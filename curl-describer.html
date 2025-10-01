@@ -1,0 +1,421 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>cURL Describer - Developer Toolkit | DevDunia</title>
+    <meta name="description" content="Analyze and understand cURL commands for API testing and debugging. Free online cURL describer tool for developers.">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body {
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #0f172a 100%);
+        }
+    </style>
+</head>
+<body class="min-h-screen">
+    <!-- Background: Consistent Subtle Dark Gradient -->
+    <div class="fixed inset-0 -z-10 bg-gradient-to-br from-gray-900 via-slate-900 to-gray-900"></div>
+
+    <!-- Main Container -->
+    <div class="relative z-10 container mx-auto px-4 pt-16 pb-24 sm:px-6 lg:px-8">
+        
+        <!-- Page Header -->
+        <div class="text-center mb-12">
+            <h1 class="text-3xl sm:text-4xl font-bold mb-4 tracking-tight
+                       text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-pink-500">
+                cURL Describer
+            </h1>
+            <p class="text-lg text-gray-400 max-w-2xl mx-auto">
+                Analyze and understand cURL commands for API testing and debugging.
+            </p>
+        </div>
+
+        <!-- Tool Container -->
+        <div class="max-w-4xl mx-auto">
+            <div class="bg-slate-800/70 backdrop-blur-md rounded-lg shadow-lg border border-slate-700/60 p-6">
+                
+                <!-- Input Section -->
+                <div class="mb-6">
+                    <label for="curl-input" class="block text-sm font-medium text-gray-300 mb-2">
+                        cURL Command
+                    </label>
+                    <textarea 
+                        id="curl-input" 
+                        rows="8" 
+                        class="w-full px-4 py-3 bg-slate-700/50 border border-slate-600 rounded-lg text-gray-200 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent resize-none font-mono text-sm"
+                        placeholder="Paste your cURL command here..."
+                    ></textarea>
+                </div>
+
+                <!-- Action Buttons -->
+                <div class="flex flex-wrap gap-3 mb-6">
+                    <button id="analyze-btn" class="px-6 py-3 bg-purple-600 hover:bg-purple-700 text-white font-medium rounded-lg transition-colors duration-200 flex items-center space-x-2">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"></path>
+                        </svg>
+                        <span>Analyze cURL</span>
+                    </button>
+                    
+                    <button id="clear-btn" class="px-6 py-3 bg-slate-600 hover:bg-slate-700 text-white font-medium rounded-lg transition-colors duration-200 flex items-center space-x-2">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
+                        </svg>
+                        <span>Clear All</span>
+                    </button>
+                </div>
+
+                <!-- Error Display -->
+                <div id="error-display" class="hidden mb-6 p-4 bg-red-900/50 border border-red-600/50 rounded-lg">
+                    <div class="flex items-center space-x-2">
+                        <svg class="w-5 h-5 text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                        </svg>
+                        <span id="error-message" class="text-red-300"></span>
+                    </div>
+                </div>
+
+                <!-- Analysis Results -->
+                <div id="analysis-results" class="hidden space-y-6">
+                    <h3 class="text-lg font-semibold text-gray-300 mb-4">cURL Analysis</h3>
+                    
+                    <!-- Basic Information -->
+                    <div class="bg-slate-700/50 p-4 rounded-lg">
+                        <h4 class="font-semibold text-blue-400 mb-3">Basic Information</h4>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div>
+                                <span class="text-gray-400 text-sm">Method:</span>
+                                <span id="method" class="text-blue-300 font-mono text-sm ml-2"></span>
+                            </div>
+                            <div>
+                                <span class="text-gray-400 text-sm">URL:</span>
+                                <span id="url" class="text-blue-300 font-mono text-sm ml-2 break-all"></span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Headers -->
+                    <div id="headers-section" class="hidden bg-slate-700/50 p-4 rounded-lg">
+                        <h4 class="font-semibold text-green-400 mb-3">Headers</h4>
+                        <div id="headers-list" class="space-y-2"></div>
+                    </div>
+
+                    <!-- Data/Body -->
+                    <div id="data-section" class="hidden bg-slate-700/50 p-4 rounded-lg">
+                        <h4 class="font-semibold text-purple-400 mb-3">Request Data</h4>
+                        <div class="bg-slate-600/50 p-3 rounded border border-slate-500">
+                            <pre id="request-data" class="text-purple-300 font-mono text-sm whitespace-pre-wrap"></pre>
+                        </div>
+                    </div>
+
+                    <!-- Authentication -->
+                    <div id="auth-section" class="hidden bg-slate-700/50 p-4 rounded-lg">
+                        <h4 class="font-semibold text-orange-400 mb-3">Authentication</h4>
+                        <div id="auth-info" class="text-orange-300 font-mono text-sm"></div>
+                    </div>
+
+                    <!-- Options -->
+                    <div id="options-section" class="hidden bg-slate-700/50 p-4 rounded-lg">
+                        <h4 class="font-semibold text-cyan-400 mb-3">Options</h4>
+                        <div id="options-list" class="space-y-2"></div>
+                    </div>
+
+                    <!-- Generated Code -->
+                    <div class="bg-slate-700/50 p-4 rounded-lg">
+                        <h4 class="font-semibold text-yellow-400 mb-3">Generated Code</h4>
+                        <div class="space-y-4">
+                            <div>
+                                <label class="block text-sm font-medium text-gray-300 mb-2">JavaScript (Fetch)</label>
+                                <div class="relative">
+                                    <textarea id="js-code" class="w-full h-32 px-4 py-3 bg-slate-600 border border-slate-500 rounded-lg text-gray-200 font-mono text-sm resize-none" readonly></textarea>
+                                    <button class="copy-code-btn absolute top-2 right-2 px-2 py-1 bg-slate-500 hover:bg-slate-400 text-white text-xs rounded transition-colors duration-200" data-target="js-code">
+                                        Copy
+                                    </button>
+                                </div>
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-300 mb-2">Python (Requests)</label>
+                                <div class="relative">
+                                    <textarea id="python-code" class="w-full h-32 px-4 py-3 bg-slate-600 border border-slate-500 rounded-lg text-gray-200 font-mono text-sm resize-none" readonly></textarea>
+                                    <button class="copy-code-btn absolute top-2 right-2 px-2 py-1 bg-slate-500 hover:bg-slate-400 text-white text-xs rounded transition-colors duration-200" data-target="python-code">
+                                        Copy
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+    </div>
+
+    <!-- Footer -->
+    <footer class="text-center text-gray-500 mt-10 pb-6">
+        © 2025 DevDunia – Free Developer Tools by <a href="https://echobash.com" class="text-blue-500 hover:underline" target="_blank">echobash</a>
+    </footer>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const curlInput = document.getElementById('curl-input');
+            const analyzeBtn = document.getElementById('analyze-btn');
+            const clearBtn = document.getElementById('clear-btn');
+            const errorDisplay = document.getElementById('error-display');
+            const errorMessage = document.getElementById('error-message');
+            const analysisResults = document.getElementById('analysis-results');
+
+            // Analyze cURL command
+            analyzeBtn.addEventListener('click', function() {
+                const curlCommand = curlInput.value.trim();
+                if (!curlCommand) {
+                    showError('Please enter a cURL command');
+                    return;
+                }
+
+                try {
+                    const analysis = analyzeCurlCommand(curlCommand);
+                    displayAnalysis(analysis);
+                    hideError();
+                } catch (error) {
+                    showError('Unable to analyze cURL command: ' + error.message);
+                }
+            });
+
+            // Clear all
+            clearBtn.addEventListener('click', function() {
+                curlInput.value = '';
+                hideAnalysis();
+                hideError();
+            });
+
+            // Copy code buttons
+            document.addEventListener('click', function(e) {
+                if (e.target.classList.contains('copy-code-btn')) {
+                    const target = e.target.getAttribute('data-target');
+                    const textarea = document.getElementById(target);
+                    textarea.select();
+                    document.execCommand('copy');
+                    
+                    e.target.textContent = 'Copied!';
+                    e.target.classList.add('bg-green-600');
+                    setTimeout(() => {
+                        e.target.textContent = 'Copy';
+                        e.target.classList.remove('bg-green-600');
+                    }, 2000);
+                }
+            });
+
+            // Auto-resize input
+            curlInput.addEventListener('input', function() {
+                this.style.height = 'auto';
+                this.style.height = this.scrollHeight + 'px';
+            });
+
+            // Helper functions
+            function showError(message) {
+                errorMessage.textContent = message;
+                errorDisplay.classList.remove('hidden');
+                hideAnalysis();
+            }
+
+            function hideError() {
+                errorDisplay.classList.add('hidden');
+            }
+
+            function showAnalysis() {
+                analysisResults.classList.remove('hidden');
+            }
+
+            function hideAnalysis() {
+                analysisResults.classList.add('hidden');
+            }
+
+            function analyzeCurlCommand(curlCommand) {
+                const analysis = {
+                    method: 'GET',
+                    url: '',
+                    headers: {},
+                    data: null,
+                    auth: null,
+                    options: []
+                };
+
+                // Remove curl prefix and split into parts
+                let command = curlCommand.replace(/^curl\s+/, '');
+                const parts = command.split(/\s+/);
+
+                for (let i = 0; i < parts.length; i++) {
+                    const part = parts[i];
+
+                    if (part.startsWith('-X') || part.startsWith('--request')) {
+                        analysis.method = parts[i + 1] || 'GET';
+                        i++;
+                    } else if (part.startsWith('-H') || part.startsWith('--header')) {
+                        const header = parts[i + 1];
+                        if (header) {
+                            const [key, value] = header.split(':');
+                            if (key && value) {
+                                analysis.headers[key.trim()] = value.trim();
+                            }
+                        }
+                        i++;
+                    } else if (part.startsWith('-d') || part.startsWith('--data')) {
+                        analysis.data = parts[i + 1] || '';
+                        i++;
+                    } else if (part.startsWith('--data-raw')) {
+                        analysis.data = parts[i + 1] || '';
+                        i++;
+                    } else if (part.startsWith('-u') || part.startsWith('--user')) {
+                        analysis.auth = parts[i + 1] || '';
+                        i++;
+                    } else if (part.startsWith('-')) {
+                        analysis.options.push(part);
+                    } else if (!part.startsWith('-') && part.startsWith('http')) {
+                        analysis.url = part;
+                    }
+                }
+
+                return analysis;
+            }
+
+            function displayAnalysis(analysis) {
+                // Basic information
+                document.getElementById('method').textContent = analysis.method;
+                document.getElementById('url').textContent = analysis.url;
+
+                // Headers
+                const headersSection = document.getElementById('headers-section');
+                const headersList = document.getElementById('headers-list');
+                if (Object.keys(analysis.headers).length > 0) {
+                    headersList.innerHTML = '';
+                    for (const [key, value] of Object.entries(analysis.headers)) {
+                        const headerDiv = document.createElement('div');
+                        headerDiv.className = 'flex justify-between items-center';
+                        headerDiv.innerHTML = `
+                            <span class="text-gray-400 text-sm">${key}:</span>
+                            <span class="text-green-300 font-mono text-sm">${value}</span>
+                        `;
+                        headersList.appendChild(headerDiv);
+                    }
+                    headersSection.classList.remove('hidden');
+                } else {
+                    headersSection.classList.add('hidden');
+                }
+
+                // Data
+                const dataSection = document.getElementById('data-section');
+                const requestData = document.getElementById('request-data');
+                if (analysis.data) {
+                    requestData.textContent = analysis.data;
+                    dataSection.classList.remove('hidden');
+                } else {
+                    dataSection.classList.add('hidden');
+                }
+
+                // Authentication
+                const authSection = document.getElementById('auth-section');
+                const authInfo = document.getElementById('auth-info');
+                if (analysis.auth) {
+                    authInfo.textContent = analysis.auth;
+                    authSection.classList.remove('hidden');
+                } else {
+                    authSection.classList.add('hidden');
+                }
+
+                // Options
+                const optionsSection = document.getElementById('options-section');
+                const optionsList = document.getElementById('options-list');
+                if (analysis.options.length > 0) {
+                    optionsList.innerHTML = '';
+                    analysis.options.forEach(option => {
+                        const optionDiv = document.createElement('div');
+                        optionDiv.className = 'text-cyan-300 font-mono text-sm';
+                        optionDiv.textContent = option;
+                        optionsList.appendChild(optionDiv);
+                    });
+                    optionsSection.classList.remove('hidden');
+                } else {
+                    optionsSection.classList.add('hidden');
+                }
+
+                // Generate code
+                generateCode(analysis);
+
+                showAnalysis();
+            }
+
+            function generateCode(analysis) {
+                // JavaScript code
+                const jsCode = generateJavaScriptCode(analysis);
+                document.getElementById('js-code').value = jsCode;
+
+                // Python code
+                const pythonCode = generatePythonCode(analysis);
+                document.getElementById('python-code').value = pythonCode;
+            }
+
+            function generateJavaScriptCode(analysis) {
+                let code = `fetch('${analysis.url}', {\n`;
+                code += `  method: '${analysis.method}',\n`;
+                
+                if (Object.keys(analysis.headers).length > 0) {
+                    code += `  headers: {\n`;
+                    for (const [key, value] of Object.entries(analysis.headers)) {
+                        code += `    '${key}': '${value}',\n`;
+                    }
+                    code += `  },\n`;
+                }
+
+                if (analysis.data) {
+                    code += `  body: '${analysis.data}',\n`;
+                }
+
+                code += `})\n`;
+                code += `.then(response => response.json())\n`;
+                code += `.then(data => console.log(data))\n`;
+                code += `.catch(error => console.error('Error:', error));`;
+
+                return code;
+            }
+
+            function generatePythonCode(analysis) {
+                let code = `import requests\n\n`;
+                code += `url = '${analysis.url}'\n`;
+                
+                if (Object.keys(analysis.headers).length > 0) {
+                    code += `headers = {\n`;
+                    for (const [key, value] of Object.entries(analysis.headers)) {
+                        code += `    '${key}': '${value}',\n`;
+                    }
+                    code += `}\n`;
+                }
+
+                if (analysis.data) {
+                    code += `data = '${analysis.data}'\n`;
+                }
+
+                code += `\nresponse = requests.${analysis.method.toLowerCase()}(`;
+                code += `url`;
+                
+                if (Object.keys(analysis.headers).length > 0) {
+                    code += `, headers=headers`;
+                }
+                
+                if (analysis.data) {
+                    code += `, data=data`;
+                }
+                
+                code += `)\n`;
+                code += `print(response.json())`;
+
+                return code;
+            }
+
+            // Example cURL on page load
+            window.addEventListener('load', () => {
+                curlInput.value = 'curl -X POST https://api.example.com/users -H "Content-Type: application/json" -d \'{"name": "John Doe", "email": "john@example.com"}\'';
+            });
+        });
+    </script>
+</body>
+</html>

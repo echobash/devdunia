@@ -1,0 +1,627 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Python Pandas - Developer Toolkit | DevDunia</title>
+    <meta name="description" content="Data manipulation, CSV handling, and DataFrame operations. Free online Python Pandas examples for developers.">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body {
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #0f172a 100%);
+        }
+    </style>
+</head>
+<body class="min-h-screen">
+    <!-- Background: Consistent Subtle Dark Gradient -->
+    <div class="fixed inset-0 -z-10 bg-gradient-to-br from-gray-900 via-slate-900 to-gray-900"></div>
+
+    <!-- Main Container -->
+    <div class="relative z-10 container mx-auto px-4 pt-16 pb-24 sm:px-6 lg:px-8">
+        
+        <!-- Page Header -->
+        <div class="text-center mb-12">
+            <h1 class="text-3xl sm:text-4xl font-bold mb-4 tracking-tight
+                       text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 to-teal-500">
+                Python Pandas
+            </h1>
+            <p class="text-lg text-gray-400 max-w-2xl mx-auto">
+                Data manipulation, CSV handling, and DataFrame operations.
+            </p>
+        </div>
+
+        <!-- Tool Container -->
+        <div class="max-w-4xl mx-auto">
+            <div class="bg-slate-800/70 backdrop-blur-md rounded-lg shadow-lg border border-slate-700/60 p-6">
+                
+                <!-- Operation Type Selection -->
+                <div class="mb-6">
+                    <label class="block text-sm font-medium text-gray-300 mb-3">Pandas Operation</label>
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
+                        <button class="operation-btn px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white text-sm rounded-lg transition-colors duration-200" data-operation="basic">
+                            Basic Operations
+                        </button>
+                        <button class="operation-btn px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white text-sm rounded-lg transition-colors duration-200" data-operation="csv">
+                            CSV Handling
+                        </button>
+                        <button class="operation-btn px-4 py-2 bg-purple-600 hover:bg-purple-700 text-white text-sm rounded-lg transition-colors duration-200" data-operation="filtering">
+                            Data Filtering
+                        </button>
+                        <button class="operation-btn px-4 py-2 bg-yellow-600 hover:bg-yellow-700 text-white text-sm rounded-lg transition-colors duration-200" data-operation="grouping">
+                            Grouping & Aggregation
+                        </button>
+                        <button class="operation-btn px-4 py-2 bg-red-600 hover:bg-red-700 text-white text-sm rounded-lg transition-colors duration-200" data-operation="merging">
+                            Data Merging
+                        </button>
+                        <button class="operation-btn px-4 py-2 bg-cyan-600 hover:bg-cyan-700 text-white text-sm rounded-lg transition-colors duration-200" data-operation="analysis">
+                            Data Analysis
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Generate Button -->
+                <div class="mb-6">
+                    <button id="generate-btn" class="px-6 py-3 bg-emerald-600 hover:bg-emerald-700 text-white font-medium rounded-lg transition-colors duration-200 flex items-center space-x-2">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
+                        </svg>
+                        <span>Generate Pandas Code</span>
+                    </button>
+                </div>
+
+                <!-- Generated Code -->
+                <div id="code-section" class="hidden">
+                    <h3 class="text-lg font-semibold text-gray-300 mb-4">Generated Pandas Code</h3>
+                    <div class="relative">
+                        <textarea 
+                            id="generated-code" 
+                            rows="25" 
+                            class="w-full px-4 py-3 bg-slate-700/50 border border-slate-600 rounded-lg text-gray-200 font-mono text-sm resize-none"
+                            readonly
+                        ></textarea>
+                        
+                        <!-- Copy Button -->
+                        <button id="copy-code-btn" class="absolute top-2 right-2 px-3 py-1 bg-slate-600 hover:bg-slate-700 text-white text-sm rounded transition-colors duration-200 flex items-center space-x-1">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v8a2 2 0 01-2 2h-2m-6-4l2 2m0 0l2-2m-2 2V10"></path>
+                            </svg>
+                            <span>Copy</span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Requirements -->
+                <div class="mt-8 p-4 bg-slate-700/30 rounded-lg border border-slate-600/50">
+                    <h3 class="text-lg font-semibold text-cyan-400 mb-3">Requirements</h3>
+                    <div class="bg-slate-600/50 p-3 rounded border border-slate-500">
+                        <pre class="text-cyan-300 font-mono text-sm">pandas==2.1.0
+numpy==1.24.3
+matplotlib==3.7.2</pre>
+                    </div>
+                </div>
+
+                <!-- Common Operations -->
+                <div class="mt-6 p-4 bg-slate-700/30 rounded-lg border border-slate-600/50">
+                    <h3 class="text-lg font-semibold text-cyan-400 mb-3">Common Pandas Operations</h3>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
+                        <div>
+                            <p class="text-gray-300 font-medium mb-2">Data Loading:</p>
+                            <p class="text-gray-400">pd.read_csv(), pd.read_excel(), pd.read_json()</p>
+                        </div>
+                        <div>
+                            <p class="text-gray-300 font-medium mb-2">Data Inspection:</p>
+                            <p class="text-gray-400">df.head(), df.info(), df.describe()</p>
+                        </div>
+                        <div>
+                            <p class="text-gray-300 font-medium mb-2">Data Cleaning:</p>
+                            <p class="text-gray-400">df.dropna(), df.fillna(), df.drop_duplicates()</p>
+                        </div>
+                        <div>
+                            <p class="text-gray-300 font-medium mb-2">Data Selection:</p>
+                            <p class="text-gray-400">df.loc[], df.iloc[], df.query()</p>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+    </div>
+
+    <!-- Footer -->
+    <footer class="text-center text-gray-500 mt-10 pb-6">
+        © 2025 DevDunia – Free Developer Tools by <a href="https://echobash.com" class="text-blue-500 hover:underline" target="_blank">echobash</a>
+    </footer>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const operationBtns = document.querySelectorAll('.operation-btn');
+            const generateBtn = document.getElementById('generate-btn');
+            const codeSection = document.getElementById('code-section');
+            const generatedCode = document.getElementById('generated-code');
+            const copyCodeBtn = document.getElementById('copy-code-btn');
+
+            let selectedOperation = 'basic';
+
+            // Operation selection
+            operationBtns.forEach(btn => {
+                btn.addEventListener('click', function() {
+                    selectedOperation = this.getAttribute('data-operation');
+                    
+                    // Update button states
+                    operationBtns.forEach(b => b.classList.remove('ring-2', 'ring-emerald-400'));
+                    this.classList.add('ring-2', 'ring-emerald-400');
+                });
+            });
+
+            // Set initial operation
+            document.querySelector('[data-operation="basic"]').click();
+
+            // Generate code
+            generateBtn.addEventListener('click', function() {
+                const code = generatePandasCode();
+                generatedCode.value = code;
+                codeSection.classList.remove('hidden');
+            });
+
+            // Copy code
+            copyCodeBtn.addEventListener('click', function() {
+                generatedCode.select();
+                document.execCommand('copy');
+                
+                // Visual feedback
+                const originalText = copyCodeBtn.innerHTML;
+                copyCodeBtn.innerHTML = '<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg><span>Copied!</span>';
+                copyCodeBtn.classList.add('bg-green-600');
+                
+                setTimeout(() => {
+                    copyCodeBtn.innerHTML = originalText;
+                    copyCodeBtn.classList.remove('bg-green-600');
+                }, 2000);
+            });
+
+            function generatePandasCode() {
+                switch (selectedOperation) {
+                    case 'basic':
+                        return generateBasicOperations();
+                    case 'csv':
+                        return generateCSVHandling();
+                    case 'filtering':
+                        return generateDataFiltering();
+                    case 'grouping':
+                        return generateGroupingAggregation();
+                    case 'merging':
+                        return generateDataMerging();
+                    case 'analysis':
+                        return generateDataAnalysis();
+                    default:
+                        return generateBasicOperations();
+                }
+            }
+
+            function generateBasicOperations() {
+                return `import pandas as pd
+import numpy as np
+
+# Create a sample DataFrame
+data = {
+    'Name': ['Alice', 'Bob', 'Charlie', 'David', 'Eve'],
+    'Age': [25, 30, 35, 28, 32],
+    'City': ['New York', 'London', 'Tokyo', 'Paris', 'Sydney'],
+    'Salary': [50000, 60000, 70000, 55000, 65000]
+}
+
+df = pd.DataFrame(data)
+
+# Basic DataFrame operations
+print("DataFrame Info:")
+print(df.info())
+print("\\nFirst 3 rows:")
+print(df.head(3))
+print("\\nDataFrame shape:", df.shape)
+print("\\nColumn names:", df.columns.tolist())
+
+# Basic statistics
+print("\\nBasic Statistics:")
+print(df.describe())
+
+# Accessing data
+print("\\nAccessing specific columns:")
+print(df['Name'])
+print("\\nAccessing multiple columns:")
+print(df[['Name', 'Age']])
+
+# Adding new column
+df['Bonus'] = df['Salary'] * 0.1
+print("\\nDataFrame with bonus column:")
+print(df)
+
+# Sorting
+print("\\nSorted by Age:")
+print(df.sort_values('Age'))
+
+# Filtering
+print("\\nPeople older than 30:")
+print(df[df['Age'] > 30])`;
+            }
+
+            function generateCSVHandling() {
+                return `import pandas as pd
+
+# Reading CSV files
+# df = pd.read_csv('data.csv')
+# df = pd.read_csv('data.csv', sep=';')  # Custom separator
+# df = pd.read_csv('data.csv', header=0)  # Specify header row
+# df = pd.read_csv('data.csv', index_col=0)  # Use first column as index
+
+# Create sample data for demonstration
+data = {
+    'ID': [1, 2, 3, 4, 5],
+    'Product': ['Laptop', 'Mouse', 'Keyboard', 'Monitor', 'Headphones'],
+    'Price': [999.99, 29.99, 79.99, 299.99, 149.99],
+    'Category': ['Electronics', 'Accessories', 'Accessories', 'Electronics', 'Accessories'],
+    'Stock': [10, 50, 25, 15, 30]
+}
+
+df = pd.DataFrame(data)
+
+# Writing to CSV
+df.to_csv('products.csv', index=False)
+print("Data written to products.csv")
+
+# Reading from CSV
+df_read = pd.read_csv('products.csv')
+print("\\nData read from CSV:")
+print(df_read)
+
+# CSV with different options
+# df.to_csv('products.csv', index=False, sep=';')  # Custom separator
+# df.to_csv('products.csv', index=False, encoding='utf-8')  # Custom encoding
+
+# Handling missing values in CSV
+df_with_nulls = df.copy()
+df_with_nulls.loc[1, 'Price'] = None
+df_with_nulls.loc[3, 'Stock'] = None
+
+print("\\nDataFrame with missing values:")
+print(df_with_nulls)
+
+# Save with missing values
+df_with_nulls.to_csv('products_with_nulls.csv', index=False)
+
+# Read and handle missing values
+df_clean = pd.read_csv('products_with_nulls.csv')
+print("\\nDataFrame with missing values handled:")
+print(df_clean.fillna(0))  # Fill with 0
+print("\\nOr drop rows with missing values:")
+print(df_clean.dropna())`;
+            }
+
+            function generateDataFiltering() {
+                return `import pandas as pd
+import numpy as np
+
+# Create sample data
+data = {
+    'Name': ['Alice', 'Bob', 'Charlie', 'David', 'Eve', 'Frank', 'Grace', 'Henry'],
+    'Age': [25, 30, 35, 28, 32, 45, 29, 38],
+    'Department': ['IT', 'HR', 'IT', 'Finance', 'IT', 'HR', 'Finance', 'IT'],
+    'Salary': [50000, 60000, 70000, 55000, 65000, 80000, 58000, 72000],
+    'Experience': [2, 5, 8, 3, 6, 15, 4, 10]
+}
+
+df = pd.DataFrame(data)
+
+print("Original DataFrame:")
+print(df)
+
+# Basic filtering
+print("\\n1. Filter by single condition:")
+it_employees = df[df['Department'] == 'IT']
+print(it_employees)
+
+print("\\n2. Filter by multiple conditions:")
+senior_it = df[(df['Department'] == 'IT') & (df['Experience'] > 5)]
+print(senior_it)
+
+print("\\n3. Filter by salary range:")
+high_salary = df[(df['Salary'] >= 60000) & (df['Salary'] <= 80000)]
+print(high_salary)
+
+# Using query method
+print("\\n4. Using query method:")
+young_employees = df.query('Age < 30 and Department == "IT"')
+print(young_employees)
+
+# Using isin for multiple values
+print("\\n5. Filter by multiple department values:")
+selected_depts = df[df['Department'].isin(['IT', 'Finance'])]
+print(selected_depts)
+
+# String filtering
+print("\\n6. Filter by name containing 'a':")
+names_with_a = df[df['Name'].str.contains('a', case=False)]
+print(names_with_a)
+
+# Using loc for more complex filtering
+print("\\n7. Using loc for complex filtering:")
+complex_filter = df.loc[(df['Age'] > 30) & (df['Salary'] > 60000), ['Name', 'Department', 'Salary']]
+print(complex_filter)
+
+# Filtering with null values (if any)
+print("\\n8. Handling null values:")
+df_with_nulls = df.copy()
+df_with_nulls.loc[2, 'Salary'] = None
+print("DataFrame with nulls:")
+print(df_with_nulls)
+print("\\nNon-null salaries:")
+print(df_with_nulls[df_with_nulls['Salary'].notna()])`;
+            }
+
+            function generateGroupingAggregation() {
+                return `import pandas as pd
+import numpy as np
+
+# Create sample sales data
+data = {
+    'Date': pd.date_range('2023-01-01', periods=20, freq='D'),
+    'Product': ['Laptop', 'Mouse', 'Keyboard', 'Monitor', 'Laptop', 'Mouse', 'Keyboard', 'Monitor', 'Laptop', 'Mouse',
+                'Keyboard', 'Monitor', 'Laptop', 'Mouse', 'Keyboard', 'Monitor', 'Laptop', 'Mouse', 'Keyboard', 'Monitor'],
+    'Category': ['Electronics', 'Accessories', 'Accessories', 'Electronics', 'Electronics', 'Accessories', 'Accessories', 'Electronics',
+                 'Electronics', 'Accessories', 'Accessories', 'Electronics', 'Electronics', 'Accessories', 'Accessories', 'Electronics',
+                 'Electronics', 'Accessories', 'Accessories', 'Electronics'],
+    'Sales': [1000, 50, 100, 500, 1200, 60, 110, 550, 1100, 45, 95, 480, 1300, 55, 105, 520, 1150, 65, 115, 510],
+    'Quantity': [1, 10, 5, 2, 1, 12, 6, 2, 1, 9, 5, 2, 1, 11, 5, 2, 1, 13, 6, 2],
+    'Region': ['North', 'South', 'East', 'West', 'North', 'South', 'East', 'West', 'North', 'South',
+               'East', 'West', 'North', 'South', 'East', 'West', 'North', 'South', 'East', 'West']
+}
+
+df = pd.DataFrame(data)
+
+print("Sample Sales Data:")
+print(df.head(10))
+
+# Basic grouping
+print("\\n1. Group by Product and get total sales:")
+product_sales = df.groupby('Product')['Sales'].sum()
+print(product_sales)
+
+print("\\n2. Group by Category and get multiple aggregations:")
+category_stats = df.groupby('Category').agg({
+    'Sales': ['sum', 'mean', 'count'],
+    'Quantity': 'sum'
+})
+print(category_stats)
+
+# Multiple grouping
+print("\\n3. Group by Category and Region:")
+category_region = df.groupby(['Category', 'Region'])['Sales'].sum()
+print(category_region)
+
+# Custom aggregation functions
+print("\\n4. Custom aggregation:")
+custom_agg = df.groupby('Product').agg({
+    'Sales': ['sum', 'mean', 'std'],
+    'Quantity': ['sum', 'max']
+})
+print(custom_agg)
+
+# Using transform for group-wise operations
+print("\\n5. Add group mean to each row:")
+df['Group_Mean'] = df.groupby('Category')['Sales'].transform('mean')
+print(df[['Product', 'Category', 'Sales', 'Group_Mean']])
+
+# Using apply for custom functions
+print("\\n6. Custom function with apply:")
+def sales_range(group):
+    return group['Sales'].max() - group['Sales'].min()
+
+sales_ranges = df.groupby('Category').apply(sales_range)
+print("Sales range by category:")
+print(sales_ranges)
+
+# Pivot tables
+print("\\n7. Pivot table - Sales by Category and Region:")
+pivot_table = df.pivot_table(values='Sales', index='Category', columns='Region', aggfunc='sum')
+print(pivot_table)
+
+# Cross tabulation
+print("\\n8. Cross tabulation:")
+crosstab = pd.crosstab(df['Category'], df['Region'])
+print(crosstab)`;
+            }
+
+            function generateDataMerging() {
+                return `import pandas as pd
+
+# Create sample datasets
+employees = pd.DataFrame({
+    'Employee_ID': [1, 2, 3, 4, 5],
+    'Name': ['Alice', 'Bob', 'Charlie', 'David', 'Eve'],
+    'Department_ID': [10, 20, 10, 30, 20],
+    'Salary': [50000, 60000, 70000, 55000, 65000]
+})
+
+departments = pd.DataFrame({
+    'Department_ID': [10, 20, 30, 40],
+    'Department_Name': ['IT', 'HR', 'Finance', 'Marketing'],
+    'Manager': ['John', 'Jane', 'Mike', 'Sarah']
+})
+
+projects = pd.DataFrame({
+    'Employee_ID': [1, 2, 1, 3, 4, 2],
+    'Project_Name': ['Project A', 'Project B', 'Project C', 'Project A', 'Project D', 'Project C'],
+    'Hours': [40, 35, 20, 45, 30, 25]
+})
+
+print("Employees DataFrame:")
+print(employees)
+print("\\nDepartments DataFrame:")
+print(departments)
+print("\\nProjects DataFrame:")
+print(projects)
+
+# Inner join
+print("\\n1. Inner join - Employees with Departments:")
+inner_join = pd.merge(employees, departments, on='Department_ID', how='inner')
+print(inner_join)
+
+# Left join
+print("\\n2. Left join - All employees with their departments:")
+left_join = pd.merge(employees, departments, on='Department_ID', how='left')
+print(left_join)
+
+# Right join
+print("\\n3. Right join - All departments with employees:")
+right_join = pd.merge(employees, departments, on='Department_ID', how='right')
+print(right_join)
+
+# Outer join
+print("\\n4. Outer join - All records:")
+outer_join = pd.merge(employees, departments, on='Department_ID', how='outer')
+print(outer_join)
+
+# Multiple merges
+print("\\n5. Multiple merges - Employees, Departments, and Projects:")
+multi_merge = pd.merge(
+    pd.merge(employees, departments, on='Department_ID', how='left'),
+    projects, on='Employee_ID', how='left'
+)
+print(multi_merge)
+
+# Merge with different column names
+print("\\n6. Merge with different column names:")
+employees_alt = employees.copy()
+employees_alt.rename(columns={'Department_ID': 'Dept_ID'}, inplace=True)
+merge_different_cols = pd.merge(employees_alt, departments, 
+                               left_on='Dept_ID', right_on='Department_ID', how='left')
+print(merge_different_cols)
+
+# Concatenation
+print("\\n7. Concatenating DataFrames:")
+new_employees = pd.DataFrame({
+    'Employee_ID': [6, 7],
+    'Name': ['Frank', 'Grace'],
+    'Department_ID': [10, 30],
+    'Salary': [58000, 62000]
+})
+
+concatenated = pd.concat([employees, new_employees], ignore_index=True)
+print("Concatenated employees:")
+print(concatenated)
+
+# Append (deprecated but still works)
+print("\\n8. Using append:")
+appended = employees.append(new_employees, ignore_index=True)
+print("Appended employees:")
+print(appended)`;
+            }
+
+            function generateDataAnalysis() {
+                return `import pandas as pd
+import numpy as np
+
+# Create comprehensive sample data
+np.random.seed(42)
+data = {
+    'Date': pd.date_range('2023-01-01', periods=100, freq='D'),
+    'Product': np.random.choice(['Laptop', 'Mouse', 'Keyboard', 'Monitor', 'Headphones'], 100),
+    'Category': np.random.choice(['Electronics', 'Accessories'], 100),
+    'Sales': np.random.normal(1000, 300, 100).round(2),
+    'Quantity': np.random.randint(1, 20, 100),
+    'Region': np.random.choice(['North', 'South', 'East', 'West'], 100),
+    'Customer_Rating': np.random.uniform(1, 5, 100).round(1)
+}
+
+df = pd.DataFrame(data)
+
+print("Sample Data Analysis:")
+print(df.head())
+print(f"\\nDataset shape: {df.shape}")
+
+# Basic statistical analysis
+print("\\n1. Descriptive Statistics:")
+print(df.describe())
+
+print("\\n2. Data types and missing values:")
+print(df.info())
+
+# Correlation analysis
+print("\\n3. Correlation Matrix:")
+numeric_cols = df.select_dtypes(include=[np.number]).columns
+correlation_matrix = df[numeric_cols].corr()
+print(correlation_matrix)
+
+# Time series analysis
+print("\\n4. Time Series Analysis:")
+df['Date'] = pd.to_datetime(df['Date'])
+df.set_index('Date', inplace=True)
+
+# Monthly sales trend
+monthly_sales = df['Sales'].resample('M').sum()
+print("Monthly Sales Trend:")
+print(monthly_sales)
+
+# Moving average
+df['Sales_MA_7'] = df['Sales'].rolling(window=7).mean()
+print("\\n7-day Moving Average (first 10 days):")
+print(df['Sales_MA_7'].head(10))
+
+# Categorical analysis
+print("\\n5. Categorical Analysis:")
+print("Sales by Category:")
+category_analysis = df.groupby('Category').agg({
+    'Sales': ['sum', 'mean', 'count'],
+    'Customer_Rating': 'mean'
+})
+print(category_analysis)
+
+# Top performing products
+print("\\n6. Top 5 Products by Total Sales:")
+top_products = df.groupby('Product')['Sales'].sum().sort_values(ascending=False).head()
+print(top_products)
+
+# Regional analysis
+print("\\n7. Regional Performance:")
+regional_analysis = df.groupby('Region').agg({
+    'Sales': ['sum', 'mean'],
+    'Customer_Rating': 'mean',
+    'Quantity': 'sum'
+})
+print(regional_analysis)
+
+# Outlier detection
+print("\\n8. Outlier Detection (using IQR method):")
+Q1 = df['Sales'].quantile(0.25)
+Q3 = df['Sales'].quantile(0.75)
+IQR = Q3 - Q1
+lower_bound = Q1 - 1.5 * IQR
+upper_bound = Q3 + 1.5 * IQR
+
+outliers = df[(df['Sales'] < lower_bound) | (df['Sales'] > upper_bound)]
+print(f"Number of outliers: {len(outliers)}")
+print("Outliers:")
+print(outliers[['Product', 'Sales', 'Region']])
+
+# Data quality checks
+print("\\n9. Data Quality Checks:")
+print(f"Missing values: {df.isnull().sum().sum()}")
+print(f"Duplicate rows: {df.duplicated().sum()}")
+print(f"Unique products: {df['Product'].nunique()}")
+print(f"Date range: {df.index.min()} to {df.index.max()}")
+
+# Performance metrics
+print("\\n10. Performance Metrics:")
+total_sales = df['Sales'].sum()
+avg_rating = df['Customer_Rating'].mean()
+total_quantity = df['Quantity'].sum()
+
+print(f"Total Sales: \${total_sales:,.2f}")
+print(f"Average Customer Rating: {avg_rating:.2f}")
+print(f"Total Quantity Sold: {total_quantity:,}")
+print(f"Average Sales per Transaction: \${total_sales/len(df):.2f}")`;
+            }
+        });
+    </script>
+</body>
+</html>

@@ -1,121 +1,400 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>DevDunia – World of Developer Tools</title>
+    <title>Developer Toolkit - DevDunia</title>
+    <meta name="description" content="A comprehensive collection of essential developer utilities for formatting, encoding, generating, and calculating. Free online tools for developers.">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="js/common.js"></script>
   <style>
     body {
-      font-family: Arial, sans-serif;
-      background: #f5f7fa;
-      margin: 0;
-      padding: 0;
-      color: #333;
-    }
-    header {
-      background: #1f2937;
-      color: #fff;
-      padding: 1rem 2rem;
-      text-align: center;
-    }
-    header h1 {
-      margin: 0;
-      font-size: 1.8rem;
-    }
-    header p {
-      margin: 0.5rem 0 0;
-      font-size: 1rem;
-      color: #9ca3af;
-    }
-    main {
-      max-width: 900px;
-      margin: 2rem auto;
-      padding: 0 1rem;
-    }
-    h2 {
-      border-bottom: 2px solid #e5e7eb;
-      padding-bottom: 0.3rem;
-      color: #111827;
-    }
-    ul {
-      list-style: none;
-      padding-left: 0;
-    }
-    li {
-      margin: 0.5rem 0;
-    }
-    a {
-      color: #2563eb;
-      text-decoration: none;
-      font-weight: 500;
-    }
-    a:hover {
-      text-decoration: underline;
-    }
-    footer {
-      text-align: center;
-      padding: 1rem;
-      font-size: 0.9rem;
-      color: #6b7280;
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #0f172a 100%);
     }
   </style>
 </head>
-<body>
-  <header>
-    <h1>DevDunia</h1>
-    <p>Your world of developer tools – free & simple</p>
-  </header>
-  <main>
-    <h2>Encoding/Decoding & Converters</h2>
-    <ul>
-      <li><a href="#">JSON Formatter / Validator</a></li>
-      <li><a href="#">YAML ⇄ JSON Converter</a></li>
-      <li><a href="#">XML Formatter</a></li>
-      <li><a href="#">CSV ⇄ JSON</a></li>
-      <li><a href="#">Base64 Encode/Decode</a></li>
-      <li><a href="#">URL Encode/Decode</a></li>
-      <li><a href="#">HTML Entities Encode/Decode</a></li>
-      <li><a href="#">ROT13, Caesar Cipher</a></li>
-      <li><a href="#">ASCII ⇄ Hex ⇄ Binary Converter</a></li>
-    </ul>
+<body class="min-h-screen">
+    <!-- Background: Consistent Subtle Dark Gradient -->
+    <div class="fixed inset-0 -z-10 bg-gradient-to-br from-gray-900 via-slate-900 to-gray-900"></div>
 
-    <h2>Strings & Text</h2>
-    <ul>
-      <li><a href="#">Regex Tester</a></li>
-      <li><a href="#">Slugify</a></li>
-      <li><a href="#">Case Converter</a></li>
-      <li><a href="#">Palindrome Checker</a></li>
-      <li><a href="#">Word/Character Counter</a></li>
-    </ul>
+    <!-- Main Container -->
+    <div class="relative z-10 container mx-auto px-4 pt-16 pb-24 sm:px-6 lg:px-8">
+        
+        <!-- Page Header -->
+        <div class="text-center mb-16">
+            <h1 class="text-4xl sm:text-5xl font-bold mb-4 tracking-tight
+                       text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 to-teal-500">
+                       Devdunia
+            </h1>
+            <p class="text-lg text-gray-400 max-w-2xl mx-auto">
+                A comprehensive collection of essential developer utilities for formatting, encoding, generating, and calculating.
+            </p>
+        </div>
 
-    <h2>Generators</h2>
-    <ul>
-      <li><a href="#">UUID/GUID Generator</a></li>
-      <li><a href="#">Lorem Ipsum Generator</a></li>
-      <li><a href="#">QR Code Generator</a></li>
-      <li><a href="#">Random Password Generator</a></li>
-      <li><a href="#">Color Picker</a></li>
-    </ul>
+        <!-- Tools Grid -->
+        <div class="max-w-6xl mx-auto space-y-12">
+            
+            <!-- FORMATTERS Section -->
+            <section>
+                <h2 class="text-2xl sm:text-3xl font-semibold mb-8 text-emerald-300 border-b-2 border-slate-700 pb-3">
+                    <span class="mr-3">🔄</span>Formatters
+                </h2>
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                    <a href="json-formatter.html" class="group bg-slate-800/70 backdrop-blur-md rounded-lg shadow-md border border-slate-700/60 p-6 transition-all duration-300 ease-out hover:shadow-lg hover:shadow-emerald-500/10 hover:border-emerald-600/70 hover:-translate-y-1">
+                        <div class="flex items-center space-x-3 mb-3">
+                            <div class="w-10 h-10 bg-emerald-600 rounded-lg flex items-center justify-center">
+                                <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4"></path>
+                                </svg>
+                            </div>
+                            <h3 class="text-lg font-semibold text-white group-hover:text-emerald-300 transition-colors">Pretty JSON Formatter</h3>
+                        </div>
+                        <p class="text-gray-400 text-sm">Format and beautify JSON data with proper indentation and structure.</p>
+                    </a>
+                    
+                    <a href="url-encoder.html" class="group bg-slate-800/70 backdrop-blur-md rounded-lg shadow-md border border-slate-700/60 p-6 transition-all duration-300 ease-out hover:shadow-lg hover:shadow-emerald-500/10 hover:border-emerald-600/70 hover:-translate-y-1">
+                        <div class="flex items-center space-x-3 mb-3">
+                            <div class="w-10 h-10 bg-emerald-600 rounded-lg flex items-center justify-center">
+                                <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16l-4-4m0 0l4-4m-4 4h18"></path>
+                                </svg>
+                            </div>
+                            <h3 class="text-lg font-semibold text-white group-hover:text-emerald-300 transition-colors">URL Encoder</h3>
+                        </div>
+                        <p class="text-gray-400 text-sm">Encode URLs with proper percent encoding for special characters and spaces.</p>
+                    </a>
+                </div>
+            </section>
 
-    <h2>Web/Frontend Helpers</h2>
-    <ul>
-      <li><a href="#">CSS Minifier / Beautifier</a></li>
-      <li><a href="#">JS Minifier / Beautifier</a></li>
-      <li><a href="#">HTML Minifier / Beautifier</a></li>
-      <li><a href="#">Gradient Generator</a></li>
-      <li><a href="#">Box-Shadow Generator</a></li>
-      <li><a href="#">Flex/Grid Playground</a></li>
-    </ul>
+            <!-- ENCODERS/DECODERS Section -->
+            <section>
+                <h2 class="text-2xl sm:text-3xl font-semibold mb-8 text-blue-300 border-b-2 border-slate-700 pb-3">
+                    <span class="mr-3">🔐</span>Encoders/Decoders
+                </h2>
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                    <a href="json-decoder.html" class="group bg-slate-800/70 backdrop-blur-md rounded-lg shadow-md border border-slate-700/60 p-6 transition-all duration-300 ease-out hover:shadow-lg hover:shadow-blue-500/10 hover:border-blue-600/70 hover:-translate-y-1">
+                        <div class="flex items-center space-x-3 mb-3">
+                            <div class="w-10 h-10 bg-blue-600 rounded-lg flex items-center justify-center">
+                                <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"></path>
+                                </svg>
+                            </div>
+                            <h3 class="text-lg font-semibold text-white group-hover:text-blue-300 transition-colors">JSON Decoder</h3>
+                        </div>
+                        <p class="text-gray-400 text-sm">Parse and decode JSON data with error handling and validation.</p>
+                    </a>
+                    
+                    <a href="json-beautifier.html" class="group bg-slate-800/70 backdrop-blur-md rounded-lg shadow-md border border-slate-700/60 p-6 transition-all duration-300 ease-out hover:shadow-lg hover:shadow-blue-500/10 hover:border-blue-600/70 hover:-translate-y-1">
+                        <div class="flex items-center space-x-3 mb-3">
+                            <div class="w-10 h-10 bg-blue-600 rounded-lg flex items-center justify-center">
+                                <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16l-4-4m0 0l4-4m-4 4h18"></path>
+                                </svg>
+                            </div>
+                            <h3 class="text-lg font-semibold text-white group-hover:text-blue-300 transition-colors">JSON Beautifier</h3>
+                        </div>
+                        <p class="text-gray-400 text-sm">Beautify and format JSON data with proper indentation.</p>
+                    </a>
+                    
+                    <a href="json-minifier.html" class="group bg-slate-800/70 backdrop-blur-md rounded-lg shadow-md border border-slate-700/60 p-6 transition-all duration-300 ease-out hover:shadow-lg hover:shadow-blue-500/10 hover:border-blue-600/70 hover:-translate-y-1">
+                        <div class="flex items-center space-x-3 mb-3">
+                            <div class="w-10 h-10 bg-blue-600 rounded-lg flex items-center justify-center">
+                                <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16l-4-4m0 0l4-4m-4 4h18"></path>
+                                </svg>
+                            </div>
+                            <h3 class="text-lg font-semibold text-white group-hover:text-blue-300 transition-colors">JSON Minifier</h3>
+                        </div>
+                        <p class="text-gray-400 text-sm">Minify JSON data by removing all unnecessary whitespace.</p>
+                    </a>
+                    
+                    <a href="string-transformer.html" class="group bg-slate-800/70 backdrop-blur-md rounded-lg shadow-md border border-slate-700/60 p-6 transition-all duration-300 ease-out hover:shadow-lg hover:shadow-blue-500/10 hover:border-blue-600/70 hover:-translate-y-1">
+                        <div class="flex items-center space-x-3 mb-3">
+                            <div class="w-10 h-10 bg-blue-600 rounded-lg flex items-center justify-center">
+                                <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16l-4-4m0 0l4-4m-4 4h18"></path>
+                                </svg>
+                            </div>
+                            <h3 class="text-lg font-semibold text-white group-hover:text-blue-300 transition-colors">String Transformer</h3>
+                        </div>
+                        <p class="text-gray-400 text-sm">Transform strings between different formats and cases.</p>
+                    </a>
+                    
+                    <a href="url-encoder.html" class="group bg-slate-800/70 backdrop-blur-md rounded-lg shadow-md border border-slate-700/60 p-6 transition-all duration-300 ease-out hover:shadow-lg hover:shadow-blue-500/10 hover:border-blue-600/70 hover:-translate-y-1">
+                        <div class="flex items-center space-x-3 mb-3">
+                            <div class="w-10 h-10 bg-blue-600 rounded-lg flex items-center justify-center">
+                                <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16l-4-4m0 0l4-4m-4 4h18"></path>
+                                </svg>
+                            </div>
+                            <h3 class="text-lg font-semibold text-white group-hover:text-blue-300 transition-colors">URL Encoder</h3>
+                        </div>
+                        <p class="text-gray-400 text-sm">Encode URLs with proper percent encoding for special characters.</p>
+                    </a>
+                    
+                    <a href="url-decoder.html" class="group bg-slate-800/70 backdrop-blur-md rounded-lg shadow-md border border-slate-700/60 p-6 transition-all duration-300 ease-out hover:shadow-lg hover:shadow-blue-500/10 hover:border-blue-600/70 hover:-translate-y-1">
+                        <div class="flex items-center space-x-3 mb-3">
+                            <div class="w-10 h-10 bg-blue-600 rounded-lg flex items-center justify-center">
+                                <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"></path>
+                                </svg>
+                            </div>
+                            <h3 class="text-lg font-semibold text-white group-hover:text-blue-300 transition-colors">URL Decoder</h3>
+                        </div>
+                        <p class="text-gray-400 text-sm">Decode percent-encoded URLs back to readable format.</p>
+                    </a>
+                    
+                    <a href="base64-encoder.html" class="group bg-slate-800/70 backdrop-blur-md rounded-lg shadow-md border border-slate-700/60 p-6 transition-all duration-300 ease-out hover:shadow-lg hover:shadow-blue-500/10 hover:border-blue-600/70 hover:-translate-y-1">
+                        <div class="flex items-center space-x-3 mb-3">
+                            <div class="w-10 h-10 bg-blue-600 rounded-lg flex items-center justify-center">
+                                <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16l-4-4m0 0l4-4m-4 4h18"></path>
+                                </svg>
+                            </div>
+                            <h3 class="text-lg font-semibold text-white group-hover:text-blue-300 transition-colors">Base64 Encoder</h3>
+                        </div>
+                        <p class="text-gray-400 text-sm">Convert text and binary data to Base64 encoding format.</p>
+                    </a>
+                    
+                    <a href="base64-decoder.html" class="group bg-slate-800/70 backdrop-blur-md rounded-lg shadow-md border border-slate-700/60 p-6 transition-all duration-300 ease-out hover:shadow-lg hover:shadow-blue-500/10 hover:border-blue-600/70 hover:-translate-y-1">
+                        <div class="flex items-center space-x-3 mb-3">
+                            <div class="w-10 h-10 bg-blue-600 rounded-lg flex items-center justify-center">
+                                <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"></path>
+                                </svg>
+                            </div>
+                            <h3 class="text-lg font-semibold text-white group-hover:text-blue-300 transition-colors">Base64 Decoder</h3>
+                        </div>
+                        <p class="text-gray-400 text-sm">Decode Base64 encoded data back to original format.</p>
+                    </a>
+                </div>
+            </section>
 
-    <h2>Date & Time</h2>
-    <ul>
-      <li><a href="#">Unix Timestamp Converter</a></li>
-      <li><a href="#">Timezone Converter</a></li>
-      <li><a href="#">Countdown Timer Generator</a></li>
-    </ul>
-  </main>
-  <footer>
-    &copy; 2025 DevDunia – Built by <a href="https://echobash.com" target="_blank">echobash</a>
+            <!-- GENERATORS Section -->
+            <section>
+                <h2 class="text-2xl sm:text-3xl font-semibold mb-8 text-purple-300 border-b-2 border-slate-700 pb-3">
+                    <span class="mr-3">⚡</span>Generators
+                </h2>
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                    <a href="password-generator.html" class="group bg-slate-800/70 backdrop-blur-md rounded-lg shadow-md border border-slate-700/60 p-6 transition-all duration-300 ease-out hover:shadow-lg hover:shadow-purple-500/10 hover:border-purple-600/70 hover:-translate-y-1">
+                        <div class="flex items-center space-x-3 mb-3">
+                            <div class="w-10 h-10 bg-purple-600 rounded-lg flex items-center justify-center">
+                                <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path>
+                                </svg>
+                            </div>
+                            <h3 class="text-lg font-semibold text-white group-hover:text-purple-300 transition-colors">Strong Password Generator</h3>
+                        </div>
+                        <p class="text-gray-400 text-sm">Generate secure, random passwords with customizable complexity.</p>
+                    </a>
+                    
+                    <a href="hash-generator.html" class="group bg-slate-800/70 backdrop-blur-md rounded-lg shadow-md border border-slate-700/60 p-6 transition-all duration-300 ease-out hover:shadow-lg hover:shadow-purple-500/10 hover:border-purple-600/70 hover:-translate-y-1">
+                        <div class="flex items-center space-x-3 mb-3">
+                            <div class="w-10 h-10 bg-purple-600 rounded-lg flex items-center justify-center">
+                                <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"></path>
+                                </svg>
+                            </div>
+                            <h3 class="text-lg font-semibold text-white group-hover:text-purple-300 transition-colors">Hash Generator</h3>
+                        </div>
+                        <p class="text-gray-400 text-sm">Generate MD5, SHA1, SHA256, and SHA512 hashes for data.</p>
+                    </a>
+                    
+                    <a href="guid-generator.html" class="group bg-slate-800/70 backdrop-blur-md rounded-lg shadow-md border border-slate-700/60 p-6 transition-all duration-300 ease-out hover:shadow-lg hover:shadow-purple-500/10 hover:border-purple-600/70 hover:-translate-y-1">
+                        <div class="flex items-center space-x-3 mb-3">
+                            <div class="w-10 h-10 bg-purple-600 rounded-lg flex items-center justify-center">
+                                <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z"></path>
+                                </svg>
+                            </div>
+                            <h3 class="text-lg font-semibold text-white group-hover:text-purple-300 transition-colors">GUID Generator</h3>
+                        </div>
+                        <p class="text-gray-400 text-sm">Generate globally unique identifiers (GUIDs/UUIDs) for applications.</p>
+                    </a>
+                </div>
+            </section>
+
+            <!-- API & INTEGRATION TOOLS Section -->
+            <section>
+                <h2 class="text-2xl sm:text-3xl font-semibold mb-8 text-purple-300 border-b-2 border-slate-700 pb-3">
+                    <span class="mr-3">🔌</span>API & Integration Tools
+                </h2>
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                    <a href="curl-describer.html" class="group bg-slate-800/70 backdrop-blur-md rounded-lg shadow-md border border-slate-700/60 p-6 transition-all duration-300 ease-out hover:shadow-lg hover:shadow-purple-500/10 hover:border-purple-600/70 hover:-translate-y-1">
+                        <div class="flex items-center space-x-3 mb-3">
+                            <div class="w-10 h-10 bg-purple-600 rounded-lg flex items-center justify-center">
+                                <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"></path>
+                                </svg>
+                            </div>
+                            <h3 class="text-lg font-semibold text-white group-hover:text-purple-300 transition-colors">cURL Describer</h3>
+                        </div>
+                        <p class="text-gray-400 text-sm">Analyze and understand cURL commands for API testing and debugging.</p>
+                    </a>
+                </div>
+            </section>
+
+            <!-- PYTHON TOOLKIT Section -->
+            <section>
+                <h2 class="text-2xl sm:text-3xl font-semibold mb-8 text-emerald-300 border-b-2 border-slate-700 pb-3">
+                    <span class="mr-3">🐍</span>Python Toolkit
+                </h2>
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                    <a href="python-requests.html" class="group bg-slate-800/70 backdrop-blur-md rounded-lg shadow-md border border-slate-700/60 p-6 transition-all duration-300 ease-out hover:shadow-lg hover:shadow-emerald-500/10 hover:border-emerald-600/70 hover:-translate-y-1">
+                        <div class="flex items-center space-x-3 mb-3">
+                            <div class="w-10 h-10 bg-emerald-600 rounded-lg flex items-center justify-center">
+                                <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
+                                </svg>
+                            </div>
+                            <h3 class="text-lg font-semibold text-white group-hover:text-emerald-300 transition-colors">Requests Library</h3>
+                        </div>
+                        <p class="text-gray-400 text-sm">HTTP methods (GET, POST, PUT, DELETE) with and without parameters.</p>
+                    </a>
+                    
+                    <div class="group bg-slate-800/70 backdrop-blur-md rounded-lg shadow-md border border-slate-700/60 p-6 relative overflow-hidden">
+                        <div class="absolute inset-0 bg-slate-900/80 backdrop-blur-sm flex items-center justify-center z-10">
+                            <div class="text-center">
+                                <div class="text-2xl mb-2">🚧</div>
+                                <div class="text-slate-300 font-medium">Coming Soon</div>
+                            </div>
+                        </div>
+                        <div class="flex items-center space-x-3 mb-3 opacity-50">
+                            <div class="w-10 h-10 bg-slate-600 rounded-lg flex items-center justify-center">
+                                <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9v-9m0-9v9"></path>
+                                </svg>
+                            </div>
+                            <h3 class="text-lg font-semibold text-slate-400">urllib</h3>
+                        </div>
+                        <p class="text-slate-500 text-sm">Built-in HTTP client library with request/response handling.</p>
+                    </div>
+                    
+                    <a href="python-flask.html" class="group bg-slate-800/70 backdrop-blur-md rounded-lg shadow-md border border-slate-700/60 p-6 transition-all duration-300 ease-out hover:shadow-lg hover:shadow-emerald-500/10 hover:border-emerald-600/70 hover:-translate-y-1">
+                        <div class="flex items-center space-x-3 mb-3">
+                            <div class="w-10 h-10 bg-emerald-600 rounded-lg flex items-center justify-center">
+                                <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"></path>
+                                </svg>
+                            </div>
+                            <h3 class="text-lg font-semibold text-white group-hover:text-emerald-300 transition-colors">Flask API</h3>
+                        </div>
+                        <p class="text-gray-400 text-sm">Simple Flask API endpoints, routing, and request handling.</p>
+                    </a>
+                    
+                    <a href="python-pandas.html" class="group bg-slate-800/70 backdrop-blur-md rounded-lg shadow-md border border-slate-700/60 p-6 transition-all duration-300 ease-out hover:shadow-lg hover:shadow-emerald-500/10 hover:border-emerald-600/70 hover:-translate-y-1">
+                        <div class="flex items-center space-x-3 mb-3">
+                            <div class="w-10 h-10 bg-emerald-600 rounded-lg flex items-center justify-center">
+                                <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
+                                </svg>
+                            </div>
+                            <h3 class="text-lg font-semibold text-white group-hover:text-emerald-300 transition-colors">Pandas</h3>
+                        </div>
+                        <p class="text-gray-400 text-sm">Data manipulation, CSV handling, and DataFrame operations.</p>
+                    </a>
+                    
+                    <div class="group bg-slate-800/70 backdrop-blur-md rounded-lg shadow-md border border-slate-700/60 p-6 relative overflow-hidden">
+                        <div class="absolute inset-0 bg-slate-900/80 backdrop-blur-sm flex items-center justify-center z-10">
+                            <div class="text-center">
+                                <div class="text-2xl mb-2">🚧</div>
+                                <div class="text-slate-300 font-medium">Coming Soon</div>
+                            </div>
+                        </div>
+                        <div class="flex items-center space-x-3 mb-3 opacity-50">
+                            <div class="w-10 h-10 bg-slate-600 rounded-lg flex items-center justify-center">
+                                <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"></path>
+                                </svg>
+                            </div>
+                            <h3 class="text-lg font-semibold text-slate-400">OpenAI API</h3>
+                        </div>
+                        <p class="text-slate-500 text-sm">ChatGPT, GPT-4, and other OpenAI API integrations.</p>
+                    </div>
+                    
+                    <div class="group bg-slate-800/70 backdrop-blur-md rounded-lg shadow-md border border-slate-700/60 p-6 relative overflow-hidden">
+                        <div class="absolute inset-0 bg-slate-900/80 backdrop-blur-sm flex items-center justify-center z-10">
+                            <div class="text-center">
+                                <div class="text-2xl mb-2">🚧</div>
+                                <div class="text-slate-300 font-medium">Coming Soon</div>
+                            </div>
+                        </div>
+                        <div class="flex items-center space-x-3 mb-3 opacity-50">
+                            <div class="w-10 h-10 bg-slate-600 rounded-lg flex items-center justify-center">
+                                <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                                </svg>
+                            </div>
+                            <h3 class="text-lg font-semibold text-slate-400">Jupyter Notebooks</h3>
+                        </div>
+                        <p class="text-slate-500 text-sm">Notebook setup, magic commands, and data visualization.</p>
+                    </div>
+                    
+                    <div class="group bg-slate-800/70 backdrop-blur-md rounded-lg shadow-md border border-slate-700/60 p-6 relative overflow-hidden">
+                        <div class="absolute inset-0 bg-slate-900/80 backdrop-blur-sm flex items-center justify-center z-10">
+                            <div class="text-center">
+                                <div class="text-2xl mb-2">🚧</div>
+                                <div class="text-slate-300 font-medium">Coming Soon</div>
+                            </div>
+                        </div>
+                        <div class="flex items-center space-x-3 mb-3 opacity-50">
+                            <div class="w-10 h-10 bg-slate-600 rounded-lg flex items-center justify-center">
+                                <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 12l3-3 3 3 4-4M8 21l4-16 2.5 8L17 21l-1-2-2 2z"></path>
+                                </svg>
+                            </div>
+                            <h3 class="text-lg font-semibold text-slate-400">Prophet</h3>
+                        </div>
+                        <p class="text-slate-500 text-sm">Time series forecasting and trend analysis with Facebook Prophet.</p>
+                    </div>
+                    
+                    <div class="group bg-slate-800/70 backdrop-blur-md rounded-lg shadow-md border border-slate-700/60 p-6 relative overflow-hidden">
+                        <div class="absolute inset-0 bg-slate-900/80 backdrop-blur-sm flex items-center justify-center z-10">
+                            <div class="text-center">
+                                <div class="text-2xl mb-2">🚧</div>
+                                <div class="text-slate-300 font-medium">Coming Soon</div>
+                            </div>
+                        </div>
+                        <div class="flex items-center space-x-3 mb-3 opacity-50">
+                            <div class="w-10 h-10 bg-slate-600 rounded-lg flex items-center justify-center">
+                                <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 12l3-3 3 3 4-4M8 21l4-16 2.5 8L17 21l-1-2-2 2z"></path>
+                                </svg>
+                            </div>
+                            <h3 class="text-lg font-semibold text-slate-400">Plotly</h3>
+                        </div>
+                        <p class="text-slate-500 text-sm">Interactive charts, dashboards, and data visualization.</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- INFO Section -->
+            <section>
+                <h2 class="text-2xl sm:text-3xl font-semibold mb-8 text-red-300 border-b-2 border-slate-700 pb-3">
+                    <span class="mr-3">ℹ️</span>Information & Reference
+                </h2>
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                    <a href="ip-address.html" class="group bg-slate-800/70 backdrop-blur-md rounded-lg shadow-md border border-slate-700/60 p-6 transition-all duration-300 ease-out hover:shadow-lg hover:shadow-red-500/10 hover:border-red-600/70 hover:-translate-y-1">
+                        <div class="flex items-center space-x-3 mb-3">
+                            <div class="w-10 h-10 bg-red-600 rounded-lg flex items-center justify-center">
+                                <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9a9 9 0 01-9-9m9 9c1.657 0 3-4.03 3-9s-1.343-9-3-9m0 18c-1.657 0-3-4.03-3-9s1.343-9 3-9m-9 9a9 9 0 019-9"></path>
+                                </svg>
+                            </div>
+                            <h3 class="text-lg font-semibold text-white group-hover:text-red-300 transition-colors">IP Address Tools</h3>
+                        </div>
+                        <p class="text-gray-400 text-sm">Check your IP address and lookup information about any IP.</p>
+                    </a>
+                </div>
+            </section>
+
+        </div>
+
+    </div>
+
+    <!-- Footer -->
+    <footer class="text-center text-gray-500 mt-10 pb-6">
+        © 2025 DevDunia – Free Developer Tools by <a href="https://echobash.com" class="text-blue-500 hover:underline" target="_blank">echobash</a>
   </footer>
 </body>
 </html>

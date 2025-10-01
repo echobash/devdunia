@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JSON Beautifier - Developer Toolkit | DevDunia</title>
+    <meta name="description" content="Beautify and format JSON data with proper indentation and structure. Free online JSON beautifier tool for developers.">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="js/common.js"></script>
+    <style>
+        body {
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #0f172a 100%);
+        }
+    </style>
+</head>
+<body class="min-h-screen">
+    <!-- Background: Consistent Subtle Dark Gradient -->
+    <div class="fixed inset-0 -z-10 bg-gradient-to-br from-gray-900 via-slate-900 to-gray-900"></div>
+
+    <!-- Main Container -->
+    <div class="relative z-10 container mx-auto px-4 pt-16 pb-24 sm:px-6 lg:px-8">
+        
+        <!-- Page Header -->
+        <div class="text-center mb-12">
+            <h1 class="text-3xl sm:text-4xl font-bold mb-4 tracking-tight
+                       text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-cyan-500">
+                JSON Beautifier
+            </h1>
+            <p class="text-lg text-gray-400 max-w-2xl mx-auto">
+                Beautify and format JSON data with proper indentation and structure.
+            </p>
+        </div>
+
+        <!-- Tool Container -->
+        <div class="max-w-4xl mx-auto">
+            <div class="bg-slate-800/70 backdrop-blur-md rounded-lg shadow-lg border border-slate-700/60 p-6">
+                
+                <!-- Input Section -->
+                <div class="mb-6">
+                    <label for="json-input" class="block text-sm font-medium text-gray-300 mb-2">
+                        Input JSON
+                    </label>
+                    <textarea 
+                        id="json-input" 
+                        rows="8" 
+                        class="w-full px-4 py-3 bg-slate-700/50 border border-slate-600 rounded-lg text-gray-200 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-none font-mono text-sm"
+                        placeholder="Paste your JSON data here..."
+                    ></textarea>
+                </div>
+
+                <!-- Action Buttons -->
+                <div class="flex flex-wrap gap-3 mb-6">
+                    <button id="beautify-btn" class="px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-lg transition-colors duration-200 flex items-center space-x-2">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path>
+                        </svg>
+                        <span>Beautify JSON</span>
+                    </button>
+                    
+                    <button class="clear-btn px-6 py-3 bg-slate-600 hover:bg-slate-700 text-white font-medium rounded-lg transition-colors duration-200 flex items-center space-x-2">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
+                        </svg>
+                        <span>Clear All</span>
+                    </button>
+                </div>
+
+                <!-- Error Display -->
+                <div id="error-display" class="hidden mb-6 p-4 bg-red-900/50 border border-red-600/50 rounded-lg">
+                    <div class="flex items-center space-x-2">
+                        <svg class="w-5 h-5 text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                        </svg>
+                        <span id="error-message" class="text-red-300"></span>
+                    </div>
+                </div>
+
+                <!-- Output Section -->
+                <div id="output-section" class="hidden">
+                    <label for="json-output" class="block text-sm font-medium text-gray-300 mb-2">
+                        Beautified Output
+                    </label>
+                    <div class="relative">
+                        <textarea 
+                            id="json-output" 
+                            rows="12" 
+                            class="w-full px-4 py-3 bg-slate-700/50 border border-slate-600 rounded-lg text-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-none font-mono text-sm"
+                            readonly
+                        ></textarea>
+                        
+                        <!-- Copy Button -->
+                        <button class="copy-btn absolute top-2 right-2 px-3 py-1 bg-slate-600 hover:bg-slate-700 text-white text-sm rounded transition-colors duration-200 flex items-center space-x-1" data-target="json-output">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v8a2 2 0 01-2 2h-2m-6-4l2 2m0 0l2-2m-2 2V10"></path>
+                            </svg>
+                            <span>Copy</span>
+                        </button>
+                    </div>
+                    
+                    <!-- Stats -->
+                    <div class="mt-3 flex flex-wrap gap-4 text-sm text-gray-400">
+                        <div class="flex items-center space-x-2">
+                            <span>Characters:</span>
+                            <span id="char-count" class="text-blue-400 font-medium">0</span>
+                        </div>
+                        <div class="flex items-center space-x-2">
+                            <span>Lines:</span>
+                            <span id="line-count" class="text-blue-400 font-medium">0</span>
+                        </div>
+                        <div class="flex items-center space-x-2">
+                            <span>Size:</span>
+                            <span id="size-info" class="text-blue-400 font-medium">0 B</span>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+    </div>
+
+    <!-- Footer -->
+    <footer class="text-center text-gray-500 mt-10 pb-6">
+        © 2025 DevDunia – Free Developer Tools by <a href="https://echobash.com" class="text-blue-500 hover:underline" target="_blank">echobash</a>
+    </footer>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const jsonInput = document.getElementById('json-input');
+            const jsonOutput = document.getElementById('json-output');
+            const beautifyBtn = document.getElementById('beautify-btn');
+            const outputSection = document.getElementById('output-section');
+            const errorDisplay = document.getElementById('error-display');
+            const errorMessage = document.getElementById('error-message');
+            const charCount = document.getElementById('char-count');
+            const lineCount = document.getElementById('line-count');
+            const sizeInfo = document.getElementById('size-info');
+
+            // Beautify JSON
+            beautifyBtn.addEventListener('click', function() {
+                const input = jsonInput.value.trim();
+                if (!input) {
+                    showError('Please enter some JSON data');
+                    return;
+                }
+
+                try {
+                    const parsed = JSON.parse(input);
+                    const beautified = JSON.stringify(parsed, null, 2);
+                    jsonOutput.value = beautified;
+                    showOutput();
+                    updateStats(beautified);
+                    hideError();
+                } catch (error) {
+                    showError('Invalid JSON: ' + error.message);
+                    hideOutput();
+                }
+            });
+
+            // Helper functions
+            function showOutput() {
+                outputSection.classList.remove('hidden');
+            }
+
+            function hideOutput() {
+                outputSection.classList.add('hidden');
+            }
+
+            function showError(message) {
+                errorMessage.textContent = message;
+                errorDisplay.classList.remove('hidden');
+            }
+
+            function hideError() {
+                errorDisplay.classList.add('hidden');
+            }
+
+            function updateStats(text) {
+                const stats = DevDuniaUtils.getTextStats(text);
+                charCount.textContent = DevDuniaUtils.formatNumber(stats.characters);
+                lineCount.textContent = DevDuniaUtils.formatNumber(stats.lines);
+                sizeInfo.textContent = stats.size;
+            }
+
+            // Example JSON on page load
+            window.addEventListener('load', () => {
+                const exampleJson = {
+                    "name": "DevDunia",
+                    "description": "Your world of developer tools",
+                    "tools": [
+                        {
+                            "name": "JSON Beautifier",
+                            "category": "Encoding/Decoding",
+                            "popular": true
+                        }
+                    ],
+                    "features": {
+                        "free": true,
+                        "offline": true,
+                        "simple": true
+                    }
+                };
+                
+                jsonInput.value = JSON.stringify(exampleJson);
+            });
+        });
+    </script>
+</body>
+</html>

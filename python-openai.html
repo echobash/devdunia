@@ -1,0 +1,428 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Python OpenAI API - Developer Toolkit | DevDunia</title>
+    <meta name="description" content="ChatGPT, GPT-4, and other OpenAI API integrations. Free online Python OpenAI examples for developers.">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body {
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #0f172a 100%);
+        }
+    </style>
+</head>
+<body class="min-h-screen">
+    <!-- Background: Consistent Subtle Dark Gradient -->
+    <div class="fixed inset-0 -z-10 bg-gradient-to-br from-gray-900 via-slate-900 to-gray-900"></div>
+
+    <!-- Main Container -->
+    <div class="relative z-10 container mx-auto px-4 pt-16 pb-24 sm:px-6 lg:px-8">
+        
+        <!-- Page Header -->
+        <div class="text-center mb-12">
+            <h1 class="text-3xl sm:text-4xl font-bold mb-4 tracking-tight
+                       text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 to-teal-500">
+                Python OpenAI API
+            </h1>
+            <p class="text-lg text-gray-400 max-w-2xl mx-auto">
+                ChatGPT, GPT-4, and other OpenAI API integrations.
+            </p>
+        </div>
+
+        <!-- Tool Container -->
+        <div class="max-w-4xl mx-auto">
+            <div class="bg-slate-800/70 backdrop-blur-md rounded-lg shadow-lg border border-slate-700/60 p-6">
+                
+                <!-- API Type Selection -->
+                <div class="mb-6">
+                    <label class="block text-sm font-medium text-gray-300 mb-3">OpenAI API Type</label>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
+                        <button class="api-type-btn px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white text-sm rounded-lg transition-colors duration-200" data-type="chat">
+                            Chat Completion
+                        </button>
+                        <button class="api-type-btn px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white text-sm rounded-lg transition-colors duration-200" data-type="completion">
+                            Text Completion
+                        </button>
+                        <button class="api-type-btn px-4 py-2 bg-purple-600 hover:bg-purple-700 text-white text-sm rounded-lg transition-colors duration-200" data-type="embeddings">
+                            Embeddings
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Model Selection -->
+                <div class="mb-6">
+                    <label for="model-select" class="block text-sm font-medium text-gray-300 mb-2">
+                        Model
+                    </label>
+                    <select id="model-select" class="w-full px-4 py-3 bg-slate-700/50 border border-slate-600 rounded-lg text-gray-200 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent">
+                        <option value="gpt-4">GPT-4</option>
+                        <option value="gpt-3.5-turbo" selected>GPT-3.5 Turbo</option>
+                        <option value="gpt-3.5-turbo-16k">GPT-3.5 Turbo 16K</option>
+                        <option value="text-davinci-003">Text Davinci 003</option>
+                        <option value="text-embedding-ada-002">Text Embedding Ada 002</option>
+                    </select>
+                </div>
+
+                <!-- API Key Input -->
+                <div class="mb-6">
+                    <label for="api-key" class="block text-sm font-medium text-gray-300 mb-2">
+                        API Key (for demonstration)
+                    </label>
+                    <input 
+                        type="password" 
+                        id="api-key" 
+                        class="w-full px-4 py-3 bg-slate-700/50 border border-slate-600 rounded-lg text-gray-200 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent font-mono text-sm"
+                        placeholder="sk-..."
+                        value="your-api-key-here"
+                    >
+                </div>
+
+                <!-- Prompt Input -->
+                <div class="mb-6">
+                    <label for="prompt-input" class="block text-sm font-medium text-gray-300 mb-2">
+                        Prompt/Message
+                    </label>
+                    <textarea 
+                        id="prompt-input" 
+                        rows="6" 
+                        class="w-full px-4 py-3 bg-slate-700/50 border border-slate-600 rounded-lg text-gray-200 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent resize-none font-mono text-sm"
+                        placeholder="Enter your prompt or message here..."
+                    ></textarea>
+                </div>
+
+                <!-- Advanced Options -->
+                <div class="mb-6">
+                    <label class="block text-sm font-medium text-gray-300 mb-3">Advanced Options</label>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                            <label for="max-tokens" class="block text-sm font-medium text-gray-300 mb-2">Max Tokens</label>
+                            <input 
+                                type="number" 
+                                id="max-tokens" 
+                                class="w-full px-4 py-3 bg-slate-700/50 border border-slate-600 rounded-lg text-gray-200 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent"
+                                value="150"
+                                min="1"
+                                max="4000"
+                            >
+                        </div>
+                        <div>
+                            <label for="temperature" class="block text-sm font-medium text-gray-300 mb-2">Temperature</label>
+                            <input 
+                                type="number" 
+                                id="temperature" 
+                                step="0.1"
+                                class="w-full px-4 py-3 bg-slate-700/50 border border-slate-600 rounded-lg text-gray-200 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent"
+                                value="0.7"
+                                min="0"
+                                max="2"
+                            >
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Generate Button -->
+                <div class="mb-6">
+                    <button id="generate-btn" class="px-6 py-3 bg-emerald-600 hover:bg-emerald-700 text-white font-medium rounded-lg transition-colors duration-200 flex items-center space-x-2">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
+                        </svg>
+                        <span>Generate OpenAI Code</span>
+                    </button>
+                </div>
+
+                <!-- Generated Code -->
+                <div id="code-section" class="hidden">
+                    <h3 class="text-lg font-semibold text-gray-300 mb-4">Generated OpenAI Code</h3>
+                    <div class="relative">
+                        <textarea 
+                            id="generated-code" 
+                            rows="30" 
+                            class="w-full px-4 py-3 bg-slate-700/50 border border-slate-600 rounded-lg text-gray-200 font-mono text-sm resize-none"
+                            readonly
+                        ></textarea>
+                        
+                        <!-- Copy Button -->
+                        <button id="copy-code-btn" class="absolute top-2 right-2 px-3 py-1 bg-slate-600 hover:bg-slate-700 text-white text-sm rounded transition-colors duration-200 flex items-center space-x-1">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v8a2 2 0 01-2 2h-2m-6-4l2 2m0 0l2-2m-2 2V10"></path>
+                            </svg>
+                            <span>Copy</span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Requirements -->
+                <div class="mt-8 p-4 bg-slate-700/30 rounded-lg border border-slate-600/50">
+                    <h3 class="text-lg font-semibold text-cyan-400 mb-3">Requirements</h3>
+                    <div class="bg-slate-600/50 p-3 rounded border border-slate-500">
+                        <pre class="text-cyan-300 font-mono text-sm">openai==1.3.0
+python-dotenv==1.0.0</pre>
+                    </div>
+                </div>
+
+                <!-- Usage Instructions -->
+                <div class="mt-6 p-4 bg-slate-700/30 rounded-lg border border-slate-600/50">
+                    <h3 class="text-lg font-semibold text-cyan-400 mb-3">Usage Instructions</h3>
+                    <div class="space-y-2 text-sm text-gray-300">
+                        <p>1. Install requirements: <code class="bg-slate-600 px-2 py-1 rounded text-cyan-300">pip install openai python-dotenv</code></p>
+                        <p>2. Set your API key: <code class="bg-slate-600 px-2 py-1 rounded text-cyan-300">export OPENAI_API_KEY="your-api-key"</code></p>
+                        <p>3. Run the code: <code class="bg-slate-600 px-2 py-1 rounded text-cyan-300">python openai_example.py</code></p>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+    </div>
+
+    <!-- Footer -->
+    <footer class="text-center text-gray-500 mt-10 pb-6">
+        © 2025 DevDunia – Free Developer Tools by <a href="https://echobash.com" class="text-blue-500 hover:underline" target="_blank">echobash</a>
+    </footer>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const apiTypeBtns = document.querySelectorAll('.api-type-btn');
+            const modelSelect = document.getElementById('model-select');
+            const apiKeyInput = document.getElementById('api-key');
+            const promptInput = document.getElementById('prompt-input');
+            const maxTokensInput = document.getElementById('max-tokens');
+            const temperatureInput = document.getElementById('temperature');
+            const generateBtn = document.getElementById('generate-btn');
+            const codeSection = document.getElementById('code-section');
+            const generatedCode = document.getElementById('generated-code');
+            const copyCodeBtn = document.getElementById('copy-code-btn');
+
+            let selectedType = 'chat';
+
+            // API type selection
+            apiTypeBtns.forEach(btn => {
+                btn.addEventListener('click', function() {
+                    selectedType = this.getAttribute('data-type');
+                    
+                    // Update button states
+                    apiTypeBtns.forEach(b => b.classList.remove('ring-2', 'ring-emerald-400'));
+                    this.classList.add('ring-2', 'ring-emerald-400');
+                    
+                    // Update model options based on type
+                    updateModelOptions();
+                });
+            });
+
+            // Set initial type
+            document.querySelector('[data-type="chat"]').click();
+
+            // Update model options based on API type
+            function updateModelOptions() {
+                const modelSelect = document.getElementById('model-select');
+                modelSelect.innerHTML = '';
+                
+                if (selectedType === 'chat') {
+                    modelSelect.innerHTML = `
+                        <option value="gpt-4">GPT-4</option>
+                        <option value="gpt-3.5-turbo" selected>GPT-3.5 Turbo</option>
+                        <option value="gpt-3.5-turbo-16k">GPT-3.5 Turbo 16K</option>
+                    `;
+                } else if (selectedType === 'completion') {
+                    modelSelect.innerHTML = `
+                        <option value="text-davinci-003" selected>Text Davinci 003</option>
+                        <option value="text-curie-001">Text Curie 001</option>
+                        <option value="text-babbage-001">Text Babbage 001</option>
+                        <option value="text-ada-001">Text Ada 001</option>
+                    `;
+                } else if (selectedType === 'embeddings') {
+                    modelSelect.innerHTML = `
+                        <option value="text-embedding-ada-002" selected>Text Embedding Ada 002</option>
+                    `;
+                }
+            }
+
+            // Generate code
+            generateBtn.addEventListener('click', function() {
+                const code = generateOpenAICode();
+                generatedCode.value = code;
+                codeSection.classList.remove('hidden');
+            });
+
+            // Copy code
+            copyCodeBtn.addEventListener('click', function() {
+                generatedCode.select();
+                document.execCommand('copy');
+                
+                // Visual feedback
+                const originalText = copyCodeBtn.innerHTML;
+                copyCodeBtn.innerHTML = '<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg><span>Copied!</span>';
+                copyCodeBtn.classList.add('bg-green-600');
+                
+                setTimeout(() => {
+                    copyCodeBtn.innerHTML = originalText;
+                    copyCodeBtn.classList.remove('bg-green-600');
+                }, 2000);
+            });
+
+            function generateOpenAICode() {
+                const model = modelSelect.value;
+                const apiKey = apiKeyInput.value.trim();
+                const prompt = promptInput.value.trim();
+                const maxTokens = parseInt(maxTokensInput.value);
+                const temperature = parseFloat(temperatureInput.value);
+
+                let code = `import openai
+import os
+from dotenv import load_dotenv
+
+# Load environment variables
+load_dotenv()
+
+# Set your API key
+openai.api_key = os.getenv("OPENAI_API_KEY", "${apiKey}")
+
+`;
+
+                if (selectedType === 'chat') {
+                    code += generateChatCompletionCode(model, prompt, maxTokens, temperature);
+                } else if (selectedType === 'completion') {
+                    code += generateTextCompletionCode(model, prompt, maxTokens, temperature);
+                } else if (selectedType === 'embeddings') {
+                    code += generateEmbeddingsCode(model, prompt);
+                }
+
+                return code;
+            }
+
+            function generateChatCompletionCode(model, prompt, maxTokens, temperature) {
+                return `
+def chat_completion(prompt):
+    """Generate a chat completion using OpenAI's Chat API"""
+    try:
+        response = openai.ChatCompletion.create(
+            model="${model}",
+            messages=[
+                {"role": "system", "content": "You are a helpful assistant."},
+                {"role": "user", "content": prompt}
+            ],
+            max_tokens=${maxTokens},
+            temperature=${temperature}
+        )
+        
+        return response.choices[0].message.content
+    except Exception as e:
+        return f"Error: {e}"
+
+# Example usage
+if __name__ == "__main__":
+    prompt = """${prompt || 'Hello, how can you help me today?'}"""
+    
+    print("Sending request to OpenAI...")
+    response = chat_completion(prompt)
+    print(f"Response: {response}")
+    
+    # Example with conversation history
+    print("\\n--- Conversation Example ---")
+    messages = [
+        {"role": "system", "content": "You are a helpful assistant."},
+        {"role": "user", "content": "What is Python?"},
+    ]
+    
+    response = openai.ChatCompletion.create(
+        model="${model}",
+        messages=messages,
+        max_tokens=${maxTokens},
+        temperature=${temperature}
+    )
+    
+    print(f"User: What is Python?")
+    print(f"Assistant: {response.choices[0].message.content}")
+`;
+            }
+
+            function generateTextCompletionCode(model, prompt, maxTokens, temperature) {
+                return `
+def text_completion(prompt):
+    """Generate a text completion using OpenAI's Completion API"""
+    try:
+        response = openai.Completion.create(
+            model="${model}",
+            prompt=prompt,
+            max_tokens=${maxTokens},
+            temperature=${temperature}
+        )
+        
+        return response.choices[0].text
+    except Exception as e:
+        return f"Error: {e}"
+
+# Example usage
+if __name__ == "__main__":
+    prompt = """${prompt || 'Write a short story about a robot learning to paint.'}"""
+    
+    print("Sending request to OpenAI...")
+    response = text_completion(prompt)
+    print(f"Response: {response}")
+    
+    # Example with different parameters
+    print("\\n--- Creative Writing Example ---")
+    creative_prompt = "Once upon a time, in a world where technology and magic coexisted..."
+    
+    response = openai.Completion.create(
+        model="${model}",
+        prompt=creative_prompt,
+        max_tokens=${maxTokens},
+        temperature=0.9,  # Higher temperature for more creativity
+        top_p=1,
+        frequency_penalty=0,
+        presence_penalty=0
+    )
+    
+    print(f"Creative Response: {response.choices[0].text}")
+`;
+            }
+
+            function generateEmbeddingsCode(model, prompt) {
+                return `
+def get_embeddings(text):
+    """Generate embeddings for text using OpenAI's Embeddings API"""
+    try:
+        response = openai.Embedding.create(
+            model="${model}",
+            input=text
+        )
+        
+        return response['data'][0]['embedding']
+    except Exception as e:
+        return f"Error: {e}"
+
+# Example usage
+if __name__ == "__main__":
+    text = """${prompt || 'The quick brown fox jumps over the lazy dog.'}"""
+    
+    print("Generating embeddings...")
+    embeddings = get_embeddings(text)
+    print(f"Embeddings length: {len(embeddings)}")
+    print(f"First 10 values: {embeddings[:10]}")
+    
+    # Example with multiple texts
+    print("\\n--- Multiple Texts Example ---")
+    texts = [
+        "Python is a programming language",
+        "JavaScript is used for web development",
+        "Machine learning is a subset of AI"
+    ]
+    
+    for i, text in enumerate(texts):
+        embeddings = get_embeddings(text)
+        print(f"Text {i+1}: {text}")
+        print(f"Embeddings length: {len(embeddings)}")
+        print("---")
+`;
+            }
+
+            // Set default prompt
+            window.addEventListener('load', () => {
+                promptInput.value = 'Explain the concept of machine learning in simple terms.';
+            });
+        });
+    </script>
+</body>
+</html>

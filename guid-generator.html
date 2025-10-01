@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GUID Generator - Developer Toolkit | DevDunia</title>
+    <meta name="description" content="Generate globally unique identifiers (GUIDs/UUIDs) for applications. Free online GUID generator tool for developers.">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body {
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #0f172a 100%);
+        }
+    </style>
+</head>
+<body class="min-h-screen">
+    <!-- Background: Consistent Subtle Dark Gradient -->
+    <div class="fixed inset-0 -z-10 bg-gradient-to-br from-gray-900 via-slate-900 to-gray-900"></div>
+
+    <!-- Main Container -->
+    <div class="relative z-10 container mx-auto px-4 pt-16 pb-24 sm:px-6 lg:px-8">
+        
+        <!-- Page Header -->
+        <div class="text-center mb-12">
+            <h1 class="text-3xl sm:text-4xl font-bold mb-4 tracking-tight
+                       text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-pink-500">
+                GUID Generator
+            </h1>
+            <p class="text-lg text-gray-400 max-w-2xl mx-auto">
+                Generate globally unique identifiers (GUIDs/UUIDs) for applications.
+            </p>
+        </div>
+
+        <!-- Tool Container -->
+        <div class="max-w-4xl mx-auto">
+            <div class="bg-slate-800/70 backdrop-blur-md rounded-lg shadow-lg border border-slate-700/60 p-6">
+                
+                <!-- GUID Display -->
+                <div class="mb-6">
+                    <label for="guid-output" class="block text-sm font-medium text-gray-300 mb-2">
+                        Generated GUID
+                    </label>
+                    <div class="relative">
+                        <input 
+                            type="text" 
+                            id="guid-output" 
+                            class="w-full px-4 py-3 bg-slate-700/50 border border-slate-600 rounded-lg text-gray-200 text-lg font-mono focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                            readonly
+                            value="Click Generate to create a GUID"
+                        >
+                        
+                        <!-- Copy Button -->
+                        <button id="copy-btn" class="absolute top-2 right-2 px-3 py-1 bg-slate-600 hover:bg-slate-700 text-white text-sm rounded transition-colors duration-200 flex items-center space-x-1">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v8a2 2 0 01-2 2h-2m-6-4l2 2m0 0l2-2m-2 2V10"></path>
+                            </svg>
+                            <span>Copy</span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- GUID Format Options -->
+                <div class="mb-6">
+                    <label class="block text-sm font-medium text-gray-300 mb-3">GUID Format</label>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+                        <label class="flex items-center space-x-3 cursor-pointer">
+                            <input type="radio" name="format" value="standard" checked class="w-4 h-4 text-purple-600 bg-slate-700 border-slate-600 focus:ring-purple-500">
+                            <span class="text-gray-300">Standard (with hyphens)</span>
+                        </label>
+                        <label class="flex items-center space-x-3 cursor-pointer">
+                            <input type="radio" name="format" value="no-hyphens" class="w-4 h-4 text-purple-600 bg-slate-700 border-slate-600 focus:ring-purple-500">
+                            <span class="text-gray-300">No hyphens</span>
+                        </label>
+                        <label class="flex items-center space-x-3 cursor-pointer">
+                            <input type="radio" name="format" value="uppercase" class="w-4 h-4 text-purple-600 bg-slate-700 border-slate-600 focus:ring-purple-500">
+                            <span class="text-gray-300">Uppercase</span>
+                        </label>
+                        <label class="flex items-center space-x-3 cursor-pointer">
+                            <input type="radio" name="format" value="braces" class="w-4 h-4 text-purple-600 bg-slate-700 border-slate-600 focus:ring-purple-500">
+                            <span class="text-gray-300">With braces</span>
+                        </label>
+                    </div>
+                </div>
+
+                <!-- Action Buttons -->
+                <div class="flex flex-wrap gap-3 mb-6">
+                    <button id="generate-btn" class="px-8 py-3 bg-purple-600 hover:bg-purple-700 text-white font-medium rounded-lg transition-colors duration-200 flex items-center space-x-2">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
+                        </svg>
+                        <span>Generate GUID</span>
+                    </button>
+                    
+                    <button id="generate-multiple-btn" class="px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-lg transition-colors duration-200 flex items-center space-x-2">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"></path>
+                        </svg>
+                        <span>Generate Multiple</span>
+                    </button>
+                </div>
+
+                <!-- Multiple GUIDs Section -->
+                <div id="multiple-guids" class="hidden">
+                    <label class="block text-sm font-medium text-gray-300 mb-2">Multiple GUIDs</label>
+                    <div class="space-y-3">
+                        <div id="guid1" class="bg-slate-700/50 border border-slate-600 rounded-lg p-3 font-mono text-sm text-gray-200"></div>
+                        <div id="guid2" class="bg-slate-700/50 border border-slate-600 rounded-lg p-3 font-mono text-sm text-gray-200"></div>
+                        <div id="guid3" class="bg-slate-700/50 border border-slate-600 rounded-lg p-3 font-mono text-sm text-gray-200"></div>
+                        <div id="guid4" class="bg-slate-700/50 border border-slate-600 rounded-lg p-3 font-mono text-sm text-gray-200"></div>
+                        <div id="guid5" class="bg-slate-700/50 border border-slate-600 rounded-lg p-3 font-mono text-sm text-gray-200"></div>
+                    </div>
+                </div>
+
+                <!-- GUID Information -->
+                <div class="mt-8 p-4 bg-slate-700/30 rounded-lg border border-slate-600/50">
+                    <h3 class="text-lg font-semibold text-cyan-400 mb-3">About GUIDs</h3>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
+                        <div>
+                            <p class="text-gray-300 font-medium mb-2">What is a GUID?</p>
+                            <p class="text-gray-400">A Globally Unique Identifier (GUID) is a 128-bit identifier that is guaranteed to be unique across all space and time.</p>
+                        </div>
+                        <div>
+                            <p class="text-gray-300 font-medium mb-2">Common Uses:</p>
+                            <p class="text-gray-400">Database primary keys, API identifiers, file names, registry entries, and more.</p>
+                        </div>
+                        <div>
+                            <p class="text-gray-300 font-medium mb-2">Format:</p>
+                            <p class="text-gray-400">8-4-4-4-12 hexadecimal digits (e.g., 550e8400-e29b-41d4-a716-446655440000)</p>
+                        </div>
+                        <div>
+                            <p class="text-gray-300 font-medium mb-2">Uniqueness:</p>
+                            <p class="text-gray-400">Practically guaranteed to be unique across all systems and time periods.</p>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+    </div>
+
+    <!-- Footer -->
+    <footer class="text-center text-gray-500 mt-10 pb-6">
+        © 2025 DevDunia – Free Developer Tools by <a href="https://echobash.com" class="text-blue-500 hover:underline" target="_blank">echobash</a>
+    </footer>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const guidOutput = document.getElementById('guid-output');
+            const copyBtn = document.getElementById('copy-btn');
+            const generateBtn = document.getElementById('generate-btn');
+            const generateMultipleBtn = document.getElementById('generate-multiple-btn');
+            const multipleGuids = document.getElementById('multiple-guids');
+
+            // Generate single GUID
+            generateBtn.addEventListener('click', function() {
+                const guid = generateGUID();
+                guidOutput.value = guid;
+                hideMultipleGuids();
+            });
+
+            // Generate multiple GUIDs
+            generateMultipleBtn.addEventListener('click', function() {
+                showMultipleGuids();
+                document.getElementById('guid1').textContent = generateGUID();
+                document.getElementById('guid2').textContent = generateGUID();
+                document.getElementById('guid3').textContent = generateGUID();
+                document.getElementById('guid4').textContent = generateGUID();
+                document.getElementById('guid5').textContent = generateGUID();
+            });
+
+            // Copy GUID
+            copyBtn.addEventListener('click', function() {
+                guidOutput.select();
+                document.execCommand('copy');
+                
+                // Visual feedback
+                const originalText = copyBtn.innerHTML;
+                copyBtn.innerHTML = '<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg><span>Copied!</span>';
+                copyBtn.classList.add('bg-green-600');
+                
+                setTimeout(() => {
+                    copyBtn.innerHTML = originalText;
+                    copyBtn.classList.remove('bg-green-600');
+                }, 2000);
+            });
+
+            // GUID generation function
+            function generateGUID() {
+                // Generate a random GUID using crypto.getRandomValues
+                const array = new Uint8Array(16);
+                crypto.getRandomValues(array);
+                
+                // Set version (4) and variant bits
+                array[6] = (array[6] & 0x0f) | 0x40; // Version 4
+                array[8] = (array[8] & 0x3f) | 0x80; // Variant bits
+                
+                // Convert to hex string
+                const hex = Array.from(array, byte => byte.toString(16).padStart(2, '0')).join('');
+                
+                // Format based on selected option
+                const format = document.querySelector('input[name="format"]:checked').value;
+                
+                switch (format) {
+                    case 'standard':
+                        return `${hex.slice(0, 8)}-${hex.slice(8, 12)}-${hex.slice(12, 16)}-${hex.slice(16, 20)}-${hex.slice(20, 32)}`;
+                    case 'no-hyphens':
+                        return hex;
+                    case 'uppercase':
+                        return `${hex.slice(0, 8)}-${hex.slice(8, 12)}-${hex.slice(12, 16)}-${hex.slice(16, 20)}-${hex.slice(20, 32)}`.toUpperCase();
+                    case 'braces':
+                        return `{${hex.slice(0, 8)}-${hex.slice(8, 12)}-${hex.slice(12, 16)}-${hex.slice(16, 20)}-${hex.slice(20, 32)}}`;
+                    default:
+                        return `${hex.slice(0, 8)}-${hex.slice(8, 12)}-${hex.slice(12, 16)}-${hex.slice(16, 20)}-${hex.slice(20, 32)}`;
+                }
+            }
+
+            // Show/hide multiple GUIDs
+            function showMultipleGuids() {
+                multipleGuids.classList.remove('hidden');
+            }
+
+            function hideMultipleGuids() {
+                multipleGuids.classList.add('hidden');
+            }
+
+            // Generate initial GUID
+            generateBtn.click();
+        });
+    </script>
+</body>
+</html>

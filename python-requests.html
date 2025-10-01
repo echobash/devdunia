@@ -1,0 +1,325 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Python Requests Library - Developer Toolkit | DevDunia</title>
+    <meta name="description" content="HTTP methods (GET, POST, PUT, DELETE) with and without parameters. Free online Python requests library examples for developers.">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body {
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #0f172a 100%);
+        }
+    </style>
+</head>
+<body class="min-h-screen">
+    <!-- Background: Consistent Subtle Dark Gradient -->
+    <div class="fixed inset-0 -z-10 bg-gradient-to-br from-gray-900 via-slate-900 to-gray-900"></div>
+
+    <!-- Main Container -->
+    <div class="relative z-10 container mx-auto px-4 pt-16 pb-24 sm:px-6 lg:px-8">
+        
+        <!-- Page Header -->
+        <div class="text-center mb-12">
+            <h1 class="text-3xl sm:text-4xl font-bold mb-4 tracking-tight
+                       text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 to-teal-500">
+                Python Requests Library
+            </h1>
+            <p class="text-lg text-gray-400 max-w-2xl mx-auto">
+                HTTP methods (GET, POST, PUT, DELETE) with and without parameters.
+            </p>
+        </div>
+
+        <!-- Tool Container -->
+        <div class="max-w-4xl mx-auto">
+            <div class="bg-slate-800/70 backdrop-blur-md rounded-lg shadow-lg border border-slate-700/60 p-6">
+                
+                <!-- HTTP Method Selection -->
+                <div class="mb-6">
+                    <label class="block text-sm font-medium text-gray-300 mb-3">HTTP Method</label>
+                    <div class="grid grid-cols-2 md:grid-cols-4 gap-3">
+                        <button class="method-btn px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white text-sm rounded-lg transition-colors duration-200" data-method="GET">
+                            GET
+                        </button>
+                        <button class="method-btn px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white text-sm rounded-lg transition-colors duration-200" data-method="POST">
+                            POST
+                        </button>
+                        <button class="method-btn px-4 py-2 bg-yellow-600 hover:bg-yellow-700 text-white text-sm rounded-lg transition-colors duration-200" data-method="PUT">
+                            PUT
+                        </button>
+                        <button class="method-btn px-4 py-2 bg-red-600 hover:bg-red-700 text-white text-sm rounded-lg transition-colors duration-200" data-method="DELETE">
+                            DELETE
+                        </button>
+                    </div>
+                </div>
+
+                <!-- URL Input -->
+                <div class="mb-6">
+                    <label for="url-input" class="block text-sm font-medium text-gray-300 mb-2">
+                        URL
+                    </label>
+                    <input 
+                        type="text" 
+                        id="url-input" 
+                        class="w-full px-4 py-3 bg-slate-700/50 border border-slate-600 rounded-lg text-gray-200 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent font-mono text-sm"
+                        placeholder="https://api.example.com/users"
+                        value="https://jsonplaceholder.typicode.com/posts"
+                    >
+                </div>
+
+                <!-- Headers Section -->
+                <div class="mb-6">
+                    <label class="block text-sm font-medium text-gray-300 mb-3">Headers</label>
+                    <div id="headers-container" class="space-y-2">
+                        <div class="flex gap-2">
+                            <input type="text" placeholder="Content-Type" class="flex-1 px-3 py-2 bg-slate-600 border border-slate-500 rounded text-gray-200 text-sm font-mono">
+                            <input type="text" placeholder="application/json" class="flex-1 px-3 py-2 bg-slate-600 border border-slate-500 rounded text-gray-200 text-sm font-mono">
+                            <button class="remove-header-btn px-3 py-2 bg-red-600 hover:bg-red-700 text-white text-sm rounded transition-colors duration-200">
+                                Remove
+                            </button>
+                        </div>
+                    </div>
+                    <button id="add-header-btn" class="mt-2 px-4 py-2 bg-slate-600 hover:bg-slate-700 text-white text-sm rounded transition-colors duration-200">
+                        Add Header
+                    </button>
+                </div>
+
+                <!-- Data Section -->
+                <div id="data-section" class="mb-6">
+                    <label for="data-input" class="block text-sm font-medium text-gray-300 mb-2">
+                        Request Data (JSON)
+                    </label>
+                    <textarea 
+                        id="data-input" 
+                        rows="6" 
+                        class="w-full px-4 py-3 bg-slate-700/50 border border-slate-600 rounded-lg text-gray-200 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent resize-none font-mono text-sm"
+                        placeholder='{"name": "John Doe", "email": "john@example.com"}'
+                    ></textarea>
+                </div>
+
+                <!-- Generate Button -->
+                <div class="mb-6">
+                    <button id="generate-btn" class="px-6 py-3 bg-emerald-600 hover:bg-emerald-700 text-white font-medium rounded-lg transition-colors duration-200 flex items-center space-x-2">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
+                        </svg>
+                        <span>Generate Python Code</span>
+                    </button>
+                </div>
+
+                <!-- Generated Code -->
+                <div id="code-section" class="hidden">
+                    <h3 class="text-lg font-semibold text-gray-300 mb-4">Generated Python Code</h3>
+                    <div class="relative">
+                        <textarea 
+                            id="generated-code" 
+                            rows="20" 
+                            class="w-full px-4 py-3 bg-slate-700/50 border border-slate-600 rounded-lg text-gray-200 font-mono text-sm resize-none"
+                            readonly
+                        ></textarea>
+                        
+                        <!-- Copy Button -->
+                        <button id="copy-code-btn" class="absolute top-2 right-2 px-3 py-1 bg-slate-600 hover:bg-slate-700 text-white text-sm rounded transition-colors duration-200 flex items-center space-x-1">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v8a2 2 0 01-2 2h-2m-6-4l2 2m0 0l2-2m-2 2V10"></path>
+                            </svg>
+                            <span>Copy</span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Examples Section -->
+                <div class="mt-8 p-4 bg-slate-700/30 rounded-lg border border-slate-600/50">
+                    <h3 class="text-lg font-semibold text-cyan-400 mb-3">Common Examples</h3>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
+                        <div>
+                            <p class="text-gray-300 font-medium mb-2">GET Request:</p>
+                            <p class="text-gray-400">Fetch data from an API endpoint</p>
+                        </div>
+                        <div>
+                            <p class="text-gray-300 font-medium mb-2">POST Request:</p>
+                            <p class="text-gray-400">Create new resources with JSON data</p>
+                        </div>
+                        <div>
+                            <p class="text-gray-300 font-medium mb-2">PUT Request:</p>
+                            <p class="text-gray-400">Update existing resources</p>
+                        </div>
+                        <div>
+                            <p class="text-gray-300 font-medium mb-2">DELETE Request:</p>
+                            <p class="text-gray-400">Remove resources from the server</p>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+    </div>
+
+    <!-- Footer -->
+    <footer class="text-center text-gray-500 mt-10 pb-6">
+        © 2025 DevDunia – Free Developer Tools by <a href="https://echobash.com" class="text-blue-500 hover:underline" target="_blank">echobash</a>
+    </footer>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const methodBtns = document.querySelectorAll('.method-btn');
+            const urlInput = document.getElementById('url-input');
+            const dataInput = document.getElementById('data-input');
+            const dataSection = document.getElementById('data-section');
+            const generateBtn = document.getElementById('generate-btn');
+            const codeSection = document.getElementById('code-section');
+            const generatedCode = document.getElementById('generated-code');
+            const copyCodeBtn = document.getElementById('copy-code-btn');
+            const addHeaderBtn = document.getElementById('add-header-btn');
+            const headersContainer = document.getElementById('headers-container');
+
+            let selectedMethod = 'GET';
+
+            // Method selection
+            methodBtns.forEach(btn => {
+                btn.addEventListener('click', function() {
+                    selectedMethod = this.getAttribute('data-method');
+                    
+                    // Update button states
+                    methodBtns.forEach(b => b.classList.remove('ring-2', 'ring-emerald-400'));
+                    this.classList.add('ring-2', 'ring-emerald-400');
+                    
+                    // Show/hide data section based on method
+                    if (selectedMethod === 'GET' || selectedMethod === 'DELETE') {
+                        dataSection.classList.add('hidden');
+                    } else {
+                        dataSection.classList.remove('hidden');
+                    }
+                });
+            });
+
+            // Set initial method
+            document.querySelector('[data-method="GET"]').click();
+
+            // Add header
+            addHeaderBtn.addEventListener('click', function() {
+                const headerDiv = document.createElement('div');
+                headerDiv.className = 'flex gap-2';
+                headerDiv.innerHTML = `
+                    <input type="text" placeholder="Header Name" class="flex-1 px-3 py-2 bg-slate-600 border border-slate-500 rounded text-gray-200 text-sm font-mono">
+                    <input type="text" placeholder="Header Value" class="flex-1 px-3 py-2 bg-slate-600 border border-slate-500 rounded text-gray-200 text-sm font-mono">
+                    <button class="remove-header-btn px-3 py-2 bg-red-600 hover:bg-red-700 text-white text-sm rounded transition-colors duration-200">
+                        Remove
+                    </button>
+                `;
+                headersContainer.appendChild(headerDiv);
+            });
+
+            // Remove header
+            headersContainer.addEventListener('click', function(e) {
+                if (e.target.classList.contains('remove-header-btn')) {
+                    e.target.parentElement.remove();
+                }
+            });
+
+            // Generate code
+            generateBtn.addEventListener('click', function() {
+                const url = urlInput.value.trim();
+                if (!url) {
+                    alert('Please enter a URL');
+                    return;
+                }
+
+                const code = generatePythonCode();
+                generatedCode.value = code;
+                codeSection.classList.remove('hidden');
+            });
+
+            // Copy code
+            copyCodeBtn.addEventListener('click', function() {
+                generatedCode.select();
+                document.execCommand('copy');
+                
+                // Visual feedback
+                const originalText = copyCodeBtn.innerHTML;
+                copyCodeBtn.innerHTML = '<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg><span>Copied!</span>';
+                copyCodeBtn.classList.add('bg-green-600');
+                
+                setTimeout(() => {
+                    copyCodeBtn.innerHTML = originalText;
+                    copyCodeBtn.classList.remove('bg-green-600');
+                }, 2000);
+            });
+
+            function generatePythonCode() {
+                const url = urlInput.value.trim();
+                const data = dataInput.value.trim();
+                
+                let code = `import requests\n\n`;
+                code += `url = '${url}'\n`;
+                
+                // Headers
+                const headers = getHeaders();
+                if (Object.keys(headers).length > 0) {
+                    code += `headers = {\n`;
+                    for (const [key, value] of Object.entries(headers)) {
+                        code += `    '${key}': '${value}',\n`;
+                    }
+                    code += `}\n`;
+                }
+
+                // Data
+                if (data && (selectedMethod === 'POST' || selectedMethod === 'PUT')) {
+                    code += `data = ${data}\n`;
+                }
+
+                code += `\n`;
+                code += `try:\n`;
+                code += `    response = requests.${selectedMethod.toLowerCase()}(`;
+                code += `url`;
+                
+                if (Object.keys(headers).length > 0) {
+                    code += `, headers=headers`;
+                }
+                
+                if (data && (selectedMethod === 'POST' || selectedMethod === 'PUT')) {
+                    code += `, json=data`;
+                }
+                
+                code += `)\n`;
+                code += `    response.raise_for_status()  # Raises an HTTPError for bad responses\n`;
+                code += `    \n`;
+                code += `    print(f"Status Code: {response.status_code}")\n`;
+                code += `    print(f"Response: {response.json()}")\n`;
+                code += `    \n`;
+                code += `except requests.exceptions.RequestException as e:\n`;
+                code += `    print(f"Error: {e}")\n`;
+
+                return code;
+            }
+
+            function getHeaders() {
+                const headers = {};
+                const headerInputs = headersContainer.querySelectorAll('.flex.gap-2');
+                
+                headerInputs.forEach(headerDiv => {
+                    const inputs = headerDiv.querySelectorAll('input');
+                    if (inputs.length >= 2) {
+                        const key = inputs[0].value.trim();
+                        const value = inputs[1].value.trim();
+                        if (key && value) {
+                            headers[key] = value;
+                        }
+                    }
+                });
+                
+                return headers;
+            }
+
+            // Set default headers
+            window.addEventListener('load', () => {
+                const firstHeader = headersContainer.querySelector('.flex.gap-2');
+                const inputs = firstHeader.querySelectorAll('input');
+                inputs[0].value = 'Content-Type';
+                inputs[1].value = 'application/json';
+            });
+        });
+    </script>
+</body>
+</html>

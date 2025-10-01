@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>String Transformer - Developer Toolkit | DevDunia</title>
+    <meta name="description" content="Transform strings between different formats and cases. Free online string transformer tool for developers.">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body {
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #0f172a 100%);
+        }
+    </style>
+</head>
+<body class="min-h-screen">
+    <!-- Background: Consistent Subtle Dark Gradient -->
+    <div class="fixed inset-0 -z-10 bg-gradient-to-br from-gray-900 via-slate-900 to-gray-900"></div>
+
+    <!-- Main Container -->
+    <div class="relative z-10 container mx-auto px-4 pt-16 pb-24 sm:px-6 lg:px-8">
+        
+        <!-- Page Header -->
+        <div class="text-center mb-12">
+            <h1 class="text-3xl sm:text-4xl font-bold mb-4 tracking-tight
+                       text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-cyan-500">
+                String Transformer
+            </h1>
+            <p class="text-lg text-gray-400 max-w-2xl mx-auto">
+                Transform strings between different formats and cases.
+            </p>
+        </div>
+
+        <!-- Tool Container -->
+        <div class="max-w-4xl mx-auto">
+            <div class="bg-slate-800/70 backdrop-blur-md rounded-lg shadow-lg border border-slate-700/60 p-6">
+                
+                <!-- Input Section -->
+                <div class="mb-6">
+                    <label for="string-input" class="block text-sm font-medium text-gray-300 mb-2">
+                        Input String
+                    </label>
+                    <textarea 
+                        id="string-input" 
+                        rows="4" 
+                        class="w-full px-4 py-3 bg-slate-700/50 border border-slate-600 rounded-lg text-gray-200 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-none font-mono text-sm"
+                        placeholder="Enter text to transform..."
+                    ></textarea>
+                </div>
+
+                <!-- Transformation Options -->
+                <div class="mb-6">
+                    <label class="block text-sm font-medium text-gray-300 mb-3">Transformations</label>
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
+                        <button class="transform-btn px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white text-sm rounded-lg transition-colors duration-200" data-transform="uppercase">
+                            UPPERCASE
+                        </button>
+                        <button class="transform-btn px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white text-sm rounded-lg transition-colors duration-200" data-transform="lowercase">
+                            lowercase
+                        </button>
+                        <button class="transform-btn px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white text-sm rounded-lg transition-colors duration-200" data-transform="capitalize">
+                            Capitalize
+                        </button>
+                        <button class="transform-btn px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white text-sm rounded-lg transition-colors duration-200" data-transform="title-case">
+                            Title Case
+                        </button>
+                        <button class="transform-btn px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white text-sm rounded-lg transition-colors duration-200" data-transform="camel-case">
+                            camelCase
+                        </button>
+                        <button class="transform-btn px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white text-sm rounded-lg transition-colors duration-200" data-transform="pascal-case">
+                            PascalCase
+                        </button>
+                        <button class="transform-btn px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white text-sm rounded-lg transition-colors duration-200" data-transform="kebab-case">
+                            kebab-case
+                        </button>
+                        <button class="transform-btn px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white text-sm rounded-lg transition-colors duration-200" data-transform="snake-case">
+                            snake_case
+                        </button>
+                        <button class="transform-btn px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white text-sm rounded-lg transition-colors duration-200" data-transform="constant-case">
+                            CONSTANT_CASE
+                        </button>
+                        <button class="transform-btn px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white text-sm rounded-lg transition-colors duration-200" data-transform="reverse">
+                            Reverse
+                        </button>
+                        <button class="transform-btn px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white text-sm rounded-lg transition-colors duration-200" data-transform="slug">
+                            slug
+                        </button>
+                        <button class="transform-btn px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white text-sm rounded-lg transition-colors duration-200" data-transform="remove-spaces">
+                            Remove Spaces
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Action Buttons -->
+                <div class="flex flex-wrap gap-3 mb-6">
+                    <button id="clear-btn" class="px-6 py-3 bg-slate-600 hover:bg-slate-700 text-white font-medium rounded-lg transition-colors duration-200 flex items-center space-x-2">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
+                        </svg>
+                        <span>Clear All</span>
+                    </button>
+                </div>
+
+                <!-- Output Section -->
+                <div id="output-section" class="hidden">
+                    <label for="string-output" class="block text-sm font-medium text-gray-300 mb-2">
+                        Transformed Output
+                    </label>
+                    <div class="relative">
+                        <textarea 
+                            id="string-output" 
+                            rows="4" 
+                            class="w-full px-4 py-3 bg-slate-700/50 border border-slate-600 rounded-lg text-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-none font-mono text-sm"
+                            readonly
+                        ></textarea>
+                        
+                        <!-- Copy Button -->
+                        <button id="copy-btn" class="absolute top-2 right-2 px-3 py-1 bg-slate-600 hover:bg-slate-700 text-white text-sm rounded transition-colors duration-200 flex items-center space-x-1">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v8a2 2 0 01-2 2h-2m-6-4l2 2m0 0l2-2m-2 2V10"></path>
+                            </svg>
+                            <span>Copy</span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- String Statistics -->
+                <div id="stats" class="hidden mt-6 grid grid-cols-1 md:grid-cols-4 gap-4">
+                    <div class="bg-slate-700/50 p-3 rounded-lg">
+                        <h4 class="text-sm font-medium text-gray-300 mb-1">Characters</h4>
+                        <p id="char-count" class="text-blue-400 font-mono text-sm"></p>
+                    </div>
+                    <div class="bg-slate-700/50 p-3 rounded-lg">
+                        <h4 class="text-sm font-medium text-gray-300 mb-1">Words</h4>
+                        <p id="word-count" class="text-green-400 font-mono text-sm"></p>
+                    </div>
+                    <div class="bg-slate-700/50 p-3 rounded-lg">
+                        <h4 class="text-sm font-medium text-gray-300 mb-1">Lines</h4>
+                        <p id="line-count" class="text-purple-400 font-mono text-sm"></p>
+                    </div>
+                    <div class="bg-slate-700/50 p-3 rounded-lg">
+                        <h4 class="text-sm font-medium text-gray-300 mb-1">Size</h4>
+                        <p id="size-info" class="text-orange-400 font-mono text-sm"></p>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+    </div>
+
+    <!-- Footer -->
+    <footer class="text-center text-gray-500 mt-10 pb-6">
+        © 2025 DevDunia – Free Developer Tools by <a href="https://echobash.com" class="text-blue-500 hover:underline" target="_blank">echobash</a>
+    </footer>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const stringInput = document.getElementById('string-input');
+            const stringOutput = document.getElementById('string-output');
+            const clearBtn = document.getElementById('clear-btn');
+            const copyBtn = document.getElementById('copy-btn');
+            const outputSection = document.getElementById('output-section');
+            const stats = document.getElementById('stats');
+            const charCount = document.getElementById('char-count');
+            const wordCount = document.getElementById('word-count');
+            const lineCount = document.getElementById('line-count');
+            const sizeInfo = document.getElementById('size-info');
+
+            // Transform buttons
+            document.querySelectorAll('.transform-btn').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const transform = this.getAttribute('data-transform');
+                    const input = stringInput.value.trim();
+                    
+                    if (!input) {
+                        alert('Please enter some text to transform');
+                        return;
+                    }
+
+                    const transformed = transformString(input, transform);
+                    stringOutput.value = transformed;
+                    showOutput();
+                    updateStats(transformed);
+                });
+            });
+
+            // Clear all
+            clearBtn.addEventListener('click', function() {
+                stringInput.value = '';
+                hideOutput();
+            });
+
+            // Copy output
+            copyBtn.addEventListener('click', function() {
+                stringOutput.select();
+                document.execCommand('copy');
+                
+                // Visual feedback
+                const originalText = copyBtn.innerHTML;
+                copyBtn.innerHTML = '<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg><span>Copied!</span>';
+                copyBtn.classList.add('bg-green-600');
+                
+                setTimeout(() => {
+                    copyBtn.innerHTML = originalText;
+                    copyBtn.classList.remove('bg-green-600');
+                }, 2000);
+            });
+
+            // Auto-resize input
+            stringInput.addEventListener('input', function() {
+                this.style.height = 'auto';
+                this.style.height = this.scrollHeight + 'px';
+            });
+
+            // Helper functions
+            function showOutput() {
+                outputSection.classList.remove('hidden');
+                stats.classList.remove('hidden');
+            }
+
+            function hideOutput() {
+                outputSection.classList.add('hidden');
+                stats.classList.add('hidden');
+            }
+
+            function transformString(input, transform) {
+                switch (transform) {
+                    case 'uppercase':
+                        return input.toUpperCase();
+                    case 'lowercase':
+                        return input.toLowerCase();
+                    case 'capitalize':
+                        return input.charAt(0).toUpperCase() + input.slice(1).toLowerCase();
+                    case 'title-case':
+                        return input.replace(/\w\S*/g, txt => txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase());
+                    case 'camel-case':
+                        return input.replace(/(?:^\w|[A-Z]|\b\w)/g, (word, index) => {
+                            return index === 0 ? word.toLowerCase() : word.toUpperCase();
+                        }).replace(/\s+/g, '');
+                    case 'pascal-case':
+                        return input.replace(/(?:^\w|[A-Z]|\b\w)/g, word => word.toUpperCase()).replace(/\s+/g, '');
+                    case 'kebab-case':
+                        return input.replace(/([a-z])([A-Z])/g, '$1-$2').replace(/[\s_]+/g, '-').toLowerCase();
+                    case 'snake-case':
+                        return input.replace(/([a-z])([A-Z])/g, '$1_$2').replace(/[\s-]+/g, '_').toLowerCase();
+                    case 'constant-case':
+                        return input.replace(/([a-z])([A-Z])/g, '$1_$2').replace(/[\s-]+/g, '_').toUpperCase();
+                    case 'reverse':
+                        return input.split('').reverse().join('');
+                    case 'slug':
+                        return input.toLowerCase()
+                            .replace(/[^\w\s-]/g, '')
+                            .replace(/[\s_-]+/g, '-')
+                            .replace(/^-+|-+$/g, '');
+                    case 'remove-spaces':
+                        return input.replace(/\s+/g, '');
+                    default:
+                        return input;
+                }
+            }
+
+            function updateStats(text) {
+                const chars = text.length;
+                const words = text.trim() ? text.trim().split(/\s+/).length : 0;
+                const lines = text.split('\n').length;
+                const size = formatBytes(chars);
+                
+                charCount.textContent = chars.toLocaleString();
+                wordCount.textContent = words.toLocaleString();
+                lineCount.textContent = lines.toLocaleString();
+                sizeInfo.textContent = size;
+            }
+
+            function formatBytes(bytes) {
+                if (bytes === 0) return '0 B';
+                const k = 1024;
+                const sizes = ['B', 'KB', 'MB', 'GB'];
+                const i = Math.floor(Math.log(bytes) / Math.log(k));
+                return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+            }
+
+            // Example text on page load
+            window.addEventListener('load', () => {
+                stringInput.value = 'Hello World! This is a sample text for transformation.';
+            });
+        });
+    </script>
+</body>
+</html>

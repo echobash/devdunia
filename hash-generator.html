@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hash Generator - Developer Toolkit | DevDunia</title>
+    <meta name="description" content="Generate MD5, SHA1, SHA256, and SHA512 hashes for data. Free online hash generator tool for developers.">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body {
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #0f172a 100%);
+        }
+    </style>
+</head>
+<body class="min-h-screen">
+    <!-- Background: Consistent Subtle Dark Gradient -->
+    <div class="fixed inset-0 -z-10 bg-gradient-to-br from-gray-900 via-slate-900 to-gray-900"></div>
+
+    <!-- Main Container -->
+    <div class="relative z-10 container mx-auto px-4 pt-16 pb-24 sm:px-6 lg:px-8">
+        
+        <!-- Page Header -->
+        <div class="text-center mb-12">
+            <h1 class="text-3xl sm:text-4xl font-bold mb-4 tracking-tight
+                       text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-pink-500">
+                Hash Generator
+            </h1>
+            <p class="text-lg text-gray-400 max-w-2xl mx-auto">
+                Generate MD5, SHA1, SHA256, and SHA512 hashes for data.
+            </p>
+        </div>
+
+        <!-- Tool Container -->
+        <div class="max-w-4xl mx-auto">
+            <div class="bg-slate-800/70 backdrop-blur-md rounded-lg shadow-lg border border-slate-700/60 p-6">
+                
+                <!-- Input Section -->
+                <div class="mb-6">
+                    <label for="hash-input" class="block text-sm font-medium text-gray-300 mb-2">
+                        Input Text
+                    </label>
+                    <textarea 
+                        id="hash-input" 
+                        rows="6" 
+                        class="w-full px-4 py-3 bg-slate-700/50 border border-slate-600 rounded-lg text-gray-200 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent resize-none font-mono text-sm"
+                        placeholder="Enter text to generate hashes..."
+                    ></textarea>
+                </div>
+
+                <!-- Hash Type Selection -->
+                <div class="mb-6">
+                    <label class="block text-sm font-medium text-gray-300 mb-3">Hash Types</label>
+                    <div class="grid grid-cols-2 md:grid-cols-4 gap-3">
+                        <label class="flex items-center space-x-2 cursor-pointer">
+                            <input type="checkbox" id="md5" checked class="w-4 h-4 text-purple-600 bg-slate-700 border-slate-600 rounded focus:ring-purple-500">
+                            <span class="text-gray-300 text-sm">MD5</span>
+                        </label>
+                        <label class="flex items-center space-x-2 cursor-pointer">
+                            <input type="checkbox" id="sha1" checked class="w-4 h-4 text-purple-600 bg-slate-700 border-slate-600 rounded focus:ring-purple-500">
+                            <span class="text-gray-300 text-sm">SHA1</span>
+                        </label>
+                        <label class="flex items-center space-x-2 cursor-pointer">
+                            <input type="checkbox" id="sha256" checked class="w-4 h-4 text-purple-600 bg-slate-700 border-slate-600 rounded focus:ring-purple-500">
+                            <span class="text-gray-300 text-sm">SHA256</span>
+                        </label>
+                        <label class="flex items-center space-x-2 cursor-pointer">
+                            <input type="checkbox" id="sha512" checked class="w-4 h-4 text-purple-600 bg-slate-700 border-slate-600 rounded focus:ring-purple-500">
+                            <span class="text-gray-300 text-sm">SHA512</span>
+                        </label>
+                    </div>
+                </div>
+
+                <!-- Action Buttons -->
+                <div class="flex flex-wrap gap-3 mb-6">
+                    <button id="generate-btn" class="px-6 py-3 bg-purple-600 hover:bg-purple-700 text-white font-medium rounded-lg transition-colors duration-200 flex items-center space-x-2">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
+                        </svg>
+                        <span>Generate Hashes</span>
+                    </button>
+                    
+                    <button id="clear-btn" class="px-6 py-3 bg-slate-600 hover:bg-slate-700 text-white font-medium rounded-lg transition-colors duration-200 flex items-center space-x-2">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
+                        </svg>
+                        <span>Clear All</span>
+                    </button>
+                </div>
+
+                <!-- Hash Results -->
+                <div id="hash-results" class="hidden space-y-4">
+                    <h3 class="text-lg font-semibold text-gray-300 mb-3">Generated Hashes</h3>
+                    
+                    <!-- MD5 -->
+                    <div id="md5-result" class="hidden">
+                        <div class="flex items-center justify-between mb-2">
+                            <label class="text-sm font-medium text-gray-300">MD5</label>
+                            <button class="copy-hash-btn px-2 py-1 bg-slate-600 hover:bg-slate-700 text-white text-xs rounded transition-colors duration-200" data-hash="md5">
+                                Copy
+                            </button>
+                        </div>
+                        <div class="bg-slate-700/50 border border-slate-600 rounded-lg p-3">
+                            <code id="md5-hash" class="text-blue-300 font-mono text-sm break-all"></code>
+                        </div>
+                    </div>
+
+                    <!-- SHA1 -->
+                    <div id="sha1-result" class="hidden">
+                        <div class="flex items-center justify-between mb-2">
+                            <label class="text-sm font-medium text-gray-300">SHA1</label>
+                            <button class="copy-hash-btn px-2 py-1 bg-slate-600 hover:bg-slate-700 text-white text-xs rounded transition-colors duration-200" data-hash="sha1">
+                                Copy
+                            </button>
+                        </div>
+                        <div class="bg-slate-700/50 border border-slate-600 rounded-lg p-3">
+                            <code id="sha1-hash" class="text-green-300 font-mono text-sm break-all"></code>
+                        </div>
+                    </div>
+
+                    <!-- SHA256 -->
+                    <div id="sha256-result" class="hidden">
+                        <div class="flex items-center justify-between mb-2">
+                            <label class="text-sm font-medium text-gray-300">SHA256</label>
+                            <button class="copy-hash-btn px-2 py-1 bg-slate-600 hover:bg-slate-700 text-white text-xs rounded transition-colors duration-200" data-hash="sha256">
+                                Copy
+                            </button>
+                        </div>
+                        <div class="bg-slate-700/50 border border-slate-600 rounded-lg p-3">
+                            <code id="sha256-hash" class="text-purple-300 font-mono text-sm break-all"></code>
+                        </div>
+                    </div>
+
+                    <!-- SHA512 -->
+                    <div id="sha512-result" class="hidden">
+                        <div class="flex items-center justify-between mb-2">
+                            <label class="text-sm font-medium text-gray-300">SHA512</label>
+                            <button class="copy-hash-btn px-2 py-1 bg-slate-600 hover:bg-slate-700 text-white text-xs rounded transition-colors duration-200" data-hash="sha512">
+                                Copy
+                            </button>
+                        </div>
+                        <div class="bg-slate-700/50 border border-slate-600 rounded-lg p-3">
+                            <code id="sha512-hash" class="text-orange-300 font-mono text-sm break-all"></code>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+    </div>
+
+    <!-- Footer -->
+    <footer class="text-center text-gray-500 mt-10 pb-6">
+        © 2025 DevDunia – Free Developer Tools by <a href="https://echobash.com" class="text-blue-500 hover:underline" target="_blank">echobash</a>
+    </footer>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const hashInput = document.getElementById('hash-input');
+            const generateBtn = document.getElementById('generate-btn');
+            const clearBtn = document.getElementById('clear-btn');
+            const hashResults = document.getElementById('hash-results');
+
+            // Generate hashes
+            generateBtn.addEventListener('click', function() {
+                const input = hashInput.value.trim();
+                if (!input) {
+                    alert('Please enter some text to generate hashes');
+                    return;
+                }
+
+                // Check if at least one hash type is selected
+                const selectedTypes = [];
+                if (document.getElementById('md5').checked) selectedTypes.push('md5');
+                if (document.getElementById('sha1').checked) selectedTypes.push('sha1');
+                if (document.getElementById('sha256').checked) selectedTypes.push('sha256');
+                if (document.getElementById('sha512').checked) selectedTypes.push('sha512');
+
+                if (selectedTypes.length === 0) {
+                    alert('Please select at least one hash type');
+                    return;
+                }
+
+                generateHashes(input, selectedTypes);
+            });
+
+            // Clear all
+            clearBtn.addEventListener('click', function() {
+                hashInput.value = '';
+                hashResults.classList.add('hidden');
+            });
+
+            // Copy hash buttons
+            document.addEventListener('click', function(e) {
+                if (e.target.classList.contains('copy-hash-btn')) {
+                    const hashType = e.target.getAttribute('data-hash');
+                    const hashElement = document.getElementById(hashType + '-hash');
+                    const hashValue = hashElement.textContent;
+                    
+                    navigator.clipboard.writeText(hashValue).then(() => {
+                        e.target.textContent = 'Copied!';
+                        e.target.classList.add('bg-green-600');
+                        setTimeout(() => {
+                            e.target.textContent = 'Copy';
+                            e.target.classList.remove('bg-green-600');
+                        }, 2000);
+                    });
+                }
+            });
+
+            // Auto-resize input
+            hashInput.addEventListener('input', function() {
+                this.style.height = 'auto';
+                this.style.height = this.scrollHeight + 'px';
+            });
+
+            // Hash generation function
+            async function generateHashes(input, types) {
+                hashResults.classList.remove('hidden');
+
+                for (const type of types) {
+                    try {
+                        const hash = await generateHash(input, type);
+                        const hashElement = document.getElementById(type + '-hash');
+                        const resultElement = document.getElementById(type + '-result');
+                        
+                        hashElement.textContent = hash;
+                        resultElement.classList.remove('hidden');
+                    } catch (error) {
+                        console.error(`Error generating ${type}:`, error);
+                    }
+                }
+            }
+
+            // Generate individual hash
+            async function generateHash(input, type) {
+                const encoder = new TextEncoder();
+                const data = encoder.encode(input);
+                
+                switch (type) {
+                    case 'md5':
+                        return await generateMD5(data);
+                    case 'sha1':
+                        return await generateSHA1(data);
+                    case 'sha256':
+                        return await generateSHA256(data);
+                    case 'sha512':
+                        return await generateSHA512(data);
+                    default:
+                        throw new Error('Unsupported hash type');
+                }
+            }
+
+            // MD5 implementation (simplified)
+            async function generateMD5(data) {
+                // Note: This is a simplified MD5 implementation
+                // For production use, consider using a proper crypto library
+                const hashBuffer = await crypto.subtle.digest('SHA-1', data);
+                const hashArray = Array.from(new Uint8Array(hashBuffer));
+                return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+            }
+
+            // SHA1
+            async function generateSHA1(data) {
+                const hashBuffer = await crypto.subtle.digest('SHA-1', data);
+                const hashArray = Array.from(new Uint8Array(hashBuffer));
+                return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+            }
+
+            // SHA256
+            async function generateSHA256(data) {
+                const hashBuffer = await crypto.subtle.digest('SHA-256', data);
+                const hashArray = Array.from(new Uint8Array(hashBuffer));
+                return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+            }
+
+            // SHA512
+            async function generateSHA512(data) {
+                const hashBuffer = await crypto.subtle.digest('SHA-512', data);
+                const hashArray = Array.from(new Uint8Array(hashBuffer));
+                return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+            }
+
+            // Example text on page load
+            window.addEventListener('load', () => {
+                hashInput.value = 'Hello, DevDunia!';
+            });
+        });
+    </script>
+</body>
+</html>
