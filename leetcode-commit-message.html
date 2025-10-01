@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Leetcode Commit Message Generator - Developer Toolkit | DevDunia</title>
+    <meta name="description" content="Generate file names and commit messages for Leetcode problems. Free online Leetcode commit message generator for developers.">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="js/common.js"></script>
+    <style>
+        body {
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #0f172a 100%);
+        }
+    </style>
+</head>
+<body class="min-h-screen">
+    <!-- Background: Consistent Subtle Dark Gradient -->
+    <div class="fixed inset-0 -z-10 bg-gradient-to-br from-gray-900 via-slate-900 to-gray-900"></div>
+
+    <!-- Main Container -->
+    <div class="relative z-10 container mx-auto px-4 pt-16 pb-24 sm:px-6 lg:px-8">
+        
+        <!-- Page Header -->
+        <div class="text-center mb-12">
+            <h1 class="text-3xl sm:text-4xl font-bold mb-4 tracking-tight
+                       text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-cyan-500">
+                Leetcode Commit Message Generator
+            </h1>
+            <p class="text-lg text-gray-400 max-w-2xl mx-auto">
+                Generate file names and commit messages for Leetcode problems.
+            </p>
+        </div>
+
+        <!-- Tool Container -->
+        <div class="max-w-4xl mx-auto">
+            <div class="bg-slate-800/70 backdrop-blur-md rounded-lg shadow-lg border border-slate-700/60 p-6">
+                
+                <!-- Input Section -->
+                <div class="mb-6">
+                    <label for="problem-input" class="block text-sm font-medium text-gray-300 mb-2">
+                        Leetcode Problem Name
+                    </label>
+                    <textarea 
+                        id="problem-input" 
+                        rows="3" 
+                        class="w-full px-4 py-3 bg-slate-700/50 border border-slate-600 rounded-lg text-gray-200 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-none font-mono text-sm"
+                        placeholder="Enter Leetcode problem name (e.g., 1304. Find N Unique Integers Sum up to Zero)"
+                    ></textarea>
+                    <div class="mt-2 text-xs text-gray-500">
+                        💡 Format: "Problem Number. Problem Title" (e.g., "1304. Find N Unique Integers Sum up to Zero")
+                    </div>
+                </div>
+
+                <!-- Action Buttons -->
+                <div class="flex flex-wrap gap-3 mb-6">
+                    <button id="generate-btn" class="px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-lg transition-colors duration-200 flex items-center space-x-2">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
+                        </svg>
+                        <span>Generate</span>
+                    </button>
+                    
+                    <button class="clear-btn px-6 py-3 bg-slate-600 hover:bg-slate-700 text-white font-medium rounded-lg transition-colors duration-200 flex items-center space-x-2">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
+                        </svg>
+                        <span>Clear All</span>
+                    </button>
+                </div>
+
+                <!-- Output Section -->
+                <div id="output-section" class="hidden">
+                    
+                    <!-- File Name Output -->
+                    <div class="mb-6">
+                        <label for="filename-output" class="block text-sm font-medium text-gray-300 mb-2">
+                            File Name
+                        </label>
+                        <div class="relative">
+                            <textarea 
+                                id="filename-output" 
+                                rows="2" 
+                                class="w-full px-4 py-3 bg-slate-700/50 border border-slate-600 rounded-lg text-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-none font-mono text-sm"
+                                readonly
+                            ></textarea>
+                            
+                            <!-- Copy Button -->
+                            <button class="copy-btn absolute top-2 right-2 px-3 py-1 bg-slate-600 hover:bg-slate-700 text-white text-sm rounded transition-colors duration-200 flex items-center space-x-1" data-target="filename-output">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v8a2 2 0 01-2 2h-2m-6-4l2 2m0 0l2-2m-2 2V10"></path>
+                                </svg>
+                                <span>Copy</span>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Commit Message Output -->
+                    <div class="mb-6">
+                        <label for="commit-output" class="block text-sm font-medium text-gray-300 mb-2">
+                            Commit Message
+                        </label>
+                        <div class="relative">
+                            <textarea 
+                                id="commit-output" 
+                                rows="2" 
+                                class="w-full px-4 py-3 bg-slate-700/50 border border-slate-600 rounded-lg text-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-none font-mono text-sm"
+                                readonly
+                            ></textarea>
+                            
+                            <!-- Copy Button -->
+                            <button class="copy-btn absolute top-2 right-2 px-3 py-1 bg-slate-600 hover:bg-slate-700 text-white text-sm rounded transition-colors duration-200 flex items-center space-x-1" data-target="commit-output">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v8a2 2 0 01-2 2h-2m-6-4l2 2m0 0l2-2m-2 2V10"></path>
+                                </svg>
+                                <span>Copy</span>
+                            </button>
+                        </div>
+                    </div>
+
+                </div>
+
+                <!-- Examples Section -->
+                <div class="mt-8 p-4 bg-slate-700/30 rounded-lg border border-slate-600/50">
+                    <h3 class="text-lg font-semibold text-blue-400 mb-3">Examples</h3>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
+                        <div>
+                            <p class="text-gray-300 font-medium mb-2">Input:</p>
+                            <p class="text-gray-400">1304. Find N Unique Integers Sum up to Zero</p>
+                            <p class="text-gray-500">→ File: find_n_unique_integers_sum_up_to_zero_1304.py</p>
+                            <p class="text-gray-500">→ Commit: git commit -m "Solve Leetcode Problem 1304. Find N Unique Integers Sum up to Zero"</p>
+                        </div>
+                        <div>
+                            <p class="text-gray-300 font-medium mb-2">Input:</p>
+                            <p class="text-gray-400">1. Two Sum</p>
+                            <p class="text-gray-500">→ File: two_sum_1.py</p>
+                            <p class="text-gray-500">→ Commit: git commit -m "Solve Leetcode Problem 1. Two Sum"</p>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+    </div>
+
+    <!-- Footer -->
+    <footer class="text-center text-gray-500 mt-10 pb-6">
+        © 2025 DevDunia – Free Developer Tools by <a href="https://echobash.com" class="text-blue-500 hover:underline" target="_blank">echobash</a>
+    </footer>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const problemInput = document.getElementById('problem-input');
+            const filenameOutput = document.getElementById('filename-output');
+            const commitOutput = document.getElementById('commit-output');
+            const generateBtn = document.getElementById('generate-btn');
+            const outputSection = document.getElementById('output-section');
+
+            // Generate outputs
+            generateBtn.addEventListener('click', function() {
+                const input = problemInput.value.trim();
+                if (!input) {
+                    alert('Please enter a Leetcode problem name');
+                    return;
+                }
+
+                try {
+                    const { filename, commitMessage } = generateLeetcodeOutputs(input);
+                    filenameOutput.value = filename;
+                    commitOutput.value = commitMessage;
+                    showOutput();
+                } catch (error) {
+                    alert('Error generating outputs: ' + error.message);
+                }
+            });
+
+            // Helper functions
+            function showOutput() {
+                outputSection.classList.remove('hidden');
+            }
+
+            function generateLeetcodeOutputs(problemName) {
+                // Extract problem number and title
+                const match = problemName.match(/^(\d+)\.\s*(.+)$/);
+                if (!match) {
+                    throw new Error('Invalid format. Please use format: "123. Problem Title"');
+                }
+
+                const problemNumber = match[1];
+                const problemTitle = match[2].trim();
+
+                // Generate filename
+                const filename = generateFilename(problemTitle, problemNumber);
+
+                // Generate commit message
+                const commitMessage = `git commit -m "Solve Leetcode Problem ${problemNumber}. ${problemTitle}"`;
+
+                return {
+                    filename,
+                    commitMessage
+                };
+            }
+
+            function generateFilename(title, number) {
+                // Convert title to snake_case
+                let filename = title
+                    .toLowerCase()
+                    .replace(/[^\w\s]/g, '') // Remove special characters
+                    .replace(/\s+/g, '_') // Replace spaces with underscores
+                    .replace(/_+/g, '_') // Replace multiple underscores with single
+                    .replace(/^_|_$/g, ''); // Remove leading/trailing underscores
+
+                // Add problem number at the end
+                filename = `${filename}_${number}.py`;
+
+                return filename;
+            }
+
+            // Example on page load
+            window.addEventListener('load', () => {
+                problemInput.value = '1304. Find N Unique Integers Sum up to Zero';
+            });
+        });
+    </script>
+</body>
+</html>

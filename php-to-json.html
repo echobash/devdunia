@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PHP Array to JSON Converter - Developer Toolkit | DevDunia</title>
+    <meta name="description" content="Convert PHP arrays to JSON format with proper syntax. Free online PHP to JSON converter tool for developers.">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="js/common.js"></script>
+    <style>
+        body {
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #0f172a 100%);
+        }
+    </style>
+</head>
+<body class="min-h-screen">
+    <!-- Background: Consistent Subtle Dark Gradient -->
+    <div class="fixed inset-0 -z-10 bg-gradient-to-br from-gray-900 via-slate-900 to-gray-900"></div>
+
+    <!-- Main Container -->
+    <div class="relative z-10 container mx-auto px-4 pt-16 pb-24 sm:px-6 lg:px-8">
+        
+        <!-- Page Header -->
+        <div class="text-center mb-12">
+            <h1 class="text-3xl sm:text-4xl font-bold mb-4 tracking-tight
+                       text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-pink-500">
+                PHP Array to JSON Converter
+            </h1>
+            <p class="text-lg text-gray-400 max-w-2xl mx-auto">
+                Convert PHP arrays to JSON format with proper syntax and formatting.
+            </p>
+        </div>
+
+        <!-- Tool Container -->
+        <div class="max-w-4xl mx-auto">
+            <div class="bg-slate-800/70 backdrop-blur-md rounded-lg shadow-lg border border-slate-700/60 p-6">
+                
+                <!-- Input Section -->
+                <div class="mb-6">
+                    <label for="php-input" class="block text-sm font-medium text-gray-300 mb-2">
+                        Input PHP Array
+                    </label>
+                    <textarea 
+                        id="php-input" 
+                        rows="10" 
+                        class="w-full px-4 py-3 bg-slate-700/50 border border-slate-600 rounded-lg text-gray-200 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent resize-none font-mono text-sm"
+                        placeholder="Paste your PHP array here..."
+                    ></textarea>
+                </div>
+
+                <!-- Action Buttons -->
+                <div class="flex flex-wrap gap-3 mb-6">
+                    <button id="convert-btn" class="px-6 py-3 bg-purple-600 hover:bg-purple-700 text-white font-medium rounded-lg transition-colors duration-200 flex items-center space-x-2">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4"></path>
+                        </svg>
+                        <span>Convert to JSON</span>
+                    </button>
+                    
+                    <button class="clear-btn px-6 py-3 bg-slate-600 hover:bg-slate-700 text-white font-medium rounded-lg transition-colors duration-200 flex items-center space-x-2">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
+                        </svg>
+                        <span>Clear All</span>
+                    </button>
+                </div>
+
+                <!-- Error Display -->
+                <div id="error-display" class="hidden mb-6 p-4 bg-red-900/50 border border-red-600/50 rounded-lg">
+                    <div class="flex items-center space-x-2">
+                        <svg class="w-5 h-5 text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                        </svg>
+                        <span id="error-message" class="text-red-300"></span>
+                    </div>
+                </div>
+
+                <!-- Output Section -->
+                <div id="output-section" class="hidden">
+                    <label for="json-output" class="block text-sm font-medium text-gray-300 mb-2">
+                        JSON Output
+                    </label>
+                    <div class="relative">
+                        <textarea 
+                            id="json-output" 
+                            rows="15" 
+                            class="w-full px-4 py-3 bg-slate-700/50 border border-slate-600 rounded-lg text-gray-200 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent resize-none font-mono text-sm"
+                            readonly
+                        ></textarea>
+                        
+                        <!-- Copy Button -->
+                        <button class="copy-btn absolute top-2 right-2 px-3 py-1 bg-slate-600 hover:bg-slate-700 text-white text-sm rounded transition-colors duration-200 flex items-center space-x-1" data-target="json-output">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v8a2 2 0 01-2 2h-2m-6-4l2 2m0 0l2-2m-2 2V10"></path>
+                            </svg>
+                            <span>Copy</span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Examples Section -->
+                <div class="mt-8 p-4 bg-slate-700/30 rounded-lg border border-slate-600/50">
+                    <h3 class="text-lg font-semibold text-cyan-400 mb-3">Conversion Examples</h3>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
+                        <div>
+                            <p class="text-gray-300 font-medium mb-2">PHP Associative Array:</p>
+                            <p class="text-gray-400">['name' => 'John', 'age' => 30]</p>
+                            <p class="text-gray-500">→ {"name": "John", "age": 30}</p>
+                        </div>
+                        <div>
+                            <p class="text-gray-300 font-medium mb-2">PHP Indexed Array:</p>
+                            <p class="text-gray-400">['apple', 'banana', 'orange']</p>
+                            <p class="text-gray-500">→ ["apple", "banana", "orange"]</p>
+                        </div>
+                        <div>
+                            <p class="text-gray-300 font-medium mb-2">Nested Array:</p>
+                            <p class="text-gray-400">['user' => ['name' => 'John', 'active' => true]]</p>
+                            <p class="text-gray-500">→ {"user": {"name": "John", "active": true}}</p>
+                        </div>
+                        <div>
+                            <p class="text-gray-300 font-medium mb-2">Mixed Array:</p>
+                            <p class="text-gray-400">[1, 'text', true, null]</p>
+                            <p class="text-gray-500">→ [1, "text", true, null]</p>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+    </div>
+
+    <!-- Footer -->
+    <footer class="text-center text-gray-500 mt-10 pb-6">
+        © 2025 DevDunia – Free Developer Tools by <a href="https://echobash.com" class="text-blue-500 hover:underline" target="_blank">echobash</a>
+    </footer>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const phpInput = document.getElementById('php-input');
+            const jsonOutput = document.getElementById('json-output');
+            const convertBtn = document.getElementById('convert-btn');
+            const outputSection = document.getElementById('output-section');
+            const errorDisplay = document.getElementById('error-display');
+            const errorMessage = document.getElementById('error-message');
+
+            // Convert PHP to JSON
+            convertBtn.addEventListener('click', async function() {
+                const input = phpInput.value.trim();
+                if (!input) {
+                    showError('Please enter some PHP array data');
+                    return;
+                }
+
+                try {
+                    const jsonData = await convertPhpToJson(input);
+                    const formatted = JSON.stringify(jsonData, null, 2);
+                    jsonOutput.value = formatted;
+                    showOutput();
+                    hideError();
+                } catch (error) {
+                    showError('Invalid PHP array: ' + error.message);
+                    hideOutput();
+                }
+            });
+
+            // Helper functions
+            function showOutput() {
+                outputSection.classList.remove('hidden');
+            }
+
+            function hideOutput() {
+                outputSection.classList.add('hidden');
+            }
+
+            function showError(message) {
+                errorMessage.textContent = message;
+                errorDisplay.classList.remove('hidden');
+            }
+
+            function hideError() {
+                errorDisplay.classList.add('hidden');
+            }
+
+            // Convert PHP Array to JSON using a simple and reliable approach
+            function convertPhpToJson(phpCode) {
+                try {
+                    // Clean up the PHP code
+                    let cleanCode = phpCode.replace(/<\?php\s*/g, '').replace(/\?>/g, '').trim();
+                    cleanCode = cleanCode.replace(/^\$[a-zA-Z_][a-zA-Z0-9_]*\s*=\s*/, '');
+                    cleanCode = cleanCode.replace(/;\s*$/, '');
+                    
+                    // Use a simple and reliable conversion
+                    return parsePhpArraySimple(cleanCode);
+                    
+                } catch (error) {
+                    throw new Error('Invalid PHP array syntax. Please check your input format.');
+                }
+            }
+
+            // Simple and reliable PHP array parser
+            function parsePhpArraySimple(phpCode) {
+                // Remove outer brackets
+                let content = phpCode.trim();
+                if (content.startsWith('[') && content.endsWith(']')) {
+                    content = content.slice(1, -1).trim();
+                }
+                
+                if (!content) {
+                    return [];
+                }
+                
+                const result = {};
+                const items = [];
+                let isIndexed = true;
+                
+                // Split by lines and process each line
+                const lines = content.split('\n').map(line => line.trim()).filter(line => line);
+                
+                for (const line of lines) {
+                    const cleanLine = line.replace(/,$/, '').trim();
+                    
+                    if (cleanLine.includes('=>')) {
+                        isIndexed = false;
+                        const arrowIndex = cleanLine.indexOf('=>');
+                        const key = cleanLine.substring(0, arrowIndex).trim();
+                        const value = cleanLine.substring(arrowIndex + 2).trim();
+                        
+                        const cleanKey = parsePhpValue(key);
+                        const cleanValue = parsePhpValue(value);
+                        
+                        result[cleanKey] = cleanValue;
+                    } else {
+                        const value = parsePhpValue(cleanLine);
+                        items.push(value);
+                    }
+                }
+                
+                return isIndexed ? items : result;
+            }
+
+            function parsePhpValue(value) {
+                value = value.trim();
+                
+                // Handle strings with single quotes
+                if (value.startsWith("'") && value.endsWith("'")) {
+                    return value.slice(1, -1);
+                }
+                
+                // Handle strings with double quotes
+                if (value.startsWith('"') && value.endsWith('"')) {
+                    return value.slice(1, -1);
+                }
+                
+                // Handle numbers
+                if (/^-?\d+(\.\d+)?$/.test(value)) {
+                    return parseFloat(value);
+                }
+                
+                // Handle booleans
+                if (value === 'true') return true;
+                if (value === 'false') return false;
+                
+                // Handle null
+                if (value === 'null') return null;
+                
+                // Handle nested arrays
+                if (value.startsWith('[') && value.endsWith(']')) {
+                    return parsePhpArraySimple(value);
+                }
+                
+                // Unquoted strings (like array keys)
+                return value;
+            }
+
+            // Example PHP array on page load
+            window.addEventListener('load', () => {
+                const examplePhp = `[
+    'name' => 'DevDunia',
+    'description' => 'Your world of developer tools',
+    'tools' => [
+        'JSON to PHP Converter',
+        'PHP to JSON Converter',
+        'Base64 Encoder'
+    ],
+    'features' => [
+        'free' => true,
+        'offline' => true,
+        'simple' => true
+    ]
+]`;
+                
+                phpInput.value = examplePhp;
+            });
+        });
+    </script>
+</body>
+</html>
