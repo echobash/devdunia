@@ -1,13 +1,20 @@
 // Sidebar HTML content as a string
-const sidebarHTML = `<!-- Common Sidebar for DevDunia -->
-<aside class="sidebar">
-    <div class="p-4">
-        <!-- Logo -->
-        <div class="flex items-center justify-center mb-8">
-            <a href="index.html" class="bg-gradient-to-r from-emerald-400 to-teal-500 rounded-lg flex items-center justify-center px-4 py-2">
-                <span class="text-white font-bold text-sm">DevDunia</span>
-            </a>
-        </div>
+const sidebarHTML = `    <!-- Common Sidebar for DevDunia -->
+    <aside class="sidebar">
+        <div class="p-4">
+            <!-- Logo -->
+            <div class="flex items-center justify-center mb-8">
+                <a href="index.html" class="bg-gradient-to-r from-emerald-400 to-teal-500 rounded-lg flex items-center justify-center px-4 py-2">
+                    <span class="text-white font-bold text-sm">DevDunia</span>
+                </a>
+            </div>
+
+            <!-- Powered by echobash.com -->
+            <div class="text-center mb-4">
+                <p class="text-xs text-gray-500">
+                    Powered by <a href="https://echobash.com" target="_blank" class="text-blue-400 hover:text-blue-300 transition-colors">echobash.com</a>
+                </p>
+            </div>
 
         <!-- Encoders/Decoders Section -->
         <div class="sidebar-section">
@@ -123,10 +130,14 @@ const sidebarHTML = `<!-- Common Sidebar for DevDunia -->
                 <div class="sidebar-icon">🔌</div>
                 <span class="sidebar-text">API & Integration</span>
             </a>
-            <a href="api-tester.html" class="sidebar-item">
-                <div class="sidebar-icon">⚡</div>
-                <span class="sidebar-text">API Response Tester</span>
-            </a>
+                <a href="api-tester.html" class="sidebar-item">
+                    <div class="sidebar-icon">⚡</div>
+                    <span class="sidebar-text">API Response Tester</span>
+                </a>
+                <a href="http-response-header-printer.html" class="sidebar-item">
+                    <div class="sidebar-icon">📡</div>
+                    <span class="sidebar-text">HTTP Header Printer</span>
+                </a>
             <a href="curl-describer.html" class="sidebar-item">
                 <div class="sidebar-icon">🌐</div>
                 <span class="sidebar-text">cURL Describer</span>
