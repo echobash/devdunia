@@ -16,84 +16,100 @@ const sidebarHTML = `    <!-- Common Sidebar for DevDunia -->
                 </p>
             </div>
 
-        <!-- Encoders/Decoders Section -->
-        <div class="sidebar-section">
-            <div class="sidebar-section-title">Encoders</div>
-            <a href="index.html#encoders" class="sidebar-item">
-                <div class="sidebar-icon">🔐</div>
-                <span class="sidebar-text">Encoders/Decoders</span>
-            </a>
-            <a href="json-decoder.html" class="sidebar-item">
-                <div class="sidebar-icon">📄</div>
-                <span class="sidebar-text">JSON Decoder</span>
-            </a>
-            <a href="base64-encoder.html" class="sidebar-item">
-                <div class="sidebar-icon">🔢</div>
-                <span class="sidebar-text">Base64 Encoder</span>
-            </a>
-            <a href="url-encoder.html" class="sidebar-item">
-                <div class="sidebar-icon">🔗</div>
-                <span class="sidebar-text">URL Encoder</span>
-            </a>
-            <a href="html-entities.html" class="sidebar-item">
-                <div class="sidebar-icon">🏷️</div>
-                <span class="sidebar-text">HTML Entities</span>
-            </a>
-            <a href="rot13-encoder.html" class="sidebar-item">
-                <div class="sidebar-icon">🔄</div>
-                <span class="sidebar-text">ROT13 Encoder</span>
-            </a>
-            <a href="caesar-cipher.html" class="sidebar-item">
-                <div class="sidebar-icon">🔐</div>
-                <span class="sidebar-text">Caesar Cipher</span>
-            </a>
-            <a href="ascii-converter.html" class="sidebar-item">
-                <div class="sidebar-icon">🔤</div>
-                <span class="sidebar-text">ASCII Converter</span>
-            </a>
-        </div>
+            <!-- Encoders/Decoders Section -->
+            <div class="sidebar-section">
+                <div class="sidebar-section-title">Encoders</div>
+                <a href="home.html#encoders" class="sidebar-item">
+                    <div class="sidebar-icon">🔐</div>
+                    <span class="sidebar-text">Encoders/Decoders</span>
+                </a>
+                <a href="json-decoder.html" class="sidebar-item">
+                    <div class="sidebar-icon">📄</div>
+                    <span class="sidebar-text">JSON Decoder</span>
+                </a>
+                <a href="php-to-json.html" class="sidebar-item">
+                    <div class="sidebar-icon">🐘</div>
+                    <span class="sidebar-text">PHP to JSON</span>
+                </a>
+                <a href="base64-encoder.html" class="sidebar-item">
+                    <div class="sidebar-icon">🔢</div>
+                    <span class="sidebar-text">Base64 Encoder</span>
+                </a>
+                <a href="base64-decoder.html" class="sidebar-item">
+                    <div class="sidebar-icon">🔢</div>
+                    <span class="sidebar-text">Base64 Decoder</span>
+                </a>
+                <a href="url-encoder.html" class="sidebar-item">
+                    <div class="sidebar-icon">🔗</div>
+                    <span class="sidebar-text">URL Encoder</span>
+                </a>
+                <a href="url-decoder.html" class="sidebar-item">
+                    <div class="sidebar-icon">🔗</div>
+                    <span class="sidebar-text">URL Decoder</span>
+                </a>
+                <a href="html-entities.html" class="sidebar-item">
+                    <div class="sidebar-icon">🏷️</div>
+                    <span class="sidebar-text">HTML Entities</span>
+                </a>
+                <a href="rot13-encoder.html" class="sidebar-item">
+                    <div class="sidebar-icon">🔄</div>
+                    <span class="sidebar-text">ROT13 Encoder</span>
+                </a>
+                <a href="caesar-cipher.html" class="sidebar-item">
+                    <div class="sidebar-icon">🔐</div>
+                    <span class="sidebar-text">Caesar Cipher</span>
+                </a>
+                <a href="ascii-converter.html" class="sidebar-item">
+                    <div class="sidebar-icon">🔤</div>
+                    <span class="sidebar-text">ASCII Converter</span>
+                </a>
+            </div>
 
-        <!-- Formatters Section -->
-        <div class="sidebar-section">
-            <div class="sidebar-section-title">Formatters</div>
-            <a href="index.html#formatters" class="sidebar-item">
-                <div class="sidebar-icon">📝</div>
-                <span class="sidebar-text">Formatters</span>
-            </a>
-            <a href="json-beautifier.html" class="sidebar-item">
-                <div class="sidebar-icon">✨</div>
-                <span class="sidebar-text">JSON Beautifier</span>
-            </a>
-            <a href="json-minifier.html" class="sidebar-item">
-                <div class="sidebar-icon">📦</div>
-                <span class="sidebar-text">JSON Minifier</span>
-            </a>
-            <a href="yaml-json-converter.html" class="sidebar-item">
-                <div class="sidebar-icon">🔄</div>
-                <span class="sidebar-text">YAML ⇄ JSON</span>
-            </a>
-            <a href="xml-formatter.html" class="sidebar-item">
-                <div class="sidebar-icon">📋</div>
-                <span class="sidebar-text">XML Formatter</span>
-            </a>
-            <a href="csv-json-converter.html" class="sidebar-item">
-                <div class="sidebar-icon">📊</div>
-                <span class="sidebar-text">CSV ⇄ JSON</span>
-            </a>
-            <a href="sql-formatter.html" class="sidebar-item">
-                <div class="sidebar-icon">🗃️</div>
-                <span class="sidebar-text">SQL Formatter</span>
-            </a>
-            <a href="string-transformer.html" class="sidebar-item">
-                <div class="sidebar-icon">🔄</div>
-                <span class="sidebar-text">String Transformer</span>
-            </a>
-        </div>
+            <!-- Formatters Section -->
+            <div class="sidebar-section">
+                <div class="sidebar-section-title">Formatters</div>
+                <a href="home.html#formatters" class="sidebar-item">
+                    <div class="sidebar-icon">📝</div>
+                    <span class="sidebar-text">Formatters</span>
+                </a>
+                <a href="json-beautifier.html" class="sidebar-item">
+                    <div class="sidebar-icon">✨</div>
+                    <span class="sidebar-text">JSON Beautifier</span>
+                </a>
+                <a href="json-minifier.html" class="sidebar-item">
+                    <div class="sidebar-icon">📦</div>
+                    <span class="sidebar-text">JSON Minifier</span>
+                </a>
+                <a href="yaml-json-converter.html" class="sidebar-item">
+                    <div class="sidebar-icon">🔄</div>
+                    <span class="sidebar-text">YAML ⇄ JSON</span>
+                </a>
+                <a href="xml-formatter.html" class="sidebar-item">
+                    <div class="sidebar-icon">📋</div>
+                    <span class="sidebar-text">XML Formatter</span>
+                </a>
+                <a href="csv-json-converter.html" class="sidebar-item">
+                    <div class="sidebar-icon">📊</div>
+                    <span class="sidebar-text">CSV ⇄ JSON</span>
+                </a>
+                <a href="sql-formatter.html" class="sidebar-item">
+                    <div class="sidebar-icon">🗃️</div>
+                    <span class="sidebar-text">SQL Formatter</span>
+                </a>
+                <a href="string-transformer.html" class="sidebar-item">
+                    <div class="sidebar-icon">🔄</div>
+                    <span class="sidebar-text">String Transformer</span>
+                </a>
+                <a href="regex-tester.html" class="sidebar-item">
+                    <div class="sidebar-icon">🔍</div>
+                    <span class="sidebar-text">Regex Tester</span>
+                </a>
+            </div>
 
         <!-- Generators Section -->
         <div class="sidebar-section">
             <div class="sidebar-section-title">Generators</div>
-            <a href="index.html#generators" class="sidebar-item">
+            <a href="home.html#generators" class="sidebar-item">
                 <div class="sidebar-icon">⚡</div>
                 <span class="sidebar-text">Generators</span>
             </a>
@@ -126,7 +142,7 @@ const sidebarHTML = `    <!-- Common Sidebar for DevDunia -->
         <!-- API Tools Section -->
         <div class="sidebar-section">
             <div class="sidebar-section-title">API Tools</div>
-            <a href="index.html#api-tools" class="sidebar-item">
+            <a href="home.html#api-tools" class="sidebar-item">
                 <div class="sidebar-icon">🔌</div>
                 <span class="sidebar-text">API & Integration</span>
             </a>
@@ -142,20 +158,24 @@ const sidebarHTML = `    <!-- Common Sidebar for DevDunia -->
                 <div class="sidebar-icon">🌐</div>
                 <span class="sidebar-text">cURL Describer</span>
             </a>
-            <a href="regex-tester.html" class="sidebar-item">
-                <div class="sidebar-icon">🔍</div>
-                <span class="sidebar-text">Regex Tester</span>
-            </a>
             <a href="cron-describer.html" class="sidebar-item">
                 <div class="sidebar-icon">⏰</div>
                 <span class="sidebar-text">Cron Describer</span>
+            </a>
+            <a href="http-response-header-printer.html" class="sidebar-item">
+                <div class="sidebar-icon">📡</div>
+                <span class="sidebar-text">HTTP Header Printer</span>
+            </a>
+            <a href="api-tester.html" class="sidebar-item">
+                <div class="sidebar-icon">⚡</div>
+                <span class="sidebar-text">API Tester</span>
             </a>
         </div>
 
         <!-- Development Tools Section -->
         <div class="sidebar-section">
             <div class="sidebar-section-title">Dev Tools</div>
-            <a href="index.html#dev-tools" class="sidebar-item">
+            <a href="home.html#dev-tools" class="sidebar-item">
                 <div class="sidebar-icon">🛠️</div>
                 <span class="sidebar-text">Development Tools</span>
             </a>
@@ -167,16 +187,16 @@ const sidebarHTML = `    <!-- Common Sidebar for DevDunia -->
                 <div class="sidebar-icon">⚙️</div>
                 <span class="sidebar-text">Environment Generator</span>
             </a>
-                <a href="word-counter.html" class="sidebar-item">
-                    <div class="sidebar-icon">📊</div>
-                    <span class="sidebar-text">Word Counter</span>
-                </a>
+            <a href="word-counter.html" class="sidebar-item">
+                <div class="sidebar-icon">📊</div>
+                <span class="sidebar-text">Word Counter</span>
+            </a>
             </div>
 
             <!-- Payments Section -->
             <div class="sidebar-section">
                 <div class="sidebar-section-title">Payments</div>
-                <a href="index.html#payments" class="sidebar-item">
+                <a href="home.html#payments" class="sidebar-item">
                     <div class="sidebar-icon">💳</div>
                     <span class="sidebar-text">Payments</span>
                 </a>
@@ -189,7 +209,7 @@ const sidebarHTML = `    <!-- Common Sidebar for DevDunia -->
         <!-- Python Section -->
         <div class="sidebar-section">
             <div class="sidebar-section-title">Python</div>
-            <a href="index.html#python" class="sidebar-item">
+            <a href="home.html#python" class="sidebar-item">
                 <div class="sidebar-icon">🐍</div>
                 <span class="sidebar-text">Python Toolkit</span>
             </a>
@@ -213,12 +233,24 @@ const sidebarHTML = `    <!-- Common Sidebar for DevDunia -->
                 <div class="sidebar-icon">📊</div>
                 <span class="sidebar-text">Plotly</span>
             </a>
+            <a href="python-pandas.html" class="sidebar-item">
+                <div class="sidebar-icon">🐼</div>
+                <span class="sidebar-text">Python Pandas</span>
+            </a>
+            <a href="python-flask.html" class="sidebar-item">
+                <div class="sidebar-icon">🌶️</div>
+                <span class="sidebar-text">Python Flask</span>
+            </a>
+            <a href="python-requests.html" class="sidebar-item">
+                <div class="sidebar-icon">📡</div>
+                <span class="sidebar-text">Python Requests</span>
+            </a>
         </div>
 
         <!-- Information Section -->
         <div class="sidebar-section">
             <div class="sidebar-section-title">Info</div>
-            <a href="index.html#info" class="sidebar-item">
+            <a href="home.html#info" class="sidebar-item">
                 <div class="sidebar-icon">ℹ️</div>
                 <span class="sidebar-text">Information</span>
             </a>
