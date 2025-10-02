@@ -132,19 +132,17 @@ At echobash.com, we believe in the power of open source and the developer commun
 ### Connect With Us
 - **Website**: [echobash.com](https://echobash.com)
 - **GitHub**: [github.com/echobash](https://github.com/echobash)
-- **Twitter**: [@echobash](https://twitter.com/echobash)
+- **Twitter**: [@alianwar_rocker](https://twitter.com/alianwar_rocker)
 
 ## 🤝 Contributing
 
 We welcome contributions from the community! Here's how you can help:
 
 ### Ways to Contribute
-1. **🐛 Report Bugs** - Found a bug? Let us know!
 2. **💡 Suggest Features** - Have an idea? We'd love to hear it!
 3. **📝 Improve Documentation** - Help others understand the tools better
 4. **🔧 Add New Tools** - Create new utilities for the community
 5. **🎨 Enhance UI/UX** - Make the interface even better
-6. **🧪 Test** - Help us ensure everything works perfectly
 
 ### Getting Started with Contributions
 1. Fork the repository
