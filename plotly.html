@@ -1,0 +1,462 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Plotly - Developer Toolkit | DevDunia</title>
+    <meta name="description" content="Plotly interactive charts, dashboards, and data visualization examples. Free online Plotly reference for developers.">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="js/common.js"></script>
+    <style>
+        body {
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #0f172a 100%);
+        }
+    </style>
+</head>
+<body class="min-h-screen">
+    <!-- Background: Consistent Subtle Dark Gradient -->
+    <div class="fixed inset-0 -z-10 bg-gradient-to-br from-gray-900 via-slate-900 to-gray-900"></div>
+
+    <!-- Main Container -->
+    <div class="relative z-10 container mx-auto px-4 pt-16 pb-24 sm:px-6 lg:px-8">
+        
+        <!-- Page Header -->
+        <div class="text-center mb-12">
+            <h1 class="text-3xl sm:text-4xl font-bold mb-4 tracking-tight
+                       text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 to-teal-500">
+                Plotly
+            </h1>
+            <p class="text-lg text-gray-400 max-w-2xl mx-auto">
+                Interactive charts, dashboards, and data visualization examples.
+            </p>
+        </div>
+
+        <!-- Tool Container -->
+        <div class="max-w-6xl mx-auto">
+            <div class="bg-slate-800/70 backdrop-blur-md rounded-lg shadow-lg border border-slate-700/60 p-6">
+                
+                <!-- Setup Section -->
+                <div class="mb-8">
+                    <h2 class="text-xl font-semibold text-emerald-300 mb-4">Setup & Installation</h2>
+                    <div class="bg-slate-700/30 rounded-lg p-4 border border-slate-600/50">
+                        <div class="flex items-center justify-between mb-3">
+                            <h3 class="text-lg font-medium text-emerald-300">Installation & Basic Setup</h3>
+                            <button class="copy-btn px-3 py-1 bg-emerald-600 hover:bg-emerald-700 text-white text-xs rounded transition-colors duration-200 flex items-center space-x-1" data-target="setup-code">
+                                <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v8a2 2 0 01-2 2h-2m-6-4l2 2m0 0l2-2m-2 2V10"></path>
+                                </svg>
+                                <span>Copy</span>
+                            </button>
+                        </div>
+                        <textarea 
+                            id="setup-code" 
+                            rows="8" 
+                            class="w-full px-3 py-2 bg-slate-800/50 border border-slate-600 rounded text-gray-200 font-mono text-sm resize-none"
+                            readonly
+                        ># Install Plotly
+pip install plotly
+
+# Install additional packages
+pip install pandas numpy dash
+
+# Basic imports
+import plotly.graph_objects as go
+import plotly.express as px
+import plotly.offline as pyo
+import pandas as pd
+import numpy as np
+
+# For Jupyter notebooks
+import plotly.io as pio
+pio.renderers.default = "notebook"
+
+# For web applications
+import dash
+from dash import dcc, html</textarea>
+                    </div>
+                </div>
+
+                <!-- Basic Charts Section -->
+                <div class="mb-8">
+                    <h2 class="text-xl font-semibold text-emerald-300 mb-4">Basic Charts</h2>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        
+                        <!-- Line and Scatter Plots -->
+                        <div class="bg-slate-700/30 rounded-lg p-4 border border-slate-600/50">
+                            <div class="flex items-center justify-between mb-3">
+                                <h3 class="text-lg font-medium text-emerald-300">Line & Scatter Plots</h3>
+                                <button class="copy-btn px-3 py-1 bg-emerald-600 hover:bg-emerald-700 text-white text-xs rounded transition-colors duration-200 flex items-center space-x-1" data-target="line-scatter-code">
+                                    <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v8a2 2 0 01-2 2h-2m-6-4l2 2m0 0l2-2m-2 2V10"></path>
+                                    </svg>
+                                    <span>Copy</span>
+                                </button>
+                            </div>
+                            <textarea 
+                                id="line-scatter-code" 
+                                rows="15" 
+                                class="w-full px-3 py-2 bg-slate-800/50 border border-slate-600 rounded text-gray-200 font-mono text-sm resize-none"
+                                readonly
+                            >import plotly.graph_objects as go
+import plotly.express as px
+import numpy as np
+
+# Create sample data
+x = np.linspace(0, 10, 100)
+y1 = np.sin(x)
+y2 = np.cos(x)
+
+# Line plot with Plotly Express
+fig = px.line(x=x, y=y1, title='Sine Wave')
+fig.show()
+
+# Multiple lines
+fig = go.Figure()
+fig.add_trace(go.Scatter(x=x, y=y1, mode='lines', name='sin(x)'))
+fig.add_trace(go.Scatter(x=x, y=y2, mode='lines', name='cos(x)'))
+fig.update_layout(title='Trigonometric Functions', xaxis_title='X', yaxis_title='Y')
+fig.show()
+
+# Scatter plot
+x_scatter = np.random.randn(100)
+y_scatter = np.random.randn(100)
+fig = px.scatter(x=x_scatter, y=y_scatter, title='Random Scatter Plot')
+fig.show()
+
+# Scatter with colors
+colors = np.random.randn(100)
+fig = px.scatter(x=x_scatter, y=y_scatter, color=colors, 
+                title='Colored Scatter Plot', color_continuous_scale='viridis')
+fig.show()</textarea>
+                        </div>
+
+                        <!-- Bar and Pie Charts -->
+                        <div class="bg-slate-700/30 rounded-lg p-4 border border-slate-600/50">
+                            <div class="flex items-center justify-between mb-3">
+                                <h3 class="text-lg font-medium text-emerald-300">Bar & Pie Charts</h3>
+                                <button class="copy-btn px-3 py-1 bg-emerald-600 hover:bg-emerald-700 text-white text-xs rounded transition-colors duration-200 flex items-center space-x-1" data-target="bar-pie-code">
+                                    <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v8a2 2 0 01-2 2h-2m-6-4l2 2m0 0l2-2m-2 2V10"></path>
+                                    </svg>
+                                    <span>Copy</span>
+                                </button>
+                            </div>
+                            <textarea 
+                                id="bar-pie-code" 
+                                rows="15" 
+                                class="w-full px-3 py-2 bg-slate-800/50 border border-slate-600 rounded text-gray-200 font-mono text-sm resize-none"
+                                readonly
+                            >import plotly.graph_objects as go
+import plotly.express as px
+import pandas as pd
+
+# Sample data
+categories = ['A', 'B', 'C', 'D', 'E']
+values = [23, 45, 56, 78, 32]
+
+# Bar chart
+fig = px.bar(x=categories, y=values, title='Bar Chart')
+fig.show()
+
+# Horizontal bar chart
+fig = px.bar(x=values, y=categories, orientation='h', title='Horizontal Bar Chart')
+fig.show()
+
+# Grouped bar chart
+df = pd.DataFrame({
+    'Category': ['A', 'B', 'C', 'D', 'E'] * 2,
+    'Value': [23, 45, 56, 78, 32, 34, 67, 23, 45, 67],
+    'Group': ['Group 1'] * 5 + ['Group 2'] * 5
+})
+
+fig = px.bar(df, x='Category', y='Value', color='Group', 
+            title='Grouped Bar Chart', barmode='group')
+fig.show()
+
+# Pie chart
+fig = px.pie(values=values, names=categories, title='Pie Chart')
+fig.show()
+
+# Donut chart
+fig = go.Figure(data=[go.Pie(labels=categories, values=values, hole=0.3)])
+fig.update_layout(title='Donut Chart')
+fig.show()</textarea>
+                        </div>
+
+                    </div>
+                </div>
+
+                <!-- Advanced Charts Section -->
+                <div class="mb-8">
+                    <h2 class="text-xl font-semibold text-emerald-300 mb-4">Advanced Charts</h2>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        
+                        <!-- 3D and Surface Plots -->
+                        <div class="bg-slate-700/30 rounded-lg p-4 border border-slate-600/50">
+                            <div class="flex items-center justify-between mb-3">
+                                <h3 class="text-lg font-medium text-emerald-300">3D & Surface Plots</h3>
+                                <button class="copy-btn px-3 py-1 bg-emerald-600 hover:bg-emerald-700 text-white text-xs rounded transition-colors duration-200 flex items-center space-x-1" data-target="3d-surface-code">
+                                    <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v8a2 2 0 01-2 2h-2m-6-4l2 2m0 0l2-2m-2 2V10"></path>
+                                    </svg>
+                                    <span>Copy</span>
+                                </button>
+                            </div>
+                            <textarea 
+                                id="3d-surface-code" 
+                                rows="15" 
+                                class="w-full px-3 py-2 bg-slate-800/50 border border-slate-600 rounded text-gray-200 font-mono text-sm resize-none"
+                                readonly
+                            >import plotly.graph_objects as go
+import numpy as np
+
+# 3D scatter plot
+x = np.random.randn(100)
+y = np.random.randn(100)
+z = np.random.randn(100)
+
+fig = go.Figure(data=[go.Scatter3d(
+    x=x, y=y, z=z,
+    mode='markers',
+    marker=dict(
+        size=5,
+        color=z,
+        colorscale='viridis',
+        opacity=0.8
+    )
+)])
+fig.update_layout(title='3D Scatter Plot')
+fig.show()
+
+# Surface plot
+x = np.linspace(-5, 5, 50)
+y = np.linspace(-5, 5, 50)
+X, Y = np.meshgrid(x, y)
+Z = np.sin(np.sqrt(X**2 + Y**2))
+
+fig = go.Figure(data=[go.Surface(z=Z, x=X, y=Y)])
+fig.update_layout(title='3D Surface Plot')
+fig.show()
+
+# 3D line plot
+t = np.linspace(0, 10, 100)
+x = np.sin(t)
+y = np.cos(t)
+z = t
+
+fig = go.Figure(data=[go.Scatter3d(
+    x=x, y=y, z=z,
+    mode='lines',
+    line=dict(color='red', width=5)
+)])
+fig.update_layout(title='3D Line Plot')
+fig.show()</textarea>
+                        </div>
+
+                        <!-- Heatmaps and Contour -->
+                        <div class="bg-slate-700/30 rounded-lg p-4 border border-slate-600/50">
+                            <div class="flex items-center justify-between mb-3">
+                                <h3 class="text-lg font-medium text-emerald-300">Heatmaps & Contour</h3>
+                                <button class="copy-btn px-3 py-1 bg-emerald-600 hover:bg-emerald-700 text-white text-xs rounded transition-colors duration-200 flex items-center space-x-1" data-target="heatmap-code">
+                                    <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v8a2 2 0 01-2 2h-2m-6-4l2 2m0 0l2-2m-2 2V10"></path>
+                                    </svg>
+                                    <span>Copy</span>
+                                </button>
+                            </div>
+                            <textarea 
+                                id="heatmap-code" 
+                                rows="15" 
+                                class="w-full px-3 py-2 bg-slate-800/50 border border-slate-600 rounded text-gray-200 font-mono text-sm resize-none"
+                                readonly
+                            >import plotly.graph_objects as go
+import plotly.express as px
+import numpy as np
+import pandas as pd
+
+# Simple heatmap
+data = np.random.randn(10, 10)
+fig = go.Figure(data=go.Heatmap(z=data, colorscale='viridis'))
+fig.update_layout(title='Heatmap')
+fig.show()
+
+# Correlation heatmap
+np.random.seed(42)
+df = pd.DataFrame(np.random.randn(100, 5), columns=['A', 'B', 'C', 'D', 'E'])
+correlation_matrix = df.corr()
+
+fig = go.Figure(data=go.Heatmap(
+    z=correlation_matrix.values,
+    x=correlation_matrix.columns,
+    y=correlation_matrix.columns,
+    colorscale='RdBu',
+    zmid=0
+))
+fig.update_layout(title='Correlation Heatmap')
+fig.show()
+
+# Contour plot
+x = np.linspace(-5, 5, 50)
+y = np.linspace(-5, 5, 50)
+X, Y = np.meshgrid(x, y)
+Z = np.sin(np.sqrt(X**2 + Y**2))
+
+fig = go.Figure(data=go.Contour(
+    x=x, y=y, z=Z,
+    colorscale='viridis',
+    contours=dict(
+        start=-1, end=1, size=0.1
+    )
+))
+fig.update_layout(title='Contour Plot')
+fig.show()</textarea>
+                        </div>
+
+                    </div>
+                </div>
+
+                <!-- Dash Applications Section -->
+                <div class="mb-8">
+                    <h2 class="text-xl font-semibold text-emerald-300 mb-4">Dash Applications</h2>
+                    <div class="bg-slate-700/30 rounded-lg p-4 border border-slate-600/50">
+                        <div class="flex items-center justify-between mb-3">
+                            <h3 class="text-lg font-medium text-emerald-300">Interactive Dashboards</h3>
+                            <button class="copy-btn px-3 py-1 bg-emerald-600 hover:bg-emerald-700 text-white text-xs rounded transition-colors duration-200 flex items-center space-x-1" data-target="dash-code">
+                                <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v8a2 2 0 01-2 2h-2m-6-4l2 2m0 0l2-2m-2 2V10"></path>
+                                </svg>
+                                <span>Copy</span>
+                            </button>
+                        </div>
+                        <textarea 
+                            id="dash-code" 
+                            rows="20" 
+                            class="w-full px-3 py-2 bg-slate-800/50 border border-slate-600 rounded text-gray-200 font-mono text-sm resize-none"
+                            readonly
+                        >import dash
+from dash import dcc, html, Input, Output
+import plotly.express as px
+import pandas as pd
+import numpy as np
+
+# Create sample data
+np.random.seed(42)
+dates = pd.date_range('2020-01-01', '2023-12-31', freq='D')
+data = pd.DataFrame({
+    'date': dates,
+    'value': np.cumsum(np.random.randn(len(dates)) * 0.1) + 100,
+    'category': np.random.choice(['A', 'B', 'C'], len(dates))
+})
+
+# Initialize Dash app
+app = dash.Dash(__name__)
+
+# Define app layout
+app.layout = html.Div([
+    html.H1("Interactive Dashboard", style={'textAlign': 'center'}),
+    
+    html.Div([
+        dcc.Dropdown(
+            id='category-dropdown',
+            options=[{'label': cat, 'value': cat} for cat in data['category'].unique()],
+            value='A',
+            style={'width': '50%'}
+        )
+    ], style={'padding': '20px'}),
+    
+    dcc.Graph(id='time-series-plot'),
+    
+    html.Div([
+        dcc.Graph(id='histogram-plot')
+    ], style={'display': 'flex'})
+])
+
+# Define callbacks
+@app.callback(
+    [Output('time-series-plot', 'figure'),
+     Output('histogram-plot', 'figure')],
+    [Input('category-dropdown', 'value')]
+)
+def update_plots(selected_category):
+    # Filter data
+    filtered_data = data[data['category'] == selected_category]
+    
+    # Time series plot
+    fig1 = px.line(filtered_data, x='date', y='value', 
+                  title=f'Time Series for Category {selected_category}')
+    
+    # Histogram
+    fig2 = px.histogram(filtered_data, x='value', 
+                       title=f'Distribution for Category {selected_category}')
+    
+    return fig1, fig2
+
+# Run the app
+if __name__ == '__main__':
+    app.run_server(debug=True, port=8050)
+
+# Simple dashboard with multiple charts
+app2 = dash.Dash(__name__)
+
+app2.layout = html.Div([
+    html.H1("Multi-Chart Dashboard"),
+    
+    html.Div([
+        dcc.Graph(
+            id='scatter-plot',
+            figure=px.scatter(data, x='date', y='value', color='category')
+        )
+    ]),
+    
+    html.Div([
+        dcc.Graph(
+            id='box-plot',
+            figure=px.box(data, x='category', y='value')
+        )
+    ])
+])
+
+if __name__ == '__main__':
+    app2.run_server(debug=True, port=8051)</textarea>
+                    </div>
+                </div>
+
+                <!-- Quick Reference Section -->
+                <div class="mt-8 p-4 bg-slate-700/30 rounded-lg border border-slate-600/50">
+                    <h3 class="text-lg font-semibold text-emerald-400 mb-3">Quick Reference</h3>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
+                        <div>
+                            <p class="text-gray-300 font-medium mb-2">Key Modules:</p>
+                            <ul class="text-gray-400 space-y-1">
+                                <li>• <code>plotly.graph_objects</code> - Low-level API</li>
+                                <li>• <code>plotly.express</code> - High-level API</li>
+                                <li>• <code>plotly.offline</code> - Offline plotting</li>
+                                <li>• <code>dash</code> - Web applications</li>
+                                <li>• <code>plotly.io</code> - I/O operations</li>
+                            </ul>
+                        </div>
+                        <div>
+                            <p class="text-gray-300 font-medium mb-2">Common Chart Types:</p>
+                            <ul class="text-gray-400 space-y-1">
+                                <li>• <code>px.line()</code> - Line charts</li>
+                                <li>• <code>px.scatter()</code> - Scatter plots</li>
+                                <li>• <code>px.bar()</code> - Bar charts</li>
+                                <li>• <code>px.pie()</code> - Pie charts</li>
+                                <li>• <code>go.Heatmap()</code> - Heatmaps</li>
+                                <li>• <code>go.Surface()</code> - 3D surfaces</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+    </div>
+
+    <!-- Footer -->
+    <footer class="text-center text-gray-500 mt-10 pb-6">
+        © 2025 DevDunia – Free Developer Tools by <a href="https://echobash.com" class="text-blue-500 hover:underline" target="_blank">echobash</a>
+    </footer>
+</body>
+</html>

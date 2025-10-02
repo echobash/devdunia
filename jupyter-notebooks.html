@@ -1,0 +1,464 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Jupyter Notebooks - Developer Toolkit | DevDunia</title>
+    <meta name="description" content="Jupyter Notebook setup, magic commands, and data visualization examples. Free online Jupyter Notebook reference for developers.">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="js/common.js"></script>
+    <style>
+        body {
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #0f172a 100%);
+        }
+    </style>
+</head>
+<body class="min-h-screen">
+    <!-- Background: Consistent Subtle Dark Gradient -->
+    <div class="fixed inset-0 -z-10 bg-gradient-to-br from-gray-900 via-slate-900 to-gray-900"></div>
+
+    <!-- Main Container -->
+    <div class="relative z-10 container mx-auto px-4 pt-16 pb-24 sm:px-6 lg:px-8">
+        
+        <!-- Page Header -->
+        <div class="text-center mb-12">
+            <h1 class="text-3xl sm:text-4xl font-bold mb-4 tracking-tight
+                       text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 to-teal-500">
+                Jupyter Notebooks
+            </h1>
+            <p class="text-lg text-gray-400 max-w-2xl mx-auto">
+                Notebook setup, magic commands, and data visualization examples.
+            </p>
+        </div>
+
+        <!-- Tool Container -->
+        <div class="max-w-6xl mx-auto">
+            <div class="bg-slate-800/70 backdrop-blur-md rounded-lg shadow-lg border border-slate-700/60 p-6">
+                
+                <!-- Setup Section -->
+                <div class="mb-8">
+                    <h2 class="text-xl font-semibold text-emerald-300 mb-4">Setup & Installation</h2>
+                    <div class="bg-slate-700/30 rounded-lg p-4 border border-slate-600/50">
+                        <div class="flex items-center justify-between mb-3">
+                            <h3 class="text-lg font-medium text-emerald-300">Installation & Basic Setup</h3>
+                            <button class="copy-btn px-3 py-1 bg-emerald-600 hover:bg-emerald-700 text-white text-xs rounded transition-colors duration-200 flex items-center space-x-1" data-target="setup-code">
+                                <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v8a2 2 0 01-2 2h-2m-6-4l2 2m0 0l2-2m-2 2V10"></path>
+                                </svg>
+                                <span>Copy</span>
+                            </button>
+                        </div>
+                        <textarea 
+                            id="setup-code" 
+                            rows="10" 
+                            class="w-full px-3 py-2 bg-slate-800/50 border border-slate-600 rounded text-gray-200 font-mono text-sm resize-none"
+                            readonly
+                        ># Install Jupyter
+pip install jupyter
+
+# Install additional packages
+pip install jupyterlab
+pip install ipywidgets
+pip install matplotlib seaborn pandas numpy
+
+# Start Jupyter Notebook
+jupyter notebook
+
+# Start JupyterLab (modern interface)
+jupyter lab
+
+# Create a new notebook
+jupyter notebook my_notebook.ipynb
+
+# Convert notebook to different formats
+jupyter nbconvert --to html my_notebook.ipynb
+jupyter nbconvert --to pdf my_notebook.ipynb
+jupyter nbconvert --to python my_notebook.ipynb
+
+# Install extensions
+pip install jupyter_contrib_nbextensions
+jupyter contrib nbextension install --user</textarea>
+                    </div>
+                </div>
+
+                <!-- Magic Commands Section -->
+                <div class="mb-8">
+                    <h2 class="text-xl font-semibold text-emerald-300 mb-4">Magic Commands</h2>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        
+                        <!-- Line Magic Commands -->
+                        <div class="bg-slate-700/30 rounded-lg p-4 border border-slate-600/50">
+                            <div class="flex items-center justify-between mb-3">
+                                <h3 class="text-lg font-medium text-emerald-300">Line Magic Commands</h3>
+                                <button class="copy-btn px-3 py-1 bg-emerald-600 hover:bg-emerald-700 text-white text-xs rounded transition-colors duration-200 flex items-center space-x-1" data-target="line-magic-code">
+                                    <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v8a2 2 0 01-2 2h-2m-6-4l2 2m0 0l2-2m-2 2V10"></path>
+                                    </svg>
+                                    <span>Copy</span>
+                                </button>
+                            </div>
+                            <textarea 
+                                id="line-magic-code" 
+                                rows="15" 
+                                class="w-full px-3 py-2 bg-slate-800/50 border border-slate-600 rounded text-gray-200 font-mono text-sm resize-none"
+                                readonly
+                            ># Timing and profiling
+%time sum(range(1000000))
+%timeit sum(range(1000000))
+
+# System commands
+%pwd                    # Current directory
+%ls                     # List files
+%cd /path/to/directory  # Change directory
+%mkdir new_folder       # Create directory
+
+# Environment and variables
+%env                    # Show environment variables
+%env MY_VAR=value       # Set environment variable
+%who                    # Show all variables
+%whos                   # Show variables with details
+%del variable_name      # Delete variable
+
+# History and debugging
+%history                # Show command history
+%debug                  # Enter debugger
+%pdb on                 # Auto-enter debugger on error
+
+# File operations
+%load filename.py       # Load Python file
+%run filename.py        # Run Python file
+%save filename.py 1-5   # Save lines 1-5 to file
+
+# Display options
+%matplotlib inline      # Show plots inline
+%matplotlib notebook    # Interactive plots
+%config InlineBackend.figure_format = 'svg'  # SVG format</textarea>
+                        </div>
+
+                        <!-- Cell Magic Commands -->
+                        <div class="bg-slate-700/30 rounded-lg p-4 border border-slate-600/50">
+                            <div class="flex items-center justify-between mb-3">
+                                <h3 class="text-lg font-medium text-emerald-300">Cell Magic Commands</h3>
+                                <button class="copy-btn px-3 py-1 bg-emerald-600 hover:bg-emerald-700 text-white text-xs rounded transition-colors duration-200 flex items-center space-x-1" data-target="cell-magic-code">
+                                    <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v8a2 2 0 01-2 2h-2m-6-4l2 2m0 0l2-2m-2 2V10"></path>
+                                    </svg>
+                                    <span>Copy</span>
+                                </button>
+                            </div>
+                            <textarea 
+                                id="cell-magic-code" 
+                                rows="15" 
+                                class="w-full px-3 py-2 bg-slate-800/50 border border-slate-600 rounded text-gray-200 font-mono text-sm resize-none"
+                                readonly
+                            ># Run different languages
+%%bash
+echo "Hello from Bash!"
+ls -la
+
+%%html
+<h1>Hello from HTML!</h1>
+<p>This is HTML content in a notebook cell.</p>
+
+%%javascript
+console.log("Hello from JavaScript!");
+alert("Hello World!");
+
+%%latex
+\begin{equation}
+E = mc^2
+\end{equation}
+
+# File operations
+%%writefile my_script.py
+def hello():
+    print("Hello from external file!")
+
+%%writefile -a my_script.py
+def goodbye():
+    print("Goodbye!")
+
+# Capture output
+%%capture captured_output
+print("This output will be captured")
+result = 42
+
+# Show captured output
+captured_output.show()
+
+# Suppress output
+%%capture
+import warnings
+warnings.filterwarnings('ignore')
+print("This won't be displayed")</textarea>
+                        </div>
+
+                    </div>
+                </div>
+
+                <!-- Data Visualization Section -->
+                <div class="mb-8">
+                    <h2 class="text-xl font-semibold text-emerald-300 mb-4">Data Visualization</h2>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        
+                        <!-- Matplotlib Examples -->
+                        <div class="bg-slate-700/30 rounded-lg p-4 border border-slate-600/50">
+                            <div class="flex items-center justify-between mb-3">
+                                <h3 class="text-lg font-medium text-emerald-300">Matplotlib Examples</h3>
+                                <button class="copy-btn px-3 py-1 bg-emerald-600 hover:bg-emerald-700 text-white text-xs rounded transition-colors duration-200 flex items-center space-x-1" data-target="matplotlib-code">
+                                    <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v8a2 2 0 01-2 2h-2m-6-4l2 2m0 0l2-2m-2 2V10"></path>
+                                    </svg>
+                                    <span>Copy</span>
+                                </button>
+                            </div>
+                            <textarea 
+                                id="matplotlib-code" 
+                                rows="15" 
+                                class="w-full px-3 py-2 bg-slate-800/50 border border-slate-600 rounded text-gray-200 font-mono text-sm resize-none"
+                                readonly
+                            >import matplotlib.pyplot as plt
+import numpy as np
+
+# Basic plot
+x = np.linspace(0, 10, 100)
+y = np.sin(x)
+plt.figure(figsize=(10, 6))
+plt.plot(x, y, 'b-', linewidth=2, label='sin(x)')
+plt.xlabel('X values')
+plt.ylabel('Y values')
+plt.title('Sine Wave')
+plt.legend()
+plt.grid(True)
+plt.show()
+
+# Multiple subplots
+fig, axes = plt.subplots(2, 2, figsize=(12, 8))
+
+# Subplot 1: Line plot
+x = np.linspace(0, 10, 100)
+axes[0, 0].plot(x, np.sin(x))
+axes[0, 0].set_title('Sine Wave')
+
+# Subplot 2: Scatter plot
+x = np.random.randn(100)
+y = np.random.randn(100)
+axes[0, 1].scatter(x, y, alpha=0.6)
+axes[0, 1].set_title('Scatter Plot')
+
+# Subplot 3: Histogram
+data = np.random.randn(1000)
+axes[1, 0].hist(data, bins=30, alpha=0.7)
+axes[1, 0].set_title('Histogram')
+
+# Subplot 4: Bar chart
+categories = ['A', 'B', 'C', 'D']
+values = [23, 45, 56, 78]
+axes[1, 1].bar(categories, values)
+axes[1, 1].set_title('Bar Chart')
+
+plt.tight_layout()
+plt.show()</textarea>
+                        </div>
+
+                        <!-- Seaborn Examples -->
+                        <div class="bg-slate-700/30 rounded-lg p-4 border border-slate-600/50">
+                            <div class="flex items-center justify-between mb-3">
+                                <h3 class="text-lg font-medium text-emerald-300">Seaborn Examples</h3>
+                                <button class="copy-btn px-3 py-1 bg-emerald-600 hover:bg-emerald-700 text-white text-xs rounded transition-colors duration-200 flex items-center space-x-1" data-target="seaborn-code">
+                                    <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v8a2 2 0 01-2 2h-2m-6-4l2 2m0 0l2-2m-2 2V10"></path>
+                                    </svg>
+                                    <span>Copy</span>
+                                </button>
+                            </div>
+                            <textarea 
+                                id="seaborn-code" 
+                                rows="15" 
+                                class="w-full px-3 py-2 bg-slate-800/50 border border-slate-600 rounded text-gray-200 font-mono text-sm resize-none"
+                                readonly
+                            >import seaborn as sns
+import pandas as pd
+import numpy as np
+
+# Set style
+sns.set_style("whitegrid")
+sns.set_palette("husl")
+
+# Load sample data
+tips = sns.load_dataset("tips")
+
+# Distribution plots
+plt.figure(figsize=(12, 4))
+
+plt.subplot(1, 3, 1)
+sns.histplot(data=tips, x="total_bill", kde=True)
+plt.title("Total Bill Distribution")
+
+plt.subplot(1, 3, 2)
+sns.boxplot(data=tips, x="day", y="total_bill")
+plt.title("Total Bill by Day")
+
+plt.subplot(1, 3, 3)
+sns.violinplot(data=tips, x="day", y="total_bill", hue="sex")
+plt.title("Total Bill by Day and Sex")
+
+plt.tight_layout()
+plt.show()
+
+# Correlation heatmap
+plt.figure(figsize=(8, 6))
+numeric_data = tips.select_dtypes(include=[np.number])
+correlation_matrix = numeric_data.corr()
+sns.heatmap(correlation_matrix, annot=True, cmap='coolwarm', center=0)
+plt.title("Correlation Heatmap")
+plt.show()
+
+# Pair plot
+sns.pairplot(tips, hue="sex", diag_kind="hist")
+plt.show()</textarea>
+                        </div>
+
+                    </div>
+                </div>
+
+                <!-- Interactive Widgets Section -->
+                <div class="mb-8">
+                    <h2 class="text-xl font-semibold text-emerald-300 mb-4">Interactive Widgets</h2>
+                    <div class="bg-slate-700/30 rounded-lg p-4 border border-slate-600/50">
+                        <div class="flex items-center justify-between mb-3">
+                            <h3 class="text-lg font-medium text-emerald-300">Interactive Controls</h3>
+                            <button class="copy-btn px-3 py-1 bg-emerald-600 hover:bg-emerald-700 text-white text-xs rounded transition-colors duration-200 flex items-center space-x-1" data-target="widgets-code">
+                                <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v8a2 2 0 01-2 2h-2m-6-4l2 2m0 0l2-2m-2 2V10"></path>
+                                </svg>
+                                <span>Copy</span>
+                            </button>
+                        </div>
+                        <textarea 
+                            id="widgets-code" 
+                            rows="20" 
+                            class="w-full px-3 py-2 bg-slate-800/50 border border-slate-600 rounded text-gray-200 font-mono text-sm resize-none"
+                            readonly
+                        >import ipywidgets as widgets
+from IPython.display import display
+import matplotlib.pyplot as plt
+import numpy as np
+
+# Basic interactive plot
+def plot_sine_wave(frequency, amplitude):
+    x = np.linspace(0, 4*np.pi, 1000)
+    y = amplitude * np.sin(frequency * x)
+    
+    plt.figure(figsize=(10, 6))
+    plt.plot(x, y, 'b-', linewidth=2)
+    plt.title(f'Sine Wave: f={frequency}, A={amplitude}')
+    plt.xlabel('X')
+    plt.ylabel('Y')
+    plt.grid(True)
+    plt.show()
+
+# Create interactive widgets
+frequency_slider = widgets.FloatSlider(
+    value=1.0,
+    min=0.1,
+    max=5.0,
+    step=0.1,
+    description='Frequency:'
+)
+
+amplitude_slider = widgets.FloatSlider(
+    value=1.0,
+    min=0.1,
+    max=3.0,
+    step=0.1,
+    description='Amplitude:'
+)
+
+# Interactive widget
+interactive_plot = widgets.interactive(
+    plot_sine_wave,
+    frequency=frequency_slider,
+    amplitude=amplitude_slider
+)
+
+display(interactive_plot)
+
+# Dropdown and text widgets
+def analyze_data(dataset, operation):
+    if dataset == 'Iris':
+        data = sns.load_dataset('iris')
+    elif dataset == 'Tips':
+        data = sns.load_dataset('tips')
+    else:
+        data = sns.load_dataset('titanic')
+    
+    if operation == 'Info':
+        return data.info()
+    elif operation == 'Describe':
+        return data.describe()
+    else:
+        return data.head()
+
+dataset_dropdown = widgets.Dropdown(
+    options=['Iris', 'Tips', 'Titanic'],
+    value='Iris',
+    description='Dataset:'
+)
+
+operation_dropdown = widgets.Dropdown(
+    options=['Info', 'Describe', 'Head'],
+    value='Info',
+    description='Operation:'
+)
+
+interactive_analysis = widgets.interactive(
+    analyze_data,
+    dataset=dataset_dropdown,
+    operation=operation_dropdown
+)
+
+display(interactive_analysis)</textarea>
+                    </div>
+                </div>
+
+                <!-- Quick Reference Section -->
+                <div class="mt-8 p-4 bg-slate-700/30 rounded-lg border border-slate-600/50">
+                    <h3 class="text-lg font-semibold text-emerald-400 mb-3">Quick Reference</h3>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
+                        <div>
+                            <p class="text-gray-300 font-medium mb-2">Keyboard Shortcuts:</p>
+                            <ul class="text-gray-400 space-y-1">
+                                <li>• <code>Shift + Enter</code> - Run cell</li>
+                                <li>• <code>Ctrl + Enter</code> - Run cell (stay)</li>
+                                <li>• <code>A</code> - Insert cell above</li>
+                                <li>• <code>B</code> - Insert cell below</li>
+                                <li>• <code>DD</code> - Delete cell</li>
+                                <li>• <code>M</code> - Markdown mode</li>
+                                <li>• <code>Y</code> - Code mode</li>
+                            </ul>
+                        </div>
+                        <div>
+                            <p class="text-gray-300 font-medium mb-2">Useful Extensions:</p>
+                            <ul class="text-gray-400 space-y-1">
+                                <li>• <code>jupyter_contrib_nbextensions</code></li>
+                                <li>• <code>jupyterlab-git</code> - Git integration</li>
+                                <li>• <code>jupyterlab-lsp</code> - Language server</li>
+                                <li>• <code>jupyterlab-drawio</code> - Diagrams</li>
+                                <li>• <code>jupyterlab-toc</code> - Table of contents</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+    </div>
+
+    <!-- Footer -->
+    <footer class="text-center text-gray-500 mt-10 pb-6">
+        © 2025 DevDunia – Free Developer Tools by <a href="https://echobash.com" class="text-blue-500 hover:underline" target="_blank">echobash</a>
+    </footer>
+</body>
+</html>

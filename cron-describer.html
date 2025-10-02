@@ -1,0 +1,480 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cron Describer - Developer Toolkit | DevDunia</title>
+    <meta name="description" content="Describe and explain cron expressions in human-readable format. Free online cron describer tool like cronguru for developers.">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="js/common.js"></script>
+    <style>
+        body {
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #0f172a 100%);
+        }
+    </style>
+</head>
+<body class="min-h-screen">
+    <!-- Background: Consistent Subtle Dark Gradient -->
+    <div class="fixed inset-0 -z-10 bg-gradient-to-br from-gray-900 via-slate-900 to-gray-900"></div>
+
+    <!-- Main Container -->
+    <div class="relative z-10 container mx-auto px-4 pt-16 pb-24 sm:px-6 lg:px-8">
+        
+        <!-- Page Header -->
+        <div class="text-center mb-12">
+            <h1 class="text-3xl sm:text-4xl font-bold mb-4 tracking-tight
+                       text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-cyan-500">
+                Cron Describer
+            </h1>
+            <p class="text-lg text-gray-400 max-w-2xl mx-auto">
+                Describe and explain cron expressions in human-readable format.
+            </p>
+        </div>
+
+        <!-- Tool Container -->
+        <div class="max-w-4xl mx-auto">
+            <div class="bg-slate-800/70 backdrop-blur-md rounded-lg shadow-lg border border-slate-700/60 p-6">
+                
+                <!-- Input Section -->
+                <div class="mb-6">
+                    <label for="cron-input" class="block text-sm font-medium text-gray-300 mb-2">
+                        Cron Expression
+                    </label>
+                    <div class="flex space-x-2">
+                        <input 
+                            type="text" 
+                            id="cron-input" 
+                            class="flex-1 px-4 py-3 bg-slate-700/50 border border-slate-600 rounded-lg text-gray-200 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent font-mono text-sm"
+                            placeholder="Enter cron expression (e.g., 0 9 * * 1-5)"
+                        >
+                        <button id="describe-btn" class="px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-lg transition-colors duration-200 flex items-center space-x-2">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                            </svg>
+                            <span>Describe</span>
+                        </button>
+                    </div>
+                    <div class="mt-2 text-xs text-gray-500">
+                        💡 Format: minute hour day month day-of-week (e.g., "0 9 * * 1-5" = 9 AM on weekdays)
+                    </div>
+                </div>
+
+                <!-- Error Display -->
+                <div id="error-display" class="hidden mb-6 p-4 bg-red-900/50 border border-red-600/50 rounded-lg">
+                    <div class="flex items-center space-x-2">
+                        <svg class="w-5 h-5 text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                        </svg>
+                        <span id="error-message" class="text-red-300"></span>
+                    </div>
+                </div>
+<!-- Cron Breakdown -->
+<div class="bg-slate-700/30 rounded-lg p-6 border border-slate-600/50">
+    <h3 class="text-lg font-semibold text-blue-300 mb-4">Cron Expression Breakdown</h3>
+    <div class="grid grid-cols-1 md:grid-cols-5 gap-4">
+        <div class="text-center">
+            <div class="bg-slate-800/50 p-3 rounded-lg">
+                <div class="text-sm text-gray-400 mb-1">Minute</div>
+                <div id="minute-field" class="text-blue-400 font-mono text-lg font-bold"></div>
+                <div id="minute-desc" class="text-gray-300 text-xs mt-1"></div>
+            </div>
+        </div>
+        <div class="text-center">
+            <div class="bg-slate-800/50 p-3 rounded-lg">
+                <div class="text-sm text-gray-400 mb-1">Hour</div>
+                <div id="hour-field" class="text-green-400 font-mono text-lg font-bold"></div>
+                <div id="hour-desc" class="text-gray-300 text-xs mt-1"></div>
+            </div>
+        </div>
+        <div class="text-center">
+            <div class="bg-slate-800/50 p-3 rounded-lg">
+                <div class="text-sm text-gray-400 mb-1">Day</div>
+                <div id="day-field" class="text-purple-400 font-mono text-lg font-bold"></div>
+                <div id="day-desc" class="text-gray-300 text-xs mt-1"></div>
+            </div>
+        </div>
+        <div class="text-center">
+            <div class="bg-slate-800/50 p-3 rounded-lg">
+                <div class="text-sm text-gray-400 mb-1">Month</div>
+                <div id="month-field" class="text-orange-400 font-mono text-lg font-bold"></div>
+                <div id="month-desc" class="text-gray-300 text-xs mt-1"></div>
+            </div>
+        </div>
+        <div class="text-center">
+            <div class="bg-slate-800/50 p-3 rounded-lg">
+                <div class="text-sm text-gray-400 mb-1">Day of Week</div>
+                <div id="dow-field" class="text-pink-400 font-mono text-lg font-bold"></div>
+                <div id="dow-desc" class="text-gray-300 text-xs mt-1"></div>
+            </div>
+        </div>
+    </div>
+</div>
+<br>
+                <!-- Description Section -->
+                <div id="description-section" class="hidden">
+                    <div class="bg-slate-700/30 rounded-lg p-6 border border-slate-600/50 mb-6">
+                        <h3 class="text-lg font-semibold text-blue-300 mb-4">Human-Readable Description</h3>
+                        <div id="description-text" class="text-gray-200 text-lg mb-4">
+                            <!-- Description will be displayed here -->
+                        </div>
+                        
+                        <!-- Next Run Times -->
+                        <div class="mt-6">
+                            <h4 class="text-md font-medium text-blue-300 mb-3">Next 5 Run Times</h4>
+                            <div id="next-runs" class="space-y-2">
+                                <!-- Next runs will be displayed here -->
+                            </div>
+                        </div>
+                    </div>
+
+                    
+                </div>
+
+                <!-- Common Examples -->
+                <div class="mt-8 p-4 bg-slate-700/30 rounded-lg border border-slate-600/50">
+                    <h3 class="text-lg font-semibold text-blue-400 mb-3">Common Cron Examples</h3>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
+                        <div class="space-y-2">
+                            <button class="example-btn w-full text-left px-3 py-2 bg-slate-600 hover:bg-slate-700 text-gray-300 rounded transition-colors duration-200" data-cron="0 9 * * 1-5">
+                                <div class="font-mono text-blue-400">0 9 * * 1-5</div>
+                                <div class="text-xs text-gray-400">9 AM on weekdays</div>
+                            </button>
+                            <button class="example-btn w-full text-left px-3 py-2 bg-slate-600 hover:bg-slate-700 text-gray-300 rounded transition-colors duration-200" data-cron="0 0 * * 0">
+                                <div class="font-mono text-blue-400">0 0 * * 0</div>
+                                <div class="text-xs text-gray-400">Midnight on Sunday</div>
+                            </button>
+                            <button class="example-btn w-full text-left px-3 py-2 bg-slate-600 hover:bg-slate-700 text-gray-300 rounded transition-colors duration-200" data-cron="*/15 * * * *">
+                                <div class="font-mono text-blue-400">*/15 * * * *</div>
+                                <div class="text-xs text-gray-400">Every 15 minutes</div>
+                            </button>
+                            <button class="example-btn w-full text-left px-3 py-2 bg-slate-600 hover:bg-slate-700 text-gray-300 rounded transition-colors duration-200" data-cron="0 0 1 * *">
+                                <div class="font-mono text-blue-400">0 0 1 * *</div>
+                                <div class="text-xs text-gray-400">First day of month at midnight</div>
+                            </button>
+                        </div>
+                        <div class="space-y-2">
+                            <button class="example-btn w-full text-left px-3 py-2 bg-slate-600 hover:bg-slate-700 text-gray-300 rounded transition-colors duration-200" data-cron="0 2 * * *">
+                                <div class="font-mono text-blue-400">0 2 * * *</div>
+                                <div class="text-xs text-gray-400">2 AM daily</div>
+                            </button>
+                            <button class="example-btn w-full text-left px-3 py-2 bg-slate-600 hover:bg-slate-700 text-gray-300 rounded transition-colors duration-200" data-cron="30 6 * * 1,3,5">
+                                <div class="font-mono text-blue-400">30 6 * * 1,3,5</div>
+                                <div class="text-xs text-gray-400">6:30 AM on Mon, Wed, Fri</div>
+                            </button>
+                            <button class="example-btn w-full text-left px-3 py-2 bg-slate-600 hover:bg-slate-700 text-gray-300 rounded transition-colors duration-200" data-cron="0 0 * * 1">
+                                <div class="font-mono text-blue-400">0 0 * * 1</div>
+                                <div class="text-xs text-gray-400">Midnight on Monday</div>
+                            </button>
+                            <button class="example-btn w-full text-left px-3 py-2 bg-slate-600 hover:bg-slate-700 text-gray-300 rounded transition-colors duration-200" data-cron="0 12 * * 6,0">
+                                <div class="font-mono text-blue-400">0 12 * * 6,0</div>
+                                <div class="text-xs text-gray-400">Noon on weekends</div>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+    </div>
+
+    <!-- Footer -->
+    <footer class="text-center text-gray-500 mt-10 pb-6">
+        © 2025 DevDunia – Free Developer Tools by <a href="https://echobash.com" class="text-blue-500 hover:underline" target="_blank">echobash</a>
+    </footer>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const cronInput = document.getElementById('cron-input');
+            const describeBtn = document.getElementById('describe-btn');
+            const descriptionSection = document.getElementById('description-section');
+            const errorDisplay = document.getElementById('error-display');
+            const errorMessage = document.getElementById('error-message');
+            const descriptionText = document.getElementById('description-text');
+            const nextRuns = document.getElementById('next-runs');
+
+            // Describe cron expression
+            describeBtn.addEventListener('click', function() {
+                const cronExpression = cronInput.value.trim();
+                if (!cronExpression) {
+                    showError('Please enter a cron expression');
+                    return;
+                }
+
+                try {
+                    const description = describeCron(cronExpression);
+                    displayDescription(description);
+                    displayNextRuns(cronExpression);
+                    showDescription();
+                    hideError();
+                } catch (error) {
+                    showError('Invalid cron expression: ' + error.message);
+                    hideDescription();
+                }
+            });
+
+            // Example buttons
+            document.querySelectorAll('.example-btn').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const cron = this.getAttribute('data-cron');
+                    cronInput.value = cron;
+                    describeBtn.click();
+                });
+            });
+
+            // Helper functions
+            function showDescription() {
+                descriptionSection.classList.remove('hidden');
+            }
+
+            function hideDescription() {
+                descriptionSection.classList.add('hidden');
+            }
+
+            function showError(message) {
+                errorMessage.textContent = message;
+                errorDisplay.classList.remove('hidden');
+            }
+
+            function hideError() {
+                errorDisplay.classList.add('hidden');
+            }
+
+            function describeCron(cronExpression) {
+                const parts = cronExpression.split(/\s+/);
+                if (parts.length !== 5) {
+                    throw new Error('Cron expression must have exactly 5 fields');
+                }
+
+                const [minute, hour, day, month, dayOfWeek] = parts;
+                
+                // Parse each field
+                const minuteDesc = parseField(minute, 0, 59, 'minute');
+                const hourDesc = parseField(hour, 0, 23, 'hour');
+                const dayDesc = parseField(day, 1, 31, 'day');
+                const monthDesc = parseField(month, 1, 12, 'month');
+                const dowDesc = parseField(dayOfWeek, 0, 6, 'day of week');
+
+                // Update breakdown display
+                updateBreakdown(minute, hour, day, month, dayOfWeek, minuteDesc, hourDesc, dayDesc, monthDesc, dowDesc);
+
+                // Generate human-readable description
+                return generateDescription(minuteDesc, hourDesc, dayDesc, monthDesc, dowDesc);
+            }
+
+            function parseField(field, min, max, type) {
+                if (field === '*') {
+                    return `every ${type}`;
+                }
+
+                if (field.includes('/')) {
+                    const [range, step] = field.split('/');
+                    if (range === '*') {
+                        return `every ${step} ${type}s`;
+                    } else {
+                        return `every ${step} ${type}s from ${range}`;
+                    }
+                }
+
+                if (field.includes('-')) {
+                    const [start, end] = field.split('-');
+                    if (type === 'day of week') {
+                        return `from ${getDayName(start)} to ${getDayName(end)}`;
+                    } else if (type === 'month') {
+                        return `from ${getMonthName(start)} to ${getMonthName(end)}`;
+                    } else {
+                        return `from ${start} to ${end}`;
+                    }
+                }
+
+                if (field.includes(',')) {
+                    const values = field.split(',');
+                    if (type === 'day of week') {
+                        return `on ${values.map(v => getDayName(v)).join(', ')}`;
+                    } else if (type === 'month') {
+                        return `in ${values.map(v => getMonthName(v)).join(', ')}`;
+                    } else {
+                        return `on ${values.join(', ')}`;
+                    }
+                }
+
+                // Single value
+                if (type === 'day of week') {
+                    return `on ${getDayName(field)}`;
+                } else if (type === 'month') {
+                    return `in ${getMonthName(field)}`;
+                } else {
+                    return `at ${field}`;
+                }
+            }
+
+            function getDayName(day) {
+                const days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+                return days[parseInt(day)] || day;
+            }
+
+            function getMonthName(month) {
+                const months = ['', 'January', 'February', 'March', 'April', 'May', 'June', 
+                              'July', 'August', 'September', 'October', 'November', 'December'];
+                return months[parseInt(month)] || month;
+            }
+
+            function generateDescription(minuteDesc, hourDesc, dayDesc, monthDesc, dowDesc) {
+                let description = 'This cron job runs ';
+
+                // Handle special cases
+                if (minuteDesc.includes('every') && hourDesc.includes('every') && 
+                    dayDesc.includes('every') && monthDesc.includes('every') && 
+                    dowDesc.includes('every')) {
+                    return 'This cron job runs every minute';
+                }
+
+                // Build description
+                const parts = [];
+                
+                if (!minuteDesc.includes('every minute')) {
+                    parts.push(minuteDesc);
+                }
+                if (!hourDesc.includes('every hour')) {
+                    parts.push(hourDesc);
+                }
+                if (!dayDesc.includes('every day')) {
+                    parts.push(dayDesc);
+                }
+                if (!monthDesc.includes('every month')) {
+                    parts.push(monthDesc);
+                }
+                if (!dowDesc.includes('every day of week')) {
+                    parts.push(dowDesc);
+                }
+
+                if (parts.length === 0) {
+                    return 'This cron job runs every minute';
+                }
+
+                return description + parts.join(' and ') + '.';
+            }
+
+            function updateBreakdown(minute, hour, day, month, dayOfWeek, minuteDesc, hourDesc, dayDesc, monthDesc, dowDesc) {
+                document.getElementById('minute-field').textContent = minute;
+                document.getElementById('minute-desc').textContent = minuteDesc;
+                document.getElementById('hour-field').textContent = hour;
+                document.getElementById('hour-desc').textContent = hourDesc;
+                document.getElementById('day-field').textContent = day;
+                document.getElementById('day-desc').textContent = dayDesc;
+                document.getElementById('month-field').textContent = month;
+                document.getElementById('month-desc').textContent = monthDesc;
+                document.getElementById('dow-field').textContent = dayOfWeek;
+                document.getElementById('dow-desc').textContent = dowDesc;
+            }
+
+            function displayDescription(description) {
+                descriptionText.textContent = description;
+            }
+
+            function displayNextRuns(cronExpression) {
+                nextRuns.innerHTML = '';
+                
+                try {
+                    const parts = cronExpression.split(/\s+/);
+                    if (parts.length !== 5) {
+                        nextRuns.innerHTML = '<p class="text-gray-400">Invalid cron expression</p>';
+                        return;
+                    }
+
+                    const [minute, hour, day, month, dayOfWeek] = parts;
+                    const runs = calculateNextRuns(minute, hour, day, month, dayOfWeek, 5);
+
+                    if (runs.length === 0) {
+                        nextRuns.innerHTML = '<p class="text-gray-400">No valid run times found</p>';
+                        return;
+                    }
+
+                    runs.forEach((run, index) => {
+                        const runDiv = document.createElement('div');
+                        runDiv.className = 'flex justify-between items-center p-2 bg-slate-800/50 rounded';
+                        runDiv.innerHTML = `
+                            <span class="text-gray-300">Run ${index + 1}:</span>
+                            <span class="text-blue-400 font-mono">${run.toLocaleString()}</span>
+                        `;
+                        nextRuns.appendChild(runDiv);
+                    });
+                } catch (error) {
+                    nextRuns.innerHTML = '<p class="text-gray-400">Error calculating run times</p>';
+                }
+            }
+
+            function calculateNextRuns(minute, hour, day, month, dayOfWeek, count) {
+                const runs = [];
+                const now = new Date();
+                let current = new Date(now.getTime() + 60000); // Start from next minute
+                
+                while (runs.length < count && runs.length < 100) { // Safety limit
+                    if (matchesCron(current, minute, hour, day, month, dayOfWeek)) {
+                        runs.push(new Date(current));
+                    }
+                    current.setMinutes(current.getMinutes() + 1);
+                    
+                    // Prevent infinite loop
+                    if (current.getTime() - now.getTime() > 365 * 24 * 60 * 60 * 1000) {
+                        break;
+                    }
+                }
+                
+                return runs;
+            }
+
+            function matchesCron(date, minute, hour, day, month, dayOfWeek) {
+                const currentMinute = date.getMinutes();
+                const currentHour = date.getHours();
+                const currentDay = date.getDate();
+                const currentMonth = date.getMonth() + 1; // JavaScript months are 0-based
+                const currentDow = date.getDay(); // 0 = Sunday
+
+                return matchesField(currentMinute, minute, 0, 59) &&
+                       matchesField(currentHour, hour, 0, 23) &&
+                       matchesField(currentDay, day, 1, 31) &&
+                       matchesField(currentMonth, month, 1, 12) &&
+                       matchesField(currentDow, dayOfWeek, 0, 6);
+            }
+
+            function matchesField(value, field, min, max) {
+                if (field === '*') return true;
+                
+                // Handle ranges (e.g., 1-5)
+                if (field.includes('-')) {
+                    const [start, end] = field.split('-').map(Number);
+                    return value >= start && value <= end;
+                }
+                
+                // Handle lists (e.g., 1,3,5)
+                if (field.includes(',')) {
+                    const values = field.split(',').map(Number);
+                    return values.includes(value);
+                }
+                
+                // Handle step values (e.g., */5)
+                if (field.includes('/')) {
+                    const [range, step] = field.split('/');
+                    const stepNum = parseInt(step);
+                    if (range === '*') {
+                        return value % stepNum === 0;
+                    } else {
+                        const start = parseInt(range);
+                        return value >= start && (value - start) % stepNum === 0;
+                    }
+                }
+                
+                // Exact match
+                return parseInt(field) === value;
+            }
+
+            // Example on page load
+            window.addEventListener('load', () => {
+                cronInput.value = '0 9 * * 1-5';
+                describeBtn.click();
+            });
+        });
+    </script>
+</body>
+</html>

@@ -4,8 +4,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Python OpenAI API - Developer Toolkit | DevDunia</title>
-    <meta name="description" content="ChatGPT, GPT-4, and other OpenAI API integrations. Free online Python OpenAI examples for developers.">
+    <meta name="description" content="Python OpenAI API examples and code snippets. ChatGPT, GPT-4, and other OpenAI API integrations for developers.">
     <script src="https://cdn.tailwindcss.com"></script>
+    <script src="js/common.js"></script>
     <style>
         body {
             background: linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #0f172a 100%);
@@ -26,148 +27,429 @@
                 Python OpenAI API
             </h1>
             <p class="text-lg text-gray-400 max-w-2xl mx-auto">
-                ChatGPT, GPT-4, and other OpenAI API integrations.
+                ChatGPT, GPT-4, and other OpenAI API integrations with Python examples.
             </p>
         </div>
 
         <!-- Tool Container -->
-        <div class="max-w-4xl mx-auto">
+        <div class="max-w-6xl mx-auto">
             <div class="bg-slate-800/70 backdrop-blur-md rounded-lg shadow-lg border border-slate-700/60 p-6">
                 
-                <!-- API Type Selection -->
-                <div class="mb-6">
-                    <label class="block text-sm font-medium text-gray-300 mb-3">OpenAI API Type</label>
-                    <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
-                        <button class="api-type-btn px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white text-sm rounded-lg transition-colors duration-200" data-type="chat">
-                            Chat Completion
+                <!-- Setup Section -->
+                <div class="mb-8">
+                    <h2 class="text-xl font-semibold text-emerald-300 mb-4">Setup & Installation</h2>
+                    <div class="bg-slate-700/30 rounded-lg p-4 border border-slate-600/50">
+                        <div class="flex items-center justify-between mb-3">
+                            <h3 class="text-lg font-medium text-emerald-300">Installation & Basic Setup</h3>
+                            <button class="copy-btn px-3 py-1 bg-emerald-600 hover:bg-emerald-700 text-white text-xs rounded transition-colors duration-200 flex items-center space-x-1" data-target="setup-code">
+                                <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v8a2 2 0 01-2 2h-2m-6-4l2 2m0 0l2-2m-2 2V10"></path>
+                                </svg>
+                                <span>Copy</span>
                         </button>
-                        <button class="api-type-btn px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white text-sm rounded-lg transition-colors duration-200" data-type="completion">
-                            Text Completion
-                        </button>
-                        <button class="api-type-btn px-4 py-2 bg-purple-600 hover:bg-purple-700 text-white text-sm rounded-lg transition-colors duration-200" data-type="embeddings">
-                            Embeddings
-                        </button>
+                        </div>
+                        <textarea 
+                            id="setup-code" 
+                            rows="8" 
+                            class="w-full px-3 py-2 bg-slate-800/50 border border-slate-600 rounded text-gray-200 font-mono text-sm resize-none"
+                            readonly
+                        ># Install OpenAI library
+pip install openai
+
+# Basic setup
+import openai
+import os
+
+# Set your API key
+openai.api_key = "your-api-key-here"
+# Or set as environment variable
+# os.environ["OPENAI_API_KEY"] = "your-api-key-here"
+
+# Initialize client (for newer versions)
+from openai import OpenAI
+client = OpenAI(api_key="your-api-key-here")</textarea>
                     </div>
                 </div>
 
-                <!-- Model Selection -->
-                <div class="mb-6">
-                    <label for="model-select" class="block text-sm font-medium text-gray-300 mb-2">
-                        Model
-                    </label>
-                    <select id="model-select" class="w-full px-4 py-3 bg-slate-700/50 border border-slate-600 rounded-lg text-gray-200 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent">
-                        <option value="gpt-4">GPT-4</option>
-                        <option value="gpt-3.5-turbo" selected>GPT-3.5 Turbo</option>
-                        <option value="gpt-3.5-turbo-16k">GPT-3.5 Turbo 16K</option>
-                        <option value="text-davinci-003">Text Davinci 003</option>
-                        <option value="text-embedding-ada-002">Text Embedding Ada 002</option>
-                    </select>
+                <!-- ChatGPT Examples Section -->
+                <div class="mb-8">
+                    <h2 class="text-xl font-semibold text-emerald-300 mb-4">ChatGPT Examples</h2>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        
+                        <!-- Simple Chat -->
+                        <div class="bg-slate-700/30 rounded-lg p-4 border border-slate-600/50">
+                            <div class="flex items-center justify-between mb-3">
+                                <h3 class="text-lg font-medium text-emerald-300">Simple Chat</h3>
+                                <button class="copy-btn px-3 py-1 bg-emerald-600 hover:bg-emerald-700 text-white text-xs rounded transition-colors duration-200 flex items-center space-x-1" data-target="chat-code">
+                                    <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v8a2 2 0 01-2 2h-2m-6-4l2 2m0 0l2-2m-2 2V10"></path>
+                                    </svg>
+                                    <span>Copy</span>
+                                </button>
+                            </div>
+                            <textarea 
+                                id="chat-code" 
+                                rows="12" 
+                                class="w-full px-3 py-2 bg-slate-800/50 border border-slate-600 rounded text-gray-200 font-mono text-sm resize-none"
+                                readonly
+                            >import openai
+
+def simple_chat(message):
+    response = openai.ChatCompletion.create(
+        model="gpt-3.5-turbo",
+        messages=[
+            {"role": "system", "content": "You are a helpful assistant."},
+            {"role": "user", "content": message}
+        ],
+        max_tokens=150,
+        temperature=0.7
+    )
+    return response.choices[0].message.content
+
+# Usage
+message = "Explain quantum computing in simple terms"
+response = simple_chat(message)
+print(response)
+
+# With newer API
+from openai import OpenAI
+client = OpenAI()
+
+def chat_with_gpt(message):
+    response = client.chat.completions.create(
+        model="gpt-3.5-turbo",
+        messages=[
+            {"role": "user", "content": message}
+        ]
+    )
+    return response.choices[0].message.content</textarea>
                 </div>
 
-                <!-- API Key Input -->
-                <div class="mb-6">
-                    <label for="api-key" class="block text-sm font-medium text-gray-300 mb-2">
-                        API Key (for demonstration)
-                    </label>
-                    <input 
-                        type="password" 
-                        id="api-key" 
-                        class="w-full px-4 py-3 bg-slate-700/50 border border-slate-600 rounded-lg text-gray-200 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent font-mono text-sm"
-                        placeholder="sk-..."
-                        value="your-api-key-here"
-                    >
+                        <!-- Conversation History -->
+                        <div class="bg-slate-700/30 rounded-lg p-4 border border-slate-600/50">
+                            <div class="flex items-center justify-between mb-3">
+                                <h3 class="text-lg font-medium text-emerald-300">Conversation History</h3>
+                                <button class="copy-btn px-3 py-1 bg-emerald-600 hover:bg-emerald-700 text-white text-xs rounded transition-colors duration-200 flex items-center space-x-1" data-target="conversation-code">
+                                    <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v8a2 2 0 01-2 2h-2m-6-4l2 2m0 0l2-2m-2 2V10"></path>
+                                    </svg>
+                                    <span>Copy</span>
+                                </button>
+                            </div>
+                            <textarea 
+                                id="conversation-code" 
+                                rows="12" 
+                                class="w-full px-3 py-2 bg-slate-800/50 border border-slate-600 rounded text-gray-200 font-mono text-sm resize-none"
+                                readonly
+                            >from openai import OpenAI
+client = OpenAI()
+
+class ChatBot:
+    def __init__(self):
+        self.conversation_history = []
+    
+    def add_message(self, role, content):
+        self.conversation_history.append({"role": role, "content": content})
+    
+    def chat(self, user_message):
+        self.add_message("user", user_message)
+        
+        response = client.chat.completions.create(
+            model="gpt-3.5-turbo",
+            messages=self.conversation_history,
+            max_tokens=200
+        )
+        
+        assistant_message = response.choices[0].message.content
+        self.add_message("assistant", assistant_message)
+        
+        return assistant_message
+    
+    def get_history(self):
+        return self.conversation_history
+
+# Usage
+bot = ChatBot()
+response1 = bot.chat("Hello, how are you?")
+response2 = bot.chat("What's the weather like?")
+print("History:", bot.get_history())</textarea>
                 </div>
 
-                <!-- Prompt Input -->
-                <div class="mb-6">
-                    <label for="prompt-input" class="block text-sm font-medium text-gray-300 mb-2">
-                        Prompt/Message
-                    </label>
-                    <textarea 
-                        id="prompt-input" 
-                        rows="6" 
-                        class="w-full px-4 py-3 bg-slate-700/50 border border-slate-600 rounded-lg text-gray-200 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent resize-none font-mono text-sm"
-                        placeholder="Enter your prompt or message here..."
-                    ></textarea>
-                </div>
-
-                <!-- Advanced Options -->
-                <div class="mb-6">
-                    <label class="block text-sm font-medium text-gray-300 mb-3">Advanced Options</label>
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        <div>
-                            <label for="max-tokens" class="block text-sm font-medium text-gray-300 mb-2">Max Tokens</label>
-                            <input 
-                                type="number" 
-                                id="max-tokens" 
-                                class="w-full px-4 py-3 bg-slate-700/50 border border-slate-600 rounded-lg text-gray-200 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent"
-                                value="150"
-                                min="1"
-                                max="4000"
-                            >
-                        </div>
-                        <div>
-                            <label for="temperature" class="block text-sm font-medium text-gray-300 mb-2">Temperature</label>
-                            <input 
-                                type="number" 
-                                id="temperature" 
-                                step="0.1"
-                                class="w-full px-4 py-3 bg-slate-700/50 border border-slate-600 rounded-lg text-gray-200 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent"
-                                value="0.7"
-                                min="0"
-                                max="2"
-                            >
-                        </div>
                     </div>
                 </div>
 
-                <!-- Generate Button -->
-                <div class="mb-6">
-                    <button id="generate-btn" class="px-6 py-3 bg-emerald-600 hover:bg-emerald-700 text-white font-medium rounded-lg transition-colors duration-200 flex items-center space-x-2">
-                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
+                <!-- GPT-4 Examples Section -->
+                <div class="mb-8">
+                    <h2 class="text-xl font-semibold text-emerald-300 mb-4">GPT-4 Examples</h2>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        
+                        <!-- Code Generation -->
+                        <div class="bg-slate-700/30 rounded-lg p-4 border border-slate-600/50">
+                            <div class="flex items-center justify-between mb-3">
+                                <h3 class="text-lg font-medium text-emerald-300">Code Generation</h3>
+                                <button class="copy-btn px-3 py-1 bg-emerald-600 hover:bg-emerald-700 text-white text-xs rounded transition-colors duration-200 flex items-center space-x-1" data-target="code-gen-code">
+                                    <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v8a2 2 0 01-2 2h-2m-6-4l2 2m0 0l2-2m-2 2V10"></path>
+                                    </svg>
+                                    <span>Copy</span>
+                                </button>
+                            </div>
+                            <textarea 
+                                id="code-gen-code" 
+                                rows="12" 
+                                class="w-full px-3 py-2 bg-slate-800/50 border border-slate-600 rounded text-gray-200 font-mono text-sm resize-none"
+                                readonly
+                            >from openai import OpenAI
+client = OpenAI()
+
+def generate_code(description, language="python"):
+    prompt = f"""Generate {language} code for the following task:
+{description}
+
+Please provide:
+1. Clean, well-commented code
+2. Brief explanation of the approach
+3. Example usage if applicable"""
+
+    response = client.chat.completions.create(
+        model="gpt-4",
+        messages=[
+            {"role": "system", "content": "You are an expert programmer. Generate clean, efficient code with proper comments."},
+            {"role": "user", "content": prompt}
+        ],
+        max_tokens=1000,
+        temperature=0.3
+    )
+    
+    return response.choices[0].message.content
+
+# Usage
+description = "Create a function to find the longest common subsequence between two strings"
+code = generate_code(description, "python")
+print(code)</textarea>
+                        </div>
+
+                        <!-- Text Analysis -->
+                        <div class="bg-slate-700/30 rounded-lg p-4 border border-slate-600/50">
+                            <div class="flex items-center justify-between mb-3">
+                                <h3 class="text-lg font-medium text-emerald-300">Text Analysis</h3>
+                                <button class="copy-btn px-3 py-1 bg-emerald-600 hover:bg-emerald-700 text-white text-xs rounded transition-colors duration-200 flex items-center space-x-1" data-target="analysis-code">
+                                    <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v8a2 2 0 01-2 2h-2m-6-4l2 2m0 0l2-2m-2 2V10"></path>
+                                    </svg>
+                                    <span>Copy</span>
+                                </button>
+                            </div>
+                            <textarea 
+                                id="analysis-code" 
+                                rows="12" 
+                                class="w-full px-3 py-2 bg-slate-800/50 border border-slate-600 rounded text-gray-200 font-mono text-sm resize-none"
+                                readonly
+                            >from openai import OpenAI
+client = OpenAI()
+
+def analyze_text(text, analysis_type="sentiment"):
+    analysis_prompts = {
+        "sentiment": "Analyze the sentiment of this text (positive, negative, neutral) and provide a confidence score.",
+        "summary": "Provide a concise summary of this text in 2-3 sentences.",
+        "keywords": "Extract the main keywords and key phrases from this text.",
+        "tone": "Analyze the tone and writing style of this text."
+    }
+    
+    prompt = f"{analysis_prompts.get(analysis_type, 'Analyze this text')}\n\nText: {text}"
+    
+    response = client.chat.completions.create(
+        model="gpt-4",
+        messages=[
+            {"role": "system", "content": "You are a text analysis expert. Provide clear, structured analysis."},
+            {"role": "user", "content": prompt}
+        ],
+        max_tokens=300,
+        temperature=0.2
+    )
+    
+    return response.choices[0].message.content
+
+# Usage
+text = "I'm really excited about this new project! It's going to be amazing."
+sentiment = analyze_text(text, "sentiment")
+summary = analyze_text(text, "summary")
+print(f"Sentiment: {sentiment}")
+print(f"Summary: {summary}")</textarea>
+                        </div>
+
+                    </div>
+                </div>
+
+                <!-- Advanced Features Section -->
+                <div class="mb-8">
+                    <h2 class="text-xl font-semibold text-emerald-300 mb-4">Advanced Features</h2>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        
+                        <!-- Function Calling -->
+                        <div class="bg-slate-700/30 rounded-lg p-4 border border-slate-600/50">
+                            <div class="flex items-center justify-between mb-3">
+                                <h3 class="text-lg font-medium text-emerald-300">Function Calling</h3>
+                                <button class="copy-btn px-3 py-1 bg-emerald-600 hover:bg-emerald-700 text-white text-xs rounded transition-colors duration-200 flex items-center space-x-1" data-target="function-code">
+                                    <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v8a2 2 0 01-2 2h-2m-6-4l2 2m0 0l2-2m-2 2V10"></path>
                         </svg>
-                        <span>Generate OpenAI Code</span>
+                                    <span>Copy</span>
                     </button>
                 </div>
-
-                <!-- Generated Code -->
-                <div id="code-section" class="hidden">
-                    <h3 class="text-lg font-semibold text-gray-300 mb-4">Generated OpenAI Code</h3>
-                    <div class="relative">
                         <textarea 
-                            id="generated-code" 
-                            rows="30" 
-                            class="w-full px-4 py-3 bg-slate-700/50 border border-slate-600 rounded-lg text-gray-200 font-mono text-sm resize-none"
+                                id="function-code" 
+                                rows="15" 
+                                class="w-full px-3 py-2 bg-slate-800/50 border border-slate-600 rounded text-gray-200 font-mono text-sm resize-none"
                             readonly
-                        ></textarea>
-                        
-                        <!-- Copy Button -->
-                        <button id="copy-code-btn" class="absolute top-2 right-2 px-3 py-1 bg-slate-600 hover:bg-slate-700 text-white text-sm rounded transition-colors duration-200 flex items-center space-x-1">
-                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            >from openai import OpenAI
+import json
+
+client = OpenAI()
+
+# Define functions that the model can call
+functions = [
+    {
+        "name": "get_weather",
+        "description": "Get current weather for a location",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "location": {
+                    "type": "string",
+                    "description": "City name"
+                }
+            },
+            "required": ["location"]
+        }
+    }
+]
+
+def get_weather(location):
+    # Mock weather function
+    return f"Weather in {location}: Sunny, 25°C"
+
+def chat_with_functions(message):
+    response = client.chat.completions.create(
+        model="gpt-3.5-turbo",
+        messages=[{"role": "user", "content": message}],
+        functions=functions,
+        function_call="auto"
+    )
+    
+    message = response.choices[0].message
+    
+    if message.function_call:
+        function_name = message.function_call.name
+        function_args = json.loads(message.function_call.arguments)
+        
+        if function_name == "get_weather":
+            result = get_weather(function_args["location"])
+            
+            # Send function result back to the model
+            response = client.chat.completions.create(
+                model="gpt-3.5-turbo",
+                messages=[
+                    {"role": "user", "content": message},
+                    {"role": "function", "name": function_name, "content": result}
+                ]
+            )
+            return response.choices[0].message.content
+    
+    return message.content
+
+# Usage
+result = chat_with_functions("What's the weather like in Tokyo?")
+print(result)</textarea>
+                        </div>
+
+                        <!-- Streaming Responses -->
+                        <div class="bg-slate-700/30 rounded-lg p-4 border border-slate-600/50">
+                            <div class="flex items-center justify-between mb-3">
+                                <h3 class="text-lg font-medium text-emerald-300">Streaming Responses</h3>
+                                <button class="copy-btn px-3 py-1 bg-emerald-600 hover:bg-emerald-700 text-white text-xs rounded transition-colors duration-200 flex items-center space-x-1" data-target="streaming-code">
+                                    <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v8a2 2 0 01-2 2h-2m-6-4l2 2m0 0l2-2m-2 2V10"></path>
                             </svg>
                             <span>Copy</span>
                         </button>
                     </div>
+                            <textarea 
+                                id="streaming-code" 
+                                rows="15" 
+                                class="w-full px-3 py-2 bg-slate-800/50 border border-slate-600 rounded text-gray-200 font-mono text-sm resize-none"
+                                readonly
+                            >from openai import OpenAI
+import sys
+
+client = OpenAI()
+
+def stream_chat(message):
+    stream = client.chat.completions.create(
+        model="gpt-3.5-turbo",
+        messages=[{"role": "user", "content": message}],
+        stream=True
+    )
+    
+    full_response = ""
+    for chunk in stream:
+        if chunk.choices[0].delta.content is not None:
+            content = chunk.choices[0].delta.content
+            print(content, end='', flush=True)
+            full_response += content
+    
+    return full_response
+
+def stream_with_callback(message, callback=None):
+    stream = client.chat.completions.create(
+        model="gpt-3.5-turbo",
+        messages=[{"role": "user", "content": message}],
+        stream=True
+    )
+    
+    full_response = ""
+    for chunk in stream:
+        if chunk.choices[0].delta.content is not None:
+            content = chunk.choices[0].delta.content
+            full_response += content
+            if callback:
+                callback(content)
+    
+    return full_response
+
+# Usage
+def print_chunk(chunk):
+    print(chunk, end='', flush=True)
+
+message = "Write a short story about a robot learning to paint"
+response = stream_with_callback(message, print_chunk)</textarea>
                 </div>
 
-                <!-- Requirements -->
-                <div class="mt-8 p-4 bg-slate-700/30 rounded-lg border border-slate-600/50">
-                    <h3 class="text-lg font-semibold text-cyan-400 mb-3">Requirements</h3>
-                    <div class="bg-slate-600/50 p-3 rounded border border-slate-500">
-                        <pre class="text-cyan-300 font-mono text-sm">openai==1.3.0
-python-dotenv==1.0.0</pre>
                     </div>
                 </div>
 
-                <!-- Usage Instructions -->
-                <div class="mt-6 p-4 bg-slate-700/30 rounded-lg border border-slate-600/50">
-                    <h3 class="text-lg font-semibold text-cyan-400 mb-3">Usage Instructions</h3>
-                    <div class="space-y-2 text-sm text-gray-300">
-                        <p>1. Install requirements: <code class="bg-slate-600 px-2 py-1 rounded text-cyan-300">pip install openai python-dotenv</code></p>
-                        <p>2. Set your API key: <code class="bg-slate-600 px-2 py-1 rounded text-cyan-300">export OPENAI_API_KEY="your-api-key"</code></p>
-                        <p>3. Run the code: <code class="bg-slate-600 px-2 py-1 rounded text-cyan-300">python openai_example.py</code></p>
+                <!-- Quick Reference Section -->
+                <div class="mt-8 p-4 bg-slate-700/30 rounded-lg border border-slate-600/50">
+                    <h3 class="text-lg font-semibold text-emerald-400 mb-3">Quick Reference</h3>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
+                        <div>
+                            <p class="text-gray-300 font-medium mb-2">Popular Models:</p>
+                            <ul class="text-gray-400 space-y-1">
+                                <li>• <code>gpt-3.5-turbo</code> - Fast, cost-effective</li>
+                                <li>• <code>gpt-4</code> - Most capable, higher cost</li>
+                                <li>• <code>gpt-4-turbo</code> - Latest GPT-4 variant</li>
+                                <li>• <code>text-embedding-ada-002</code> - Embeddings</li>
+                            </ul>
+                        </div>
+                        <div>
+                            <p class="text-gray-300 font-medium mb-2">Key Parameters:</p>
+                            <ul class="text-gray-400 space-y-1">
+                                <li>• <code>max_tokens</code> - Response length limit</li>
+                                <li>• <code>temperature</code> - Creativity (0-2)</li>
+                                <li>• <code>top_p</code> - Nucleus sampling</li>
+                                <li>• <code>stream</code> - Real-time responses</li>
+                            </ul>
+                        </div>
                     </div>
                 </div>
 
@@ -180,249 +462,5 @@ python-dotenv==1.0.0</pre>
     <footer class="text-center text-gray-500 mt-10 pb-6">
         © 2025 DevDunia – Free Developer Tools by <a href="https://echobash.com" class="text-blue-500 hover:underline" target="_blank">echobash</a>
     </footer>
-
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            const apiTypeBtns = document.querySelectorAll('.api-type-btn');
-            const modelSelect = document.getElementById('model-select');
-            const apiKeyInput = document.getElementById('api-key');
-            const promptInput = document.getElementById('prompt-input');
-            const maxTokensInput = document.getElementById('max-tokens');
-            const temperatureInput = document.getElementById('temperature');
-            const generateBtn = document.getElementById('generate-btn');
-            const codeSection = document.getElementById('code-section');
-            const generatedCode = document.getElementById('generated-code');
-            const copyCodeBtn = document.getElementById('copy-code-btn');
-
-            let selectedType = 'chat';
-
-            // API type selection
-            apiTypeBtns.forEach(btn => {
-                btn.addEventListener('click', function() {
-                    selectedType = this.getAttribute('data-type');
-                    
-                    // Update button states
-                    apiTypeBtns.forEach(b => b.classList.remove('ring-2', 'ring-emerald-400'));
-                    this.classList.add('ring-2', 'ring-emerald-400');
-                    
-                    // Update model options based on type
-                    updateModelOptions();
-                });
-            });
-
-            // Set initial type
-            document.querySelector('[data-type="chat"]').click();
-
-            // Update model options based on API type
-            function updateModelOptions() {
-                const modelSelect = document.getElementById('model-select');
-                modelSelect.innerHTML = '';
-                
-                if (selectedType === 'chat') {
-                    modelSelect.innerHTML = `
-                        <option value="gpt-4">GPT-4</option>
-                        <option value="gpt-3.5-turbo" selected>GPT-3.5 Turbo</option>
-                        <option value="gpt-3.5-turbo-16k">GPT-3.5 Turbo 16K</option>
-                    `;
-                } else if (selectedType === 'completion') {
-                    modelSelect.innerHTML = `
-                        <option value="text-davinci-003" selected>Text Davinci 003</option>
-                        <option value="text-curie-001">Text Curie 001</option>
-                        <option value="text-babbage-001">Text Babbage 001</option>
-                        <option value="text-ada-001">Text Ada 001</option>
-                    `;
-                } else if (selectedType === 'embeddings') {
-                    modelSelect.innerHTML = `
-                        <option value="text-embedding-ada-002" selected>Text Embedding Ada 002</option>
-                    `;
-                }
-            }
-
-            // Generate code
-            generateBtn.addEventListener('click', function() {
-                const code = generateOpenAICode();
-                generatedCode.value = code;
-                codeSection.classList.remove('hidden');
-            });
-
-            // Copy code
-            copyCodeBtn.addEventListener('click', function() {
-                generatedCode.select();
-                document.execCommand('copy');
-                
-                // Visual feedback
-                const originalText = copyCodeBtn.innerHTML;
-                copyCodeBtn.innerHTML = '<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg><span>Copied!</span>';
-                copyCodeBtn.classList.add('bg-green-600');
-                
-                setTimeout(() => {
-                    copyCodeBtn.innerHTML = originalText;
-                    copyCodeBtn.classList.remove('bg-green-600');
-                }, 2000);
-            });
-
-            function generateOpenAICode() {
-                const model = modelSelect.value;
-                const apiKey = apiKeyInput.value.trim();
-                const prompt = promptInput.value.trim();
-                const maxTokens = parseInt(maxTokensInput.value);
-                const temperature = parseFloat(temperatureInput.value);
-
-                let code = `import openai
-import os
-from dotenv import load_dotenv
-
-# Load environment variables
-load_dotenv()
-
-# Set your API key
-openai.api_key = os.getenv("OPENAI_API_KEY", "${apiKey}")
-
-`;
-
-                if (selectedType === 'chat') {
-                    code += generateChatCompletionCode(model, prompt, maxTokens, temperature);
-                } else if (selectedType === 'completion') {
-                    code += generateTextCompletionCode(model, prompt, maxTokens, temperature);
-                } else if (selectedType === 'embeddings') {
-                    code += generateEmbeddingsCode(model, prompt);
-                }
-
-                return code;
-            }
-
-            function generateChatCompletionCode(model, prompt, maxTokens, temperature) {
-                return `
-def chat_completion(prompt):
-    """Generate a chat completion using OpenAI's Chat API"""
-    try:
-        response = openai.ChatCompletion.create(
-            model="${model}",
-            messages=[
-                {"role": "system", "content": "You are a helpful assistant."},
-                {"role": "user", "content": prompt}
-            ],
-            max_tokens=${maxTokens},
-            temperature=${temperature}
-        )
-        
-        return response.choices[0].message.content
-    except Exception as e:
-        return f"Error: {e}"
-
-# Example usage
-if __name__ == "__main__":
-    prompt = """${prompt || 'Hello, how can you help me today?'}"""
-    
-    print("Sending request to OpenAI...")
-    response = chat_completion(prompt)
-    print(f"Response: {response}")
-    
-    # Example with conversation history
-    print("\\n--- Conversation Example ---")
-    messages = [
-        {"role": "system", "content": "You are a helpful assistant."},
-        {"role": "user", "content": "What is Python?"},
-    ]
-    
-    response = openai.ChatCompletion.create(
-        model="${model}",
-        messages=messages,
-        max_tokens=${maxTokens},
-        temperature=${temperature}
-    )
-    
-    print(f"User: What is Python?")
-    print(f"Assistant: {response.choices[0].message.content}")
-`;
-            }
-
-            function generateTextCompletionCode(model, prompt, maxTokens, temperature) {
-                return `
-def text_completion(prompt):
-    """Generate a text completion using OpenAI's Completion API"""
-    try:
-        response = openai.Completion.create(
-            model="${model}",
-            prompt=prompt,
-            max_tokens=${maxTokens},
-            temperature=${temperature}
-        )
-        
-        return response.choices[0].text
-    except Exception as e:
-        return f"Error: {e}"
-
-# Example usage
-if __name__ == "__main__":
-    prompt = """${prompt || 'Write a short story about a robot learning to paint.'}"""
-    
-    print("Sending request to OpenAI...")
-    response = text_completion(prompt)
-    print(f"Response: {response}")
-    
-    # Example with different parameters
-    print("\\n--- Creative Writing Example ---")
-    creative_prompt = "Once upon a time, in a world where technology and magic coexisted..."
-    
-    response = openai.Completion.create(
-        model="${model}",
-        prompt=creative_prompt,
-        max_tokens=${maxTokens},
-        temperature=0.9,  # Higher temperature for more creativity
-        top_p=1,
-        frequency_penalty=0,
-        presence_penalty=0
-    )
-    
-    print(f"Creative Response: {response.choices[0].text}")
-`;
-            }
-
-            function generateEmbeddingsCode(model, prompt) {
-                return `
-def get_embeddings(text):
-    """Generate embeddings for text using OpenAI's Embeddings API"""
-    try:
-        response = openai.Embedding.create(
-            model="${model}",
-            input=text
-        )
-        
-        return response['data'][0]['embedding']
-    except Exception as e:
-        return f"Error: {e}"
-
-# Example usage
-if __name__ == "__main__":
-    text = """${prompt || 'The quick brown fox jumps over the lazy dog.'}"""
-    
-    print("Generating embeddings...")
-    embeddings = get_embeddings(text)
-    print(f"Embeddings length: {len(embeddings)}")
-    print(f"First 10 values: {embeddings[:10]}")
-    
-    # Example with multiple texts
-    print("\\n--- Multiple Texts Example ---")
-    texts = [
-        "Python is a programming language",
-        "JavaScript is used for web development",
-        "Machine learning is a subset of AI"
-    ]
-    
-    for i, text in enumerate(texts):
-        embeddings = get_embeddings(text)
-        print(f"Text {i+1}: {text}")
-        print(f"Embeddings length: {len(embeddings)}")
-        print("---")
-`;
-            }
-
-            // Set default prompt
-            window.addEventListener('load', () => {
-                promptInput.value = 'Explain the concept of machine learning in simple terms.';
-            });
-        });
-    </script>
 </body>
 </html>

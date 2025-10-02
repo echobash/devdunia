@@ -1,0 +1,372 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>YAML ⇄ JSON Converter - Developer Toolkit | DevDunia</title>
+    <meta name="description" content="Convert between YAML and JSON formats with proper syntax. Free online YAML to JSON and JSON to YAML converter tool for developers.">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="js/common.js"></script>
+    <style>
+        body {
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #0f172a 100%);
+        }
+    </style>
+</head>
+<body class="min-h-screen">
+    <!-- Background: Consistent Subtle Dark Gradient -->
+    <div class="fixed inset-0 -z-10 bg-gradient-to-br from-gray-900 via-slate-900 to-gray-900"></div>
+
+    <!-- Main Container -->
+    <div class="relative z-10 container mx-auto px-4 pt-16 pb-24 sm:px-6 lg:px-8">
+        
+        <!-- Page Header -->
+        <div class="text-center mb-12">
+            <h1 class="text-3xl sm:text-4xl font-bold mb-4 tracking-tight
+                       text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-cyan-500">
+                YAML ⇄ JSON Converter
+            </h1>
+            <p class="text-lg text-gray-400 max-w-2xl mx-auto">
+                Convert between YAML and JSON formats with proper syntax and formatting.
+            </p>
+        </div>
+
+        <!-- Tool Container -->
+        <div class="max-w-6xl mx-auto">
+            <div class="bg-slate-800/70 backdrop-blur-md rounded-lg shadow-lg border border-slate-700/60 p-6">
+                
+                <!-- Conversion Direction -->
+                <div class="mb-6">
+                    <div class="flex items-center justify-center space-x-4">
+                        <button id="yaml-to-json-btn" class="px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-lg transition-colors duration-200 flex items-center space-x-2">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4"></path>
+                            </svg>
+                            <span>YAML → JSON</span>
+                        </button>
+                        
+                        <button id="json-to-yaml-btn" class="px-6 py-3 bg-slate-600 hover:bg-slate-700 text-white font-medium rounded-lg transition-colors duration-200 flex items-center space-x-2">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4"></path>
+                            </svg>
+                            <span>JSON → YAML</span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Input Section -->
+                <div class="mb-6">
+                    <label id="input-label" for="input-text" class="block text-sm font-medium text-gray-300 mb-2">
+                        YAML Input
+                    </label>
+                    <textarea 
+                        id="input-text" 
+                        rows="12" 
+                        class="w-full px-4 py-3 bg-slate-700/50 border border-slate-600 rounded-lg text-gray-200 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-none font-mono text-sm"
+                        placeholder="Paste your YAML data here..."
+                    ></textarea>
+                </div>
+
+                <!-- Action Buttons -->
+                <div class="flex flex-wrap gap-3 mb-6">
+                    <button id="convert-btn" class="px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-lg transition-colors duration-200 flex items-center space-x-2">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
+                        </svg>
+                        <span>Convert</span>
+                    </button>
+                    
+                    <button class="clear-btn px-6 py-3 bg-slate-600 hover:bg-slate-700 text-white font-medium rounded-lg transition-colors duration-200 flex items-center space-x-2">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
+                        </svg>
+                        <span>Clear All</span>
+                    </button>
+                </div>
+
+                <!-- Error Display -->
+                <div id="error-display" class="hidden mb-6 p-4 bg-red-900/50 border border-red-600/50 rounded-lg">
+                    <div class="flex items-center space-x-2">
+                        <svg class="w-5 h-5 text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                        </svg>
+                        <span id="error-message" class="text-red-300"></span>
+                    </div>
+                </div>
+
+                <!-- Output Section -->
+                <div id="output-section" class="hidden">
+                    <label id="output-label" for="output-text" class="block text-sm font-medium text-gray-300 mb-2">
+                        JSON Output
+                    </label>
+                    <div class="relative">
+                        <textarea 
+                            id="output-text" 
+                            rows="12" 
+                            class="w-full px-4 py-3 bg-slate-700/50 border border-slate-600 rounded-lg text-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-none font-mono text-sm"
+                            readonly
+                        ></textarea>
+                        
+                        <!-- Copy Button -->
+                        <button class="copy-btn absolute top-2 right-2 px-3 py-1 bg-slate-600 hover:bg-slate-700 text-white text-sm rounded transition-colors duration-200 flex items-center space-x-1" data-target="output-text">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v8a2 2 0 01-2 2h-2m-6-4l2 2m0 0l2-2m-2 2V10"></path>
+                            </svg>
+                            <span>Copy</span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Examples Section -->
+                <div class="mt-8 p-4 bg-slate-700/30 rounded-lg border border-slate-600/50">
+                    <h3 class="text-lg font-semibold text-blue-400 mb-3">Conversion Examples</h3>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
+                        <div>
+                            <p class="text-gray-300 font-medium mb-2">YAML Object:</p>
+                            <pre class="text-gray-400 text-xs bg-slate-800/50 p-2 rounded">name: John Doe
+age: 30
+active: true
+skills:
+  - Python
+  - JavaScript</pre>
+                            <p class="text-gray-500 text-xs mt-1">→ JSON equivalent</p>
+                        </div>
+                        <div>
+                            <p class="text-gray-300 font-medium mb-2">JSON Object:</p>
+                            <pre class="text-gray-400 text-xs bg-slate-800/50 p-2 rounded">{
+  "name": "John Doe",
+  "age": 30,
+  "active": true,
+  "skills": ["Python", "JavaScript"]
+}</pre>
+                            <p class="text-gray-500 text-xs mt-1">→ YAML equivalent</p>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+    </div>
+
+    <!-- Footer -->
+    <footer class="text-center text-gray-500 mt-10 pb-6">
+        © 2025 DevDunia – Free Developer Tools by <a href="https://echobash.com" class="text-blue-500 hover:underline" target="_blank">echobash</a>
+    </footer>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const inputText = document.getElementById('input-text');
+            const outputText = document.getElementById('output-text');
+            const convertBtn = document.getElementById('convert-btn');
+            const outputSection = document.getElementById('output-section');
+            const errorDisplay = document.getElementById('error-display');
+            const errorMessage = document.getElementById('error-message');
+            const inputLabel = document.getElementById('input-label');
+            const outputLabel = document.getElementById('output-label');
+            
+            const yamlToJsonBtn = document.getElementById('yaml-to-json-btn');
+            const jsonToYamlBtn = document.getElementById('json-to-yaml-btn');
+            
+            let conversionMode = 'yaml-to-json'; // Default mode
+
+            // Mode switching
+            yamlToJsonBtn.addEventListener('click', function() {
+                conversionMode = 'yaml-to-json';
+                updateUI();
+                yamlToJsonBtn.classList.remove('bg-slate-600');
+                yamlToJsonBtn.classList.add('bg-blue-600');
+                jsonToYamlBtn.classList.remove('bg-blue-600');
+                jsonToYamlBtn.classList.add('bg-slate-600');
+            });
+
+            jsonToYamlBtn.addEventListener('click', function() {
+                conversionMode = 'json-to-yaml';
+                updateUI();
+                jsonToYamlBtn.classList.remove('bg-slate-600');
+                jsonToYamlBtn.classList.add('bg-blue-600');
+                yamlToJsonBtn.classList.remove('bg-blue-600');
+                yamlToJsonBtn.classList.add('bg-slate-600');
+            });
+
+            function updateUI() {
+                if (conversionMode === 'yaml-to-json') {
+                    inputLabel.textContent = 'YAML Input';
+                    outputLabel.textContent = 'JSON Output';
+                    inputText.placeholder = 'Paste your YAML data here...';
+                } else {
+                    inputLabel.textContent = 'JSON Input';
+                    outputLabel.textContent = 'YAML Output';
+                    inputText.placeholder = 'Paste your JSON data here...';
+                }
+                hideOutput();
+                hideError();
+            }
+
+            // Convert
+            convertBtn.addEventListener('click', function() {
+                const input = inputText.value.trim();
+                if (!input) {
+                    showError('Please enter some data to convert');
+                    return;
+                }
+
+                try {
+                    let result;
+                    if (conversionMode === 'yaml-to-json') {
+                        result = yamlToJson(input);
+                    } else {
+                        result = jsonToYaml(input);
+                    }
+                    
+                    outputText.value = result;
+                    showOutput();
+                    hideError();
+                } catch (error) {
+                    showError('Conversion failed: ' + error.message);
+                    hideOutput();
+                }
+            });
+
+            // Helper functions
+            function showOutput() {
+                outputSection.classList.remove('hidden');
+            }
+
+            function hideOutput() {
+                outputSection.classList.add('hidden');
+            }
+
+            function showError(message) {
+                errorMessage.textContent = message;
+                errorDisplay.classList.remove('hidden');
+            }
+
+            function hideError() {
+                errorDisplay.classList.add('hidden');
+            }
+
+            // YAML to JSON conversion
+            function yamlToJson(yamlString) {
+                // Simple YAML to JSON converter
+                // This is a basic implementation - for production use a proper YAML parser
+                try {
+                    const lines = yamlString.split('\n');
+                    const result = {};
+                    const stack = [result];
+                    let currentIndent = 0;
+                    
+                    for (let line of lines) {
+                        if (!line.trim()) continue;
+                        
+                        const indent = line.match(/^(\s*)/)[1].length;
+                        const content = line.trim();
+                        
+                        if (content.startsWith('-')) {
+                            // Array item
+                            const value = content.substring(1).trim();
+                            if (!Array.isArray(stack[stack.length - 1])) {
+                                const parent = stack[stack.length - 2];
+                                const key = Object.keys(parent)[Object.keys(parent).length - 1];
+                                parent[key] = [];
+                                stack[stack.length - 1] = parent[key];
+                            }
+                            stack[stack.length - 1].push(parseValue(value));
+                        } else if (content.includes(':')) {
+                            // Key-value pair
+                            const [key, ...valueParts] = content.split(':');
+                            const value = valueParts.join(':').trim();
+                            
+                            // Adjust stack based on indentation
+                            while (stack.length > 1 && indent <= currentIndent) {
+                                stack.pop();
+                                currentIndent -= 2;
+                            }
+                            
+                            const current = stack[stack.length - 1];
+                            if (value === '') {
+                                // Nested object
+                                current[key.trim()] = {};
+                                stack.push(current[key.trim()]);
+                                currentIndent = indent;
+                            } else {
+                                current[key.trim()] = parseValue(value);
+                            }
+                        }
+                    }
+                    
+                    return JSON.stringify(result, null, 2);
+                } catch (error) {
+                    throw new Error('Invalid YAML format');
+                }
+            }
+
+            // JSON to YAML conversion
+            function jsonToYaml(jsonString) {
+                try {
+                    const obj = JSON.parse(jsonString);
+                    return jsonToYamlRecursive(obj, 0);
+                } catch (error) {
+                    throw new Error('Invalid JSON format');
+                }
+            }
+
+            function jsonToYamlRecursive(obj, indent) {
+                const spaces = '  '.repeat(indent);
+                let result = '';
+                
+                if (Array.isArray(obj)) {
+                    for (let item of obj) {
+                        result += spaces + '- ' + formatValue(item, indent + 1) + '\n';
+                    }
+                } else if (typeof obj === 'object' && obj !== null) {
+                    for (let [key, value] of Object.entries(obj)) {
+                        if (typeof value === 'object' && value !== null && !Array.isArray(value)) {
+                            result += spaces + key + ':\n';
+                            result += jsonToYamlRecursive(value, indent + 1);
+                        } else {
+                            result += spaces + key + ': ' + formatValue(value, indent) + '\n';
+                        }
+                    }
+                }
+                
+                return result;
+            }
+
+            function formatValue(value, indent) {
+                if (value === null) return 'null';
+                if (typeof value === 'string') return value;
+                if (typeof value === 'number' || typeof value === 'boolean') return value.toString();
+                if (Array.isArray(value)) {
+                    return '\n' + jsonToYamlRecursive(value, indent);
+                }
+                return value.toString();
+            }
+
+            function parseValue(value) {
+                if (value === 'true') return true;
+                if (value === 'false') return false;
+                if (value === 'null') return null;
+                if (!isNaN(value) && value !== '') return Number(value);
+                return value;
+            }
+
+            // Example on page load
+            window.addEventListener('load', () => {
+                const exampleYaml = `name: DevDunia
+description: Your world of developer tools
+version: 1.0.0
+features:
+  - free
+  - offline
+  - simple
+config:
+  theme: dark
+  language: en`;
+                
+                inputText.value = exampleYaml;
+            });
+        });
+    </script>
+</body>
+</html>

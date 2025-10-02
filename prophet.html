@@ -1,0 +1,458 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Facebook Prophet - Developer Toolkit | DevDunia</title>
+    <meta name="description" content="Facebook Prophet time series forecasting and trend analysis examples. Free online Prophet reference for developers.">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="js/common.js"></script>
+    <style>
+        body {
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #0f172a 100%);
+        }
+    </style>
+</head>
+<body class="min-h-screen">
+    <!-- Background: Consistent Subtle Dark Gradient -->
+    <div class="fixed inset-0 -z-10 bg-gradient-to-br from-gray-900 via-slate-900 to-gray-900"></div>
+
+    <!-- Main Container -->
+    <div class="relative z-10 container mx-auto px-4 pt-16 pb-24 sm:px-6 lg:px-8">
+        
+        <!-- Page Header -->
+        <div class="text-center mb-12">
+            <h1 class="text-3xl sm:text-4xl font-bold mb-4 tracking-tight
+                       text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 to-teal-500">
+                Facebook Prophet
+            </h1>
+            <p class="text-lg text-gray-400 max-w-2xl mx-auto">
+                Time series forecasting and trend analysis with Facebook Prophet.
+            </p>
+        </div>
+
+        <!-- Tool Container -->
+        <div class="max-w-6xl mx-auto">
+            <div class="bg-slate-800/70 backdrop-blur-md rounded-lg shadow-lg border border-slate-700/60 p-6">
+                
+                <!-- Setup Section -->
+                <div class="mb-8">
+                    <h2 class="text-xl font-semibold text-emerald-300 mb-4">Setup & Installation</h2>
+                    <div class="bg-slate-700/30 rounded-lg p-4 border border-slate-600/50">
+                        <div class="flex items-center justify-between mb-3">
+                            <h3 class="text-lg font-medium text-emerald-300">Installation & Basic Setup</h3>
+                            <button class="copy-btn px-3 py-1 bg-emerald-600 hover:bg-emerald-700 text-white text-xs rounded transition-colors duration-200 flex items-center space-x-1" data-target="setup-code">
+                                <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v8a2 2 0 01-2 2h-2m-6-4l2 2m0 0l2-2m-2 2V10"></path>
+                                </svg>
+                                <span>Copy</span>
+                            </button>
+                        </div>
+                        <textarea 
+                            id="setup-code" 
+                                rows="8" 
+                                class="w-full px-3 py-2 bg-slate-800/50 border border-slate-600 rounded text-gray-200 font-mono text-sm resize-none"
+                                readonly
+                        ># Install Prophet
+pip install prophet
+
+# Install additional dependencies
+pip install pandas numpy matplotlib seaborn
+
+# Basic imports
+import pandas as pd
+import numpy as np
+import matplotlib.pyplot as plt
+from prophet import Prophet
+import warnings
+warnings.filterwarnings('ignore')
+
+# Set up plotting
+plt.style.use('default')
+plt.rcParams['figure.figsize'] = (12, 6)</textarea>
+                    </div>
+                </div>
+
+                <!-- Basic Forecasting Section -->
+                <div class="mb-8">
+                    <h2 class="text-xl font-semibold text-emerald-300 mb-4">Basic Forecasting</h2>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        
+                        <!-- Simple Forecast -->
+                        <div class="bg-slate-700/30 rounded-lg p-4 border border-slate-600/50">
+                            <div class="flex items-center justify-between mb-3">
+                                <h3 class="text-lg font-medium text-emerald-300">Simple Forecast</h3>
+                                <button class="copy-btn px-3 py-1 bg-emerald-600 hover:bg-emerald-700 text-white text-xs rounded transition-colors duration-200 flex items-center space-x-1" data-target="simple-forecast-code">
+                                    <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v8a2 2 0 01-2 2h-2m-6-4l2 2m0 0l2-2m-2 2V10"></path>
+                                    </svg>
+                                    <span>Copy</span>
+                                </button>
+                            </div>
+                            <textarea 
+                                id="simple-forecast-code" 
+                                rows="15" 
+                                class="w-full px-3 py-2 bg-slate-800/50 border border-slate-600 rounded text-gray-200 font-mono text-sm resize-none"
+                                readonly
+                            ># Create sample data
+dates = pd.date_range('2020-01-01', '2023-12-31', freq='D')
+values = 100 + np.cumsum(np.random.randn(len(dates)) * 0.5) + 10 * np.sin(np.arange(len(dates)) * 2 * np.pi / 365)
+
+# Create DataFrame
+df = pd.DataFrame({
+    'ds': dates,
+    'y': values
+})
+
+# Initialize and fit Prophet model
+model = Prophet()
+model.fit(df)
+
+# Create future dataframe
+future = model.make_future_dataframe(periods=365)  # Forecast 1 year ahead
+forecast = model.predict(future)
+
+# Plot the forecast
+fig = model.plot(forecast)
+plt.title('Prophet Forecast')
+plt.show()
+
+# Plot components
+fig = model.plot_components(forecast)
+plt.show()
+
+# Access forecast data
+print(forecast[['ds', 'yhat', 'yhat_lower', 'yhat_upper']].tail())</textarea>
+                        </div>
+
+                        <!-- With Seasonality -->
+                        <div class="bg-slate-700/30 rounded-lg p-4 border border-slate-600/50">
+                            <div class="flex items-center justify-between mb-3">
+                                <h3 class="text-lg font-medium text-emerald-300">With Seasonality</h3>
+                                <button class="copy-btn px-3 py-1 bg-emerald-600 hover:bg-emerald-700 text-white text-xs rounded transition-colors duration-200 flex items-center space-x-1" data-target="seasonality-code">
+                                    <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v8a2 2 0 01-2 2h-2m-6-4l2 2m0 0l2-2m-2 2V10"></path>
+                                    </svg>
+                                    <span>Copy</span>
+                                </button>
+                            </div>
+                            <textarea 
+                                id="seasonality-code" 
+                                rows="15" 
+                                class="w-full px-3 py-2 bg-slate-800/50 border border-slate-600 rounded text-gray-200 font-mono text-sm resize-none"
+                                readonly
+                            ># Create data with strong seasonality
+dates = pd.date_range('2020-01-01', '2023-12-31', freq='D')
+# Add yearly seasonality
+yearly_season = 20 * np.sin(2 * np.pi * np.arange(len(dates)) / 365.25)
+# Add weekly seasonality
+weekly_season = 5 * np.sin(2 * np.pi * np.arange(len(dates)) / 7)
+# Add trend
+trend = np.linspace(100, 200, len(dates))
+# Add noise
+noise = np.random.randn(len(dates)) * 2
+
+values = trend + yearly_season + weekly_season + noise
+
+df = pd.DataFrame({
+    'ds': dates,
+    'y': values
+})
+
+# Initialize Prophet with custom seasonality
+model = Prophet(
+    yearly_seasonality=True,
+    weekly_seasonality=True,
+    daily_seasonality=False,
+    seasonality_mode='multiplicative'  # or 'additive'
+)
+
+# Add custom seasonality
+model.add_seasonality(name='monthly', period=30.5, fourier_order=5)
+
+# Fit the model
+model.fit(df)
+
+# Make predictions
+future = model.make_future_dataframe(periods=365)
+forecast = model.predict(future)
+
+# Plot results
+fig = model.plot(forecast)
+plt.title('Prophet Forecast with Seasonality')
+plt.show()
+
+# Plot components
+fig = model.plot_components(forecast)
+plt.show()</textarea>
+                        </div>
+
+                    </div>
+                </div>
+
+                <!-- Advanced Features Section -->
+                <div class="mb-8">
+                    <h2 class="text-xl font-semibold text-emerald-300 mb-4">Advanced Features</h2>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        
+                        <!-- Holidays and Events -->
+                        <div class="bg-slate-700/30 rounded-lg p-4 border border-slate-600/50">
+                            <div class="flex items-center justify-between mb-3">
+                                <h3 class="text-lg font-medium text-emerald-300">Holidays and Events</h3>
+                                <button class="copy-btn px-3 py-1 bg-emerald-600 hover:bg-emerald-700 text-white text-xs rounded transition-colors duration-200 flex items-center space-x-1" data-target="holidays-code">
+                                    <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v8a2 2 0 01-2 2h-2m-6-4l2 2m0 0l2-2m-2 2V10"></path>
+                                    </svg>
+                                    <span>Copy</span>
+                                </button>
+                            </div>
+                            <textarea 
+                                id="holidays-code" 
+                                rows="15" 
+                                class="w-full px-3 py-2 bg-slate-800/50 border border-slate-600 rounded text-gray-200 font-mono text-sm resize-none"
+                                readonly
+                            ># Create custom holidays
+holidays = pd.DataFrame({
+    'holiday': ['New Year', 'Christmas', 'Black Friday', 'Summer Sale'],
+    'ds': pd.to_datetime(['2020-01-01', '2020-12-25', '2020-11-27', '2020-07-15',
+                         '2021-01-01', '2021-12-25', '2021-11-26', '2021-07-15',
+                         '2022-01-01', '2022-12-25', '2022-11-25', '2022-07-15']),
+    'lower_window': 0,
+    'upper_window': 1,
+})
+
+# Create sample data with holiday effects
+dates = pd.date_range('2020-01-01', '2022-12-31', freq='D')
+base_values = 100 + np.cumsum(np.random.randn(len(dates)) * 0.3)
+
+# Add holiday effects
+holiday_effects = np.zeros(len(dates))
+for _, holiday in holidays.iterrows():
+    mask = (dates >= holiday['ds']) & (dates <= holiday['ds'] + pd.Timedelta(days=holiday['upper_window']))
+    holiday_effects[mask] += 20  # Boost during holidays
+
+values = base_values + holiday_effects
+
+df = pd.DataFrame({
+    'ds': dates,
+    'y': values
+})
+
+# Initialize Prophet with holidays
+model = Prophet(holidays=holidays)
+model.fit(df)
+
+# Make predictions
+future = model.make_future_dataframe(periods=365)
+forecast = model.predict(future)
+
+# Plot results
+fig = model.plot(forecast)
+plt.title('Prophet Forecast with Holidays')
+plt.show()
+
+# Plot components including holidays
+fig = model.plot_components(forecast)
+plt.show()</textarea>
+                        </div>
+
+                        <!-- Regressors -->
+                        <div class="bg-slate-700/30 rounded-lg p-4 border border-slate-600/50">
+                            <div class="flex items-center justify-between mb-3">
+                                <h3 class="text-lg font-medium text-emerald-300">External Regressors</h3>
+                                <button class="copy-btn px-3 py-1 bg-emerald-600 hover:bg-emerald-700 text-white text-xs rounded transition-colors duration-200 flex items-center space-x-1" data-target="regressors-code">
+                                    <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v8a2 2 0 01-2 2h-2m-6-4l2 2m0 0l2-2m-2 2V10"></path>
+                                    </svg>
+                                    <span>Copy</span>
+                                </button>
+                            </div>
+                            <textarea 
+                                id="regressors-code" 
+                                rows="15" 
+                                class="w-full px-3 py-2 bg-slate-800/50 border border-slate-600 rounded text-gray-200 font-mono text-sm resize-none"
+                                readonly
+                            ># Create data with external regressors
+dates = pd.date_range('2020-01-01', '2023-12-31', freq='D')
+
+# Create external regressors
+temperature = 20 + 10 * np.sin(2 * np.pi * np.arange(len(dates)) / 365.25) + np.random.randn(len(dates)) * 2
+advertising = np.random.exponential(100, len(dates))
+competitor_price = 50 + np.cumsum(np.random.randn(len(dates)) * 0.1)
+
+# Create target variable influenced by regressors
+base_sales = 1000
+temp_effect = 5 * temperature
+ad_effect = 0.1 * advertising
+price_effect = -2 * competitor_price
+trend = np.linspace(0, 200, len(dates))
+noise = np.random.randn(len(dates)) * 50
+
+sales = base_sales + temp_effect + ad_effect + price_effect + trend + noise
+
+# Create DataFrame
+df = pd.DataFrame({
+    'ds': dates,
+    'y': sales,
+    'temperature': temperature,
+    'advertising': advertising,
+    'competitor_price': competitor_price
+})
+
+# Initialize Prophet and add regressors
+model = Prophet()
+model.add_regressor('temperature')
+model.add_regressor('advertising')
+model.add_regressor('competitor_price')
+
+# Fit the model
+model.fit(df)
+
+# Create future dataframe with regressor values
+future = model.make_future_dataframe(periods=365)
+
+# For future periods, you need to provide regressor values
+# This is a simplified example - in practice, you'd forecast these too
+future['temperature'] = np.tile(temperature[-365:], 1)  # Repeat last year
+future['advertising'] = np.tile(advertising[-365:], 1)
+future['competitor_price'] = np.tile(competitor_price[-365:], 1)
+
+# Make predictions
+forecast = model.predict(future)
+
+# Plot results
+fig = model.plot(forecast)
+plt.title('Prophet Forecast with External Regressors')
+plt.show()</textarea>
+                        </div>
+
+                    </div>
+                </div>
+
+                <!-- Model Evaluation Section -->
+                <div class="mb-8">
+                    <h2 class="text-xl font-semibold text-emerald-300 mb-4">Model Evaluation</h2>
+                    <div class="bg-slate-700/30 rounded-lg p-4 border border-slate-600/50">
+                        <div class="flex items-center justify-between mb-3">
+                            <h3 class="text-lg font-medium text-emerald-300">Cross-Validation and Metrics</h3>
+                            <button class="copy-btn px-3 py-1 bg-emerald-600 hover:bg-emerald-700 text-white text-xs rounded transition-colors duration-200 flex items-center space-x-1" data-target="evaluation-code">
+                                <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v8a2 2 0 01-2 2h-2m-6-4l2 2m0 0l2-2m-2 2V10"></path>
+                                </svg>
+                                <span>Copy</span>
+                            </button>
+                        </div>
+                        <textarea 
+                            id="evaluation-code" 
+                            rows="20" 
+                            class="w-full px-3 py-2 bg-slate-800/50 border border-slate-600 rounded text-gray-200 font-mono text-sm resize-none"
+                            readonly
+                        >from prophet.diagnostics import cross_validation, performance_metrics
+from prophet.plot import plot_cross_validation_metric
+import matplotlib.pyplot as plt
+
+# Create sample data
+dates = pd.date_range('2020-01-01', '2023-12-31', freq='D')
+values = 100 + np.cumsum(np.random.randn(len(dates)) * 0.5) + 10 * np.sin(np.arange(len(dates)) * 2 * np.pi / 365)
+
+df = pd.DataFrame({
+    'ds': dates,
+    'y': values
+})
+
+# Initialize and fit model
+model = Prophet()
+model.fit(df)
+
+# Cross-validation
+df_cv = cross_validation(
+    model, 
+    initial='730 days',  # Use first 2 years for training
+    period='180 days',   # Every 6 months
+    horizon='90 days',   # Forecast 3 months ahead
+    parallel="processes"
+)
+
+# Calculate performance metrics
+df_performance = performance_metrics(df_cv)
+print("Performance Metrics:")
+print(df_performance.head())
+
+# Plot cross-validation metrics
+fig = plot_cross_validation_metric(df_cv, metric='mape')
+plt.title('Mean Absolute Percentage Error')
+plt.show()
+
+# Manual evaluation
+def evaluate_model(model, df, test_size=0.2):
+    # Split data
+    split_point = int(len(df) * (1 - test_size))
+    train_df = df[:split_point]
+    test_df = df[split_point:]
+    
+    # Fit model on training data
+    model.fit(train_df)
+    
+    # Make predictions for test period
+    future = model.make_future_dataframe(periods=len(test_df))
+    forecast = model.predict(future)
+    
+    # Get predictions for test period
+    test_forecast = forecast[split_point:].reset_index(drop=True)
+    
+    # Calculate metrics
+    mae = np.mean(np.abs(test_df['y'] - test_forecast['yhat']))
+    mape = np.mean(np.abs((test_df['y'] - test_forecast['yhat']) / test_df['y'])) * 100
+    rmse = np.sqrt(np.mean((test_df['y'] - test_forecast['yhat'])**2))
+    
+    print(f"MAE: {mae:.2f}")
+    print(f"MAPE: {mape:.2f}%")
+    print(f"RMSE: {rmse:.2f}")
+    
+    return mae, mape, rmse
+
+# Evaluate model
+mae, mape, rmse = evaluate_model(model, df)</textarea>
+                    </div>
+                </div>
+
+                <!-- Quick Reference Section -->
+                <div class="mt-8 p-4 bg-slate-700/30 rounded-lg border border-slate-600/50">
+                    <h3 class="text-lg font-semibold text-emerald-400 mb-3">Quick Reference</h3>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
+                        <div>
+                            <p class="text-gray-300 font-medium mb-2">Key Parameters:</p>
+                            <ul class="text-gray-400 space-y-1">
+                                <li>• <code>yearly_seasonality</code> - Enable yearly patterns</li>
+                                <li>• <code>weekly_seasonality</code> - Enable weekly patterns</li>
+                                <li>• <code>daily_seasonality</code> - Enable daily patterns</li>
+                                <li>• <code>seasonality_mode</code> - 'additive' or 'multiplicative'</li>
+                                <li>• <code>changepoint_prior_scale</code> - Trend flexibility</li>
+                                <li>• <code>seasonality_prior_scale</code> - Seasonality strength</li>
+                            </ul>
+                        </div>
+                        <div>
+                            <p class="text-gray-300 font-medium mb-2">Common Methods:</p>
+                            <ul class="text-gray-400 space-y-1">
+                                <li>• <code>fit()</code> - Train the model</li>
+                                <li>• <code>predict()</code> - Make forecasts</li>
+                                <li>• <code>plot()</code> - Plot forecast</li>
+                                <li>• <code>plot_components()</code> - Plot components</li>
+                                <li>• <code>add_seasonality()</code> - Custom seasonality</li>
+                                <li>• <code>add_regressor()</code> - External variables</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+    </div>
+
+    <!-- Footer -->
+    <footer class="text-center text-gray-500 mt-10 pb-6">
+        © 2025 DevDunia – Free Developer Tools by <a href="https://echobash.com" class="text-blue-500 hover:underline" target="_blank">echobash</a>
+    </footer>
+</body>
+</html>

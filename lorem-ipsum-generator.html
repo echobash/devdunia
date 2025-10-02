@@ -1,0 +1,425 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lorem Ipsum Generator - Developer Toolkit | DevDunia</title>
+    <meta name="description" content="Generate Lorem Ipsum placeholder text in various formats. Free online Lorem Ipsum generator tool for developers and designers.">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="js/common.js"></script>
+    <style>
+        body {
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #0f172a 100%);
+        }
+    </style>
+</head>
+<body class="min-h-screen">
+    <!-- Background: Consistent Subtle Dark Gradient -->
+    <div class="fixed inset-0 -z-10 bg-gradient-to-br from-gray-900 via-slate-900 to-gray-900"></div>
+
+    <!-- Main Container -->
+    <div class="relative z-10 container mx-auto px-4 pt-16 pb-24 sm:px-6 lg:px-8">
+        
+        <!-- Page Header -->
+        <div class="text-center mb-12">
+            <h1 class="text-3xl sm:text-4xl font-bold mb-4 tracking-tight
+                       text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-pink-500">
+                Lorem Ipsum Generator
+            </h1>
+            <p class="text-lg text-gray-400 max-w-2xl mx-auto">
+                Generate Lorem Ipsum placeholder text in various formats and lengths.
+            </p>
+        </div>
+
+        <!-- Tool Container -->
+        <div class="max-w-4xl mx-auto">
+            <div class="bg-slate-800/70 backdrop-blur-md rounded-lg shadow-lg border border-slate-700/60 p-6">
+                
+                <!-- Options Section -->
+                <div class="mb-6">
+                    <h2 class="text-lg font-semibold text-purple-300 mb-4">Generation Options</h2>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        
+                        <!-- Text Type -->
+                        <div>
+                            <label class="block text-sm font-medium text-gray-300 mb-2">Text Type</label>
+                            <select id="text-type" class="w-full px-3 py-2 bg-slate-700/50 border border-slate-600 rounded-lg text-gray-200 focus:outline-none focus:ring-2 focus:ring-purple-500">
+                                <option value="lorem">Lorem Ipsum</option>
+                                <option value="hipster">Hipster Ipsum</option>
+                                <option value="bacon">Bacon Ipsum</option>
+                                <option value="cupcake">Cupcake Ipsum</option>
+                                <option value="pirate">Pirate Ipsum</option>
+                                <option value="cat">Cat Ipsum</option>
+                            </select>
+                        </div>
+
+                        <!-- Generation Method -->
+                        <div>
+                            <label class="block text-sm font-medium text-gray-300 mb-2">Generation Method</label>
+                            <select id="generation-method" class="w-full px-3 py-2 bg-slate-700/50 border border-slate-600 rounded-lg text-gray-200 focus:outline-none focus:ring-2 focus:ring-purple-500">
+                                <option value="paragraphs">Paragraphs</option>
+                                <option value="words">Words</option>
+                                <option value="sentences">Sentences</option>
+                                <option value="characters">Characters</option>
+                            </select>
+                        </div>
+
+                        <!-- Quantity -->
+                        <div>
+                            <label class="block text-sm font-medium text-gray-300 mb-2">Quantity</label>
+                            <input type="number" id="quantity" value="3" min="1" max="100" class="w-full px-3 py-2 bg-slate-700/50 border border-slate-600 rounded-lg text-gray-200 focus:outline-none focus:ring-2 focus:ring-purple-500">
+                        </div>
+
+                        <!-- Start with Lorem -->
+                        <div class="flex items-center">
+                            <input type="checkbox" id="start-with-lorem" class="mr-2">
+                            <label for="start-with-lorem" class="text-sm text-gray-300">Start with "Lorem ipsum dolor sit amet"</label>
+                        </div>
+
+                    </div>
+                </div>
+
+                <!-- Action Buttons -->
+                <div class="flex flex-wrap gap-3 mb-6">
+                    <button id="generate-btn" class="px-6 py-3 bg-purple-600 hover:bg-purple-700 text-white font-medium rounded-lg transition-colors duration-200 flex items-center space-x-2">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
+                        </svg>
+                        <span>Generate Text</span>
+                    </button>
+                    
+                    <button class="clear-btn px-6 py-3 bg-slate-600 hover:bg-slate-700 text-white font-medium rounded-lg transition-colors duration-200 flex items-center space-x-2">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
+                        </svg>
+                        <span>Clear All</span>
+                    </button>
+                </div>
+
+                <!-- Output Section -->
+                <div id="output-section" class="hidden">
+                    <div class="flex items-center justify-between mb-3">
+                        <label for="generated-text" class="block text-sm font-medium text-gray-300">
+                            Generated Text
+                        </label>
+                        <button class="copy-btn px-3 py-1 bg-purple-600 hover:bg-purple-700 text-white text-sm rounded transition-colors duration-200 flex items-center space-x-1" data-target="generated-text">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v8a2 2 0 01-2 2h-2m-6-4l2 2m0 0l2-2m-2 2V10"></path>
+                            </svg>
+                            <span>Copy</span>
+                        </button>
+                    </div>
+                    <textarea 
+                        id="generated-text" 
+                        rows="12" 
+                        class="w-full px-4 py-3 bg-slate-700/50 border border-slate-600 rounded-lg text-gray-200 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent resize-none font-mono text-sm"
+                        readonly
+                    ></textarea>
+                </div>
+
+                <!-- Text Statistics -->
+                <div id="stats" class="hidden mt-6 grid grid-cols-1 md:grid-cols-4 gap-4">
+                    <div class="bg-slate-700/50 p-3 rounded-lg">
+                        <h4 class="text-sm font-medium text-gray-300 mb-1">Words</h4>
+                        <p id="word-count" class="text-purple-400 font-mono text-sm"></p>
+                    </div>
+                    <div class="bg-slate-700/50 p-3 rounded-lg">
+                        <h4 class="text-sm font-medium text-gray-300 mb-1">Characters</h4>
+                        <p id="char-count" class="text-blue-400 font-mono text-sm"></p>
+                    </div>
+                    <div class="bg-slate-700/50 p-3 rounded-lg">
+                        <h4 class="text-sm font-medium text-gray-300 mb-1">Paragraphs</h4>
+                        <p id="paragraph-count" class="text-green-400 font-mono text-sm"></p>
+                    </div>
+                    <div class="bg-slate-700/50 p-3 rounded-lg">
+                        <h4 class="text-sm font-medium text-gray-300 mb-1">Size</h4>
+                        <p id="size-info" class="text-orange-400 font-mono text-sm"></p>
+                    </div>
+                </div>
+
+                <!-- Quick Presets -->
+                <div class="mt-8 p-4 bg-slate-700/30 rounded-lg border border-slate-600/50">
+                    <h3 class="text-lg font-semibold text-purple-400 mb-3">Quick Presets</h3>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
+                        <button class="preset-btn px-4 py-2 bg-slate-600 hover:bg-slate-700 text-gray-300 rounded-lg transition-colors duration-200 text-sm" data-preset="short">
+                            Short Text (1 paragraph)
+                        </button>
+                        <button class="preset-btn px-4 py-2 bg-slate-600 hover:bg-slate-700 text-gray-300 rounded-lg transition-colors duration-200 text-sm" data-preset="medium">
+                            Medium Text (3 paragraphs)
+                        </button>
+                        <button class="preset-btn px-4 py-2 bg-slate-600 hover:bg-slate-700 text-gray-300 rounded-lg transition-colors duration-200 text-sm" data-preset="long">
+                            Long Text (5 paragraphs)
+                        </button>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+    </div>
+
+    <!-- Footer -->
+    <footer class="text-center text-gray-500 mt-10 pb-6">
+        © 2025 DevDunia – Free Developer Tools by <a href="https://echobash.com" class="text-blue-500 hover:underline" target="_blank">echobash</a>
+    </footer>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const textTypeSelect = document.getElementById('text-type');
+            const generationMethodSelect = document.getElementById('generation-method');
+            const quantityInput = document.getElementById('quantity');
+            const startWithLoremCheckbox = document.getElementById('start-with-lorem');
+            const generateBtn = document.getElementById('generate-btn');
+            const generatedText = document.getElementById('generated-text');
+            const outputSection = document.getElementById('output-section');
+            const stats = document.getElementById('stats');
+            const wordCount = document.getElementById('word-count');
+            const charCount = document.getElementById('char-count');
+            const paragraphCount = document.getElementById('paragraph-count');
+            const sizeInfo = document.getElementById('size-info');
+
+            // Text libraries
+            const textLibraries = {
+                lorem: [
+                    "lorem ipsum dolor sit amet consectetur adipiscing elit sed do eiusmod tempor incididunt ut labore et dolore magna aliqua",
+                    "ut enim ad minim veniam quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat",
+                    "duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur",
+                    "excepteur sint occaecat cupidatat non proident sunt in culpa qui officia deserunt mollit anim id est laborum",
+                    "sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium",
+                    "totam rem aperiam eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt",
+                    "explicabo nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit",
+                    "sed quia consequuntur magni dolores eos qui ratione voluptatem sequi nesciunt",
+                    "neque porro quisquam est qui dolorem ipsum quia dolor sit amet consectetur adipisci velit",
+                    "sed quia non numquam eius modi tempora incidunt ut labore et dolore magnam aliquam quaerat voluptatem"
+                ],
+                hipster: [
+                    "aesthetic sustainable craft beer farm-to-table organic gluten-free",
+                    "artisan coffee pour-over cold brew single origin fair trade",
+                    "vintage vinyl record player turntable analog music",
+                    "minimalist design clean lines geometric patterns",
+                    "handmade ceramics pottery kiln fired clay",
+                    "urban gardening hydroponic vertical farming",
+                    "bicycle culture fixie single speed cycling",
+                    "independent bookstore local authors zine culture",
+                    "food truck street food fusion cuisine",
+                    "co-working space remote work digital nomad"
+                ],
+                bacon: [
+                    "bacon ipsum dolor amet pork belly brisket ribeye",
+                    "beef ribs short loin ham hock tenderloin",
+                    "pancetta prosciutto capicola andouille sausage",
+                    "corned beef pastrami flank strip steak",
+                    "pork chop shoulder tail meatball",
+                    "chuck boudin venison jerky tri-tip",
+                    "turkey drumstick ham bacon fatback",
+                    "sirloin tongue beef ribs shankle",
+                    "pork loin filet mignon ground round",
+                    "spare ribs chuck tenderloin bresaola"
+                ],
+                cupcake: [
+                    "cupcake ipsum dolor sit amet chocolate cake",
+                    "sugar plum marshmallow jelly beans candy",
+                    "gummi bears lollipop sweet roll donut",
+                    "chocolate bar cookie brownie toffee",
+                    "caramels jelly-o marzipan fudge",
+                    "cotton candy ice cream wafer",
+                    "gingerbread cookie cake pie",
+                    "macaroon bonbon sweet soufflé",
+                    "tiramisu cheesecake mousse",
+                    "pudding tart fruitcake"
+                ],
+                pirate: [
+                    "ahoy matey walk the plank scallywag",
+                    "yo ho ho and a bottle of rum",
+                    "shiver me timbers jolly roger treasure",
+                    "black spot keelhaul marooned",
+                    "parrot doubloon pieces of eight",
+                    "cannon broadside port starboard",
+                    "mizzenmast crow's nest rigging",
+                    "swashbuckling buccaneer privateer",
+                    "treasure map x marks the spot",
+                    "shipwreck island buried treasure"
+                ],
+                cat: [
+                    "meow purr knead whiskers paws",
+                    "catnip laser pointer yarn ball",
+                    "scratching post climbing tree",
+                    "sunbeam window sill nap",
+                    "fish tuna salmon treats",
+                    "litter box sand scratching",
+                    "feline graceful independent",
+                    "hunt stalk pounce play",
+                    "grooming fur coat tail",
+                    "curious explore adventure"
+                ]
+            };
+
+            // Generate text
+            generateBtn.addEventListener('click', function() {
+                const textType = textTypeSelect.value;
+                const method = generationMethodSelect.value;
+                const quantity = parseInt(quantityInput.value);
+                const startWithLorem = startWithLoremCheckbox.checked;
+
+                try {
+                    const generated = generateText(textType, method, quantity, startWithLorem);
+                    generatedText.value = generated;
+                    showOutput();
+                    updateStats(generated);
+                } catch (error) {
+                    console.error('Generation error:', error);
+                }
+            });
+
+            // Preset buttons
+            document.querySelectorAll('.preset-btn').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const preset = this.getAttribute('data-preset');
+                    applyPreset(preset);
+                });
+            });
+
+            // Helper functions
+            function showOutput() {
+                outputSection.classList.remove('hidden');
+                stats.classList.remove('hidden');
+            }
+
+            function hideOutput() {
+                outputSection.classList.add('hidden');
+                stats.classList.add('hidden');
+            }
+
+            function generateText(type, method, quantity, startWithLorem) {
+                const words = textLibraries[type];
+                let result = '';
+
+                switch (method) {
+                    case 'paragraphs':
+                        result = generateParagraphs(words, quantity, startWithLorem);
+                        break;
+                    case 'words':
+                        result = generateWords(words, quantity);
+                        break;
+                    case 'sentences':
+                        result = generateSentences(words, quantity);
+                        break;
+                    case 'characters':
+                        result = generateCharacters(words, quantity);
+                        break;
+                }
+
+                return result;
+            }
+
+            function generateParagraphs(words, count, startWithLorem) {
+                let result = '';
+                const startText = startWithLorem ? 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. ' : '';
+                
+                for (let i = 0; i < count; i++) {
+                    if (i === 0 && startWithLorem) {
+                        result += startText;
+                    }
+                    
+                    const sentenceCount = Math.floor(Math.random() * 3) + 2; // 2-4 sentences
+                    for (let j = 0; j < sentenceCount; j++) {
+                        const wordCount = Math.floor(Math.random() * 8) + 5; // 5-12 words
+                        const sentence = generateSentence(words, wordCount);
+                        result += sentence;
+                        if (j < sentenceCount - 1) result += ' ';
+                    }
+                    
+                    if (i < count - 1) result += '\n\n';
+                }
+                
+                return result;
+            }
+
+            function generateWords(words, count) {
+                let result = [];
+                for (let i = 0; i < count; i++) {
+                    result.push(words[Math.floor(Math.random() * words.length)]);
+                }
+                return result.join(' ');
+            }
+
+            function generateSentences(words, count) {
+                let result = '';
+                for (let i = 0; i < count; i++) {
+                    const wordCount = Math.floor(Math.random() * 8) + 5; // 5-12 words
+                    result += generateSentence(words, wordCount);
+                    if (i < count - 1) result += ' ';
+                }
+                return result;
+            }
+
+            function generateCharacters(words, count) {
+                let result = '';
+                while (result.length < count) {
+                    const word = words[Math.floor(Math.random() * words.length)];
+                    if (result.length + word.length + 1 <= count) {
+                        result += (result ? ' ' : '') + word;
+                    } else {
+                        break;
+                    }
+                }
+                return result;
+            }
+
+            function generateSentence(words, wordCount) {
+                let sentence = '';
+                for (let i = 0; i < wordCount; i++) {
+                    const word = words[Math.floor(Math.random() * words.length)];
+                    sentence += (i === 0 ? word.charAt(0).toUpperCase() + word.slice(1) : word);
+                    if (i < wordCount - 1) sentence += ' ';
+                }
+                sentence += '.';
+                return sentence;
+            }
+
+            function updateStats(text) {
+                const words = text.trim() ? text.trim().split(/\s+/).length : 0;
+                const chars = text.length;
+                const paragraphs = text.split('\n\n').filter(p => p.trim()).length;
+                const size = formatBytes(chars);
+                
+                wordCount.textContent = words.toLocaleString();
+                charCount.textContent = chars.toLocaleString();
+                paragraphCount.textContent = paragraphs.toLocaleString();
+                sizeInfo.textContent = size;
+            }
+
+            function formatBytes(bytes) {
+                if (bytes === 0) return '0 B';
+                const k = 1024;
+                const sizes = ['B', 'KB', 'MB', 'GB'];
+                const i = Math.floor(Math.log(bytes) / Math.log(k));
+                return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+            }
+
+            function applyPreset(preset) {
+                switch (preset) {
+                    case 'short':
+                        generationMethodSelect.value = 'paragraphs';
+                        quantityInput.value = '1';
+                        break;
+                    case 'medium':
+                        generationMethodSelect.value = 'paragraphs';
+                        quantityInput.value = '3';
+                        break;
+                    case 'long':
+                        generationMethodSelect.value = 'paragraphs';
+                        quantityInput.value = '5';
+                        break;
+                }
+                generateBtn.click();
+            }
+
+            // Generate on page load
+            window.addEventListener('load', () => {
+                generateBtn.click();
+            });
+        });
+    </script>
+</body>
+</html>

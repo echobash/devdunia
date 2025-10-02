@@ -1,0 +1,386 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Regex Tester - Developer Toolkit | DevDunia</title>
+    <meta name="description" content="Test and debug regular expressions with real-time matching and highlighting. Free online regex tester tool for developers.">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="js/common.js"></script>
+    <style>
+        body {
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #0f172a 100%);
+        }
+        .match-highlight {
+            background-color: #fbbf24;
+            color: #1f2937;
+            padding: 2px 4px;
+            border-radius: 3px;
+        }
+        .group-highlight {
+            background-color: #34d399;
+            color: #1f2937;
+            padding: 2px 4px;
+            border-radius: 3px;
+        }
+    </style>
+</head>
+<body class="min-h-screen">
+    <!-- Background: Consistent Subtle Dark Gradient -->
+    <div class="fixed inset-0 -z-10 bg-gradient-to-br from-gray-900 via-slate-900 to-gray-900"></div>
+
+    <!-- Main Container -->
+    <div class="relative z-10 container mx-auto px-4 pt-16 pb-24 sm:px-6 lg:px-8">
+        
+        <!-- Page Header -->
+        <div class="text-center mb-12">
+            <h1 class="text-3xl sm:text-4xl font-bold mb-4 tracking-tight
+                       text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-cyan-500">
+                Regex Tester
+            </h1>
+            <p class="text-lg text-gray-400 max-w-2xl mx-auto">
+                Test and debug regular expressions with real-time matching and highlighting.
+            </p>
+        </div>
+
+        <!-- Tool Container -->
+        <div class="max-w-6xl mx-auto">
+            <div class="bg-slate-800/70 backdrop-blur-md rounded-lg shadow-lg border border-slate-700/60 p-6">
+                
+                <!-- Regex Input Section -->
+                <div class="mb-6">
+                    <label for="regex-input" class="block text-sm font-medium text-gray-300 mb-2">
+                        Regular Expression Pattern
+                    </label>
+                    <div class="relative">
+                        <textarea 
+                            id="regex-input" 
+                            rows="3" 
+                            class="w-full px-4 py-3 bg-slate-700/50 border border-slate-600 rounded-lg text-gray-200 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-none font-mono text-sm"
+                            placeholder="Enter your regex pattern here (e.g., /[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}/)"
+                        ></textarea>
+                    </div>
+                    <div class="mt-2 flex items-center space-x-4 text-sm">
+                        <label class="flex items-center text-gray-400">
+                            <input type="checkbox" id="global-flag" class="mr-2" checked>
+                            Global (g)
+                        </label>
+                        <label class="flex items-center text-gray-400">
+                            <input type="checkbox" id="case-insensitive-flag" class="mr-2">
+                            Case Insensitive (i)
+                        </label>
+                        <label class="flex items-center text-gray-400">
+                            <input type="checkbox" id="multiline-flag" class="mr-2">
+                            Multiline (m)
+                        </label>
+                        <label class="flex items-center text-gray-400">
+                            <input type="checkbox" id="dotall-flag" class="mr-2">
+                            Dot All (s)
+                        </label>
+                    </div>
+                </div>
+
+                <!-- Test String Section -->
+                <div class="mb-6">
+                    <label for="test-input" class="block text-sm font-medium text-gray-300 mb-2">
+                        Test String
+                    </label>
+                    <textarea 
+                        id="test-input" 
+                        rows="8" 
+                        class="w-full px-4 py-3 bg-slate-700/50 border border-slate-600 rounded-lg text-gray-200 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-none font-mono text-sm"
+                        placeholder="Enter text to test against the regex pattern..."
+                    ></textarea>
+                </div>
+
+                <!-- Action Buttons -->
+                <div class="flex flex-wrap gap-3 mb-6">
+                    <button id="test-btn" class="px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-lg transition-colors duration-200 flex items-center space-x-2">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
+                        </svg>
+                        <span>Test Regex</span>
+                    </button>
+                    
+                    <button class="clear-btn px-6 py-3 bg-slate-600 hover:bg-slate-700 text-white font-medium rounded-lg transition-colors duration-200 flex items-center space-x-2">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
+                        </svg>
+                        <span>Clear All</span>
+                    </button>
+                </div>
+
+                <!-- Error Display -->
+                <div id="error-display" class="hidden mb-6 p-4 bg-red-900/50 border border-red-600/50 rounded-lg">
+                    <div class="flex items-center space-x-2">
+                        <svg class="w-5 h-5 text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                        </svg>
+                        <span id="error-message" class="text-red-300"></span>
+                    </div>
+                </div>
+
+                <!-- Results Section -->
+                <div id="results-section" class="hidden">
+                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                        
+                        <!-- Matches Display -->
+                        <div class="bg-slate-700/30 rounded-lg p-4 border border-slate-600/50">
+                            <h3 class="text-lg font-medium text-blue-300 mb-3">Matches Found</h3>
+                            <div id="matches-display" class="space-y-2 max-h-64 overflow-y-auto">
+                                <!-- Matches will be displayed here -->
+                            </div>
+                        </div>
+
+                        <!-- Highlighted Text -->
+                        <div class="bg-slate-700/30 rounded-lg p-4 border border-slate-600/50">
+                            <h3 class="text-lg font-medium text-blue-300 mb-3">Highlighted Text</h3>
+                            <div id="highlighted-text" class="bg-slate-800/50 p-3 rounded text-sm font-mono max-h-64 overflow-y-auto">
+                                <!-- Highlighted text will be displayed here -->
+                            </div>
+                        </div>
+
+                    </div>
+
+                    <!-- Match Details -->
+                    <div class="mt-6 bg-slate-700/30 rounded-lg p-4 border border-slate-600/50">
+                        <h3 class="text-lg font-medium text-blue-300 mb-3">Match Details</h3>
+                        <div id="match-details" class="space-y-2">
+                            <!-- Match details will be displayed here -->
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Common Regex Patterns -->
+                <div class="mt-8 p-4 bg-slate-700/30 rounded-lg border border-slate-600/50">
+                    <h3 class="text-lg font-semibold text-blue-400 mb-3">Common Regex Patterns</h3>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
+                        <div>
+                            <p class="text-gray-300 font-medium mb-2">Email:</p>
+                            <code class="text-gray-400 text-xs bg-slate-800/50 p-2 rounded block">/[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}/</code>
+                        </div>
+                        <div>
+                            <p class="text-gray-300 font-medium mb-2">Phone (US):</p>
+                            <code class="text-gray-400 text-xs bg-slate-800/50 p-2 rounded block">/\(?([0-9]{3})\)?[-. ]?([0-9]{3})[-. ]?([0-9]{4})/</code>
+                        </div>
+                        <div>
+                            <p class="text-gray-300 font-medium mb-2">URL:</p>
+                            <code class="text-gray-400 text-xs bg-slate-800/50 p-2 rounded block">/https?:\/\/(www\.)?[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_\+.~#?&//=]*)/</code>
+                        </div>
+                        <div>
+                            <p class="text-gray-300 font-medium mb-2">IP Address:</p>
+                            <code class="text-gray-400 text-xs bg-slate-800/50 p-2 rounded block">/(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)/</code>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+    </div>
+
+    <!-- Footer -->
+    <footer class="text-center text-gray-500 mt-10 pb-6">
+        © 2025 DevDunia – Free Developer Tools by <a href="https://echobash.com" class="text-blue-500 hover:underline" target="_blank">echobash</a>
+    </footer>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const regexInput = document.getElementById('regex-input');
+            const testInput = document.getElementById('test-input');
+            const testBtn = document.getElementById('test-btn');
+            const resultsSection = document.getElementById('results-section');
+            const errorDisplay = document.getElementById('error-display');
+            const errorMessage = document.getElementById('error-message');
+            const matchesDisplay = document.getElementById('matches-display');
+            const highlightedText = document.getElementById('highlighted-text');
+            const matchDetails = document.getElementById('match-details');
+
+            // Test regex
+            testBtn.addEventListener('click', function() {
+                const pattern = regexInput.value.trim();
+                const testString = testInput.value;
+                
+                if (!pattern) {
+                    showError('Please enter a regex pattern');
+                    return;
+                }
+
+                if (!testString) {
+                    showError('Please enter a test string');
+                    return;
+                }
+
+                try {
+                    testRegex(pattern, testString);
+                    hideError();
+                } catch (error) {
+                    showError('Regex Error: ' + error.message);
+                    hideResults();
+                }
+            });
+
+            // Auto-test on input change
+            regexInput.addEventListener('input', debounce(() => {
+                if (regexInput.value.trim() && testInput.value) {
+                    testBtn.click();
+                }
+            }, 500));
+
+            testInput.addEventListener('input', debounce(() => {
+                if (regexInput.value.trim() && testInput.value) {
+                    testBtn.click();
+                }
+            }, 500));
+
+            // Helper functions
+            function showError(message) {
+                errorMessage.textContent = message;
+                errorDisplay.classList.remove('hidden');
+            }
+
+            function hideError() {
+                errorDisplay.classList.add('hidden');
+            }
+
+            function showResults() {
+                resultsSection.classList.remove('hidden');
+            }
+
+            function hideResults() {
+                resultsSection.classList.add('hidden');
+            }
+
+            function testRegex(pattern, testString) {
+                // Get flags
+                const flags = getFlags();
+                
+                // Create regex
+                const regex = new RegExp(pattern, flags);
+                
+                // Find all matches
+                const matches = [...testString.matchAll(regex)];
+                
+                // Display results
+                displayMatches(matches);
+                displayHighlightedText(testString, matches);
+                displayMatchDetails(matches);
+                
+                showResults();
+            }
+
+            function getFlags() {
+                let flags = '';
+                if (document.getElementById('global-flag').checked) flags += 'g';
+                if (document.getElementById('case-insensitive-flag').checked) flags += 'i';
+                if (document.getElementById('multiline-flag').checked) flags += 'm';
+                if (document.getElementById('dotall-flag').checked) flags += 's';
+                return flags;
+            }
+
+            function displayMatches(matches) {
+                matchesDisplay.innerHTML = '';
+                
+                if (matches.length === 0) {
+                    matchesDisplay.innerHTML = '<p class="text-gray-400">No matches found</p>';
+                    return;
+                }
+
+                matches.forEach((match, index) => {
+                    const matchDiv = document.createElement('div');
+                    matchDiv.className = 'bg-slate-800/50 p-2 rounded text-sm';
+                    matchDiv.innerHTML = `
+                        <div class="text-blue-300 font-medium">Match ${index + 1}:</div>
+                        <div class="text-gray-200 font-mono">"${match[0]}"</div>
+                        <div class="text-gray-400 text-xs">Position: ${match.index} - ${match.index + match[0].length}</div>
+                    `;
+                    matchesDisplay.appendChild(matchDiv);
+                });
+            }
+
+            function displayHighlightedText(testString, matches) {
+                if (matches.length === 0) {
+                    highlightedText.innerHTML = testString;
+                    return;
+                }
+
+                let highlighted = testString;
+                let offset = 0;
+
+                matches.forEach(match => {
+                    const start = match.index + offset;
+                    const end = start + match[0].length;
+                    const before = highlighted.substring(0, start);
+                    const matched = highlighted.substring(start, end);
+                    const after = highlighted.substring(end);
+                    
+                    highlighted = before + 
+                        `<span class="match-highlight">${matched}</span>` + 
+                        after;
+                    
+                    offset += '<span class="match-highlight"></span>'.length - matched.length;
+                });
+
+                highlightedText.innerHTML = highlighted;
+            }
+
+            function displayMatchDetails(matches) {
+                matchDetails.innerHTML = '';
+                
+                if (matches.length === 0) {
+                    matchDetails.innerHTML = '<p class="text-gray-400">No match details available</p>';
+                    return;
+                }
+
+                const detailsDiv = document.createElement('div');
+                detailsDiv.className = 'space-y-3';
+                
+                matches.forEach((match, index) => {
+                    const matchDiv = document.createElement('div');
+                    matchDiv.className = 'bg-slate-800/50 p-3 rounded';
+                    
+                    let groupsHtml = '';
+                    if (match.length > 1) {
+                        groupsHtml = '<div class="mt-2"><div class="text-green-300 text-sm font-medium">Groups:</div>';
+                        for (let i = 1; i < match.length; i++) {
+                            groupsHtml += `<div class="text-gray-300 text-sm">Group ${i}: "${match[i] || 'undefined'}"</div>`;
+                        }
+                        groupsHtml += '</div>';
+                    }
+                    
+                    matchDiv.innerHTML = `
+                        <div class="text-blue-300 font-medium">Match ${index + 1} Details:</div>
+                        <div class="text-gray-200 text-sm">Full match: "${match[0]}"</div>
+                        <div class="text-gray-400 text-xs">Index: ${match.index}</div>
+                        <div class="text-gray-400 text-xs">Length: ${match[0].length}</div>
+                        ${groupsHtml}
+                    `;
+                    
+                    detailsDiv.appendChild(matchDiv);
+                });
+                
+                matchDetails.appendChild(detailsDiv);
+            }
+
+            function debounce(func, wait) {
+                let timeout;
+                return function executedFunction(...args) {
+                    const later = () => {
+                        clearTimeout(timeout);
+                        func(...args);
+                    };
+                    clearTimeout(timeout);
+                    timeout = setTimeout(later, wait);
+                };
+            }
+
+            // Example on page load
+            window.addEventListener('load', () => {
+                regexInput.value = '/[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}/';
+                testInput.value = 'Contact us at support@devdunia.com or info@example.org for more details.';
+                document.getElementById('global-flag').checked = true;
+            });
+        });
+    </script>
+</body>
+</html>
