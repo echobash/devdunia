@@ -1,0 +1,255 @@
+<!-- 
+SIDEBAR TEMPLATE FOR DEVDUNA TOOLS
+
+To add this sidebar to any tool page, follow these steps:
+
+1. Add the CSS styles to the <style> section
+2. Add the sidebar HTML after the opening <body> tag
+3. Add the JavaScript functionality before the closing </body> tag
+4. Wrap your main content in <div class="main-content">
+5. Update the page title in the navigation bar
+
+-->
+
+<!-- CSS STYLES (add to <style> section) -->
+<style>
+/* Sidebar Styles */
+.sidebar {
+    width: 280px;
+    height: 100vh;
+    position: fixed;
+    left: 0;
+    top: 0;
+    background: rgba(15, 23, 42, 0.95);
+    backdrop-filter: blur(10px);
+    border-right: 1px solid rgba(71, 85, 105, 0.3);
+    z-index: 40;
+    overflow-y: auto;
+    transition: transform 0.3s ease;
+    transform: translateX(0); /* Always visible by default */
+}
+
+.sidebar::-webkit-scrollbar {
+    width: 4px;
+}
+
+.sidebar::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.sidebar::-webkit-scrollbar-thumb {
+    background: rgba(71, 85, 105, 0.5);
+    border-radius: 2px;
+}
+
+.main-content {
+    margin-left: 280px;
+    min-height: 100vh;
+}
+
+/* Desktop: Always visible */
+@media (min-width: 769px) {
+    .sidebar {
+        transform: translateX(0) !important;
+        display: block !important;
+    }
+    
+    .main-content {
+        margin-left: 280px;
+    }
+}
+
+/* Mobile: Hidden by default, toggleable */
+@media (max-width: 768px) {
+    .sidebar {
+        transform: translateX(-100%);
+    }
+    
+    .sidebar.open {
+        transform: translateX(0);
+    }
+    
+    .main-content {
+        margin-left: 0;
+    }
+}
+</style>
+
+<!-- SIDEBAR HTML (add after opening <body> tag) -->
+<aside class="sidebar">
+    <div class="p-6">
+        <!-- Sidebar Header -->
+        <div class="flex items-center justify-between mb-8">
+            <a href="index.html" class="flex items-center space-x-3">
+                <div class="w-8 h-8 bg-gradient-to-r from-emerald-400 to-teal-500 rounded-lg flex items-center justify-center">
+                    <span class="text-white font-bold text-sm">D</span>
+                </div>
+                <h2 class="text-xl font-bold text-white">DevDunia</h2>
+            </a>
+            <button id="sidebar-close" class="p-2 rounded-lg text-gray-400 hover:text-white hover:bg-slate-800 transition-colors md:hidden">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                </svg>
+            </button>
+        </div>
+
+        <!-- Quick Navigation -->
+        <div class="space-y-4">
+            <a href="index.html#encoders" class="flex items-center space-x-3 p-3 rounded-lg text-gray-300 hover:text-white hover:bg-slate-800 transition-colors">
+                <span class="text-2xl">🔐</span>
+                <span>Encoders/Decoders</span>
+            </a>
+            <a href="index.html#generators" class="flex items-center space-x-3 p-3 rounded-lg text-gray-300 hover:text-white hover:bg-slate-800 transition-colors">
+                <span class="text-2xl">⚡</span>
+                <span>Generators</span>
+            </a>
+            <a href="index.html#api-tools" class="flex items-center space-x-3 p-3 rounded-lg text-gray-300 hover:text-white hover:bg-slate-800 transition-colors">
+                <span class="text-2xl">🔌</span>
+                <span>API & Integration</span>
+            </a>
+            <a href="index.html#dev-tools" class="flex items-center space-x-3 p-3 rounded-lg text-gray-300 hover:text-white hover:bg-slate-800 transition-colors">
+                <span class="text-2xl">🛠️</span>
+                <span>Development Tools</span>
+            </a>
+            <a href="index.html#python" class="flex items-center space-x-3 p-3 rounded-lg text-gray-300 hover:text-white hover:bg-slate-800 transition-colors">
+                <span class="text-2xl">🐍</span>
+                <span>Python Toolkit</span>
+            </a>
+            <a href="index.html#info" class="flex items-center space-x-3 p-3 rounded-lg text-gray-300 hover:text-white hover:bg-slate-800 transition-colors">
+                <span class="text-2xl">ℹ️</span>
+                <span>Information</span>
+            </a>
+        </div>
+
+        <!-- Popular Tools -->
+        <div class="mt-8">
+            <h3 class="text-lg font-semibold text-white mb-4">🔥 Popular Tools</h3>
+            <div class="space-y-2">
+                <a href="json-decoder.html" class="block p-2 rounded text-sm text-gray-400 hover:text-white hover:bg-slate-800 transition-colors">JSON Decoder</a>
+                <a href="base64-encoder.html" class="block p-2 rounded text-sm text-gray-400 hover:text-white hover:bg-slate-800 transition-colors">Base64 Encoder</a>
+                <a href="url-encoder.html" class="block p-2 rounded text-sm text-gray-400 hover:text-white hover:bg-slate-800 transition-colors">URL Encoder</a>
+                <a href="hash-generator.html" class="block p-2 rounded text-sm text-gray-400 hover:text-white hover:bg-slate-800 transition-colors">Hash Generator</a>
+                <a href="qr-generator.html" class="block p-2 rounded text-sm text-gray-400 hover:text-white hover:bg-slate-800 transition-colors">QR Code Generator</a>
+            </div>
+        </div>
+
+        <!-- Recently Used -->
+        <div class="mt-6">
+            <h3 class="text-lg font-semibold text-white mb-4">⏰ Recently Used</h3>
+            <div id="recent-tools" class="space-y-2">
+                <div class="text-sm text-gray-500 italic">No recent tools</div>
+            </div>
+        </div>
+
+        <!-- GitHub Link -->
+        <div class="mt-8 pt-6 border-t border-slate-700">
+            <a href="https://github.com/echobash/devdunia" target="_blank" class="flex items-center space-x-3 p-3 rounded-lg text-gray-300 hover:text-white hover:bg-slate-800 transition-colors">
+                <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+                    <path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/>
+                </svg>
+                <span>Star on GitHub</span>
+            </a>
+        </div>
+    </div>
+</aside>
+
+<!-- NAVIGATION BAR (add after sidebar) -->
+<div class="main-content">
+    <nav class="bg-slate-900/95 backdrop-blur-md border-b border-slate-700/50">
+        <div class="container mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-16">
+                <!-- Mobile Menu Button -->
+                <button id="sidebar-toggle" class="p-2 rounded-lg text-gray-400 hover:text-white hover:bg-slate-800 transition-colors md:hidden">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
+                    </svg>
+                </button>
+
+                <!-- Page Title (UPDATE THIS) -->
+                <div class="flex items-center space-x-3">
+                    <h1 class="text-xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 to-teal-500">
+                        TOOL NAME HERE
+                    </h1>
+                </div>
+
+                <!-- Back to Home -->
+                <a href="index.html" class="px-4 py-2 bg-slate-800 hover:bg-slate-700 text-white rounded-lg transition-colors duration-200 flex items-center space-x-2">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path>
+                    </svg>
+                    <span>Back to Home</span>
+                </a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- YOUR MAIN CONTENT GOES HERE -->
+    <!-- Remember to close the main-content div before the footer -->
+
+<!-- JAVASCRIPT (add before closing </body> tag) -->
+<script>
+// Sidebar functionality
+const sidebarToggle = document.getElementById('sidebar-toggle');
+const sidebarClose = document.getElementById('sidebar-close');
+const sidebar = document.querySelector('.sidebar');
+
+function openSidebar() {
+    sidebar.classList.add('open');
+}
+
+function closeSidebar() {
+    sidebar.classList.remove('open');
+}
+
+if (sidebarToggle) {
+    sidebarToggle.addEventListener('click', openSidebar);
+}
+
+if (sidebarClose) {
+    sidebarClose.addEventListener('click', closeSidebar);
+}
+
+// Recently used tools functionality
+function updateRecentTools() {
+    const recentTools = JSON.parse(localStorage.getItem('recentTools') || '[]');
+    const recentToolsContainer = document.getElementById('recent-tools');
+    
+    if (recentTools.length === 0) {
+        recentToolsContainer.innerHTML = '<div class="text-sm text-gray-500 italic">No recent tools</div>';
+        return;
+    }
+    
+    recentToolsContainer.innerHTML = recentTools.map(tool => 
+        `<a href="${tool.url}" class="block p-2 rounded text-sm text-gray-400 hover:text-white hover:bg-slate-800 transition-colors">${tool.name}</a>`
+    ).join('');
+}
+
+// Track tool usage
+function trackToolUsage(toolName, toolUrl) {
+    let recentTools = JSON.parse(localStorage.getItem('recentTools') || '[]');
+    
+    // Remove if already exists
+    recentTools = recentTools.filter(tool => tool.url !== toolUrl);
+    
+    // Add to beginning
+    recentTools.unshift({ name: toolName, url: toolUrl });
+    
+    // Keep only last 5
+    recentTools = recentTools.slice(0, 5);
+    
+    localStorage.setItem('recentTools', JSON.stringify(recentTools));
+    updateRecentTools();
+}
+
+// Add click tracking to all tool links
+document.querySelectorAll('a[href$=".html"]').forEach(link => {
+    link.addEventListener('click', function() {
+        const toolName = this.textContent.trim() || 'Unknown Tool';
+        const toolUrl = this.getAttribute('href');
+        trackToolUsage(toolName, toolUrl);
+    });
+});
+
+// Initialize recent tools on page load
+updateRecentTools();
+</script>

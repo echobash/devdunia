@@ -1,0 +1,418 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Environment Variable Generator - Developer Toolkit | DevDunia</title>
+    <meta name="description" content="Generate .env files and environment variables. Free online environment variable generator for developers.">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="js/common.js"></script>
+    <style>
+        body {
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #0f172a 100%);
+        }
+    </style>
+</head>
+<body class="min-h-screen">
+    <!-- Background: Consistent Subtle Dark Gradient -->
+    <div class="fixed inset-0 -z-10 bg-gradient-to-br from-gray-900 via-slate-900 to-gray-900"></div>
+
+    <!-- Main Container -->
+    <div class="relative z-10 container mx-auto px-4 pt-16 pb-24 sm:px-6 lg:px-8">
+        
+        <!-- Page Header -->
+        <div class="text-center mb-12">
+            <h1 class="text-3xl sm:text-4xl font-bold mb-4 tracking-tight
+                       text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-cyan-500">
+                Environment Variable Generator
+            </h1>
+            <p class="text-lg text-gray-400 max-w-2xl mx-auto">
+                Generate .env files and environment variables for your projects. Create secure configurations with ease.
+            </p>
+        </div>
+
+        <!-- Tool Container -->
+        <div class="max-w-6xl mx-auto">
+            <div class="bg-slate-800/70 backdrop-blur-md rounded-lg shadow-lg border border-slate-700/60 p-6">
+                
+                <!-- Project Type Selection -->
+                <div class="mb-6">
+                    <label for="project-type" class="block text-sm font-medium text-gray-300 mb-2">
+                        Project Type
+                    </label>
+                    <select id="project-type" class="w-full px-4 py-2 bg-slate-700/50 border border-slate-600 rounded-lg text-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                        <option value="custom">Custom</option>
+                        <option value="nodejs">Node.js</option>
+                        <option value="react">React</option>
+                        <option value="vue">Vue.js</option>
+                        <option value="angular">Angular</option>
+                        <option value="laravel">Laravel</option>
+                        <option value="django">Django</option>
+                        <option value="flask">Flask</option>
+                        <option value="spring">Spring Boot</option>
+                        <option value="rails">Ruby on Rails</option>
+                        <option value="docker">Docker</option>
+                        <option value="kubernetes">Kubernetes</option>
+                    </select>
+                </div>
+
+                <!-- Environment Variables Builder -->
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
+                    <!-- Left Column - Add Variables -->
+                    <div class="space-y-4">
+                        <h3 class="text-lg font-semibold text-blue-400">Add Environment Variables</h3>
+                        
+                        <div class="space-y-4" id="variables-container">
+                            <!-- Variables will be added here dynamically -->
+                        </div>
+
+                        <button id="add-variable-btn" class="w-full px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors duration-200 flex items-center justify-center space-x-2">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
+                            </svg>
+                            <span>Add Variable</span>
+                        </button>
+                    </div>
+
+                    <!-- Right Column - Generated .env -->
+                    <div>
+                        <div class="flex items-center justify-between mb-3">
+                            <h3 class="text-lg font-semibold text-green-400">Generated .env File</h3>
+                            <button id="copy-env-btn" class="px-3 py-1 bg-slate-600 hover:bg-slate-700 text-white text-sm rounded transition-colors duration-200 flex items-center space-x-1">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v8a2 2 0 01-2 2h-2m-6-4l2 2m0 0l2-2m-2 2V10"></path>
+                                </svg>
+                                <span>Copy</span>
+                            </button>
+                        </div>
+                        <textarea 
+                            id="env-output" 
+                            rows="20" 
+                            class="w-full px-4 py-3 bg-slate-700/50 border border-slate-600 rounded-lg text-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-none font-mono text-sm"
+                            readonly
+                        ></textarea>
+                    </div>
+                </div>
+
+                <!-- Action Buttons -->
+                <div class="flex flex-wrap gap-3 mb-6">
+                    <button id="generate-btn" class="px-6 py-3 bg-green-600 hover:bg-green-700 text-white font-medium rounded-lg transition-colors duration-200 flex items-center space-x-2">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
+                        </svg>
+                        <span>Generate .env</span>
+                    </button>
+                    
+                    <button id="download-btn" class="px-6 py-3 bg-purple-600 hover:bg-purple-700 text-white font-medium rounded-lg transition-colors duration-200 flex items-center space-x-2">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                        </svg>
+                        <span>Download .env</span>
+                    </button>
+                    
+                    <button class="clear-btn px-6 py-3 bg-slate-600 hover:bg-slate-700 text-white font-medium rounded-lg transition-colors duration-200 flex items-center space-x-2">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
+                        </svg>
+                        <span>Clear All</span>
+                    </button>
+                </div>
+
+                <!-- Quick Templates -->
+                <div class="mt-8 p-4 bg-slate-700/30 rounded-lg border border-slate-600/50">
+                    <h3 class="text-lg font-semibold text-blue-400 mb-3">Quick Templates</h3>
+                    <div class="grid grid-cols-2 md:grid-cols-4 gap-3">
+                        <button class="template-btn px-4 py-2 bg-slate-600 hover:bg-slate-700 text-white text-sm rounded-lg transition-colors duration-200" data-template="nodejs">
+                            Node.js
+                        </button>
+                        <button class="template-btn px-4 py-2 bg-slate-600 hover:bg-slate-700 text-white text-sm rounded-lg transition-colors duration-200" data-template="react">
+                            React
+                        </button>
+                        <button class="template-btn px-4 py-2 bg-slate-600 hover:bg-slate-700 text-white text-sm rounded-lg transition-colors duration-200" data-template="laravel">
+                            Laravel
+                        </button>
+                        <button class="template-btn px-4 py-2 bg-slate-600 hover:bg-slate-700 text-white text-sm rounded-lg transition-colors duration-200" data-template="django">
+                            Django
+                        </button>
+                        <button class="template-btn px-4 py-2 bg-slate-600 hover:bg-slate-700 text-white text-sm rounded-lg transition-colors duration-200" data-template="docker">
+                            Docker
+                        </button>
+                        <button class="template-btn px-4 py-2 bg-slate-600 hover:bg-slate-700 text-white text-sm rounded-lg transition-colors duration-200" data-template="database">
+                            Database
+                        </button>
+                        <button class="template-btn px-4 py-2 bg-slate-600 hover:bg-slate-700 text-white text-sm rounded-lg transition-colors duration-200" data-template="api">
+                            API Keys
+                        </button>
+                        <button class="template-btn px-4 py-2 bg-slate-600 hover:bg-slate-700 text-white text-sm rounded-lg transition-colors duration-200" data-template="auth">
+                            Authentication
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Best Practices -->
+                <div class="mt-6 p-4 bg-slate-700/30 rounded-lg border border-slate-600/50">
+                    <h3 class="text-lg font-semibold text-blue-400 mb-3">Best Practices</h3>
+                    <div class="text-sm text-gray-300 space-y-2">
+                        <ul class="list-disc list-inside ml-4 space-y-1">
+                            <li><strong>Never commit .env files</strong> to version control</li>
+                            <li><strong>Use descriptive names</strong> for environment variables</li>
+                            <li><strong>Add .env to .gitignore</strong> to prevent accidental commits</li>
+                            <li><strong>Use different values</strong> for development, staging, and production</li>
+                            <li><strong>Keep sensitive data secure</strong> and use proper encryption</li>
+                            <li><strong>Document your variables</strong> in README or documentation</li>
+                        </ul>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+    </div>
+
+    <!-- Footer -->
+    <footer class="text-center text-gray-500 mt-10 pb-6">
+        © 2025 DevDunia – Free Developer Tools by <a href="https://echobash.com" class="text-blue-500 hover:underline" target="_blank">echobash</a>
+    </footer>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const projectTypeSelect = document.getElementById('project-type');
+            const variablesContainer = document.getElementById('variables-container');
+            const addVariableBtn = document.getElementById('add-variable-btn');
+            const generateBtn = document.getElementById('generate-btn');
+            const copyEnvBtn = document.getElementById('copy-env-btn');
+            const downloadBtn = document.getElementById('download-btn');
+            const envOutput = document.getElementById('env-output');
+            const templateBtns = document.querySelectorAll('.template-btn');
+
+            let variables = [];
+
+            // Add variable button
+            addVariableBtn.addEventListener('click', function() {
+                addVariableRow();
+            });
+
+            // Generate .env file
+            generateBtn.addEventListener('click', function() {
+                generateEnvFile();
+            });
+
+            // Copy .env content
+            copyEnvBtn.addEventListener('click', function() {
+                copyToClipboard(envOutput.value);
+            });
+
+            // Download .env file
+            downloadBtn.addEventListener('click', function() {
+                downloadEnvFile();
+            });
+
+            // Project type change
+            projectTypeSelect.addEventListener('change', function() {
+                loadProjectTemplate(this.value);
+            });
+
+            // Template buttons
+            templateBtns.forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const templateName = this.dataset.template;
+                    loadProjectTemplate(templateName);
+                });
+            });
+
+            function addVariableRow(key = '', value = '', description = '', isSecret = false) {
+                const variableId = Date.now();
+                const variableRow = document.createElement('div');
+                variableRow.className = 'bg-slate-700/30 rounded-lg p-4 border border-slate-600/50';
+                variableRow.innerHTML = `
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-3 mb-3">
+                        <div>
+                            <label class="block text-xs text-gray-400 mb-1">Variable Name</label>
+                            <input type="text" class="variable-key w-full px-3 py-2 bg-slate-600 border border-slate-500 rounded text-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="DATABASE_URL" value="${key}">
+                        </div>
+                        <div>
+                            <label class="block text-xs text-gray-400 mb-1">Value</label>
+                            <input type="text" class="variable-value w-full px-3 py-2 bg-slate-600 border border-slate-500 rounded text-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="postgresql://user:pass@localhost:5432/db" value="${value}">
+                        </div>
+                        <div>
+                            <label class="block text-xs text-gray-400 mb-1">Description</label>
+                            <input type="text" class="variable-description w-full px-3 py-2 bg-slate-600 border border-slate-500 rounded text-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="Database connection string" value="${description}">
+                        </div>
+                    </div>
+                    <div class="flex justify-between items-center">
+                        <div class="flex items-center space-x-2">
+                            <input type="checkbox" class="variable-secret rounded text-red-600 focus:ring-red-500" ${isSecret ? 'checked' : ''}>
+                            <label class="text-xs text-gray-400">Mark as secret</label>
+                        </div>
+                        <button class="remove-variable px-3 py-1 bg-red-600 hover:bg-red-700 text-white text-sm rounded transition-colors duration-200" data-id="${variableId}">
+                            Remove
+                        </button>
+                    </div>
+                `;
+
+                variablesContainer.appendChild(variableRow);
+
+                // Add event listeners
+                const removeBtn = variableRow.querySelector('.remove-variable');
+                removeBtn.addEventListener('click', function() {
+                    variableRow.remove();
+                });
+
+                // Auto-generate on input change
+                const inputs = variableRow.querySelectorAll('input[type="text"]');
+                inputs.forEach(input => {
+                    input.addEventListener('input', generateEnvFile);
+                });
+
+                // Auto-generate on checkbox change
+                const secretCheckbox = variableRow.querySelector('.variable-secret');
+                secretCheckbox.addEventListener('change', generateEnvFile);
+            }
+
+            function generateEnvFile() {
+                const variableRows = variablesContainer.querySelectorAll('.bg-slate-700\\/30');
+                let envContent = '';
+
+                // Add header comment
+                const projectType = projectTypeSelect.value;
+                if (projectType !== 'custom') {
+                    envContent += `# ${projectType.toUpperCase()} Environment Variables\n`;
+                    envContent += `# Generated by DevDunia\n\n`;
+                }
+
+                variableRows.forEach(row => {
+                    const key = row.querySelector('.variable-key').value.trim();
+                    const value = row.querySelector('.variable-value').value.trim();
+                    const description = row.querySelector('.variable-description').value.trim();
+                    const isSecret = row.querySelector('.variable-secret').checked;
+
+                    if (key && value) {
+                        // Add description as comment
+                        if (description) {
+                            envContent += `# ${description}\n`;
+                        }
+
+                        // Add the variable
+                        if (isSecret) {
+                            envContent += `# ${key}=${value}\n`;
+                            envContent += `${key}=your_${key.toLowerCase()}_here\n\n`;
+                        } else {
+                            envContent += `${key}=${value}\n\n`;
+                        }
+                    }
+                });
+
+                envOutput.value = envContent;
+            }
+
+            function loadProjectTemplate(templateName) {
+                // Clear existing variables
+                variablesContainer.innerHTML = '';
+
+                const templates = {
+                    nodejs: [
+                        { key: 'NODE_ENV', value: 'development', description: 'Environment (development, production, test)' },
+                        { key: 'PORT', value: '3000', description: 'Server port' },
+                        { key: 'DATABASE_URL', value: 'mongodb://localhost:27017/myapp', description: 'MongoDB connection string' },
+                        { key: 'JWT_SECRET', value: 'your_jwt_secret_here', description: 'JWT signing secret', secret: true },
+                        { key: 'API_KEY', value: 'your_api_key_here', description: 'External API key', secret: true }
+                    ],
+                    react: [
+                        { key: 'REACT_APP_API_URL', value: 'http://localhost:3001/api', description: 'Backend API URL' },
+                        { key: 'REACT_APP_ENV', value: 'development', description: 'Environment' },
+                        { key: 'REACT_APP_VERSION', value: '1.0.0', description: 'App version' },
+                        { key: 'REACT_APP_GOOGLE_ANALYTICS', value: 'GA_TRACKING_ID', description: 'Google Analytics tracking ID' }
+                    ],
+                    laravel: [
+                        { key: 'APP_NAME', value: 'Laravel', description: 'Application name' },
+                        { key: 'APP_ENV', value: 'local', description: 'Environment' },
+                        { key: 'APP_KEY', value: 'base64:your_app_key_here', description: 'Application key', secret: true },
+                        { key: 'APP_DEBUG', value: 'true', description: 'Debug mode' },
+                        { key: 'DB_CONNECTION', value: 'mysql', description: 'Database connection' },
+                        { key: 'DB_HOST', value: '127.0.0.1', description: 'Database host' },
+                        { key: 'DB_PORT', value: '3306', description: 'Database port' },
+                        { key: 'DB_DATABASE', value: 'laravel', description: 'Database name' },
+                        { key: 'DB_USERNAME', value: 'root', description: 'Database username' },
+                        { key: 'DB_PASSWORD', value: 'your_password_here', description: 'Database password', secret: true }
+                    ],
+                    django: [
+                        { key: 'DEBUG', value: 'True', description: 'Debug mode' },
+                        { key: 'SECRET_KEY', value: 'your_secret_key_here', description: 'Django secret key', secret: true },
+                        { key: 'DATABASE_URL', value: 'postgresql://user:pass@localhost:5432/db', description: 'Database URL' },
+                        { key: 'ALLOWED_HOSTS', value: 'localhost,127.0.0.1', description: 'Allowed hosts' },
+                        { key: 'EMAIL_HOST', value: 'smtp.gmail.com', description: 'Email host' },
+                        { key: 'EMAIL_PORT', value: '587', description: 'Email port' }
+                    ],
+                    docker: [
+                        { key: 'COMPOSE_PROJECT_NAME', value: 'myapp', description: 'Docker Compose project name' },
+                        { key: 'POSTGRES_DB', value: 'myapp_db', description: 'PostgreSQL database name' },
+                        { key: 'POSTGRES_USER', value: 'postgres', description: 'PostgreSQL username' },
+                        { key: 'POSTGRES_PASSWORD', value: 'your_password_here', description: 'PostgreSQL password', secret: true },
+                        { key: 'REDIS_URL', value: 'redis://redis:6379', description: 'Redis connection URL' }
+                    ],
+                    database: [
+                        { key: 'DB_HOST', value: 'localhost', description: 'Database host' },
+                        { key: 'DB_PORT', value: '5432', description: 'Database port' },
+                        { key: 'DB_NAME', value: 'myapp', description: 'Database name' },
+                        { key: 'DB_USER', value: 'postgres', description: 'Database username' },
+                        { key: 'DB_PASSWORD', value: 'your_password_here', description: 'Database password', secret: true },
+                        { key: 'DB_SSL', value: 'false', description: 'Enable SSL connection' }
+                    ],
+                    api: [
+                        { key: 'API_BASE_URL', value: 'https://api.example.com', description: 'Base API URL' },
+                        { key: 'API_KEY', value: 'your_api_key_here', description: 'API key', secret: true },
+                        { key: 'API_SECRET', value: 'your_api_secret_here', description: 'API secret', secret: true },
+                        { key: 'API_TIMEOUT', value: '30000', description: 'API timeout in milliseconds' }
+                    ],
+                    auth: [
+                        { key: 'JWT_SECRET', value: 'your_jwt_secret_here', description: 'JWT signing secret', secret: true },
+                        { key: 'JWT_EXPIRES_IN', value: '24h', description: 'JWT expiration time' },
+                        { key: 'REFRESH_TOKEN_SECRET', value: 'your_refresh_secret_here', description: 'Refresh token secret', secret: true },
+                        { key: 'GOOGLE_CLIENT_ID', value: 'your_google_client_id', description: 'Google OAuth client ID' },
+                        { key: 'GOOGLE_CLIENT_SECRET', value: 'your_google_client_secret', description: 'Google OAuth client secret', secret: true }
+                    ]
+                };
+
+                const templateData = templates[templateName] || [];
+                templateData.forEach(variable => {
+                    addVariableRow(variable.key, variable.value, variable.description, variable.secret);
+                });
+
+                generateEnvFile();
+            }
+
+            function copyToClipboard(text) {
+                navigator.clipboard.writeText(text).then(() => {
+                    // Show success feedback
+                    const originalText = copyEnvBtn.innerHTML;
+                    copyEnvBtn.innerHTML = '<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg><span>Copied!</span>';
+                    setTimeout(() => {
+                        copyEnvBtn.innerHTML = originalText;
+                    }, 2000);
+                });
+            }
+
+            function downloadEnvFile() {
+                const content = envOutput.value;
+                if (!content.trim()) {
+                    alert('Please generate .env content first');
+                    return;
+                }
+
+                const blob = new Blob([content], { type: 'text/plain' });
+                const url = URL.createObjectURL(blob);
+                const link = document.createElement('a');
+                link.href = url;
+                link.download = '.env';
+                link.click();
+                URL.revokeObjectURL(url);
+            }
+
+            // Initialize with a default variable
+            window.addEventListener('load', () => {
+                addVariableRow('NODE_ENV', 'development', 'Environment (development, production, test)');
+            });
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,470 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HTTP Response Header Printer - Developer Toolkit | DevDunia</title>
+    <meta name="description" content="Test HTTP endpoints and view response headers. Free online HTTP response header printer tool for developers.">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="sidebar.css">
+    <style>
+        body {
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #0f172a 100%);
+        }
+    </style>
+</head>
+<body class="min-h-screen">
+    <!-- Background: Consistent Subtle Dark Gradient -->
+    <div class="fixed inset-0 -z-10 bg-gradient-to-br from-gray-900 via-slate-900 to-gray-900"></div>
+
+    <!-- Sidebar Container -->
+    <div id="sidebar-container"></div>
+
+    <!-- Main Container -->
+    <div class="main-content">
+        <div class="relative z-10 container mx-auto px-4 pt-16 pb-24 sm:px-6 lg:px-8">
+        
+        <!-- Page Header -->
+        <div class="text-center mb-12">
+            <h1 class="text-3xl sm:text-4xl font-bold mb-4 tracking-tight
+                       text-transparent bg-clip-text bg-gradient-to-r from-green-400 to-emerald-500">
+                HTTP Response Header Printer
+            </h1>
+            <p class="text-lg text-gray-400 max-w-2xl mx-auto">
+                Test HTTP endpoints and view response headers, status codes, and timing information.
+            </p>
+        </div>
+
+        <!-- Tool Container -->
+        <div class="max-w-6xl mx-auto">
+            <div class="bg-slate-800/70 backdrop-blur-md rounded-lg shadow-lg border border-slate-700/60 p-6">
+                
+                <!-- Request Configuration -->
+                <div class="mb-8">
+                    <h2 class="text-xl font-semibold text-green-400 mb-4">Request Configuration</h2>
+                    
+                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                        <!-- URL Input -->
+                        <div>
+                            <label for="url-input" class="block text-sm font-medium text-gray-300 mb-2">
+                                URL
+                            </label>
+                            <input 
+                                type="url" 
+                                id="url-input" 
+                                class="w-full px-4 py-3 bg-slate-700/50 border border-slate-600 rounded-lg text-gray-200 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                                placeholder="https://api.example.com/endpoint"
+                            >
+                        </div>
+
+                        <!-- HTTP Method -->
+                        <div>
+                            <label for="method-select" class="block text-sm font-medium text-gray-300 mb-2">
+                                HTTP Method
+                            </label>
+                            <select 
+                                id="method-select" 
+                                class="w-full px-4 py-3 bg-slate-700/50 border border-slate-600 rounded-lg text-gray-200 focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                            >
+                                <option value="GET">GET</option>
+                                <option value="POST">POST</option>
+                                <option value="PUT">PUT</option>
+                                <option value="PATCH">PATCH</option>
+                                <option value="DELETE">DELETE</option>
+                                <option value="HEAD">HEAD</option>
+                                <option value="OPTIONS">OPTIONS</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <!-- Headers Section -->
+                    <div class="mt-6">
+                        <div class="flex items-center justify-between mb-3">
+                            <label class="block text-sm font-medium text-gray-300">
+                                Custom Headers
+                            </label>
+                            <button 
+                                id="add-header-btn" 
+                                class="px-3 py-1 bg-green-600 hover:bg-green-700 text-white text-sm rounded transition-colors duration-200"
+                            >
+                                + Add Header
+                            </button>
+                        </div>
+                        <div id="headers-container" class="space-y-2">
+                            <!-- Headers will be added here dynamically -->
+                        </div>
+                    </div>
+
+                    <!-- Request Body (for POST, PUT, PATCH) -->
+                    <div id="request-body-section" class="mt-6 hidden">
+                        <label for="request-body" class="block text-sm font-medium text-gray-300 mb-2">
+                            Request Body
+                        </label>
+                        <textarea 
+                            id="request-body" 
+                            rows="4" 
+                            class="w-full px-4 py-3 bg-slate-700/50 border border-slate-600 rounded-lg text-gray-200 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent resize-none font-mono text-sm"
+                            placeholder='{"key": "value"}'
+                        ></textarea>
+                    </div>
+
+                    <!-- Send Button -->
+                    <div class="mt-6 text-center">
+                        <button 
+                            id="send-request-btn" 
+                            class="px-8 py-3 bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700 text-white font-semibold rounded-lg transition-all duration-200 transform hover:scale-105 shadow-lg"
+                        >
+                            <span id="btn-text">Send Request</span>
+                            <span id="btn-loading" class="hidden">
+                                <svg class="animate-spin -ml-1 mr-3 h-5 w-5 text-white inline" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                                    <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                                    <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                                </svg>
+                                Sending...
+                            </span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Response Section -->
+                <div id="response-section" class="hidden">
+                    <h2 class="text-xl font-semibold text-green-400 mb-4">Response Information</h2>
+                    
+                    <!-- Response Summary -->
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+                        <div class="bg-slate-700/50 rounded-lg p-4 border border-slate-600">
+                            <div class="text-sm text-gray-400 mb-1">Status Code</div>
+                            <div id="status-code" class="text-lg font-semibold text-white"></div>
+                        </div>
+                        <div class="bg-slate-700/50 rounded-lg p-4 border border-slate-600">
+                            <div class="text-sm text-gray-400 mb-1">Response Time</div>
+                            <div id="response-time" class="text-lg font-semibold text-white"></div>
+                        </div>
+                        <div class="bg-slate-700/50 rounded-lg p-4 border border-slate-600">
+                            <div class="text-sm text-gray-400 mb-1">Content Length</div>
+                            <div id="content-length" class="text-lg font-semibold text-white"></div>
+                        </div>
+                    </div>
+
+                    <!-- Response Headers -->
+                    <div class="mb-6">
+                        <h3 class="text-lg font-medium text-gray-300 mb-3">Response Headers</h3>
+                        <div class="bg-slate-900/50 rounded-lg p-4 border border-slate-600">
+                            <pre id="headers-output" class="text-sm text-gray-300 whitespace-pre-wrap font-mono"></pre>
+                        </div>
+                    </div>
+
+                    <!-- Response Body Preview -->
+                    <div class="mb-6">
+                        <h3 class="text-lg font-medium text-gray-300 mb-3">Response Body Preview</h3>
+                        <div class="bg-slate-900/50 rounded-lg p-4 border border-slate-600">
+                            <pre id="body-output" class="text-sm text-gray-300 whitespace-pre-wrap font-mono max-h-96 overflow-y-auto"></pre>
+                        </div>
+                    </div>
+
+                    <!-- Copy Response Button -->
+                    <div class="text-center">
+                        <button 
+                            id="copy-response-btn" 
+                            class="px-6 py-2 bg-slate-600 hover:bg-slate-700 text-white rounded-lg transition-colors duration-200 flex items-center space-x-2 mx-auto"
+                        >
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v8a2 2 0 01-2 2h-2m-6-4l2 2m0 0l2-2m-2 2V10"></path>
+                            </svg>
+                            <span>Copy Response</span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Error Section -->
+                <div id="error-section" class="hidden">
+                    <div class="bg-red-900/30 border border-red-500/50 rounded-lg p-4">
+                        <h3 class="text-lg font-medium text-red-400 mb-2">Error</h3>
+                        <p id="error-message" class="text-red-300"></p>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+        <!-- Examples Section -->
+        <div class="mt-8 max-w-6xl mx-auto">
+            <div class="bg-slate-800/50 backdrop-blur-md rounded-lg shadow-lg border border-slate-700/60 p-6">
+                <h3 class="text-lg font-semibold text-green-400 mb-4">Example URLs</h3>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div class="space-y-2">
+                        <button class="example-url w-full text-left p-3 bg-slate-700/50 hover:bg-slate-700 rounded-lg border border-slate-600 transition-colors duration-200" data-url="https://httpbin.org/headers">
+                            <div class="text-sm font-medium text-white">httpbin.org/headers</div>
+                            <div class="text-xs text-gray-400">Returns request headers</div>
+                        </button>
+                        <button class="example-url w-full text-left p-3 bg-slate-700/50 hover:bg-slate-700 rounded-lg border border-slate-600 transition-colors duration-200" data-url="https://httpbin.org/json">
+                            <div class="text-sm font-medium text-white">httpbin.org/json</div>
+                            <div class="text-xs text-gray-400">Returns JSON response</div>
+                        </button>
+                        <button class="example-url w-full text-left p-3 bg-slate-700/50 hover:bg-slate-700 rounded-lg border border-slate-600 transition-colors duration-200" data-url="https://httpbin.org/status/200">
+                            <div class="text-sm font-medium text-white">httpbin.org/status/200</div>
+                            <div class="text-xs text-gray-400">Returns status 200</div>
+                        </button>
+                    </div>
+                    <div class="space-y-2">
+                        <button class="example-url w-full text-left p-3 bg-slate-700/50 hover:bg-slate-700 rounded-lg border border-slate-600 transition-colors duration-200" data-url="https://httpbin.org/status/404">
+                            <div class="text-sm font-medium text-white">httpbin.org/status/404</div>
+                            <div class="text-xs text-gray-400">Returns status 404</div>
+                        </button>
+                        <button class="example-url w-full text-left p-3 bg-slate-700/50 hover:bg-slate-700 rounded-lg border border-slate-600 transition-colors duration-200" data-url="https://httpbin.org/delay/2">
+                            <div class="text-sm font-medium text-white">httpbin.org/delay/2</div>
+                            <div class="text-xs text-gray-400">2 second delay</div>
+                        </button>
+                        <button class="example-url w-full text-left p-3 bg-slate-700/50 hover:bg-slate-700 rounded-lg border border-slate-600 transition-colors duration-200" data-url="https://api.github.com/users/octocat">
+                            <div class="text-sm font-medium text-white">api.github.com/users/octocat</div>
+                            <div class="text-xs text-gray-400">GitHub API example</div>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const urlInput = document.getElementById('url-input');
+            const methodSelect = document.getElementById('method-select');
+            const requestBodySection = document.getElementById('request-body-section');
+            const requestBody = document.getElementById('request-body');
+            const addHeaderBtn = document.getElementById('add-header-btn');
+            const headersContainer = document.getElementById('headers-container');
+            const sendRequestBtn = document.getElementById('send-request-btn');
+            const btnText = document.getElementById('btn-text');
+            const btnLoading = document.getElementById('btn-loading');
+            const responseSection = document.getElementById('response-section');
+            const errorSection = document.getElementById('error-section');
+            const statusCode = document.getElementById('status-code');
+            const responseTime = document.getElementById('response-time');
+            const contentLength = document.getElementById('content-length');
+            const headersOutput = document.getElementById('headers-output');
+            const bodyOutput = document.getElementById('body-output');
+            const copyResponseBtn = document.getElementById('copy-response-btn');
+            const errorMessage = document.getElementById('error-message');
+            const exampleUrls = document.querySelectorAll('.example-url');
+
+            // Show/hide request body based on method
+            methodSelect.addEventListener('change', function() {
+                const method = this.value;
+                if (['POST', 'PUT', 'PATCH'].includes(method)) {
+                    requestBodySection.classList.remove('hidden');
+                } else {
+                    requestBodySection.classList.add('hidden');
+                }
+            });
+
+            // Add header functionality
+            addHeaderBtn.addEventListener('click', function() {
+                addHeaderRow();
+            });
+
+            function addHeaderRow() {
+                const headerRow = document.createElement('div');
+                headerRow.className = 'flex gap-2 items-center';
+                headerRow.innerHTML = `
+                    <input 
+                        type="text" 
+                        placeholder="Header Name" 
+                        class="flex-1 px-3 py-2 bg-slate-700/50 border border-slate-600 rounded text-gray-200 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent text-sm"
+                    >
+                    <span class="text-gray-400">:</span>
+                    <input 
+                        type="text" 
+                        placeholder="Header Value" 
+                        class="flex-1 px-3 py-2 bg-slate-700/50 border border-slate-600 rounded text-gray-200 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent text-sm"
+                    >
+                    <button 
+                        type="button" 
+                        class="remove-header px-2 py-2 bg-red-600 hover:bg-red-700 text-white rounded transition-colors duration-200"
+                    >
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                        </svg>
+                    </button>
+                `;
+                
+                headerRow.querySelector('.remove-header').addEventListener('click', function() {
+                    headerRow.remove();
+                });
+                
+                headersContainer.appendChild(headerRow);
+            }
+
+            // Example URL click handlers
+            exampleUrls.forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const url = this.dataset.url;
+                    urlInput.value = url;
+                });
+            });
+
+            // Send request
+            sendRequestBtn.addEventListener('click', function() {
+                sendRequest();
+            });
+
+            async function sendRequest() {
+                const url = urlInput.value.trim();
+                if (!url) {
+                    showError('Please enter a URL');
+                    return;
+                }
+
+                // Show loading state
+                btnText.classList.add('hidden');
+                btnLoading.classList.remove('hidden');
+                sendRequestBtn.disabled = true;
+                responseSection.classList.add('hidden');
+                errorSection.classList.add('hidden');
+
+                try {
+                    const startTime = Date.now();
+                    
+                    // Collect headers
+                    const headers = {};
+                    const headerRows = headersContainer.querySelectorAll('.flex.gap-2');
+                    headerRows.forEach(row => {
+                        const nameInput = row.querySelector('input[placeholder="Header Name"]');
+                        const valueInput = row.querySelector('input[placeholder="Header Value"]');
+                        if (nameInput.value.trim() && valueInput.value.trim()) {
+                            headers[nameInput.value.trim()] = valueInput.value.trim();
+                        }
+                    });
+
+                    // Prepare request options
+                    const options = {
+                        method: methodSelect.value,
+                        headers: {
+                            'Content-Type': 'application/json',
+                            ...headers
+                        }
+                    };
+
+                    // Add body for POST, PUT, PATCH
+                    if (['POST', 'PUT', 'PATCH'].includes(methodSelect.value) && requestBody.value.trim()) {
+                        options.body = requestBody.value.trim();
+                    }
+
+                    // Make request
+                    const response = await fetch(url, options);
+                    const endTime = Date.now();
+                    const responseTimeMs = endTime - startTime;
+
+                    // Get response body
+                    let responseBody = '';
+                    try {
+                        responseBody = await response.text();
+                    } catch (e) {
+                        responseBody = 'Unable to read response body';
+                    }
+
+                    // Display response
+                    displayResponse(response, responseTimeMs, responseBody);
+
+                } catch (error) {
+                    showError(`Request failed: ${error.message}`);
+                } finally {
+                    // Hide loading state
+                    btnText.classList.remove('hidden');
+                    btnLoading.classList.add('hidden');
+                    sendRequestBtn.disabled = false;
+                }
+            }
+
+            function displayResponse(response, responseTimeMs, responseBody) {
+                // Update status code
+                statusCode.textContent = response.status;
+                statusCode.className = `text-lg font-semibold ${
+                    response.status >= 200 && response.status < 300 ? 'text-green-400' :
+                    response.status >= 300 && response.status < 400 ? 'text-yellow-400' :
+                    response.status >= 400 ? 'text-red-400' : 'text-white'
+                }`;
+
+                // Update response time
+                responseTime.textContent = `${responseTimeMs}ms`;
+
+                // Update content length
+                const contentLengthHeader = response.headers.get('content-length');
+                contentLength.textContent = contentLengthHeader ? `${contentLengthHeader} bytes` : 'Unknown';
+
+                // Display headers
+                let headersText = '';
+                response.headers.forEach((value, key) => {
+                    headersText += `${key}: ${value}\n`;
+                });
+                headersOutput.textContent = headersText;
+
+                // Display body (truncated if too long)
+                const maxBodyLength = 2000;
+                if (responseBody.length > maxBodyLength) {
+                    bodyOutput.textContent = responseBody.substring(0, maxBodyLength) + '\n\n... (truncated)';
+                } else {
+                    bodyOutput.textContent = responseBody;
+                }
+
+                responseSection.classList.remove('hidden');
+            }
+
+            function showError(message) {
+                errorMessage.textContent = message;
+                errorSection.classList.remove('hidden');
+            }
+
+            // Copy response functionality
+            copyResponseBtn.addEventListener('click', function() {
+                const responseData = {
+                    status: statusCode.textContent,
+                    responseTime: responseTime.textContent,
+                    contentLength: contentLength.textContent,
+                    headers: headersOutput.textContent,
+                    body: bodyOutput.textContent
+                };
+
+                const responseText = `Status: ${responseData.status}
+Response Time: ${responseData.responseTime}
+Content Length: ${responseData.contentLength}
+
+Headers:
+${responseData.headers}
+
+Body:
+${responseData.body}`;
+
+                navigator.clipboard.writeText(responseText).then(() => {
+                    const originalText = copyResponseBtn.innerHTML;
+                    copyResponseBtn.innerHTML = `
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                        </svg>
+                        <span>Copied!</span>
+                    `;
+                    copyResponseBtn.classList.add('bg-green-600');
+                    
+                    setTimeout(() => {
+                        copyResponseBtn.innerHTML = originalText;
+                        copyResponseBtn.classList.remove('bg-green-600');
+                    }, 2000);
+                });
+            });
+
+            // Example on page load
+            window.addEventListener('load', () => {
+                urlInput.value = 'https://httpbin.org/headers';
+                addHeaderRow();
+            });
+        });
+    </script>
+        </div>
+    </div>
+
+    <!-- Sidebar Scripts -->
+    <script src="sidebar-include.js"></script>
+    <script src="sidebar.js"></script>
+</body>
+</html>

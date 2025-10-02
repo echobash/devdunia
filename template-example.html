@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Your Tool Name - Developer Toolkit | DevDunia</title>
+    <meta name="description" content="Your tool description here.">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="js/common.js"></script>
+    <link rel="stylesheet" href="sidebar.css">
+    <style>
+        body {
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #0f172a 100%);
+        }
+    </style>
+</head>
+<body class="min-h-screen">
+    <!-- Background: Consistent Subtle Dark Gradient -->
+    <div class="fixed inset-0 -z-10 bg-gradient-to-br from-gray-900 via-slate-900 to-gray-900"></div>
+
+    <!-- Sidebar -->
+    <div id="sidebar-container"></div>
+
+    <!-- Main Content -->
+    <div class="main-content">
+        <!-- Navigation Bar -->
+        <div id="navbar-container"></div>
+
+        <!-- Main Container -->
+        <div class="container mx-auto px-4 pt-8 pb-24 sm:px-6 lg:px-8">
+        
+            <!-- Page Header -->
+            <div class="text-center mb-12">
+                <h1 class="text-3xl sm:text-4xl font-bold mb-4 tracking-tight
+                           text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-cyan-500">
+                    Your Tool Name
+                </h1>
+                <p class="text-lg text-gray-400 max-w-2xl mx-auto">
+                    Your tool description here.
+                </p>
+            </div>
+
+            <!-- Tool Container -->
+            <div class="max-w-4xl mx-auto">
+                <div class="bg-slate-800/70 backdrop-blur-md rounded-lg shadow-lg border border-slate-700/60 p-6">
+                    
+                    <!-- Your Tool Content Goes Here -->
+                    <div class="mb-6">
+                        <label for="your-input" class="block text-sm font-medium text-gray-300 mb-2">
+                            Your Input Label
+                        </label>
+                        <textarea 
+                            id="your-input" 
+                            rows="4" 
+                            class="w-full px-4 py-3 bg-slate-700/50 border border-slate-600 rounded-lg text-gray-200 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-none font-mono text-sm"
+                            placeholder="Enter your input here..."
+                        ></textarea>
+                    </div>
+
+                    <!-- Action Buttons -->
+                    <div class="flex flex-wrap gap-3 mb-6">
+                        <button id="your-action-btn" class="px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-lg transition-colors duration-200 flex items-center space-x-2">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
+                            </svg>
+                            <span>Your Action</span>
+                        </button>
+                        
+                        <button class="clear-btn px-6 py-3 bg-slate-600 hover:bg-slate-700 text-white font-medium rounded-lg transition-colors duration-200 flex items-center space-x-2">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
+                            </svg>
+                            <span>Clear All</span>
+                        </button>
+                    </div>
+
+                    <!-- Output Section -->
+                    <div id="output-section" class="hidden">
+                        <label for="your-output" class="block text-sm font-medium text-gray-300 mb-2">
+                            Output
+                        </label>
+                        <textarea 
+                            id="your-output" 
+                            rows="8" 
+                            class="w-full px-4 py-3 bg-slate-700/50 border border-slate-600 rounded-lg text-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-none font-mono text-sm"
+                            readonly
+                        ></textarea>
+                    </div>
+
+                </div>
+            </div>
+
+        </div>
+
+        <!-- Footer -->
+        <footer class="text-center text-gray-500 mt-10 pb-6">
+            © 2025 DevDunia – Free Developer Tools by <a href="https://echobash.com" class="text-blue-500 hover:underline" target="_blank">echobash</a>
+        </footer>
+    </div>
+
+    <script>
+        // Load common components
+        async function loadCommonComponents() {
+            try {
+                // Load sidebar
+                const sidebarResponse = await fetch('sidebar.html');
+                const sidebarHTML = await sidebarResponse.text();
+                document.getElementById('sidebar-container').innerHTML = sidebarHTML;
+
+                // Load navbar
+                const navbarResponse = await fetch('navbar.html');
+                const navbarHTML = await navbarResponse.text();
+                document.getElementById('navbar-container').innerHTML = navbarHTML;
+
+                // Update page title - CHANGE THIS TO YOUR TOOL NAME
+                document.getElementById('page-title').textContent = 'Your Tool Name';
+
+                // Load sidebar JavaScript
+                const script = document.createElement('script');
+                script.src = 'sidebar.js';
+                document.head.appendChild(script);
+            } catch (error) {
+                console.error('Error loading common components:', error);
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            // Load common components first
+            loadCommonComponents();
+
+            // Your tool-specific JavaScript goes here
+            const yourInput = document.getElementById('your-input');
+            const yourActionBtn = document.getElementById('your-action-btn');
+            const outputSection = document.getElementById('output-section');
+            const yourOutput = document.getElementById('your-output');
+
+            // Your action button
+            yourActionBtn.addEventListener('click', function() {
+                const input = yourInput.value.trim();
+                if (!input) {
+                    alert('Please enter some input');
+                    return;
+                }
+
+                // Your tool logic here
+                const result = processInput(input);
+                yourOutput.value = result;
+                outputSection.classList.remove('hidden');
+            });
+
+            // Clear button
+            document.querySelector('.clear-btn').addEventListener('click', function() {
+                yourInput.value = '';
+                yourOutput.value = '';
+                outputSection.classList.add('hidden');
+            });
+
+            // Your tool function
+            function processInput(input) {
+                // Your processing logic here
+                return `Processed: ${input}`;
+            }
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,368 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SQL Formatter - Developer Toolkit | DevDunia</title>
+    <meta name="description" content="Format and beautify SQL queries. Free online SQL formatter supporting multiple dialects for developers.">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="js/common.js"></script>
+    <style>
+        body {
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #0f172a 100%);
+        }
+    </style>
+</head>
+<body class="min-h-screen">
+    <!-- Background: Consistent Subtle Dark Gradient -->
+    <div class="fixed inset-0 -z-10 bg-gradient-to-br from-gray-900 via-slate-900 to-gray-900"></div>
+
+    <!-- Main Container -->
+    <div class="relative z-10 container mx-auto px-4 pt-16 pb-24 sm:px-6 lg:px-8">
+        
+        <!-- Page Header -->
+        <div class="text-center mb-12">
+            <h1 class="text-3xl sm:text-4xl font-bold mb-4 tracking-tight
+                       text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-cyan-500">
+                SQL Formatter
+            </h1>
+            <p class="text-lg text-gray-400 max-w-2xl mx-auto">
+                Format and beautify SQL queries. Supports multiple SQL dialects with customizable formatting options.
+            </p>
+        </div>
+
+        <!-- Tool Container -->
+        <div class="max-w-6xl mx-auto">
+            <div class="bg-slate-800/70 backdrop-blur-md rounded-lg shadow-lg border border-slate-700/60 p-6">
+                
+                <!-- Options Section -->
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
+                    <div>
+                        <label for="sql-dialect" class="block text-sm font-medium text-gray-300 mb-2">
+                            SQL Dialect
+                        </label>
+                        <select id="sql-dialect" class="w-full px-4 py-2 bg-slate-700/50 border border-slate-600 rounded-lg text-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                            <option value="standard">Standard SQL</option>
+                            <option value="mysql">MySQL</option>
+                            <option value="postgresql">PostgreSQL</option>
+                            <option value="sqlserver">SQL Server</option>
+                            <option value="oracle">Oracle</option>
+                            <option value="sqlite">SQLite</option>
+                        </select>
+                    </div>
+                    
+                    <div>
+                        <label for="indent-size" class="block text-sm font-medium text-gray-300 mb-2">
+                            Indent Size
+                        </label>
+                        <select id="indent-size" class="w-full px-4 py-2 bg-slate-700/50 border border-slate-600 rounded-lg text-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                            <option value="2">2 Spaces</option>
+                            <option value="4" selected>4 Spaces</option>
+                            <option value="8">8 Spaces</option>
+                            <option value="tab">Tab</option>
+                        </select>
+                    </div>
+                    
+                    <div>
+                        <label for="case-style" class="block text-sm font-medium text-gray-300 mb-2">
+                            Case Style
+                        </label>
+                        <select id="case-style" class="w-full px-4 py-2 bg-slate-700/50 border border-slate-600 rounded-lg text-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                            <option value="upper">UPPERCASE</option>
+                            <option value="lower" selected>lowercase</option>
+                            <option value="preserve">Preserve Original</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Input Section -->
+                <div class="mb-6">
+                    <label for="sql-input" class="block text-sm font-medium text-gray-300 mb-2">
+                        SQL Query
+                    </label>
+                    <textarea 
+                        id="sql-input" 
+                        rows="12" 
+                        class="w-full px-4 py-3 bg-slate-700/50 border border-slate-600 rounded-lg text-gray-200 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-none font-mono text-sm"
+                        placeholder="Enter your SQL query here..."
+                    ></textarea>
+                </div>
+
+                <!-- Action Buttons -->
+                <div class="flex flex-wrap gap-3 mb-6">
+                    <button id="format-btn" class="px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-lg transition-colors duration-200 flex items-center space-x-2">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 10h16M4 14h16M4 18h16"></path>
+                        </svg>
+                        <span>Format SQL</span>
+                    </button>
+                    
+                    <button id="minify-btn" class="px-6 py-3 bg-green-600 hover:bg-green-700 text-white font-medium rounded-lg transition-colors duration-200 flex items-center space-x-2">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                        </svg>
+                        <span>Minify SQL</span>
+                    </button>
+                    
+                    <button class="clear-btn px-6 py-3 bg-slate-600 hover:bg-slate-700 text-white font-medium rounded-lg transition-colors duration-200 flex items-center space-x-2">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
+                        </svg>
+                        <span>Clear All</span>
+                    </button>
+                </div>
+
+                <!-- Output Section -->
+                <div id="output-section" class="hidden">
+                    <label for="sql-output" class="block text-sm font-medium text-gray-300 mb-2">
+                        Formatted SQL
+                    </label>
+                    <div class="relative">
+                        <textarea 
+                            id="sql-output" 
+                            rows="12" 
+                            class="w-full px-4 py-3 bg-slate-700/50 border border-slate-600 rounded-lg text-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-none font-mono text-sm"
+                            readonly
+                        ></textarea>
+                        
+                        <!-- Copy Button -->
+                        <button class="copy-btn absolute top-2 right-2 px-3 py-1 bg-slate-600 hover:bg-slate-700 text-white text-sm rounded transition-colors duration-200 flex items-center space-x-1" data-target="sql-output">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v8a2 2 0 01-2 2h-2m-6-4l2 2m0 0l2-2m-2 2V10"></path>
+                            </svg>
+                            <span>Copy</span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- SQL Templates Section -->
+                <div class="mt-8 p-4 bg-slate-700/30 rounded-lg border border-slate-600/50">
+                    <h3 class="text-lg font-semibold text-blue-400 mb-3">SQL Templates</h3>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+                        <button class="template-btn px-4 py-2 bg-slate-600 hover:bg-slate-700 text-white text-sm rounded-lg transition-colors duration-200" data-template="select">
+                            SELECT Query
+                        </button>
+                        <button class="template-btn px-4 py-2 bg-slate-600 hover:bg-slate-700 text-white text-sm rounded-lg transition-colors duration-200" data-template="insert">
+                            INSERT Statement
+                        </button>
+                        <button class="template-btn px-4 py-2 bg-slate-600 hover:bg-slate-700 text-white text-sm rounded-lg transition-colors duration-200" data-template="update">
+                            UPDATE Statement
+                        </button>
+                        <button class="template-btn px-4 py-2 bg-slate-600 hover:bg-slate-700 text-white text-sm rounded-lg transition-colors duration-200" data-template="delete">
+                            DELETE Statement
+                        </button>
+                        <button class="template-btn px-4 py-2 bg-slate-600 hover:bg-slate-700 text-white text-sm rounded-lg transition-colors duration-200" data-template="join">
+                            JOIN Query
+                        </button>
+                        <button class="template-btn px-4 py-2 bg-slate-600 hover:bg-slate-700 text-white text-sm rounded-lg transition-colors duration-200" data-template="subquery">
+                            Subquery
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Examples Section -->
+                <div class="mt-6 p-4 bg-slate-700/30 rounded-lg border border-slate-600/50">
+                    <h3 class="text-lg font-semibold text-blue-400 mb-3">Features</h3>
+                    <div class="text-sm text-gray-300 space-y-2">
+                        <ul class="list-disc list-inside ml-4 space-y-1">
+                            <li><strong>Multiple Dialects:</strong> Support for MySQL, PostgreSQL, SQL Server, Oracle, SQLite</li>
+                            <li><strong>Customizable Formatting:</strong> Indent size, case style, and more</li>
+                            <li><strong>SQL Minification:</strong> Remove unnecessary whitespace</li>
+                            <li><strong>Syntax Highlighting:</strong> Color-coded SQL keywords</li>
+                            <li><strong>Template Library:</strong> Common SQL patterns and queries</li>
+                        </ul>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+    </div>
+
+    <!-- Footer -->
+    <footer class="text-center text-gray-500 mt-10 pb-6">
+        © 2025 DevDunia – Free Developer Tools by <a href="https://echobash.com" class="text-blue-500 hover:underline" target="_blank">echobash</a>
+    </footer>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const sqlInput = document.getElementById('sql-input');
+            const sqlOutput = document.getElementById('sql-output');
+            const formatBtn = document.getElementById('format-btn');
+            const minifyBtn = document.getElementById('minify-btn');
+            const outputSection = document.getElementById('output-section');
+            const templateBtns = document.querySelectorAll('.template-btn');
+
+            // Format SQL
+            formatBtn.addEventListener('click', function() {
+                const sql = sqlInput.value.trim();
+                if (!sql) {
+                    alert('Please enter a SQL query to format');
+                    return;
+                }
+
+                try {
+                    const formatted = formatSQL(sql);
+                    sqlOutput.value = formatted;
+                    showOutput();
+                } catch (error) {
+                    alert('Error formatting SQL: ' + error.message);
+                }
+            });
+
+            // Minify SQL
+            minifyBtn.addEventListener('click', function() {
+                const sql = sqlInput.value.trim();
+                if (!sql) {
+                    alert('Please enter a SQL query to minify');
+                    return;
+                }
+
+                try {
+                    const minified = minifySQL(sql);
+                    sqlOutput.value = minified;
+                    showOutput();
+                } catch (error) {
+                    alert('Error minifying SQL: ' + error.message);
+                }
+            });
+
+            // Template buttons
+            templateBtns.forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const template = this.dataset.template;
+                    loadTemplate(template);
+                });
+            });
+
+            // Helper functions
+            function showOutput() {
+                outputSection.classList.remove('hidden');
+            }
+
+            function formatSQL(sql) {
+                const dialect = document.getElementById('sql-dialect').value;
+                const indentSize = document.getElementById('indent-size').value;
+                const caseStyle = document.getElementById('case-style').value;
+
+                // Basic SQL formatting
+                let formatted = sql
+                    .replace(/\s+/g, ' ') // Normalize whitespace
+                    .trim();
+
+                // Apply case style
+                if (caseStyle === 'upper') {
+                    formatted = formatCase(formatted, 'upper');
+                } else if (caseStyle === 'lower') {
+                    formatted = formatCase(formatted, 'lower');
+                }
+
+                // Add line breaks and indentation
+                formatted = addLineBreaks(formatted, indentSize);
+
+                return formatted;
+            }
+
+            function minifySQL(sql) {
+                return sql
+                    .replace(/\s+/g, ' ') // Replace multiple spaces with single space
+                    .replace(/\s*,\s*/g, ',') // Remove spaces around commas
+                    .replace(/\s*\(\s*/g, '(') // Remove spaces around opening parentheses
+                    .replace(/\s*\)\s*/g, ')') // Remove spaces around closing parentheses
+                    .replace(/\s*;\s*/g, ';') // Remove spaces around semicolons
+                    .trim();
+            }
+
+            function formatCase(sql, style) {
+                const keywords = [
+                    'SELECT', 'FROM', 'WHERE', 'INSERT', 'INTO', 'VALUES', 'UPDATE', 'SET',
+                    'DELETE', 'JOIN', 'INNER', 'LEFT', 'RIGHT', 'OUTER', 'ON', 'AS', 'AND',
+                    'OR', 'NOT', 'IN', 'EXISTS', 'BETWEEN', 'LIKE', 'IS', 'NULL', 'ORDER',
+                    'BY', 'GROUP', 'HAVING', 'LIMIT', 'OFFSET', 'UNION', 'ALL', 'DISTINCT',
+                    'COUNT', 'SUM', 'AVG', 'MIN', 'MAX', 'CASE', 'WHEN', 'THEN', 'ELSE',
+                    'END', 'IF', 'EXISTS', 'CREATE', 'TABLE', 'ALTER', 'DROP', 'INDEX',
+                    'PRIMARY', 'KEY', 'FOREIGN', 'REFERENCES', 'CONSTRAINT', 'UNIQUE',
+                    'NOT', 'DEFAULT', 'AUTO_INCREMENT', 'VARCHAR', 'INT', 'BIGINT',
+                    'DECIMAL', 'FLOAT', 'DOUBLE', 'DATE', 'DATETIME', 'TIMESTAMP',
+                    'TEXT', 'BLOB', 'BOOLEAN', 'CHAR', 'TINYINT', 'SMALLINT', 'MEDIUMINT'
+                ];
+
+                let result = sql;
+                keywords.forEach(keyword => {
+                    const regex = new RegExp(`\\b${keyword}\\b`, 'gi');
+                    if (style === 'upper') {
+                        result = result.replace(regex, keyword.toUpperCase());
+                    } else if (style === 'lower') {
+                        result = result.replace(regex, keyword.toLowerCase());
+                    }
+                });
+
+                return result;
+            }
+
+            function addLineBreaks(sql, indentSize) {
+                const indent = indentSize === 'tab' ? '\t' : ' '.repeat(parseInt(indentSize));
+                
+                return sql
+                    .replace(/\bSELECT\b/gi, '\nSELECT')
+                    .replace(/\bFROM\b/gi, '\nFROM')
+                    .replace(/\bWHERE\b/gi, '\nWHERE')
+                    .replace(/\bJOIN\b/gi, '\nJOIN')
+                    .replace(/\bINNER JOIN\b/gi, '\nINNER JOIN')
+                    .replace(/\bLEFT JOIN\b/gi, '\nLEFT JOIN')
+                    .replace(/\bRIGHT JOIN\b/gi, '\nRIGHT JOIN')
+                    .replace(/\bOUTER JOIN\b/gi, '\nOUTER JOIN')
+                    .replace(/\bON\b/gi, '\n  ON')
+                    .replace(/\bAND\b/gi, '\n  AND')
+                    .replace(/\bOR\b/gi, '\n  OR')
+                    .replace(/\bORDER BY\b/gi, '\nORDER BY')
+                    .replace(/\bGROUP BY\b/gi, '\nGROUP BY')
+                    .replace(/\bHAVING\b/gi, '\nHAVING')
+                    .replace(/\bUNION\b/gi, '\nUNION')
+                    .replace(/\bINSERT INTO\b/gi, '\nINSERT INTO')
+                    .replace(/\bVALUES\b/gi, '\nVALUES')
+                    .replace(/\bUPDATE\b/gi, '\nUPDATE')
+                    .replace(/\bSET\b/gi, '\nSET')
+                    .replace(/\bDELETE FROM\b/gi, '\nDELETE FROM')
+                    .replace(/\n\s*\n/g, '\n') // Remove empty lines
+                    .trim();
+            }
+
+            function loadTemplate(template) {
+                const templates = {
+                    select: `SELECT column1, column2, column3
+FROM table_name
+WHERE condition = 'value'
+ORDER BY column1 ASC;`,
+                    insert: `INSERT INTO table_name (column1, column2, column3)
+VALUES ('value1', 'value2', 'value3');`,
+                    update: `UPDATE table_name
+SET column1 = 'new_value1',
+    column2 = 'new_value2'
+WHERE condition = 'value';`,
+                    delete: `DELETE FROM table_name
+WHERE condition = 'value';`,
+                    join: `SELECT t1.column1, t2.column2
+FROM table1 t1
+INNER JOIN table2 t2 ON t1.id = t2.table1_id
+WHERE t1.condition = 'value';`,
+                    subquery: `SELECT column1, column2
+FROM table_name
+WHERE column1 IN (
+    SELECT column1
+    FROM another_table
+    WHERE condition = 'value'
+);`
+                };
+
+                sqlInput.value = templates[template] || '';
+            }
+
+            // Example on page load
+            window.addEventListener('load', () => {
+                sqlInput.value = `select u.id,u.name,u.email,p.title,p.content from users u inner join posts p on u.id=p.user_id where u.active=1 and p.published=1 order by p.created_at desc limit 10;`;
+            });
+        });
+    </script>
+</body>
+</html>

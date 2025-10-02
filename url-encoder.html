@@ -7,6 +7,7 @@
     <meta name="description" content="Encode URLs with proper percent encoding for special characters and spaces. Free online URL encoder tool for developers.">
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="js/common.js"></script>
+    <link rel="stylesheet" href="sidebar.css">
     <style>
         body {
             background: linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #0f172a 100%);
@@ -17,7 +18,12 @@
     <!-- Background: Consistent Subtle Dark Gradient -->
     <div class="fixed inset-0 -z-10 bg-gradient-to-br from-gray-900 via-slate-900 to-gray-900"></div>
 
-    <!-- Main Container -->
+    <!-- Sidebar -->
+    <div id="sidebar-container"></div>
+
+    <!-- Main Content -->
+    <div class="main-content">
+        <!-- Main Container -->
     <div class="relative z-10 container mx-auto px-4 pt-16 pb-24 sm:px-6 lg:px-8">
         
         <!-- Page Header -->
@@ -126,11 +132,14 @@
 
     </div>
 
-    <!-- Footer -->
-    <footer class="text-center text-gray-500 mt-10 pb-6">
-        © 2025 DevDunia – Free Developer Tools by <a href="https://echobash.com" class="text-blue-500 hover:underline" target="_blank">echobash</a>
-    </footer>
+        <!-- Footer -->
+        <footer class="text-center text-gray-500 mt-10 pb-6">
+            © 2025 DevDunia – Free Developer Tools by <a href="https://echobash.com" class="text-blue-500 hover:underline" target="_blank">echobash</a>
+        </footer>
+    </div>
 
+    <script src="sidebar-include.js"></script>
+    <script src="sidebar.js"></script>
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             const urlInput = document.getElementById('url-input');
