@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Payment Tester - DevDunia</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="sidebar.css">
+    <style>
+        .payment-section {
+            max-height: 400px;
+            overflow-y: auto;
+        }
+        .test-card {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border: 2px solid #e2e8f0;
+            transition: all 0.3s ease;
+        }
+        .test-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+        }
+        .stripe-element {
+            background: #1e293b;
+            border: 1px solid #334155;
+            border-radius: 8px;
+            padding: 12px;
+            color: white;
+        }
+        .stripe-element:focus {
+            border-color: #3b82f6;
+            box-shadow: 0 0 0 1px #3b82f6;
+        }
+    </style>
+</head>
+<body class="min-h-screen">
+    <!-- Background: Consistent Subtle Dark Gradient -->
+    <div class="fixed inset-0 -z-10 bg-gradient-to-br from-gray-900 via-slate-900 to-gray-900"></div>
+
+    <!-- Sidebar Container -->
+    <div id="sidebar-container"></div>
+
+    <!-- Main Container -->
+    <div class="main-content">
+        <div class="relative z-10 container mx-auto px-4 pt-16 pb-24 sm:px-6 lg:px-8">
+            <!-- Header -->
+            <div class="text-center mb-8">
+                <h1 class="text-4xl sm:text-5xl font-bold mb-3 tracking-tight
+                           text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 to-teal-500">
+                    Payment Tester
+                </h1>
+                <p class="text-lg text-gray-400 max-w-2xl mx-auto">
+                    Test Stripe payments with test cards. Safe environment for development and testing.
+                </p>
+            </div>
+
+            <!-- Main Content -->
+            <div class="max-w-6xl mx-auto">
+                <!-- Test Cards Section -->
+                <div class="bg-slate-800/50 backdrop-blur-sm rounded-2xl p-6 mb-6 border border-slate-700/50">
+                    <h2 class="text-2xl font-semibold text-white mb-6">Stripe Test Cards</h2>
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                        <!-- Visa Success -->
+                        <div class="test-card rounded-xl p-4 text-white">
+                            <div class="flex items-center justify-between mb-2">
+                                <span class="font-bold">Visa</span>
+                                <span class="text-sm bg-green-500 px-2 py-1 rounded">Success</span>
+                            </div>
+                            <div class="text-sm font-mono">4242 4242 4242 4242</div>
+                            <div class="text-xs mt-1">Any future date, any CVC</div>
+                        </div>
+
+                        <!-- Visa Decline -->
+                        <div class="test-card rounded-xl p-4 text-white">
+                            <div class="flex items-center justify-between mb-2">
+                                <span class="font-bold">Visa</span>
+                                <span class="text-sm bg-red-500 px-2 py-1 rounded">Decline</span>
+                            </div>
+                            <div class="text-sm font-mono">4000 0000 0000 0002</div>
+                            <div class="text-xs mt-1">Generic decline</div>
+                        </div>
+
+                        <!-- Mastercard Success -->
+                        <div class="test-card rounded-xl p-4 text-white">
+                            <div class="flex items-center justify-between mb-2">
+                                <span class="font-bold">Mastercard</span>
+                                <span class="text-sm bg-green-500 px-2 py-1 rounded">Success</span>
+                            </div>
+                            <div class="text-sm font-mono">5555 5555 5555 4444</div>
+                            <div class="text-xs mt-1">Any future date, any CVC</div>
+                        </div>
+
+                        <!-- American Express -->
+                        <div class="test-card rounded-xl p-4 text-white">
+                            <div class="flex items-center justify-between mb-2">
+                                <span class="font-bold">Amex</span>
+                                <span class="text-sm bg-green-500 px-2 py-1 rounded">Success</span>
+                            </div>
+                            <div class="text-sm font-mono">3782 822463 10005</div>
+                            <div class="text-xs mt-1">Any future date, any CVC</div>
+                        </div>
+
+                        <!-- 3D Secure -->
+                        <div class="test-card rounded-xl p-4 text-white">
+                            <div class="flex items-center justify-between mb-2">
+                                <span class="font-bold">Visa</span>
+                                <span class="text-sm bg-blue-500 px-2 py-1 rounded">3D Secure</span>
+                            </div>
+                            <div class="text-sm font-mono">4000 0025 0000 3155</div>
+                            <div class="text-xs mt-1">Requires authentication</div>
+                        </div>
+
+                        <!-- Insufficient Funds -->
+                        <div class="test-card rounded-xl p-4 text-white">
+                            <div class="flex items-center justify-between mb-2">
+                                <span class="font-bold">Visa</span>
+                                <span class="text-sm bg-red-500 px-2 py-1 rounded">Decline</span>
+                            </div>
+                            <div class="text-sm font-mono">4000 0000 0000 9995</div>
+                            <div class="text-xs mt-1">Insufficient funds</div>
+                        </div>
+                    </div>
+
+                    <!-- Additional Test Cards -->
+                    <div class="mt-6">
+                        <h3 class="text-lg font-semibold text-white mb-4">More Test Scenarios</h3>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div class="bg-slate-700/50 rounded-lg p-4">
+                                <h4 class="font-semibold text-white mb-2">Processing Errors</h4>
+                                <div class="space-y-2 text-sm">
+                                    <div><span class="font-mono text-blue-400">4000 0000 0000 0119</span> - Processing error</div>
+                                    <div><span class="font-mono text-blue-400">4000 0000 0000 0069</span> - Expired card</div>
+                                    <div><span class="font-mono text-blue-400">4000 0000 0000 0127</span> - Incorrect CVC</div>
+                                </div>
+                            </div>
+                            <div class="bg-slate-700/50 rounded-lg p-4">
+                                <h4 class="font-semibold text-white mb-2">Special Cases</h4>
+                                <div class="space-y-2 text-sm">
+                                    <div><span class="font-mono text-blue-400">4000 0000 0000 0341</span> - Attaching SCA</div>
+                                    <div><span class="font-mono text-blue-400">4000 0000 0000 3220</span> - Non-3D Secure</div>
+                                    <div><span class="font-mono text-blue-400">4000 0000 0000 3063</span> - Always requires payment</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+
+                <!-- Integration Guide -->
+                <div class="bg-slate-800/50 backdrop-blur-sm rounded-2xl p-6 border border-slate-700/50">
+                    <h2 class="text-2xl font-semibold text-white mb-6">Integration Guide</h2>
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                        <!-- Frontend Code -->
+                        <div>
+                            <h3 class="text-lg font-semibold text-white mb-4">Frontend Integration</h3>
+                            <div class="bg-slate-900/50 rounded-lg p-4">
+                                <pre class="text-sm text-gray-300 overflow-x-auto"><code>// Initialize Stripe
+const stripe = Stripe('pk_test_your_key');
+
+// Create payment element
+const elements = stripe.elements();
+const cardElement = elements.create('card');
+cardElement.mount('#card-element');
+
+// Handle form submission
+form.addEventListener('submit', async (event) => {
+  event.preventDefault();
+  
+  const {error, paymentMethod} = await stripe.createPaymentMethod({
+    type: 'card',
+    card: cardElement,
+  });
+  
+  if (error) {
+    console.error(error);
+  } else {
+    // Send paymentMethod.id to your server
+    console.log(paymentMethod);
+  }
+});</code></pre>
+                            </div>
+                        </div>
+
+                        <!-- Backend Code -->
+                        <div>
+                            <h3 class="text-lg font-semibold text-white mb-4">Backend Integration</h3>
+                            <div class="bg-slate-900/50 rounded-lg p-4">
+                                <pre class="text-sm text-gray-300 overflow-x-auto"><code>// Node.js example
+const stripe = require('stripe')('sk_test_your_key');
+
+app.post('/create-payment-intent', async (req, res) => {
+  const {amount, currency = 'usd'} = req.body;
+  
+  try {
+    const paymentIntent = await stripe.paymentIntents.create({
+      amount: amount * 100, // Convert to cents
+      currency,
+      automatic_payment_methods: {
+        enabled: true,
+      },
+    });
+    
+    res.json({
+      clientSecret: paymentIntent.client_secret
+    });
+  } catch (error) {
+    res.status(400).json({error: error.message});
+  }
+});</code></pre>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Sidebar Scripts -->
+    <script src="sidebar-include.js"></script>
+    <script src="sidebar.js"></script>
+
+    <script>
+        // Copy test card numbers to clipboard
+        document.querySelectorAll('.test-card').forEach(card => {
+            card.addEventListener('click', function() {
+                const cardNumber = this.querySelector('.font-mono').textContent;
+                navigator.clipboard.writeText(cardNumber.replace(/\s/g, '')).then(() => {
+                    // Show feedback
+                    const originalBg = this.style.background;
+                    this.style.background = 'linear-gradient(135deg, #10b981 0%, #059669 100%)';
+                    setTimeout(() => {
+                        this.style.background = originalBg;
+                    }, 1000);
+                });
+            });
+        });
+    </script>
+</body>
+</html>

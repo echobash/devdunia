@@ -167,11 +167,24 @@ const sidebarHTML = `    <!-- Common Sidebar for DevDunia -->
                 <div class="sidebar-icon">⚙️</div>
                 <span class="sidebar-text">Environment Generator</span>
             </a>
-            <a href="word-counter.html" class="sidebar-item">
-                <div class="sidebar-icon">📊</div>
-                <span class="sidebar-text">Word Counter</span>
-            </a>
-        </div>
+                <a href="word-counter.html" class="sidebar-item">
+                    <div class="sidebar-icon">📊</div>
+                    <span class="sidebar-text">Word Counter</span>
+                </a>
+            </div>
+
+            <!-- Payments Section -->
+            <div class="sidebar-section">
+                <div class="sidebar-section-title">Payments</div>
+                <a href="index.html#payments" class="sidebar-item">
+                    <div class="sidebar-icon">💳</div>
+                    <span class="sidebar-text">Payments</span>
+                </a>
+                <a href="payment-tester.html" class="sidebar-item">
+                    <div class="sidebar-icon">🧪</div>
+                    <span class="sidebar-text">Payment Tester</span>
+                </a>
+            </div>
 
         <!-- Python Section -->
         <div class="sidebar-section">
