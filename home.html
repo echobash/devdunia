@@ -1,0 +1,1202 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Developer Toolkit - DevDunia</title>
+    <meta name="description" content="A comprehensive collection of essential developer utilities for formatting, encoding, generating, and calculating. Free online tools for developers.">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="js/common.js"></script>
+    <style>
+    body {
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #0f172a 100%);
+    }
+    
+    /* Compact Sidebar Styles */
+    .sidebar {
+      width: 280px;
+      height: 100vh;
+      position: fixed;
+      left: 0;
+      top: 0;
+      background: rgba(15, 23, 42, 0.95);
+      backdrop-filter: blur(10px);
+      border-right: 1px solid rgba(71, 85, 105, 0.3);
+      z-index: 40;
+      overflow-y: auto;
+      transition: width 0.3s ease;
+    }
+    
+    .sidebar-text {
+      opacity: 1 !important;
+      transform: translateX(0) !important;
+      display: block !important;
+    }
+    
+    .sidebar-item {
+      display: flex;
+      align-items: center;
+      padding: 12px 16px;
+      color: #94a3b8;
+      text-decoration: none;
+      transition: all 0.3s ease;
+      border-radius: 8px;
+      margin: 4px 8px;
+    }
+    
+    .sidebar-item:hover {
+      background: rgba(71, 85, 105, 0.3);
+      color: #ffffff;
+    }
+    
+    .sidebar-item.active {
+      background: rgba(59, 130, 246, 0.2);
+      color: #60a5fa;
+    }
+    
+    .sidebar-icon {
+      width: 24px;
+      height: 24px;
+      flex-shrink: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 18px;
+    }
+    
+    .sidebar-text {
+      margin-left: 12px;
+      opacity: 0;
+      transform: translateX(-10px);
+      transition: all 0.3s ease;
+      white-space: nowrap;
+      font-size: 14px;
+      font-weight: 500;
+    }
+    
+    .sidebar-section {
+      margin: 16px 0;
+    }
+    
+    .sidebar-section-title {
+      padding: 8px 16px;
+      font-size: 11px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      color: #64748b;
+      opacity: 1 !important;
+      transform: translateX(0) !important;
+      display: block !important;
+      transition: all 0.3s ease;
+    }
+    
+    .main-content {
+      margin-left: 280px;
+      min-height: 100vh;
+    }
+    
+    .sidebar::-webkit-scrollbar {
+      width: 4px;
+    }
+    
+    .sidebar::-webkit-scrollbar-track {
+      background: transparent;
+    }
+    
+    .sidebar::-webkit-scrollbar-thumb {
+      background: rgba(71, 85, 105, 0.5);
+      border-radius: 2px;
+    }
+    
+    /* Desktop: Always show text */
+    @media (min-width: 769px) {
+      .sidebar-text {
+        opacity: 1 !important;
+        transform: translateX(0) !important;
+        display: block !important;
+      }
+      
+      .sidebar-section-title {
+        opacity: 1 !important;
+        transform: translateX(0) !important;
+        display: block !important;
+      }
+    }
+    
+    /* Mobile responsive */
+    @media (max-width: 768px) {
+      .sidebar {
+        width: 0;
+        overflow: hidden;
+      }
+      
+      .sidebar-text {
+        opacity: 0;
+        transform: translateX(-10px);
+      }
+      
+      .sidebar-section-title {
+        opacity: 0;
+        transform: translateX(-10px);
+      }
+      
+      .main-content {
+        margin-left: 0;
+      }
+    }
+    
+    /* Tool Card Hover Effects */
+    .tool-card {
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    
+    .tool-card:hover {
+      transform: translateY(-4px) scale(1.02);
+      box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+    }
+    
+    /* Floating Action Button */
+    .fab {
+      position: fixed;
+      bottom: 2rem;
+      right: 2rem;
+      z-index: 50;
+      transition: all 0.3s ease;
+    }
+    
+    .fab:hover {
+      transform: scale(1.1);
+    }
+    
+    /* Search Highlight */
+    .search-highlight {
+      background: linear-gradient(120deg, #fbbf24 0%, #f59e0b 100%);
+      color: #1f2937;
+      padding: 0.125rem 0.25rem;
+      border-radius: 0.25rem;
+      font-weight: 600;
+    }
+  </style>
+</head>
+<body class="min-h-screen">
+    <!-- Background: Consistent Subtle Dark Gradient -->
+    <div class="fixed inset-0 -z-10 bg-gradient-to-br from-gray-900 via-slate-900 to-gray-900"></div>
+
+    <!-- Compact Sidebar -->
+    <aside class="sidebar">
+        <div class="p-4">
+            <!-- Logo -->
+            <div class="flex items-center justify-center mb-8">
+                <div class="bg-gradient-to-r from-emerald-400 to-teal-500 rounded-lg flex items-center justify-center px-4 py-2">
+                    <span class="text-white font-bold text-sm">Dev Dunia</span>
+                </div>
+            </div>
+
+            <!-- Encoders/Decoders Section -->
+            <div class="sidebar-section">
+                <div class="sidebar-section-title">Encoders</div>
+                <a href="#encoders" class="sidebar-item">
+                    <div class="sidebar-icon">🔐</div>
+                    <span class="sidebar-text">Encoders/Decoders</span>
+                </a>
+                <a href="json-decoder.html" class="sidebar-item">
+                    <div class="sidebar-icon">📄</div>
+                    <span class="sidebar-text">JSON Decoder</span>
+                </a>
+                <a href="base64-encoder.html" class="sidebar-item">
+                    <div class="sidebar-icon">🔢</div>
+                    <span class="sidebar-text">Base64 Encoder</span>
+                </a>
+                <a href="url-encoder.html" class="sidebar-item">
+                    <div class="sidebar-icon">🔗</div>
+                    <span class="sidebar-text">URL Encoder</span>
+                </a>
+                <a href="html-entities.html" class="sidebar-item">
+                    <div class="sidebar-icon">🏷️</div>
+                    <span class="sidebar-text">HTML Entities</span>
+                </a>
+                <a href="rot13-encoder.html" class="sidebar-item">
+                    <div class="sidebar-icon">🔄</div>
+                    <span class="sidebar-text">ROT13 Encoder</span>
+                </a>
+                <a href="caesar-cipher.html" class="sidebar-item">
+                    <div class="sidebar-icon">🔐</div>
+                    <span class="sidebar-text">Caesar Cipher</span>
+                </a>
+                <a href="ascii-converter.html" class="sidebar-item">
+                    <div class="sidebar-icon">🔤</div>
+                    <span class="sidebar-text">ASCII Converter</span>
+                </a>
+            </div>
+
+            <!-- Formatters Section -->
+            <div class="sidebar-section">
+                <div class="sidebar-section-title">Formatters</div>
+                <a href="#formatters" class="sidebar-item">
+                    <div class="sidebar-icon">📝</div>
+                    <span class="sidebar-text">Formatters</span>
+                </a>
+                <a href="json-beautifier.html" class="sidebar-item">
+                    <div class="sidebar-icon">✨</div>
+                    <span class="sidebar-text">JSON Beautifier</span>
+                </a>
+                <a href="json-minifier.html" class="sidebar-item">
+                    <div class="sidebar-icon">📦</div>
+                    <span class="sidebar-text">JSON Minifier</span>
+                </a>
+                <a href="yaml-json-converter.html" class="sidebar-item">
+                    <div class="sidebar-icon">🔄</div>
+                    <span class="sidebar-text">YAML ⇄ JSON</span>
+                </a>
+                <a href="xml-formatter.html" class="sidebar-item">
+                    <div class="sidebar-icon">📋</div>
+                    <span class="sidebar-text">XML Formatter</span>
+                </a>
+                <a href="csv-json-converter.html" class="sidebar-item">
+                    <div class="sidebar-icon">📊</div>
+                    <span class="sidebar-text">CSV ⇄ JSON</span>
+                </a>
+                <a href="sql-formatter.html" class="sidebar-item">
+                    <div class="sidebar-icon">🗃️</div>
+                    <span class="sidebar-text">SQL Formatter</span>
+                </a>
+                <a href="string-transformer.html" class="sidebar-item">
+                    <div class="sidebar-icon">🔄</div>
+                    <span class="sidebar-text">String Transformer</span>
+                </a>
+            </div>
+
+            <!-- Generators Section -->
+            <div class="sidebar-section">
+                <div class="sidebar-section-title">Generators</div>
+                <a href="#generators" class="sidebar-item">
+                    <div class="sidebar-icon">⚡</div>
+                    <span class="sidebar-text">Generators</span>
+                </a>
+                <a href="hash-generator.html" class="sidebar-item">
+                    <div class="sidebar-icon">🔐</div>
+                    <span class="sidebar-text">Hash Generator</span>
+                </a>
+                <a href="guid-generator.html" class="sidebar-item">
+                    <div class="sidebar-icon">🆔</div>
+                    <span class="sidebar-text">GUID Generator</span>
+                </a>
+                <a href="password-generator.html" class="sidebar-item">
+                    <div class="sidebar-icon">🔑</div>
+                    <span class="sidebar-text">Password Generator</span>
+                </a>
+                <a href="qr-generator.html" class="sidebar-item">
+                    <div class="sidebar-icon">📱</div>
+                    <span class="sidebar-text">QR Code Generator</span>
+                </a>
+                <a href="lorem-ipsum-generator.html" class="sidebar-item">
+                    <div class="sidebar-icon">📝</div>
+                    <span class="sidebar-text">Lorem Ipsum</span>
+                </a>
+                <a href="leetcode-commit-message.html" class="sidebar-item">
+                    <div class="sidebar-icon">💻</div>
+                    <span class="sidebar-text">Leetcode Commit</span>
+                </a>
+            </div>
+
+            <!-- API Tools Section -->
+            <div class="sidebar-section">
+                <div class="sidebar-section-title">API Tools</div>
+                <a href="#api-tools" class="sidebar-item">
+                    <div class="sidebar-icon">🔌</div>
+                    <span class="sidebar-text">API & Integration</span>
+                </a>
+                <a href="curl-describer.html" class="sidebar-item">
+                    <div class="sidebar-icon">🌐</div>
+                    <span class="sidebar-text">cURL Describer</span>
+                </a>
+                <a href="regex-tester.html" class="sidebar-item">
+                    <div class="sidebar-icon">🔍</div>
+                    <span class="sidebar-text">Regex Tester</span>
+                </a>
+                <a href="cron-describer.html" class="sidebar-item">
+                    <div class="sidebar-icon">⏰</div>
+                    <span class="sidebar-text">Cron Describer</span>
+                </a>
+            </div>
+
+            <!-- Development Tools Section -->
+            <div class="sidebar-section">
+                <div class="sidebar-section-title">Dev Tools</div>
+                <a href="#dev-tools" class="sidebar-item">
+                    <div class="sidebar-icon">🛠️</div>
+                    <span class="sidebar-text">Development Tools</span>
+                </a>
+                <a href="jwt-decoder.html" class="sidebar-item">
+                    <div class="sidebar-icon">🔓</div>
+                    <span class="sidebar-text">JWT Decoder</span>
+                </a>
+                <a href="env-generator.html" class="sidebar-item">
+                    <div class="sidebar-icon">⚙️</div>
+                    <span class="sidebar-text">Environment Generator</span>
+                </a>
+                <a href="word-counter.html" class="sidebar-item">
+                    <div class="sidebar-icon">📊</div>
+                    <span class="sidebar-text">Word Counter</span>
+                </a>
+            </div>
+
+            <!-- Python Section -->
+            <div class="sidebar-section">
+                <div class="sidebar-section-title">Python</div>
+                <a href="#python" class="sidebar-item">
+                    <div class="sidebar-icon">🐍</div>
+                    <span class="sidebar-text">Python Toolkit</span>
+                </a>
+                <a href="python-urllib.html" class="sidebar-item">
+                    <div class="sidebar-icon">🌐</div>
+                    <span class="sidebar-text">Python urllib</span>
+                </a>
+                <a href="python-openai.html" class="sidebar-item">
+                    <div class="sidebar-icon">🤖</div>
+                    <span class="sidebar-text">OpenAI API</span>
+                </a>
+                <a href="jupyter-notebooks.html" class="sidebar-item">
+                    <div class="sidebar-icon">📓</div>
+                    <span class="sidebar-text">Jupyter Notebooks</span>
+                </a>
+                <a href="prophet.html" class="sidebar-item">
+                    <div class="sidebar-icon">📈</div>
+                    <span class="sidebar-text">Prophet</span>
+                </a>
+                <a href="plotly.html" class="sidebar-item">
+                    <div class="sidebar-icon">📊</div>
+                    <span class="sidebar-text">Plotly</span>
+                </a>
+            </div>
+
+            <!-- Information Section -->
+            <div class="sidebar-section">
+                <div class="sidebar-section-title">Info</div>
+                <a href="#info" class="sidebar-item">
+                    <div class="sidebar-icon">ℹ️</div>
+                    <span class="sidebar-text">Information</span>
+                </a>
+                <a href="ip-address.html" class="sidebar-item">
+                    <div class="sidebar-icon">🌐</div>
+                    <span class="sidebar-text">IP Address</span>
+                </a>
+            </div>
+
+            <!-- GitHub Link -->
+            <div class="sidebar-section mt-8">
+                <a href="https://github.com/echobash/devdunia" target="_blank" class="sidebar-item">
+                    <div class="sidebar-icon">
+                        <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+                            <path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/>
+                        </svg>
+                    </div>
+                    <span class="sidebar-text">GitHub</span>
+                </a>
+            </div>
+        </div>
+    </aside>
+
+    <!-- Main Content -->
+    <div class="main-content">
+        <!-- Navigation Bar -->
+        <nav class="bg-slate-900/95 backdrop-blur-md border-b border-slate-700/50">
+            <div class="container mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="flex items-center justify-between h-16">
+                    <!-- Logo -->
+                    <div class="flex items-center space-x-3">
+                        <h1 class="text-xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 to-teal-500">
+                            Dev Dunia
+                        </h1>
+                    </div>
+
+                <!-- Search Bar -->
+                <div class="flex-1 max-w-md mx-8">
+                    <div class="relative">
+                        <input 
+                            type="text" 
+                            id="search-input"
+                            placeholder="Search tools..." 
+                            class="w-full px-4 py-2 pl-10 bg-slate-800/50 border border-slate-600 rounded-lg text-gray-200 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent"
+                        >
+                        <svg class="absolute left-3 top-2.5 w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+                        </svg>
+                    </div>
+                </div>
+
+                <!-- Stats -->
+                <div class="hidden md:flex items-center space-x-4 text-sm text-gray-400">
+                    <span class="flex items-center space-x-1">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                        </svg>
+                        <span id="tool-count">50+ Tools</span>
+                    </span>
+                    <span class="flex items-center space-x-1">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
+                        </svg>
+                        <span>Free & Open Source</span>
+                    </span>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+
+        <!-- Main Container -->
+        <div class="relative z-10 container mx-auto px-4 pt-8 pb-24 sm:px-6 lg:px-8">
+
+        <!-- Page Header -->
+        <div class="text-center mb-8">
+            <h1 class="text-4xl sm:text-5xl font-bold mb-3 tracking-tight
+                       text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 to-teal-500">
+                       Dev Dunia
+            </h1>
+                    
+        <!-- Powered by echobash.com -->
+        <div class="text-center mb-4">
+            <p class="text-sm text-gray-500">
+                Powered by <a href="https://echobash.com" target="_blank" class="text-blue-400 hover:text-blue-300 transition-colors">echobash.com</a>
+            </p>
+        </div>
+            <p class="text-lg text-gray-400 max-w-2xl mx-auto mb-4">
+                A comprehensive collection of 50+ essential developer utilities for formatting, encoding, generating, and calculating.
+            </p>
+            
+            <!-- Attention-Grabbing GitHub Star Banner -->
+            <div class="flex flex-wrap justify-center items-center gap-4 mb-4">
+                <div class="relative group">
+                    <!-- Animated background glow -->
+                    <div class="absolute -inset-1 bg-gradient-to-r from-yellow-400 via-orange-500 to-red-500 rounded-xl blur opacity-30 group-hover:opacity-50 transition duration-300 animate-pulse"></div>
+                    
+                    <!-- Main banner -->
+                    <div class="relative flex items-center space-x-3 bg-gradient-to-r from-slate-900 to-slate-800 rounded-xl px-6 py-3 border-2 border-yellow-400/30 shadow-2xl">
+                        <!-- Animated star icon -->
+                        <div class="relative">
+                            <svg class="w-6 h-6 text-yellow-400 animate-bounce" fill="currentColor" viewBox="0 0 24 24">
+                                <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
+                            </svg>
+                            <!-- Sparkle effect -->
+                            <div class="absolute -top-1 -right-1 w-2 h-2 bg-yellow-300 rounded-full animate-ping"></div>
+                        </div>
+                        
+                        <!-- Text with gradient -->
+                        <span class="text-white font-bold text-lg bg-gradient-to-r from-yellow-300 to-orange-300 bg-clip-text text-transparent">
+                            ⭐ Star us on GitHub
+                        </span>
+                        
+                        <!-- Enhanced CTA button -->
+                        <a href="https://github.com/echobash/devdunia" target="_blank" 
+                           class="relative overflow-hidden bg-gradient-to-r from-yellow-400 to-orange-500 text-black px-6 py-2 rounded-lg font-bold text-sm shadow-lg hover:from-yellow-300 hover:to-orange-400 transition-all duration-300 transform hover:scale-105 hover:shadow-xl group">
+                            <!-- Button glow effect -->
+                            <div class="absolute inset-0 bg-gradient-to-r from-yellow-300 to-orange-400 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                            <span class="relative flex items-center space-x-2">
+                                <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
+                                    <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
+                                </svg>
+                                <span>Star Now</span>
+                            </span>
+                        </a>
+                    </div>
+                </div>
+                
+                <!-- Compact Open Source Message -->
+                <div class="flex items-center space-x-2 text-sm text-gray-300">
+                    <svg class="w-4 h-4 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"></path>
+                    </svg>
+                    <span class="text-blue-300 font-medium">Open Source</span>
+                    <span class="text-green-400">•</span>
+                    <span class="text-green-400">100% Free</span>
+                    <span class="text-purple-400">•</span>
+                    <span class="text-purple-400">Privacy First</span>
+                </div>
+            </div>
+
+            <div class="flex flex-wrap justify-center gap-4 text-sm text-gray-500">
+                <span class="flex items-center space-x-1">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
+                    </svg>
+                    <span>Lightning Fast</span>
+                </span>
+                <span class="flex items-center space-x-1">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path>
+                    </svg>
+                    <span>Secure & Private</span>
+                </span>
+                <span class="flex items-center space-x-1">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"></path>
+                    </svg>
+                    <span>Open Source</span>
+                </span>
+            </div>
+        </div>
+
+        <!-- Tools Grid -->
+        <div class="max-w-6xl mx-auto space-y-12">
+
+            <!-- ENCODERS/DECODERS Section -->
+            <section id="encoders">
+                <h2 class="text-2xl sm:text-3xl font-semibold mb-8 text-blue-300 border-b-2 border-slate-700 pb-3">
+                    <span class="mr-3">🔐</span>Encoders/Decoders
+                </h2>
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                    <a href="json-decoder.html" class="group bg-slate-800/70 backdrop-blur-md rounded-lg shadow-md border border-slate-700/60 p-6 transition-all duration-300 ease-out hover:shadow-lg hover:shadow-blue-500/10 hover:border-blue-600/70 hover:-translate-y-1">
+                        <div class="flex items-center space-x-3 mb-3">
+                            <div class="w-10 h-10 bg-blue-600 rounded-lg flex items-center justify-center">
+                                <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4"></path>
+                                </svg>
+                            </div>
+                            <h3 class="text-lg font-semibold text-white group-hover:text-blue-300 transition-colors">JSON to PHP Converter</h3>
+                        </div>
+                        <p class="text-gray-400 text-sm">Convert JSON data to PHP arrays with proper syntax.</p>
+                    </a>
+                    
+                    <!-- <div class="group bg-slate-800/70 backdrop-blur-md rounded-lg shadow-md border border-slate-700/60 p-6 relative overflow-hidden">
+                        <div class="absolute inset-0 bg-slate-900/80 backdrop-blur-sm flex items-center justify-center z-10">
+                            <div class="text-center">
+                                <div class="text-2xl mb-2">🚧</div>
+                                <div class="text-slate-300 font-medium">Coming Soon</div>
+                            </div>
+                        </div>
+                        <div class="flex items-center space-x-3 mb-3 opacity-50">
+                            <div class="w-10 h-10 bg-slate-600 rounded-lg flex items-center justify-center">
+                                <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4"></path>
+                                </svg>
+                            </div>
+                            <h3 class="text-lg font-semibold text-slate-400">PHP Array to JSON Converter</h3>
+                        </div>
+                        <p class="text-slate-500 text-sm">Convert PHP arrays to JSON format with proper syntax.</p>
+                    </div> -->
+                    
+                    <a href="json-beautifier.html" class="group bg-slate-800/70 backdrop-blur-md rounded-lg shadow-md border border-slate-700/60 p-6 transition-all duration-300 ease-out hover:shadow-lg hover:shadow-blue-500/10 hover:border-blue-600/70 hover:-translate-y-1">
+                        <div class="flex items-center space-x-3 mb-3">
+                            <div class="w-10 h-10 bg-blue-600 rounded-lg flex items-center justify-center">
+                                <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16l-4-4m0 0l4-4m-4 4h18"></path>
+                                </svg>
+                            </div>
+                            <h3 class="text-lg font-semibold text-white group-hover:text-blue-300 transition-colors">JSON Beautifier</h3>
+                        </div>
+                        <p class="text-gray-400 text-sm">Beautify and format JSON data with proper indentation.</p>
+                    </a>
+                    
+                    <a href="json-minifier.html" class="group bg-slate-800/70 backdrop-blur-md rounded-lg shadow-md border border-slate-700/60 p-6 transition-all duration-300 ease-out hover:shadow-lg hover:shadow-blue-500/10 hover:border-blue-600/70 hover:-translate-y-1">
+                        <div class="flex items-center space-x-3 mb-3">
+                            <div class="w-10 h-10 bg-blue-600 rounded-lg flex items-center justify-center">
+                                <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16l-4-4m0 0l4-4m-4 4h18"></path>
+                                </svg>
+                            </div>
+                            <h3 class="text-lg font-semibold text-white group-hover:text-blue-300 transition-colors">JSON Minifier</h3>
+                        </div>
+                        <p class="text-gray-400 text-sm">Minify JSON data by removing all unnecessary whitespace.</p>
+                    </a>
+                    
+                    <a href="string-transformer.html" class="group bg-slate-800/70 backdrop-blur-md rounded-lg shadow-md border border-slate-700/60 p-6 transition-all duration-300 ease-out hover:shadow-lg hover:shadow-blue-500/10 hover:border-blue-600/70 hover:-translate-y-1">
+                        <div class="flex items-center space-x-3 mb-3">
+                            <div class="w-10 h-10 bg-blue-600 rounded-lg flex items-center justify-center">
+                                <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16l-4-4m0 0l4-4m-4 4h18"></path>
+                                </svg>
+                            </div>
+                            <h3 class="text-lg font-semibold text-white group-hover:text-blue-300 transition-colors">String Transformer</h3>
+                        </div>
+                        <p class="text-gray-400 text-sm">Transform strings between different formats and cases.</p>
+                    </a>
+                    
+                    <a href="url-encoder.html" class="group bg-slate-800/70 backdrop-blur-md rounded-lg shadow-md border border-slate-700/60 p-6 transition-all duration-300 ease-out hover:shadow-lg hover:shadow-blue-500/10 hover:border-blue-600/70 hover:-translate-y-1">
+                        <div class="flex items-center space-x-3 mb-3">
+                            <div class="w-10 h-10 bg-blue-600 rounded-lg flex items-center justify-center">
+                                <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16l-4-4m0 0l4-4m-4 4h18"></path>
+                                </svg>
+                            </div>
+                            <h3 class="text-lg font-semibold text-white group-hover:text-blue-300 transition-colors">URL Encoder</h3>
+                        </div>
+                        <p class="text-gray-400 text-sm">Encode URLs with proper percent encoding for special characters.</p>
+                    </a>
+                    
+                    <a href="url-decoder.html" class="group bg-slate-800/70 backdrop-blur-md rounded-lg shadow-md border border-slate-700/60 p-6 transition-all duration-300 ease-out hover:shadow-lg hover:shadow-blue-500/10 hover:border-blue-600/70 hover:-translate-y-1">
+                        <div class="flex items-center space-x-3 mb-3">
+                            <div class="w-10 h-10 bg-blue-600 rounded-lg flex items-center justify-center">
+                                <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"></path>
+                                </svg>
+                            </div>
+                            <h3 class="text-lg font-semibold text-white group-hover:text-blue-300 transition-colors">URL Decoder</h3>
+                        </div>
+                        <p class="text-gray-400 text-sm">Decode percent-encoded URLs back to readable format.</p>
+                    </a>
+                    
+                    <a href="jwt-decoder.html" class="group bg-slate-800/70 backdrop-blur-md rounded-lg shadow-md border border-slate-700/60 p-6 transition-all duration-300 ease-out hover:shadow-lg hover:shadow-blue-500/10 hover:border-blue-600/70 hover:-translate-y-1">
+                        <div class="flex items-center space-x-3 mb-3">
+                            <div class="w-10 h-10 bg-blue-600 rounded-lg flex items-center justify-center">
+                                <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path>
+                                </svg>
+                            </div>
+                            <h3 class="text-lg font-semibold text-white group-hover:text-blue-300 transition-colors">JWT Decoder</h3>
+                        </div>
+                        <p class="text-gray-400 text-sm">Decode and analyze JWT tokens with header and payload details.</p>
+                    </a>
+                    
+                    <a href="base64-encoder.html" class="group bg-slate-800/70 backdrop-blur-md rounded-lg shadow-md border border-slate-700/60 p-6 transition-all duration-300 ease-out hover:shadow-lg hover:shadow-blue-500/10 hover:border-blue-600/70 hover:-translate-y-1">
+                        <div class="flex items-center space-x-3 mb-3">
+                            <div class="w-10 h-10 bg-blue-600 rounded-lg flex items-center justify-center">
+                                <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16l-4-4m0 0l4-4m-4 4h18"></path>
+                                </svg>
+                            </div>
+                            <h3 class="text-lg font-semibold text-white group-hover:text-blue-300 transition-colors">Base64 Encoder</h3>
+                        </div>
+                        <p class="text-gray-400 text-sm">Convert text and binary data to Base64 encoding format.</p>
+                    </a>
+                    
+                    <a href="base64-decoder.html" class="group bg-slate-800/70 backdrop-blur-md rounded-lg shadow-md border border-slate-700/60 p-6 transition-all duration-300 ease-out hover:shadow-lg hover:shadow-blue-500/10 hover:border-blue-600/70 hover:-translate-y-1">
+                        <div class="flex items-center space-x-3 mb-3">
+                            <div class="w-10 h-10 bg-blue-600 rounded-lg flex items-center justify-center">
+                                <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"></path>
+                                </svg>
+                            </div>
+                            <h3 class="text-lg font-semibold text-white group-hover:text-blue-300 transition-colors">Base64 Decoder</h3>
+                        </div>
+                        <p class="text-gray-400 text-sm">Decode Base64 encoded data back to original format.</p>
+                    </a>
+                    
+                    <a href="yaml-json-converter.html" class="group bg-slate-800/70 backdrop-blur-md rounded-lg shadow-md border border-slate-700/60 p-6 transition-all duration-300 ease-out hover:shadow-lg hover:shadow-blue-500/10 hover:border-blue-600/70 hover:-translate-y-1">
+                        <div class="flex items-center space-x-3 mb-3">
+                            <div class="w-10 h-10 bg-blue-600 rounded-lg flex items-center justify-center">
+                                <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4"></path>
+                                </svg>
+                            </div>
+                            <h3 class="text-lg font-semibold text-white group-hover:text-blue-300 transition-colors">YAML ⇄ JSON Converter</h3>
+                        </div>
+                        <p class="text-gray-400 text-sm">Convert between YAML and JSON formats with proper syntax.</p>
+                    </a>
+                    
+                    <a href="xml-formatter.html" class="group bg-slate-800/70 backdrop-blur-md rounded-lg shadow-md border border-slate-700/60 p-6 transition-all duration-300 ease-out hover:shadow-lg hover:shadow-blue-500/10 hover:border-blue-600/70 hover:-translate-y-1">
+                        <div class="flex items-center space-x-3 mb-3">
+                            <div class="w-10 h-10 bg-blue-600 rounded-lg flex items-center justify-center">
+                                <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 10h16M4 14h16M4 18h16"></path>
+                                </svg>
+                            </div>
+                            <h3 class="text-lg font-semibold text-white group-hover:text-blue-300 transition-colors">XML Formatter</h3>
+                        </div>
+                        <p class="text-gray-400 text-sm">Format and beautify XML data with proper indentation.</p>
+                    </a>
+                    
+                    <a href="csv-json-converter.html" class="group bg-slate-800/70 backdrop-blur-md rounded-lg shadow-md border border-slate-700/60 p-6 transition-all duration-300 ease-out hover:shadow-lg hover:shadow-blue-500/10 hover:border-blue-600/70 hover:-translate-y-1">
+                        <div class="flex items-center space-x-3 mb-3">
+                            <div class="w-10 h-10 bg-blue-600 rounded-lg flex items-center justify-center">
+                                <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4"></path>
+                                </svg>
+                            </div>
+                            <h3 class="text-lg font-semibold text-white group-hover:text-blue-300 transition-colors">CSV ⇄ JSON Converter</h3>
+                        </div>
+                        <p class="text-gray-400 text-sm">Convert between CSV and JSON formats with proper syntax.</p>
+                    </a>
+                </div>
+            </section>
+
+            <!-- GENERATORS Section -->
+            <section id="generators">
+                <h2 class="text-2xl sm:text-3xl font-semibold mb-8 text-purple-300 border-b-2 border-slate-700 pb-3">
+                    <span class="mr-3">⚡</span>Generators
+                </h2>
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                    <a href="password-generator.html" class="group bg-slate-800/70 backdrop-blur-md rounded-lg shadow-md border border-slate-700/60 p-6 transition-all duration-300 ease-out hover:shadow-lg hover:shadow-purple-500/10 hover:border-purple-600/70 hover:-translate-y-1">
+                        <div class="flex items-center space-x-3 mb-3">
+                            <div class="w-10 h-10 bg-purple-600 rounded-lg flex items-center justify-center">
+                                <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path>
+                                </svg>
+                            </div>
+                            <h3 class="text-lg font-semibold text-white group-hover:text-purple-300 transition-colors">Strong Password Generator</h3>
+                        </div>
+                        <p class="text-gray-400 text-sm">Generate secure, random passwords with customizable complexity.</p>
+                    </a>
+                    
+                    <a href="hash-generator.html" class="group bg-slate-800/70 backdrop-blur-md rounded-lg shadow-md border border-slate-700/60 p-6 transition-all duration-300 ease-out hover:shadow-lg hover:shadow-purple-500/10 hover:border-purple-600/70 hover:-translate-y-1">
+                        <div class="flex items-center space-x-3 mb-3">
+                            <div class="w-10 h-10 bg-purple-600 rounded-lg flex items-center justify-center">
+                                <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"></path>
+                                </svg>
+                            </div>
+                            <h3 class="text-lg font-semibold text-white group-hover:text-purple-300 transition-colors">Hash Generator</h3>
+                        </div>
+                        <p class="text-gray-400 text-sm">Generate MD5, SHA1, SHA256, and SHA512 hashes for data.</p>
+                    </a>
+                    
+                    <a href="guid-generator.html" class="group bg-slate-800/70 backdrop-blur-md rounded-lg shadow-md border border-slate-700/60 p-6 transition-all duration-300 ease-out hover:shadow-lg hover:shadow-purple-500/10 hover:border-purple-600/70 hover:-translate-y-1">
+                        <div class="flex items-center space-x-3 mb-3">
+                            <div class="w-10 h-10 bg-purple-600 rounded-lg flex items-center justify-center">
+                                <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z"></path>
+                                </svg>
+                            </div>
+                            <h3 class="text-lg font-semibold text-white group-hover:text-purple-300 transition-colors">GUID Generator</h3>
+                        </div>
+                        <p class="text-gray-400 text-sm">Generate globally unique identifiers (GUIDs/UUIDs) for applications.</p>
+                    </a>
+                    
+                    <a href="leetcode-commit-message.html" class="group bg-slate-800/70 backdrop-blur-md rounded-lg shadow-md border border-slate-700/60 p-6 transition-all duration-300 ease-out hover:shadow-lg hover:shadow-purple-500/10 hover:border-purple-600/70 hover:-translate-y-1">
+                        <div class="flex items-center space-x-3 mb-3">
+                            <div class="w-10 h-10 bg-purple-600 rounded-lg flex items-center justify-center">
+                                <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                                </svg>
+                            </div>
+                            <h3 class="text-lg font-semibold text-white group-hover:text-purple-300 transition-colors">Leetcode Commit Message</h3>
+                        </div>
+                        <p class="text-gray-400 text-sm">Generate file names and commit messages for Leetcode problems.</p>
+                    </a>
+                    
+                    <a href="lorem-ipsum-generator.html" class="group bg-slate-800/70 backdrop-blur-md rounded-lg shadow-md border border-slate-700/60 p-6 transition-all duration-300 ease-out hover:shadow-lg hover:shadow-purple-500/10 hover:border-purple-600/70 hover:-translate-y-1">
+                        <div class="flex items-center space-x-3 mb-3">
+                            <div class="w-10 h-10 bg-purple-600 rounded-lg flex items-center justify-center">
+                                <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 10h16M4 14h16M4 18h16"></path>
+                                </svg>
+                            </div>
+                            <h3 class="text-lg font-semibold text-white group-hover:text-purple-300 transition-colors">Lorem Ipsum Generator</h3>
+                        </div>
+                        <p class="text-gray-400 text-sm">Generate Lorem Ipsum placeholder text in various formats.</p>
+                    </a>
+                    
+                </div>
+            </section>
+
+            <!-- API & INTEGRATION TOOLS Section -->
+            <section id="api-tools">
+                <h2 class="text-2xl sm:text-3xl font-semibold mb-8 text-purple-300 border-b-2 border-slate-700 pb-3">
+                    <span class="mr-3">🔌</span>API & Integration Tools
+                </h2>
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                    <a href="curl-describer.html" class="group bg-slate-800/70 backdrop-blur-md rounded-lg shadow-md border border-slate-700/60 p-6 transition-all duration-300 ease-out hover:shadow-lg hover:shadow-purple-500/10 hover:border-purple-600/70 hover:-translate-y-1">
+                        <div class="flex items-center space-x-3 mb-3">
+                            <div class="w-10 h-10 bg-purple-600 rounded-lg flex items-center justify-center">
+                                <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"></path>
+                                </svg>
+                            </div>
+                            <h3 class="text-lg font-semibold text-white group-hover:text-purple-300 transition-colors">cURL Describer</h3>
+                        </div>
+                        <p class="text-gray-400 text-sm">Analyze and understand cURL commands for API testing and debugging.</p>
+                    </a>
+                    
+                    <a href="cron-describer.html" class="group bg-slate-800/70 backdrop-blur-md rounded-lg shadow-md border border-slate-700/60 p-6 transition-all duration-300 ease-out hover:shadow-lg hover:shadow-purple-500/10 hover:border-purple-600/70 hover:-translate-y-1">
+                        <div class="flex items-center space-x-3 mb-3">
+                            <div class="w-10 h-10 bg-purple-600 rounded-lg flex items-center justify-center">
+                                <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                                </svg>
+                            </div>
+                            <h3 class="text-lg font-semibold text-white group-hover:text-purple-300 transition-colors">Cron Describer</h3>
+                        </div>
+                        <p class="text-gray-400 text-sm">Describe and explain cron expressions in human-readable format.</p>
+                    </a>
+                    
+                    <a href="regex-tester.html" class="group bg-slate-800/70 backdrop-blur-md rounded-lg shadow-md border border-slate-700/60 p-6 transition-all duration-300 ease-out hover:shadow-lg hover:shadow-purple-500/10 hover:border-purple-600/70 hover:-translate-y-1">
+                        <div class="flex items-center space-x-3 mb-3">
+                            <div class="w-10 h-10 bg-purple-600 rounded-lg flex items-center justify-center">
+                                <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                                </svg>
+                            </div>
+                            <h3 class="text-lg font-semibold text-white group-hover:text-purple-300 transition-colors">Regex Tester</h3>
+                        </div>
+                        <p class="text-gray-400 text-sm">Test and debug regular expressions with real-time matching.</p>
+                    </a>
+                    
+                    <a href="http-response-header-printer.html" class="group bg-slate-800/70 backdrop-blur-md rounded-lg shadow-md border border-slate-700/60 p-6 transition-all duration-300 ease-out hover:shadow-lg hover:shadow-purple-500/10 hover:border-purple-600/70 hover:-translate-y-1">
+                        <div class="flex items-center space-x-3 mb-3">
+                            <div class="w-10 h-10 bg-purple-600 rounded-lg flex items-center justify-center">
+                                <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 9l3 3-3 3m5 0h3M5 20h14a2 2 0 002-2V6a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+                                </svg>
+                            </div>
+                            <h3 class="text-lg font-semibold text-white group-hover:text-purple-300 transition-colors">HTTP Response Header Printer</h3>
+                        </div>
+                        <p class="text-gray-400 text-sm">Test HTTP endpoints and view response headers, status codes, and timing.</p>
+                    </a>
+                </div>
+            </section>
+
+            <!-- DEVELOPMENT TOOLS Section -->
+            <section id="dev-tools">
+                <h2 class="text-2xl sm:text-3xl font-semibold mb-8 text-cyan-300 border-b-2 border-slate-700 pb-3">
+                    <span class="mr-3">🛠️</span>Development Tools
+                </h2>
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                    <a href="sql-formatter.html" class="group bg-slate-800/70 backdrop-blur-md rounded-lg shadow-md border border-slate-700/60 p-6 transition-all duration-300 ease-out hover:shadow-lg hover:shadow-cyan-500/10 hover:border-cyan-600/70 hover:-translate-y-1">
+                        <div class="flex items-center space-x-3 mb-3">
+                            <div class="w-10 h-10 bg-cyan-600 rounded-lg flex items-center justify-center">
+                                <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 10h16M4 14h16M4 18h16"></path>
+                                </svg>
+                            </div>
+                            <h3 class="text-lg font-semibold text-white group-hover:text-cyan-300 transition-colors">SQL Formatter</h3>
+                        </div>
+                        <p class="text-gray-400 text-sm">Format and beautify SQL queries with multiple dialect support.</p>
+                    </a>
+                    
+                    <a href="api-tester.html" class="group bg-slate-800/70 backdrop-blur-md rounded-lg shadow-md border border-slate-700/60 p-6 transition-all duration-300 ease-out hover:shadow-lg hover:shadow-cyan-500/10 hover:border-cyan-600/70 hover:-translate-y-1">
+                        <div class="flex items-center space-x-3 mb-3">
+                            <div class="w-10 h-10 bg-cyan-600 rounded-lg flex items-center justify-center">
+                                <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
+                                </svg>
+                            </div>
+                            <h3 class="text-lg font-semibold text-white group-hover:text-cyan-300 transition-colors">API Response Time Tester</h3>
+                        </div>
+                        <p class="text-gray-400 text-sm">Test API response times and performance with detailed metrics.</p>
+                    </a>
+                    
+                    <a href="env-generator.html" class="group bg-slate-800/70 backdrop-blur-md rounded-lg shadow-md border border-slate-700/60 p-6 transition-all duration-300 ease-out hover:shadow-lg hover:shadow-cyan-500/10 hover:border-cyan-600/70 hover:-translate-y-1">
+                        <div class="flex items-center space-x-3 mb-3">
+                            <div class="w-10 h-10 bg-cyan-600 rounded-lg flex items-center justify-center">
+                                <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path>
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                                </svg>
+                            </div>
+                            <h3 class="text-lg font-semibold text-white group-hover:text-cyan-300 transition-colors">Environment Variable Generator</h3>
+                        </div>
+                        <p class="text-gray-400 text-sm">Generate .env files and environment variables for your projects.</p>
+                    </a>
+                </div>
+            </section>
+
+            <!-- PYTHON TOOLKIT Section -->
+            <section id="python">
+                <h2 class="text-2xl sm:text-3xl font-semibold mb-8 text-emerald-300 border-b-2 border-slate-700 pb-3">
+                    <span class="mr-3">🐍</span>Python Toolkit
+                </h2>
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                    <a href="python-requests.html" class="group bg-slate-800/70 backdrop-blur-md rounded-lg shadow-md border border-slate-700/60 p-6 transition-all duration-300 ease-out hover:shadow-lg hover:shadow-emerald-500/10 hover:border-emerald-600/70 hover:-translate-y-1">
+                        <div class="flex items-center space-x-3 mb-3">
+                            <div class="w-10 h-10 bg-emerald-600 rounded-lg flex items-center justify-center">
+                                <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
+                                </svg>
+                            </div>
+                            <h3 class="text-lg font-semibold text-white group-hover:text-emerald-300 transition-colors">Requests Library</h3>
+                        </div>
+                        <p class="text-gray-400 text-sm">HTTP methods (GET, POST, PUT, DELETE) with and without parameters.</p>
+                    </a>
+                    
+                    <a href="python-urllib.html" class="group bg-slate-800/70 backdrop-blur-md rounded-lg shadow-md border border-slate-700/60 p-6 transition-all duration-300 ease-out hover:shadow-lg hover:shadow-emerald-500/10 hover:border-emerald-600/70 hover:-translate-y-1">
+                        <div class="flex items-center space-x-3 mb-3">
+                            <div class="w-10 h-10 bg-emerald-600 rounded-lg flex items-center justify-center">
+                                <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9v-9m0-9v9"></path>
+                                </svg>
+                            </div>
+                            <h3 class="text-lg font-semibold text-white group-hover:text-emerald-300 transition-colors">urllib</h3>
+                        </div>
+                        <p class="text-gray-400 text-sm">Built-in HTTP client library with request/response handling.</p>
+                    </a>
+                    
+                    <a href="python-flask.html" class="group bg-slate-800/70 backdrop-blur-md rounded-lg shadow-md border border-slate-700/60 p-6 transition-all duration-300 ease-out hover:shadow-lg hover:shadow-emerald-500/10 hover:border-emerald-600/70 hover:-translate-y-1">
+                        <div class="flex items-center space-x-3 mb-3">
+                            <div class="w-10 h-10 bg-emerald-600 rounded-lg flex items-center justify-center">
+                                <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"></path>
+                                </svg>
+                            </div>
+                            <h3 class="text-lg font-semibold text-white group-hover:text-emerald-300 transition-colors">Flask API</h3>
+                        </div>
+                        <p class="text-gray-400 text-sm">Simple Flask API endpoints, routing, and request handling.</p>
+                    </a>
+                    
+                    <a href="python-pandas.html" class="group bg-slate-800/70 backdrop-blur-md rounded-lg shadow-md border border-slate-700/60 p-6 transition-all duration-300 ease-out hover:shadow-lg hover:shadow-emerald-500/10 hover:border-emerald-600/70 hover:-translate-y-1">
+                        <div class="flex items-center space-x-3 mb-3">
+                            <div class="w-10 h-10 bg-emerald-600 rounded-lg flex items-center justify-center">
+                                <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
+                                </svg>
+                            </div>
+                            <h3 class="text-lg font-semibold text-white group-hover:text-emerald-300 transition-colors">Pandas</h3>
+                        </div>
+                        <p class="text-gray-400 text-sm">Data manipulation, CSV handling, and DataFrame operations.</p>
+                    </a>
+                    
+                    <a href="python-openai.html" class="group bg-slate-800/70 backdrop-blur-md rounded-lg shadow-md border border-slate-700/60 p-6 transition-all duration-300 ease-out hover:shadow-lg hover:shadow-emerald-500/10 hover:border-emerald-600/70 hover:-translate-y-1">
+                        <div class="flex items-center space-x-3 mb-3">
+                            <div class="w-10 h-10 bg-emerald-600 rounded-lg flex items-center justify-center">
+                                <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"></path>
+                                </svg>
+                            </div>
+                            <h3 class="text-lg font-semibold text-white group-hover:text-emerald-300 transition-colors">OpenAI API</h3>
+                        </div>
+                        <p class="text-gray-400 text-sm">ChatGPT, GPT-4, and other OpenAI API integrations.</p>
+                    </a>
+                    
+                    <a href="jupyter-notebooks.html" class="group bg-slate-800/70 backdrop-blur-md rounded-lg shadow-md border border-slate-700/60 p-6 transition-all duration-300 ease-out hover:shadow-lg hover:shadow-emerald-500/10 hover:border-emerald-600/70 hover:-translate-y-1">
+                        <div class="flex items-center space-x-3 mb-3">
+                            <div class="w-10 h-10 bg-emerald-600 rounded-lg flex items-center justify-center">
+                                <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                                </svg>
+                            </div>
+                            <h3 class="text-lg font-semibold text-white group-hover:text-emerald-300 transition-colors">Jupyter Notebooks</h3>
+                        </div>
+                        <p class="text-gray-400 text-sm">Notebook setup, magic commands, and data visualization.</p>
+                    </a>
+                    
+                    <a href="prophet.html" class="group bg-slate-800/70 backdrop-blur-md rounded-lg shadow-md border border-slate-700/60 p-6 transition-all duration-300 ease-out hover:shadow-lg hover:shadow-emerald-500/10 hover:border-emerald-600/70 hover:-translate-y-1">
+                        <div class="flex items-center space-x-3 mb-3">
+                            <div class="w-10 h-10 bg-emerald-600 rounded-lg flex items-center justify-center">
+                                <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 12l3-3 3 3 4-4M8 21l4-16 2.5 8L17 21l-1-2-2 2z"></path>
+                                </svg>
+                            </div>
+                            <h3 class="text-lg font-semibold text-white group-hover:text-emerald-300 transition-colors">Prophet</h3>
+                        </div>
+                        <p class="text-gray-400 text-sm">Time series forecasting and trend analysis with Facebook Prophet.</p>
+                    </a>
+                    
+                    <a href="plotly.html" class="group bg-slate-800/70 backdrop-blur-md rounded-lg shadow-md border border-slate-700/60 p-6 transition-all duration-300 ease-out hover:shadow-lg hover:shadow-emerald-500/10 hover:border-emerald-600/70 hover:-translate-y-1">
+                        <div class="flex items-center space-x-3 mb-3">
+                            <div class="w-10 h-10 bg-emerald-600 rounded-lg flex items-center justify-center">
+                                <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 12l3-3 3 3 4-4M8 21l4-16 2.5 8L17 21l-1-2-2 2z"></path>
+                                </svg>
+                            </div>
+                            <h3 class="text-lg font-semibold text-white group-hover:text-emerald-300 transition-colors">Plotly</h3>
+                        </div>
+                        <p class="text-gray-400 text-sm">Interactive charts, dashboards, and data visualization.</p>
+                    </a>
+                </div>
+            </section>
+
+            <!-- INFO Section -->
+            <section id="info">
+                <h2 class="text-2xl sm:text-3xl font-semibold mb-8 text-red-300 border-b-2 border-slate-700 pb-3">
+                    <span class="mr-3">ℹ️</span>Information & Reference
+                </h2>
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                    <a href="ip-address.html" class="group bg-slate-800/70 backdrop-blur-md rounded-lg shadow-md border border-slate-700/60 p-6 transition-all duration-300 ease-out hover:shadow-lg hover:shadow-red-500/10 hover:border-red-600/70 hover:-translate-y-1">
+                        <div class="flex items-center space-x-3 mb-3">
+                            <div class="w-10 h-10 bg-red-600 rounded-lg flex items-center justify-center">
+                                <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9a9 9 0 01-9-9m9 9c1.657 0 3-4.03 3-9s-1.343-9-3-9m0 18c-1.657 0-3-4.03-3-9s1.343-9 3-9m-9 9a9 9 0 019-9"></path>
+                                </svg>
+                            </div>
+                            <h3 class="text-lg font-semibold text-white group-hover:text-red-300 transition-colors">IP Address Tools</h3>
+                        </div>
+                        <p class="text-gray-400 text-sm">Check your IP address and lookup information about any IP.</p>
+                    </a>
+                </div>
+            </section>
+
+        </div>
+
+    </div>
+
+    <!-- Floating Action Button -->
+    <div class="fab">
+        <button id="fab-toggle" class="w-14 h-14 bg-gradient-to-r from-emerald-500 to-teal-600 text-white rounded-full shadow-lg hover:shadow-xl transition-all duration-300 flex items-center justify-center">
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
+            </svg>
+        </button>
+        
+        <!-- FAB Menu -->
+        <div id="fab-menu" class="absolute bottom-16 right-0 space-y-3 opacity-0 invisible transition-all duration-300 transform translate-y-4">
+            <a href="json-decoder.html" class="flex items-center space-x-3 bg-slate-800 text-white px-4 py-2 rounded-lg shadow-lg hover:bg-slate-700 transition-colors">
+                <span class="text-lg">🔧</span>
+                <span class="text-sm">JSON Tools</span>
+            </a>
+            <a href="jwt-decoder.html" class="flex items-center space-x-3 bg-slate-800 text-white px-4 py-2 rounded-lg shadow-lg hover:bg-slate-700 transition-colors">
+                <span class="text-lg">🔑</span>
+                <span class="text-sm">JWT Decoder</span>
+            </a>
+            <a href="sql-formatter.html" class="flex items-center space-x-3 bg-slate-800 text-white px-4 py-2 rounded-lg shadow-lg hover:bg-slate-700 transition-colors">
+                <span class="text-lg">🗄️</span>
+                <span class="text-sm">SQL Formatter</span>
+            </a>
+            <a href="api-tester.html" class="flex items-center space-x-3 bg-slate-800 text-white px-4 py-2 rounded-lg shadow-lg hover:bg-slate-700 transition-colors">
+                <span class="text-lg">⚡</span>
+                <span class="text-sm">API Tester</span>
+            </a>
+            <a href="qr-generator.html" class="flex items-center space-x-3 bg-slate-800 text-white px-4 py-2 rounded-lg shadow-lg hover:bg-slate-700 transition-colors">
+                <span class="text-lg">📱</span>
+                <span class="text-sm">QR Generator</span>
+            </a>
+            <a href="hash-generator.html" class="flex items-center space-x-3 bg-slate-800 text-white px-4 py-2 rounded-lg shadow-lg hover:bg-slate-700 transition-colors">
+                <span class="text-lg">🔐</span>
+                <span class="text-sm">Hash Tools</span>
+            </a>
+        </div>
+    </div>
+
+        <!-- Footer -->
+        <footer class="text-center text-gray-500 mt-10 pb-6">
+            © 2025 DevDunia – Free Developer Tools by <a href="https://echobash.com" class="text-blue-500 hover:underline" target="_blank">echobash</a>
+        </footer>
+    </div>
+
+    <script>
+
+        // Search functionality
+        const searchInput = document.getElementById('search-input');
+        const toolCards = document.querySelectorAll('.tool-card, a[href$=".html"]');
+
+        searchInput.addEventListener('input', function() {
+            const searchTerm = this.value.toLowerCase();
+            
+            toolCards.forEach(card => {
+                const title = card.querySelector('h3')?.textContent.toLowerCase() || '';
+                const description = card.querySelector('p')?.textContent.toLowerCase() || '';
+                
+                if (title.includes(searchTerm) || description.includes(searchTerm)) {
+                    card.style.display = '';
+                    card.style.opacity = '1';
+                    
+                    // Highlight search term
+                    if (searchTerm && title.includes(searchTerm)) {
+                        const highlightedTitle = title.replace(
+                            new RegExp(searchTerm, 'gi'), 
+                            `<span class="search-highlight">$&</span>`
+                        );
+                        card.querySelector('h3').innerHTML = highlightedTitle;
+                    }
+                } else {
+                    card.style.display = 'none';
+                    card.style.opacity = '0';
+                }
+            });
+        });
+
+        // FAB functionality
+        const fabToggle = document.getElementById('fab-toggle');
+        const fabMenu = document.getElementById('fab-menu');
+        let fabOpen = false;
+
+        fabToggle.addEventListener('click', function() {
+            fabOpen = !fabOpen;
+            
+            if (fabOpen) {
+                fabMenu.style.opacity = '1';
+                fabMenu.style.visibility = 'visible';
+                fabMenu.style.transform = 'translateY(0)';
+                fabToggle.style.transform = 'rotate(45deg)';
+            } else {
+                fabMenu.style.opacity = '0';
+                fabMenu.style.visibility = 'hidden';
+                fabMenu.style.transform = 'translateY(1rem)';
+                fabToggle.style.transform = 'rotate(0deg)';
+            }
+        });
+
+        // Close FAB menu when clicking outside
+        document.addEventListener('click', function(e) {
+            if (!e.target.closest('.fab') && fabOpen) {
+                fabOpen = false;
+                fabMenu.style.opacity = '0';
+                fabMenu.style.visibility = 'hidden';
+                fabMenu.style.transform = 'translateY(1rem)';
+                fabToggle.style.transform = 'rotate(0deg)';
+            }
+        });
+
+        // Add tool-card class to all tool links
+        document.querySelectorAll('a[href$=".html"]').forEach(link => {
+            link.classList.add('tool-card');
+        });
+
+        // Smooth scrolling for anchor links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                    closeSidebar();
+                }
+            });
+        });
+
+        // Add section IDs for navigation
+        document.querySelectorAll('section').forEach((section, index) => {
+            const headings = ['encoders', 'formatters', 'generators', 'api-tools', 'python', 'info'];
+            if (headings[index]) {
+                section.id = headings[index];
+            }
+        });
+
+        // Keyboard shortcuts
+        document.addEventListener('keydown', function(e) {
+            // Ctrl/Cmd + K to focus search
+            if ((e.ctrlKey || e.metaKey) && e.key === 'k') {
+                e.preventDefault();
+                searchInput.focus();
+            }
+        });
+
+        // Add search placeholder with keyboard shortcut hint
+        searchInput.placeholder = 'Search tools... (Ctrl+K)';
+
+        // Smooth scrolling for sidebar navigation
+        document.querySelectorAll('.sidebar-item[href^="#"]').forEach(link => {
+            link.addEventListener('click', function(e) {
+                e.preventDefault();
+                const targetId = this.getAttribute('href').substring(1);
+                const targetElement = document.getElementById(targetId);
+                
+                if (targetElement) {
+                    targetElement.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            });
+        });
+
+        // Update active sidebar item on scroll
+        function updateActiveSidebarItem() {
+            const sections = document.querySelectorAll('section[id]');
+            const sidebarItems = document.querySelectorAll('.sidebar-item[href^="#"]');
+            
+            let currentSection = '';
+            sections.forEach(section => {
+                const rect = section.getBoundingClientRect();
+                if (rect.top <= 100 && rect.bottom >= 100) {
+                    currentSection = section.id;
+                }
+            });
+            
+            sidebarItems.forEach(item => {
+                item.classList.remove('active');
+                if (item.getAttribute('href') === `#${currentSection}`) {
+                    item.classList.add('active');
+                }
+            });
+        }
+
+        // Update active item on scroll
+        window.addEventListener('scroll', updateActiveSidebarItem);
+        updateActiveSidebarItem(); // Initial call
+
+    </script>
+</body>
+</html>
