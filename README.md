@@ -1,10 +1,14 @@
-# 🚀 DevDunia - Open Source Developer Tools
-
-[![GitHub stars](https://img.shields.io/github/stars/echobash/devdunia?style=social)](https://github.com/echobash/devdunia)
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
-[![Open Source](https://badges.frapsoft.com/os/v1/open-source.svg?v=103)](https://github.com/ellerbrock/open-source-badges/)
-
-> **A comprehensive collection of 50+ essential developer utilities for formatting, encoding, generating, and calculating - completely free and open source.**
+<div align="center">
+  <img src="images/logo.png" alt="DevDunia Logo" width="300" height="auto">
+  
+  # 🚀 DevDunia - Open Source Developer Tools
+  
+  [![GitHub stars](https://img.shields.io/github/stars/echobash/devdunia?style=social)](https://github.com/echobash/devdunia)
+  [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+  [![Open Source](https://badges.frapsoft.com/os/v1/open-source.svg?v=103)](https://github.com/ellerbrock/open-source-badges/)
+  
+  > **A comprehensive collection of 50+ essential developer utilities for formatting, encoding, generating, and calculating - completely free and open source.**
+</div>
 
 ## 🌟 What is DevDunia?
 

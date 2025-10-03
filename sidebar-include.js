@@ -4,8 +4,8 @@ const sidebarHTML = `    <!-- Common Sidebar for DevDunia -->
         <div class="p-4">
             <!-- Logo -->
             <div class="flex items-center justify-center mb-8">
-                <a href="/" class="bg-gradient-to-r from-emerald-400 to-teal-500 rounded-lg flex items-center justify-center px-4 py-2">
-                    <span class="text-white font-bold text-sm">DevDunia</span>
+                <a href="/" class="flex items-center justify-center">
+                    <img src="images/logo.png" alt="DevDunia" class="h-24 w-auto hover:scale-105 transition-transform duration-200">
                 </a>
             </div>
 
