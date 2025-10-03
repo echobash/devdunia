@@ -1,0 +1,364 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Array Data Structure - DevDunia</title>
+    <meta name="description" content="Learn about Array data structure with definition, syntax, operations, and examples in multiple programming languages.">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="sidebar.css">
+    <style>
+        body {
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #0f172a 100%);
+        }
+    </style>
+</head>
+<body class="min-h-screen">
+    <!-- Background: Consistent Subtle Dark Gradient -->
+    <div class="fixed inset-0 -z-10 bg-gradient-to-br from-gray-900 via-slate-900 to-gray-900"></div>
+
+    <!-- Sidebar Container -->
+    <div id="sidebar-container"></div>
+
+    <!-- Main Content -->
+    <div class="main-content">
+        <div class="relative z-10 container mx-auto px-4 pt-16 pb-24 sm:px-6 lg:px-8">
+            <!-- Header -->
+            <div class="text-center mb-12">
+                <h1 class="text-3xl sm:text-4xl font-bold mb-4 tracking-tight
+                           text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 to-teal-500">
+                    Array Data Structure
+                </h1>
+                <p class="text-lg text-gray-400 max-w-2xl mx-auto">
+                    A fixed-size collection of elements with contiguous memory allocation. One of the most fundamental data structures.
+                </p>
+            </div>
+
+            <!-- Main Content -->
+            <div class="max-w-6xl mx-auto">
+                <!-- Definition -->
+                <div class="mb-8">
+                    <div class="bg-slate-800/70 backdrop-blur-md rounded-lg shadow-lg border border-slate-700/60 p-6">
+                        <h2 class="text-xl font-semibold text-emerald-300 mb-4">Definition</h2>
+                        <p class="text-gray-300 leading-relaxed">
+                            An array is a data structure that stores a collection of elements of the same data type in contiguous memory locations. 
+                            Each element can be accessed directly using its index position. Arrays have a fixed size that is determined at the time of creation.
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Key Properties -->
+                <div class="mb-8">
+                    <div class="bg-slate-800/70 backdrop-blur-md rounded-lg shadow-lg border border-slate-700/60 p-6">
+                        <h2 class="text-xl font-semibold text-emerald-300 mb-4">Key Properties</h2>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div class="space-y-3">
+                                <div class="flex items-start space-x-3">
+                                    <div class="w-2 h-2 bg-emerald-400 rounded-full mt-2"></div>
+                                    <div>
+                                        <h3 class="text-white font-medium">Fixed Size</h3>
+                                        <p class="text-gray-400 text-sm">Size is determined at creation and cannot be changed</p>
+                                    </div>
+                                </div>
+                                <div class="flex items-start space-x-3">
+                                    <div class="w-2 h-2 bg-emerald-400 rounded-full mt-2"></div>
+                                    <div>
+                                        <h3 class="text-white font-medium">Contiguous Memory</h3>
+                                        <p class="text-gray-400 text-sm">Elements are stored in adjacent memory locations</p>
+                                    </div>
+                                </div>
+                                <div class="flex items-start space-x-3">
+                                    <div class="w-2 h-2 bg-emerald-400 rounded-full mt-2"></div>
+                                    <div>
+                                        <h3 class="text-white font-medium">Random Access</h3>
+                                        <p class="text-gray-400 text-sm">O(1) time complexity for accessing any element</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="space-y-3">
+                                <div class="flex items-start space-x-3">
+                                    <div class="w-2 h-2 bg-emerald-400 rounded-full mt-2"></div>
+                                    <div>
+                                        <h3 class="text-white font-medium">Same Data Type</h3>
+                                        <p class="text-gray-400 text-sm">All elements must be of the same type</p>
+                                    </div>
+                                </div>
+                                <div class="flex items-start space-x-3">
+                                    <div class="w-2 h-2 bg-emerald-400 rounded-full mt-2"></div>
+                                    <div>
+                                        <h3 class="text-white font-medium">Zero-based Indexing</h3>
+                                        <p class="text-gray-400 text-sm">First element is at index 0</p>
+                                    </div>
+                                </div>
+                                <div class="flex items-start space-x-3">
+                                    <div class="w-2 h-2 bg-emerald-400 rounded-full mt-2"></div>
+                                    <div>
+                                        <h3 class="text-white font-medium">Cache Friendly</h3>
+                                        <p class="text-gray-400 text-sm">Better performance due to spatial locality</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Time Complexity -->
+                <div class="mb-8">
+                    <div class="bg-slate-800/70 backdrop-blur-md rounded-lg shadow-lg border border-slate-700/60 p-6">
+                        <h2 class="text-xl font-semibold text-emerald-300 mb-4">Time Complexity</h2>
+                        <div class="overflow-x-auto">
+                            <table class="w-full text-sm">
+                                <thead>
+                                    <tr class="border-b border-slate-600">
+                                        <th class="text-left py-3 px-4 text-emerald-300">Operation</th>
+                                        <th class="text-left py-3 px-4 text-emerald-300">Time Complexity</th>
+                                        <th class="text-left py-3 px-4 text-emerald-300">Description</th>
+                                    </tr>
+                                </thead>
+                                <tbody class="text-gray-300">
+                                    <tr class="border-b border-slate-700">
+                                        <td class="py-3 px-4">Access</td>
+                                        <td class="py-3 px-4 text-green-400">O(1)</td>
+                                        <td class="py-3 px-4">Direct access by index</td>
+                                    </tr>
+                                    <tr class="border-b border-slate-700">
+                                        <td class="py-3 px-4">Search</td>
+                                        <td class="py-3 px-4 text-yellow-400">O(n)</td>
+                                        <td class="py-3 px-4">Linear search through elements</td>
+                                    </tr>
+                                    <tr class="border-b border-slate-700">
+                                        <td class="py-3 px-4">Insertion</td>
+                                        <td class="py-3 px-4 text-yellow-400">O(n)</td>
+                                        <td class="py-3 px-4">May require shifting elements</td>
+                                    </tr>
+                                    <tr class="border-b border-slate-700">
+                                        <td class="py-3 px-4">Deletion</td>
+                                        <td class="py-3 px-4 text-yellow-400">O(n)</td>
+                                        <td class="py-3 px-4">May require shifting elements</td>
+                                    </tr>
+                                    <tr>
+                                        <td class="py-3 px-4">Update</td>
+                                        <td class="py-3 px-4 text-green-400">O(1)</td>
+                                        <td class="py-3 px-4">Direct update by index</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Examples -->
+                <div class="mb-8">
+                    <h2 class="text-2xl font-semibold text-white mb-6">Code Examples</h2>
+                    
+                    <!-- JavaScript Example -->
+                    <div class="mb-6">
+                        <div class="bg-slate-800/70 backdrop-blur-md rounded-lg shadow-lg border border-slate-700/60 p-6">
+                            <div class="flex items-center justify-between mb-4">
+                                <h3 class="text-lg font-semibold text-emerald-300">JavaScript</h3>
+                                <button class="text-blue-400 hover:text-blue-300" onclick="copyCode('js-example')">
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"></path>
+                                    </svg>
+                                </button>
+                            </div>
+                            <pre id="js-example" class="bg-slate-900 rounded-lg p-4 text-sm text-gray-300 overflow-x-auto"><code>// Array declaration and initialization
+let numbers = [1, 2, 3, 4, 5];
+let fruits = new Array('apple', 'banana', 'orange');
+
+// Accessing elements
+console.log(numbers[0]); // 1
+console.log(fruits[1]);  // 'banana'
+
+// Modifying elements
+numbers[2] = 10;
+console.log(numbers); // [1, 2, 10, 4, 5]
+
+// Array methods
+numbers.push(6);        // Add to end
+numbers.unshift(0);     // Add to beginning
+numbers.pop();          // Remove from end
+numbers.shift();        // Remove from beginning
+
+// Iteration
+for (let i = 0; i < numbers.length; i++) {
+    console.log(numbers[i]);
+}
+
+// Modern iteration
+numbers.forEach(num => console.log(num));
+numbers.map(num => num * 2); // [2, 4, 20, 8, 10]</code></pre>
+                        </div>
+                    </div>
+
+                    <!-- Python Example -->
+                    <div class="mb-6">
+                        <div class="bg-slate-800/70 backdrop-blur-md rounded-lg shadow-lg border border-slate-700/60 p-6">
+                            <div class="flex items-center justify-between mb-4">
+                                <h3 class="text-lg font-semibold text-emerald-300">Python</h3>
+                                <button class="text-blue-400 hover:text-blue-300" onclick="copyCode('python-example')">
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"></path>
+                                    </svg>
+                                </button>
+                            </div>
+                            <pre id="python-example" class="bg-slate-900 rounded-lg p-4 text-sm text-gray-300 overflow-x-auto"><code># List (Python's array equivalent)
+numbers = [1, 2, 3, 4, 5]
+fruits = ['apple', 'banana', 'orange']
+
+# Accessing elements
+print(numbers[0])  # 1
+print(fruits[-1])  # 'orange' (last element)
+
+# Modifying elements
+numbers[2] = 10
+print(numbers)  # [1, 2, 10, 4, 5]
+
+# List methods
+numbers.append(6)      # Add to end
+numbers.insert(0, 0)   # Insert at index
+numbers.remove(10)     # Remove first occurrence
+numbers.pop()          # Remove and return last element
+
+# List comprehensions
+squares = [x**2 for x in range(5)]  # [0, 1, 4, 9, 16]
+evens = [x for x in numbers if x % 2 == 0]
+
+# Iteration
+for num in numbers:
+    print(num)
+
+# Using enumerate for index
+for i, num in enumerate(numbers):
+    print(f"Index {i}: {num}")</code></pre>
+                        </div>
+                    </div>
+
+                    <!-- Java Example -->
+                    <div class="mb-6">
+                        <div class="bg-slate-800/70 backdrop-blur-md rounded-lg shadow-lg border border-slate-700/60 p-6">
+                            <div class="flex items-center justify-between mb-4">
+                                <h3 class="text-lg font-semibold text-emerald-300">Java</h3>
+                                <button class="text-blue-400 hover:text-blue-300" onclick="copyCode('java-example')">
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"></path>
+                                    </svg>
+                                </button>
+                            </div>
+                            <pre id="java-example" class="bg-slate-900 rounded-lg p-4 text-sm text-gray-300 overflow-x-auto"><code>// Array declaration and initialization
+int[] numbers = {1, 2, 3, 4, 5};
+String[] fruits = new String[]{"apple", "banana", "orange"};
+
+// Accessing elements
+System.out.println(numbers[0]); // 1
+System.out.println(fruits[1]);  // "banana"
+
+// Modifying elements
+numbers[2] = 10;
+System.out.println(Arrays.toString(numbers)); // [1, 2, 10, 4, 5]
+
+// Array length
+System.out.println(numbers.length); // 5
+
+// Iteration
+for (int i = 0; i < numbers.length; i++) {
+    System.out.println(numbers[i]);
+}
+
+// Enhanced for loop
+for (int num : numbers) {
+    System.out.println(num);
+}
+
+// Using ArrayList for dynamic arrays
+ArrayList&lt;Integer&gt; dynamicArray = new ArrayList&lt;&gt;();
+dynamicArray.add(1);
+dynamicArray.add(2);
+dynamicArray.remove(0); // Remove at index 0</code></pre>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Common Use Cases -->
+                <div class="mb-8">
+                    <div class="bg-slate-800/70 backdrop-blur-md rounded-lg shadow-lg border border-slate-700/60 p-6">
+                        <h2 class="text-xl font-semibold text-emerald-300 mb-4">Common Use Cases</h2>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div class="space-y-3">
+                                <div class="flex items-start space-x-3">
+                                    <div class="w-2 h-2 bg-emerald-400 rounded-full mt-2"></div>
+                                    <div>
+                                        <h3 class="text-white font-medium">Data Storage</h3>
+                                        <p class="text-gray-400 text-sm">Storing collections of similar data</p>
+                                    </div>
+                                </div>
+                                <div class="flex items-start space-x-3">
+                                    <div class="w-2 h-2 bg-emerald-400 rounded-full mt-2"></div>
+                                    <div>
+                                        <h3 class="text-white font-medium">Mathematical Operations</h3>
+                                        <p class="text-gray-400 text-sm">Vectors, matrices, and mathematical computations</p>
+                                    </div>
+                                </div>
+                                <div class="flex items-start space-x-3">
+                                    <div class="w-2 h-2 bg-emerald-400 rounded-full mt-2"></div>
+                                    <div>
+                                        <h3 class="text-white font-medium">Buffer/Queue Implementation</h3>
+                                        <p class="text-gray-400 text-sm">Fixed-size buffers and circular queues</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="space-y-3">
+                                <div class="flex items-start space-x-3">
+                                    <div class="w-2 h-2 bg-emerald-400 rounded-full mt-2"></div>
+                                    <div>
+                                        <h3 class="text-white font-medium">Lookup Tables</h3>
+                                        <p class="text-gray-400 text-sm">Fast access to precomputed values</p>
+                                    </div>
+                                </div>
+                                <div class="flex items-start space-x-3">
+                                    <div class="w-2 h-2 bg-emerald-400 rounded-full mt-2"></div>
+                                    <div>
+                                        <h3 class="text-white font-medium">Image Processing</h3>
+                                        <p class="text-gray-400 text-sm">Pixel data and image manipulation</p>
+                                    </div>
+                                </div>
+                                <div class="flex items-start space-x-3">
+                                    <div class="w-2 h-2 bg-emerald-400 rounded-full mt-2"></div>
+                                    <div>
+                                        <h3 class="text-white font-medium">Algorithm Implementation</h3>
+                                        <p class="text-gray-400 text-sm">Base for many sorting and searching algorithms</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Sidebar Scripts -->
+    <script src="sidebar-include.js"></script>
+    <script src="sidebar.js"></script>
+    
+    <script>
+        function copyCode(elementId) {
+            const codeElement = document.getElementById(elementId);
+            const text = codeElement.textContent;
+            
+            navigator.clipboard.writeText(text).then(() => {
+                // Visual feedback
+                const button = codeElement.parentElement.querySelector('button');
+                const originalHTML = button.innerHTML;
+                button.innerHTML = '<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>';
+                button.classList.add('text-green-400');
+                
+                setTimeout(() => {
+                    button.innerHTML = originalHTML;
+                    button.classList.remove('text-green-400');
+                }, 2000);
+            });
+        }
+    </script>
+</body>
+</html>

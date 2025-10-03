@@ -1,0 +1,375 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Linked List Data Structure - DevDunia</title>
+    <meta name="description" content="Learn about Linked List data structure with definition, syntax, operations, and examples in multiple programming languages.">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="../sidebar.css">
+    <style>
+        body {
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #0f172a 100%);
+        }
+    </style>
+</head>
+<body class="min-h-screen">
+    <!-- Background: Consistent Subtle Dark Gradient -->
+    <div class="fixed inset-0 -z-10 bg-gradient-to-br from-gray-900 via-slate-900 to-gray-900"></div>
+
+    <!-- Sidebar Container -->
+    <div id="sidebar-container"></div>
+
+    <!-- Main Content -->
+    <div class="main-content">
+        <div class="relative z-10 container mx-auto px-4 pt-16 pb-24 sm:px-6 lg:px-8">
+            <!-- Header -->
+            <div class="text-center mb-12">
+                <h1 class="text-3xl sm:text-4xl font-bold mb-4 tracking-tight
+                           text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 to-teal-500">
+                    Linked List Data Structure
+                </h1>
+                <p class="text-lg text-gray-400 max-w-2xl mx-auto">
+                    A linear data structure where elements are stored in nodes, and each node points to the next node in the sequence.
+                </p>
+            </div>
+
+            <!-- Main Content -->
+            <div class="max-w-6xl mx-auto">
+                <!-- Definition -->
+                <div class="mb-8">
+                    <div class="bg-slate-800/70 backdrop-blur-md rounded-lg shadow-lg border border-slate-700/60 p-6">
+                        <h2 class="text-xl font-semibold text-emerald-300 mb-4">Definition</h2>
+                        <p class="text-gray-300 leading-relaxed">
+                            A linked list is a linear data structure consisting of nodes where each node contains data and a reference (pointer) to the next node in the sequence. 
+                            Unlike arrays, linked lists don't store elements in contiguous memory locations. The first node is called the head, and the last node points to null.
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Key Properties -->
+                <div class="mb-8">
+                    <div class="bg-slate-800/70 backdrop-blur-md rounded-lg shadow-lg border border-slate-700/60 p-6">
+                        <h2 class="text-xl font-semibold text-emerald-300 mb-4">Key Properties</h2>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div class="space-y-3">
+                                <div class="flex items-start space-x-3">
+                                    <div class="w-2 h-2 bg-emerald-400 rounded-full mt-2"></div>
+                                    <div>
+                                        <h3 class="text-white font-medium">Dynamic Size</h3>
+                                        <p class="text-gray-400 text-sm">Size can grow or shrink during runtime</p>
+                                    </div>
+                                </div>
+                                <div class="flex items-start space-x-3">
+                                    <div class="w-2 h-2 bg-emerald-400 rounded-full mt-2"></div>
+                                    <div>
+                                        <h3 class="text-white font-medium">Non-contiguous Memory</h3>
+                                        <p class="text-gray-400 text-sm">Nodes can be stored anywhere in memory</p>
+                                    </div>
+                                </div>
+                                <div class="flex items-start space-x-3">
+                                    <div class="w-2 h-2 bg-emerald-400 rounded-full mt-2"></div>
+                                    <div>
+                                        <h3 class="text-white font-medium">Sequential Access</h3>
+                                        <p class="text-gray-400 text-sm">Must traverse from head to access elements</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="space-y-3">
+                                <div class="flex items-start space-x-3">
+                                    <div class="w-2 h-2 bg-emerald-400 rounded-full mt-2"></div>
+                                    <div>
+                                        <h3 class="text-white font-medium">Easy Insertion/Deletion</h3>
+                                        <p class="text-gray-400 text-sm">O(1) insertion/deletion at known position</p>
+                                    </div>
+                                </div>
+                                <div class="flex items-start space-x-3">
+                                    <div class="w-2 h-2 bg-emerald-400 rounded-full mt-2"></div>
+                                    <div>
+                                        <h3 class="text-white font-medium">Memory Efficient</h3>
+                                        <p class="text-gray-400 text-sm">Only uses memory for actual data</p>
+                                    </div>
+                                </div>
+                                <div class="flex items-start space-x-3">
+                                    <div class="w-2 h-2 bg-emerald-400 rounded-full mt-2"></div>
+                                    <div>
+                                        <h3 class="text-white font-medium">No Wasted Space</h3>
+                                        <p class="text-gray-400 text-sm">No unused memory allocation</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Time Complexity -->
+                <div class="mb-8">
+                    <div class="bg-slate-800/70 backdrop-blur-md rounded-lg shadow-lg border border-slate-700/60 p-6">
+                        <h2 class="text-xl font-semibold text-emerald-300 mb-4">Time Complexity</h2>
+                        <div class="overflow-x-auto">
+                            <table class="w-full text-sm">
+                                <thead>
+                                    <tr class="border-b border-slate-600">
+                                        <th class="text-left py-3 px-4 text-emerald-300">Operation</th>
+                                        <th class="text-left py-3 px-4 text-emerald-300">Time Complexity</th>
+                                        <th class="text-left py-3 px-4 text-emerald-300">Description</th>
+                                    </tr>
+                                </thead>
+                                <tbody class="text-gray-300">
+                                    <tr class="border-b border-slate-700">
+                                        <td class="py-3 px-4">Access</td>
+                                        <td class="py-3 px-4 text-yellow-400">O(n)</td>
+                                        <td class="py-3 px-4">Must traverse from head</td>
+                                    </tr>
+                                    <tr class="border-b border-slate-700">
+                                        <td class="py-3 px-4">Search</td>
+                                        <td class="py-3 px-4 text-yellow-400">O(n)</td>
+                                        <td class="py-3 px-4">Linear search through nodes</td>
+                                    </tr>
+                                    <tr class="border-b border-slate-700">
+                                        <td class="py-3 px-4">Insertion (at head)</td>
+                                        <td class="py-3 px-4 text-green-400">O(1)</td>
+                                        <td class="py-3 px-4">Direct insertion at beginning</td>
+                                    </tr>
+                                    <tr class="border-b border-slate-700">
+                                        <td class="py-3 px-4">Insertion (at tail)</td>
+                                        <td class="py-3 px-4 text-yellow-400">O(n)</td>
+                                        <td class="py-3 px-4">Must traverse to end</td>
+                                    </tr>
+                                    <tr class="border-b border-slate-700">
+                                        <td class="py-3 px-4">Deletion (at head)</td>
+                                        <td class="py-3 px-4 text-green-400">O(1)</td>
+                                        <td class="py-3 px-4">Direct deletion from beginning</td>
+                                    </tr>
+                                    <tr>
+                                        <td class="py-3 px-4">Deletion (at tail)</td>
+                                        <td class="py-3 px-4 text-yellow-400">O(n)</td>
+                                        <td class="py-3 px-4">Must traverse to end</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Examples -->
+                <div class="mb-8">
+                    <h2 class="text-2xl font-semibold text-white mb-6">Python Code Examples</h2>
+                    
+                    <!-- Python Example -->
+                    <div class="mb-6">
+                        <div class="bg-slate-800/70 backdrop-blur-md rounded-lg shadow-lg border border-slate-700/60 p-6">
+                            <div class="flex items-center justify-between mb-4">
+                                <h3 class="text-lg font-semibold text-emerald-300">Python Implementation</h3>
+                                <button class="text-blue-400 hover:text-blue-300" onclick="copyCode('python-example')">
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"></path>
+                                    </svg>
+                                </button>
+                            </div>
+                            <pre id="python-example" class="bg-slate-900 rounded-lg p-4 text-sm text-gray-300 overflow-x-auto"><code># Node class
+class ListNode:
+    def __init__(self, data):
+        self.data = data
+        self.next = None
+
+# Linked List class
+class LinkedList:
+    def __init__(self):
+        self.head = None
+        self.size = 0
+
+    def prepend(self, data):
+        """Add element at the beginning"""
+        new_node = ListNode(data)
+        new_node.next = self.head
+        self.head = new_node
+        self.size += 1
+
+    def append(self, data):
+        """Add element at the end"""
+        new_node = ListNode(data)
+        if not self.head:
+            self.head = new_node
+        else:
+            current = self.head
+            while current.next:
+                current = current.next
+            current.next = new_node
+        self.size += 1
+
+    def insert_at(self, data, index):
+        """Insert at specific position"""
+        if index < 0 or index > self.size:
+            return False
+        
+        if index == 0:
+            self.prepend(data)
+            return True
+
+        new_node = ListNode(data)
+        current = self.head
+        for i in range(index - 1):
+            current = current.next
+        
+        new_node.next = current.next
+        current.next = new_node
+        self.size += 1
+        return True
+
+    def remove(self, data):
+        """Remove element"""
+        if not self.head:
+            return False
+        
+        if self.head.data == data:
+            self.head = self.head.next
+            self.size -= 1
+            return True
+
+        current = self.head
+        while current.next and current.next.data != data:
+            current = current.next
+        
+        if current.next:
+            current.next = current.next.next
+            self.size -= 1
+            return True
+        return False
+
+    def find(self, data):
+        """Search element"""
+        current = self.head
+        index = 0
+        while current:
+            if current.data == data:
+                return index
+            current = current.next
+            index += 1
+        return -1
+
+    def display(self):
+        """Display list"""
+        current = self.head
+        result = []
+        while current:
+            result.append(str(current.data))
+            current = current.next
+        return " -> ".join(result)
+
+    def reverse(self):
+        """Reverse the linked list"""
+        prev = None
+        current = self.head
+        while current:
+            next_node = current.next
+            current.next = prev
+            prev = current
+            current = next_node
+        self.head = prev
+
+# Usage
+ll = LinkedList()
+ll.append(1)
+ll.append(2)
+ll.append(3)
+ll.prepend(0)
+print(ll.display())  # "0 -> 1 -> 2 -> 3"
+
+# Find element
+print(f"Index of 2: {ll.find(2)}")  # 2
+
+# Remove element
+ll.remove(1)
+print(ll.display())  # "0 -> 2 -> 3"
+
+# Reverse list
+ll.reverse()
+print(ll.display())  # "3 -> 2 -> 0"</code></pre>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Common Use Cases -->
+                <div class="mb-8">
+                    <div class="bg-slate-800/70 backdrop-blur-md rounded-lg shadow-lg border border-slate-700/60 p-6">
+                        <h2 class="text-xl font-semibold text-emerald-300 mb-4">Common Use Cases</h2>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div class="space-y-3">
+                                <div class="flex items-start space-x-3">
+                                    <div class="w-2 h-2 bg-emerald-400 rounded-full mt-2"></div>
+                                    <div>
+                                        <h3 class="text-white font-medium">Dynamic Memory Allocation</h3>
+                                        <p class="text-gray-400 text-sm">When size is unknown at compile time</p>
+                                    </div>
+                                </div>
+                                <div class="flex items-start space-x-3">
+                                    <div class="w-2 h-2 bg-emerald-400 rounded-full mt-2"></div>
+                                    <div>
+                                        <h3 class="text-white font-medium">Implementation of Stacks/Queues</h3>
+                                        <p class="text-gray-400 text-sm">Base structure for other data structures</p>
+                                    </div>
+                                </div>
+                                <div class="flex items-start space-x-3">
+                                    <div class="w-2 h-2 bg-emerald-400 rounded-full mt-2"></div>
+                                    <div>
+                                        <h3 class="text-white font-medium">Music Playlists</h3>
+                                        <p class="text-gray-400 text-sm">Sequential access to songs</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="space-y-3">
+                                <div class="flex items-start space-x-3">
+                                    <div class="w-2 h-2 bg-emerald-400 rounded-full mt-2"></div>
+                                    <div>
+                                        <h3 class="text-white font-medium">Undo Functionality</h3>
+                                        <p class="text-gray-400 text-sm">Storing command history</p>
+                                    </div>
+                                </div>
+                                <div class="flex items-start space-x-3">
+                                    <div class="w-2 h-2 bg-emerald-400 rounded-full mt-2"></div>
+                                    <div>
+                                        <h3 class="text-white font-medium">Browser History</h3>
+                                        <p class="text-gray-400 text-sm">Forward/backward navigation</p>
+                                    </div>
+                                </div>
+                                <div class="flex items-start space-x-3">
+                                    <div class="w-2 h-2 bg-emerald-400 rounded-full mt-2"></div>
+                                    <div>
+                                        <h3 class="text-white font-medium">Polynomial Representation</h3>
+                                        <p class="text-gray-400 text-sm">Mathematical expressions</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Sidebar Scripts -->
+    <script src="../sidebar-include.js"></script>
+    <script src="../sidebar.js"></script>
+    
+    <script>
+        function copyCode(elementId) {
+            const codeElement = document.getElementById(elementId);
+            const text = codeElement.textContent;
+            
+            navigator.clipboard.writeText(text).then(() => {
+                // Visual feedback
+                const button = codeElement.parentElement.querySelector('button');
+                const originalHTML = button.innerHTML;
+                button.innerHTML = '<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>';
+                button.classList.add('text-green-400');
+                
+                setTimeout(() => {
+                    button.innerHTML = originalHTML;
+                    button.classList.remove('text-green-400');
+                }, 2000);
+            });
+        }
+    </script>
+</body>
+</html>

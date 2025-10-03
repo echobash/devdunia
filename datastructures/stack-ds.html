@@ -1,0 +1,337 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Stack Data Structure - DevDunia</title>
+    <meta name="description" content="Learn about Stack data structure with definition, syntax, operations, and examples in multiple programming languages.">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="../sidebar.css">
+    <style>
+        body {
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #0f172a 100%);
+        }
+    </style>
+</head>
+<body class="min-h-screen">
+    <!-- Background: Consistent Subtle Dark Gradient -->
+    <div class="fixed inset-0 -z-10 bg-gradient-to-br from-gray-900 via-slate-900 to-gray-900"></div>
+
+    <!-- Sidebar Container -->
+    <div id="sidebar-container"></div>
+
+    <!-- Main Content -->
+    <div class="main-content">
+        <div class="relative z-10 container mx-auto px-4 pt-16 pb-24 sm:px-6 lg:px-8">
+            <!-- Header -->
+            <div class="text-center mb-12">
+                <h1 class="text-3xl sm:text-4xl font-bold mb-4 tracking-tight
+                           text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 to-teal-500">
+                    Stack Data Structure
+                </h1>
+                <p class="text-lg text-gray-400 max-w-2xl mx-auto">
+                    A Last In, First Out (LIFO) data structure where elements are added and removed from the same end, called the top.
+                </p>
+            </div>
+
+            <!-- Main Content -->
+            <div class="max-w-6xl mx-auto">
+                <!-- Definition -->
+                <div class="mb-8">
+                    <div class="bg-slate-800/70 backdrop-blur-md rounded-lg shadow-lg border border-slate-700/60 p-6">
+                        <h2 class="text-xl font-semibold text-emerald-300 mb-4">Definition</h2>
+                        <p class="text-gray-300 leading-relaxed">
+                            A stack is a linear data structure that follows the Last In, First Out (LIFO) principle. This means the last element added to the stack 
+                            will be the first one to be removed. Think of it like a stack of plates - you can only add or remove plates from the top.
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Key Properties -->
+                <div class="mb-8">
+                    <div class="bg-slate-800/70 backdrop-blur-md rounded-lg shadow-lg border border-slate-700/60 p-6">
+                        <h2 class="text-xl font-semibold text-emerald-300 mb-4">Key Properties</h2>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div class="space-y-3">
+                                <div class="flex items-start space-x-3">
+                                    <div class="w-2 h-2 bg-emerald-400 rounded-full mt-2"></div>
+                                    <div>
+                                        <h3 class="text-white font-medium">LIFO Principle</h3>
+                                        <p class="text-gray-400 text-sm">Last In, First Out - most recent element is accessed first</p>
+                                    </div>
+                                </div>
+                                <div class="flex items-start space-x-3">
+                                    <div class="w-2 h-2 bg-emerald-400 rounded-full mt-2"></div>
+                                    <div>
+                                        <h3 class="text-white font-medium">Single Access Point</h3>
+                                        <p class="text-gray-400 text-sm">Only the top element can be accessed</p>
+                                    </div>
+                                </div>
+                                <div class="flex items-start space-x-3">
+                                    <div class="w-2 h-2 bg-emerald-400 rounded-full mt-2"></div>
+                                    <div>
+                                        <h3 class="text-white font-medium">Limited Operations</h3>
+                                        <p class="text-gray-400 text-sm">Only push, pop, peek, and isEmpty operations</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="space-y-3">
+                                <div class="flex items-start space-x-3">
+                                    <div class="w-2 h-2 bg-emerald-400 rounded-full mt-2"></div>
+                                    <div>
+                                        <h3 class="text-white font-medium">Dynamic Size</h3>
+                                        <p class="text-gray-400 text-sm">Can grow and shrink as needed</p>
+                                    </div>
+                                </div>
+                                <div class="flex items-start space-x-3">
+                                    <div class="w-2 h-2 bg-emerald-400 rounded-full mt-2"></div>
+                                    <div>
+                                        <h3 class="text-white font-medium">Memory Efficient</h3>
+                                        <p class="text-gray-400 text-sm">Only stores necessary elements</p>
+                                    </div>
+                                </div>
+                                <div class="flex items-start space-x-3">
+                                    <div class="w-2 h-2 bg-emerald-400 rounded-full mt-2"></div>
+                                    <div>
+                                        <h3 class="text-white font-medium">Simple Implementation</h3>
+                                        <p class="text-gray-400 text-sm">Easy to implement using arrays or linked lists</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Operations -->
+                <div class="mb-8">
+                    <div class="bg-slate-800/70 backdrop-blur-md rounded-lg shadow-lg border border-slate-700/60 p-6">
+                        <h2 class="text-xl font-semibold text-emerald-300 mb-4">Stack Operations</h2>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div class="space-y-4">
+                                <div class="border border-slate-600 rounded-lg p-4">
+                                    <h3 class="text-white font-medium mb-2">Push(element)</h3>
+                                    <p class="text-gray-400 text-sm">Adds an element to the top of the stack</p>
+                                    <div class="mt-2 text-xs text-emerald-400">Time Complexity: O(1)</div>
+                                </div>
+                                <div class="border border-slate-600 rounded-lg p-4">
+                                    <h3 class="text-white font-medium mb-2">Pop()</h3>
+                                    <p class="text-gray-400 text-sm">Removes and returns the top element</p>
+                                    <div class="mt-2 text-xs text-emerald-400">Time Complexity: O(1)</div>
+                                </div>
+                            </div>
+                            <div class="space-y-4">
+                                <div class="border border-slate-600 rounded-lg p-4">
+                                    <h3 class="text-white font-medium mb-2">Peek() / Top()</h3>
+                                    <p class="text-gray-400 text-sm">Returns the top element without removing it</p>
+                                    <div class="mt-2 text-xs text-emerald-400">Time Complexity: O(1)</div>
+                                </div>
+                                <div class="border border-slate-600 rounded-lg p-4">
+                                    <h3 class="text-white font-medium mb-2">isEmpty()</h3>
+                                    <p class="text-gray-400 text-sm">Checks if the stack is empty</p>
+                                    <div class="mt-2 text-xs text-emerald-400">Time Complexity: O(1)</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Examples -->
+                <div class="mb-8">
+                    <h2 class="text-2xl font-semibold text-white mb-6">Python Code Examples</h2>
+                    
+                    <!-- Python Example -->
+                    <div class="mb-6">
+                        <div class="bg-slate-800/70 backdrop-blur-md rounded-lg shadow-lg border border-slate-700/60 p-6">
+                            <div class="flex items-center justify-between mb-4">
+                                <h3 class="text-lg font-semibold text-emerald-300">Python Implementation</h3>
+                                <button class="text-blue-400 hover:text-blue-300" onclick="copyCode('python-example')">
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"></path>
+                                    </svg>
+                                </button>
+                            </div>
+                            <pre id="python-example" class="bg-slate-900 rounded-lg p-4 text-sm text-gray-300 overflow-x-auto"><code># Stack implementation using List
+class Stack:
+    def __init__(self):
+        self.items = []
+
+    def push(self, item):
+        """Add element to the top"""
+        self.items.append(item)
+
+    def pop(self):
+        """Remove and return top element"""
+        if self.is_empty():
+            return "Stack is empty"
+        return self.items.pop()
+
+    def peek(self):
+        """Return top element without removing"""
+        if self.is_empty():
+            return "Stack is empty"
+        return self.items[-1]
+
+    def is_empty(self):
+        """Check if stack is empty"""
+        return len(self.items) == 0
+
+    def size(self):
+        """Return stack size"""
+        return len(self.items)
+
+    def display(self):
+        """Display stack from top to bottom"""
+        return self.items[::-1]
+
+# Usage
+stack = Stack()
+stack.push(10)
+stack.push(20)
+stack.push(30)
+
+print("Stack:", stack.display())  # [30, 20, 10]
+print("Top element:", stack.peek())  # 30
+print("Popped:", stack.pop())  # 30
+print("Stack after pop:", stack.display())  # [20, 10]
+
+# Using built-in list as stack
+stack_list = []
+stack_list.append(1)  # push
+stack_list.append(2)
+stack_list.append(3)
+print(stack_list.pop())  # 3 (pop)
+print(stack_list[-1])  # 2 (peek)
+
+# Using collections.deque (more efficient)
+from collections import deque
+deque_stack = deque()
+deque_stack.append(1)  # push
+deque_stack.append(2)
+deque_stack.append(3)
+print(deque_stack.pop())  # 3 (pop)
+print(deque_stack[-1])  # 2 (peek)
+
+# Stack application: Balanced parentheses checker
+def is_balanced(expression):
+    """Check if parentheses are balanced using stack"""
+    stack = []
+    opening = ['(', '[', '{']
+    closing = [')', ']', '}']
+    
+    for char in expression:
+        if char in opening:
+            stack.append(char)
+        elif char in closing:
+            if not stack:
+                return False
+            last_opening = stack.pop()
+            if opening.index(last_opening) != closing.index(char):
+                return False
+    
+    return len(stack) == 0
+
+# Test balanced parentheses
+print(is_balanced("()[]{}"))  # True
+print(is_balanced("([)]"))    # False
+print(is_balanced("{[()]}"))  # True</code></pre>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Common Use Cases -->
+                <div class="mb-8">
+                    <div class="bg-slate-800/70 backdrop-blur-md rounded-lg shadow-lg border border-slate-700/60 p-6">
+                        <h2 class="text-xl font-semibold text-emerald-300 mb-4">Common Use Cases</h2>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div class="space-y-3">
+                                <div class="flex items-start space-x-3">
+                                    <div class="w-2 h-2 bg-emerald-400 rounded-full mt-2"></div>
+                                    <div>
+                                        <h3 class="text-white font-medium">Function Call Management</h3>
+                                        <p class="text-gray-400 text-sm">Call stack in programming languages</p>
+                                    </div>
+                                </div>
+                                <div class="flex items-start space-x-3">
+                                    <div class="w-2 h-2 bg-emerald-400 rounded-full mt-2"></div>
+                                    <div>
+                                        <h3 class="text-white font-medium">Expression Evaluation</h3>
+                                        <p class="text-gray-400 text-sm">Infix to postfix conversion</p>
+                                    </div>
+                                </div>
+                                <div class="flex items-start space-x-3">
+                                    <div class="w-2 h-2 bg-emerald-400 rounded-full mt-2"></div>
+                                    <div>
+                                        <h3 class="text-white font-medium">Undo Operations</h3>
+                                        <p class="text-gray-400 text-sm">Storing previous states</p>
+                                    </div>
+                                </div>
+                                <div class="flex items-start space-x-3">
+                                    <div class="w-2 h-2 bg-emerald-400 rounded-full mt-2"></div>
+                                    <div>
+                                        <h3 class="text-white font-medium">Browser History</h3>
+                                        <p class="text-gray-400 text-sm">Back button functionality</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="space-y-3">
+                                <div class="flex items-start space-x-3">
+                                    <div class="w-2 h-2 bg-emerald-400 rounded-full mt-2"></div>
+                                    <div>
+                                        <h3 class="text-white font-medium">Balanced Parentheses</h3>
+                                        <p class="text-gray-400 text-sm">Checking syntax validity</p>
+                                    </div>
+                                </div>
+                                <div class="flex items-start space-x-3">
+                                    <div class="w-2 h-2 bg-emerald-400 rounded-full mt-2"></div>
+                                    <div>
+                                        <h3 class="text-white font-medium">Memory Management</h3>
+                                        <p class="text-gray-400 text-sm">Stack-based memory allocation</p>
+                                    </div>
+                                </div>
+                                <div class="flex items-start space-x-3">
+                                    <div class="w-2 h-2 bg-emerald-400 rounded-full mt-2"></div>
+                                    <div>
+                                        <h3 class="text-white font-medium">Backtracking Algorithms</h3>
+                                        <p class="text-gray-400 text-sm">DFS, maze solving</p>
+                                    </div>
+                                </div>
+                                <div class="flex items-start space-x-3">
+                                    <div class="w-2 h-2 bg-emerald-400 rounded-full mt-2"></div>
+                                    <div>
+                                        <h3 class="text-white font-medium">Compiler Design</h3>
+                                        <p class="text-gray-400 text-sm">Syntax analysis and parsing</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Sidebar Scripts -->
+    <script src="../sidebar-include.js"></script>
+    <script src="../sidebar.js"></script>
+    
+    <script>
+        function copyCode(elementId) {
+            const codeElement = document.getElementById(elementId);
+            const text = codeElement.textContent;
+            
+            navigator.clipboard.writeText(text).then(() => {
+                // Visual feedback
+                const button = codeElement.parentElement.querySelector('button');
+                const originalHTML = button.innerHTML;
+                button.innerHTML = '<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>';
+                button.classList.add('text-green-400');
+                
+                setTimeout(() => {
+                    button.innerHTML = originalHTML;
+                    button.classList.remove('text-green-400');
+                }, 2000);
+            });
+        }
+    </script>
+</body>
+</html>

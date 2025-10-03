@@ -1,0 +1,397 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Queue Data Structure - DevDunia</title>
+    <meta name="description" content="Learn about Queue data structure with definition, syntax, operations, and examples in multiple programming languages.">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="../sidebar.css">
+    <style>
+        body {
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #0f172a 100%);
+        }
+    </style>
+</head>
+<body class="min-h-screen">
+    <!-- Background: Consistent Subtle Dark Gradient -->
+    <div class="fixed inset-0 -z-10 bg-gradient-to-br from-gray-900 via-slate-900 to-gray-900"></div>
+
+    <!-- Sidebar Container -->
+    <div id="sidebar-container"></div>
+
+    <!-- Main Content -->
+    <div class="main-content">
+        <div class="relative z-10 container mx-auto px-4 pt-16 pb-24 sm:px-6 lg:px-8">
+            <!-- Header -->
+            <div class="text-center mb-12">
+                <h1 class="text-3xl sm:text-4xl font-bold mb-4 tracking-tight
+                           text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 to-teal-500">
+                    Queue Data Structure
+                </h1>
+                <p class="text-lg text-gray-400 max-w-2xl mx-auto">
+                    A First In, First Out (FIFO) data structure where elements are added at the rear and removed from the front.
+                </p>
+            </div>
+
+            <!-- Main Content -->
+            <div class="max-w-6xl mx-auto">
+                <!-- Definition -->
+                <div class="mb-8">
+                    <div class="bg-slate-800/70 backdrop-blur-md rounded-lg shadow-lg border border-slate-700/60 p-6">
+                        <h2 class="text-xl font-semibold text-emerald-300 mb-4">Definition</h2>
+                        <p class="text-gray-300 leading-relaxed">
+                            A queue is a linear data structure that follows the First In, First Out (FIFO) principle. This means the first element added to the queue 
+                            will be the first one to be removed. Think of it like a line of people waiting - the person who arrives first gets served first.
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Key Properties -->
+                <div class="mb-8">
+                    <div class="bg-slate-800/70 backdrop-blur-md rounded-lg shadow-lg border border-slate-700/60 p-6">
+                        <h2 class="text-xl font-semibold text-emerald-300 mb-4">Key Properties</h2>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div class="space-y-3">
+                                <div class="flex items-start space-x-3">
+                                    <div class="w-2 h-2 bg-emerald-400 rounded-full mt-2"></div>
+                                    <div>
+                                        <h3 class="text-white font-medium">FIFO Principle</h3>
+                                        <p class="text-gray-400 text-sm">First In, First Out - oldest element is accessed first</p>
+                                    </div>
+                                </div>
+                                <div class="flex items-start space-x-3">
+                                    <div class="w-2 h-2 bg-emerald-400 rounded-full mt-2"></div>
+                                    <div>
+                                        <h3 class="text-white font-medium">Two Access Points</h3>
+                                        <p class="text-gray-400 text-sm">Front (dequeue) and Rear (enqueue)</p>
+                                    </div>
+                                </div>
+                                <div class="flex items-start space-x-3">
+                                    <div class="w-2 h-2 bg-emerald-400 rounded-full mt-2"></div>
+                                    <div>
+                                        <h3 class="text-white font-medium">Sequential Processing</h3>
+                                        <p class="text-gray-400 text-sm">Elements processed in order of arrival</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="space-y-3">
+                                <div class="flex items-start space-x-3">
+                                    <div class="w-2 h-2 bg-emerald-400 rounded-full mt-2"></div>
+                                    <div>
+                                        <h3 class="text-white font-medium">Dynamic Size</h3>
+                                        <p class="text-gray-400 text-sm">Can grow and shrink as needed</p>
+                                    </div>
+                                </div>
+                                <div class="flex items-start space-x-3">
+                                    <div class="w-2 h-2 bg-emerald-400 rounded-full mt-2"></div>
+                                    <div>
+                                        <h3 class="text-white font-medium">Fair Scheduling</h3>
+                                        <p class="text-gray-400 text-sm">Ensures first-come-first-served order</p>
+                                    </div>
+                                </div>
+                                <div class="flex items-start space-x-3">
+                                    <div class="w-2 h-2 bg-emerald-400 rounded-full mt-2"></div>
+                                    <div>
+                                        <h3 class="text-white font-medium">Buffer Mechanism</h3>
+                                        <p class="text-gray-400 text-sm">Temporary storage for data processing</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Operations -->
+                <div class="mb-8">
+                    <div class="bg-slate-800/70 backdrop-blur-md rounded-lg shadow-lg border border-slate-700/60 p-6">
+                        <h2 class="text-xl font-semibold text-emerald-300 mb-4">Queue Operations</h2>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div class="space-y-4">
+                                <div class="border border-slate-600 rounded-lg p-4">
+                                    <h3 class="text-white font-medium mb-2">Enqueue(element)</h3>
+                                    <p class="text-gray-400 text-sm">Adds an element to the rear of the queue</p>
+                                    <div class="mt-2 text-xs text-emerald-400">Time Complexity: O(1)</div>
+                                </div>
+                                <div class="border border-slate-600 rounded-lg p-4">
+                                    <h3 class="text-white font-medium mb-2">Dequeue()</h3>
+                                    <p class="text-gray-400 text-sm">Removes and returns the front element</p>
+                                    <div class="mt-2 text-xs text-emerald-400">Time Complexity: O(1)</div>
+                                </div>
+                            </div>
+                            <div class="space-y-4">
+                                <div class="border border-slate-600 rounded-lg p-4">
+                                    <h3 class="text-white font-medium mb-2">Front() / Peek()</h3>
+                                    <p class="text-gray-400 text-sm">Returns the front element without removing it</p>
+                                    <div class="mt-2 text-xs text-emerald-400">Time Complexity: O(1)</div>
+                                </div>
+                                <div class="border border-slate-600 rounded-lg p-4">
+                                    <h3 class="text-white font-medium mb-2">isEmpty()</h3>
+                                    <p class="text-gray-400 text-sm">Checks if the queue is empty</p>
+                                    <div class="mt-2 text-xs text-emerald-400">Time Complexity: O(1)</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Examples -->
+                <div class="mb-8">
+                    <h2 class="text-2xl font-semibold text-white mb-6">Python Code Examples</h2>
+                    
+                    <!-- Python Example -->
+                    <div class="mb-6">
+                        <div class="bg-slate-800/70 backdrop-blur-md rounded-lg shadow-lg border border-slate-700/60 p-6">
+                            <div class="flex items-center justify-between mb-4">
+                                <h3 class="text-lg font-semibold text-emerald-300">Python Implementation</h3>
+                                <button class="text-blue-400 hover:text-blue-300" onclick="copyCode('python-example')">
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"></path>
+                                    </svg>
+                                </button>
+                            </div>
+                            <pre id="python-example" class="bg-slate-900 rounded-lg p-4 text-sm text-gray-300 overflow-x-auto"><code>from collections import deque
+import heapq
+
+# Queue implementation using List
+class Queue:
+    def __init__(self):
+        self.items = []
+
+    def enqueue(self, item):
+        """Add element to the rear"""
+        self.items.append(item)
+
+    def dequeue(self):
+        """Remove element from the front"""
+        if self.is_empty():
+            return "Queue is empty"
+        return self.items.pop(0)
+
+    def front(self):
+        """Get front element without removing"""
+        if self.is_empty():
+            return "Queue is empty"
+        return self.items[0]
+
+    def is_empty(self):
+        """Check if queue is empty"""
+        return len(self.items) == 0
+
+    def size(self):
+        """Return queue size"""
+        return len(self.items)
+
+    def display(self):
+        """Display queue from front to rear"""
+        return self.items.copy()
+
+# Usage
+queue = Queue()
+queue.enqueue(10)
+queue.enqueue(20)
+queue.enqueue(30)
+
+print("Queue:", queue.display())  # [10, 20, 30]
+print("Front element:", queue.front())  # 10
+print("Dequeued:", queue.dequeue())  # 10
+print("Queue after dequeue:", queue.display())  # [20, 30]
+
+# Using collections.deque (more efficient)
+deque_queue = deque()
+deque_queue.append(1)  # enqueue
+deque_queue.append(2)
+deque_queue.append(3)
+print(deque_queue.popleft())  # 1 (dequeue)
+print(deque_queue[0])  # 2 (front)
+
+# Priority Queue using heapq
+class PriorityQueue:
+    def __init__(self):
+        self.heap = []
+        self.index = 0
+
+    def enqueue(self, item, priority):
+        """Add item with priority"""
+        heapq.heappush(self.heap, (priority, self.index, item))
+        self.index += 1
+
+    def dequeue(self):
+        """Remove highest priority item"""
+        if self.is_empty():
+            return "Queue is empty"
+        return heapq.heappop(self.heap)[2]
+
+    def is_empty(self):
+        return len(self.heap) == 0
+
+# Usage
+pq = PriorityQueue()
+pq.enqueue("Task 1", 3)
+pq.enqueue("Task 2", 1)
+pq.enqueue("Task 3", 2)
+print(pq.dequeue())  # "Task 2" (highest priority)
+
+# Circular Queue implementation
+class CircularQueue:
+    def __init__(self, capacity):
+        self.capacity = capacity
+        self.items = [None] * capacity
+        self.front = 0
+        self.rear = -1
+        self.size = 0
+
+    def enqueue(self, item):
+        """Add element to the rear"""
+        if self.is_full():
+            return "Queue is full"
+        self.rear = (self.rear + 1) % self.capacity
+        self.items[self.rear] = item
+        self.size += 1
+
+    def dequeue(self):
+        """Remove element from the front"""
+        if self.is_empty():
+            return "Queue is empty"
+        item = self.items[self.front]
+        self.front = (self.front + 1) % self.capacity
+        self.size -= 1
+        return item
+
+    def is_full(self):
+        return self.size == self.capacity
+
+    def is_empty(self):
+        return self.size == 0
+
+# Queue application: BFS (Breadth-First Search)
+def bfs(graph, start):
+    """Breadth-First Search using queue"""
+    visited = set()
+    queue = deque([start])
+    result = []
+    
+    while queue:
+        vertex = queue.popleft()
+        if vertex not in visited:
+            visited.add(vertex)
+            result.append(vertex)
+            # Add all unvisited neighbors to queue
+            for neighbor in graph.get(vertex, []):
+                if neighbor not in visited:
+                    queue.append(neighbor)
+    
+    return result
+
+# Example graph
+graph = {
+    'A': ['B', 'C'],
+    'B': ['A', 'D', 'E'],
+    'C': ['A', 'F'],
+    'D': ['B'],
+    'E': ['B', 'F'],
+    'F': ['C', 'E']
+}
+
+print("BFS traversal:", bfs(graph, 'A'))  # ['A', 'B', 'C', 'D', 'E', 'F']</code></pre>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Common Use Cases -->
+                <div class="mb-8">
+                    <div class="bg-slate-800/70 backdrop-blur-md rounded-lg shadow-lg border border-slate-700/60 p-6">
+                        <h2 class="text-xl font-semibold text-emerald-300 mb-4">Common Use Cases</h2>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div class="space-y-3">
+                                <div class="flex items-start space-x-3">
+                                    <div class="w-2 h-2 bg-emerald-400 rounded-full mt-2"></div>
+                                    <div>
+                                        <h3 class="text-white font-medium">Task Scheduling</h3>
+                                        <p class="text-gray-400 text-sm">CPU scheduling, process management</p>
+                                    </div>
+                                </div>
+                                <div class="flex items-start space-x-3">
+                                    <div class="w-2 h-2 bg-emerald-400 rounded-full mt-2"></div>
+                                    <div>
+                                        <h3 class="text-white font-medium">Breadth-First Search</h3>
+                                        <p class="text-gray-400 text-sm">Graph traversal algorithms</p>
+                                    </div>
+                                </div>
+                                <div class="flex items-start space-x-3">
+                                    <div class="w-2 h-2 bg-emerald-400 rounded-full mt-2"></div>
+                                    <div>
+                                        <h3 class="text-white font-medium">Print Spooling</h3>
+                                        <p class="text-gray-400 text-sm">Managing print jobs</p>
+                                    </div>
+                                </div>
+                                <div class="flex items-start space-x-3">
+                                    <div class="w-2 h-2 bg-emerald-400 rounded-full mt-2"></div>
+                                    <div>
+                                        <h3 class="text-white font-medium">Call Center Systems</h3>
+                                        <p class="text-gray-400 text-sm">Customer service queue management</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="space-y-3">
+                                <div class="flex items-start space-x-3">
+                                    <div class="w-2 h-2 bg-emerald-400 rounded-full mt-2"></div>
+                                    <div>
+                                        <h3 class="text-white font-medium">Buffer Management</h3>
+                                        <p class="text-gray-400 text-sm">Data streaming, I/O operations</p>
+                                    </div>
+                                </div>
+                                <div class="flex items-start space-x-3">
+                                    <div class="w-2 h-2 bg-emerald-400 rounded-full mt-2"></div>
+                                    <div>
+                                        <h3 class="text-white font-medium">Event Handling</h3>
+                                        <p class="text-gray-400 text-sm">GUI events, message queues</p>
+                                    </div>
+                                </div>
+                                <div class="flex items-start space-x-3">
+                                    <div class="w-2 h-2 bg-emerald-400 rounded-full mt-2"></div>
+                                    <div>
+                                        <h3 class="text-white font-medium">Web Server Requests</h3>
+                                        <p class="text-gray-400 text-sm">HTTP request processing</p>
+                                    </div>
+                                </div>
+                                <div class="flex items-start space-x-3">
+                                    <div class="w-2 h-2 bg-emerald-400 rounded-full mt-2"></div>
+                                    <div>
+                                        <h3 class="text-white font-medium">Cache Management</h3>
+                                        <p class="text-gray-400 text-sm">LRU cache implementation</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Sidebar Scripts -->
+    <script src="../sidebar-include.js"></script>
+    <script src="../sidebar.js"></script>
+    
+    <script>
+        function copyCode(elementId) {
+            const codeElement = document.getElementById(elementId);
+            const text = codeElement.textContent;
+            
+            navigator.clipboard.writeText(text).then(() => {
+                // Visual feedback
+                const button = codeElement.parentElement.querySelector('button');
+                const originalHTML = button.innerHTML;
+                button.innerHTML = '<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>';
+                button.classList.add('text-green-400');
+                
+                setTimeout(() => {
+                    button.innerHTML = originalHTML;
+                    button.classList.remove('text-green-400');
+                }, 2000);
+            });
+        }
+    </script>
+</body>
+</html>
