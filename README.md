@@ -6,9 +6,28 @@
   [![GitHub stars](https://img.shields.io/github/stars/echobash/devdunia?style=social)](https://github.com/echobash/devdunia)
   [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
   [![Open Source](https://badges.frapsoft.com/os/v1/open-source.svg?v=103)](https://github.com/ellerbrock/open-source-badges/)
+  [![Live Demo](https://img.shields.io/badge/Live%20Demo-DevDunia-blue)](https://devdunia.com)
+  [![Tools](https://img.shields.io/badge/Tools-50+-green)](https://devdunia.com)
+  [![Contributors](https://img.shields.io/github/contributors/echobash/devdunia)](https://github.com/echobash/devdunia/graphs/contributors)
   
   > **A comprehensive collection of 50+ essential developer utilities for formatting, encoding, generating, and calculating - completely free and open source.**
+  
+  [![Try DevDunia](https://img.shields.io/badge/Try%20DevDunia-Now-brightgreen?style=for-the-badge)](https://devdunia.com)
+  [![Star on GitHub](https://img.shields.io/badge/Star%20on%20GitHub-⭐-yellow?style=for-the-badge)](https://github.com/echobash/devdunia)
 </div>
+
+## ⚡ Quick Start
+
+**🚀 Try it now:** [devdunia.com](https://devdunia.com) - No installation required!
+
+**📱 Perfect for:**
+- JSON formatting and validation
+- Base64 encoding/decoding  
+- Hash generation (MD5, SHA1, SHA256, SHA512)
+- URL encoding/decoding
+- Password generation
+- QR code creation
+- And 40+ more essential tools!
 
 ## 🌟 What is DevDunia?
 
