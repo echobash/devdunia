@@ -245,6 +245,10 @@ const sidebarHTML = `    <!-- Common Sidebar for DevDunia -->
                 <div class="sidebar-icon">📡</div>
                 <span class="sidebar-text">Python Requests</span>
             </a>
+            <a href="elasticsearch-tools.html" class="sidebar-item">
+                <div class="sidebar-icon">🔍</div>
+                <span class="sidebar-text">Elasticsearch Tools</span>
+            </a>
         </div>
 
         <!-- Information Section -->

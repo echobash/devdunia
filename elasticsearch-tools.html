@@ -1,0 +1,932 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Elasticsearch Tools - DevDunia</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="icon" type="image/png" href="images/logo.png">
+    <link rel="apple-touch-icon" href="images/logo.png">
+    <link rel="stylesheet" href="sidebar.css">
+    <style>
+        body {
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #0f172a 100%);
+        }
+        .code-block {
+            background: #1e293b;
+            border: 1px solid #334155;
+            border-radius: 8px;
+            padding: 1rem;
+            font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+            font-size: 0.875rem;
+            line-height: 1.5;
+            overflow-x: auto;
+        }
+        .copy-btn {
+            transition: all 0.2s ease;
+        }
+        .copy-btn:hover {
+            transform: scale(1.05);
+        }
+        .copy-btn.copied {
+            background-color: #10b981;
+            color: white;
+        }
+        
+        /* Fix main content positioning */
+        .main-content {
+            margin-left: 280px;
+            min-height: 100vh;
+        }
+        
+        /* Mobile responsive */
+        @media (max-width: 768px) {
+            .main-content {
+                margin-left: 0;
+            }
+        }
+    </style>
+</head>
+<body class="min-h-screen">
+    <!-- Background -->
+    <div class="fixed inset-0 -z-10 bg-gradient-to-br from-gray-900 via-slate-900 to-gray-900"></div>
+
+    <!-- Sidebar Container -->
+    <div id="sidebar-container"></div>
+
+    <!-- Main Content -->
+    <div class="main-content">
+        <div class="relative z-10 container mx-auto px-4 pt-8 pb-12 sm:px-6 lg:px-8">
+            <!-- Header -->
+            <div class="text-center mb-8">
+                <h1 class="text-3xl sm:text-4xl font-bold mb-4 tracking-tight text-white">
+                    Elasticsearch Tools
+                </h1>
+                <p class="text-lg text-gray-400 max-w-2xl mx-auto">
+                    Essential Elasticsearch commands, queries, and code examples for Python and Laravel developers.
+                </p>
+            </div>
+
+            <!-- Main Content Area -->
+            <div class="max-w-6xl mx-auto">
+                
+                <!-- Python Section -->
+                <div class="mb-12">
+                    <h2 class="text-2xl font-semibold text-white mb-6 flex items-center">
+                        <span class="mr-3">🐍</span>Python Elasticsearch
+                    </h2>
+                    
+                    <!-- Python Installation -->
+                    <div class="mb-8">
+                        <h3 class="text-xl font-semibold text-blue-300 mb-4">Installation & Setup</h3>
+                        <div class="bg-slate-800/70 backdrop-blur-md rounded-lg shadow-lg border border-slate-700/60 p-6">
+                            <div class="flex items-center justify-between mb-4">
+                                <h4 class="text-lg font-semibold text-white">Install Elasticsearch Python Client</h4>
+                                <button class="copy-btn bg-blue-600 hover:bg-blue-700 text-white px-3 py-1 rounded text-sm" onclick="copyCode('python-install')">
+                                    Copy
+                                </button>
+                            </div>
+                            <pre id="python-install" class="code-block text-green-400"><code># Install Elasticsearch client
+pip install elasticsearch
+
+# For async support
+pip install elasticsearch[async]
+
+# For development with additional features
+pip install elasticsearch[dev]</code></pre>
+                        </div>
+                    </div>
+
+                    <!-- Python Connection -->
+                    <div class="mb-8">
+                        <h3 class="text-xl font-semibold text-blue-300 mb-4">Connection Setup</h3>
+                        <div class="bg-slate-800/70 backdrop-blur-md rounded-lg shadow-lg border border-slate-700/60 p-6">
+                            <div class="flex items-center justify-between mb-4">
+                                <h4 class="text-lg font-semibold text-white">Basic Connection</h4>
+                                <button class="copy-btn bg-blue-600 hover:bg-blue-700 text-white px-3 py-1 rounded text-sm" onclick="copyCode('python-connection')">
+                                    Copy
+                                </button>
+                            </div>
+                            <pre id="python-connection" class="code-block text-green-400"><code>from elasticsearch import Elasticsearch
+from elasticsearch.helpers import bulk
+
+# Basic connection
+es = Elasticsearch([{'host': 'localhost', 'port': 9200}])
+
+# With authentication
+es = Elasticsearch(
+    ['localhost:9200'],
+    http_auth=('username', 'password'),
+    verify_certs=True,
+    ca_certs='/path/to/ca_certs.pem'
+)
+
+# Cloud connection
+es = Elasticsearch(
+    cloud_id="your_cloud_id",
+    http_auth=('elastic', 'password')
+)
+
+# Check connection
+if es.ping():
+    print("Connected to Elasticsearch!")
+else:
+    print("Could not connect to Elasticsearch")</code></pre>
+                        </div>
+                    </div>
+
+                    <!-- Python CRUD Operations -->
+                    <div class="mb-8">
+                        <h3 class="text-xl font-semibold text-blue-300 mb-4">CRUD Operations</h3>
+                        
+                        <!-- Create Document -->
+                        <div class="mb-6">
+                            <div class="bg-slate-800/70 backdrop-blur-md rounded-lg shadow-lg border border-slate-700/60 p-6">
+                                <div class="flex items-center justify-between mb-4">
+                                    <h4 class="text-lg font-semibold text-white">Create Document</h4>
+                                    <button class="copy-btn bg-blue-600 hover:bg-blue-700 text-white px-3 py-1 rounded text-sm" onclick="copyCode('python-create')">
+                                        Copy
+                                    </button>
+                                </div>
+                                <pre id="python-create" class="code-block text-green-400"><code># Create a single document
+doc = {
+    'title': 'Elasticsearch Guide',
+    'content': 'This is a comprehensive guide to Elasticsearch',
+    'tags': ['elasticsearch', 'search', 'database'],
+    'created_at': '2024-01-15T10:30:00Z'
+}
+
+# Index document with auto-generated ID
+result = es.index(index='articles', body=doc)
+print(f"Document created with ID: {result['_id']}")
+
+# Index document with specific ID
+result = es.index(index='articles', id=1, body=doc)
+
+# Bulk indexing
+documents = [
+    {'_index': 'articles', '_source': {'title': 'Doc 1', 'content': 'Content 1'}},
+    {'_index': 'articles', '_source': {'title': 'Doc 2', 'content': 'Content 2'}},
+    {'_index': 'articles', '_source': {'title': 'Doc 3', 'content': 'Content 3'}}
+]
+bulk(es, documents)</code></pre>
+                            </div>
+                        </div>
+
+                        <!-- Read Document -->
+                        <div class="mb-6">
+                            <div class="bg-slate-800/70 backdrop-blur-md rounded-lg shadow-lg border border-slate-700/60 p-6">
+                                <div class="flex items-center justify-between mb-4">
+                                    <h4 class="text-lg font-semibold text-white">Read Document</h4>
+                                    <button class="copy-btn bg-blue-600 hover:bg-blue-700 text-white px-3 py-1 rounded text-sm" onclick="copyCode('python-read')">
+                                        Copy
+                                    </button>
+                                </div>
+                                <pre id="python-read" class="code-block text-green-400"><code># Get document by ID
+doc = es.get(index='articles', id=1)
+print(doc['_source'])
+
+# Search documents
+search_body = {
+    'query': {
+        'match': {
+            'title': 'Elasticsearch'
+        }
+    }
+}
+
+result = es.search(index='articles', body=search_body)
+for hit in result['hits']['hits']:
+    print(f"Score: {hit['_score']}, Source: {hit['_source']}")
+
+# Search with filters
+search_body = {
+    'query': {
+        'bool': {
+            'must': [
+                {'match': {'title': 'guide'}},
+                {'term': {'tags': 'elasticsearch'}}
+            ],
+            'filter': [
+                {'range': {'created_at': {'gte': '2024-01-01'}}}
+            ]
+        }
+    }
+}
+
+result = es.search(index='articles', body=search_body)</code></pre>
+                            </div>
+                        </div>
+
+                        <!-- Update Document -->
+                        <div class="mb-6">
+                            <div class="bg-slate-800/70 backdrop-blur-md rounded-lg shadow-lg border border-slate-700/60 p-6">
+                                <div class="flex items-center justify-between mb-4">
+                                    <h4 class="text-lg font-semibold text-white">Update Document</h4>
+                                    <button class="copy-btn bg-blue-600 hover:bg-blue-700 text-white px-3 py-1 rounded text-sm" onclick="copyCode('python-update')">
+                                        Copy
+                                    </button>
+                                </div>
+                                <pre id="python-update" class="code-block text-green-400"><code># Update entire document
+updated_doc = {
+    'title': 'Updated Elasticsearch Guide',
+    'content': 'This is an updated comprehensive guide to Elasticsearch',
+    'tags': ['elasticsearch', 'search', 'database', 'updated'],
+    'updated_at': '2024-01-16T10:30:00Z'
+}
+
+result = es.index(index='articles', id=1, body=updated_doc)
+
+# Partial update using script
+update_body = {
+    'script': {
+        'source': 'ctx._source.views += params.views',
+        'params': {'views': 1}
+    }
+}
+
+result = es.update(index='articles', id=1, body=update_body)
+
+# Partial update with doc
+update_body = {
+    'doc': {
+        'title': 'New Title',
+        'updated_at': '2024-01-16T10:30:00Z'
+    }
+}
+
+result = es.update(index='articles', id=1, body=update_body)</code></pre>
+                            </div>
+                        </div>
+
+                        <!-- Delete Document -->
+                        <div class="mb-6">
+                            <div class="bg-slate-800/70 backdrop-blur-md rounded-lg shadow-lg border border-slate-700/60 p-6">
+                                <div class="flex items-center justify-between mb-4">
+                                    <h4 class="text-lg font-semibold text-white">Delete Document</h4>
+                                    <button class="copy-btn bg-blue-600 hover:bg-blue-700 text-white px-3 py-1 rounded text-sm" onclick="copyCode('python-delete')">
+                                        Copy
+                                    </button>
+                                </div>
+                                <pre id="python-delete" class="code-block text-green-400"><code># Delete document by ID
+result = es.delete(index='articles', id=1)
+print(f"Document deleted: {result['result']}")
+
+# Delete by query
+delete_query = {
+    'query': {
+        'term': {'status': 'inactive'}
+    }
+}
+
+result = es.delete_by_query(index='articles', body=delete_query)
+print(f"Deleted {result['deleted']} documents")
+
+# Delete entire index
+result = es.indices.delete(index='articles')</code></pre>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Python Advanced Queries -->
+                    <div class="mb-8">
+                        <h3 class="text-xl font-semibold text-blue-300 mb-4">Advanced Queries</h3>
+                        
+                        <!-- Aggregations -->
+                        <div class="mb-6">
+                            <div class="bg-slate-800/70 backdrop-blur-md rounded-lg shadow-lg border border-slate-700/60 p-6">
+                                <div class="flex items-center justify-between mb-4">
+                                    <h4 class="text-lg font-semibold text-white">Aggregations</h4>
+                                    <button class="copy-btn bg-blue-600 hover:bg-blue-700 text-white px-3 py-1 rounded text-sm" onclick="copyCode('python-aggs')">
+                                        Copy
+                                    </button>
+                                </div>
+                                <pre id="python-aggs" class="code-block text-green-400"><code># Terms aggregation
+search_body = {
+    'size': 0,
+    'aggs': {
+        'popular_tags': {
+            'terms': {
+                'field': 'tags.keyword',
+                'size': 10
+            }
+        }
+    }
+}
+
+result = es.search(index='articles', body=search_body)
+for bucket in result['aggregations']['popular_tags']['buckets']:
+    print(f"Tag: {bucket['key']}, Count: {bucket['doc_count']}")
+
+# Date histogram aggregation
+search_body = {
+    'size': 0,
+    'aggs': {
+        'articles_over_time': {
+            'date_histogram': {
+                'field': 'created_at',
+                'calendar_interval': 'month'
+            }
+        }
+    }
+}
+
+result = es.search(index='articles', body=search_body)
+
+# Range aggregation
+search_body = {
+    'size': 0,
+    'aggs': {
+        'view_ranges': {
+            'range': {
+                'field': 'views',
+                'ranges': [
+                    {'to': 100},
+                    {'from': 100, 'to': 1000},
+                    {'from': 1000}
+                ]
+            }
+        }
+    }
+}
+
+result = es.search(index='articles', body=search_body)</code></pre>
+                            </div>
+                        </div>
+
+                        <!-- Full Text Search -->
+                        <div class="mb-6">
+                            <div class="bg-slate-800/70 backdrop-blur-md rounded-lg shadow-lg border border-slate-700/60 p-6">
+                                <div class="flex items-center justify-between mb-4">
+                                    <h4 class="text-lg font-semibold text-white">Full Text Search</h4>
+                                    <button class="copy-btn bg-blue-600 hover:bg-blue-700 text-white px-3 py-1 rounded text-sm" onclick="copyCode('python-search')">
+                                        Copy
+                                    </button>
+                                </div>
+                                <pre id="python-search" class="code-block text-green-400"><code># Multi-match query
+search_body = {
+    'query': {
+        'multi_match': {
+            'query': 'elasticsearch guide',
+            'fields': ['title^2', 'content'],
+            'type': 'best_fields',
+            'fuzziness': 'AUTO'
+        }
+    }
+}
+
+result = es.search(index='articles', body=search_body)
+
+# Bool query with should
+search_body = {
+    'query': {
+        'bool': {
+            'should': [
+                {'match': {'title': 'elasticsearch'}},
+                {'match': {'content': 'elasticsearch'}},
+                {'match': {'tags': 'elasticsearch'}}
+            ],
+            'minimum_should_match': 1
+        }
+    }
+}
+
+result = es.search(index='articles', body=search_body)
+
+# Wildcard and regex queries
+search_body = {
+    'query': {
+        'bool': {
+            'should': [
+                {'wildcard': {'title': '*guide*'}},
+                {'regexp': {'content': 'elast.*'}}
+            ]
+        }
+    }
+}
+
+result = es.search(index='articles', body=search_body)</code></pre>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Laravel Section -->
+                <div class="mb-12">
+                    <h2 class="text-2xl font-semibold text-white mb-6 flex items-center">
+                        <span class="mr-3">🌶️</span>Laravel Elasticsearch
+                    </h2>
+                    
+                    <!-- Laravel Installation -->
+                    <div class="mb-8">
+                        <h3 class="text-xl font-semibold text-green-300 mb-4">Installation & Setup</h3>
+                        <div class="bg-slate-800/70 backdrop-blur-md rounded-lg shadow-lg border border-slate-700/60 p-6">
+                            <div class="flex items-center justify-between mb-4">
+                                <h4 class="text-lg font-semibold text-white">Install Laravel Scout & Elasticsearch</h4>
+                                <button class="copy-btn bg-green-600 hover:bg-green-700 text-white px-3 py-1 rounded text-sm" onclick="copyCode('laravel-install')">
+                                    Copy
+                                </button>
+                            </div>
+                            <pre id="laravel-install" class="code-block text-green-400"><code># Install Laravel Scout
+composer require laravel/scout
+
+# Install Elasticsearch driver
+composer require tamayo/laravel-scout-elastic
+
+# Publish Scout configuration
+php artisan vendor:publish --provider="Laravel\Scout\ScoutServiceProvider"
+
+# Publish Elasticsearch configuration
+php artisan vendor:publish --provider="Tamayo\LaravelScoutElastic\ScoutElasticServiceProvider"</code></pre>
+                        </div>
+                    </div>
+
+                    <!-- Laravel Configuration -->
+                    <div class="mb-8">
+                        <h3 class="text-xl font-semibold text-green-300 mb-4">Configuration</h3>
+                        <div class="bg-slate-800/70 backdrop-blur-md rounded-lg shadow-lg border border-slate-700/60 p-6">
+                            <div class="flex items-center justify-between mb-4">
+                                <h4 class="text-lg font-semibold text-white">Environment Configuration</h4>
+                                <button class="copy-btn bg-green-600 hover:bg-green-700 text-white px-3 py-1 rounded text-sm" onclick="copyCode('laravel-config')">
+                                    Copy
+                                </button>
+                            </div>
+                            <pre id="laravel-config" class="code-block text-green-400"><code># .env configuration
+SCOUT_DRIVER=elastic
+ELASTICSEARCH_HOST=localhost:9200
+ELASTICSEARCH_INDEX=laravel
+
+# config/scout.php
+'elastic' => [
+    'index' => env('ELASTICSEARCH_INDEX', 'laravel'),
+    'hosts' => [
+        env('ELASTICSEARCH_HOST', 'localhost:9200'),
+    ],
+],
+
+# config/database.php (add to connections)
+'elasticsearch' => [
+    'driver' => 'elasticsearch',
+    'host' => env('ELASTICSEARCH_HOST', 'localhost:9200'),
+    'index' => env('ELASTICSEARCH_INDEX', 'laravel'),
+],</code></pre>
+                        </div>
+                    </div>
+
+                    <!-- Laravel Model Setup -->
+                    <div class="mb-8">
+                        <h3 class="text-xl font-semibold text-green-300 mb-4">Model Setup</h3>
+                        <div class="bg-slate-800/70 backdrop-blur-md rounded-lg shadow-lg border border-slate-700/60 p-6">
+                            <div class="flex items-center justify-between mb-4">
+                                <h4 class="text-lg font-semibold text-white">Article Model with Scout</h4>
+                                <button class="copy-btn bg-green-600 hover:bg-green-700 text-white px-3 py-1 rounded text-sm" onclick="copyCode('laravel-model')">
+                                    Copy
+                                </button>
+                            </div>
+                            <pre id="laravel-model" class="code-block text-green-400"><code><?php
+
+namespace App\Models;
+
+use Illuminate\Database\Eloquent\Model;
+use Laravel\Scout\Searchable;
+
+class Article extends Model
+{
+    use Searchable;
+
+    protected $fillable = [
+        'title',
+        'content',
+        'tags',
+        'published_at',
+        'views'
+    ];
+
+    protected $casts = [
+        'tags' => 'array',
+        'published_at' => 'datetime',
+    ];
+
+    /**
+     * Get the indexable data array for the model.
+     */
+    public function toSearchableArray()
+    {
+        return [
+            'title' => $this->title,
+            'content' => $this->content,
+            'tags' => $this->tags,
+            'published_at' => $this->published_at?->toISOString(),
+            'views' => $this->views,
+            'created_at' => $this->created_at->toISOString(),
+        ];
+    }
+
+    /**
+     * Get the index name for the model.
+     */
+    public function searchableAs()
+    {
+        return 'articles_index';
+    }
+
+    /**
+     * Determine if the model should be searchable.
+     */
+    public function shouldBeSearchable()
+    {
+        return $this->published_at !== null;
+    }
+}</code></pre>
+                        </div>
+                    </div>
+
+                    <!-- Laravel CRUD Operations -->
+                    <div class="mb-8">
+                        <h3 class="text-xl font-semibold text-green-300 mb-4">CRUD Operations</h3>
+                        
+                        <!-- Create & Index -->
+                        <div class="mb-6">
+                            <div class="bg-slate-800/70 backdrop-blur-md rounded-lg shadow-lg border border-slate-700/60 p-6">
+                                <div class="flex items-center justify-between mb-4">
+                                    <h4 class="text-lg font-semibold text-white">Create & Index Documents</h4>
+                                    <button class="copy-btn bg-green-600 hover:bg-green-700 text-white px-3 py-1 rounded text-sm" onclick="copyCode('laravel-create')">
+                                        Copy
+                                    </button>
+                                </div>
+                                <pre id="laravel-create" class="code-block text-green-400"><code><?php
+
+// Create and automatically index
+$article = Article::create([
+    'title' => 'Laravel Elasticsearch Guide',
+    'content' => 'This is a comprehensive guide to using Elasticsearch with Laravel',
+    'tags' => ['laravel', 'elasticsearch', 'search'],
+    'published_at' => now(),
+    'views' => 0
+]);
+
+// Manually index existing model
+$article->searchable();
+
+// Bulk index all models
+Article::makeAllSearchable();
+
+// Index specific models
+Article::where('published_at', '!=', null)->searchable();
+
+// Remove from search index
+$article->unsearchable();</code></pre>
+                            </div>
+                        </div>
+
+                        <!-- Search Operations -->
+                        <div class="mb-6">
+                            <div class="bg-slate-800/70 backdrop-blur-md rounded-lg shadow-lg border border-slate-700/60 p-6">
+                                <div class="flex items-center justify-between mb-4">
+                                    <h4 class="text-lg font-semibold text-white">Search Operations</h4>
+                                    <button class="copy-btn bg-green-600 hover:bg-green-700 text-white px-3 py-1 rounded text-sm" onclick="copyCode('laravel-search')">
+                                        Copy
+                                    </button>
+                                </div>
+                                <pre id="laravel-search" class="code-block text-green-400"><code><?php
+
+// Basic search
+$articles = Article::search('elasticsearch')->get();
+
+// Search with pagination
+$articles = Article::search('laravel guide')
+    ->paginate(15);
+
+// Advanced search with filters
+$articles = Article::search('elasticsearch')
+    ->where('tags', 'laravel')
+    ->where('views', '>', 100)
+    ->orderBy('published_at', 'desc')
+    ->get();
+
+// Search with custom query
+$articles = Article::search('', function ($elasticsearch, $query) {
+    return $elasticsearch->search($query, [
+        'body' => [
+            'query' => [
+                'bool' => [
+                    'must' => [
+                        ['match' => ['title' => 'elasticsearch']],
+                        ['match' => ['content' => 'guide']]
+                    ],
+                    'filter' => [
+                        ['term' => ['tags' => 'laravel']]
+                    ]
+                ]
+            ]
+        ]
+    ]);
+})->get();
+
+// Get search results with highlights
+$results = Article::search('elasticsearch')
+    ->with([
+        'body' => [
+            'highlight' => [
+                'fields' => [
+                    'title' => new \stdClass(),
+                    'content' => new \stdClass()
+                ]
+            ]
+        ]
+    ])
+    ->get();</code></pre>
+                            </div>
+                        </div>
+
+                        <!-- Aggregations -->
+                        <div class="mb-6">
+                            <div class="bg-slate-800/70 backdrop-blur-md rounded-lg shadow-lg border border-slate-700/60 p-6">
+                                <div class="flex items-center justify-between mb-4">
+                                    <h4 class="text-lg font-semibold text-white">Aggregations</h4>
+                                    <button class="copy-btn bg-green-600 hover:bg-green-700 text-white px-3 py-1 rounded text-sm" onclick="copyCode('laravel-aggs')">
+                                        Copy
+                                    </button>
+                                </div>
+                                <pre id="laravel-aggs" class="code-block text-green-400"><code><?php
+
+// Terms aggregation
+$results = Article::search('')
+    ->with([
+        'body' => [
+            'size' => 0,
+            'aggs' => [
+                'popular_tags' => [
+                    'terms' => [
+                        'field' => 'tags.keyword',
+                        'size' => 10
+                    ]
+                ]
+            ]
+        ]
+    ])
+    ->get();
+
+$aggregations = $results->getAggregations();
+$popularTags = $aggregations['popular_tags']['buckets'];
+
+// Date histogram aggregation
+$results = Article::search('')
+    ->with([
+        'body' => [
+            'size' => 0,
+            'aggs' => [
+                'articles_over_time' => [
+                    'date_histogram' => [
+                        'field' => 'published_at',
+                        'calendar_interval' => 'month'
+                    ]
+                ]
+            ]
+        ]
+    ])
+    ->get();
+
+// Range aggregation
+$results = Article::search('')
+    ->with([
+        'body' => [
+            'size' => 0,
+            'aggs' => [
+                'view_ranges' => [
+                    'range' => [
+                        'field' => 'views',
+                        'ranges' => [
+                            ['to' => 100],
+                            ['from' => 100, 'to' => 1000],
+                            ['from' => 1000]
+                        ]
+                    ]
+                ]
+            ]
+        ]
+    ])
+    ->get();</code></pre>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Laravel Commands -->
+                    <div class="mb-8">
+                        <h3 class="text-xl font-semibold text-green-300 mb-4">Artisan Commands</h3>
+                        <div class="bg-slate-800/70 backdrop-blur-md rounded-lg shadow-lg border border-slate-700/60 p-6">
+                            <div class="flex items-center justify-between mb-4">
+                                <h4 class="text-lg font-semibold text-white">Useful Commands</h4>
+                                <button class="copy-btn bg-green-600 hover:bg-green-700 text-white px-3 py-1 rounded text-sm" onclick="copyCode('laravel-commands')">
+                                    Copy
+                                </button>
+                            </div>
+                            <pre id="laravel-commands" class="code-block text-green-400"><code># Import all models to search index
+php artisan scout:import "App\Models\Article"
+
+# Flush all models from search index
+php artisan scout:flush "App\Models\Article"
+
+# Create custom search command
+php artisan make:command SearchArticles
+
+# Example custom command
+<?php
+
+namespace App\Console\Commands;
+
+use Illuminate\Console\Command;
+use App\Models\Article;
+
+class SearchArticles extends Command
+{
+    protected $signature = 'search:articles {query}';
+    protected $description = 'Search articles in Elasticsearch';
+
+    public function handle()
+    {
+        $query = $this->argument('query');
+        
+        $articles = Article::search($query)->get();
+        
+        $this->info("Found {$articles->count()} articles:");
+        
+        foreach ($articles as $article) {
+            $this->line("- {$article->title}");
+        }
+    }
+}</code></pre>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Common Elasticsearch Queries -->
+                <div class="mb-12">
+                    <h2 class="text-2xl font-semibold text-white mb-6 flex items-center">
+                        <span class="mr-3">🔍</span>Common Elasticsearch Queries
+                    </h2>
+                    
+                    <!-- Query Examples -->
+                    <div class="mb-8">
+                        <h3 class="text-xl font-semibold text-purple-300 mb-4">Query Examples</h3>
+                        
+                        <!-- Match Query -->
+                        <div class="mb-6">
+                            <div class="bg-slate-800/70 backdrop-blur-md rounded-lg shadow-lg border border-slate-700/60 p-6">
+                                <div class="flex items-center justify-between mb-4">
+                                    <h4 class="text-lg font-semibold text-white">Match Query</h4>
+                                    <button class="copy-btn bg-purple-600 hover:bg-purple-700 text-white px-3 py-1 rounded text-sm" onclick="copyCode('match-query')">
+                                        Copy
+                                    </button>
+                                </div>
+                                <pre id="match-query" class="code-block text-green-400"><code>{
+  "query": {
+    "match": {
+      "title": "elasticsearch guide"
+    }
+  }
+}</code></pre>
+                            </div>
+                        </div>
+
+                        <!-- Bool Query -->
+                        <div class="mb-6">
+                            <div class="bg-slate-800/70 backdrop-blur-md rounded-lg shadow-lg border border-slate-700/60 p-6">
+                                <div class="flex items-center justify-between mb-4">
+                                    <h4 class="text-lg font-semibold text-white">Bool Query</h4>
+                                    <button class="copy-btn bg-purple-600 hover:bg-purple-700 text-white px-3 py-1 rounded text-sm" onclick="copyCode('bool-query')">
+                                        Copy
+                                    </button>
+                                </div>
+                                <pre id="bool-query" class="code-block text-green-400"><code>{
+  "query": {
+    "bool": {
+      "must": [
+        { "match": { "title": "elasticsearch" } }
+      ],
+      "should": [
+        { "match": { "content": "guide" } },
+        { "match": { "tags": "tutorial" } }
+      ],
+      "filter": [
+        { "term": { "status": "published" } },
+        { "range": { "created_at": { "gte": "2024-01-01" } } }
+      ],
+      "must_not": [
+        { "term": { "category": "draft" } }
+      ]
+    }
+  }
+}</code></pre>
+                            </div>
+                        </div>
+
+                        <!-- Aggregation Query -->
+                        <div class="mb-6">
+                            <div class="bg-slate-800/70 backdrop-blur-md rounded-lg shadow-lg border border-slate-700/60 p-6">
+                                <div class="flex items-center justify-between mb-4">
+                                    <h4 class="text-lg font-semibold text-white">Aggregation Query</h4>
+                                    <button class="copy-btn bg-purple-600 hover:bg-purple-700 text-white px-3 py-1 rounded text-sm" onclick="copyCode('agg-query')">
+                                        Copy
+                                    </button>
+                                </div>
+                                <pre id="agg-query" class="code-block text-green-400"><code>{
+  "size": 0,
+  "aggs": {
+    "popular_tags": {
+      "terms": {
+        "field": "tags.keyword",
+        "size": 10
+      }
+    },
+    "avg_views": {
+      "avg": {
+        "field": "views"
+      }
+    },
+    "articles_by_month": {
+      "date_histogram": {
+        "field": "created_at",
+        "calendar_interval": "month"
+      }
+    }
+  }
+}</code></pre>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Performance Tips -->
+                <div class="mb-12">
+                    <h2 class="text-2xl font-semibold text-white mb-6 flex items-center">
+                        <span class="mr-3">⚡</span>Performance Tips
+                    </h2>
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <!-- Python Tips -->
+                        <div class="bg-slate-800/70 backdrop-blur-md rounded-lg shadow-lg border border-slate-700/60 p-6">
+                            <h3 class="text-lg font-semibold text-blue-300 mb-4">Python Performance</h3>
+                            <ul class="text-gray-300 space-y-2">
+                                <li>• Use connection pooling</li>
+                                <li>• Implement bulk operations</li>
+                                <li>• Use async client for I/O operations</li>
+                                <li>• Cache frequently used queries</li>
+                                <li>• Use scroll API for large datasets</li>
+                                <li>• Optimize mapping and analyzers</li>
+                            </ul>
+                        </div>
+
+                        <!-- Laravel Tips -->
+                        <div class="bg-slate-800/70 backdrop-blur-md rounded-lg shadow-lg border border-slate-700/60 p-6">
+                            <h3 class="text-lg font-semibold text-green-300 mb-4">Laravel Performance</h3>
+                            <ul class="text-gray-300 space-y-2">
+                                <li>• Use queue jobs for indexing</li>
+                                <li>• Implement search result caching</li>
+                                <li>• Use eager loading with search</li>
+                                <li>• Optimize toSearchableArray()</li>
+                                <li>• Use partial updates when possible</li>
+                                <li>• Monitor search performance</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="sidebar-include.js"></script>
+    <script src="sidebar.js"></script>
+    <script>
+        // Ensure sidebar loads properly
+        document.addEventListener('DOMContentLoaded', function() {
+            const sidebarContainer = document.getElementById('sidebar-container');
+            if (sidebarContainer && typeof sidebarHTML !== 'undefined') {
+                sidebarContainer.innerHTML = sidebarHTML;
+            } else {
+                console.error('Sidebar not loading properly');
+            }
+        });
+        
+        function copyCode(elementId) {
+            const element = document.getElementById(elementId);
+            const text = element.textContent;
+            
+            navigator.clipboard.writeText(text).then(() => {
+                const button = element.parentElement.querySelector('.copy-btn');
+                const originalText = button.textContent;
+                button.textContent = 'Copied!';
+                button.classList.add('copied');
+                
+                setTimeout(() => {
+                    button.textContent = originalText;
+                    button.classList.remove('copied');
+                }, 2000);
+            }).catch(err => {
+                console.error('Failed to copy text: ', err);
+            });
+        }
+    </script>
+</body>
+</html>
