@@ -92,6 +92,9 @@
                         <button class="transform-btn px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white text-sm rounded-lg transition-colors duration-200" data-transform="remove-spaces">
                             Remove Spaces
                         </button>
+                        <button class="transform-btn px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white text-sm rounded-lg transition-colors duration-200" data-transform="frequency-counter">
+                            Frequency Counter
+                        </button>
                     </div>
                 </div>
 
@@ -107,24 +110,49 @@
 
                 <!-- Output Section -->
                 <div id="output-section" class="hidden">
-                    <label for="string-output" class="block text-sm font-medium text-gray-300 mb-2">
-                        Transformed Output
-                    </label>
-                    <div class="relative">
+                    <div class="flex items-center justify-between mb-2">
+                        <label for="string-output" class="text-sm font-medium text-gray-300">
+                            Transformed Output
+                        </label>
+                        <button id="copy-btn" class="px-3 py-1 bg-slate-600 hover:bg-slate-700 text-white text-sm rounded transition-colors duration-200 flex items-center space-x-1">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v8a2 2 0 01-2 2h-2m-6-4l2 2m0 0l2-2m-2 2V10"></path>
+                            </svg>
+                            <span>Copy</span>
+                        </button>
+                    </div>
+                    
+                    <!-- Text Output (default) -->
+                    <div id="text-output-container" class="relative">
                         <textarea 
                             id="string-output" 
                             rows="4" 
                             class="w-full px-4 py-3 bg-slate-700/50 border border-slate-600 rounded-lg text-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-none font-mono text-sm"
                             readonly
                         ></textarea>
-                        
-                        <!-- Copy Button -->
-                        <button id="copy-btn" class="absolute top-2 right-2 px-3 py-1 bg-slate-600 hover:bg-slate-700 text-white text-sm rounded transition-colors duration-200 flex items-center space-x-1">
-                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v8a2 2 0 01-2 2h-2m-6-4l2 2m0 0l2-2m-2 2V10"></path>
-                            </svg>
-                            <span>Copy</span>
-                        </button>
+                    </div>
+                    
+                    <!-- Table Output (for frequency counter) -->
+                    <div id="table-output-container" class="hidden">
+                        <div class="bg-slate-700/50 border border-slate-600 rounded-lg overflow-hidden">
+                            <div class="overflow-x-auto">
+                                <table id="frequency-table" class="w-full text-sm">
+                                    <thead class="bg-slate-600/50">
+                                        <tr>
+                                            <th class="text-left py-3 px-4 text-gray-300 font-medium">Character</th>
+                                            <th class="text-center py-3 px-4 text-gray-300 font-medium">Count</th>
+                                            <th class="text-center py-3 px-4 text-gray-300 font-medium">Percentage</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="frequency-tbody" class="divide-y divide-slate-600">
+                                        <!-- Frequency data will be populated here -->
+                                    </tbody>
+                                </table>
+                            </div>
+                            <div id="frequency-summary" class="px-4 py-3 bg-slate-600/30 border-t border-slate-600 text-xs text-gray-400">
+                                <!-- Summary will be populated here -->
+                            </div>
+                        </div>
                     </div>
                 </div>
 
@@ -229,6 +257,18 @@
             }
 
             function transformString(input, transform) {
+                // Show/hide appropriate output container
+                const textContainer = document.getElementById('text-output-container');
+                const tableContainer = document.getElementById('table-output-container');
+                
+                if (transform === 'frequency-counter') {
+                    textContainer.classList.add('hidden');
+                    tableContainer.classList.remove('hidden');
+                } else {
+                    textContainer.classList.remove('hidden');
+                    tableContainer.classList.add('hidden');
+                }
+                
                 switch (transform) {
                     case 'uppercase':
                         return input.toUpperCase();
@@ -259,6 +299,8 @@
                             .replace(/^-+|-+$/g, '');
                     case 'remove-spaces':
                         return input.replace(/\s+/g, '');
+                    case 'frequency-counter':
+                        return getCharacterFrequency(input);
                     default:
                         return input;
                 }
@@ -282,6 +324,68 @@
                 const sizes = ['B', 'KB', 'MB', 'GB'];
                 const i = Math.floor(Math.log(bytes) / Math.log(k));
                 return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+            }
+
+            function getCharacterFrequency(str) {
+                const frequency = {};
+                const totalChars = str.length;
+                
+                // Count each character
+                for (let char of str) {
+                    frequency[char] = (frequency[char] || 0) + 1;
+                }
+                
+                // Sort by character lexicographically (alphabetically)
+                const sortedChars = Object.entries(frequency)
+                    .sort((a, b) => a[0].localeCompare(b[0]));
+                
+                // Display as interactive table
+                displayFrequencyTable(sortedChars, totalChars);
+                
+                // Return a simple text version for copy functionality
+                return sortedChars.map(([char, count]) => {
+                    const displayChar = char === ' ' ? '[space]' : 
+                                      char === '\n' ? '[newline]' : 
+                                      char === '\t' ? '[tab]' : 
+                                      char === '\r' ? '[carriage-return]' : char;
+                    return `${displayChar}: ${count}`;
+                }).join('\n');
+            }
+            
+            function displayFrequencyTable(sortedChars, totalChars) {
+                const tbody = document.getElementById('frequency-tbody');
+                const summary = document.getElementById('frequency-summary');
+                
+                // Clear previous data
+                tbody.innerHTML = '';
+                
+                // Populate table rows
+                sortedChars.forEach(([char, count]) => {
+                    const percentage = ((count / totalChars) * 100).toFixed(1);
+                    const displayChar = char === ' ' ? '⎵' : 
+                                      char === '\n' ? '↵' : 
+                                      char === '\t' ? '⇥' : 
+                                      char === '\r' ? '⏎' : char;
+                    
+                    const row = document.createElement('tr');
+                    row.className = 'hover:bg-slate-600/30 transition-colors duration-200';
+                    
+                    row.innerHTML = `
+                        <td class="py-2 px-4 text-gray-200 font-mono">${displayChar}</td>
+                        <td class="py-2 px-4 text-center text-blue-400 font-semibold">${count}</td>
+                        <td class="py-2 px-4 text-center text-green-400">${percentage}%</td>
+                    `;
+                    
+                    tbody.appendChild(row);
+                });
+                
+                // Update summary
+                summary.innerHTML = `
+                    <div class="flex justify-between items-center">
+                        <span>📊 Total unique characters: <span class="text-blue-400 font-semibold">${sortedChars.length}</span></span>
+                        <span>📝 Total characters: <span class="text-green-400 font-semibold">${totalChars}</span></span>
+                    </div>
+                `;
             }
 
             // Example text on page load
