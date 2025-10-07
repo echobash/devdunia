@@ -255,6 +255,19 @@ const sidebarHTML = `    <!-- Common Sidebar for DevDunia -->
             </a>
         </div>
 
+        <!-- Redis Section -->
+        <div class="sidebar-section">
+            <div class="sidebar-section-title">Redis</div>
+            <a href="home.html#redis" class="sidebar-item">
+                <div class="sidebar-icon">🔴</div>
+                <span class="sidebar-text">Redis</span>
+            </a>
+            <a href="redis-command-explorer.html" class="sidebar-item">
+                <div class="sidebar-icon">📚</div>
+                <span class="sidebar-text">Command Explorer</span>
+            </a>
+        </div>
+
         <!-- Information Section -->
         <div class="sidebar-section">
             <div class="sidebar-section-title">Info</div>
