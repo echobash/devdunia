@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Markdown Editor - DevDunia</title>
+    <meta name="description" content="Write and preview Markdown with live rendering, syntax highlighting, and export options. Perfect for documentation, README files, and content creation.">
+    <link rel="stylesheet" href="sidebar.css">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="icon" type="image/png" href="images/logo.png">
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css">
+    <style>
+        body {
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+            min-height: 100vh;
+        }
+        .markdown-preview {
+            height: 100vh;
+            overflow-y: auto;
+        }
+        .markdown-editor-container {
+            height: 100vh;
+        }
+        .markdown-preview h1, .markdown-preview h2, .markdown-preview h3 {
+            color: #f1f5f9;
+            margin-top: 1.5rem;
+            margin-bottom: 0.5rem;
+        }
+        .markdown-preview h1 {
+            font-size: 2rem;
+            border-bottom: 2px solid #3b82f6;
+            padding-bottom: 0.5rem;
+        }
+        .markdown-preview h2 {
+            font-size: 1.5rem;
+            border-bottom: 1px solid #64748b;
+            padding-bottom: 0.25rem;
+        }
+        .markdown-preview h3 {
+            font-size: 1.25rem;
+        }
+        .markdown-preview p {
+            margin-bottom: 1rem;
+            line-height: 1.6;
+        }
+        .markdown-preview code {
+            background-color: #1e293b;
+            padding: 0.125rem 0.25rem;
+            border-radius: 0.25rem;
+            font-family: 'Courier New', monospace;
+        }
+        .markdown-preview pre {
+            background-color: #1e293b;
+            padding: 1rem;
+            border-radius: 0.5rem;
+            overflow-x: auto;
+            margin: 1rem 0;
+        }
+        .markdown-preview blockquote {
+            border-left: 4px solid #3b82f6;
+            padding-left: 1rem;
+            margin: 1rem 0;
+            color: #94a3b8;
+            font-style: italic;
+        }
+        .markdown-preview table {
+            border-collapse: collapse;
+            width: 100%;
+            margin: 1rem 0;
+        }
+        .markdown-preview th, .markdown-preview td {
+            border: 1px solid #475569;
+            padding: 0.5rem;
+            text-align: left;
+        }
+        .markdown-preview th {
+            background-color: #334155;
+            font-weight: bold;
+        }
+        .markdown-preview ul, .markdown-preview ol {
+            margin: 1rem 0;
+            padding-left: 2rem;
+        }
+        .markdown-preview li {
+            margin-bottom: 0.25rem;
+        }
+        .markdown-preview a {
+            color: #60a5fa;
+            text-decoration: underline;
+        }
+        .markdown-preview a:hover {
+            color: #93c5fd;
+        }
+        .markdown-preview img {
+            max-width: 100%;
+            height: auto;
+            border-radius: 0.5rem;
+            margin: 1rem 0;
+        }
+        .markdown-preview hr {
+            border: none;
+            border-top: 2px solid #475569;
+            margin: 2rem 0;
+        }
+    </style>
+</head>
+<body>
+    <!-- Sidebar -->
+    <div id="sidebar-container"></div>
+    
+    <!-- Main Content -->
+    <div class="main-content ml-0 lg:ml-64 h-screen">
+        <!-- Editor and Preview -->
+        <div class="grid grid-cols-1 lg:grid-cols-2 h-full">
+            <!-- Editor -->
+            <div class="bg-slate-800/50 backdrop-blur-lg border-r border-slate-700/50 flex flex-col">
+                <div class="p-4 border-b border-slate-700/50 flex-shrink-0">
+                    <h3 class="text-lg font-semibold text-gray-300">Markdown Editor</h3>
+                </div>
+                <div class="p-4 flex-1">
+                    <textarea 
+                        id="markdown-editor" 
+                        class="markdown-editor-container w-full px-4 py-3 bg-slate-700/50 border border-slate-600 rounded-lg text-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-none font-mono text-sm"
+                        placeholder="Start writing your Markdown here...
+
+# Welcome to Markdown Editor
+
+This is a **live preview** editor. Try these features:
+
+## Features
+- **Bold text**
+- *Italic text*
+- `Inline code`
+- [Links](https://example.com)
+- ![Images](https://via.placeholder.com/150)
+
+### Code Blocks
+```javascript
+function hello() {
+    console.log('Hello, World!');
+}
+```
+
+### Lists
+1. First item
+2. Second item
+3. Third item
+
+### Tables
+| Column 1 | Column 2 | Column 3 |
+|----------|----------|----------|
+| Data 1   | Data 2   | Data 3   |
+
+> This is a blockquote
+
+---
+"
+                    ></textarea>
+                </div>
+            </div>
+
+            <!-- Preview -->
+            <div class="bg-slate-800/50 backdrop-blur-lg flex flex-col">
+                <div class="p-4 border-b border-slate-700/50 flex-shrink-0">
+                    <h3 class="text-lg font-semibold text-gray-300">Live Preview</h3>
+                </div>
+                <div class="p-4 flex-1 overflow-hidden">
+                    <div id="markdown-preview" class="markdown-preview text-gray-200">
+                        <p class="text-gray-400 italic">Start typing in the editor to see the live preview...</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Sidebar Include Script -->
+    <script src="sidebar-include.js"></script>
+
+    <script>
+        // Configure marked
+        marked.setOptions({
+            highlight: function(code, lang) {
+                if (lang && hljs.getLanguage(lang)) {
+                    return hljs.highlight(code, { language: lang }).value;
+                }
+                return hljs.highlightAuto(code).value;
+            },
+            breaks: true,
+            gfm: true
+        });
+
+        // DOM elements
+        const editor = document.getElementById('markdown-editor');
+        const preview = document.getElementById('markdown-preview');
+
+        // Update preview
+        function updatePreview() {
+            const markdown = editor.value;
+            const html = marked.parse(markdown);
+            preview.innerHTML = html;
+        }
+
+        // Live preview
+        editor.addEventListener('input', updatePreview);
+
+        // Initialize
+        window.addEventListener('load', () => {
+            updatePreview();
+        });
+    </script>
+</body>
+</html>

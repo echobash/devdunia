@@ -191,6 +191,10 @@ const sidebarHTML = `    <!-- Common Sidebar for DevDunia -->
                 <div class="sidebar-icon">📊</div>
                 <span class="sidebar-text">Word Counter</span>
             </a>
+            <a href="markdown-editor.html" class="sidebar-item">
+                <div class="sidebar-icon">📝</div>
+                <span class="sidebar-text">Markdown Editor</span>
+            </a>
             </div>
 
             <!-- Payments Section -->
