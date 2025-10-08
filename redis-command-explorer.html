@@ -1,0 +1,691 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Redis Command Explorer - DevDunia</title>
+    <meta name="description" content="Interactive Redis command reference with examples, syntax, and performance tips">
+    <link rel="icon" type="image/png" href="images/logo.png">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="sidebar.css">
+    <style>
+        body {
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+            min-height: 100vh;
+        }
+        .command-card {
+            transition: all 0.3s ease;
+        }
+        .command-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+        }
+        .redis-red {
+            background: linear-gradient(135deg, #dc2626 0%, #991b1b 100%);
+        }
+        .redis-red-light {
+            background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+        }
+        .command-syntax {
+            background: #1e293b;
+            border: 1px solid #334155;
+            font-family: 'Courier New', monospace;
+        }
+        .copy-btn {
+            transition: all 0.2s ease;
+        }
+        .copy-btn:hover {
+            transform: scale(1.05);
+        }
+        .category-active {
+            background: linear-gradient(135deg, #dc2626 0%, #991b1b 100%);
+            color: white;
+        }
+    </style>
+</head>
+<body>
+    <!-- Sidebar -->
+    <div id="sidebar-container"></div>
+    
+    <!-- Main Content -->
+    <div class="main-content ml-0 lg:ml-64 min-h-screen">
+        <div class="container mx-auto px-4 py-8">
+            <!-- Header -->
+            <div class="text-center mb-8">
+                <h1 class="text-4xl font-bold text-white mb-4">Redis Command Explorer</h1>
+                <p class="text-gray-400 text-lg">Interactive Redis command reference with examples and performance tips</p>
+            </div>
+
+            <!-- Search and Filter -->
+            <div class="bg-slate-800/50 backdrop-blur-lg rounded-xl p-6 border border-slate-700/50 shadow-2xl mb-8">
+                <div class="flex flex-col lg:flex-row gap-4">
+                    <div class="flex-1">
+                        <input 
+                            type="text" 
+                            id="command-search" 
+                            placeholder="Search Redis commands..." 
+                            class="w-full px-4 py-3 bg-slate-700/50 border border-slate-600 rounded-lg text-gray-200 focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent"
+                        >
+                    </div>
+                    <div class="flex flex-wrap gap-2">
+                        <button class="category-btn px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded-lg transition-colors duration-200" data-category="all">
+                            All Commands
+                        </button>
+                        <button class="category-btn px-4 py-2 bg-slate-600 hover:bg-slate-700 text-white rounded-lg transition-colors duration-200" data-category="strings">
+                            Strings
+                        </button>
+                        <button class="category-btn px-4 py-2 bg-slate-600 hover:bg-slate-700 text-white rounded-lg transition-colors duration-200" data-category="lists">
+                            Lists
+                        </button>
+                        <button class="category-btn px-4 py-2 bg-slate-600 hover:bg-slate-700 text-white rounded-lg transition-colors duration-200" data-category="sets">
+                            Sets
+                        </button>
+                        <button class="category-btn px-4 py-2 bg-slate-600 hover:bg-slate-700 text-white rounded-lg transition-colors duration-200" data-category="hashes">
+                            Hashes
+                        </button>
+                        <button class="category-btn px-4 py-2 bg-slate-600 hover:bg-slate-700 text-white rounded-lg transition-colors duration-200" data-category="sorted-sets">
+                            Sorted Sets
+                        </button>
+                        <button class="category-btn px-4 py-2 bg-slate-600 hover:bg-slate-700 text-white rounded-lg transition-colors duration-200" data-category="keys">
+                            Keys
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Commands Display -->
+            <div id="commands-container" class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                <!-- Commands will be populated here -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Sidebar Include Script -->
+    <script src="sidebar-include.js"></script>
+
+    <script>
+        // Redis Commands Data (ranked by usage frequency - CRUD operations first)
+        const redisCommands = {
+            strings: [
+                {
+                    command: "GET",
+                    syntax: "GET key",
+                    description: "Get the value of a key",
+                    example: "GET mykey",
+                    performance: "O(1)",
+                    useCase: "Retrieve cached data, simple lookups",
+                    usageRank: 1,
+                    frequency: "Very High"
+                },
+                {
+                    command: "SET",
+                    syntax: "SET key value [EX seconds] [PX milliseconds] [NX|XX]",
+                    description: "Set the string value of a key",
+                    example: "SET mykey \"Hello World\" EX 3600",
+                    performance: "O(1)",
+                    useCase: "Basic key-value storage, caching, session storage",
+                    usageRank: 2,
+                    frequency: "Very High"
+                },
+                {
+                    command: "DEL",
+                    syntax: "DEL key [key ...]",
+                    description: "Delete a key",
+                    example: "DEL mykey",
+                    performance: "O(1) per key",
+                    useCase: "Cleanup, cache invalidation",
+                    usageRank: 3,
+                    frequency: "Very High"
+                },
+                {
+                    command: "MGET",
+                    syntax: "MGET key [key ...]",
+                    description: "Get the values of all given keys",
+                    example: "MGET key1 key2 key3",
+                    performance: "O(N)",
+                    useCase: "Batch retrieval, reducing round trips",
+                    usageRank: 4,
+                    frequency: "High"
+                },
+                {
+                    command: "MSET",
+                    syntax: "MSET key value [key value ...]",
+                    description: "Set multiple keys to multiple values",
+                    example: "MSET key1 \"Hello\" key2 \"World\"",
+                    performance: "O(N)",
+                    useCase: "Batch operations, bulk data insertion",
+                    usageRank: 5,
+                    frequency: "High"
+                },
+                {
+                    command: "EXISTS",
+                    syntax: "EXISTS key [key ...]",
+                    description: "Determine if a key exists",
+                    example: "EXISTS mykey",
+                    performance: "O(1) per key",
+                    useCase: "Validation, conditional operations",
+                    usageRank: 6,
+                    frequency: "High"
+                },
+                {
+                    command: "KEYS",
+                    syntax: "KEYS pattern",
+                    description: "Find all keys matching the given pattern",
+                    example: "KEYS user:*",
+                    performance: "O(N)",
+                    useCase: "Debugging, admin operations (avoid in production)",
+                    usageRank: 7,
+                    frequency: "High"
+                },
+                {
+                    command: "EXPIRE",
+                    syntax: "EXPIRE key seconds",
+                    description: "Set a key's time to live in seconds",
+                    example: "EXPIRE mykey 3600",
+                    performance: "O(1)",
+                    useCase: "TTL management, cache expiration",
+                    usageRank: 8,
+                    frequency: "Medium"
+                },
+                {
+                    command: "TTL",
+                    syntax: "TTL key",
+                    description: "Get the time to live for a key",
+                    example: "TTL mykey",
+                    performance: "O(1)",
+                    useCase: "Monitoring expiration, debugging",
+                    usageRank: 9,
+                    frequency: "Medium"
+                },
+                {
+                    command: "INCR",
+                    syntax: "INCR key",
+                    description: "Increment the integer value of a key by one",
+                    example: "INCR counter",
+                    performance: "O(1)",
+                    useCase: "Counters, rate limiting, unique IDs",
+                    usageRank: 10,
+                    frequency: "Medium"
+                },
+                {
+                    command: "APPEND",
+                    syntax: "APPEND key value",
+                    description: "Append a value to a key",
+                    example: "APPEND mykey \" World\"",
+                    performance: "O(1)",
+                    useCase: "Logging, building strings incrementally",
+                    usageRank: 11,
+                    frequency: "Low"
+                }
+            ],
+            lists: [
+                {
+                    command: "LPUSH",
+                    syntax: "LPUSH key element [element ...]",
+                    description: "Prepend one or more elements to a list",
+                    example: "LPUSH mylist \"world\" \"hello\"",
+                    performance: "O(1) per element",
+                    useCase: "Stacks, recent items, activity feeds",
+                    usageRank: 11,
+                    frequency: "High"
+                },
+                {
+                    command: "RPUSH",
+                    syntax: "RPUSH key element [element ...]",
+                    description: "Append one or more elements to a list",
+                    example: "RPUSH mylist \"item1\" \"item2\"",
+                    performance: "O(1) per element",
+                    useCase: "Queues, FIFO operations, message queues",
+                    usageRank: 12,
+                    frequency: "High"
+                },
+                {
+                    command: "LRANGE",
+                    syntax: "LRANGE key start stop",
+                    description: "Get a range of elements from a list",
+                    example: "LRANGE mylist 0 -1",
+                    performance: "O(S+N)",
+                    useCase: "Pagination, retrieving multiple items",
+                    usageRank: 13,
+                    frequency: "Medium"
+                },
+                {
+                    command: "LLEN",
+                    syntax: "LLEN key",
+                    description: "Get the length of a list",
+                    example: "LLEN mylist",
+                    performance: "O(1)",
+                    useCase: "Monitoring queue size, validation",
+                    usageRank: 14,
+                    frequency: "Medium"
+                },
+                {
+                    command: "LPOP",
+                    syntax: "LPOP key [count]",
+                    description: "Remove and get the first elements in a list",
+                    example: "LPOP mylist",
+                    performance: "O(1) per element",
+                    useCase: "Stack operations, task processing",
+                    usageRank: 15,
+                    frequency: "Medium"
+                },
+                {
+                    command: "RPOP",
+                    syntax: "RPOP key [count]",
+                    description: "Remove and get the last elements in a list",
+                    example: "RPOP mylist",
+                    performance: "O(1) per element",
+                    useCase: "Queue operations, LIFO processing",
+                    usageRank: 16,
+                    frequency: "Medium"
+                }
+            ],
+            sets: [
+                {
+                    command: "SADD",
+                    syntax: "SADD key member [member ...]",
+                    description: "Add one or more members to a set",
+                    example: "SADD myset \"member1\" \"member2\"",
+                    performance: "O(1) per member",
+                    useCase: "Unique collections, tags, categories",
+                    usageRank: 17,
+                    frequency: "Medium"
+                },
+                {
+                    command: "SMEMBERS",
+                    syntax: "SMEMBERS key",
+                    description: "Get all the members in a set",
+                    example: "SMEMBERS myset",
+                    performance: "O(N)",
+                    useCase: "Retrieving all unique items",
+                    usageRank: 18,
+                    frequency: "Medium"
+                },
+                {
+                    command: "SCARD",
+                    syntax: "SCARD key",
+                    description: "Get the number of members in a set",
+                    example: "SCARD myset",
+                    performance: "O(1)",
+                    useCase: "Counting unique items",
+                    usageRank: 19,
+                    frequency: "Medium"
+                },
+                {
+                    command: "SREM",
+                    syntax: "SREM key member [member ...]",
+                    description: "Remove one or more members from a set",
+                    example: "SREM myset \"member1\"",
+                    performance: "O(1) per member",
+                    useCase: "Removing items from collections",
+                    usageRank: 20,
+                    frequency: "Low"
+                },
+                {
+                    command: "SINTER",
+                    syntax: "SINTER key [key ...]",
+                    description: "Intersect multiple sets",
+                    example: "SINTER set1 set2",
+                    performance: "O(N*M)",
+                    useCase: "Finding common elements, filtering",
+                    usageRank: 21,
+                    frequency: "Low"
+                },
+                {
+                    command: "SUNION",
+                    syntax: "SUNION key [key ...]",
+                    description: "Add multiple sets",
+                    example: "SUNION set1 set2",
+                    performance: "O(N)",
+                    useCase: "Combining collections, merging tags",
+                    usageRank: 22,
+                    frequency: "Low"
+                }
+            ],
+            hashes: [
+                {
+                    command: "HGET",
+                    syntax: "HGET key field",
+                    description: "Get the value of a hash field",
+                    example: "HGET user:1000 name",
+                    performance: "O(1)",
+                    useCase: "Retrieving specific object properties",
+                    usageRank: 12,
+                    frequency: "Very High"
+                },
+                {
+                    command: "HSET",
+                    syntax: "HSET key field value [field value ...]",
+                    description: "Set the string value of a hash field",
+                    example: "HSET user:1000 name \"John\" age \"30\"",
+                    performance: "O(1) per field",
+                    useCase: "Object storage, user profiles, configurations",
+                    usageRank: 13,
+                    frequency: "Very High"
+                },
+                {
+                    command: "HGETALL",
+                    syntax: "HGETALL key",
+                    description: "Get all the fields and values in a hash",
+                    example: "HGETALL user:1000",
+                    performance: "O(N)",
+                    useCase: "Retrieving complete objects",
+                    usageRank: 14,
+                    frequency: "High"
+                },
+                {
+                    command: "HKEYS",
+                    syntax: "HKEYS key",
+                    description: "Get all the fields in a hash",
+                    example: "HKEYS user:1000",
+                    performance: "O(N)",
+                    useCase: "Getting object field names",
+                    usageRank: 15,
+                    frequency: "High"
+                },
+                {
+                    command: "HDEL",
+                    syntax: "HDEL key field [field ...]",
+                    description: "Delete one or more hash fields",
+                    example: "HDEL user:1000 age",
+                    performance: "O(1) per field",
+                    useCase: "Removing object properties",
+                    usageRank: 16,
+                    frequency: "Medium"
+                },
+                {
+                    command: "HINCRBY",
+                    syntax: "HINCRBY key field increment",
+                    description: "Increment the integer value of a hash field",
+                    example: "HINCRBY user:1000 score 10",
+                    performance: "O(1)",
+                    useCase: "Counters within objects, scores",
+                    usageRank: 17,
+                    frequency: "Medium"
+                }
+            ],
+            "sorted-sets": [
+                {
+                    command: "ZADD",
+                    syntax: "ZADD key [NX|XX] [CH] [INCR] score member [score member ...]",
+                    description: "Add one or more members to a sorted set",
+                    example: "ZADD leaderboard 100 \"player1\" 200 \"player2\"",
+                    performance: "O(log N) per member",
+                    useCase: "Leaderboards, rankings, time-series data"
+                },
+                {
+                    command: "ZRANGE",
+                    syntax: "ZRANGE key start stop [WITHSCORES]",
+                    description: "Return a range of members in a sorted set",
+                    example: "ZRANGE leaderboard 0 9 WITHSCORES",
+                    performance: "O(log N + M)",
+                    useCase: "Top N queries, pagination"
+                },
+                {
+                    command: "ZREVRANGE",
+                    syntax: "ZREVRANGE key start stop [WITHSCORES]",
+                    description: "Return a range of members in a sorted set (reverse)",
+                    example: "ZREVRANGE leaderboard 0 9 WITHSCORES",
+                    performance: "O(log N + M)",
+                    useCase: "Highest scores, recent items"
+                },
+                {
+                    command: "ZREM",
+                    syntax: "ZREM key member [member ...]",
+                    description: "Remove one or more members from a sorted set",
+                    example: "ZREM leaderboard \"player1\"",
+                    performance: "O(log N) per member",
+                    useCase: "Removing items from rankings"
+                },
+                {
+                    command: "ZCARD",
+                    syntax: "ZCARD key",
+                    description: "Get the number of members in a sorted set",
+                    example: "ZCARD leaderboard",
+                    performance: "O(1)",
+                    useCase: "Counting ranked items"
+                },
+                {
+                    command: "ZSCORE",
+                    syntax: "ZSCORE key member",
+                    description: "Get the score associated with the given member",
+                    example: "ZSCORE leaderboard \"player1\"",
+                    performance: "O(1)",
+                    useCase: "Getting specific scores"
+                }
+            ],
+            keys: [
+                {
+                    command: "KEYS",
+                    syntax: "KEYS pattern",
+                    description: "Find all keys matching the given pattern",
+                    example: "KEYS user:*",
+                    performance: "O(N)",
+                    useCase: "Debugging, admin operations (avoid in production)"
+                },
+                {
+                    command: "EXISTS",
+                    syntax: "EXISTS key [key ...]",
+                    description: "Determine if a key exists",
+                    example: "EXISTS mykey",
+                    performance: "O(1) per key",
+                    useCase: "Validation, conditional operations"
+                },
+                {
+                    command: "DEL",
+                    syntax: "DEL key [key ...]",
+                    description: "Delete a key",
+                    example: "DEL mykey",
+                    performance: "O(1) per key",
+                    useCase: "Cleanup, cache invalidation"
+                },
+                {
+                    command: "EXPIRE",
+                    syntax: "EXPIRE key seconds",
+                    description: "Set a key's time to live in seconds",
+                    example: "EXPIRE mykey 3600",
+                    performance: "O(1)",
+                    useCase: "TTL management, cache expiration"
+                },
+                {
+                    command: "TTL",
+                    syntax: "TTL key",
+                    description: "Get the time to live for a key",
+                    example: "TTL mykey",
+                    performance: "O(1)",
+                    useCase: "Monitoring expiration, debugging"
+                },
+                {
+                    command: "TYPE",
+                    syntax: "TYPE key",
+                    description: "Determine the type stored at key",
+                    example: "TYPE mykey",
+                    performance: "O(1)",
+                    useCase: "Debugging, type validation"
+                }
+            ]
+        };
+
+        // DOM elements
+        const searchInput = document.getElementById('command-search');
+        const commandsContainer = document.getElementById('commands-container');
+        const categoryButtons = document.querySelectorAll('.category-btn');
+
+        let currentCategory = 'all';
+        let currentSearch = '';
+
+        // Initialize
+        window.addEventListener('load', () => {
+            displayCommands();
+            setupEventListeners();
+        });
+
+        function setupEventListeners() {
+            // Search functionality
+            searchInput.addEventListener('input', (e) => {
+                currentSearch = e.target.value.toLowerCase();
+                displayCommands();
+            });
+
+            // Category filtering
+            categoryButtons.forEach(btn => {
+                btn.addEventListener('click', (e) => {
+                    currentCategory = e.target.dataset.category;
+                    updateCategoryButtons();
+                    displayCommands();
+                });
+            });
+        }
+
+        function updateCategoryButtons() {
+            categoryButtons.forEach(btn => {
+                if (btn.dataset.category === currentCategory) {
+                    btn.classList.add('category-active');
+                    btn.classList.remove('bg-slate-600', 'hover:bg-slate-700');
+                } else {
+                    btn.classList.remove('category-active');
+                    btn.classList.add('bg-slate-600', 'hover:bg-slate-700');
+                }
+            });
+        }
+
+        function displayCommands() {
+            let commandsToShow = [];
+
+            // Filter by category
+            if (currentCategory === 'all') {
+                Object.values(redisCommands).flat().forEach(cmd => commandsToShow.push(cmd));
+            } else {
+                commandsToShow = redisCommands[currentCategory] || [];
+            }
+
+            // Filter by search
+            if (currentSearch) {
+                commandsToShow = commandsToShow.filter(cmd => 
+                    cmd.command.toLowerCase().includes(currentSearch) ||
+                    cmd.description.toLowerCase().includes(currentSearch) ||
+                    cmd.useCase.toLowerCase().includes(currentSearch)
+                );
+            }
+
+            // Sort by usage rank (most used first)
+            commandsToShow.sort((a, b) => {
+                if (currentCategory === 'all') {
+                    // For "all" category, sort by global usage rank
+                    return a.usageRank - b.usageRank;
+                } else {
+                    // For specific categories, sort by usage rank within that category
+                    return a.usageRank - b.usageRank;
+                }
+            });
+
+            // Display commands
+            commandsContainer.innerHTML = '';
+            commandsToShow.forEach(command => {
+                const commandCard = createCommandCard(command);
+                commandsContainer.appendChild(commandCard);
+            });
+
+            // Show message if no results
+            if (commandsToShow.length === 0) {
+                commandsContainer.innerHTML = `
+                    <div class="col-span-2 text-center py-12">
+                        <div class="text-gray-400 text-lg">No commands found matching your criteria</div>
+                        <div class="text-gray-500 text-sm mt-2">Try adjusting your search or category filter</div>
+                    </div>
+                `;
+            }
+        }
+
+        function createCommandCard(command) {
+            const card = document.createElement('div');
+            card.className = 'command-card bg-slate-800/50 backdrop-blur-lg rounded-xl border border-slate-700/50 shadow-2xl p-6';
+            
+            card.innerHTML = `
+                <div class="flex items-center justify-between mb-4">
+                    <h3 class="text-xl font-bold text-white">${command.command}</h3>
+                    <div class="flex items-center space-x-2">
+                        <span class="px-2 py-1 bg-red-600 text-xs text-white rounded">Redis</span>
+                        <span class="px-2 py-1 bg-green-600 text-xs text-white rounded">${command.performance}</span>
+                        ${command.frequency ? `<span class="px-2 py-1 ${getFrequencyColor(command.frequency)} text-xs text-white rounded">${command.frequency}</span>` : ''}
+                    </div>
+                </div>
+                
+                <div class="mb-4">
+                    <div class="flex items-center justify-between mb-2">
+                        <label class="text-sm font-medium text-gray-300">Syntax</label>
+                        <button class="copy-btn px-2 py-1 bg-blue-600 hover:bg-blue-700 text-white text-xs rounded transition-colors duration-200" onclick="copyToClipboard('${command.example}')">
+                            Copy
+                        </button>
+                    </div>
+                    <div class="command-syntax p-3 rounded-lg text-red-400 text-sm font-mono">
+                        ${command.syntax}
+                    </div>
+                </div>
+
+                <div class="mb-4">
+                    <label class="text-sm font-medium text-gray-300 mb-2 block">Example</label>
+                    <div class="command-syntax p-3 rounded-lg text-green-400 text-sm font-mono">
+                        ${command.example}
+                    </div>
+                </div>
+
+                <div class="mb-4">
+                    <label class="text-sm font-medium text-gray-300 mb-2 block">Description</label>
+                    <p class="text-gray-200 text-sm">${command.description}</p>
+                </div>
+
+                <div class="mb-4">
+                    <label class="text-sm font-medium text-gray-300 mb-2 block">Use Cases</label>
+                    <p class="text-gray-200 text-sm">${command.useCase}</p>
+                </div>
+
+                <div class="flex items-center justify-between">
+                    <div class="flex items-center space-x-2">
+                        <div class="w-2 h-2 bg-red-500 rounded-full"></div>
+                        <span class="text-xs text-gray-400">Redis Command</span>
+                    </div>
+                    <div class="text-xs text-gray-500">
+                        Performance: ${command.performance}
+                    </div>
+                </div>
+            `;
+
+            return card;
+        }
+
+        function copyToClipboard(text) {
+            navigator.clipboard.writeText(text).then(() => {
+                // Show feedback
+                const btn = event.target;
+                const originalText = btn.textContent;
+                btn.textContent = 'Copied!';
+                btn.classList.add('bg-green-600');
+                setTimeout(() => {
+                    btn.textContent = originalText;
+                    btn.classList.remove('bg-green-600');
+                    btn.classList.add('bg-blue-600');
+                }, 1000);
+            });
+        }
+
+        function getFrequencyColor(frequency) {
+            switch (frequency) {
+                case 'Very High':
+                    return 'bg-red-600';
+                case 'High':
+                    return 'bg-orange-600';
+                case 'Medium':
+                    return 'bg-yellow-600';
+                case 'Low':
+                    return 'bg-gray-600';
+                default:
+                    return 'bg-gray-600';
+            }
+        }
+
+        // Initialize with all commands
+        displayCommands();
+    </script>
+</body>
+</html>
