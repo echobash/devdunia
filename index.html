@@ -11,8 +11,8 @@
     <!-- Primary SEO Meta Tags -->
     <title>DevDunia - Free Developer Tools & Utilities | 50+ Online Dev Tools</title>
     <meta name="title" content="DevDunia - Free Developer Tools & Utilities | 50+ Online Dev Tools">
-    <meta name="description" content="DevDunia offers 50+ free developer tools including URL decoder, string transformer, JSON beautifier, hash generator, and more. Essential utilities for developers, programmers, and coders.">
-    <meta name="keywords" content="developer tools, dev tools, online tools, free tools, URL decoder, string transformer, JSON beautifier, hash generator, code formatter, developer utilities, programming tools, coding tools, DevDunia">
+    <meta name="description" content="DevDunia offers 50+ free developer tools including JSON beautifier, password generator, CSV to JSON converter, hash generator, and more. Essential utilities for developers, programmers, and coders.">
+    <meta name="keywords" content="developer tools, dev tools, online tools, free tools, JSON beautifier, password generator, CSV to JSON converter, hash generator, code formatter, developer utilities, programming tools, coding tools, DevDunia">
     <meta name="author" content="DevDunia">
     <meta name="robots" content="index, follow">
     <meta name="language" content="English">
@@ -22,7 +22,7 @@
     <meta property="og:type" content="website">
     <meta property="og:url" content="https://devdunia.com/">
     <meta property="og:title" content="DevDunia - Free Developer Tools & Utilities">
-    <meta property="og:description" content="50+ free developer tools including URL decoder, string transformer, JSON beautifier, hash generator, and more. Essential utilities for developers.">
+    <meta property="og:description" content="50+ free developer tools including JSON beautifier, password generator, CSV to JSON converter, hash generator, and more. Essential utilities for developers.">
     <meta property="og:image" content="https://devdunia.com/images/og-image.png">
     <meta property="og:site_name" content="DevDunia">
     <meta property="og:locale" content="en_US">
@@ -31,7 +31,7 @@
     <meta property="twitter:card" content="summary_large_image">
     <meta property="twitter:url" content="https://devdunia.com/">
     <meta property="twitter:title" content="DevDunia - Free Developer Tools & Utilities">
-    <meta property="twitter:description" content="50+ free developer tools including URL decoder, string transformer, JSON beautifier, hash generator, and more.">
+    <meta property="twitter:description" content="50+ free developer tools including JSON beautifier, password generator, CSV to JSON converter, hash generator, and more.">
     <meta property="twitter:image" content="https://devdunia.com/images/twitter-card.png">
     
     <!-- Additional SEO -->
@@ -60,9 +60,9 @@
         "url": "https://devdunia.com"
       },
       "featureList": [
-        "URL Decoder",
-        "String Transformer",
-        "JSON Beautifier", 
+        "JSON Beautifier",
+        "Password Generator", 
+        "CSV to JSON Converter",
         "Hash Generator",
         "Base64 Encoder/Decoder",
         "URL Encoder/Decoder",
@@ -96,6 +96,7 @@
             from { box-shadow: 0 0 20px rgba(147, 51, 234, 0.3); }
             to { box-shadow: 0 0 40px rgba(147, 51, 234, 0.6); }
     }
+
   </style>
 </head>
 <body class="min-h-screen hero-bg">
@@ -123,7 +124,7 @@
                     
                     <!-- Subtitle -->
                     <p class="text-2xl text-gray-300 mb-8 max-w-2xl leading-relaxed">
-                        Master your development workflow with 50+ powerful tools. From URL decoding to string transformation, everything you need in one place.
+                        Master your development workflow with 50+ powerful tools. From JSON beautifying to password generation, everything you need in one place.
                     </p>
                     
                     <!-- CTA Buttons -->
@@ -164,105 +165,49 @@
                     <div class="bg-slate-800/90 backdrop-blur-sm rounded-3xl border border-slate-700/50 p-8 shadow-2xl">
                         <!-- Tool Selector -->
                         <div class="flex space-x-2 mb-8 bg-slate-900/50 rounded-xl p-2">
-                            <button id="url-tab" class="flex-1 px-4 py-3 text-sm font-medium text-purple-400 bg-slate-700/50 rounded-lg transition-colors">
-                                URL Decoder
-                            </button>
-                            <button id="string-tab" class="flex-1 px-4 py-3 text-sm font-medium text-gray-400 hover:text-white transition-colors">
-                                String Transformer
-                            </button>
-                            <button id="json-tab" class="flex-1 px-4 py-3 text-sm font-medium text-gray-400 hover:text-white transition-colors">
+                            <button class="flex-1 px-4 py-3 text-sm font-medium text-purple-400 bg-slate-700/50 rounded-lg transition-colors">
                                 JSON Beautifier
+                            </button>
+                            <button class="flex-1 px-4 py-3 text-sm font-medium text-gray-400 hover:text-white transition-colors">
+                                Password Generator
+                            </button>
+                            <button class="flex-1 px-4 py-3 text-sm font-medium text-gray-400 hover:text-white transition-colors">
+                                CSV to JSON
                             </button>
                         </div>
                         
                         <!-- Demo Content -->
-                        <div class="space-y-6 h-96">
-                            <!-- URL Decoder Content -->
-                            <div id="url-content" class="demo-content h-full flex flex-col">
+                        <div class="space-y-6">
+                            <!-- Input Section -->
+                            <div>
                                 <div class="flex items-center justify-between mb-3">
-                                    <label class="text-base font-medium text-gray-300">Input URL-encoded String:</label>
-                                    <button id="clear-url" class="text-sm text-gray-400 hover:text-white transition-colors px-3 py-1 rounded-lg hover:bg-slate-700/50">Clear</button>
+                                    <label class="text-base font-medium text-gray-300">Input:</label>
+                                    <button class="text-sm text-gray-400 hover:text-white transition-colors px-3 py-1 rounded-lg hover:bg-slate-700/50">Clear</button>
                             </div>
-                                <div class="bg-slate-900/50 rounded-xl p-6 border border-slate-600/50 flex-1 mb-4">
-                                    <textarea id="url-input" class="w-full h-full bg-transparent text-gray-300 font-mono text-sm outline-none resize-none" placeholder="Enter URL-encoded string to decode...">https%3A//devdunia.com/search%3Fq%3Dhello%20world%26type%3Dtools</textarea>
-                        </div>
-                                
-                                <div class="flex gap-2 mb-4">
-                                    <button id="decode-url" class="px-4 py-2 text-sm bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors">Decode URL</button>
-                                    <button id="copy-url" class="px-4 py-2 text-sm bg-slate-700 hover:bg-slate-600 text-gray-300 rounded-lg transition-colors">Copy</button>
-                            </div>
-
-                                <div class="flex items-center justify-between mb-3">
-                                    <label class="text-base font-medium text-gray-300">Decoded Output:</label>
-                        </div>
-                                <div class="bg-slate-900/50 rounded-xl p-6 border border-slate-600/50 flex-1">
-                                    <pre id="url-output" class="text-sm text-green-400 font-mono overflow-x-auto h-full"><code>https://devdunia.com/search?q=hello world&type=tools</code></pre>
-                </div>
-                            </div>
-
-                            <!-- String Transformer Content -->
-                            <div id="string-content" class="demo-content hidden h-full flex flex-col">
-                                <div class="flex items-center justify-between mb-3">
-                                    <label class="text-base font-medium text-gray-300">Input String:</label>
-                                    <button id="clear-string" class="text-sm text-gray-400 hover:text-white transition-colors px-3 py-1 rounded-lg hover:bg-slate-700/50">Clear</button>
-                        </div>
-                                <div class="bg-slate-900/50 rounded-xl p-6 border border-slate-600/50 mb-4">
-                                    <textarea id="string-input" class="w-full bg-transparent text-gray-300 font-mono text-sm outline-none resize-none" rows="3" placeholder="Enter your string here...">Hello World! This is a sample string for transformation.</textarea>
-                </div>
-                                
-                                <div class="grid grid-cols-2 md:grid-cols-3 gap-2 mb-4">
-                                    <button class="transform-btn px-3 py-2 text-sm bg-slate-700 hover:bg-slate-600 text-gray-300 rounded-lg transition-colors" data-transform="uppercase">UPPERCASE</button>
-                                    <button class="transform-btn px-3 py-2 text-sm bg-slate-700 hover:bg-slate-600 text-gray-300 rounded-lg transition-colors" data-transform="lowercase">lowercase</button>
-                                    <button class="transform-btn px-3 py-2 text-sm bg-slate-700 hover:bg-slate-600 text-gray-300 rounded-lg transition-colors" data-transform="capitalize">Capitalize</button>
-                                    <button class="transform-btn px-3 py-2 text-sm bg-slate-700 hover:bg-slate-600 text-gray-300 rounded-lg transition-colors" data-transform="title-case">Title Case</button>
-                                    <button class="transform-btn px-3 py-2 text-sm bg-slate-700 hover:bg-slate-600 text-gray-300 rounded-lg transition-colors" data-transform="camel-case">camelCase</button>
-                                    <button class="transform-btn px-3 py-2 text-sm bg-slate-700 hover:bg-slate-600 text-gray-300 rounded-lg transition-colors" data-transform="pascal-case">PascalCase</button>
-                                    <button class="transform-btn px-3 py-2 text-sm bg-slate-700 hover:bg-slate-600 text-gray-300 rounded-lg transition-colors" data-transform="kebab-case">kebab-case</button>
-                                    <button class="transform-btn px-3 py-2 text-sm bg-slate-700 hover:bg-slate-600 text-gray-300 rounded-lg transition-colors" data-transform="snake-case">snake_case</button>
-                                    <button class="transform-btn px-3 py-2 text-sm bg-slate-700 hover:bg-slate-600 text-gray-300 rounded-lg transition-colors" data-transform="constant-case">CONSTANT_CASE</button>
-                                    <button class="transform-btn px-3 py-2 text-sm bg-slate-700 hover:bg-slate-600 text-gray-300 rounded-lg transition-colors" data-transform="reverse">Reverse</button>
-                                    <button class="transform-btn px-3 py-2 text-sm bg-slate-700 hover:bg-slate-600 text-gray-300 rounded-lg transition-colors" data-transform="slug">slug</button>
-                                    <button class="transform-btn px-3 py-2 text-sm bg-slate-700 hover:bg-slate-600 text-gray-300 rounded-lg transition-colors" data-transform="remove-spaces">Remove Spaces</button>
-                                    <button class="transform-btn px-3 py-2 text-sm bg-slate-700 hover:bg-slate-600 text-gray-300 rounded-lg transition-colors" data-transform="frequency-counter">Frequency Counter</button>
-                        </div>
-
-                                <div class="flex items-center justify-between mb-3">
-                                    <label class="text-base font-medium text-gray-300">Transformed Output:</label>
-                                    <button id="copy-string" class="text-sm text-gray-400 hover:text-white transition-colors px-3 py-1 rounded-lg hover:bg-slate-700/50">Copy</button>
-                            </div>
-                                <div class="bg-slate-900/50 rounded-xl p-6 border border-slate-600/50 flex-1">
-                                    <pre id="string-output" class="text-sm text-green-400 font-mono overflow-x-auto h-full"><code>HELLO WORLD! THIS IS A SAMPLE STRING FOR TRANSFORMATION.</code></pre>
+                                <div class="bg-slate-900/50 rounded-xl p-6 border border-slate-600/50">
+                                    <pre class="text-sm text-gray-300 font-mono overflow-x-auto"><code>{"name":"DevDunia","tools":50,"features":["JSON Beautifier","Password Generator","CSV to JSON","Hash Generator","JWT Decoder","SQL Formatter"],"status":"active"}</code></pre>
                         </div>
                             </div>
-
-                            <!-- JSON Beautifier Content -->
-                            <div id="json-content" class="demo-content hidden h-full flex flex-col">
+                            
+                            <!-- Output Section -->
+                            <div>
                                 <div class="flex items-center justify-between mb-3">
-                                    <label class="text-base font-medium text-gray-300">JSON Input:</label>
-                                    <button id="clear-json" class="text-sm text-gray-400 hover:text-white transition-colors px-3 py-1 rounded-lg hover:bg-slate-700/50">Clear</button>
-                        </div>
-                                <div class="bg-slate-900/50 rounded-xl p-6 border border-slate-600/50 flex-1 mb-4">
-                                    <textarea id="json-input" class="w-full h-full bg-transparent text-gray-300 font-mono text-sm outline-none resize-none" placeholder="Enter JSON data here...">{"name":"DevDunia","tools":50,"features":["URL Decoder","String Transformer","JSON Beautifier","Hash Generator","JWT Decoder","SQL Formatter"],"status":"active"}</textarea>
-                    </div>
-                                <div class="flex items-center justify-between mb-3">
-                                    <label class="text-base font-medium text-gray-300">Beautified JSON:</label>
+                                    <label class="text-base font-medium text-gray-300">Output:</label>
                                     <div class="flex items-center space-x-3">
-                                        <select id="json-indent" class="text-sm bg-slate-700 text-gray-300 rounded-lg px-3 py-1">
-                                            <option value="2">2 spaces</option>
-                                            <option value="4">4 spaces</option>
-                                            <option value="1">1 tab</option>
+                                        <select class="text-sm bg-slate-700 text-gray-300 rounded-lg px-3 py-1">
+                                            <option>2 spaces</option>
                                         </select>
-                                        <button id="copy-json" class="text-sm text-gray-400 hover:text-white transition-colors px-3 py-1 rounded-lg hover:bg-slate-700/50">Copy</button>
+                                        <button class="text-sm text-gray-400 hover:text-white transition-colors px-3 py-1 rounded-lg hover:bg-slate-700/50">Copy</button>
                             </div>
                         </div>
-                                <div class="bg-slate-900/50 rounded-xl p-6 border border-slate-600/50 flex-1">
-                                    <pre id="json-output" class="text-sm text-green-400 font-mono overflow-x-auto h-full"><code>{
+                                <div class="bg-slate-900/50 rounded-xl p-6 border border-slate-600/50">
+                                    <pre class="text-sm text-green-400 font-mono overflow-x-auto"><code>{
   "name": "DevDunia",
   "tools": 50,
   "features": [
-    "URL Decoder",
-    "String Transformer",
     "JSON Beautifier",
+    "Password Generator",
+    "CSV to JSON",
     "Hash Generator",
     "JWT Decoder",
     "SQL Formatter"
@@ -270,6 +215,9 @@
   "status": "active"
 }</code></pre>
                         </div>
+                            </div>
+                        </div>
+                    </div>
                             </div>
                         </div>
                             </div>
@@ -399,172 +347,6 @@
                     }, 150);
                 });
             });
-        });
-
-        // Tool Demo Functionality
-        document.addEventListener('DOMContentLoaded', function() {
-            // Tab switching functionality
-            const tabs = {
-                url: { tab: document.getElementById('url-tab'), content: document.getElementById('url-content') },
-                string: { tab: document.getElementById('string-tab'), content: document.getElementById('string-content') },
-                json: { tab: document.getElementById('json-tab'), content: document.getElementById('json-content') }
-            };
-
-            function switchTab(activeTab) {
-                // Reset all tabs
-                Object.values(tabs).forEach(tab => {
-                    tab.tab.className = 'flex-1 px-4 py-3 text-sm font-medium text-gray-400 hover:text-white transition-colors';
-                    tab.content.classList.add('hidden');
-                });
-
-                // Activate selected tab
-                tabs[activeTab].tab.className = 'flex-1 px-4 py-3 text-sm font-medium text-purple-400 bg-slate-700/50 rounded-lg transition-colors';
-                tabs[activeTab].content.classList.remove('hidden');
-            }
-
-            // Tab click events
-            tabs.url.tab.addEventListener('click', () => switchTab('url'));
-            tabs.string.tab.addEventListener('click', () => switchTab('string'));
-            tabs.json.tab.addEventListener('click', () => switchTab('json'));
-
-            // URL Decoder Functionality
-            function decodeUrl() {
-                const inputText = document.getElementById('url-input').value.trim();
-                if (!inputText) return;
-
-                try {
-                    const decoded = decodeURIComponent(inputText);
-                    document.getElementById('url-output').innerHTML = '<code>' + decoded + '</code>';
-                } catch (e) {
-                    document.getElementById('url-output').innerHTML = '<code class="text-red-400">Invalid URL encoding: ' + e.message + '</code>';
-                }
-            }
-
-            document.getElementById('decode-url').addEventListener('click', decodeUrl);
-            document.getElementById('clear-url').addEventListener('click', function() {
-                document.getElementById('url-input').value = '';
-                document.getElementById('url-output').innerHTML = '<code></code>';
-            });
-            document.getElementById('copy-url').addEventListener('click', function() {
-                const outputText = document.getElementById('url-output').textContent;
-                navigator.clipboard.writeText(outputText).then(() => {
-                    this.textContent = 'Copied!';
-                    setTimeout(() => this.textContent = 'Copy', 2000);
-                });
-            });
-
-            // String Transformer Functionality
-            function transformString(transformType, inputText) {
-                switch(transformType) {
-                    case 'uppercase':
-                        return inputText.toUpperCase();
-                    case 'lowercase':
-                        return inputText.toLowerCase();
-                    case 'capitalize':
-                        return inputText.replace(/\b\w/g, l => l.toUpperCase());
-                    case 'title-case':
-                        return inputText.replace(/\w\S*/g, (txt) => txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase());
-                    case 'camel-case':
-                        return inputText.replace(/(?:^\w|[A-Z]|\b\w)/g, (word, index) => index === 0 ? word.toLowerCase() : word.toUpperCase()).replace(/\s+/g, '');
-                    case 'pascal-case':
-                        return inputText.replace(/(?:^\w|[A-Z]|\b\w)/g, (word) => word.toUpperCase()).replace(/\s+/g, '');
-                    case 'kebab-case':
-                        return inputText.replace(/([a-z])([A-Z])/g, '$1-$2').replace(/\s+/g, '-').toLowerCase();
-                    case 'snake-case':
-                        return inputText.replace(/([a-z])([A-Z])/g, '$1_$2').replace(/\s+/g, '_').toLowerCase();
-                    case 'constant-case':
-                        return inputText.replace(/([a-z])([A-Z])/g, '$1_$2').replace(/\s+/g, '_').toUpperCase();
-                    case 'reverse':
-                        return inputText.split('').reverse().join('');
-                    case 'slug':
-                        return inputText.toLowerCase().replace(/[^\w\s-]/g, '').replace(/\s+/g, '-').replace(/-+/g, '-').trim('-');
-                    case 'remove-spaces':
-                        return inputText.replace(/\s+/g, '');
-                    case 'frequency-counter':
-                        const chars = {};
-                        for (let char of inputText) {
-                            chars[char] = (chars[char] || 0) + 1;
-                        }
-                        const sorted = Object.entries(chars).sort((a, b) => b[1] - a[1]);
-                        return sorted.slice(0, 10).map(([char, count]) => `${char}: ${count}`).join(', ');
-                    default:
-                        return inputText;
-                }
-            }
-
-            function updateStringOutput() {
-                const inputText = document.getElementById('string-input').value;
-                const currentTransform = document.querySelector('.transform-btn.active')?.dataset.transform || 'uppercase';
-                const transformed = transformString(currentTransform, inputText);
-                document.getElementById('string-output').innerHTML = '<code>' + transformed + '</code>';
-            }
-
-            // String transformer events
-            document.getElementById('string-input').addEventListener('input', updateStringOutput);
-            
-            document.querySelectorAll('.transform-btn').forEach(btn => {
-                btn.addEventListener('click', function() {
-                    // Remove active class from all buttons
-                    document.querySelectorAll('.transform-btn').forEach(b => b.classList.remove('active', 'bg-purple-600', 'text-white'));
-                    // Add active class to clicked button
-                    this.classList.add('active', 'bg-purple-600', 'text-white');
-                    updateStringOutput();
-                });
-            });
-
-            document.getElementById('clear-string').addEventListener('click', function() {
-                document.getElementById('string-input').value = '';
-                updateStringOutput();
-            });
-
-            document.getElementById('copy-string').addEventListener('click', function() {
-                const outputText = document.getElementById('string-output').textContent;
-                navigator.clipboard.writeText(outputText).then(() => {
-                    this.textContent = 'Copied!';
-                    setTimeout(() => this.textContent = 'Copy', 2000);
-                });
-            });
-
-            // JSON Beautifier Functionality
-            function beautifyJson() {
-                const jsonText = document.getElementById('json-input').value.trim();
-                if (!jsonText) {
-                    document.getElementById('json-output').innerHTML = '<code></code>';
-                    return;
-                }
-
-                try {
-                    const obj = JSON.parse(jsonText);
-                    const indent = document.getElementById('json-indent').value;
-                    const indentValue = indent === '1' ? '\t' : ' '.repeat(parseInt(indent));
-                    const beautified = JSON.stringify(obj, null, indentValue);
-                    document.getElementById('json-output').innerHTML = '<code>' + beautified + '</code>';
-                } catch (e) {
-                    document.getElementById('json-output').innerHTML = '<code class="text-red-400">Invalid JSON: ' + e.message + '</code>';
-                }
-            }
-
-            // JSON events
-            document.getElementById('json-input').addEventListener('input', beautifyJson);
-            document.getElementById('json-indent').addEventListener('change', beautifyJson);
-            document.getElementById('clear-json').addEventListener('click', function() {
-                document.getElementById('json-input').value = '';
-                document.getElementById('json-output').innerHTML = '<code></code>';
-            });
-
-            document.getElementById('copy-json').addEventListener('click', function() {
-                const jsonText = document.getElementById('json-output').textContent;
-                navigator.clipboard.writeText(jsonText).then(() => {
-                    this.textContent = 'Copied!';
-                    setTimeout(() => this.textContent = 'Copy', 2000);
-                });
-            });
-
-            // Initialize with sample data
-            decodeUrl();
-            document.querySelector('.transform-btn[data-transform="uppercase"]').classList.add('active', 'bg-purple-600', 'text-white');
-            updateStringOutput();
-            beautifyJson();
         });
     </script>
 </body>
