@@ -1,0 +1,1137 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <!-- SEO Meta Tags -->
+  <title>DevDunia - Premium Developer Tools Dashboard | 50+ Free Utilities</title>
+  <meta name="description" content="Modern developer tools dashboard with 50+ free utilities. JSON formatter, API tester, password generator, and more essential development tools.">
+  <meta name="keywords" content="developer tools, dev tools, JSON formatter, API tester, password generator, free tools, development utilities">
+  
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+  
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            'sans': ['Inter', 'system-ui', 'sans-serif'],
+          },
+          colors: {
+            'glass': {
+              '50': 'rgba(255, 255, 255, 0.05)',
+              '100': 'rgba(255, 255, 255, 0.1)',
+              '200': 'rgba(255, 255, 255, 0.15)',
+            },
+            'dark': {
+              '900': '#0d1117',
+              '800': '#121826',
+              '700': '#1a1f2e',
+            }
+          },
+          animation: {
+            'float': 'float 6s ease-in-out infinite',
+            'glow': 'glow 2s ease-in-out infinite alternate',
+            'slide-up': 'slideUp 0.5s ease-out',
+            'fade-in': 'fadeIn 0.6s ease-out',
+            'scale-in': 'scaleIn 0.4s ease-out',
+          },
+          keyframes: {
+            float: {
+              '0%, 100%': { transform: 'translateY(0px)' },
+              '50%': { transform: 'translateY(-10px)' },
+            },
+            glow: {
+              '0%': { boxShadow: '0 0 20px rgba(59, 130, 246, 0.3)' },
+              '100%': { boxShadow: '0 0 30px rgba(59, 130, 246, 0.6)' },
+            },
+            slideUp: {
+              '0%': { transform: 'translateY(20px)', opacity: '0' },
+              '100%': { transform: 'translateY(0)', opacity: '1' },
+            },
+            fadeIn: {
+              '0%': { opacity: '0' },
+              '100%': { opacity: '1' },
+            },
+            scaleIn: {
+              '0%': { transform: 'scale(0.9)', opacity: '0' },
+              '100%': { transform: 'scale(1)', opacity: '1' },
+            }
+          }
+        }
+      }
+    }
+  </script>
+  
+  <style>
+    /* Custom CSS for advanced effects */
+    body {
+      font-family: 'Inter', system-ui, -apple-system, sans-serif;
+      background: linear-gradient(135deg, #0d1117 0%, #121826 50%, #0d1117 100%);
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+    
+    /* Glass morphism base */
+    .glass {
+      background: rgba(255, 255, 255, 0.05);
+      backdrop-filter: blur(20px);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+    }
+    
+    .glass-card {
+      background: rgba(255, 255, 255, 0.03);
+      backdrop-filter: blur(15px);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    
+    .glass-card:hover {
+      background: rgba(255, 255, 255, 0.08);
+      border-color: rgba(59, 130, 246, 0.3);
+      transform: translateY(-8px) scale(1.02);
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4), 0 0 20px rgba(59, 130, 246, 0.2);
+    }
+    
+    /* Tool card specific styling */
+    .tool-card {
+      background: linear-gradient(135deg, rgba(255, 255, 255, 0.05) 0%, rgba(255, 255, 255, 0.02) 100%);
+      backdrop-filter: blur(15px);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+      position: relative;
+      overflow: hidden;
+    }
+    
+    .tool-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+      transition: left 0.6s ease;
+    }
+    
+    .tool-card:hover::before {
+      left: 100%;
+    }
+    
+    .tool-card:hover {
+      transform: translateY(-12px) scale(1.05);
+      border-color: rgba(59, 130, 246, 0.4);
+      box-shadow: 
+        0 25px 50px rgba(0, 0, 0, 0.5),
+        0 0 30px rgba(59, 130, 246, 0.3),
+        inset 0 1px 0 rgba(255, 255, 255, 0.2);
+    }
+    
+    /* Gradient text */
+    .gradient-text {
+      background: linear-gradient(135deg, #3b82f6, #8b5cf6, #10b981);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    
+    /* Search bar styling */
+    .search-bar {
+      background: rgba(255, 255, 255, 0.05);
+      backdrop-filter: blur(20px);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      transition: all 0.3s ease;
+    }
+    
+    .search-bar:focus {
+      background: rgba(255, 255, 255, 0.08);
+      border-color: rgba(59, 130, 246, 0.5);
+      box-shadow: 0 0 20px rgba(59, 130, 246, 0.3);
+    }
+    
+    /* GitHub star banner */
+    .github-banner {
+      background: linear-gradient(135deg, #3b82f6, #8b5cf6);
+      animation: float 6s ease-in-out infinite;
+      box-shadow: 0 10px 30px rgba(59, 130, 246, 0.4);
+    }
+    
+    /* Section dividers */
+    .section-divider {
+      background: linear-gradient(90deg, transparent, rgba(59, 130, 246, 0.3), transparent);
+      height: 1px;
+    }
+    
+    /* Tool icon containers */
+    .tool-icon {
+      background: linear-gradient(135deg, rgba(59, 130, 246, 0.2), rgba(139, 92, 246, 0.2));
+      border: 1px solid rgba(59, 130, 246, 0.3);
+      transition: all 0.3s ease;
+    }
+    
+    .tool-card:hover .tool-icon {
+      background: linear-gradient(135deg, rgba(59, 130, 246, 0.3), rgba(139, 92, 246, 0.3));
+      border-color: rgba(59, 130, 246, 0.5);
+      transform: scale(1.1);
+    }
+    
+    /* Responsive grid */
+    .tools-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 1.5rem;
+    }
+    
+    @media (max-width: 768px) {
+      .tools-grid {
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 1rem;
+      }
+    }
+    
+    /* Smooth scrolling */
+    html {
+      scroll-behavior: smooth;
+    }
+    
+    /* Custom scrollbar */
+    ::-webkit-scrollbar {
+      width: 8px;
+    }
+    
+    ::-webkit-scrollbar-track {
+      background: rgba(255, 255, 255, 0.05);
+    }
+    
+    ::-webkit-scrollbar-thumb {
+      background: linear-gradient(135deg, #3b82f6, #8b5cf6);
+      border-radius: 4px;
+    }
+    
+    ::-webkit-scrollbar-thumb:hover {
+      background: linear-gradient(135deg, #2563eb, #7c3aed);
+    }
+  </style>
+</head>
+<body class="text-white">
+  <!-- Navigation -->
+  <nav class="fixed top-0 w-full z-40 glass">
+    <div class="max-w-7xl mx-auto px-6 py-4">
+      <div class="flex items-center justify-between">
+        <!-- Logo -->
+        <div class="flex items-center space-x-3">
+          <div class="w-10 h-10 bg-gradient-to-r from-blue-500 via-purple-500 to-green-500 rounded-xl flex items-center justify-center animate-glow">
+            <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4"></path>
+            </svg>
+          </div>
+          <div>
+            <h1 class="text-xl font-bold gradient-text">DevDunia</h1>
+            <p class="text-xs text-gray-400">Developer Tools</p>
+          </div>
+        </div>
+        
+        <!-- Search Bar -->
+        <div class="flex-1 max-w-md mx-8">
+          <div class="relative">
+            <input 
+              type="text" 
+              placeholder="Search 50+ tools..." 
+              class="search-bar w-full px-4 py-3 pl-12 rounded-xl text-white placeholder-gray-400 focus:outline-none"
+              id="searchInput"
+            >
+            <svg class="absolute left-4 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+            </svg>
+          </div>
+        </div>
+        
+        <!-- Stats -->
+        <div class="flex items-center space-x-6 text-sm">
+          <div class="flex items-center space-x-2">
+            <div class="w-2 h-2 bg-green-400 rounded-full animate-pulse"></div>
+            <span class="text-gray-300">50+ Tools</span>
+          </div>
+          <div class="flex items-center space-x-2">
+            <div class="w-2 h-2 bg-blue-400 rounded-full"></div>
+            <span class="text-gray-300">Free Forever</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Main Content -->
+  <main class="pt-24 pb-16">
+    <div class="max-w-7xl mx-auto px-6">
+      <!-- Hero Section -->
+      <section class="text-center mb-12 animate-fade-in">
+        <h1 class="text-4xl md:text-5xl font-bold mb-4 leading-tight">
+          Premium Developer
+          <br>
+          <span class="gradient-text">Tools Dashboard</span>
+        </h1>
+        <p class="text-lg text-gray-300 mb-6 max-w-2xl mx-auto">
+          Streamline your development workflow with 50+ professional tools. 
+          From JSON formatting to API testing, everything you need in one place.
+        </p>
+        
+        <!-- GitHub Star Button -->
+        <div class="mb-8">
+          <a href="https://github.com/echobash/devdunia" target="_blank" class="github-banner px-6 py-3 rounded-xl text-base font-bold flex items-center space-x-2 mx-auto w-fit hover:scale-105 transition-all duration-300">
+            <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+              <path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/>
+            </svg>
+            <span>⭐ Star us on GitHub</span>
+          </a>
+        </div>
+        
+        <!-- Quick Stats -->
+        <div class="flex flex-wrap justify-center gap-6">
+          <div class="glass-card px-4 py-3 rounded-xl">
+            <div class="text-xl font-bold text-blue-400">50+</div>
+            <div class="text-xs text-gray-400">Tools Available</div>
+          </div>
+          <div class="glass-card px-4 py-3 rounded-xl">
+            <div class="text-xl font-bold text-green-400">100%</div>
+            <div class="text-xs text-gray-400">Free to Use</div>
+          </div>
+          <div class="glass-card px-4 py-3 rounded-xl">
+            <div class="text-xl font-bold text-purple-400">24/7</div>
+            <div class="text-xs text-gray-400">Available</div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Tools Sections -->
+      <div class="space-y-16">
+        <!-- Encoders/Decoders Section -->
+        <section id="encoders" class="animate-slide-up">
+          <div class="flex items-center justify-between mb-8">
+            <div>
+              <h2 class="text-3xl font-bold mb-2 flex items-center">
+                <span class="w-8 h-8 bg-gradient-to-r from-blue-500 to-purple-500 rounded-lg flex items-center justify-center mr-3">
+                  🔧
+                </span>
+                Encoders/Decoders
+              </h2>
+              <p class="text-gray-400">Transform and convert data formats seamlessly</p>
+            </div>
+            <div class="section-divider w-32"></div>
+          </div>
+          
+          <div class="tools-grid">
+            <a href="json-to-php.html" class="tool-card p-6 rounded-2xl group">
+              <div class="flex items-center space-x-4">
+                <div class="tool-icon w-12 h-12 rounded-xl flex items-center justify-center">
+                  <span class="text-xl">🔄</span>
+                </div>
+                <div>
+                  <h3 class="font-semibold text-lg">JSON to PHP</h3>
+                  <p class="text-sm text-gray-400">Convert JSON data to PHP arrays</p>
+                </div>
+              </div>
+            </a>
+            
+            <a href="json-beautifier.html" class="tool-card p-6 rounded-2xl group">
+              <div class="flex items-center space-x-4">
+                <div class="tool-icon w-12 h-12 rounded-xl flex items-center justify-center">
+                  <span class="text-xl">✨</span>
+                </div>
+                <div>
+                  <h3 class="font-semibold text-lg">JSON Beautifier</h3>
+                  <p class="text-sm text-gray-400">Format and validate JSON data</p>
+                </div>
+              </div>
+            </a>
+            
+            <a href="json-minifier.html" class="tool-card p-6 rounded-2xl group">
+              <div class="flex items-center space-x-4">
+                <div class="tool-icon w-12 h-12 rounded-xl flex items-center justify-center">
+                  <span class="text-xl">📦</span>
+                </div>
+                <div>
+                  <h3 class="font-semibold text-lg">JSON Minifier</h3>
+                  <p class="text-sm text-gray-400">Compress JSON for production</p>
+                </div>
+              </div>
+            </a>
+            
+            <a href="string-transformer.html" class="tool-card p-6 rounded-2xl group">
+              <div class="flex items-center space-x-4">
+                <div class="tool-icon w-12 h-12 rounded-xl flex items-center justify-center">
+                  <span class="text-xl">🔄</span>
+                </div>
+                <div>
+                  <h3 class="font-semibold text-lg">String Transformer</h3>
+                  <p class="text-sm text-gray-400">Transform text between formats</p>
+                </div>
+              </div>
+            </a>
+            
+            <a href="url-encoder.html" class="tool-card p-6 rounded-2xl group">
+              <div class="flex items-center space-x-4">
+                <div class="tool-icon w-12 h-12 rounded-xl flex items-center justify-center">
+                  <span class="text-xl">🔗</span>
+                </div>
+                <div>
+                  <h3 class="font-semibold text-lg">URL Encoder</h3>
+                  <p class="text-sm text-gray-400">Encode URLs safely</p>
+                </div>
+              </div>
+            </a>
+            
+            <a href="url-decoder.html" class="tool-card p-6 rounded-2xl group">
+              <div class="flex items-center space-x-4">
+                <div class="tool-icon w-12 h-12 rounded-xl flex items-center justify-center">
+                  <span class="text-xl">🔓</span>
+                </div>
+                <div>
+                  <h3 class="font-semibold text-lg">URL Decoder</h3>
+                  <p class="text-sm text-gray-400">Decode URL-encoded strings</p>
+                </div>
+              </div>
+            </a>
+            
+            <a href="base64-encoder.html" class="tool-card p-6 rounded-2xl group">
+              <div class="flex items-center space-x-4">
+                <div class="tool-icon w-12 h-12 rounded-xl flex items-center justify-center">
+                  <span class="text-xl">📤</span>
+                </div>
+                <div>
+                  <h3 class="font-semibold text-lg">Base64 Encoder</h3>
+                  <p class="text-sm text-gray-400">Encode to Base64 format</p>
+                </div>
+              </div>
+            </a>
+            
+            <a href="base64-decoder.html" class="tool-card p-6 rounded-2xl group">
+              <div class="flex items-center space-x-4">
+                <div class="tool-icon w-12 h-12 rounded-xl flex items-center justify-center">
+                  <span class="text-xl">📥</span>
+                </div>
+                <div>
+                  <h3 class="font-semibold text-lg">Base64 Decoder</h3>
+                  <p class="text-sm text-gray-400">Decode Base64 strings</p>
+                </div>
+              </div>
+            </a>
+            
+            <a href="hash-generator.html" class="tool-card p-6 rounded-2xl group">
+              <div class="flex items-center space-x-4">
+                <div class="tool-icon w-12 h-12 rounded-xl flex items-center justify-center">
+                  <span class="text-xl">🔐</span>
+                </div>
+                <div>
+                  <h3 class="font-semibold text-lg">Hash Generator</h3>
+                  <p class="text-sm text-gray-400">Generate secure hashes</p>
+                </div>
+              </div>
+            </a>
+            
+            <a href="jwt-decoder.html" class="tool-card p-6 rounded-2xl group">
+              <div class="flex items-center space-x-4">
+                <div class="tool-icon w-12 h-12 rounded-xl flex items-center justify-center">
+                  <span class="text-xl">🎫</span>
+                </div>
+                <div>
+                  <h3 class="font-semibold text-lg">JWT Decoder</h3>
+                  <p class="text-sm text-gray-400">Decode JWT tokens</p>
+                </div>
+              </div>
+            </a>
+            
+            <a href="csv-to-json.html" class="tool-card p-6 rounded-2xl group">
+              <div class="flex items-center space-x-4">
+                <div class="tool-icon w-12 h-12 rounded-xl flex items-center justify-center">
+                  <span class="text-xl">📊</span>
+                </div>
+                <div>
+                  <h3 class="font-semibold text-lg">CSV to JSON</h3>
+                  <p class="text-sm text-gray-400">Convert CSV to JSON</p>
+                </div>
+              </div>
+            </a>
+            
+            <a href="yaml-to-json.html" class="tool-card p-6 rounded-2xl group">
+              <div class="flex items-center space-x-4">
+                <div class="tool-icon w-12 h-12 rounded-xl flex items-center justify-center">
+                  <span class="text-xl">⚖️</span>
+                </div>
+                <div>
+                  <h3 class="font-semibold text-lg">YAML ⇄ JSON</h3>
+                  <p class="text-sm text-gray-400">Convert between YAML and JSON</p>
+                </div>
+              </div>
+            </a>
+            
+            <a href="xml-formatter.html" class="tool-card p-6 rounded-2xl group">
+              <div class="flex items-center space-x-4">
+                <div class="tool-icon w-12 h-12 rounded-xl flex items-center justify-center">
+                  <span class="text-xl">📄</span>
+                </div>
+                <div>
+                  <h3 class="font-semibold text-lg">XML Formatter</h3>
+                  <p class="text-sm text-gray-400">Format and validate XML</p>
+                </div>
+              </div>
+            </a>
+          </div>
+        </section>
+
+        <!-- Generators Section -->
+        <section id="generators" class="animate-slide-up">
+          <div class="flex items-center justify-between mb-8">
+            <div>
+              <h2 class="text-3xl font-bold mb-2 flex items-center">
+                <span class="w-8 h-8 bg-gradient-to-r from-green-500 to-blue-500 rounded-lg flex items-center justify-center mr-3">
+                  ⚡
+                </span>
+                Generators
+              </h2>
+              <p class="text-gray-400">Create passwords, UUIDs, and more</p>
+            </div>
+            <div class="section-divider w-32"></div>
+          </div>
+          
+          <div class="tools-grid">
+            <a href="password-generator.html" class="tool-card p-6 rounded-2xl group">
+              <div class="flex items-center space-x-4">
+                <div class="tool-icon w-12 h-12 rounded-xl flex items-center justify-center">
+                  <span class="text-xl">🔑</span>
+                </div>
+                <div>
+                  <h3 class="font-semibold text-lg">Password Generator</h3>
+                  <p class="text-sm text-gray-400">Generate secure passwords</p>
+                </div>
+              </div>
+            </a>
+            
+            <a href="uuid-generator.html" class="tool-card p-6 rounded-2xl group">
+              <div class="flex items-center space-x-4">
+                <div class="tool-icon w-12 h-12 rounded-xl flex items-center justify-center">
+                  <span class="text-xl">🆔</span>
+                </div>
+                <div>
+                  <h3 class="font-semibold text-lg">UUID Generator</h3>
+                  <p class="text-sm text-gray-400">Generate unique identifiers</p>
+                </div>
+              </div>
+            </a>
+            
+            <a href="qr-generator.html" class="tool-card p-6 rounded-2xl group">
+              <div class="flex items-center space-x-4">
+                <div class="tool-icon w-12 h-12 rounded-xl flex items-center justify-center">
+                  <span class="text-xl">📱</span>
+                </div>
+                <div>
+                  <h3 class="font-semibold text-lg">QR Generator</h3>
+                  <p class="text-sm text-gray-400">Create QR codes</p>
+                </div>
+              </div>
+            </a>
+            
+            <a href="guid-generator.html" class="tool-card p-6 rounded-2xl group">
+              <div class="flex items-center space-x-4">
+                <div class="tool-icon w-12 h-12 rounded-xl flex items-center justify-center">
+                  <span class="text-xl">🎯</span>
+                </div>
+                <div>
+                  <h3 class="font-semibold text-lg">GUID Generator</h3>
+                  <p class="text-sm text-gray-400">Generate GUIDs</p>
+                </div>
+              </div>
+            </a>
+            
+            <a href="lorem-ipsum.html" class="tool-card p-6 rounded-2xl group">
+              <div class="flex items-center space-x-4">
+                <div class="tool-icon w-12 h-12 rounded-xl flex items-center justify-center">
+                  <span class="text-xl">📝</span>
+                </div>
+                <div>
+                  <h3 class="font-semibold text-lg">Lorem Ipsum</h3>
+                  <p class="text-sm text-gray-400">Generate placeholder text</p>
+                </div>
+              </div>
+            </a>
+          </div>
+        </section>
+
+        <!-- API & Integration Tools Section -->
+        <section id="api-tools" class="animate-slide-up">
+          <div class="flex items-center justify-between mb-8">
+            <div>
+              <h2 class="text-3xl font-bold mb-2 flex items-center">
+                <span class="w-8 h-8 bg-gradient-to-r from-purple-500 to-pink-500 rounded-lg flex items-center justify-center mr-3">
+                  🌐
+                </span>
+                API & Integration Tools
+              </h2>
+              <p class="text-gray-400">Test APIs and integrate with external services</p>
+            </div>
+            <div class="section-divider w-32"></div>
+          </div>
+          
+          <div class="tools-grid">
+            <a href="curl-describer.html" class="tool-card p-6 rounded-2xl group">
+              <div class="flex items-center space-x-4">
+                <div class="tool-icon w-12 h-12 rounded-xl flex items-center justify-center">
+                  <span class="text-xl">🔄</span>
+                </div>
+                <div>
+                  <h3 class="font-semibold text-lg">cURL Describer</h3>
+                  <p class="text-sm text-gray-400">Convert cURL to code</p>
+                </div>
+              </div>
+            </a>
+            
+            <a href="cron-describer.html" class="tool-card p-6 rounded-2xl group">
+              <div class="flex items-center space-x-4">
+                <div class="tool-icon w-12 h-12 rounded-xl flex items-center justify-center">
+                  <span class="text-xl">⏰</span>
+                </div>
+                <div>
+                  <h3 class="font-semibold text-lg">Cron Describer</h3>
+                  <p class="text-sm text-gray-400">Explain cron expressions</p>
+                </div>
+              </div>
+            </a>
+            
+            <a href="regex-tester.html" class="tool-card p-6 rounded-2xl group">
+              <div class="flex items-center space-x-4">
+                <div class="tool-icon w-12 h-12 rounded-xl flex items-center justify-center">
+                  <span class="text-xl">🔍</span>
+                </div>
+                <div>
+                  <h3 class="font-semibold text-lg">Regex Tester</h3>
+                  <p class="text-sm text-gray-400">Test regular expressions</p>
+                </div>
+              </div>
+            </a>
+            
+            <a href="http-header-printer.html" class="tool-card p-6 rounded-2xl group">
+              <div class="flex items-center space-x-4">
+                <div class="tool-icon w-12 h-12 rounded-xl flex items-center justify-center">
+                  <span class="text-xl">📋</span>
+                </div>
+                <div>
+                  <h3 class="font-semibold text-lg">HTTP Header Printer</h3>
+                  <p class="text-sm text-gray-400">View HTTP headers</p>
+                </div>
+              </div>
+            </a>
+          </div>
+        </section>
+
+        <!-- Development Tools Section -->
+        <section id="dev-tools" class="animate-slide-up">
+          <div class="flex items-center justify-between mb-8">
+            <div>
+              <h2 class="text-3xl font-bold mb-2 flex items-center">
+                <span class="w-8 h-8 bg-gradient-to-r from-orange-500 to-red-500 rounded-lg flex items-center justify-center mr-3">
+                  🛠️
+                </span>
+                Development Tools
+              </h2>
+              <p class="text-gray-400">Essential tools for developers</p>
+            </div>
+            <div class="section-divider w-32"></div>
+          </div>
+          
+          <div class="tools-grid">
+            <a href="sql-formatter.html" class="tool-card p-6 rounded-2xl group">
+              <div class="flex items-center space-x-4">
+                <div class="tool-icon w-12 h-12 rounded-xl flex items-center justify-center">
+                  <span class="text-xl">🗄️</span>
+                </div>
+                <div>
+                  <h3 class="font-semibold text-lg">SQL Formatter</h3>
+                  <p class="text-sm text-gray-400">Format SQL queries</p>
+                </div>
+              </div>
+            </a>
+            
+            <a href="api-response-tester.html" class="tool-card p-6 rounded-2xl group">
+              <div class="flex items-center space-x-4">
+                <div class="tool-icon w-12 h-12 rounded-xl flex items-center justify-center">
+                  <span class="text-xl">🧪</span>
+                </div>
+                <div>
+                  <h3 class="font-semibold text-lg">API Response Tester</h3>
+                  <p class="text-sm text-gray-400">Test API responses</p>
+                </div>
+              </div>
+            </a>
+            
+            <a href="environment-generator.html" class="tool-card p-6 rounded-2xl group">
+              <div class="flex items-center space-x-4">
+                <div class="tool-icon w-12 h-12 rounded-xl flex items-center justify-center">
+                  <span class="text-xl">🌍</span>
+                </div>
+                <div>
+                  <h3 class="font-semibold text-lg">Environment Generator</h3>
+                  <p class="text-sm text-gray-400">Generate .env files</p>
+                </div>
+              </div>
+            </a>
+            
+            <a href="elasticsearch-tools.html" class="tool-card p-6 rounded-2xl group">
+              <div class="flex items-center space-x-4">
+                <div class="tool-icon w-12 h-12 rounded-xl flex items-center justify-center">
+                  <span class="text-xl">🔍</span>
+                </div>
+                <div>
+                  <h3 class="font-semibold text-lg">Elasticsearch Tools</h3>
+                  <p class="text-sm text-gray-400">Elasticsearch utilities</p>
+                </div>
+              </div>
+            </a>
+            
+            <a href="markdown-editor.html" class="tool-card p-6 rounded-2xl group">
+              <div class="flex items-center space-x-4">
+                <div class="tool-icon w-12 h-12 rounded-xl flex items-center justify-center">
+                  <span class="text-xl">📝</span>
+                </div>
+                <div>
+                  <h3 class="font-semibold text-lg">Markdown Editor</h3>
+                  <p class="text-sm text-gray-400">Live markdown editor</p>
+                </div>
+              </div>
+            </a>
+          </div>
+        </section>
+
+        <!-- Redis Section -->
+        <section id="redis" class="animate-slide-up">
+          <div class="flex items-center justify-between mb-8">
+            <div>
+              <h2 class="text-3xl font-bold mb-2 flex items-center">
+                <span class="w-8 h-8 bg-gradient-to-r from-red-500 to-orange-500 rounded-lg flex items-center justify-center mr-3">
+                  🔴
+                </span>
+                Redis Tools
+              </h2>
+              <p class="text-gray-400">Redis database utilities and commands</p>
+            </div>
+            <div class="section-divider w-32"></div>
+          </div>
+          
+          <div class="tools-grid">
+            <a href="redis-command-explorer.html" class="tool-card p-6 rounded-2xl group">
+              <div class="flex items-center space-x-4">
+                <div class="tool-icon w-12 h-12 rounded-xl flex items-center justify-center">
+                  <span class="text-xl">📚</span>
+                </div>
+                <div>
+                  <h3 class="font-semibold text-lg">Redis Command Explorer</h3>
+                  <p class="text-sm text-gray-400">Explore Redis commands</p>
+                </div>
+              </div>
+            </a>
+          </div>
+        </section>
+
+        <!-- Payments Section -->
+        <section id="payments" class="animate-slide-up">
+          <div class="flex items-center justify-between mb-8">
+            <div>
+              <h2 class="text-3xl font-bold mb-2 flex items-center">
+                <span class="w-8 h-8 bg-gradient-to-r from-green-500 to-emerald-500 rounded-lg flex items-center justify-center mr-3">
+                  💳
+                </span>
+                Payment Tools
+              </h2>
+              <p class="text-gray-400">Payment processing and testing utilities</p>
+            </div>
+            <div class="section-divider w-32"></div>
+          </div>
+          
+          <div class="tools-grid">
+            <a href="payment-tester.html" class="tool-card p-6 rounded-2xl group">
+              <div class="flex items-center space-x-4">
+                <div class="tool-icon w-12 h-12 rounded-xl flex items-center justify-center">
+                  <span class="text-xl">🧪</span>
+                </div>
+                <div>
+                  <h3 class="font-semibold text-lg">Payment Tester</h3>
+                  <p class="text-sm text-gray-400">Test payment integrations</p>
+                </div>
+              </div>
+            </a>
+          </div>
+        </section>
+
+        <!-- Python Toolkit Section -->
+        <section id="python" class="animate-slide-up">
+          <div class="flex items-center justify-between mb-8">
+            <div>
+              <h2 class="text-3xl font-bold mb-2 flex items-center">
+                <span class="w-8 h-8 bg-gradient-to-r from-yellow-500 to-orange-500 rounded-lg flex items-center justify-center mr-3">
+                  🐍
+                </span>
+                Python Toolkit
+              </h2>
+              <p class="text-gray-400">Python development utilities and code generators</p>
+            </div>
+            <div class="section-divider w-32"></div>
+          </div>
+          
+          <div class="tools-grid">
+            <a href="requests-library.html" class="tool-card p-6 rounded-2xl group">
+              <div class="flex items-center space-x-4">
+                <div class="tool-icon w-12 h-12 rounded-xl flex items-center justify-center">
+                  <span class="text-xl">🌐</span>
+                </div>
+                <div>
+                  <h3 class="font-semibold text-lg">Requests Library</h3>
+                  <p class="text-sm text-gray-400">HTTP library examples</p>
+                </div>
+              </div>
+            </a>
+            
+            <a href="urllib.html" class="tool-card p-6 rounded-2xl group">
+              <div class="flex items-center space-x-4">
+                <div class="tool-icon w-12 h-12 rounded-xl flex items-center justify-center">
+                  <span class="text-xl">🔗</span>
+                </div>
+                <div>
+                  <h3 class="font-semibold text-lg">urllib</h3>
+                  <p class="text-sm text-gray-400">urllib examples</p>
+                </div>
+              </div>
+            </a>
+            
+            <a href="flask-api.html" class="tool-card p-6 rounded-2xl group">
+              <div class="flex items-center space-x-4">
+                <div class="tool-icon w-12 h-12 rounded-xl flex items-center justify-center">
+                  <span class="text-xl">🌶️</span>
+                </div>
+                <div>
+                  <h3 class="font-semibold text-lg">Flask API</h3>
+                  <p class="text-sm text-gray-400">Flask API templates</p>
+                </div>
+              </div>
+            </a>
+            
+            <a href="pandas.html" class="tool-card p-6 rounded-2xl group">
+              <div class="flex items-center space-x-4">
+                <div class="tool-icon w-12 h-12 rounded-xl flex items-center justify-center">
+                  <span class="text-xl">🐼</span>
+                </div>
+                <div>
+                  <h3 class="font-semibold text-lg">Pandas</h3>
+                  <p class="text-sm text-gray-400">Data manipulation examples</p>
+                </div>
+              </div>
+            </a>
+            
+            <a href="openai-api.html" class="tool-card p-6 rounded-2xl group">
+              <div class="flex items-center space-x-4">
+                <div class="tool-icon w-12 h-12 rounded-xl flex items-center justify-center">
+                  <span class="text-xl">🤖</span>
+                </div>
+                <div>
+                  <h3 class="font-semibold text-lg">OpenAI API</h3>
+                  <p class="text-sm text-gray-400">OpenAI integration examples</p>
+                </div>
+              </div>
+            </a>
+            
+            <a href="jupyter-notebooks.html" class="tool-card p-6 rounded-2xl group">
+              <div class="flex items-center space-x-4">
+                <div class="tool-icon w-12 h-12 rounded-xl flex items-center justify-center">
+                  <span class="text-xl">📓</span>
+                </div>
+                <div>
+                  <h3 class="font-semibold text-lg">Jupyter Notebooks</h3>
+                  <p class="text-sm text-gray-400">Notebook templates</p>
+                </div>
+              </div>
+            </a>
+            
+            <a href="prophet.html" class="tool-card p-6 rounded-2xl group">
+              <div class="flex items-center space-x-4">
+                <div class="tool-icon w-12 h-12 rounded-xl flex items-center justify-center">
+                  <span class="text-xl">📈</span>
+                </div>
+                <div>
+                  <h3 class="font-semibold text-lg">Prophet</h3>
+                  <p class="text-sm text-gray-400">Time series forecasting</p>
+                </div>
+              </div>
+            </a>
+            
+            <a href="plotly.html" class="tool-card p-6 rounded-2xl group">
+              <div class="flex items-center space-x-4">
+                <div class="tool-icon w-12 h-12 rounded-xl flex items-center justify-center">
+                  <span class="text-xl">📊</span>
+                </div>
+                <div>
+                  <h3 class="font-semibold text-lg">Plotly</h3>
+                  <p class="text-sm text-gray-400">Interactive visualizations</p>
+                </div>
+              </div>
+            </a>
+          </div>
+        </section>
+
+        <!-- Data Structures & Algorithms Section -->
+        <section id="data-structures" class="animate-slide-up">
+          <div class="flex items-center justify-between mb-8">
+            <div>
+              <h2 class="text-3xl font-bold mb-2 flex items-center">
+                <span class="w-8 h-8 bg-gradient-to-r from-indigo-500 to-purple-500 rounded-lg flex items-center justify-center mr-3">
+                  📊
+                </span>
+                Data Structures & Algorithms
+              </h2>
+              <p class="text-gray-400">Learn and practice data structures and algorithms</p>
+            </div>
+            <div class="section-divider w-32"></div>
+          </div>
+          
+          <div class="tools-grid">
+            <a href="data-structures.html" class="tool-card p-6 rounded-2xl group">
+              <div class="flex items-center space-x-4">
+                <div class="tool-icon w-12 h-12 rounded-xl flex items-center justify-center">
+                  <span class="text-xl">🏗️</span>
+                </div>
+                <div>
+                  <h3 class="font-semibold text-lg">Data Structures</h3>
+                  <p class="text-sm text-gray-400">Visualize data structures</p>
+                </div>
+              </div>
+            </a>
+            
+            <a href="array-ds.html" class="tool-card p-6 rounded-2xl group">
+              <div class="flex items-center space-x-4">
+                <div class="tool-icon w-12 h-12 rounded-xl flex items-center justify-center">
+                  <span class="text-xl">📋</span>
+                </div>
+                <div>
+                  <h3 class="font-semibold text-lg">Array</h3>
+                  <p class="text-sm text-gray-400">Array operations and algorithms</p>
+                </div>
+              </div>
+            </a>
+            
+            <a href="linked-list.html" class="tool-card p-6 rounded-2xl group">
+              <div class="flex items-center space-x-4">
+                <div class="tool-icon w-12 h-12 rounded-xl flex items-center justify-center">
+                  <span class="text-xl">🔗</span>
+                </div>
+                <div>
+                  <h3 class="font-semibold text-lg">Linked List</h3>
+                  <p class="text-sm text-gray-400">Linked list implementations</p>
+                </div>
+              </div>
+            </a>
+            
+            <a href="stack.html" class="tool-card p-6 rounded-2xl group">
+              <div class="flex items-center space-x-4">
+                <div class="tool-icon w-12 h-12 rounded-xl flex items-center justify-center">
+                  <span class="text-xl">📚</span>
+                </div>
+                <div>
+                  <h3 class="font-semibold text-lg">Stack</h3>
+                  <p class="text-sm text-gray-400">Stack data structure</p>
+                </div>
+              </div>
+            </a>
+            
+            <a href="queue.html" class="tool-card p-6 rounded-2xl group">
+              <div class="flex items-center space-x-4">
+                <div class="tool-icon w-12 h-12 rounded-xl flex items-center justify-center">
+                  <span class="text-xl">🚶</span>
+                </div>
+                <div>
+                  <h3 class="font-semibold text-lg">Queue</h3>
+                  <p class="text-sm text-gray-400">Queue data structure</p>
+                </div>
+              </div>
+            </a>
+            
+            <a href="tree.html" class="tool-card p-6 rounded-2xl group">
+              <div class="flex items-center space-x-4">
+                <div class="tool-icon w-12 h-12 rounded-xl flex items-center justify-center">
+                  <span class="text-xl">🌳</span>
+                </div>
+                <div>
+                  <h3 class="font-semibold text-lg">Tree</h3>
+                  <p class="text-sm text-gray-400">Tree data structures</p>
+                </div>
+              </div>
+            </a>
+            
+            <a href="graph.html" class="tool-card p-6 rounded-2xl group">
+              <div class="flex items-center space-x-4">
+                <div class="tool-icon w-12 h-12 rounded-xl flex items-center justify-center">
+                  <span class="text-xl">🕸️</span>
+                </div>
+                <div>
+                  <h3 class="font-semibold text-lg">Graph</h3>
+                  <p class="text-sm text-gray-400">Graph algorithms</p>
+                </div>
+              </div>
+            </a>
+            
+            <a href="binary-search.html" class="tool-card p-6 rounded-2xl group">
+              <div class="flex items-center space-x-4">
+                <div class="tool-icon w-12 h-12 rounded-xl flex items-center justify-center">
+                  <span class="text-xl">🔍</span>
+                </div>
+                <div>
+                  <h3 class="font-semibold text-lg">Binary Search</h3>
+                  <p class="text-sm text-gray-400">Binary search algorithms</p>
+                </div>
+              </div>
+            </a>
+          </div>
+        </section>
+
+        <!-- Information & Reference Section -->
+        <section id="information" class="animate-slide-up">
+          <div class="flex items-center justify-between mb-8">
+            <div>
+              <h2 class="text-3xl font-bold mb-2 flex items-center">
+                <span class="w-8 h-8 bg-gradient-to-r from-teal-500 to-cyan-500 rounded-lg flex items-center justify-center mr-3">
+                  📚
+                </span>
+                Information & Reference
+              </h2>
+              <p class="text-gray-400">Reference materials and information tools</p>
+            </div>
+            <div class="section-divider w-32"></div>
+          </div>
+          
+          <div class="tools-grid">
+            <a href="ip-address-tools.html" class="tool-card p-6 rounded-2xl group">
+              <div class="flex items-center space-x-4">
+                <div class="tool-icon w-12 h-12 rounded-xl flex items-center justify-center">
+                  <span class="text-xl">🌍</span>
+                </div>
+                <div>
+                  <h3 class="font-semibold text-lg">IP Address Tools</h3>
+                  <p class="text-sm text-gray-400">IP address utilities</p>
+                </div>
+              </div>
+            </a>
+          </div>
+        </section>
+      </div>
+    </div>
+  </main>
+
+  <!-- Footer CTA -->
+  <footer class="py-16 border-t border-white/10">
+    <div class="max-w-4xl mx-auto px-6 text-center">
+      <div class="glass-card p-8 rounded-3xl">
+        <h2 class="text-3xl font-bold mb-4 gradient-text">
+          Made with ❤️ by echobash.com
+        </h2>
+        <p class="text-xl text-gray-300 mb-6">
+          Open Source & Free Forever
+        </p>
+        <div class="flex flex-col sm:flex-row gap-4 justify-center">
+          <a href="https://github.com/echobash/devdunia" target="_blank" class="btn-primary px-8 py-4 rounded-xl font-semibold text-lg">
+            Star on GitHub
+          </a>
+          <a href="https://echobash.com" target="_blank" class="btn-secondary px-8 py-4 rounded-xl font-semibold text-lg">
+            Visit echobash.com
+          </a>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <!-- JavaScript for interactions -->
+  <script>
+    // Search functionality
+    const searchInput = document.getElementById('searchInput');
+    const toolCards = document.querySelectorAll('.tool-card');
+    
+    searchInput.addEventListener('input', function(e) {
+      const searchTerm = e.target.value.toLowerCase();
+      
+      toolCards.forEach(card => {
+        const title = card.querySelector('h3').textContent.toLowerCase();
+        const description = card.querySelector('p').textContent.toLowerCase();
+        
+        if (title.includes(searchTerm) || description.includes(searchTerm)) {
+          card.style.display = 'block';
+          card.style.animation = 'scaleIn 0.3s ease-out';
+        } else {
+          card.style.display = 'none';
+        }
+      });
+    });
+    
+    // Smooth scroll for navigation
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+      anchor.addEventListener('click', function (e) {
+        e.preventDefault();
+        const target = document.querySelector(this.getAttribute('href'));
+        if (target) {
+          target.scrollIntoView({
+            behavior: 'smooth',
+            block: 'start'
+          });
+        }
+      });
+    });
+    
+    // Intersection Observer for animations
+    const observerOptions = {
+      threshold: 0.1,
+      rootMargin: '0px 0px -50px 0px'
+    };
+    
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.style.opacity = '1';
+          entry.target.style.transform = 'translateY(0)';
+        }
+      });
+    }, observerOptions);
+    
+    // Observe all sections for scroll animations
+    document.querySelectorAll('section').forEach(section => {
+      section.style.opacity = '0';
+      section.style.transform = 'translateY(20px)';
+      section.style.transition = 'opacity 0.6s ease-out, transform 0.6s ease-out';
+      observer.observe(section);
+    });
+    
+    // Add hover effects to tool cards
+    toolCards.forEach(card => {
+      card.addEventListener('mouseenter', function() {
+        this.style.transform = 'translateY(-12px) scale(1.05)';
+      });
+      
+      card.addEventListener('mouseleave', function() {
+        this.style.transform = 'translateY(0) scale(1)';
+      });
+    });
+    
+    // GitHub banner animation
+    const githubBanner = document.querySelector('.github-banner');
+    if (githubBanner) {
+      githubBanner.addEventListener('mouseenter', function() {
+        this.style.transform = 'scale(1.05)';
+      });
+      
+      githubBanner.addEventListener('mouseleave', function() {
+        this.style.transform = 'scale(1)';
+      });
+    }
+  </script>
+</body>
+</html>
