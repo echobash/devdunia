@@ -1,5 +1,5 @@
 <!-- Final Sidebar for DevDunia -->
-<aside class="fixed left-0 top-0 h-full w-72 bg-slate-900/95 backdrop-blur-md border-r border-slate-700/60 z-50 overflow-y-auto">
+<aside class="fixed left-0 top-0 h-full w-72 bg-slate-900/95 backdrop-blur-md border-r border-slate-700/60 z-50 overflow-y-auto transform -translate-x-full lg:translate-x-0 transition-transform duration-300 ease-in-out" id="sidebar">
     <div class="p-4">
         <!-- Logo -->
         <div class="flex items-center justify-center mb-8">
@@ -306,8 +306,8 @@
 </aside>
 
 <!-- Mobile Sidebar Toggle -->
-<div class="lg:hidden fixed top-4 left-4 z-50">
-    <button id="mobile-sidebar-toggle" class="p-2 bg-slate-800/90 backdrop-blur-md border border-slate-700/60 rounded-lg text-white hover:bg-slate-700/90 transition-colors duration-200">
+<div class="lg:hidden fixed top-4 left-4 z-[60]">
+    <button id="mobile-sidebar-toggle" class="p-3 bg-slate-800/95 backdrop-blur-md border border-slate-700/60 rounded-lg text-white hover:bg-slate-700/90 transition-colors duration-200 shadow-lg" style="pointer-events: auto;">
         <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
         </svg>
@@ -318,23 +318,64 @@
 <div id="mobile-sidebar-overlay" class="lg:hidden fixed inset-0 bg-black/50 backdrop-blur-sm z-40 hidden"></div>
 
 <script>
-document.addEventListener('DOMContentLoaded', function() {
+// Initialize sidebar functionality
+function initializeSidebar() {
+    const sidebar = document.getElementById('sidebar');
     const mobileToggle = document.getElementById('mobile-sidebar-toggle');
-    const sidebar = document.querySelector('aside');
     const overlay = document.getElementById('mobile-sidebar-overlay');
 
-    // Mobile sidebar toggle
-    if (mobileToggle && sidebar && overlay) {
-        mobileToggle.addEventListener('click', function() {
-            sidebar.classList.toggle('-translate-x-full');
-            overlay.classList.toggle('hidden');
-        });
+    console.log('Initializing sidebar:', { sidebar: !!sidebar, mobileToggle: !!mobileToggle, overlay: !!overlay });
 
-        overlay.addEventListener('click', function() {
+    if (!sidebar || !mobileToggle || !overlay) {
+        console.log('Missing elements, retrying in 100ms...');
+        setTimeout(initializeSidebar, 100);
+        return;
+    }
+
+    // Ensure sidebar is hidden on mobile by default
+    if (window.innerWidth < 1024) {
+        sidebar.classList.add('-translate-x-full');
+    }
+
+    // Mobile sidebar toggle
+    mobileToggle.addEventListener('click', function(e) {
+        e.preventDefault();
+        console.log('Hamburger clicked, current sidebar classes:', sidebar.className);
+        
+        // Visual feedback
+        mobileToggle.style.backgroundColor = 'rgba(59, 130, 246, 0.5)';
+        setTimeout(() => {
+            mobileToggle.style.backgroundColor = '';
+        }, 200);
+        
+        sidebar.classList.toggle('-translate-x-full');
+        overlay.classList.toggle('hidden');
+        console.log('After toggle, sidebar classes:', sidebar.className);
+    });
+
+    overlay.addEventListener('click', function() {
+        sidebar.classList.add('-translate-x-full');
+        overlay.classList.add('hidden');
+    });
+}
+
+document.addEventListener('DOMContentLoaded', function() {
+    // Initialize immediately and also with a delay to handle dynamic loading
+    initializeSidebar();
+    setTimeout(initializeSidebar, 500);
+
+    // Handle window resize
+    window.addEventListener('resize', function() {
+        if (window.innerWidth >= 1024) {
+            // Desktop: show sidebar, hide overlay
+            sidebar.classList.remove('-translate-x-full');
+            overlay.classList.add('hidden');
+        } else {
+            // Mobile: hide sidebar by default
             sidebar.classList.add('-translate-x-full');
             overlay.classList.add('hidden');
-        });
-    }
+        }
+    });
 
     // Set active sidebar item based on current page
     function setActiveSidebarItem() {
