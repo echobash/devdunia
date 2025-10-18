@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Markdown Editor - DevDunia</title>
     <meta name="description" content="Write and preview Markdown with live rendering, syntax highlighting, and export options. Perfect for documentation, README files, and content creation.">
-    <link rel="stylesheet" href="sidebar.css">
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="icon" type="image/png" href="images/logo.png">
     <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
@@ -209,6 +208,20 @@ function hello() {
         window.addEventListener('load', () => {
             updatePreview();
         });
+    </script>
+
+    <!-- Include Final Sidebar -->
+    <div id="sidebar-container"></div>
+    <script>
+        // Load final_sidebar.html content
+        fetch('final_sidebar.html')
+            .then(response => response.text())
+            .then(html => {
+                document.getElementById('sidebar-container').innerHTML = html;
+            })
+            .catch(error => {
+                console.error('Error loading sidebar:', error);
+            });
     </script>
 </body>
 </html>

@@ -7,7 +7,6 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="icon" type="image/png" href="images/logo.png">
     <link rel="apple-touch-icon" href="images/logo.png">
-    <link rel="stylesheet" href="sidebar.css">
     <style>
         body {
             background: linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #0f172a 100%);
@@ -895,19 +894,21 @@ class SearchArticles extends Command
         </div>
     </div>
 
-    <!-- Scripts -->
-    <script src="sidebar-include.js"></script>
-    <script src="sidebar.js"></script>
+    <!-- Include Final Sidebar -->
     <script>
-        // Ensure sidebar loads properly
-        document.addEventListener('DOMContentLoaded', function() {
-            const sidebarContainer = document.getElementById('sidebar-container');
-            if (sidebarContainer && typeof sidebarHTML !== 'undefined') {
-                sidebarContainer.innerHTML = sidebarHTML;
-            } else {
-                console.error('Sidebar not loading properly');
-            }
-        });
+        // Load final_sidebar.html content
+        fetch('final_sidebar.html')
+            .then(response => response.text())
+            .then(html => {
+                document.getElementById('sidebar-container').innerHTML = html;
+            })
+            .catch(error => {
+                console.error('Error loading sidebar:', error);
+            });
+    </script>
+
+    <!-- Scripts -->
+    <script>
         
         function copyCode(elementId) {
             const element = document.getElementById(elementId);

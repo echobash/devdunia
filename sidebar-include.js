@@ -195,6 +195,10 @@ const sidebarHTML = `    <!-- Common Sidebar for DevDunia -->
                 <div class="sidebar-icon">📝</div>
                 <span class="sidebar-text">Markdown Editor</span>
             </a>
+            <a href="diff-checker.html" class="sidebar-item">
+                <div class="sidebar-icon">🔍</div>
+                <span class="sidebar-text">Diff Checker</span>
+            </a>
             </div>
 
             <!-- Payments Section -->

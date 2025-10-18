@@ -6,7 +6,6 @@
     <title>SQL Formatter - Developer Toolkit | DevDunia</title>
     <meta name="description" content="Format and beautify SQL queries. Free online SQL formatter supporting multiple dialects for developers.">
     <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="stylesheet" href="sidebar.css">
     <script src="js/common.js"></script>
     <style>
         body {
@@ -14,12 +13,9 @@
         }
     </style>
 </head>
-<body class="min-h-screen">
+<body class="h-screen lg:ml-72">
     <!-- Background: Consistent Subtle Dark Gradient -->
     <div class="fixed inset-0 -z-10 bg-gradient-to-br from-gray-900 via-slate-900 to-gray-900"></div>
-
-    <!-- Sidebar Container -->
-    <div id="sidebar-container"></div>
 
     <!-- Main Container -->
     <div class="main-content">
@@ -373,7 +369,19 @@ WHERE column1 IN (
     </div>
 
     <!-- Sidebar Scripts -->
-    <script src="sidebar-include.js"></script>
-    <script src="sidebar.js"></script>
+    
+    <!-- Include Final Sidebar -->
+    <div id="sidebar-container"></div>
+    <script>
+        // Load final_sidebar.html content
+        fetch('final_sidebar.html')
+            .then(response => response.text())
+            .then(html => {
+                document.getElementById('sidebar-container').innerHTML = html;
+            })
+            .catch(error => {
+                console.error('Error loading sidebar:', error);
+            });
+    </script>
 </body>
 </html>

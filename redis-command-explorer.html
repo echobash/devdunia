@@ -7,7 +7,6 @@
     <meta name="description" content="Interactive Redis command reference with examples, syntax, and performance tips">
     <link rel="icon" type="image/png" href="images/logo.png">
     <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="stylesheet" href="sidebar.css">
     <style>
         body {
             background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
@@ -100,8 +99,19 @@
         </div>
     </div>
 
-    <!-- Sidebar Include Script -->
-    <script src="sidebar-include.js"></script>
+    <!-- Include Final Sidebar -->
+    <div id="sidebar-container"></div>
+    <script>
+        // Load final_sidebar.html content
+        fetch('final_sidebar.html')
+            .then(response => response.text())
+            .then(html => {
+                document.getElementById('sidebar-container').innerHTML = html;
+            })
+            .catch(error => {
+                console.error('Error loading sidebar:', error);
+            });
+    </script>
 
     <script>
         // Redis Commands Data (ranked by usage frequency - CRUD operations first)

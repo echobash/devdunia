@@ -12,7 +12,7 @@
         }
     </style>
 </head>
-<body class="min-h-screen">
+<body class="h-screen lg:ml-72">
     <!-- Background: Consistent Subtle Dark Gradient -->
     <div class="fixed inset-0 -z-10 bg-gradient-to-br from-gray-900 via-slate-900 to-gray-900"></div>
 
@@ -468,6 +468,19 @@ if __name__ == '__main__':
     app.run(debug=True, host='0.0.0.0', port=${port})`;
             }
         });
+    </script>
+    <!-- Include Final Sidebar -->
+    <div id="sidebar-container"></div>
+    <script>
+        // Load final_sidebar.html content
+        fetch('final_sidebar.html')
+            .then(response => response.text())
+            .then(html => {
+                document.getElementById('sidebar-container').innerHTML = html;
+            })
+            .catch(error => {
+                console.error('Error loading sidebar:', error);
+            });
     </script>
 </body>
 </html>

@@ -6,14 +6,13 @@
     <title>JSON Decoder - Developer Toolkit | DevDunia</title>
     <meta name="description" content="Parse and decode JSON data with error handling and validation. Free online JSON decoder tool for developers.">
     <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="stylesheet" href="sidebar.css">
     <style>
         body {
             background: linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #0f172a 100%);
         }
     </style>
 </head>
-<body class="min-h-screen">
+<body class="h-screen lg:ml-72">
     <!-- Background: Consistent Subtle Dark Gradient -->
     <div class="fixed inset-0 -z-10 bg-gradient-to-br from-gray-900 via-slate-900 to-gray-900"></div>
 
@@ -140,8 +139,7 @@
         </footer>
     </div>
 
-    <script src="sidebar-include.js"></script>
-    <script src="sidebar.js"></script>
+    
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             const jsonInput = document.getElementById('json-input');
@@ -293,6 +291,19 @@
                 jsonInput.value = JSON.stringify(exampleJson);
             });
         });
+    </script>
+    <!-- Include Final Sidebar -->
+    <div id="sidebar-container"></div>
+    <script>
+        // Load final_sidebar.html content
+        fetch('final_sidebar.html')
+            .then(response => response.text())
+            .then(html => {
+                document.getElementById('sidebar-container').innerHTML = html;
+            })
+            .catch(error => {
+                console.error('Error loading sidebar:', error);
+            });
     </script>
 </body>
 </html>
