@@ -231,12 +231,12 @@
             <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4"></path>
                         </svg>
-                    </div>
+                </div>
           <div>
             <h1 class="text-xl font-bold gradient-text">DevDunia</h1>
             <p class="text-xs text-gray-400">Developer Tools</p>
             </div>
-                    </div>
+            </div>
 
                 <!-- Search Bar -->
                 <div class="flex-1 max-w-md mx-8">
@@ -250,15 +250,36 @@
             <svg class="absolute left-4 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
                         </svg>
+                        <!-- Clear search button -->
+                        <button id="clearSearch" class="absolute right-4 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400 hover:text-white transition-colors hidden">
+                            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                            </svg>
+                        </button>
+            </div>
+
+                    <!-- Search Results Area -->
+                    <div id="searchResults" class="absolute top-full left-0 right-0 mt-2 bg-slate-800/95 backdrop-blur-md border border-slate-700/60 rounded-xl shadow-2xl z-50 hidden">
+                        <div class="p-4">
+                            <div id="searchResultsContent" class="space-y-2">
+                                <!-- Search results will be populated here -->
+            </div>
+                            <div id="noResults" class="text-center py-8 text-gray-400 hidden">
+                                <svg class="w-12 h-12 mx-auto mb-3 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+                                </svg>
+                                <p class="text-sm">No tools found matching your search</p>
+            </div>
+            </div>
                     </div>
-                </div>
+            </div>
 
                 <!-- Stats -->
         <div class="flex items-center space-x-6 text-sm">
           <div class="flex items-center space-x-2">
             <div class="w-2 h-2 bg-green-400 rounded-full animate-pulse"></div>
             <span class="text-gray-300">50+ Tools</span>
-          </div>
+            </div>
           <div class="flex items-center space-x-2">
             <div class="w-2 h-2 bg-blue-400 rounded-full"></div>
             <span class="text-gray-300">Free Forever</span>
@@ -286,19 +307,19 @@
         <!-- GitHub Star Button -->
         <div class="mb-8">
           <a href="https://github.com/echobash/devdunia" target="_blank" class="github-banner px-6 py-3 rounded-xl text-base font-bold flex items-center space-x-2 mx-auto w-fit hover:scale-105 transition-all duration-300">
-            <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
-              <path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/>
-                            </svg>
+                        <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+                            <path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/>
+                        </svg>
             <span>⭐ Star us on GitHub</span>
-          </a>
-                        </div>
+                </a>
+            </div>
                         
         <!-- Quick Stats -->
         <div class="flex flex-wrap justify-center gap-6">
           <div class="glass-card px-4 py-3 rounded-xl">
             <div class="text-xl font-bold text-blue-400">50+</div>
             <div class="text-xs text-gray-400">Tools Available</div>
-          </div>
+        </div>
           <div class="glass-card px-4 py-3 rounded-xl">
             <div class="text-xl font-bold text-green-400">100%</div>
             <div class="text-xs text-gray-400">Free to Use</div>
@@ -325,18 +346,18 @@
               <p class="text-gray-400">Transform and convert data formats seamlessly</p>
                     </div>
             <div class="section-divider w-32"></div>
-                </div>
-                
+                    </div>
+
           <div class="tools-grid">
             <a href="php-to-json.html" class="tool-card p-6 rounded-2xl group">
               <div class="flex items-center space-x-4">
                 <div class="tool-icon w-12 h-12 rounded-xl flex items-center justify-center">
                   <span class="text-xl">🔄</span>
-                </div>
+                    </div>
                 <div>
                   <h3 class="font-semibold text-lg">JSON to PHP</h3>
                   <p class="text-sm text-gray-400">Convert JSON data to PHP arrays</p>
-            </div>
+                </div>
               </div>
             </a>
             
@@ -344,12 +365,12 @@
               <div class="flex items-center space-x-4">
                 <div class="tool-icon w-12 h-12 rounded-xl flex items-center justify-center">
                   <span class="text-xl">✨</span>
-            </div>
+                </div>
                 <div>
                   <h3 class="font-semibold text-lg">JSON Beautifier</h3>
                   <p class="text-sm text-gray-400">Format and validate JSON data</p>
+            </div>
         </div>
-              </div>
             </a>
             
             <a href="json-minifier.html" class="tool-card p-6 rounded-2xl group">
@@ -392,7 +413,7 @@
               <div class="flex items-center space-x-4">
                 <div class="tool-icon w-12 h-12 rounded-xl flex items-center justify-center">
                   <span class="text-xl">🔓</span>
-                        </div>
+        </div>
                 <div>
                   <h3 class="font-semibold text-lg">URL Decoder</h3>
                   <p class="text-sm text-gray-400">Decode URL-encoded strings</p>
@@ -404,7 +425,7 @@
               <div class="flex items-center space-x-4">
                 <div class="tool-icon w-12 h-12 rounded-xl flex items-center justify-center">
                   <span class="text-xl">📤</span>
-                            </div>
+                        </div>
                 <div>
                   <h3 class="font-semibold text-lg">Base64 Encoder</h3>
                   <p class="text-sm text-gray-400">Encode to Base64 format</p>
@@ -428,11 +449,11 @@
               <div class="flex items-center space-x-4">
                 <div class="tool-icon w-12 h-12 rounded-xl flex items-center justify-center">
                   <span class="text-xl">🔐</span>
-                            </div>
+                    </div>
                 <div>
                   <h3 class="font-semibold text-lg">Hash Generator</h3>
                   <p class="text-sm text-gray-400">Generate secure hashes</p>
-                        </div>
+                </div>
               </div>
             </a>
             
@@ -440,11 +461,11 @@
               <div class="flex items-center space-x-4">
                 <div class="tool-icon w-12 h-12 rounded-xl flex items-center justify-center">
                   <span class="text-xl">🎫</span>
-                            </div>
+                </div>
                 <div>
                   <h3 class="font-semibold text-lg">JWT Decoder</h3>
                   <p class="text-sm text-gray-400">Decode JWT tokens</p>
-                        </div>
+            </div>
               </div>
             </a>
             
@@ -452,11 +473,11 @@
               <div class="flex items-center space-x-4">
                 <div class="tool-icon w-12 h-12 rounded-xl flex items-center justify-center">
                   <span class="text-xl">📊</span>
-                            </div>
+            </div>
                 <div>
                   <h3 class="font-semibold text-lg">CSV to JSON</h3>
                   <p class="text-sm text-gray-400">Convert CSV to JSON</p>
-                        </div>
+        </div>
               </div>
             </a>
             
@@ -481,9 +502,9 @@
                   <h3 class="font-semibold text-lg">XML Formatter</h3>
                   <p class="text-sm text-gray-400">Format and validate XML</p>
                         </div>
-              </div>
+                            </div>
             </a>
-          </div>
+                        </div>
         </section>
 
         <!-- Generators Section -->
@@ -506,11 +527,11 @@
               <div class="flex items-center space-x-4">
                 <div class="tool-icon w-12 h-12 rounded-xl flex items-center justify-center">
                   <span class="text-xl">🔑</span>
-                </div>
+                            </div>
                 <div>
                   <h3 class="font-semibold text-lg">Password Generator</h3>
                   <p class="text-sm text-gray-400">Generate secure passwords</p>
-                </div>
+                        </div>
               </div>
             </a>
             
@@ -554,11 +575,11 @@
               <div class="flex items-center space-x-4">
                 <div class="tool-icon w-12 h-12 rounded-xl flex items-center justify-center">
                   <span class="text-xl">📝</span>
-                </div>
+                            </div>
                 <div>
                   <h3 class="font-semibold text-lg">Lorem Ipsum</h3>
                   <p class="text-sm text-gray-400">Generate placeholder text</p>
-                </div>
+                        </div>
               </div>
                     </a>
                 </div>
@@ -698,11 +719,11 @@
               <div class="flex items-center space-x-4">
                 <div class="tool-icon w-12 h-12 rounded-xl flex items-center justify-center">
                   <span class="text-xl">📝</span>
-                </div>
+                            </div>
                 <div>
                   <h3 class="font-semibold text-lg">Markdown Editor</h3>
                   <p class="text-sm text-gray-400">Live markdown editor</p>
-                </div>
+                        </div>
               </div>
             </a>
             
@@ -770,11 +791,11 @@
               <div class="flex items-center space-x-4">
                 <div class="tool-icon w-12 h-12 rounded-xl flex items-center justify-center">
                   <span class="text-xl">🧪</span>
-                </div>
+                            </div>
                 <div>
                   <h3 class="font-semibold text-lg">Payment Tester</h3>
                   <p class="text-sm text-gray-400">Test payment integrations</p>
-                </div>
+                        </div>
               </div>
                     </a>
                 </div>
@@ -830,13 +851,13 @@
                   <p class="text-sm text-gray-400">Flask API templates</p>
                         </div>
               </div>
-            </a>
+                    </a>
             
             <a href="python-pandas.html" class="tool-card p-6 rounded-2xl group">
               <div class="flex items-center space-x-4">
                 <div class="tool-icon w-12 h-12 rounded-xl flex items-center justify-center">
                   <span class="text-xl">🐼</span>
-                            </div>
+                </div>
                 <div>
                   <h3 class="font-semibold text-lg">Pandas</h3>
                   <p class="text-sm text-gray-400">Data manipulation examples</p>
@@ -926,11 +947,11 @@
               <div class="flex items-center space-x-4">
                 <div class="tool-icon w-12 h-12 rounded-xl flex items-center justify-center">
                   <span class="text-xl">📋</span>
-                </div>
+                            </div>
                 <div>
                   <h3 class="font-semibold text-lg">Array</h3>
                   <p class="text-sm text-gray-400">Array operations and algorithms</p>
-                </div>
+                        </div>
               </div>
             </a>
             
@@ -938,11 +959,11 @@
               <div class="flex items-center space-x-4">
                 <div class="tool-icon w-12 h-12 rounded-xl flex items-center justify-center">
                   <span class="text-xl">🔗</span>
-        </div>
+                            </div>
                 <div>
                   <h3 class="font-semibold text-lg">Linked List</h3>
                   <p class="text-sm text-gray-400">Linked list implementations</p>
-                </div>
+                        </div>
               </div>
             </a>
             
@@ -950,11 +971,11 @@
               <div class="flex items-center space-x-4">
                 <div class="tool-icon w-12 h-12 rounded-xl flex items-center justify-center">
                   <span class="text-xl">📚</span>
-    </div>
+                            </div>
                 <div>
                   <h3 class="font-semibold text-lg">Stack</h3>
                   <p class="text-sm text-gray-400">Stack data structure</p>
-                </div>
+                        </div>
               </div>
             </a>
             
@@ -970,8 +991,8 @@
               </div>
             </a>
             
-          </div>
-        </section>
+                </div>
+            </section>
 
         <!-- Information & Reference Section -->
         <section id="information" class="animate-slide-up">
@@ -982,11 +1003,11 @@
                   📚
                 </span>
                 Information & Reference
-              </h2>
+                </h2>
               <p class="text-gray-400">Reference materials and information tools</p>
-            </div>
+                            </div>
             <div class="section-divider w-32"></div>
-          </div>
+                        </div>
           
           <div class="tools-grid">
             <a href="ip-address.html" class="tool-card p-6 rounded-2xl group">
@@ -999,10 +1020,10 @@
                   <p class="text-sm text-gray-400">IP address utilities</p>
                 </div>
               </div>
-            </a>
-          </div>
-        </section>
-      </div>
+                    </a>
+                </div>
+            </section>
+        </div>
     </div>
   </main>
 
@@ -1030,24 +1051,139 @@
 
   <!-- JavaScript for interactions -->
     <script>
-        // Search functionality
-    const searchInput = document.getElementById('searchInput');
-    const toolCards = document.querySelectorAll('.tool-card');
+        // Enhanced Search functionality
+        const searchInput = document.getElementById('searchInput');
+        const clearSearchBtn = document.getElementById('clearSearch');
+        const searchResults = document.getElementById('searchResults');
+        const searchResultsContent = document.getElementById('searchResultsContent');
+        const noResults = document.getElementById('noResults');
+        const toolCards = document.querySelectorAll('.tool-card');
+        
+        // Create tools data array for search
+        const toolsData = Array.from(toolCards).map(card => ({
+            element: card,
+            title: card.querySelector('h3').textContent,
+            description: card.querySelector('p').textContent,
+            href: card.getAttribute('href'),
+            icon: card.querySelector('.tool-icon span').textContent
+        }));
 
-    searchInput.addEventListener('input', function(e) {
-      const searchTerm = e.target.value.toLowerCase();
+        // Search function
+        function performSearch(searchTerm) {
+            const term = searchTerm.toLowerCase().trim();
             
+            if (term === '') {
+                // Show all tools
             toolCards.forEach(card => {
-        const title = card.querySelector('h3').textContent.toLowerCase();
-        const description = card.querySelector('p').textContent.toLowerCase();
-                
-                if (title.includes(searchTerm) || description.includes(searchTerm)) {
-          card.style.display = 'block';
-          card.style.animation = 'scaleIn 0.3s ease-out';
-                } else {
+                    card.style.display = 'block';
+                    card.style.animation = 'scaleIn 0.3s ease-out';
+                });
+                searchResults.classList.add('hidden');
+                clearSearchBtn.classList.add('hidden');
+                return;
+            }
+
+            // Filter tools - only search in tool names (titles)
+            const matchingTools = toolsData.filter(tool => 
+                tool.title.toLowerCase().includes(term)
+            );
+
+            // Hide all tool cards
+            toolCards.forEach(card => {
                     card.style.display = 'none';
-                }
             });
+
+            // Show matching tool cards
+            matchingTools.forEach(tool => {
+                tool.element.style.display = 'block';
+                tool.element.style.animation = 'scaleIn 0.3s ease-out';
+            });
+
+            // Show search results dropdown
+            if (matchingTools.length > 0) {
+                displaySearchResults(matchingTools, term);
+                noResults.classList.add('hidden');
+            } else {
+                showNoResults();
+            }
+            
+            searchResults.classList.remove('hidden');
+            clearSearchBtn.classList.remove('hidden');
+        }
+
+        // Display search results in dropdown
+        function displaySearchResults(tools, searchTerm) {
+            searchResultsContent.innerHTML = '';
+            
+            tools.forEach(tool => {
+                const resultItem = document.createElement('a');
+                resultItem.href = tool.href;
+                resultItem.className = 'flex items-center space-x-3 p-3 rounded-lg hover:bg-slate-700/50 transition-colors duration-200 group';
+                
+                const highlightedTitle = highlightSearchTerm(tool.title, searchTerm);
+                const highlightedDescription = tool.description; // No highlighting in description
+                
+                resultItem.innerHTML = `
+                    <div class="tool-icon w-10 h-10 rounded-lg flex items-center justify-center bg-slate-700/50 group-hover:bg-slate-600/50 transition-colors">
+                        <span class="text-lg">${tool.icon}</span>
+                    </div>
+                    <div class="flex-1 min-w-0">
+                        <h4 class="font-medium text-white text-sm">${highlightedTitle}</h4>
+                        <p class="text-xs text-gray-400 truncate">${highlightedDescription}</p>
+                    </div>
+                `;
+                
+                searchResultsContent.appendChild(resultItem);
+            });
+        }
+
+        // Highlight search terms in text
+        function highlightSearchTerm(text, term) {
+            if (!term) return text;
+            const regex = new RegExp(`(${term})`, 'gi');
+            return text.replace(regex, '<span class="bg-blue-500/20 text-blue-300 px-1 rounded">$1</span>');
+        }
+
+        // Show no results message
+        function showNoResults() {
+            searchResultsContent.innerHTML = '';
+            noResults.classList.remove('hidden');
+        }
+
+        // Clear search
+        function clearSearch() {
+            searchInput.value = '';
+            searchResults.classList.add('hidden');
+            clearSearchBtn.classList.add('hidden');
+            noResults.classList.add('hidden');
+            
+            // Show all tools
+            toolCards.forEach(card => {
+                card.style.display = 'block';
+                card.style.animation = 'scaleIn 0.3s ease-out';
+            });
+        }
+
+        // Event listeners
+        searchInput.addEventListener('input', function(e) {
+            performSearch(e.target.value);
+        });
+
+        clearSearchBtn.addEventListener('click', clearSearch);
+
+        // Hide search results when clicking outside
+        document.addEventListener('click', function(e) {
+            if (!e.target.closest('#searchInput') && !e.target.closest('#searchResults') && !e.target.closest('#clearSearch')) {
+                searchResults.classList.add('hidden');
+            }
+        });
+
+        // Keyboard navigation for search results
+        searchInput.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') {
+                clearSearch();
+                searchInput.blur();
+            }
         });
 
     // Smooth scroll for navigation
