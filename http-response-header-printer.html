@@ -35,6 +35,22 @@
         <div class="max-w-6xl mx-auto">
             <div class="bg-slate-800/70 backdrop-blur-md rounded-lg shadow-lg border border-slate-700/60 p-6">
                 
+                <!-- CORS Notice -->
+                <div class="mb-6 p-4 bg-yellow-900/20 border border-yellow-500/30 rounded-lg">
+                    <div class="flex items-start space-x-3">
+                        <svg class="w-5 h-5 text-yellow-400 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.732-.833-2.5 0L4.268 19.5c-.77.833.192 2.5 1.732 2.5z"></path>
+                        </svg>
+                        <div>
+                            <h3 class="text-sm font-medium text-yellow-400">CORS Notice</h3>
+                            <p class="text-xs text-yellow-300 mt-1">
+                                For external domains, we use a CORS proxy which only supports GET requests. 
+                                For POST/PUT/PATCH requests to external domains, consider using browser extensions like "CORS Unblock" or server-side solutions.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
                 <!-- Request Configuration -->
                 <div class="mb-8">
                     <h2 class="text-xl font-semibold text-green-400 mb-4">Request Configuration</h2>
@@ -347,8 +363,39 @@
                         options.body = requestBody.value.trim();
                     }
 
-                    // Make request
-                    const response = await fetch(url, options);
+                    // Make request with CORS proxy
+                    let response;
+                    try {
+                        // Try direct request first (for same-origin requests)
+                        response = await fetch(url, options);
+                    } catch (corsError) {
+                        // If CORS error, use proxy
+                        console.log('CORS error detected, using proxy...');
+                        
+                        // Use a reliable CORS proxy
+                        const proxyUrl = `https://api.allorigins.win/get?url=${encodeURIComponent(url)}`;
+                        
+                        // For proxy requests, we can only do GET requests
+                        if (methodSelect.value !== 'GET') {
+                            showError('CORS proxy only supports GET requests. For other methods, please use a browser extension or server-side solution.');
+                            return;
+                        }
+                        
+                        const proxyResponse = await fetch(proxyUrl);
+                        const proxyData = await proxyResponse.json();
+                        
+                        // Create a mock response object
+                        response = {
+                            status: proxyResponse.status,
+                            statusText: proxyResponse.statusText,
+                            headers: new Headers({
+                                'content-type': 'text/plain',
+                                'x-proxied': 'true'
+                            }),
+                            text: () => Promise.resolve(proxyData.contents || ''),
+                            json: () => Promise.resolve(JSON.parse(proxyData.contents || '{}'))
+                        };
+                    }
                     const endTime = Date.now();
                     const responseTimeMs = endTime - startTime;
 
