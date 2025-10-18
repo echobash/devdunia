@@ -1,0 +1,1217 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <!-- Primary SEO Meta Tags -->
+  <title>DevDunia Tools - Complete Developer Utilities Collection | Free Online Tools</title>
+  <meta name="title" content="DevDunia Tools - Complete Developer Utilities Collection | Free Online Tools">
+  <meta name="description" content="Browse 50+ free developer tools on DevDunia. JSON formatter, Base64 encoder, hash generator, API tester, SQL formatter, and more essential utilities for developers and programmers.">
+  <meta name="keywords" content="developer tools, dev tools, online tools, free tools, JSON formatter, Base64 encoder, hash generator, API tester, SQL formatter, code formatter, developer utilities, programming tools, coding tools, DevDunia, toolkit">
+  <meta name="author" content="DevDunia">
+  <meta name="robots" content="index, follow">
+  <meta name="language" content="English">
+  <meta name="revisit-after" content="7 days">
+  
+  <!-- Open Graph / Facebook -->
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://devdunia.com/home.html">
+  <meta property="og:title" content="DevDunia Tools - Complete Developer Utilities Collection">
+  <meta property="og:description" content="Browse 50+ free developer tools including JSON formatter, Base64 encoder, hash generator, API tester, and more essential utilities.">
+  <meta property="og:image" content="https://devdunia.com/images/og-tools.png">
+  <meta property="og:site_name" content="DevDunia">
+  <meta property="og:locale" content="en_US">
+  
+  <!-- Twitter -->
+  <meta property="twitter:card" content="summary_large_image">
+  <meta property="twitter:url" content="https://devdunia.com/home.html">
+  <meta property="twitter:title" content="DevDunia Tools - Complete Developer Utilities Collection">
+  <meta property="twitter:description" content="Browse 50+ free developer tools including JSON formatter, Base64 encoder, hash generator, API tester, and more.">
+  <meta property="twitter:image" content="https://devdunia.com/images/twitter-tools.png">
+  
+  <!-- Additional SEO -->
+  <meta name="theme-color" content="#0f172a">
+  <meta name="msapplication-TileColor" content="#0f172a">
+  <link rel="canonical" href="https://devdunia.com/home.html">
+  
+  <!-- Structured Data -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "CollectionPage",
+    "name": "DevDunia Developer Tools Collection",
+    "description": "Complete collection of 50+ free developer tools and utilities",
+    "url": "https://devdunia.com/home.html",
+    "mainEntity": {
+      "@type": "ItemList",
+      "name": "Developer Tools",
+      "description": "Free online developer tools and utilities",
+      "numberOfItems": 50,
+      "itemListElement": [
+        {
+          "@type": "SoftwareApplication",
+          "name": "JSON Formatter",
+          "description": "Format and beautify JSON data",
+          "applicationCategory": "DeveloperApplication",
+          "operatingSystem": "Web Browser",
+          "offers": {"@type": "Offer", "price": "0", "priceCurrency": "USD"}
+        },
+        {
+          "@type": "SoftwareApplication", 
+          "name": "Base64 Encoder/Decoder",
+          "description": "Encode and decode Base64 data",
+          "applicationCategory": "DeveloperApplication",
+          "operatingSystem": "Web Browser",
+          "offers": {"@type": "Offer", "price": "0", "priceCurrency": "USD"}
+        },
+        {
+          "@type": "SoftwareApplication",
+          "name": "Hash Generator", 
+          "description": "Generate MD5, SHA1, SHA256, SHA512 hashes",
+          "applicationCategory": "DeveloperApplication",
+          "operatingSystem": "Web Browser",
+          "offers": {"@type": "Offer", "price": "0", "priceCurrency": "USD"}
+        }
+      ]
+    }
+  }
+  </script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="js/common.js"></script>
+    <link rel="stylesheet" href="sidebar.css">
+    <style>
+    body {
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #0f172a 100%);
+        font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+        -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale;
+    }
+    
+    /* Professional SaaS Tool Cards */
+    .tool-card {
+        background: rgba(255, 255, 255, 0.05);
+      backdrop-filter: blur(10px);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+        position: relative;
+        overflow: hidden;
+    }
+    
+    .tool-card:hover {
+        background: rgba(255, 255, 255, 0.08);
+        border-color: rgba(59, 130, 246, 0.3);
+        transform: translateY(-2px);
+        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+    }
+    
+    .tool-card::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 1px;
+        background: linear-gradient(90deg, transparent, rgba(59, 130, 246, 0.5), transparent);
+        opacity: 0;
+        transition: opacity 0.2s ease;
+    }
+    
+    .tool-card:hover::before {
+        opacity: 1;
+    }
+    
+    /* Compact Grid for Maximum Tools Visibility */
+    .tools-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+        gap: 12px;
+        padding: 0;
+    }
+    
+    @media (min-width: 640px) {
+        .tools-grid {
+            grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+            gap: 16px;
+        }
+    }
+    
+    @media (min-width: 1024px) {
+        .tools-grid {
+            grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+            gap: 20px;
+        }
+    }
+    
+    /* Professional Section Headers */
+    .section-header {
+        font-size: 1.125rem;
+      font-weight: 600;
+        color: #e2e8f0;
+        margin-bottom: 16px;
+        padding-bottom: 8px;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    }
+    
+    /* Compact Tool Icon */
+    .tool-icon {
+        width: 32px;
+        height: 32px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+        border-radius: 8px;
+        margin-bottom: 8px;
+    }
+    
+    /* Tool Name Styling */
+    .tool-name {
+        font-size: 0.875rem;
+      font-weight: 500;
+        color: #f1f5f9;
+        line-height: 1.25;
+        text-align: center;
+    }
+
+    /* Professional Tools Marquee */
+    .tools-marquee-container {
+        position: relative;
+        width: 100%;
+        overflow: hidden;
+        padding: 20px 0;
+        background: linear-gradient(135deg, 
+            rgba(59, 130, 246, 0.05) 0%, 
+            rgba(147, 51, 234, 0.05) 50%, 
+            rgba(59, 130, 246, 0.05) 100%);
+        border-radius: 20px;
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        backdrop-filter: blur(10px);
+        box-shadow: 
+            0 8px 32px rgba(0, 0, 0, 0.1),
+            inset 0 1px 0 rgba(255, 255, 255, 0.1);
+    }
+
+    .marquee-track {
+        width: 100%;
+        overflow: hidden;
+        position: relative;
+    }
+
+    .marquee-items {
+        display: flex;
+        animation: marquee-scroll 12s linear infinite;
+        gap: 24px;
+        align-items: center;
+    }
+
+    .tool-badge {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        padding: 14px 24px;
+        background: linear-gradient(135deg, 
+            rgba(255, 255, 255, 0.12) 0%, 
+            rgba(255, 255, 255, 0.08) 50%,
+            rgba(255, 255, 255, 0.12) 100%);
+        border: 1px solid rgba(255, 255, 255, 0.25);
+        border-radius: 25px;
+        backdrop-filter: blur(12px);
+        transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        white-space: nowrap;
+        position: relative;
+        overflow: visible;
+        box-shadow: 
+            0 4px 15px rgba(0, 0, 0, 0.1),
+            inset 0 1px 0 rgba(255, 255, 255, 0.2);
+        font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+        min-height: 44px;
+        min-width: max-content;
+    }
+
+    .tool-badge::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(90deg, 
+            transparent, 
+            rgba(255, 255, 255, 0.2), 
+            transparent);
+        transition: left 0.5s;
+    }
+
+    .tool-badge:hover {
+        transform: translateY(-4px) scale(1.08);
+        background: linear-gradient(135deg, 
+            rgba(59, 130, 246, 0.2) 0%, 
+            rgba(147, 51, 234, 0.2) 50%,
+            rgba(59, 130, 246, 0.2) 100%);
+        border-color: rgba(59, 130, 246, 0.6);
+        box-shadow: 
+            0 15px 35px rgba(0, 0, 0, 0.25),
+            0 0 30px rgba(59, 130, 246, 0.4),
+            inset 0 1px 0 rgba(255, 255, 255, 0.3);
+        color: #ffffff;
+        text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+    }
+
+    .tool-badge:hover::before {
+        left: 100%;
+    }
+
+    .tool-badge {
+        font-size: 14px;
+        font-weight: 600;
+        color: #f1f5f9;
+        text-shadow: 0 1px 3px rgba(0, 0, 0, 0.4);
+        letter-spacing: 0.02em;
+        line-height: 1.3;
+        text-transform: none;
+        max-width: none;
+        width: auto;
+    }
+
+    @keyframes marquee-scroll {
+        0% {
+            transform: translateX(100%);
+        }
+        100% {
+            transform: translateX(-100%);
+        }
+    }
+
+
+    /* Pause animation on hover */
+    .tools-marquee-container:hover .marquee-items {
+        animation-play-state: paused;
+    }
+
+    /* Responsive adjustments */
+    @media (max-width: 768px) {
+        .tools-marquee-container {
+            padding: 16px 0;
+            margin: 0 16px;
+        }
+        
+        .tool-badge {
+            padding: 12px 20px;
+            font-size: 13px;
+            font-weight: 600;
+            min-height: 40px;
+            border-radius: 20px;
+        }
+    }
+
+    @media (max-width: 480px) {
+        .tool-badge {
+            padding: 10px 18px;
+            font-size: 12px;
+            min-height: 36px;
+            border-radius: 18px;
+            letter-spacing: 0.01em;
+        }
+    }
+    
+    /* Search Highlight */
+    .search-highlight {
+      background: linear-gradient(120deg, #fbbf24 0%, #f59e0b 100%);
+      color: #1f2937;
+      padding: 0.125rem 0.25rem;
+      border-radius: 0.25rem;
+      font-weight: 600;
+    }
+    
+    /* Professional Navigation */
+    .nav-enhanced {
+        background: rgba(15, 23, 42, 0.8);
+        backdrop-filter: blur(20px);
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    }
+    
+    /* Compact Hero */
+    .hero-compact {
+        padding: 2rem 0 1rem 0;
+    }
+    
+    /* Professional Button */
+    .btn-professional {
+        background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
+        border: none;
+        transition: all 0.2s ease;
+    }
+    
+    .btn-professional:hover {
+        background: linear-gradient(135deg, #2563eb 0%, #1e40af 100%);
+        transform: translateY(-1px);
+        box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+    }
+  </style>
+</head>
+<body class="min-h-screen">
+    <!-- Background: Consistent Subtle Dark Gradient -->
+    <div class="fixed inset-0 -z-10 bg-gradient-to-br from-gray-900 via-slate-900 to-gray-900"></div>
+    <!-- Sidebar Container -->
+    <div id="sidebar-container"></div>
+
+    <!-- Main Content -->
+    <div class="main-content">
+        <!-- Navigation Bar -->
+        <nav class="nav-enhanced sticky top-0 z-50">
+            <div class="container mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="flex items-center justify-between h-14">
+                    <!-- Logo -->
+                    <div class="flex items-center space-x-3">
+                        <h1 class="text-lg font-semibold text-white">
+                            DevDunia
+                        </h1>
+                        <span class="text-xs bg-blue-500/20 text-blue-300 px-2 py-1 rounded-full">50+ Tools</span>
+                    </div>
+
+                <!-- Search Bar -->
+                <div class="flex-1 max-w-lg mx-8">
+                    <div class="relative">
+                        <input 
+                            type="text" 
+                            id="search-input"
+                            placeholder="Search tools..." 
+                            class="w-full px-4 py-2 pl-10 bg-slate-800/60 border border-slate-600/40 rounded-xl text-gray-200 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500/50 transition-all duration-200"
+                        >
+                        <svg class="absolute left-3 top-2.5 w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+                        </svg>
+                    </div>
+                </div>
+
+                <!-- Stats -->
+                <div class="hidden md:flex items-center space-x-6 text-sm text-gray-300">
+                    <span class="flex items-center space-x-2 px-3 py-1 bg-slate-800/40 rounded-lg">
+                        <svg class="w-4 h-4 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                        </svg>
+                        <span>Free</span>
+                    </span>
+                    <span class="flex items-center space-x-2 px-3 py-1 bg-slate-800/40 rounded-lg">
+                        <svg class="w-4 h-4 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
+                        </svg>
+                        <span>Open Source</span>
+                    </span>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+
+        <!-- Main Container -->
+        <div class="relative z-10 container mx-auto px-4 pt-6 pb-16 sm:px-6 lg:px-8">
+
+        <!-- Compact Page Header -->
+        <div class="text-center mb-6">
+            <h1 class="text-3xl sm:text-4xl font-bold mb-2 tracking-tight text-white">
+                Developer Tools
+            </h1>
+            <p class="text-sm text-gray-400 max-w-xl mx-auto">
+                50+ essential utilities for developers • 
+                <a href="https://echobash.com" target="_blank" class="text-blue-400 hover:text-blue-300 transition-colors">Powered by echobash.com</a>
+            </p>
+            
+            <!-- Attention-Grabbing GitHub Star Banner -->
+            <div class="flex flex-wrap justify-center items-center gap-4 mb-4">
+                <div class="relative group">
+                    <!-- Animated background glow -->
+                    <div class="absolute -inset-1 bg-gradient-to-r from-yellow-400 via-orange-500 to-red-500 rounded-xl blur opacity-30 group-hover:opacity-50 transition duration-300 animate-pulse"></div>
+                    
+                    <!-- Main banner -->
+                    <div class="relative flex items-center space-x-3 bg-gradient-to-r from-slate-900 to-slate-800 rounded-xl px-6 py-3 border-2 border-yellow-400/30 shadow-2xl">
+                        <!-- Animated star icon -->
+                        <div class="relative">
+                            <svg class="w-6 h-6 text-yellow-400 animate-bounce" fill="currentColor" viewBox="0 0 24 24">
+                                <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
+                            </svg>
+                            <!-- Sparkle effect -->
+                            <div class="absolute -top-1 -right-1 w-2 h-2 bg-yellow-300 rounded-full animate-ping"></div>
+                        </div>
+                        
+                        <!-- Text with gradient -->
+                        <span class="text-white font-bold text-lg bg-gradient-to-r from-yellow-300 to-orange-300 bg-clip-text text-transparent">
+                            ⭐ Star us on GitHub
+                        </span>
+                        
+                        <!-- Enhanced CTA button -->
+                        <a href="https://github.com/echobash/devdunia" target="_blank" 
+                           class="relative overflow-hidden bg-gradient-to-r from-yellow-400 to-orange-500 text-black px-6 py-2 rounded-lg font-bold text-sm shadow-lg hover:from-yellow-300 hover:to-orange-400 transition-all duration-300 transform hover:scale-105 hover:shadow-xl group">
+                            <!-- Button glow effect -->
+                            <div class="absolute inset-0 bg-gradient-to-r from-yellow-300 to-orange-400 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                            <span class="relative flex items-center space-x-2">
+                                <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
+                                    <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
+                                </svg>
+                                <span>Star Now</span>
+                            </span>
+                        </a>
+                    </div>
+                </div>
+                
+                <!-- Compact Open Source Message -->
+                <div class="flex items-center space-x-2 text-sm text-gray-300">
+                    <svg class="w-4 h-4 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"></path>
+                    </svg>
+                    <span class="text-blue-300 font-medium">Open Source</span>
+                    <span class="text-green-400">•</span>
+                    <span class="text-green-400">100% Free</span>
+                    <span class="text-purple-400">•</span>
+                    <span class="text-purple-400">Privacy First</span>
+                </div>
+            </div>
+
+            <div class="flex flex-wrap justify-center gap-4 text-sm text-gray-500">
+                <span class="flex items-center space-x-1">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
+                    </svg>
+                    <span>Lightning Fast</span>
+                </span>
+                <span class="flex items-center space-x-1">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path>
+                    </svg>
+                    <span>Secure & Private</span>
+                </span>
+                <span class="flex items-center space-x-1">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"></path>
+                    </svg>
+                    <span>Open Source</span>
+                </span>
+            </div>
+        </div>
+
+        <!-- Professional Tools Marquee -->
+        <div class="tools-marquee-container mb-8">
+            <div class="marquee-track">
+                <div class="marquee-items">
+                    <div class="tool-badge">JSON Beautifier</div>
+                    <div class="tool-badge">Password Generator</div>
+                    <div class="tool-badge">CSV to JSON</div>
+                    <div class="tool-badge">URL Encoder</div>
+                    <div class="tool-badge">String Transformer</div>
+                    <div class="tool-badge">Base64 Decoder</div>
+                    <div class="tool-badge">Hash Generator</div>
+                    <div class="tool-badge">JWT Decoder</div>
+                    <div class="tool-badge">SQL Formatter</div>
+                    <div class="tool-badge">API Tester</div>
+                    <div class="tool-badge">Color Picker</div>
+                    <div class="tool-badge">QR Generator</div>
+                    <div class="tool-badge">UUID Generator</div>
+                    <div class="tool-badge">Markdown Editor</div>
+                    <div class="tool-badge">Redis Explorer</div>
+                    <div class="tool-badge">Docker Tools</div>
+                    <div class="tool-badge">Payment Tester</div>
+                    <div class="tool-badge">Python Tools</div>
+                    <div class="tool-badge">Data Structures</div>
+                    <div class="tool-badge">IP Tools</div>
+                    <div class="tool-badge">JSON to PHP</div>
+                    <div class="tool-badge">JSON Minifier</div>
+                    <div class="tool-badge">URL Decoder</div>
+                    <div class="tool-badge">Base64 Encoder</div>
+                    <div class="tool-badge">YAML to JSON</div>
+                    <div class="tool-badge">XML Formatter</div>
+                    <div class="tool-badge">Lorem Ipsum</div>
+                    <div class="tool-badge">cURL Describer</div>
+                    <div class="tool-badge">Cron Describer</div>
+                    <div class="tool-badge">Regex Tester</div>
+                    <div class="tool-badge">HTTP Header Printer</div>
+                    <div class="tool-badge">Environment Generator</div>
+                    <div class="tool-badge">Elasticsearch Tools</div>
+                    <div class="tool-badge">Requests Library</div>
+                    <div class="tool-badge">urllib</div>
+                    <div class="tool-badge">Flask API</div>
+                    <div class="tool-badge">Pandas</div>
+                    <div class="tool-badge">OpenAI API</div>
+                    <div class="tool-badge">Jupyter Notebooks</div>
+                    <div class="tool-badge">Prophet</div>
+                    <div class="tool-badge">Plotly</div>
+                    <div class="tool-badge">Array</div>
+                    <div class="tool-badge">Linked List</div>
+                    <div class="tool-badge">Stack</div>
+                    <div class="tool-badge">Queue</div>
+                    <div class="tool-badge">Tree</div>
+                    <div class="tool-badge">Graph</div>
+                    <div class="tool-badge">Binary Search</div>
+                    <!-- Duplicate for seamless loop -->
+                    <div class="tool-badge">JSON Beautifier</div>
+                    <div class="tool-badge">Password Generator</div>
+                    <div class="tool-badge">CSV to JSON</div>
+                    <div class="tool-badge">URL Encoder</div>
+                    <div class="tool-badge">String Transformer</div>
+                    <div class="tool-badge">Base64 Decoder</div>
+                    <div class="tool-badge">Hash Generator</div>
+                    <div class="tool-badge">JWT Decoder</div>
+                    <div class="tool-badge">SQL Formatter</div>
+                    <div class="tool-badge">API Tester</div>
+                    <div class="tool-badge">Color Picker</div>
+                    <div class="tool-badge">QR Generator</div>
+                    <div class="tool-badge">UUID Generator</div>
+                    <div class="tool-badge">Markdown Editor</div>
+                    <div class="tool-badge">Redis Explorer</div>
+                    <div class="tool-badge">Docker Tools</div>
+                    <div class="tool-badge">Payment Tester</div>
+                    <div class="tool-badge">Python Tools</div>
+                    <div class="tool-badge">Data Structures</div>
+                    <div class="tool-badge">IP Tools</div>
+                    <div class="tool-badge">JSON to PHP</div>
+                    <div class="tool-badge">JSON Minifier</div>
+                    <div class="tool-badge">URL Decoder</div>
+                    <div class="tool-badge">Base64 Encoder</div>
+                    <div class="tool-badge">YAML to JSON</div>
+                    <div class="tool-badge">XML Formatter</div>
+                    <div class="tool-badge">Lorem Ipsum</div>
+                    <div class="tool-badge">cURL Describer</div>
+                    <div class="tool-badge">Cron Describer</div>
+                    <div class="tool-badge">Regex Tester</div>
+                    <div class="tool-badge">HTTP Header Printer</div>
+                    <div class="tool-badge">Environment Generator</div>
+                    <div class="tool-badge">Elasticsearch Tools</div>
+                    <div class="tool-badge">Requests Library</div>
+                    <div class="tool-badge">urllib</div>
+                    <div class="tool-badge">Flask API</div>
+                    <div class="tool-badge">Pandas</div>
+                    <div class="tool-badge">OpenAI API</div>
+                    <div class="tool-badge">Jupyter Notebooks</div>
+                    <div class="tool-badge">Prophet</div>
+                    <div class="tool-badge">Plotly</div>
+                    <div class="tool-badge">Array</div>
+                    <div class="tool-badge">Linked List</div>
+                    <div class="tool-badge">Stack</div>
+                    <div class="tool-badge">Queue</div>
+                    <div class="tool-badge">Tree</div>
+                    <div class="tool-badge">Graph</div>
+                    <div class="tool-badge">Binary Search</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tools Grid -->
+        <div class="max-w-7xl mx-auto space-y-8">
+
+            <!-- ENCODERS/DECODERS Section -->
+            <section id="encoders">
+                <h2 class="section-header">
+                    <span class="mr-2">🔐</span>Encoders/Decoders
+                </h2>
+                <div class="tools-grid">
+                    <a href="json-decoder.html" class="tool-card rounded-xl p-4 flex flex-col items-center justify-center min-h-[80px]">
+                        <div class="tool-icon bg-blue-500/20">
+                            <svg class="w-5 h-5 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4"></path>
+                                </svg>
+                            </div>
+                        <span class="tool-name">JSON to PHP</span>
+                    </a>
+                    
+                    <!-- <div class="group bg-slate-800/70 backdrop-blur-md rounded-lg shadow-md border border-slate-700/60 p-6 relative overflow-hidden">
+                        <div class="absolute inset-0 bg-slate-900/80 backdrop-blur-sm flex items-center justify-center z-10">
+                            <div class="text-center">
+                                <div class="text-2xl mb-2">🚧</div>
+                                <div class="text-slate-300 font-medium">Coming Soon</div>
+                            </div>
+                        </div>
+                        <div class="flex items-center space-x-3 mb-3 opacity-50">
+                            <div class="w-10 h-10 bg-slate-600 rounded-lg flex items-center justify-center">
+                                <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4"></path>
+                                </svg>
+                            </div>
+                            <h3 class="text-lg font-semibold text-slate-400">PHP Array to JSON Converter</h3>
+                        </div>
+                        <p class="text-slate-500 text-sm">Convert PHP arrays to JSON format with proper syntax.</p>
+                    </div> -->
+                    
+                    <a href="json-beautifier.html" class="tool-card rounded-xl p-4 flex flex-col items-center justify-center min-h-[80px]">
+                        <div class="tool-icon bg-green-500/20">
+                            <svg class="w-5 h-5 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16l-4-4m0 0l4-4m-4 4h18"></path>
+                                </svg>
+                            </div>
+                        <span class="tool-name">JSON Beautifier</span>
+                    </a>
+                    
+                    <a href="json-minifier.html" class="tool-card rounded-xl p-4 flex flex-col items-center justify-center min-h-[80px]">
+                        <div class="tool-icon bg-orange-500/20">
+                            <svg class="w-5 h-5 text-orange-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16l-4-4m0 0l4-4m-4 4h18"></path>
+                                </svg>
+                            </div>
+                        <span class="tool-name">JSON Minifier</span>
+                    </a>
+                    
+                    <a href="string-transformer.html" class="tool-card rounded-xl p-4 flex flex-col items-center justify-center min-h-[80px]">
+                        <div class="tool-icon bg-purple-500/20">
+                            <svg class="w-5 h-5 text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16l-4-4m0 0l4-4m-4 4h18"></path>
+                                </svg>
+                            </div>
+                        <span class="tool-name">String Transformer</span>
+                    </a>
+                    
+                    <a href="url-encoder.html" class="tool-card rounded-xl p-4 flex flex-col items-center justify-center min-h-[80px]">
+                        <div class="tool-icon bg-teal-500/20">
+                            <svg class="w-5 h-5 text-teal-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16l-4-4m0 0l4-4m-4 4h18"></path>
+                                </svg>
+                            </div>
+                        <span class="tool-name">URL Encoder</span>
+                    </a>
+                    
+                    <a href="url-decoder.html" class="tool-card rounded-xl p-4 flex flex-col items-center justify-center min-h-[80px]">
+                        <div class="tool-icon bg-cyan-500/20">
+                            <svg class="w-5 h-5 text-cyan-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"></path>
+                                </svg>
+                            </div>
+                        <span class="tool-name">URL Decoder</span>
+                    </a>
+                    
+                    <a href="base64-encoder.html" class="tool-card rounded-xl p-4 flex flex-col items-center justify-center min-h-[80px]">
+                        <div class="tool-icon bg-indigo-500/20">
+                            <svg class="w-5 h-5 text-indigo-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16l-4-4m0 0l4-4m-4 4h18"></path>
+                                </svg>
+                        </div>
+                        <span class="tool-name">Base64 Encoder</span>
+                    </a>
+                    
+                    <a href="base64-decoder.html" class="tool-card rounded-xl p-4 flex flex-col items-center justify-center min-h-[80px]">
+                        <div class="tool-icon bg-pink-500/20">
+                            <svg class="w-5 h-5 text-pink-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"></path>
+                                </svg>
+                            </div>
+                        <span class="tool-name">Base64 Decoder</span>
+                    </a>
+                    
+                    <a href="hash-generator.html" class="tool-card rounded-xl p-4 flex flex-col items-center justify-center min-h-[80px]">
+                        <div class="tool-icon bg-red-500/20">
+                            <svg class="w-5 h-5 text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path>
+                                </svg>
+                            </div>
+                        <span class="tool-name">Hash Generator</span>
+                    </a>
+                    
+                    <a href="jwt-decoder.html" class="tool-card rounded-xl p-4 flex flex-col items-center justify-center min-h-[80px]">
+                        <div class="tool-icon bg-yellow-500/20">
+                            <svg class="w-5 h-5 text-yellow-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path>
+                                </svg>
+                            </div>
+                        <span class="tool-name">JWT Decoder</span>
+                    </a>
+                    
+                    <a href="csv-json-converter.html" class="tool-card rounded-xl p-4 flex flex-col items-center justify-center min-h-[80px]">
+                        <div class="tool-icon bg-emerald-500/20">
+                            <svg class="w-5 h-5 text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4"></path>
+                                </svg>
+                            </div>
+                        <span class="tool-name">CSV to JSON</span>
+                    </a>
+                    
+                    <a href="yaml-json-converter.html" class="tool-card rounded-xl p-4 flex flex-col items-center justify-center min-h-[80px]">
+                        <div class="tool-icon bg-amber-500/20">
+                            <svg class="w-5 h-5 text-amber-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4"></path>
+                                </svg>
+                            </div>
+                        <span class="tool-name">YAML ⇄ JSON</span>
+                    </a>
+                    
+                    <a href="xml-formatter.html" class="tool-card rounded-xl p-4 flex flex-col items-center justify-center min-h-[80px]">
+                        <div class="tool-icon bg-violet-500/20">
+                            <svg class="w-5 h-5 text-violet-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                                </svg>
+                            </div>
+                        <span class="tool-name">XML Formatter</span>
+                    </a>
+                    
+                </div>
+            </section>
+
+            <!-- GENERATORS Section -->
+            <section id="generators">
+                <h2 class="section-header">
+                    <span class="mr-2">⚡</span>Generators
+                </h2>
+                <div class="tools-grid">
+                    <a href="password-generator.html" class="tool-card rounded-xl p-4 flex flex-col items-center justify-center min-h-[80px]">
+                        <div class="tool-icon bg-purple-500/20">
+                            <svg class="w-5 h-5 text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path>
+                                </svg>
+                            </div>
+                        <span class="tool-name">Password Generator</span>
+                    </a>
+                    
+                    <a href="uuid-generator.html" class="tool-card rounded-xl p-4 flex flex-col items-center justify-center min-h-[80px]">
+                        <div class="tool-icon bg-blue-500/20">
+                            <svg class="w-5 h-5 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 20l4-16m2 16l4-16M6 9h14M4 15h14"></path>
+                            </svg>
+                        </div>
+                        <span class="tool-name">UUID Generator</span>
+                    </a>
+                    
+                    <a href="qr-generator.html" class="tool-card rounded-xl p-4 flex flex-col items-center justify-center min-h-[80px]">
+                        <div class="tool-icon bg-green-500/20">
+                            <svg class="w-5 h-5 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v1m6 11h2m-6 0h-2v4m0-11v3m0 0h.01M12 12h4.01M16 20h4M4 12h4m12 0h.01M5 8h2a1 1 0 001-1V5a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1zm12 0h2a1 1 0 001-1V5a1 1 0 00-1-1h-2a1 1 0 00-1 1v2a1 1 0 001 1zM5 20h2a1 1 0 001-1v-2a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1z"></path>
+                                </svg>
+                            </div>
+                        <span class="tool-name">QR Generator</span>
+                    </a>
+                    
+                    <a href="guid-generator.html" class="tool-card rounded-xl p-4 flex flex-col items-center justify-center min-h-[80px]">
+                        <div class="tool-icon bg-teal-500/20">
+                            <svg class="w-5 h-5 text-teal-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 20l4-16m2 16l4-16M6 9h14M4 15h14"></path>
+                            </svg>
+                        </div>
+                        <span class="tool-name">GUID Generator</span>
+                    </a>
+                    </a>
+                    
+                    <a href="hash-generator.html" class="tool-card rounded-xl p-4 flex flex-col items-center justify-center min-h-[80px]">
+                        <div class="tool-icon bg-red-500/20">
+                            <svg class="w-5 h-5 text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"></path>
+                                </svg>
+                            </div>
+                        <span class="tool-name">Hash Generator</span>
+                    </a>
+                    
+                    <a href="leetcode-commit-message.html" class="tool-card rounded-xl p-4 flex flex-col items-center justify-center min-h-[80px]">
+                        <div class="tool-icon bg-indigo-500/20">
+                            <svg class="w-5 h-5 text-indigo-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                                </svg>
+                            </div>
+                        <span class="tool-name">Leetcode Commit</span>
+                    </a>
+                    
+                    <a href="lorem-ipsum-generator.html" class="tool-card rounded-xl p-4 flex flex-col items-center justify-center min-h-[80px]">
+                        <div class="tool-icon bg-pink-500/20">
+                            <svg class="w-5 h-5 text-pink-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 10h16M4 14h16M4 18h16"></path>
+                                </svg>
+                            </div>
+                        <span class="tool-name">Lorem Ipsum</span>
+                    </a>
+                    
+                </div>
+            </section>
+
+            <!-- API & INTEGRATION TOOLS Section -->
+            <section id="api-tools">
+                <h2 class="section-header">
+                    <span class="mr-2">🔌</span>API & Integration Tools
+                </h2>
+                <div class="tools-grid">
+                    <a href="curl-describer.html" class="tool-card rounded-xl p-4 flex flex-col items-center justify-center min-h-[80px]">
+                        <div class="tool-icon bg-purple-500/20">
+                            <svg class="w-5 h-5 text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"></path>
+                                </svg>
+                            </div>
+                        <span class="tool-name">cURL Describer</span>
+                    </a>
+                    
+                    <a href="cron-describer.html" class="tool-card rounded-xl p-4 flex flex-col items-center justify-center min-h-[80px]">
+                        <div class="tool-icon bg-blue-500/20">
+                            <svg class="w-5 h-5 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                                </svg>
+                            </div>
+                        <span class="tool-name">Cron Describer</span>
+                    </a>
+                    
+                    <a href="regex-tester.html" class="tool-card rounded-xl p-4 flex flex-col items-center justify-center min-h-[80px]">
+                        <div class="tool-icon bg-green-500/20">
+                            <svg class="w-5 h-5 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                                </svg>
+                            </div>
+                        <span class="tool-name">Regex Tester</span>
+                    </a>
+                    
+                    <a href="http-response-header-printer.html" class="tool-card rounded-xl p-4 flex flex-col items-center justify-center min-h-[80px]">
+                        <div class="tool-icon bg-orange-500/20">
+                            <svg class="w-5 h-5 text-orange-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 9l3 3-3 3m5 0h3M5 20h14a2 2 0 002-2V6a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+                                </svg>
+                            </div>
+                        <span class="tool-name">HTTP Header Printer</span>
+                    </a>
+                </div>
+            </section>
+
+            <!-- DEVELOPMENT TOOLS Section -->
+            <section id="dev-tools">
+                <h2 class="section-header">
+                    <span class="mr-2">🛠️</span>Development Tools
+                </h2>
+                <div class="tools-grid">
+                    <a href="sql-formatter.html" class="tool-card rounded-xl p-4 flex flex-col items-center justify-center min-h-[80px]">
+                        <div class="tool-icon bg-cyan-500/20">
+                            <svg class="w-5 h-5 text-cyan-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 10h16M4 14h16M4 18h16"></path>
+                                </svg>
+                            </div>
+                        <span class="tool-name">SQL Formatter</span>
+                    </a>
+                    
+                    <a href="api-tester.html" class="tool-card rounded-xl p-4 flex flex-col items-center justify-center min-h-[80px]">
+                        <div class="tool-icon bg-blue-500/20">
+                            <svg class="w-5 h-5 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
+                                </svg>
+                            </div>
+                        <span class="tool-name">API Response Tester</span>
+                    </a>
+                    
+                    <a href="env-generator.html" class="tool-card rounded-xl p-4 flex flex-col items-center justify-center min-h-[80px]">
+                        <div class="tool-icon bg-green-500/20">
+                            <svg class="w-5 h-5 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path>
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                                </svg>
+                            </div>
+                        <span class="tool-name">Environment Generator</span>
+                    </a>
+                    
+                    <a href="elasticsearch-tools.html" class="tool-card rounded-xl p-4 flex flex-col items-center justify-center min-h-[80px]">
+                        <div class="tool-icon bg-yellow-500/20">
+                            <svg class="w-5 h-5 text-yellow-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+                            </svg>
+                        </div>
+                        <span class="tool-name">Elasticsearch Tools</span>
+                    </a>
+                    
+                    <a href="markdown-editor.html" class="tool-card rounded-xl p-4 flex flex-col items-center justify-center min-h-[80px]">
+                        <div class="tool-icon bg-indigo-500/20">
+                            <svg class="w-5 h-5 text-indigo-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path>
+                            </svg>
+                        </div>
+                        <span class="tool-name">Markdown Editor</span>
+                    </a>
+                </div>
+            </section>
+
+            <!-- REDIS Section -->
+            <section id="redis">
+                <h2 class="section-header">
+                    <span class="mr-2">🔴</span>Redis
+                </h2>
+                <div class="tools-grid">
+                    <a href="redis-command-explorer.html" class="tool-card rounded-xl p-4 flex flex-col items-center justify-center min-h-[80px]">
+                        <div class="tool-icon bg-red-500/20">
+                            <svg class="w-5 h-5 text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.746 0 3.332.477 4.5 1.253v13C19.832 18.477 18.246 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path>
+                            </svg>
+                        </div>
+                        <span class="tool-name">Redis Command Explorer</span>
+                    </a>
+                </div>
+            </section>
+
+            <!-- PAYMENTS Section -->
+            <section id="payments">
+                <h2 class="section-header">
+                    <span class="mr-2">💳</span>Payments
+                </h2>
+                <div class="tools-grid">
+                    <a href="payment-tester.html" class="tool-card rounded-xl p-4 flex flex-col items-center justify-center min-h-[80px]">
+                        <div class="tool-icon bg-green-500/20">
+                            <svg class="w-5 h-5 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"></path>
+                            </svg>
+                        </div>
+                        <span class="tool-name">Payment Tester</span>
+                    </a>
+                </div>
+            </section>
+
+            <!-- PYTHON TOOLKIT Section -->
+            <section id="python">
+                <h2 class="section-header">
+                    <span class="mr-2">🐍</span>Python Toolkit
+                </h2>
+                <div class="tools-grid">
+                    <a href="python-requests.html" class="tool-card rounded-xl p-4 flex flex-col items-center justify-center min-h-[80px]">
+                        <div class="tool-icon bg-emerald-500/20">
+                            <svg class="w-5 h-5 text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
+                                </svg>
+                            </div>
+                        <span class="tool-name">Requests Library</span>
+                    </a>
+                    
+                    <a href="python-urllib.html" class="tool-card rounded-xl p-4 flex flex-col items-center justify-center min-h-[80px]">
+                        <div class="tool-icon bg-green-500/20">
+                            <svg class="w-5 h-5 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9v-9m0-9v9"></path>
+                                </svg>
+                            </div>
+                        <span class="tool-name">urllib</span>
+                    </a>
+                    
+                    <a href="python-flask.html" class="tool-card rounded-xl p-4 flex flex-col items-center justify-center min-h-[80px]">
+                        <div class="tool-icon bg-blue-500/20">
+                            <svg class="w-5 h-5 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"></path>
+                                </svg>
+                            </div>
+                        <span class="tool-name">Flask API</span>
+                    </a>
+                    
+                    <a href="python-pandas.html" class="tool-card rounded-xl p-4 flex flex-col items-center justify-center min-h-[80px]">
+                        <div class="tool-icon bg-orange-500/20">
+                            <svg class="w-5 h-5 text-orange-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
+                                </svg>
+                            </div>
+                        <span class="tool-name">Pandas</span>
+                    </a>
+                    
+                    <a href="python-openai.html" class="tool-card rounded-xl p-4 flex flex-col items-center justify-center min-h-[80px]">
+                        <div class="tool-icon bg-purple-500/20">
+                            <svg class="w-5 h-5 text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"></path>
+                                </svg>
+                            </div>
+                        <span class="tool-name">OpenAI API</span>
+                    </a>
+                    
+                    <a href="jupyter-notebooks.html" class="tool-card rounded-xl p-4 flex flex-col items-center justify-center min-h-[80px]">
+                        <div class="tool-icon bg-yellow-500/20">
+                            <svg class="w-5 h-5 text-yellow-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                                </svg>
+                            </div>
+                        <span class="tool-name">Jupyter Notebooks</span>
+                    </a>
+                    
+                    <a href="prophet.html" class="tool-card rounded-xl p-4 flex flex-col items-center justify-center min-h-[80px]">
+                        <div class="tool-icon bg-teal-500/20">
+                            <svg class="w-5 h-5 text-teal-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 12l3-3 3 3 4-4M8 21l4-16 2.5 8L17 21l-1-2-2 2z"></path>
+                            </svg>
+                        </div>
+                        <span class="tool-name">Prophet</span>
+                    </a>
+                    
+                    <a href="plotly.html" class="tool-card rounded-xl p-4 flex flex-col items-center justify-center min-h-[80px]">
+                        <div class="tool-icon bg-pink-500/20">
+                            <svg class="w-5 h-5 text-pink-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 12l3-3 3 3 4-4M8 21l4-16 2.5 8L17 21l-1-2-2 2z"></path>
+                                </svg>
+                            </div>
+                        <span class="tool-name">Plotly</span>
+                    </a>
+                    
+                    <a href="elasticsearch-tools.html" class="tool-card rounded-xl p-4 flex flex-col items-center justify-center min-h-[80px]">
+                        <div class="tool-icon bg-indigo-500/20">
+                            <svg class="w-5 h-5 text-indigo-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+                            </svg>
+                        </div>
+                        <span class="tool-name">Elasticsearch Tools</span>
+                    </a>
+                </div>
+            </section>
+
+            <!-- DATA STRUCTURES Section -->
+            <section id="data-structures">
+                <h2 class="section-header">
+                    <span class="mr-2">📚</span>Data Structures & Algorithms
+                </h2>
+                <div class="tools-grid">
+                    <a href="data-structures.html" class="tool-card rounded-xl p-4 flex flex-col items-center justify-center min-h-[80px]">
+                        <div class="tool-icon bg-purple-500/20">
+                            <svg class="w-5 h-5 text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.746 0 3.332.477 4.5 1.253v13C19.832 18.477 18.246 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path>
+                                </svg>
+                            </div>
+                        <span class="tool-name">Data Structures</span>
+                    </a>
+                    
+                    <a href="array-ds.html" class="tool-card rounded-xl p-4 flex flex-col items-center justify-center min-h-[80px]">
+                        <div class="tool-icon bg-blue-500/20">
+                            <svg class="w-5 h-5 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 10h16M4 14h16M4 18h16"></path>
+                            </svg>
+                        </div>
+                        <span class="tool-name">Array</span>
+                    </a>
+                    
+                    <a href="linkedlist-ds.html" class="tool-card rounded-xl p-4 flex flex-col items-center justify-center min-h-[80px]">
+                        <div class="tool-icon bg-green-500/20">
+                            <svg class="w-5 h-5 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1"></path>
+                            </svg>
+                        </div>
+                        <span class="tool-name">Linked List</span>
+                    </a>
+                    
+                    <a href="stack-ds.html" class="tool-card rounded-xl p-4 flex flex-col items-center justify-center min-h-[80px]">
+                        <div class="tool-icon bg-orange-500/20">
+                            <svg class="w-5 h-5 text-orange-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"></path>
+                            </svg>
+                        </div>
+                        <span class="tool-name">Stack</span>
+                    </a>
+                    
+                    <a href="queue-ds.html" class="tool-card rounded-xl p-4 flex flex-col items-center justify-center min-h-[80px]">
+                        <div class="tool-icon bg-teal-500/20">
+                            <svg class="w-5 h-5 text-teal-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 10h16M4 14h16M4 18h16"></path>
+                            </svg>
+                        </div>
+                        <span class="tool-name">Queue</span>
+                    </a>
+                    
+                    <a href="tree-ds.html" class="tool-card rounded-xl p-4 flex flex-col items-center justify-center min-h-[80px]">
+                        <div class="tool-icon bg-yellow-500/20">
+                            <svg class="w-5 h-5 text-yellow-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"></path>
+                            </svg>
+                        </div>
+                        <span class="tool-name">Tree</span>
+                    </a>
+                    
+                    <a href="graph-ds.html" class="tool-card rounded-xl p-4 flex flex-col items-center justify-center min-h-[80px]">
+                        <div class="tool-icon bg-pink-500/20">
+                            <svg class="w-5 h-5 text-pink-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1"></path>
+                            </svg>
+                        </div>
+                        <span class="tool-name">Graph</span>
+                    </a>
+                    
+                    <a href="binarysearch-ds.html" class="tool-card rounded-xl p-4 flex flex-col items-center justify-center min-h-[80px]">
+                        <div class="tool-icon bg-indigo-500/20">
+                            <svg class="w-5 h-5 text-indigo-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+                            </svg>
+                        </div>
+                        <span class="tool-name">Binary Search</span>
+                    </a>
+                </div>
+            </section>
+
+            <!-- INFO Section -->
+            <section id="info">
+                <h2 class="section-header">
+                    <span class="mr-2">ℹ️</span>Information & Reference
+                </h2>
+                <div class="tools-grid">
+                    <a href="ip-address.html" class="tool-card rounded-xl p-4 flex flex-col items-center justify-center min-h-[80px]">
+                        <div class="tool-icon bg-red-500/20">
+                            <svg class="w-5 h-5 text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9a9 9 0 01-9-9m9 9c1.657 0 3-4.03 3-9s-1.343-9-3-9m0 18c-1.657 0-3-4.03-3-9s1.343-9 3-9m-9 9a9 9 0 019-9"></path>
+                                </svg>
+                            </div>
+                        <span class="tool-name">IP Address Tools</span>
+                    </a>
+                </div>
+            </section>
+
+        </div>
+
+    </div>
+
+    <!-- Floating Action Button -->
+    <div class="fab">
+        <button id="fab-toggle" class="w-14 h-14 bg-gradient-to-r from-emerald-500 to-teal-600 text-white rounded-full shadow-lg hover:shadow-xl transition-all duration-300 flex items-center justify-center">
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
+            </svg>
+        </button>
+        
+        <!-- FAB Menu -->
+        <div id="fab-menu" class="absolute bottom-16 right-0 space-y-3 opacity-0 invisible transition-all duration-300 transform translate-y-4">
+            <a href="json-decoder.html" class="flex items-center space-x-3 bg-slate-800 text-white px-4 py-2 rounded-lg shadow-lg hover:bg-slate-700 transition-colors">
+                <span class="text-lg">🔧</span>
+                <span class="text-sm">JSON Tools</span>
+            </a>
+            <a href="jwt-decoder.html" class="flex items-center space-x-3 bg-slate-800 text-white px-4 py-2 rounded-lg shadow-lg hover:bg-slate-700 transition-colors">
+                <span class="text-lg">🔑</span>
+                <span class="text-sm">JWT Decoder</span>
+            </a>
+            <a href="sql-formatter.html" class="flex items-center space-x-3 bg-slate-800 text-white px-4 py-2 rounded-lg shadow-lg hover:bg-slate-700 transition-colors">
+                <span class="text-lg">🗄️</span>
+                <span class="text-sm">SQL Formatter</span>
+            </a>
+            <a href="api-tester.html" class="flex items-center space-x-3 bg-slate-800 text-white px-4 py-2 rounded-lg shadow-lg hover:bg-slate-700 transition-colors">
+                <span class="text-lg">⚡</span>
+                <span class="text-sm">API Tester</span>
+            </a>
+            <a href="qr-generator.html" class="flex items-center space-x-3 bg-slate-800 text-white px-4 py-2 rounded-lg shadow-lg hover:bg-slate-700 transition-colors">
+                <span class="text-lg">📱</span>
+                <span class="text-sm">QR Generator</span>
+            </a>
+            <a href="hash-generator.html" class="flex items-center space-x-3 bg-slate-800 text-white px-4 py-2 rounded-lg shadow-lg hover:bg-slate-700 transition-colors">
+                <span class="text-lg">🔐</span>
+                <span class="text-sm">Hash Tools</span>
+            </a>
+        </div>
+    </div>
+
+        <!-- Footer -->
+        <footer class="text-center text-gray-500 mt-10 pb-6">
+            © 2025 DevDunia – Free Developer Tools by <a href="https://echobash.com" class="text-blue-500 hover:underline" target="_blank">echobash</a>
+        </footer>
+    </div>
+
+    <script>
+
+        // Search functionality
+        const searchInput = document.getElementById('search-input');
+        const toolCards = document.querySelectorAll('.tool-card, a[href$=".html"]');
+
+        searchInput.addEventListener('input', function() {
+            const searchTerm = this.value.toLowerCase();
+            
+            toolCards.forEach(card => {
+                const title = card.querySelector('h3')?.textContent.toLowerCase() || '';
+                const description = card.querySelector('p')?.textContent.toLowerCase() || '';
+                
+                if (title.includes(searchTerm) || description.includes(searchTerm)) {
+                    card.style.display = '';
+                    card.style.opacity = '1';
+                    
+                    // Highlight search term
+                    if (searchTerm && title.includes(searchTerm)) {
+                        const highlightedTitle = title.replace(
+                            new RegExp(searchTerm, 'gi'), 
+                            `<span class="search-highlight">$&</span>`
+                        );
+                        card.querySelector('h3').innerHTML = highlightedTitle;
+                    }
+                } else {
+                    card.style.display = 'none';
+                    card.style.opacity = '0';
+                }
+            });
+        });
+    </script>
+    <script src="sidebar-include.js"></script>
+    <script src="sidebar.js"></script>
+</body>
+</html>

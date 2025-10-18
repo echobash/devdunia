@@ -1,0 +1,657 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Diff Checker - Developer Toolkit | DevDunia</title>
+    <meta name="description" content="Compare and find differences between two text files or code snippets. Free online diff checker tool for developers.">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="common-sidebar.js"></script>
+    <style>
+        body {
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #0f172a 100%);
+        }
+        
+        .diff-added {
+            background-color: rgba(34, 197, 94, 0.2);
+            border-left: 3px solid #22c55e;
+        }
+        
+        .diff-removed {
+            background-color: rgba(239, 68, 68, 0.2);
+            border-left: 3px solid #ef4444;
+        }
+        
+        .diff-modified {
+            background-color: rgba(251, 191, 36, 0.2);
+            border-left: 3px solid #fbbf24;
+        }
+        
+        .line-number {
+            background-color: #1e293b;
+            color: #64748b;
+            user-select: none;
+            border-right: 1px solid #334155;
+        }
+        
+        .diff-line {
+            font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+            font-size: 14px;
+            line-height: 1.5;
+            white-space: pre-wrap;
+            word-break: break-all;
+        }
+    </style>
+</head>
+<body class="h-screen lg:ml-72">
+    <!-- Background -->
+    <div class="fixed inset-0 -z-10 bg-gradient-to-br from-gray-900 via-slate-900 to-gray-900"></div>
+
+    <!-- Main Container -->
+    <div class="relative z-10 w-full h-screen flex flex-col">
+        
+        <!-- Header -->
+        <div class="bg-slate-800/70 backdrop-blur-md border-b border-slate-700/60 px-6 py-4">
+            <div class="flex items-center justify-between">
+                <div>
+                    <h1 class="text-2xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-cyan-500">
+                        Diff Checker
+                    </h1>
+                    <p class="text-sm text-gray-400 mt-1">Compare and find differences between two text files</p>
+                </div>
+                <div class="flex items-center space-x-3">
+                    <button id="clear-all-btn" class="px-4 py-2 bg-slate-600 hover:bg-slate-700 text-white text-sm rounded-lg transition-colors duration-200 flex items-center space-x-2">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
+                        </svg>
+                        <span>Clear All</span>
+                    </button>
+                    <button id="compare-btn" class="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white text-sm rounded-lg transition-colors duration-200 flex items-center space-x-2">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                        </svg>
+                        <span>Compare</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Main Content Area -->
+        <div class="flex-1 flex overflow-hidden">
+            
+            <!-- Left Panel -->
+            <div class="flex-1 flex flex-col border-r border-slate-700/60">
+                <div class="bg-slate-800/50 px-4 py-2 border-b border-slate-700/60">
+                    <div class="flex items-center justify-between">
+                        <h3 class="text-sm font-medium text-gray-300">Original Text</h3>
+                        <div class="flex items-center space-x-2">
+                            <button id="load-file-left" class="px-2 py-1 bg-slate-600 hover:bg-slate-700 text-white text-xs rounded transition-colors duration-200">
+                                Load File
+                            </button>
+                            <button id="copy-left" class="px-2 py-1 bg-slate-600 hover:bg-slate-700 text-white text-xs rounded transition-colors duration-200">
+                                Copy
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                <div class="flex-1 relative">
+                    <textarea 
+                        id="left-text" 
+                        class="w-full h-full p-4 bg-slate-900/50 border-0 text-gray-200 placeholder-gray-400 focus:outline-none resize-none font-mono text-sm leading-relaxed"
+                        placeholder="Paste your original text here..."
+                    >class Solution:
+    def removeAnagrams(self, words: List[str]) -> List[str]:
+        result = [words[0]]
+        n = len(words)
+        for i in range(1,n):
+            if sorted(words[i]) != sorted(words[i-1]):
+                result.append(words[i])
+        return result</textarea>
+                </div>
+            </div>
+
+            <!-- Right Panel -->
+            <div class="flex-1 flex flex-col">
+                <div class="bg-slate-800/50 px-4 py-2 border-b border-slate-700/60">
+                    <div class="flex items-center justify-between">
+                        <h3 class="text-sm font-medium text-gray-300">Modified Text</h3>
+                        <div class="flex items-center space-x-2">
+                            <button id="load-file-right" class="px-2 py-1 bg-slate-600 hover:bg-slate-700 text-white text-xs rounded transition-colors duration-200">
+                                Load File
+                            </button>
+                            <button id="copy-right" class="px-2 py-1 bg-slate-600 hover:bg-slate-700 text-white text-xs rounded transition-colors duration-200">
+                                Copy
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                <div class="flex-1 relative">
+                    <textarea 
+                        id="right-text" 
+                        class="w-full h-full p-4 bg-slate-900/50 border-0 text-gray-200 placeholder-gray-400 focus:outline-none resize-none font-mono text-sm leading-relaxed"
+                        placeholder="Paste your modified text here..."
+                    >class Solution:
+    def removeAnagrams(self, words: List[str]) -> List[str]:
+        result = [words[0]]
+        n = len(worhds)
+        for i in range(1,n):
+            hi
+            if sorted(words[i]) != sorted(words[i-1]):
+                result.append(words[i])
+        return result</textarea>
+                </div>
+            </div>
+        </div>
+
+        <!-- Diff Results Panel -->
+        <div id="diff-results" class="hidden bg-slate-800/70 backdrop-blur-md border-t border-slate-700/60 h-1/2 flex flex-col">
+            <div class="bg-slate-800/50 px-4 py-2 border-b border-slate-700/60">
+                <div class="flex items-center justify-between">
+                    <h3 class="text-sm font-medium text-gray-300">Differences</h3>
+                    <div class="flex items-center space-x-4">
+                        <div class="flex items-center space-x-2 text-xs">
+                            <div class="w-3 h-3 bg-green-500 rounded"></div>
+                            <span class="text-gray-400">Added</span>
+                        </div>
+                        <div class="flex items-center space-x-2 text-xs">
+                            <div class="w-3 h-3 bg-red-500 rounded"></div>
+                            <span class="text-gray-400">Removed</span>
+                        </div>
+                        <div class="flex items-center space-x-2 text-xs">
+                            <div class="w-3 h-3 bg-yellow-500 rounded"></div>
+                            <span class="text-gray-400">Modified</span>
+                        </div>
+                        <button id="copy-diff" class="px-2 py-1 bg-slate-600 hover:bg-slate-700 text-white text-xs rounded transition-colors duration-200">
+                            Copy Diff
+                        </button>
+                    </div>
+                </div>
+            </div>
+            <div class="flex-1 flex overflow-hidden">
+                <!-- Left Diff Panel -->
+                <div class="flex-1 flex flex-col border-r border-slate-700/60">
+                    <div class="bg-slate-800/30 px-4 py-2 border-b border-slate-700/60">
+                        <div class="flex items-center justify-between">
+                            <h4 class="text-xs font-medium text-gray-400">Original</h4>
+                            <span id="left-diff-count" class="text-xs text-gray-500">0 lines</span>
+                        </div>
+                    </div>
+                    <div class="flex-1 overflow-auto">
+                        <div id="left-diff-content" class="p-4 font-mono text-sm"></div>
+                    </div>
+                </div>
+                
+                <!-- Right Diff Panel -->
+                <div class="flex-1 flex flex-col">
+                    <div class="bg-slate-800/30 px-4 py-2 border-b border-slate-700/60">
+                        <div class="flex items-center justify-between">
+                            <h4 class="text-xs font-medium text-gray-400">Modified</h4>
+                            <span id="right-diff-count" class="text-xs text-gray-500">0 lines</span>
+                        </div>
+                    </div>
+                    <div class="flex-1 overflow-auto">
+                        <div id="right-diff-content" class="p-4 font-mono text-sm"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Statistics Panel -->
+        <div id="stats-panel" class="hidden bg-slate-800/50 border-t border-slate-700/60 px-6 py-3">
+            <div class="flex items-center justify-between text-sm">
+                <div class="flex items-center space-x-6">
+                    <div class="flex items-center space-x-2">
+                        <span class="text-gray-400">Added:</span>
+                        <span id="added-count" class="text-green-400 font-semibold">0</span>
+                    </div>
+                    <div class="flex items-center space-x-2">
+                        <span class="text-gray-400">Removed:</span>
+                        <span id="removed-count" class="text-red-400 font-semibold">0</span>
+                    </div>
+                    <div class="flex items-center space-x-2">
+                        <span class="text-gray-400">Modified:</span>
+                        <span id="modified-count" class="text-yellow-400 font-semibold">0</span>
+                    </div>
+
+                </div>
+                <div class="flex items-center space-x-2">
+                    <span class="text-gray-400">Similarity:</span>
+                    <span id="similarity" class="text-blue-400 font-semibold">100%</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Hidden file input -->
+    <input type="file" id="file-input-left" accept=".txt,.js,.html,.css,.json,.xml,.md,.py,.java,.cpp,.c,.php,.rb,.go,.rs,.ts,.jsx,.tsx,.vue,.svelte" style="display: none;">
+    <input type="file" id="file-input-right" accept=".txt,.js,.html,.css,.json,.xml,.md,.py,.java,.cpp,.c,.php,.rb,.go,.rs,.ts,.jsx,.tsx,.vue,.svelte" style="display: none;">
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const leftText = document.getElementById('left-text');
+            const rightText = document.getElementById('right-text');
+            const compareBtn = document.getElementById('compare-btn');
+            const clearAllBtn = document.getElementById('clear-all-btn');
+            const diffResults = document.getElementById('diff-results');
+            const diffContent = document.getElementById('diff-content');
+            const statsPanel = document.getElementById('stats-panel');
+            const copyLeftBtn = document.getElementById('copy-left');
+            const copyRightBtn = document.getElementById('copy-right');
+            const copyDiffBtn = document.getElementById('copy-diff');
+            const loadFileLeftBtn = document.getElementById('load-file-left');
+            const loadFileRightBtn = document.getElementById('load-file-right');
+            const fileInputLeft = document.getElementById('file-input-left');
+            const fileInputRight = document.getElementById('file-input-right');
+
+            // File loading
+            loadFileLeftBtn.addEventListener('click', () => fileInputLeft.click());
+            loadFileRightBtn.addEventListener('click', () => fileInputRight.click());
+
+            fileInputLeft.addEventListener('change', function(e) {
+                const file = e.target.files[0];
+                if (file) {
+                    const reader = new FileReader();
+                    reader.onload = function(e) {
+                        leftText.value = e.target.result;
+                    };
+                    reader.readAsText(file);
+                }
+            });
+
+            fileInputRight.addEventListener('change', function(e) {
+                const file = e.target.files[0];
+                if (file) {
+                    const reader = new FileReader();
+                    reader.onload = function(e) {
+                        rightText.value = e.target.result;
+                    };
+                    reader.readAsText(file);
+                }
+            });
+
+            // Copy functions
+            copyLeftBtn.addEventListener('click', () => {
+                navigator.clipboard.writeText(leftText.value);
+                showCopyFeedback(copyLeftBtn);
+            });
+
+            copyRightBtn.addEventListener('click', () => {
+                navigator.clipboard.writeText(rightText.value);
+                showCopyFeedback(copyRightBtn);
+            });
+
+            copyDiffBtn.addEventListener('click', () => {
+                const leftContent = document.getElementById('left-diff-content').textContent;
+                const rightContent = document.getElementById('right-diff-content').textContent;
+                const diffText = `=== ORIGINAL ===\n${leftContent}\n\n=== MODIFIED ===\n${rightContent}`;
+                navigator.clipboard.writeText(diffText);
+                showCopyFeedback(copyDiffBtn);
+            });
+
+            // Clear all
+            clearAllBtn.addEventListener('click', function() {
+                leftText.value = '';
+                rightText.value = '';
+                diffResults.classList.add('hidden');
+                statsPanel.classList.add('hidden');
+                document.getElementById('left-diff-content').innerHTML = '';
+                document.getElementById('right-diff-content').innerHTML = '';
+                
+                // Show input panels
+                document.querySelector('.flex-1.flex.overflow-hidden').classList.remove('hidden');
+                
+                // Reset compare button and state
+                compareBtn.innerHTML = `
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                    </svg>
+                    <span>Compare</span>
+                `;
+                isComparing = false;
+            });
+
+            // Compare function
+            let isComparing = false;
+            
+            compareBtn.addEventListener('click', function() {
+                if (!isComparing) {
+                    // Compare mode
+                    const left = leftText.value;
+                    const right = rightText.value;
+
+                    if (!left && !right) {
+                        alert('Please enter text in at least one panel to compare.');
+                        return;
+                    }
+
+                    const diff = generateDiff(left, right);
+                    displayDiff(diff);
+                    
+                    // Hide input panels and show only diff results
+                    document.querySelector('.flex-1.flex.overflow-hidden').classList.add('hidden');
+                    diffResults.classList.remove('hidden');
+                    statsPanel.classList.remove('hidden');
+                    
+                    // Update compare button to "New Comparison"
+                    compareBtn.innerHTML = `
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
+                        </svg>
+                        <span>New Comparison</span>
+                    `;
+                    isComparing = true;
+                } else {
+                    // Reset mode
+                    document.querySelector('.flex-1.flex.overflow-hidden').classList.remove('hidden');
+                    diffResults.classList.add('hidden');
+                    statsPanel.classList.add('hidden');
+                    
+                    // Reset button
+                    compareBtn.innerHTML = `
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                        </svg>
+                        <span>Compare</span>
+                    `;
+                    isComparing = false;
+                }
+            });
+
+            // Auto-resize textareas
+            [leftText, rightText].forEach(textarea => {
+                textarea.addEventListener('input', function() {
+                    this.style.height = 'auto';
+                    this.style.height = this.scrollHeight + 'px';
+                });
+            });
+
+            // Improved diff generation algorithm using LCS (Longest Common Subsequence)
+            function generateDiff(left, right) {
+                const leftLines = left.split('\n');
+                const rightLines = right.split('\n');
+                
+                // Find LCS to properly align lines
+                const lcs = findLCS(leftLines, rightLines);
+                
+                const diff = [];
+                let i = 0, j = 0, lcsIndex = 0;
+                
+                while (i < leftLines.length || j < rightLines.length) {
+                    // Check if current positions match LCS
+                    if (lcsIndex < lcs.length && 
+                        i < leftLines.length && j < rightLines.length &&
+                        leftLines[i] === lcs[lcsIndex] && rightLines[j] === lcs[lcsIndex]) {
+                        // Lines match - add as equal
+                        diff.push({ 
+                            type: 'equal', 
+                            leftLine: leftLines[i], 
+                            rightLine: rightLines[j], 
+                            leftNum: i + 1, 
+                            rightNum: j + 1 
+                        });
+                        i++;
+                        j++;
+                        lcsIndex++;
+                    } else if (i >= leftLines.length) {
+                        // Only right lines remain - these are additions
+                        diff.push({ 
+                            type: 'added', 
+                            leftLine: null, 
+                            rightLine: rightLines[j], 
+                            leftNum: null, 
+                            rightNum: j + 1 
+                        });
+                        j++;
+                    } else if (j >= rightLines.length) {
+                        // Only left lines remain - these are removals
+                        diff.push({ 
+                            type: 'removed', 
+                            leftLine: leftLines[i], 
+                            rightLine: null, 
+                            leftNum: i + 1, 
+                            rightNum: null 
+                        });
+                        i++;
+                    } else if (leftLines[i] === rightLines[j]) {
+                        // Direct match found
+                        diff.push({ 
+                            type: 'equal', 
+                            leftLine: leftLines[i], 
+                            rightLine: rightLines[j], 
+                            leftNum: i + 1, 
+                            rightNum: j + 1 
+                        });
+                        i++;
+                        j++;
+                    } else {
+                        // Look ahead to find the next match
+                        let foundMatch = false;
+                        const maxLookAhead = Math.min(20, Math.max(leftLines.length, rightLines.length));
+                        
+                        for (let lookAhead = 1; lookAhead <= maxLookAhead; lookAhead++) {
+                            // Check if we can find a match by advancing left
+                            if (i + lookAhead < leftLines.length && 
+                                j < rightLines.length && 
+                                leftLines[i + lookAhead] === rightLines[j]) {
+                                // Add removed lines
+                                for (let k = 0; k < lookAhead; k++) {
+                                    diff.push({ 
+                                        type: 'removed', 
+                                        leftLine: leftLines[i + k], 
+                                        rightLine: null, 
+                                        leftNum: i + k + 1, 
+                                        rightNum: null 
+                                    });
+                                }
+                                i += lookAhead;
+                                foundMatch = true;
+                                break;
+                            }
+                            // Check if we can find a match by advancing right
+                            if (j + lookAhead < rightLines.length && 
+                                i < leftLines.length && 
+                                leftLines[i] === rightLines[j + lookAhead]) {
+                                // Add added lines
+                                for (let k = 0; k < lookAhead; k++) {
+                                    diff.push({ 
+                                        type: 'added', 
+                                        leftLine: null, 
+                                        rightLine: rightLines[j + k], 
+                                        leftNum: null, 
+                                        rightNum: j + k + 1 
+                                    });
+                                }
+                                j += lookAhead;
+                                foundMatch = true;
+                                break;
+                            }
+                        }
+                        
+                        if (!foundMatch) {
+                            // No match found - treat as modified
+                            diff.push({ 
+                                type: 'modified', 
+                                leftLine: leftLines[i], 
+                                rightLine: rightLines[j], 
+                                leftNum: i + 1, 
+                                rightNum: j + 1 
+                            });
+                            i++;
+                            j++;
+                        }
+                    }
+                }
+                
+                return diff;
+            }
+            
+            // Find Longest Common Subsequence
+            function findLCS(arr1, arr2) {
+                const m = arr1.length;
+                const n = arr2.length;
+                const dp = Array(m + 1).fill().map(() => Array(n + 1).fill(0));
+                
+                // Build LCS table
+                for (let i = 1; i <= m; i++) {
+                    for (let j = 1; j <= n; j++) {
+                        if (arr1[i - 1] === arr2[j - 1]) {
+                            dp[i][j] = dp[i - 1][j - 1] + 1;
+                        } else {
+                            dp[i][j] = Math.max(dp[i - 1][j], dp[i][j - 1]);
+                        }
+                    }
+                }
+                
+                // Reconstruct LCS
+                const lcs = [];
+                let i = m, j = n;
+                while (i > 0 && j > 0) {
+                    if (arr1[i - 1] === arr2[j - 1]) {
+                        lcs.unshift(arr1[i - 1]);
+                        i--;
+                        j--;
+                    } else if (dp[i - 1][j] > dp[i][j - 1]) {
+                        i--;
+                    } else {
+                        j--;
+                    }
+                }
+                
+                return lcs;
+            }
+
+            // Display diff results in side-by-side format
+            function displayDiff(diff) {
+                const leftDiffContent = document.getElementById('left-diff-content');
+                const rightDiffContent = document.getElementById('right-diff-content');
+                const leftDiffCount = document.getElementById('left-diff-count');
+                const rightDiffCount = document.getElementById('right-diff-count');
+                
+                leftDiffContent.innerHTML = '';
+                rightDiffContent.innerHTML = '';
+                
+                let leftLineCount = 0;
+                let rightLineCount = 0;
+                let leftRemovals = 0;
+                let rightAdditions = 0;
+                
+                diff.forEach(item => {
+                    if (item.type === 'equal') {
+                        // Show same line in both panels
+                        const leftLine = createDiffLine(item.leftLine, item.leftNum, 'equal');
+                        const rightLine = createDiffLine(item.rightLine, item.rightNum, 'equal');
+                        leftDiffContent.appendChild(leftLine);
+                        rightDiffContent.appendChild(rightLine);
+                        leftLineCount++;
+                        rightLineCount++;
+                    } else if (item.type === 'removed') {
+                        // Show removed line in left panel only
+                        const leftLine = createDiffLine(item.leftLine, item.leftNum, 'removed');
+                        const rightLine = createDiffLine('', '', 'empty');
+                        leftDiffContent.appendChild(leftLine);
+                        rightDiffContent.appendChild(rightLine);
+                        leftLineCount++;
+                        rightLineCount++;
+                        leftRemovals++;
+                    } else if (item.type === 'added') {
+                        // Show added line in right panel only
+                        const leftLine = createDiffLine('', '', 'empty');
+                        const rightLine = createDiffLine(item.rightLine, item.rightNum, 'added');
+                        leftDiffContent.appendChild(leftLine);
+                        rightDiffContent.appendChild(rightLine);
+                        leftLineCount++;
+                        rightLineCount++;
+                        rightAdditions++;
+                    } else if (item.type === 'modified') {
+                        // Show modified line in both panels with different highlighting
+                        const leftLine = createDiffLine(item.leftLine, item.leftNum, 'removed');
+                        const rightLine = createDiffLine(item.rightLine, item.rightNum, 'added');
+                        leftDiffContent.appendChild(leftLine);
+                        rightDiffContent.appendChild(rightLine);
+                        leftLineCount++;
+                        rightLineCount++;
+                        leftRemovals++;
+                        rightAdditions++;
+                    }
+                });
+                
+                // Update line counts
+                leftDiffCount.textContent = `${leftLineCount} lines`;
+                rightDiffCount.textContent = `${rightLineCount} lines`;
+                
+                // Update statistics
+                updateStats(leftRemovals, rightAdditions, diff.length);
+            }
+            
+            // Create a diff line element
+            function createDiffLine(content, lineNum, type) {
+                const lineDiv = document.createElement('div');
+                lineDiv.className = 'flex border-b border-slate-700/20 hover:bg-slate-700/20 transition-colors duration-150';
+                
+                const numDiv = document.createElement('div');
+                numDiv.className = 'line-number w-12 px-2 py-1 text-right text-xs text-gray-500 select-none';
+                numDiv.textContent = lineNum || '';
+                
+                const contentDiv = document.createElement('div');
+                contentDiv.className = 'flex-1 px-2 py-1 text-sm';
+                
+                if (type === 'equal') {
+                    contentDiv.className += ' text-gray-300';
+                    contentDiv.textContent = content;
+                } else if (type === 'removed') {
+                    contentDiv.className += ' diff-removed text-red-300';
+                    contentDiv.textContent = content;
+                } else if (type === 'added') {
+                    contentDiv.className += ' diff-added text-green-300';
+                    contentDiv.textContent = content;
+                } else if (type === 'empty') {
+                    contentDiv.className += ' text-transparent';
+                    contentDiv.textContent = ' ';
+                }
+                
+                lineDiv.appendChild(numDiv);
+                lineDiv.appendChild(contentDiv);
+                return lineDiv;
+            }
+            
+            // Update statistics
+            function updateStats(removals, additions, totalLines) {
+                const addedCount = document.getElementById('added-count');
+                const removedCount = document.getElementById('removed-count');
+                const modifiedCount = document.getElementById('modified-count');
+                const similarity = document.getElementById('similarity');
+                
+                addedCount.textContent = additions;
+                removedCount.textContent = removals;
+                modifiedCount.textContent = Math.min(removals, additions); // Modified lines are the overlap
+                
+                const equalLines = totalLines - removals - additions + Math.min(removals, additions);
+                const similarityPercent = totalLines > 0 ? Math.round((equalLines / totalLines) * 100) : 100;
+                similarity.textContent = similarityPercent + '%';
+            }
+
+
+            // Copy feedback
+            function showCopyFeedback(button) {
+                const originalText = button.textContent;
+                button.textContent = 'Copied!';
+                button.classList.add('bg-green-600');
+                setTimeout(() => {
+                    button.textContent = originalText;
+                    button.classList.remove('bg-green-600');
+                }, 2000);
+            }
+
+            // Keyboard shortcuts
+            document.addEventListener('keydown', function(e) {
+                if (e.ctrlKey || e.metaKey) {
+                    if (e.key === 'Enter') {
+                        e.preventDefault();
+                        compareBtn.click();
+                    }
+                }
+            });
+        });
+    </script>
+</body>
+</html>
