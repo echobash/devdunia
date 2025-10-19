@@ -1,0 +1,919 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PostgreSQL Guide - Developer Toolkit | DevDunia</title>
+    <meta name="description" content="Complete PostgreSQL reference guide with commands, functions, and examples. Essential PostgreSQL documentation for developers.">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body {
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #0f172a 100%);
+        }
+    </style>
+</head>
+<body class="h-screen lg:ml-72">
+    <!-- Background: Consistent Subtle Dark Gradient -->
+    <div class="fixed inset-0 -z-10 bg-gradient-to-br from-gray-900 via-slate-900 to-gray-900"></div>
+
+    <!-- Main Container -->
+    <div class="main-content">
+        <div class="relative z-10 container mx-auto px-4 pt-16 pb-24 sm:px-6 lg:px-8">
+        
+        <!-- Page Header -->
+        <div class="text-center mb-12">
+            <h1 class="text-3xl sm:text-4xl font-bold mb-4 tracking-tight
+                       text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-cyan-500">
+                PostgreSQL Guide
+            </h1>
+            <p class="text-lg text-gray-400 max-w-2xl mx-auto">
+                Complete PostgreSQL reference with commands, functions, and practical examples.
+            </p>
+        </div>
+
+        <!-- Tool Container -->
+        <div class="max-w-6xl mx-auto">
+            <div class="bg-slate-800/70 backdrop-blur-md rounded-lg shadow-lg border border-slate-700/60 p-6">
+                
+                <!-- Search Bar -->
+                <div class="mb-8">
+                    <input type="text" id="searchInput" placeholder="Search PostgreSQL commands, functions, or concepts..." 
+                           class="w-full px-4 py-3 bg-slate-700/50 border border-slate-600 rounded-lg text-gray-200 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                </div>
+
+                <!-- Content Sections -->
+                <div class="space-y-8">
+                    
+                    <!-- Database Management -->
+                    <section class="command-section">
+                        <h2 class="text-2xl font-bold text-white mb-6 flex items-center">
+                            <span class="text-blue-400 mr-3">🗄️</span>
+                            Database Management
+                        </h2>
+                        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                            <div class="bg-slate-700/50 p-6 rounded-lg border border-slate-600/30">
+                                <h3 class="text-lg font-semibold text-blue-400 mb-3">Create Database</h3>
+                                <div class="bg-slate-900/50 p-4 rounded-lg mb-3">
+                                    <code class="text-green-400">CREATE DATABASE database_name;</code>
+                                </div>
+                                <p class="text-gray-300 text-sm mb-3">Creates a new database with the specified name.</p>
+                                <div class="bg-slate-900/50 p-4 rounded-lg">
+                                    <code class="text-gray-300">
+-- Example<br>
+CREATE DATABASE myapp;<br>
+CREATE DATABASE test_db WITH ENCODING 'UTF8';
+                                    </code>
+                                </div>
+                            </div>
+
+                            <div class="bg-slate-700/50 p-6 rounded-lg border border-slate-600/30">
+                                <h3 class="text-lg font-semibold text-blue-400 mb-3">Drop Database</h3>
+                                <div class="bg-slate-900/50 p-4 rounded-lg mb-3">
+                                    <code class="text-red-400">DROP DATABASE database_name;</code>
+                                </div>
+                                <p class="text-gray-300 text-sm mb-3">Permanently deletes a database and all its data.</p>
+                                <div class="bg-slate-900/50 p-4 rounded-lg">
+                                    <code class="text-gray-300">
+-- Example<br>
+DROP DATABASE old_db;<br>
+DROP DATABASE IF EXISTS temp_db;
+                                    </code>
+                                </div>
+                            </div>
+
+                            <div class="bg-slate-700/50 p-6 rounded-lg border border-slate-600/30">
+                                <h3 class="text-lg font-semibold text-blue-400 mb-3">Connect to Database</h3>
+                                <div class="bg-slate-900/50 p-4 rounded-lg mb-3">
+                                    <code class="text-cyan-400">\c database_name</code>
+                                </div>
+                                <p class="text-gray-300 text-sm mb-3">Connects to a specific database in psql.</p>
+                                <div class="bg-slate-900/50 p-4 rounded-lg">
+                                    <code class="text-gray-300">
+-- Example<br>
+\c myapp<br>
+\c postgres
+                                    </code>
+                                </div>
+                            </div>
+
+                            <div class="bg-slate-700/50 p-6 rounded-lg border border-slate-600/30">
+                                <h3 class="text-lg font-semibold text-blue-400 mb-3">List Databases</h3>
+                                <div class="bg-slate-900/50 p-4 rounded-lg mb-3">
+                                    <code class="text-yellow-400">\l</code>
+                                </div>
+                                <p class="text-gray-300 text-sm mb-3">Lists all databases in the PostgreSQL server.</p>
+                                <div class="bg-slate-900/50 p-4 rounded-lg">
+                                    <code class="text-gray-300">
+-- Alternative<br>
+SELECT datname FROM pg_database;
+                                    </code>
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+
+                    <!-- Table Operations -->
+                    <section class="command-section">
+                        <h2 class="text-2xl font-bold text-white mb-6 flex items-center">
+                            <span class="text-green-400 mr-3">📋</span>
+                            Table Operations
+                        </h2>
+                        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                            <div class="bg-slate-700/50 p-6 rounded-lg border border-slate-600/30">
+                                <h3 class="text-lg font-semibold text-green-400 mb-3">Create Table</h3>
+                                <div class="bg-slate-900/50 p-4 rounded-lg mb-3">
+                                    <code class="text-green-400">CREATE TABLE table_name (column_definitions);</code>
+                                </div>
+                                <p class="text-gray-300 text-sm mb-3">Creates a new table with specified columns and constraints.</p>
+                                <div class="bg-slate-900/50 p-4 rounded-lg">
+                                    <code class="text-gray-300">
+CREATE TABLE users (<br>
+&nbsp;&nbsp;id SERIAL PRIMARY KEY,<br>
+&nbsp;&nbsp;name VARCHAR(100) NOT NULL,<br>
+&nbsp;&nbsp;email VARCHAR(255) UNIQUE,<br>
+&nbsp;&nbsp;created_at TIMESTAMP DEFAULT NOW()<br>
+);
+                                    </code>
+                                </div>
+                            </div>
+
+                            <div class="bg-slate-700/50 p-6 rounded-lg border border-slate-600/30">
+                                <h3 class="text-lg font-semibold text-green-400 mb-3">Drop Table</h3>
+                                <div class="bg-slate-900/50 p-4 rounded-lg mb-3">
+                                    <code class="text-red-400">DROP TABLE table_name;</code>
+                                </div>
+                                <p class="text-gray-300 text-sm mb-3">Permanently deletes a table and all its data.</p>
+                                <div class="bg-slate-900/50 p-4 rounded-lg">
+                                    <code class="text-gray-300">
+-- Example<br>
+DROP TABLE old_table;<br>
+DROP TABLE IF EXISTS temp_table;
+                                    </code>
+                                </div>
+                            </div>
+
+                            <div class="bg-slate-700/50 p-6 rounded-lg border border-slate-600/30">
+                                <h3 class="text-lg font-semibold text-green-400 mb-3">Alter Table</h3>
+                                <div class="bg-slate-900/50 p-4 rounded-lg mb-3">
+                                    <code class="text-blue-400">ALTER TABLE table_name action;</code>
+                                </div>
+                                <p class="text-gray-300 text-sm mb-3">Modifies the structure of an existing table.</p>
+                                <div class="bg-slate-900/50 p-4 rounded-lg">
+                                    <code class="text-gray-300">
+-- Add column<br>
+ALTER TABLE users ADD COLUMN age INTEGER;<br>
+-- Drop column<br>
+ALTER TABLE users DROP COLUMN age;<br>
+-- Rename column<br>
+ALTER TABLE users RENAME COLUMN name TO full_name;
+                                    </code>
+                                </div>
+                            </div>
+
+                            <div class="bg-slate-700/50 p-6 rounded-lg border border-slate-600/30">
+                                <h3 class="text-lg font-semibold text-green-400 mb-3">List Tables</h3>
+                                <div class="bg-slate-900/50 p-4 rounded-lg mb-3">
+                                    <code class="text-yellow-400">\dt</code>
+                                </div>
+                                <p class="text-gray-300 text-sm mb-3">Lists all tables in the current database.</p>
+                                <div class="bg-slate-900/50 p-4 rounded-lg">
+                                    <code class="text-gray-300">
+-- Alternative<br>
+SELECT table_name FROM information_schema.tables<br>
+WHERE table_schema = 'public';
+                                    </code>
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+
+                    <!-- Data Manipulation -->
+                    <section class="command-section">
+                        <h2 class="text-2xl font-bold text-white mb-6 flex items-center">
+                            <span class="text-purple-400 mr-3">💾</span>
+                            Data Manipulation (DML)
+                        </h2>
+                        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                            <div class="bg-slate-700/50 p-6 rounded-lg border border-slate-600/30">
+                                <h3 class="text-lg font-semibold text-purple-400 mb-3">INSERT</h3>
+                                <div class="bg-slate-900/50 p-4 rounded-lg mb-3">
+                                    <code class="text-green-400">INSERT INTO table_name VALUES (values);</code>
+                                </div>
+                                <p class="text-gray-300 text-sm mb-3">Inserts new rows into a table.</p>
+                                <div class="bg-slate-900/50 p-4 rounded-lg">
+                                    <code class="text-gray-300">
+-- Single row<br>
+INSERT INTO users (name, email) VALUES ('John', 'john@example.com');<br><br>
+-- Multiple rows<br>
+INSERT INTO users (name, email) VALUES<br>
+&nbsp;&nbsp;('Alice', 'alice@example.com'),<br>
+&nbsp;&nbsp;('Bob', 'bob@example.com');
+                                    </code>
+                                </div>
+                            </div>
+
+                            <div class="bg-slate-700/50 p-6 rounded-lg border border-slate-600/30">
+                                <h3 class="text-lg font-semibold text-purple-400 mb-3">SELECT</h3>
+                                <div class="bg-slate-900/50 p-4 rounded-lg mb-3">
+                                    <code class="text-blue-400">SELECT columns FROM table_name WHERE condition;</code>
+                                </div>
+                                <p class="text-gray-300 text-sm mb-3">Retrieves data from one or more tables.</p>
+                                <div class="bg-slate-900/50 p-4 rounded-lg">
+                                    <code class="text-gray-300">
+-- All columns<br>
+SELECT * FROM users;<br><br>
+-- Specific columns<br>
+SELECT name, email FROM users WHERE age > 18;<br><br>
+-- With ordering<br>
+SELECT * FROM users ORDER BY created_at DESC;
+                                    </code>
+                                </div>
+                            </div>
+
+                            <div class="bg-slate-700/50 p-6 rounded-lg border border-slate-600/30">
+                                <h3 class="text-lg font-semibold text-purple-400 mb-3">UPDATE</h3>
+                                <div class="bg-slate-900/50 p-4 rounded-lg mb-3">
+                                    <code class="text-yellow-400">UPDATE table_name SET column = value WHERE condition;</code>
+                                </div>
+                                <p class="text-gray-300 text-sm mb-3">Modifies existing rows in a table.</p>
+                                <div class="bg-slate-900/50 p-4 rounded-lg">
+                                    <code class="text-gray-300">
+-- Update single row<br>
+UPDATE users SET email = 'new@example.com' WHERE id = 1;<br><br>
+-- Update multiple columns<br>
+UPDATE users SET name = 'John Doe', age = 30 WHERE id = 1;
+                                    </code>
+                                </div>
+                            </div>
+
+                            <div class="bg-slate-700/50 p-6 rounded-lg border border-slate-600/30">
+                                <h3 class="text-lg font-semibold text-purple-400 mb-3">DELETE</h3>
+                                <div class="bg-slate-900/50 p-4 rounded-lg mb-3">
+                                    <code class="text-red-400">DELETE FROM table_name WHERE condition;</code>
+                                </div>
+                                <p class="text-gray-300 text-sm mb-3">Removes rows from a table.</p>
+                                <div class="bg-slate-900/50 p-4 rounded-lg">
+                                    <code class="text-gray-300">
+-- Delete specific row<br>
+DELETE FROM users WHERE id = 1;<br><br>
+-- Delete with condition<br>
+DELETE FROM users WHERE created_at < '2023-01-01';
+                                    </code>
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+
+                    <!-- Joins -->
+                    <section class="command-section">
+                        <h2 class="text-2xl font-bold text-white mb-6 flex items-center">
+                            <span class="text-orange-400 mr-3">🔗</span>
+                            Joins
+                        </h2>
+                        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                            <div class="bg-slate-700/50 p-6 rounded-lg border border-slate-600/30">
+                                <h3 class="text-lg font-semibold text-orange-400 mb-3">INNER JOIN</h3>
+                                <div class="bg-slate-900/50 p-4 rounded-lg mb-3">
+                                    <code class="text-blue-400">SELECT * FROM table1 INNER JOIN table2 ON condition;</code>
+                                </div>
+                                <p class="text-gray-300 text-sm mb-3">Returns only matching rows from both tables.</p>
+                                <div class="bg-slate-900/50 p-4 rounded-lg">
+                                    <code class="text-gray-300">
+SELECT u.name, p.title<br>
+FROM users u<br>
+INNER JOIN posts p ON u.id = p.user_id;
+                                    </code>
+                                </div>
+                            </div>
+
+                            <div class="bg-slate-700/50 p-6 rounded-lg border border-slate-600/30">
+                                <h3 class="text-lg font-semibold text-orange-400 mb-3">LEFT JOIN</h3>
+                                <div class="bg-slate-900/50 p-4 rounded-lg mb-3">
+                                    <code class="text-blue-400">SELECT * FROM table1 LEFT JOIN table2 ON condition;</code>
+                                </div>
+                                <p class="text-gray-300 text-sm mb-3">Returns all rows from left table and matching rows from right table.</p>
+                                <div class="bg-slate-900/50 p-4 rounded-lg">
+                                    <code class="text-gray-300">
+SELECT u.name, p.title<br>
+FROM users u<br>
+LEFT JOIN posts p ON u.id = p.user_id;
+                                    </code>
+                                </div>
+                            </div>
+
+                            <div class="bg-slate-700/50 p-6 rounded-lg border border-slate-600/30">
+                                <h3 class="text-lg font-semibold text-orange-400 mb-3">RIGHT JOIN</h3>
+                                <div class="bg-slate-900/50 p-4 rounded-lg mb-3">
+                                    <code class="text-blue-400">SELECT * FROM table1 RIGHT JOIN table2 ON condition;</code>
+                                </div>
+                                <p class="text-gray-300 text-sm mb-3">Returns all rows from right table and matching rows from left table.</p>
+                                <div class="bg-slate-900/50 p-4 rounded-lg">
+                                    <code class="text-gray-300">
+SELECT u.name, p.title<br>
+FROM users u<br>
+RIGHT JOIN posts p ON u.id = p.user_id;
+                                    </code>
+                                </div>
+                            </div>
+
+                            <div class="bg-slate-700/50 p-6 rounded-lg border border-slate-600/30">
+                                <h3 class="text-lg font-semibold text-orange-400 mb-3">FULL OUTER JOIN</h3>
+                                <div class="bg-slate-900/50 p-4 rounded-lg mb-3">
+                                    <code class="text-blue-400">SELECT * FROM table1 FULL OUTER JOIN table2 ON condition;</code>
+                                </div>
+                                <p class="text-gray-300 text-sm mb-3">Returns all rows from both tables, with NULLs for non-matching rows.</p>
+                                <div class="bg-slate-900/50 p-4 rounded-lg">
+                                    <code class="text-gray-300">
+SELECT u.name, p.title<br>
+FROM users u<br>
+FULL OUTER JOIN posts p ON u.id = p.user_id;
+                                    </code>
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+
+                    <!-- Aggregate Functions -->
+                    <section class="command-section">
+                        <h2 class="text-2xl font-bold text-white mb-6 flex items-center">
+                            <span class="text-cyan-400 mr-3">📊</span>
+                            Aggregate Functions
+                        </h2>
+                        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                            <div class="bg-slate-700/50 p-6 rounded-lg border border-slate-600/30">
+                                <h3 class="text-lg font-semibold text-cyan-400 mb-3">COUNT</h3>
+                                <div class="bg-slate-900/50 p-4 rounded-lg mb-3">
+                                    <code class="text-blue-400">SELECT COUNT(*) FROM table_name;</code>
+                                </div>
+                                <p class="text-gray-300 text-sm mb-3">Counts the number of rows or non-NULL values.</p>
+                                <div class="bg-slate-900/50 p-4 rounded-lg">
+                                    <code class="text-gray-300">
+-- Count all rows<br>
+SELECT COUNT(*) FROM users;<br><br>
+-- Count non-NULL values<br>
+SELECT COUNT(email) FROM users;<br><br>
+-- Count with condition<br>
+SELECT COUNT(*) FROM users WHERE age > 18;
+                                    </code>
+                                </div>
+                            </div>
+
+                            <div class="bg-slate-700/50 p-6 rounded-lg border border-slate-600/30">
+                                <h3 class="text-lg font-semibold text-cyan-400 mb-3">SUM</h3>
+                                <div class="bg-slate-900/50 p-4 rounded-lg mb-3">
+                                    <code class="text-blue-400">SELECT SUM(column) FROM table_name;</code>
+                                </div>
+                                <p class="text-gray-300 text-sm mb-3">Calculates the sum of numeric values in a column.</p>
+                                <div class="bg-slate-900/50 p-4 rounded-lg">
+                                    <code class="text-gray-300">
+-- Sum all values<br>
+SELECT SUM(price) FROM products;<br><br>
+-- Sum with condition<br>
+SELECT SUM(amount) FROM orders WHERE status = 'completed';
+                                    </code>
+                                </div>
+                            </div>
+
+                            <div class="bg-slate-700/50 p-6 rounded-lg border border-slate-600/30">
+                                <h3 class="text-lg font-semibold text-cyan-400 mb-3">AVG</h3>
+                                <div class="bg-slate-900/50 p-4 rounded-lg mb-3">
+                                    <code class="text-blue-400">SELECT AVG(column) FROM table_name;</code>
+                                </div>
+                                <p class="text-gray-300 text-sm mb-3">Calculates the average of numeric values in a column.</p>
+                                <div class="bg-slate-900/50 p-4 rounded-lg">
+                                    <code class="text-gray-300">
+-- Average value<br>
+SELECT AVG(age) FROM users;<br><br>
+-- Average with rounding<br>
+SELECT ROUND(AVG(price), 2) FROM products;
+                                    </code>
+                                </div>
+                            </div>
+
+                            <div class="bg-slate-700/50 p-6 rounded-lg border border-slate-600/30">
+                                <h3 class="text-lg font-semibold text-cyan-400 mb-3">MIN/MAX</h3>
+                                <div class="bg-slate-900/50 p-4 rounded-lg mb-3">
+                                    <code class="text-blue-400">SELECT MIN(column), MAX(column) FROM table_name;</code>
+                                </div>
+                                <p class="text-gray-300 text-sm mb-3">Finds the minimum and maximum values in a column.</p>
+                                <div class="bg-slate-900/50 p-4 rounded-lg">
+                                    <code class="text-gray-300">
+-- Min and max values<br>
+SELECT MIN(price), MAX(price) FROM products;<br><br>
+-- Min and max with condition<br>
+SELECT MIN(created_at), MAX(created_at) FROM users;
+                                    </code>
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+
+                    <!-- String Functions -->
+                    <section class="command-section">
+                        <h2 class="text-2xl font-bold text-white mb-6 flex items-center">
+                            <span class="text-pink-400 mr-3">📝</span>
+                            String Functions
+                        </h2>
+                        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                            <div class="bg-slate-700/50 p-6 rounded-lg border border-slate-600/30">
+                                <h3 class="text-lg font-semibold text-pink-400 mb-3">CONCAT</h3>
+                                <div class="bg-slate-900/50 p-4 rounded-lg mb-3">
+                                    <code class="text-blue-400">SELECT CONCAT(string1, string2, ...);</code>
+                                </div>
+                                <p class="text-gray-300 text-sm mb-3">Concatenates multiple strings together.</p>
+                                <div class="bg-slate-900/50 p-4 rounded-lg">
+                                    <code class="text-gray-300">
+-- Concatenate strings<br>
+SELECT CONCAT(first_name, ' ', last_name) AS full_name FROM users;<br><br>
+-- With separator<br>
+SELECT CONCAT_WS(' - ', title, author) FROM books;
+                                    </code>
+                                </div>
+                            </div>
+
+                            <div class="bg-slate-700/50 p-6 rounded-lg border border-slate-600/30">
+                                <h3 class="text-lg font-semibold text-pink-400 mb-3">UPPER/LOWER</h3>
+                                <div class="bg-slate-900/50 p-4 rounded-lg mb-3">
+                                    <code class="text-blue-400">SELECT UPPER(column), LOWER(column) FROM table_name;</code>
+                                </div>
+                                <p class="text-gray-300 text-sm mb-3">Converts strings to uppercase or lowercase.</p>
+                                <div class="bg-slate-900/50 p-4 rounded-lg">
+                                    <code class="text-gray-300">
+-- Convert case<br>
+SELECT UPPER(name) FROM users;<br>
+SELECT LOWER(email) FROM users;<br><br>
+-- Case-insensitive search<br>
+SELECT * FROM users WHERE LOWER(name) = 'john';
+                                    </code>
+                                </div>
+                            </div>
+
+                            <div class="bg-slate-700/50 p-6 rounded-lg border border-slate-600/30">
+                                <h3 class="text-lg font-semibold text-pink-400 mb-3">SUBSTRING</h3>
+                                <div class="bg-slate-900/50 p-4 rounded-lg mb-3">
+                                    <code class="text-blue-400">SELECT SUBSTRING(string FROM start FOR length);</code>
+                                </div>
+                                <p class="text-gray-300 text-sm mb-3">Extracts a substring from a string.</p>
+                                <div class="bg-slate-900/50 p-4 rounded-lg">
+                                    <code class="text-gray-300">
+-- Extract substring<br>
+SELECT SUBSTRING(email FROM 1 FOR 5) FROM users;<br><br>
+-- Extract domain<br>
+SELECT SUBSTRING(email FROM '@' FOR 50) FROM users;
+                                    </code>
+                                </div>
+                            </div>
+
+                            <div class="bg-slate-700/50 p-6 rounded-lg border border-slate-600/30">
+                                <h3 class="text-lg font-semibold text-pink-400 mb-3">LENGTH</h3>
+                                <div class="bg-slate-900/50 p-4 rounded-lg mb-3">
+                                    <code class="text-blue-400">SELECT LENGTH(column) FROM table_name;</code>
+                                </div>
+                                <p class="text-gray-300 text-sm mb-3">Returns the length of a string in characters.</p>
+                                <div class="bg-slate-900/50 p-4 rounded-lg">
+                                    <code class="text-gray-300">
+-- String length<br>
+SELECT name, LENGTH(name) AS name_length FROM users;<br><br>
+-- Filter by length<br>
+SELECT * FROM users WHERE LENGTH(name) > 10;
+                                    </code>
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+
+                    <!-- Date Functions -->
+                    <section class="command-section">
+                        <h2 class="text-2xl font-bold text-white mb-6 flex items-center">
+                            <span class="text-indigo-400 mr-3">📅</span>
+                            Date Functions
+                        </h2>
+                        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                            <div class="bg-slate-700/50 p-6 rounded-lg border border-slate-600/30">
+                                <h3 class="text-lg font-semibold text-indigo-400 mb-3">NOW()</h3>
+                                <div class="bg-slate-900/50 p-4 rounded-lg mb-3">
+                                    <code class="text-blue-400">SELECT NOW();</code>
+                                </div>
+                                <p class="text-gray-300 text-sm mb-3">Returns the current date and time.</p>
+                                <div class="bg-slate-900/50 p-4 rounded-lg">
+                                    <code class="text-gray-300">
+-- Current timestamp<br>
+SELECT NOW();<br><br>
+-- Insert with current time<br>
+INSERT INTO logs (message, created_at) VALUES ('User login', NOW());
+                                    </code>
+                                </div>
+                            </div>
+
+                            <div class="bg-slate-700/50 p-6 rounded-lg border border-slate-600/30">
+                                <h3 class="text-lg font-semibold text-indigo-400 mb-3">DATE_TRUNC</h3>
+                                <div class="bg-slate-900/50 p-4 rounded-lg mb-3">
+                                    <code class="text-blue-400">SELECT DATE_TRUNC('unit', timestamp);</code>
+                                </div>
+                                <p class="text-gray-300 text-sm mb-3">Truncates a timestamp to specified precision.</p>
+                                <div class="bg-slate-900/50 p-4 rounded-lg">
+                                    <code class="text-gray-300">
+-- Truncate to day<br>
+SELECT DATE_TRUNC('day', created_at) FROM users;<br><br>
+-- Truncate to month<br>
+SELECT DATE_TRUNC('month', created_at) FROM users;
+                                    </code>
+                                </div>
+                            </div>
+
+                            <div class="bg-slate-700/50 p-6 rounded-lg border border-slate-600/30">
+                                <h3 class="text-lg font-semibold text-indigo-400 mb-3">EXTRACT</h3>
+                                <div class="bg-slate-900/50 p-4 rounded-lg mb-3">
+                                    <code class="text-blue-400">SELECT EXTRACT(field FROM timestamp);</code>
+                                </div>
+                                <p class="text-gray-300 text-sm mb-3">Extracts a specific field from a timestamp.</p>
+                                <div class="bg-slate-900/50 p-4 rounded-lg">
+                                    <code class="text-gray-300">
+-- Extract year<br>
+SELECT EXTRACT(YEAR FROM created_at) FROM users;<br><br>
+-- Extract month<br>
+SELECT EXTRACT(MONTH FROM created_at) FROM users;
+                                    </code>
+                                </div>
+                            </div>
+
+                            <div class="bg-slate-700/50 p-6 rounded-lg border border-slate-600/30">
+                                <h3 class="text-lg font-semibold text-indigo-400 mb-3">AGE</h3>
+                                <div class="bg-slate-900/50 p-4 rounded-lg mb-3">
+                                    <code class="text-blue-400">SELECT AGE(timestamp1, timestamp2);</code>
+                                </div>
+                                <p class="text-gray-300 text-sm mb-3">Calculates the age between two timestamps.</p>
+                                <div class="bg-slate-900/50 p-4 rounded-lg">
+                                    <code class="text-gray-300">
+-- Age from now<br>
+SELECT AGE(NOW(), created_at) FROM users;<br><br>
+-- Age between dates<br>
+SELECT AGE('2023-12-31', '2023-01-01');
+                                    </code>
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+
+                    <!-- Indexes -->
+                    <section class="command-section">
+                        <h2 class="text-2xl font-bold text-white mb-6 flex items-center">
+                            <span class="text-yellow-400 mr-3">⚡</span>
+                            Indexes
+                        </h2>
+                        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                            <div class="bg-slate-700/50 p-6 rounded-lg border border-slate-600/30">
+                                <h3 class="text-lg font-semibold text-yellow-400 mb-3">CREATE INDEX</h3>
+                                <div class="bg-slate-900/50 p-4 rounded-lg mb-3">
+                                    <code class="text-blue-400">CREATE INDEX index_name ON table_name (column);</code>
+                                </div>
+                                <p class="text-gray-300 text-sm mb-3">Creates an index to improve query performance.</p>
+                                <div class="bg-slate-900/50 p-4 rounded-lg">
+                                    <code class="text-gray-300">
+-- Single column index<br>
+CREATE INDEX idx_user_email ON users (email);<br><br>
+-- Composite index<br>
+CREATE INDEX idx_user_name_age ON users (name, age);<br><br>
+-- Unique index<br>
+CREATE UNIQUE INDEX idx_user_email_unique ON users (email);
+                                    </code>
+                                </div>
+                            </div>
+
+                            <div class="bg-slate-700/50 p-6 rounded-lg border border-slate-600/30">
+                                <h3 class="text-lg font-semibold text-yellow-400 mb-3">DROP INDEX</h3>
+                                <div class="bg-slate-900/50 p-4 rounded-lg mb-3">
+                                    <code class="text-red-400">DROP INDEX index_name;</code>
+                                </div>
+                                <p class="text-gray-300 text-sm mb-3">Removes an index from the database.</p>
+                                <div class="bg-slate-900/50 p-4 rounded-lg">
+                                    <code class="text-gray-300">
+-- Drop index<br>
+DROP INDEX idx_user_email;<br><br>
+-- Drop if exists<br>
+DROP INDEX IF EXISTS idx_old_index;
+                                    </code>
+                                </div>
+                            </div>
+
+                            <div class="bg-slate-700/50 p-6 rounded-lg border border-slate-600/30">
+                                <h3 class="text-lg font-semibold text-yellow-400 mb-3">List Indexes</h3>
+                                <div class="bg-slate-900/50 p-4 rounded-lg mb-3">
+                                    <code class="text-yellow-400">\di</code>
+                                </div>
+                                <p class="text-gray-300 text-sm mb-3">Lists all indexes in the current database.</p>
+                                <div class="bg-slate-900/50 p-4 rounded-lg">
+                                    <code class="text-gray-300">
+-- Alternative query<br>
+SELECT indexname, tablename FROM pg_indexes<br>
+WHERE schemaname = 'public';
+                                    </code>
+                                </div>
+                            </div>
+
+                            <div class="bg-slate-700/50 p-6 rounded-lg border border-slate-600/30">
+                                <h3 class="text-lg font-semibold text-yellow-400 mb-3">Partial Index</h3>
+                                <div class="bg-slate-900/50 p-4 rounded-lg mb-3">
+                                    <code class="text-blue-400">CREATE INDEX ... WHERE condition;</code>
+                                </div>
+                                <p class="text-gray-300 text-sm mb-3">Creates an index on a subset of rows.</p>
+                                <div class="bg-slate-900/50 p-4 rounded-lg">
+                                    <code class="text-gray-300">
+-- Index only active users<br>
+CREATE INDEX idx_active_users ON users (email)<br>
+WHERE status = 'active';<br><br>
+-- Index only recent orders<br>
+CREATE INDEX idx_recent_orders ON orders (created_at)<br>
+WHERE created_at > '2023-01-01';
+                                    </code>
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+
+                    <!-- Views -->
+                    <section class="command-section">
+                        <h2 class="text-2xl font-bold text-white mb-6 flex items-center">
+                            <span class="text-teal-400 mr-3">👁️</span>
+                            Views
+                        </h2>
+                        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                            <div class="bg-slate-700/50 p-6 rounded-lg border border-slate-600/30">
+                                <h3 class="text-lg font-semibold text-teal-400 mb-3">CREATE VIEW</h3>
+                                <div class="bg-slate-900/50 p-4 rounded-lg mb-3">
+                                    <code class="text-blue-400">CREATE VIEW view_name AS SELECT ...;</code>
+                                </div>
+                                <p class="text-gray-300 text-sm mb-3">Creates a virtual table based on a query result.</p>
+                                <div class="bg-slate-900/50 p-4 rounded-lg">
+                                    <code class="text-gray-300">
+-- Simple view<br>
+CREATE VIEW active_users AS<br>
+SELECT id, name, email FROM users WHERE status = 'active';<br><br>
+-- Complex view with joins<br>
+CREATE VIEW user_posts AS<br>
+SELECT u.name, p.title, p.created_at<br>
+FROM users u JOIN posts p ON u.id = p.user_id;
+                                    </code>
+                                </div>
+                            </div>
+
+                            <div class="bg-slate-700/50 p-6 rounded-lg border border-slate-600/30">
+                                <h3 class="text-lg font-semibold text-teal-400 mb-3">DROP VIEW</h3>
+                                <div class="bg-slate-900/50 p-4 rounded-lg mb-3">
+                                    <code class="text-red-400">DROP VIEW view_name;</code>
+                                </div>
+                                <p class="text-gray-300 text-sm mb-3">Removes a view from the database.</p>
+                                <div class="bg-slate-900/50 p-4 rounded-lg">
+                                    <code class="text-gray-300">
+-- Drop view<br>
+DROP VIEW active_users;<br><br>
+-- Drop if exists<br>
+DROP VIEW IF EXISTS old_view;
+                                    </code>
+                                </div>
+                            </div>
+
+                            <div class="bg-slate-700/50 p-6 rounded-lg border border-slate-600/30">
+                                <h3 class="text-lg font-semibold text-teal-400 mb-3">List Views</h3>
+                                <div class="bg-slate-900/50 p-4 rounded-lg mb-3">
+                                    <code class="text-yellow-400">\dv</code>
+                                </div>
+                                <p class="text-gray-300 text-sm mb-3">Lists all views in the current database.</p>
+                                <div class="bg-slate-900/50 p-4 rounded-lg">
+                                    <code class="text-gray-300">
+-- Alternative query<br>
+SELECT viewname FROM pg_views<br>
+WHERE schemaname = 'public';
+                                    </code>
+                                </div>
+                            </div>
+
+                            <div class="bg-slate-700/50 p-6 rounded-lg border border-slate-600/30">
+                                <h3 class="text-lg font-semibold text-teal-400 mb-3">Materialized View</h3>
+                                <div class="bg-slate-900/50 p-4 rounded-lg mb-3">
+                                    <code class="text-blue-400">CREATE MATERIALIZED VIEW ... AS SELECT ...;</code>
+                                </div>
+                                <p class="text-gray-300 text-sm mb-3">Creates a view that stores the query result physically.</p>
+                                <div class="bg-slate-900/50 p-4 rounded-lg">
+                                    <code class="text-gray-300">
+-- Create materialized view<br>
+CREATE MATERIALIZED VIEW user_stats AS<br>
+SELECT COUNT(*) as total_users, AVG(age) as avg_age<br>
+FROM users;<br><br>
+-- Refresh materialized view<br>
+REFRESH MATERIALIZED VIEW user_stats;
+                                    </code>
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+
+                    <!-- Transactions -->
+                    <section class="command-section">
+                        <h2 class="text-2xl font-bold text-white mb-6 flex items-center">
+                            <span class="text-red-400 mr-3">🔄</span>
+                            Transactions
+                        </h2>
+                        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                            <div class="bg-slate-700/50 p-6 rounded-lg border border-slate-600/30">
+                                <h3 class="text-lg font-semibold text-red-400 mb-3">BEGIN</h3>
+                                <div class="bg-slate-900/50 p-4 rounded-lg mb-3">
+                                    <code class="text-blue-400">BEGIN;</code>
+                                </div>
+                                <p class="text-gray-300 text-sm mb-3">Starts a new transaction block.</p>
+                                <div class="bg-slate-900/50 p-4 rounded-lg">
+                                    <code class="text-gray-300">
+-- Start transaction<br>
+BEGIN;<br><br>
+-- Multiple operations<br>
+INSERT INTO users (name) VALUES ('John');<br>
+UPDATE users SET age = 25 WHERE name = 'John';<br>
+COMMIT;
+                                    </code>
+                                </div>
+                            </div>
+
+                            <div class="bg-slate-700/50 p-6 rounded-lg border border-slate-600/30">
+                                <h3 class="text-lg font-semibold text-red-400 mb-3">COMMIT</h3>
+                                <div class="bg-slate-900/50 p-4 rounded-lg mb-3">
+                                    <code class="text-green-400">COMMIT;</code>
+                                </div>
+                                <p class="text-gray-300 text-sm mb-3">Commits the current transaction, making changes permanent.</p>
+                                <div class="bg-slate-900/50 p-4 rounded-lg">
+                                    <code class="text-gray-300">
+-- Commit transaction<br>
+BEGIN;<br>
+INSERT INTO users (name) VALUES ('Alice');<br>
+COMMIT; -- Changes are now permanent
+                                    </code>
+                                </div>
+                            </div>
+
+                            <div class="bg-slate-700/50 p-6 rounded-lg border border-slate-600/30">
+                                <h3 class="text-lg font-semibold text-red-400 mb-3">ROLLBACK</h3>
+                                <div class="bg-slate-900/50 p-4 rounded-lg mb-3">
+                                    <code class="text-red-400">ROLLBACK;</code>
+                                </div>
+                                <p class="text-gray-300 text-sm mb-3">Rolls back the current transaction, undoing all changes.</p>
+                                <div class="bg-slate-900/50 p-4 rounded-lg">
+                                    <code class="text-gray-300">
+-- Rollback transaction<br>
+BEGIN;<br>
+INSERT INTO users (name) VALUES ('Bob');<br>
+ROLLBACK; -- Changes are undone
+                                    </code>
+                                </div>
+                            </div>
+
+                            <div class="bg-slate-700/50 p-6 rounded-lg border border-slate-600/30">
+                                <h3 class="text-lg font-semibold text-red-400 mb-3">SAVEPOINT</h3>
+                                <div class="bg-slate-900/50 p-4 rounded-lg mb-3">
+                                    <code class="text-blue-400">SAVEPOINT name;</code>
+                                </div>
+                                <p class="text-gray-300 text-sm mb-3">Creates a savepoint within a transaction.</p>
+                                <div class="bg-slate-900/50 p-4 rounded-lg">
+                                    <code class="text-gray-300">
+-- Create savepoint<br>
+BEGIN;<br>
+INSERT INTO users (name) VALUES ('Charlie');<br>
+SAVEPOINT sp1;<br>
+INSERT INTO users (name) VALUES ('David');<br>
+ROLLBACK TO sp1; -- Rollback to savepoint
+                                    </code>
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+
+                    <!-- Backup & Restore -->
+                    <section class="command-section">
+                        <h2 class="text-2xl font-bold text-white mb-6 flex items-center">
+                            <span class="text-emerald-400 mr-3">💾</span>
+                            Backup & Restore
+                        </h2>
+                        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                            <div class="bg-slate-700/50 p-6 rounded-lg border border-slate-600/30">
+                                <h3 class="text-lg font-semibold text-emerald-400 mb-3">pg_dump</h3>
+                                <div class="bg-slate-900/50 p-4 rounded-lg mb-3">
+                                    <code class="text-blue-400">pg_dump database_name > backup.sql</code>
+                                </div>
+                                <p class="text-gray-300 text-sm mb-3">Creates a backup of a database to a SQL file.</p>
+                                <div class="bg-slate-900/50 p-4 rounded-lg">
+                                    <code class="text-gray-300">
+# Backup entire database<br>
+pg_dump myapp > backup.sql<br><br>
+# Backup with custom format<br>
+pg_dump -Fc myapp > backup.dump<br><br>
+# Backup specific schema<br>
+pg_dump -n public myapp > schema.sql
+                                    </code>
+                                </div>
+                            </div>
+
+                            <div class="bg-slate-700/50 p-6 rounded-lg border border-slate-600/30">
+                                <h3 class="text-lg font-semibold text-emerald-400 mb-3">pg_restore</h3>
+                                <div class="bg-slate-900/50 p-4 rounded-lg mb-3">
+                                    <code class="text-blue-400">pg_restore -d database_name backup.dump</code>
+                                </div>
+                                <p class="text-gray-300 text-sm mb-3">Restores a database from a backup file.</p>
+                                <div class="bg-slate-900/50 p-4 rounded-lg">
+                                    <code class="text-gray-300">
+# Restore from custom format<br>
+pg_restore -d myapp backup.dump<br><br>
+# Restore with clean<br>
+pg_restore -c -d myapp backup.dump<br><br>
+# Restore specific tables<br>
+pg_restore -t users -d myapp backup.dump
+                                    </code>
+                                </div>
+                            </div>
+
+                            <div class="bg-slate-700/50 p-6 rounded-lg border border-slate-600/30">
+                                <h3 class="text-lg font-semibold text-emerald-400 mb-3">psql restore</h3>
+                                <div class="bg-slate-900/50 p-4 rounded-lg mb-3">
+                                    <code class="text-blue-400">psql -d database_name -f backup.sql</code>
+                                </div>
+                                <p class="text-gray-300 text-sm mb-3">Restores a database from a SQL file.</p>
+                                <div class="bg-slate-900/50 p-4 rounded-lg">
+                                    <code class="text-gray-300">
+# Restore from SQL file<br>
+psql -d myapp -f backup.sql<br><br>
+# Restore with verbose output<br>
+psql -d myapp -f backup.sql -v ON_ERROR_STOP=1
+                                    </code>
+                                </div>
+                            </div>
+
+                            <div class="bg-slate-700/50 p-6 rounded-lg border border-slate-600/30">
+                                <h3 class="text-lg font-semibold text-emerald-400 mb-3">pg_dumpall</h3>
+                                <div class="bg-slate-900/50 p-4 rounded-lg mb-3">
+                                    <code class="text-blue-400">pg_dumpall > all_databases.sql</code>
+                                </div>
+                                <p class="text-gray-300 text-sm mb-3">Backs up all databases in a PostgreSQL cluster.</p>
+                                <div class="bg-slate-900/50 p-4 rounded-lg">
+                                    <code class="text-gray-300">
+# Backup all databases<br>
+pg_dumpall > all_databases.sql<br><br>
+# Backup only globals<br>
+pg_dumpall -g > globals.sql<br><br>
+# Backup with roles<br>
+pg_dumpall -r > roles.sql
+                                    </code>
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Sidebar Scripts -->
+    
+    <!-- Include Final Sidebar -->
+    <div id="sidebar-container"></div>
+    <script>
+        // Load final_sidebar.html content
+        fetch('final_sidebar.html')
+            .then(response => response.text())
+            .then(html => {
+                document.getElementById('sidebar-container').innerHTML = html;
+            })
+            .catch(error => {
+                console.error('Error loading sidebar:', error);
+            });
+    </script>
+
+    <script>
+        // Search functionality
+        document.getElementById('searchInput').addEventListener('input', function() {
+            const searchTerm = this.value.toLowerCase();
+            const sections = document.querySelectorAll('.command-section');
+            
+            sections.forEach(section => {
+                const content = section.textContent.toLowerCase();
+                if (content.includes(searchTerm)) {
+                    section.style.display = 'block';
+                } else {
+                    section.style.display = 'none';
+                }
+            });
+        });
+
+        // Copy code functionality
+        document.querySelectorAll('code').forEach(code => {
+            code.addEventListener('click', function() {
+                navigator.clipboard.writeText(this.textContent).then(() => {
+                    // Visual feedback
+                    const originalBg = this.style.backgroundColor;
+                    this.style.backgroundColor = '#10b981';
+                    setTimeout(() => {
+                        this.style.backgroundColor = originalBg;
+                    }, 200);
+                });
+            });
+        });
+    </script>
+</body>
+</html>
