@@ -165,55 +165,185 @@
                     <div class="bg-slate-800/90 backdrop-blur-sm rounded-3xl border border-slate-700/50 p-8 shadow-2xl">
                         <!-- Tool Selector -->
                         <div class="flex space-x-2 mb-8 bg-slate-900/50 rounded-xl p-2">
-                            <button class="flex-1 px-4 py-3 text-sm font-medium text-purple-400 bg-slate-700/50 rounded-lg transition-colors">
-                                JSON Beautifier
+                            
+                            <button class="tool-tab active flex-1 px-4 py-3 text-sm font-medium text-gray-400 hover:text-white transition-colors" data-tool="ip">
+                                IP Address Tools
                             </button>
-                            <button class="flex-1 px-4 py-3 text-sm font-medium text-gray-400 hover:text-white transition-colors">
+                            <button class="tool-tab flex-1 px-4 py-3 text-sm font-medium text-purple-400 bg-slate-700/50 rounded-lg transition-colors" data-tool="password">
                                 Password Generator
                             </button>
-                            <button class="flex-1 px-4 py-3 text-sm font-medium text-gray-400 hover:text-white transition-colors">
-                                CSV to JSON
+                            <button class="tool-tab flex-1 px-4 py-3 text-sm font-medium text-gray-400 hover:text-white transition-colors" data-tool="json">
+                                JSON Beautifier
                             </button>
                         </div>
                         
                         <!-- Demo Content -->
                         <div class="space-y-6">
-                            <!-- Input Section -->
-                            <div>
-                                <div class="flex items-center justify-between mb-3">
-                                    <label class="text-base font-medium text-gray-300">Input:</label>
-                                    <button class="text-sm text-gray-400 hover:text-white transition-colors px-3 py-1 rounded-lg hover:bg-slate-700/50">Clear</button>
+                            <!-- Password Generator Content -->
+                            <div id="password-content" class="tool-content">
+                                <div class="mb-6">
+                                    <h3 class="text-lg font-semibold text-white mb-4">Generated Password</h3>
+                                    <div class="bg-slate-900/50 rounded-xl p-4 border border-slate-600/50 flex items-center justify-between">
+                                        <span id="generated-password" class="text-lg font-mono text-green-400">Kx9#mP2$vL8@nQ4!</span>
+                                        <button id="copy-password" class="px-3 py-1 bg-blue-600/20 border border-blue-500/30 rounded-lg text-blue-400 hover:bg-blue-600/30 transition-colors text-sm">
+                                            Copy
+                                        </button>
+                                    </div>
                             </div>
-                                <div class="bg-slate-900/50 rounded-xl p-6 border border-slate-600/50">
-                                    <pre class="text-sm text-gray-300 font-mono overflow-x-auto"><code>{"name":"DevDunia","tools":50,"features":["JSON Beautifier","Password Generator","CSV to JSON","Hash Generator","JWT Decoder","SQL Formatter"],"status":"active"}</code></pre>
+                                
+                                <div class="mb-6">
+                                    <label class="text-sm font-medium text-gray-300 mb-2 block">Password Length: <span id="length-value">16</span></label>
+                                    <input type="range" id="length-slider" min="8" max="32" value="16" class="w-full h-2 bg-slate-700 rounded-lg appearance-none cursor-pointer slider">
+                        </div>
+                                
+                                <div class="mb-6">
+                                    <div class="flex items-center justify-between mb-2">
+                                        <span class="text-sm font-medium text-gray-300">Password Strength:</span>
+                                        <span class="text-sm font-medium text-green-400">Strong</span>
+                                    </div>
+                                    <div class="w-full bg-slate-700 rounded-full h-2">
+                                        <div class="bg-gradient-to-r from-red-500 via-yellow-500 to-green-500 h-2 rounded-full" style="width: 100%"></div>
+                            </div>
+                                    <p class="text-xs text-gray-400 mt-1">Contains: lowercase, uppercase, numbers, symbols</p>
+                        </div>
+                                
+                                <div class="grid grid-cols-2 gap-4 mb-6">
+                                    <label class="flex items-center space-x-2">
+                                        <input type="checkbox" checked class="w-4 h-4 text-purple-600 bg-slate-700 border-slate-600 rounded focus:ring-purple-500">
+                                        <span class="text-sm text-gray-300">Uppercase (A-Z)</span>
+                                    </label>
+                                    <label class="flex items-center space-x-2">
+                                        <input type="checkbox" checked class="w-4 h-4 text-purple-600 bg-slate-700 border-slate-600 rounded focus:ring-purple-500">
+                                        <span class="text-sm text-gray-300">Lowercase (a-z)</span>
+                                    </label>
+                                    <label class="flex items-center space-x-2">
+                                        <input type="checkbox" checked class="w-4 h-4 text-purple-600 bg-slate-700 border-slate-600 rounded focus:ring-purple-500">
+                                        <span class="text-sm text-gray-300">Numbers (0-9)</span>
+                                    </label>
+                                    <label class="flex items-center space-x-2">
+                                        <input type="checkbox" checked class="w-4 h-4 text-purple-600 bg-slate-700 border-slate-600 rounded focus:ring-purple-500">
+                                        <span class="text-sm text-gray-300">Symbols (!@#$)</span>
+                                    </label>
+                </div>
+                                
+                                <div class="flex space-x-3">
+                                    <button id="generate-password" class="flex-1 px-4 py-2 bg-purple-600 hover:bg-purple-700 text-white rounded-lg transition-colors flex items-center justify-center space-x-2">
+                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
+                                        </svg>
+                                        <span>Generate Password</span>
+                                    </button>
+                                    <button class="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors flex items-center justify-center space-x-2">
+                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                                </svg>
+                                        <span>Multiple</span>
+                                    </button>
+                                </div>
+                            </div>
+                            
+                            <!-- IP Address Tools Content -->
+                            <div id="ip-content" class="tool-content hidden">
+                                <div class="mb-6">
+                                    <h3 class="text-lg font-semibold text-white mb-4">Your Public IP Address</h3>
+                                    <div class="bg-slate-900/50 rounded-xl p-4 border border-slate-600/50">
+                                        <div class="flex items-center justify-between">
+                                            <div>
+                                                <span class="text-sm text-gray-400">Public IP</span>
+                                                <div class="text-lg font-mono text-blue-400">223.190.80.209</div>
+                                            </div>
+                                            <button class="px-3 py-1 bg-blue-600/20 border border-blue-500/30 rounded-lg text-blue-400 hover:bg-blue-600/30 transition-colors text-sm">
+                                                Copy
+                                            </button>
+                                        </div>
+                        </div>
+                </div>
+                                
+                                <div class="mb-6">
+                                    <h3 class="text-lg font-semibold text-white mb-4">IP Address Lookup</h3>
+                                    <div class="flex space-x-3">
+                                        <input id="ip-lookup-input" type="text" placeholder="Enter IP address (e.g., 8.8.8.8)" class="flex-1 px-4 py-2 bg-slate-700/50 border border-slate-600/50 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500">
+                                        <button id="ip-lookup-btn" class="px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded-lg transition-colors flex items-center space-x-2">
+                                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+                                </svg>
+                                            <span>Lookup</span>
+                                        </button>
+                            </div>
+                        </div>
+                                
+                                <!-- IP Information Results -->
+                                <div id="ip-results" class="mb-6 hidden">
+                                    <h3 class="text-lg font-semibold text-white mb-4">IP Information</h3>
+                                    <div class="bg-slate-900/50 rounded-xl p-6 border border-slate-600/50">
+                                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                            <div class="bg-slate-700/50 p-4 rounded-lg border border-slate-600/30">
+                                                <h4 class="font-semibold text-blue-400 mb-2 text-sm">IP Address</h4>
+                                                <p id="result-ip" class="text-blue-300 font-mono text-sm"></p>
+                                            </div>
+                                            <div class="bg-slate-700/50 p-4 rounded-lg border border-slate-600/30">
+                                                <h4 class="font-semibold text-green-400 mb-2 text-sm">Country</h4>
+                                                <p id="result-country" class="text-green-300 text-sm"></p>
+                                            </div>
+                                            <div class="bg-slate-700/50 p-4 rounded-lg border border-slate-600/30">
+                                                <h4 class="font-semibold text-purple-400 mb-2 text-sm">Region</h4>
+                                                <p id="result-region" class="text-purple-300 text-sm"></p>
+                                            </div>
+                                            <div class="bg-slate-700/50 p-4 rounded-lg border border-slate-600/30">
+                                                <h4 class="font-semibold text-orange-400 mb-2 text-sm">City</h4>
+                                                <p id="result-city" class="text-orange-300 text-sm"></p>
+                                            </div>
+                                            <div class="bg-slate-700/50 p-4 rounded-lg border border-slate-600/30">
+                                                <h4 class="font-semibold text-blue-400 mb-2 text-sm">ISP</h4>
+                                                <p id="result-isp" class="text-blue-300 text-sm"></p>
+                                            </div>
+                                            <div class="bg-slate-700/50 p-4 rounded-lg border border-slate-600/30">
+                                                <h4 class="font-semibold text-yellow-400 mb-2 text-sm">Organization</h4>
+                                                <p id="result-org" class="text-yellow-300 text-sm"></p>
+                                            </div>
+                                        </div>
+                            </div>
                         </div>
                             </div>
                             
-                            <!-- Output Section -->
-                            <div>
-                                <div class="flex items-center justify-between mb-3">
-                                    <label class="text-base font-medium text-gray-300">Output:</label>
-                                    <div class="flex items-center space-x-3">
-                                        <select class="text-sm bg-slate-700 text-gray-300 rounded-lg px-3 py-1">
-                                            <option>2 spaces</option>
-                                        </select>
-                                        <button class="text-sm text-gray-400 hover:text-white transition-colors px-3 py-1 rounded-lg hover:bg-slate-700/50">Copy</button>
-                            </div>
+                            <!-- JSON Beautifier Content -->
+                            <div id="json-content" class="tool-content hidden">
+                                <div class="mb-6">
+                                    <div class="flex items-center justify-between mb-3">
+                                        <label class="text-base font-medium text-gray-300">Input:</label>
+                                        <button id="clear-json" class="text-sm text-gray-400 hover:text-white transition-colors px-3 py-1 rounded-lg hover:bg-slate-700/50">Clear</button>
+                                    </div>
+                                    <div class="bg-slate-900/50 rounded-xl p-6 border border-slate-600/50">
+                                        <textarea id="json-input" class="w-full h-32 bg-transparent text-gray-300 font-mono text-sm resize-none focus:outline-none" placeholder="Enter your JSON here...">{"name":"DevDunia","tools":50,"features":["JSON Beautifier","Password Generator","IP Address Tools","Hash Generator","JWT Decoder","SQL Formatter"],"status":"active"}</textarea>
                         </div>
-                                <div class="bg-slate-900/50 rounded-xl p-6 border border-slate-600/50">
-                                    <pre class="text-sm text-green-400 font-mono overflow-x-auto"><code>{
+                    </div>
+                    
+                                <div>
+                                    <div class="flex items-center justify-between mb-3">
+                                        <label class="text-base font-medium text-gray-300">Output:</label>
+                                        <div class="flex items-center space-x-3">
+                                            <select id="indent-select" class="text-sm bg-slate-700 text-gray-300 rounded-lg px-3 py-1">
+                                                <option value="2">2 spaces</option>
+                                                <option value="4">4 spaces</option>
+                                            </select>
+                                            <button id="copy-json" class="text-sm text-gray-400 hover:text-white transition-colors px-3 py-1 rounded-lg hover:bg-slate-700/50">Copy</button>
+                                        </div>
+                                    </div>
+                                    <div class="bg-slate-900/50 rounded-xl p-6 border border-slate-600/50">
+                                        <pre id="json-output" class="text-sm text-green-400 font-mono overflow-x-auto"><code>{
   "name": "DevDunia",
   "tools": 50,
   "features": [
     "JSON Beautifier",
     "Password Generator",
-    "CSV to JSON",
+    "IP Address Tools",
     "Hash Generator",
     "JWT Decoder",
     "SQL Formatter"
   ],
   "status": "active"
 }</code></pre>
+                            </div>
                         </div>
                             </div>
                         </div>
@@ -313,8 +443,213 @@
     </div>
 
     <script>
-        // Add some interactive animations
         document.addEventListener('DOMContentLoaded', function() {
+            // Tool switching functionality
+            const toolTabs = document.querySelectorAll('.tool-tab');
+            const toolContents = document.querySelectorAll('.tool-content');
+            
+            function switchTool(tool) {
+                // Update tab states
+                toolTabs.forEach(tab => {
+                    tab.classList.remove('active', 'text-purple-400', 'bg-slate-700/50');
+                    tab.classList.add('text-gray-400');
+                });
+                
+                const activeTab = document.querySelector(`[data-tool="${tool}"]`);
+                activeTab.classList.add('active', 'text-purple-400', 'bg-slate-700/50');
+                activeTab.classList.remove('text-gray-400');
+                
+                // Show/hide content
+                toolContents.forEach(content => {
+                    content.classList.add('hidden');
+                });
+                
+                const activeContent = document.getElementById(`${tool}-content`);
+                if (activeContent) {
+                    activeContent.classList.remove('hidden');
+                }
+            }
+            
+            // Tab click handlers
+            toolTabs.forEach(tab => {
+                tab.addEventListener('click', function() {
+                    switchTool(this.dataset.tool);
+                });
+            });
+            
+            // Password Generator functionality
+            const lengthSlider = document.getElementById('length-slider');
+            const lengthValue = document.getElementById('length-value');
+            const generatedPassword = document.getElementById('generated-password');
+            const generatePasswordBtn = document.getElementById('generate-password');
+            const copyPasswordBtn = document.getElementById('copy-password');
+            
+            if (lengthSlider && lengthValue) {
+                lengthSlider.addEventListener('input', function() {
+                    lengthValue.textContent = this.value;
+                });
+            }
+            
+            function generatePassword() {
+                const length = parseInt(lengthSlider.value);
+                const uppercase = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+                const lowercase = 'abcdefghijklmnopqrstuvwxyz';
+                const numbers = '0123456789';
+                const symbols = '!@#$%^&*()_+-=[]{}|;:,.<>?';
+                
+                // Get checkbox states from the password content section
+                const passwordContent = document.getElementById('password-content');
+                const checkboxes = passwordContent.querySelectorAll('input[type="checkbox"]');
+                
+                let charset = '';
+                if (checkboxes[0] && checkboxes[0].checked) charset += uppercase;
+                if (checkboxes[1] && checkboxes[1].checked) charset += lowercase;
+                if (checkboxes[2] && checkboxes[2].checked) charset += numbers;
+                if (checkboxes[3] && checkboxes[3].checked) charset += symbols;
+                
+                // If no character types selected, use all
+                if (charset === '') {
+                    charset = uppercase + lowercase + numbers + symbols;
+                }
+                
+                let password = '';
+                for (let i = 0; i < length; i++) {
+                    password += charset.charAt(Math.floor(Math.random() * charset.length));
+                }
+                
+                generatedPassword.textContent = password;
+            }
+            
+            if (generatePasswordBtn) {
+                generatePasswordBtn.addEventListener('click', generatePassword);
+            }
+            
+            if (copyPasswordBtn) {
+                copyPasswordBtn.addEventListener('click', function() {
+                    navigator.clipboard.writeText(generatedPassword.textContent).then(() => {
+                        const originalText = copyPasswordBtn.textContent;
+                        copyPasswordBtn.textContent = 'Copied!';
+                        copyPasswordBtn.classList.add('bg-green-600/20', 'border-green-500/30', 'text-green-400');
+                        copyPasswordBtn.classList.remove('bg-blue-600/20', 'border-blue-500/30', 'text-blue-400');
+                        
+                        setTimeout(() => {
+                            copyPasswordBtn.textContent = originalText;
+                            copyPasswordBtn.classList.remove('bg-green-600/20', 'border-green-500/30', 'text-green-400');
+                            copyPasswordBtn.classList.add('bg-blue-600/20', 'border-blue-500/30', 'text-blue-400');
+                        }, 2000);
+                    });
+                });
+            }
+            
+            // JSON Beautifier functionality
+            const jsonInput = document.getElementById('json-input');
+            const jsonOutput = document.getElementById('json-output');
+            const indentSelect = document.getElementById('indent-select');
+            const clearJsonBtn = document.getElementById('clear-json');
+            const copyJsonBtn = document.getElementById('copy-json');
+            
+            function beautifyJSON() {
+                try {
+                    const input = jsonInput.value;
+                    const parsed = JSON.parse(input);
+                    const indent = parseInt(indentSelect.value);
+                    const beautified = JSON.stringify(parsed, null, indent);
+                    jsonOutput.innerHTML = `<code>${beautified}</code>`;
+                } catch (e) {
+                    jsonOutput.innerHTML = `<code class="text-red-400">Invalid JSON format</code>`;
+                }
+            }
+            
+            if (jsonInput) {
+                jsonInput.addEventListener('input', beautifyJSON);
+            }
+            
+            if (indentSelect) {
+                indentSelect.addEventListener('change', beautifyJSON);
+            }
+            
+            if (clearJsonBtn) {
+                clearJsonBtn.addEventListener('click', function() {
+                    jsonInput.value = '';
+                    jsonOutput.innerHTML = '<code></code>';
+                });
+            }
+            
+            if (copyJsonBtn) {
+                copyJsonBtn.addEventListener('click', function() {
+                    const text = jsonOutput.textContent;
+                    navigator.clipboard.writeText(text).then(() => {
+                        const originalText = copyJsonBtn.textContent;
+                        copyJsonBtn.textContent = 'Copied!';
+                        copyJsonBtn.classList.add('text-green-400');
+                        copyJsonBtn.classList.remove('text-gray-400');
+                        
+                        setTimeout(() => {
+                            copyJsonBtn.textContent = originalText;
+                            copyJsonBtn.classList.remove('text-green-400');
+                            copyJsonBtn.classList.add('text-gray-400');
+                        }, 2000);
+                    });
+                });
+            }
+            
+            // IP Address Tools functionality
+            const ipLookupInput = document.getElementById('ip-lookup-input');
+            const ipLookupBtn = document.getElementById('ip-lookup-btn');
+            const ipResults = document.getElementById('ip-results');
+            
+            // IP Lookup functionality
+            if (ipLookupBtn && ipLookupInput) {
+                ipLookupBtn.addEventListener('click', async function() {
+                    const ip = ipLookupInput.value.trim();
+                    
+                    if (!ip) {
+                        alert('Please enter an IP address');
+                        return;
+                    }
+
+                    if (!isValidIP(ip)) {
+                        alert('Please enter a valid IP address');
+                        return;
+                    }
+
+                    try {
+                        // Using the same API as ip-address.html
+                        const response = await fetch(`https://ipapi.co/${ip}/json/`);
+                        const data = await response.json();
+                        
+                        if (data.error) {
+                            alert(data.reason || 'Unable to lookup IP information');
+                            return;
+                        }
+
+                        displayIPInfo(data);
+                    } catch (error) {
+                        alert('Unable to lookup IP information');
+                    }
+                });
+            }
+            
+            // Helper functions for IP tools
+            function isValidIP(ip) {
+                const ipRegex = /^(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$/;
+                return ipRegex.test(ip);
+            }
+            
+            function displayIPInfo(data) {
+                document.getElementById('result-ip').textContent = data.ip || 'N/A';
+                document.getElementById('result-country').textContent = data.country_name || 'N/A';
+                document.getElementById('result-region').textContent = data.region || 'N/A';
+                document.getElementById('result-city').textContent = data.city || 'N/A';
+                document.getElementById('result-isp').textContent = data.org || 'N/A';
+                document.getElementById('result-org').textContent = data.org || 'N/A';
+                ipResults.classList.remove('hidden');
+            }
+            
+            // Initialize with IP Address Tools
+            switchTool('ip');
+            beautifyJSON();
+            
             // Animate stats on scroll
             const observerOptions = {
                 threshold: 0.1,
@@ -351,3 +686,4 @@
     </script>
 </body>
 </html>
+
