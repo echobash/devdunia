@@ -1,0 +1,536 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OSI Model Guide - DevDunia</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/mermaid@10.6.1/dist/mermaid.min.js"></script>
+    <style>
+        body {
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #0f172a 100%);
+        }
+        
+        .mermaid {
+            background: transparent !important;
+        }
+
+        #diagram svg {
+            max-width: 100% !important;
+            height: auto !important;
+            width: auto !important;
+            display: block;
+            margin: 0 auto;
+        }
+
+        #diagram {
+            display: flex;
+            align-items: flex-start;
+            justify-content: center;
+            width: 100%;
+            min-height: 100%;
+            padding: 20px;
+        }
+
+        #diagram-container {
+            overflow: auto;
+            height: 100%;
+        }
+
+        .layer-card {
+            transition: all 0.3s ease;
+        }
+        
+        .layer-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+        }
+    </style>
+</head>
+<body class="h-screen">
+    <!-- Background -->
+    <div class="fixed inset-0 -z-10 bg-gradient-to-br from-gray-900 via-slate-900 to-gray-900"></div>
+
+    <!-- Main Container -->
+    <div class="relative z-10 w-full h-screen flex flex-col">
+        
+        <!-- Header -->
+        <div class="bg-slate-800/70 backdrop-blur-md border-b border-slate-700/60 px-6 py-4">
+            <div class="flex items-center justify-between">
+                <div class="flex items-center space-x-4">
+                    <button id="back-btn" class="px-3 py-2 bg-slate-600 hover:bg-slate-700 text-white text-sm rounded-lg transition-colors duration-200 flex items-center space-x-2">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path>
+                        </svg>
+                        <span>Back</span>
+                    </button>
+                    <div>
+                        <h1 class="text-2xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-pink-500">
+                            OSI Model Guide
+                        </h1>
+                        <p class="text-sm text-gray-400 mt-1">Open Systems Interconnection - 7-Layer Network Model</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Main Content -->
+        <div class="flex-1 overflow-auto p-6">
+            <div class="max-w-6xl mx-auto">
+                
+                <!-- Introduction -->
+                <div class="mb-8">
+                    <h2 class="text-3xl font-bold text-white mb-4">What is the OSI Model?</h2>
+                    <p class="text-gray-300 text-lg leading-relaxed mb-6">
+                        The OSI (Open Systems Interconnection) model is a conceptual framework that standardizes 
+                        network communication into seven distinct layers. Each layer has specific functions and 
+                        communicates with adjacent layers to enable reliable data transmission.
+                    </p>
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+                        <div class="bg-purple-500/10 border border-purple-500/20 rounded-lg p-6">
+                            <h3 class="text-lg font-semibold text-purple-300 mb-2">Layered Architecture</h3>
+                            <p class="text-gray-300 text-sm">Each layer has specific responsibilities and communicates with adjacent layers.</p>
+                        </div>
+                        <div class="bg-blue-500/10 border border-blue-500/20 rounded-lg p-6">
+                            <h3 class="text-lg font-semibold text-blue-300 mb-2">Standardization</h3>
+                            <p class="text-gray-300 text-sm">Provides a common framework for understanding network communication.</p>
+                        </div>
+                        <div class="bg-green-500/10 border border-green-500/20 rounded-lg p-6">
+                            <h3 class="text-lg font-semibold text-green-300 mb-2">Modularity</h3>
+                            <p class="text-gray-300 text-sm">Allows independent development and modification of each layer.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- OSI Model Diagram -->
+                <div class="mb-8">
+                    <h3 class="text-2xl font-bold text-white mb-4">OSI Model - 7 Layers</h3>
+                    <div class="bg-slate-800/50 border border-slate-700 rounded-lg p-6">
+                        <div id="osi-model-diagram" class="w-full"></div>
+                    </div>
+                </div>
+
+                <!-- Data Flow Through OSI -->
+                <div class="mb-8">
+                    <h3 class="text-2xl font-bold text-white mb-4">Data Flow Through OSI Layers</h3>
+                    <div class="bg-slate-800/50 border border-slate-700 rounded-lg p-6">
+                        <div id="data-flow-diagram" class="w-full"></div>
+                    </div>
+                </div>
+
+                <!-- Layer Details -->
+                <div class="mb-8">
+                    <h3 class="text-2xl font-bold text-white mb-4">Layer Details</h3>
+                    <div class="space-y-6">
+                        
+                        <!-- Application Layer -->
+                        <div class="layer-card bg-slate-800/50 border border-slate-700 rounded-lg p-6">
+                            <div class="flex items-center mb-4">
+                                <div class="w-12 h-12 bg-blue-500/20 rounded-lg flex items-center justify-center mr-4">
+                                    <span class="text-2xl">🌐</span>
+                                </div>
+                                <div>
+                                    <h4 class="text-xl font-semibold text-blue-300">Layer 7: Application Layer</h4>
+                                    <p class="text-gray-400">User interface and network services</p>
+                                </div>
+                            </div>
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                <div>
+                                    <h5 class="text-lg font-medium text-white mb-2">Functions</h5>
+                                    <ul class="text-gray-300 space-y-1">
+                                        <li>• User interface to network services</li>
+                                        <li>• File transfer, email, web browsing</li>
+                                        <li>• Network transparency</li>
+                                        <li>• Resource sharing</li>
+                                    </ul>
+                                </div>
+                                <div>
+                                    <h5 class="text-lg font-medium text-white mb-2">Protocols & Examples</h5>
+                                    <ul class="text-gray-300 space-y-1">
+                                        <li>• HTTP, HTTPS</li>
+                                        <li>• FTP, SMTP, POP3</li>
+                                        <li>• DNS, DHCP</li>
+                                        <li>• Telnet, SSH</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Presentation Layer -->
+                        <div class="layer-card bg-slate-800/50 border border-slate-700 rounded-lg p-6">
+                            <div class="flex items-center mb-4">
+                                <div class="w-12 h-12 bg-purple-500/20 rounded-lg flex items-center justify-center mr-4">
+                                    <span class="text-2xl">🔐</span>
+                                </div>
+                                <div>
+                                    <h4 class="text-xl font-semibold text-purple-300">Layer 6: Presentation Layer</h4>
+                                    <p class="text-gray-400">Data translation, encryption, compression</p>
+                                </div>
+                            </div>
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                <div>
+                                    <h5 class="text-lg font-medium text-white mb-2">Functions</h5>
+                                    <ul class="text-gray-300 space-y-1">
+                                        <li>• Data translation</li>
+                                        <li>• Encryption/decryption</li>
+                                        <li>• Data compression</li>
+                                        <li>• Character encoding</li>
+                                    </ul>
+                                </div>
+                                <div>
+                                    <h5 class="text-lg font-medium text-white mb-2">Protocols & Examples</h5>
+                                    <ul class="text-gray-300 space-y-1">
+                                        <li>• SSL/TLS</li>
+                                        <li>• JPEG, GIF, PNG</li>
+                                        <li>• ASCII, Unicode</li>
+                                        <li>• MPEG, AVI</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Session Layer -->
+                        <div class="layer-card bg-slate-800/50 border border-slate-700 rounded-lg p-6">
+                            <div class="flex items-center mb-4">
+                                <div class="w-12 h-12 bg-cyan-500/20 rounded-lg flex items-center justify-center mr-4">
+                                    <span class="text-2xl">🤝</span>
+                                </div>
+                                <div>
+                                    <h4 class="text-xl font-semibold text-cyan-300">Layer 5: Session Layer</h4>
+                                    <p class="text-gray-400">Session management and dialog control</p>
+                                </div>
+                            </div>
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                <div>
+                                    <h5 class="text-lg font-medium text-white mb-2">Functions</h5>
+                                    <ul class="text-gray-300 space-y-1">
+                                        <li>• Session establishment</li>
+                                        <li>• Session maintenance</li>
+                                        <li>• Session termination</li>
+                                        <li>• Dialog control</li>
+                                    </ul>
+                                </div>
+                                <div>
+                                    <h5 class="text-lg font-medium text-white mb-2">Protocols & Examples</h5>
+                                    <ul class="text-gray-300 space-y-1">
+                                        <li>• NetBIOS</li>
+                                        <li>• RPC (Remote Procedure Call)</li>
+                                        <li>• SQL</li>
+                                        <li>• PPTP</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Transport Layer -->
+                        <div class="layer-card bg-slate-800/50 border border-slate-700 rounded-lg p-6">
+                            <div class="flex items-center mb-4">
+                                <div class="w-12 h-12 bg-green-500/20 rounded-lg flex items-center justify-center mr-4">
+                                    <span class="text-2xl">🚚</span>
+                                </div>
+                                <div>
+                                    <h4 class="text-xl font-semibold text-green-300">Layer 4: Transport Layer</h4>
+                                    <p class="text-gray-400">End-to-end communication and reliability</p>
+                                </div>
+                            </div>
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                <div>
+                                    <h5 class="text-lg font-medium text-white mb-2">Functions</h5>
+                                    <ul class="text-gray-300 space-y-1">
+                                        <li>• End-to-end communication</li>
+                                        <li>• Error detection and recovery</li>
+                                        <li>• Flow control</li>
+                                        <li>• Segmentation and reassembly</li>
+                                    </ul>
+                                </div>
+                                <div>
+                                    <h5 class="text-lg font-medium text-white mb-2">Protocols & Examples</h5>
+                                    <ul class="text-gray-300 space-y-1">
+                                        <li>• TCP (Transmission Control Protocol)</li>
+                                        <li>• UDP (User Datagram Protocol)</li>
+                                        <li>• SCTP</li>
+                                        <li>• DCCP</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Network Layer -->
+                        <div class="layer-card bg-slate-800/50 border border-slate-700 rounded-lg p-6">
+                            <div class="flex items-center mb-4">
+                                <div class="w-12 h-12 bg-orange-500/20 rounded-lg flex items-center justify-center mr-4">
+                                    <span class="text-2xl">🗺️</span>
+                                </div>
+                                <div>
+                                    <h4 class="text-xl font-semibold text-orange-300">Layer 3: Network Layer</h4>
+                                    <p class="text-gray-400">Routing and logical addressing</p>
+                                </div>
+                            </div>
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                <div>
+                                    <h5 class="text-lg font-medium text-white mb-2">Functions</h5>
+                                    <ul class="text-gray-300 space-y-1">
+                                        <li>• Logical addressing</li>
+                                        <li>• Routing</li>
+                                        <li>• Path determination</li>
+                                        <li>• Packet forwarding</li>
+                                    </ul>
+                                </div>
+                                <div>
+                                    <h5 class="text-lg font-medium text-white mb-2">Protocols & Examples</h5>
+                                    <ul class="text-gray-300 space-y-1">
+                                        <li>• IP (Internet Protocol)</li>
+                                        <li>• ICMP, ARP</li>
+                                        <li>• OSPF, BGP</li>
+                                        <li>• RIP</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Data Link Layer -->
+                        <div class="layer-card bg-slate-800/50 border border-slate-700 rounded-lg p-6">
+                            <div class="flex items-center mb-4">
+                                <div class="w-12 h-12 bg-red-500/20 rounded-lg flex items-center justify-center mr-4">
+                                    <span class="text-2xl">🔗</span>
+                                </div>
+                                <div>
+                                    <h4 class="text-xl font-semibold text-red-300">Layer 2: Data Link Layer</h4>
+                                    <p class="text-gray-400">Physical addressing and error detection</p>
+                                </div>
+                            </div>
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                <div>
+                                    <h5 class="text-lg font-medium text-white mb-2">Functions</h5>
+                                    <ul class="text-gray-300 space-y-1">
+                                        <li>• Physical addressing (MAC)</li>
+                                        <li>• Error detection and correction</li>
+                                        <li>• Frame synchronization</li>
+                                        <li>• Flow control</li>
+                                    </ul>
+                                </div>
+                                <div>
+                                    <h5 class="text-lg font-medium text-white mb-2">Protocols & Examples</h5>
+                                    <ul class="text-gray-300 space-y-1">
+                                        <li>• Ethernet</li>
+                                        <li>• WiFi (802.11)</li>
+                                        <li>• PPP, HDLC</li>
+                                        <li>• Frame Relay</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Physical Layer -->
+                        <div class="layer-card bg-slate-800/50 border border-slate-700 rounded-lg p-6">
+                            <div class="flex items-center mb-4">
+                                <div class="w-12 h-12 bg-gray-500/20 rounded-lg flex items-center justify-center mr-4">
+                                    <span class="text-2xl">⚡</span>
+                                </div>
+                                <div>
+                                    <h4 class="text-xl font-semibold text-gray-300">Layer 1: Physical Layer</h4>
+                                    <p class="text-gray-400">Physical transmission of data bits</p>
+                                </div>
+                            </div>
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                <div>
+                                    <h5 class="text-lg font-medium text-white mb-2">Functions</h5>
+                                    <ul class="text-gray-300 space-y-1">
+                                        <li>• Physical transmission</li>
+                                        <li>• Signal encoding</li>
+                                        <li>• Bit synchronization</li>
+                                        <li>• Physical topology</li>
+                                    </ul>
+                                </div>
+                                <div>
+                                    <h5 class="text-lg font-medium text-white mb-2">Protocols & Examples</h5>
+                                    <ul class="text-gray-300 space-y-1">
+                                        <li>• Ethernet cables</li>
+                                        <li>• Fiber optic</li>
+                                        <li>• Wireless (WiFi)</li>
+                                        <li>• Bluetooth</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+
+                <!-- Data Encapsulation -->
+                <div class="mb-8">
+                    <h3 class="text-2xl font-bold text-white mb-4">Data Encapsulation Process</h3>
+                    <div class="bg-slate-800/50 border border-slate-700 rounded-lg p-6">
+                        <div id="encapsulation-diagram" class="w-full"></div>
+                    </div>
+                </div>
+
+                <!-- OSI vs TCP/IP -->
+                <div class="mb-8">
+                    <h3 class="text-2xl font-bold text-white mb-4">OSI Model vs TCP/IP Model</h3>
+                    <div class="bg-slate-800/50 border border-slate-700 rounded-lg overflow-hidden">
+                        <table class="w-full">
+                            <thead class="bg-slate-700/50">
+                                <tr>
+                                    <th class="px-6 py-4 text-left text-white font-semibold">OSI Model</th>
+                                    <th class="px-6 py-4 text-left text-white font-semibold">TCP/IP Model</th>
+                                    <th class="px-6 py-4 text-left text-white font-semibold">Protocols</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr class="border-t border-slate-700">
+                                    <td class="px-6 py-4 text-blue-300 font-medium">Application (7)</td>
+                                    <td class="px-6 py-4 text-gray-300">Application</td>
+                                    <td class="px-6 py-4 text-gray-300">HTTP, FTP, SMTP, DNS</td>
+                                </tr>
+                                <tr class="border-t border-slate-700">
+                                    <td class="px-6 py-4 text-purple-300 font-medium">Presentation (6)</td>
+                                    <td class="px-6 py-4 text-gray-300">Application</td>
+                                    <td class="px-6 py-4 text-gray-300">SSL/TLS, JPEG, MPEG</td>
+                                </tr>
+                                <tr class="border-t border-slate-700">
+                                    <td class="px-6 py-4 text-cyan-300 font-medium">Session (5)</td>
+                                    <td class="px-6 py-4 text-gray-300">Application</td>
+                                    <td class="px-6 py-4 text-gray-300">NetBIOS, RPC</td>
+                                </tr>
+                                <tr class="border-t border-slate-700">
+                                    <td class="px-6 py-4 text-green-300 font-medium">Transport (4)</td>
+                                    <td class="px-6 py-4 text-gray-300">Transport</td>
+                                    <td class="px-6 py-4 text-gray-300">TCP, UDP</td>
+                                </tr>
+                                <tr class="border-t border-slate-700">
+                                    <td class="px-6 py-4 text-orange-300 font-medium">Network (3)</td>
+                                    <td class="px-6 py-4 text-gray-300">Internet</td>
+                                    <td class="px-6 py-4 text-gray-300">IP, ICMP, ARP</td>
+                                </tr>
+                                <tr class="border-t border-slate-700">
+                                    <td class="px-6 py-4 text-red-300 font-medium">Data Link (2)</td>
+                                    <td class="px-6 py-4 text-gray-300">Network Access</td>
+                                    <td class="px-6 py-4 text-gray-300">Ethernet, WiFi</td>
+                                </tr>
+                                <tr class="border-t border-slate-700">
+                                    <td class="px-6 py-4 text-gray-300 font-medium">Physical (1)</td>
+                                    <td class="px-6 py-4 text-gray-300">Network Access</td>
+                                    <td class="px-6 py-4 text-gray-300">Cables, Wireless</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const backBtn = document.getElementById('back-btn');
+
+            // Back button
+            backBtn.addEventListener('click', () => {
+                window.history.back();
+            });
+
+            // Initialize Mermaid
+            mermaid.initialize({
+                startOnLoad: false,
+                theme: 'dark',
+                themeVariables: {
+                    primaryColor: '#8b5cf6',
+                    primaryTextColor: '#f8fafc',
+                    primaryBorderColor: '#334155',
+                    lineColor: '#64748b',
+                    secondaryColor: '#1e293b',
+                    tertiaryColor: '#0f172a',
+                    background: '#0f172a',
+                    mainBkg: '#1e293b',
+                    secondBkg: '#334155'
+                }
+            });
+
+            // Render OSI Model diagram
+            const osiModelDiagram = `
+                graph TD
+                    A["Application Layer<br/>HTTP, FTP, SMTP, DNS"] --> B["Presentation Layer<br/>SSL/TLS, JPEG, MPEG"]
+                    B --> C["Session Layer<br/>NetBIOS, RPC, SQL"]
+                    C --> D["Transport Layer<br/>TCP, UDP, SCTP"]
+                    D --> E["Network Layer<br/>IP, ICMP, ARP, OSPF"]
+                    E --> F["Data Link Layer<br/>Ethernet, WiFi, PPP"]
+                    F --> G["Physical Layer<br/>Cables, Fiber, Wireless"]
+                    
+                    style A fill:#3b82f6,stroke:#1e40af,stroke-width:2px,color:#fff
+                    style B fill:#8b5cf6,stroke:#7c3aed,stroke-width:2px,color:#fff
+                    style C fill:#06b6d4,stroke:#0891b2,stroke-width:2px,color:#fff
+                    style D fill:#10b981,stroke:#059669,stroke-width:2px,color:#fff
+                    style E fill:#f59e0b,stroke:#d97706,stroke-width:2px,color:#fff
+                    style F fill:#ef4444,stroke:#dc2626,stroke-width:2px,color:#fff
+                    style G fill:#6b7280,stroke:#4b5563,stroke-width:2px,color:#fff
+            `;
+
+            // Render Data Flow diagram
+            const dataFlowDiagram = `
+                sequenceDiagram
+                    participant App as Application
+                    participant Pres as Presentation
+                    participant Sess as Session
+                    participant Trans as Transport
+                    participant Net as Network
+                    participant Data as Data Link
+                    participant Phys as Physical
+                    
+                    Note over App,Phys: Data Encapsulation (Sending)
+                    
+                    App->>Pres: Data
+                    Pres->>Sess: Data + Presentation Header
+                    Sess->>Trans: Data + Session Header
+                    Trans->>Net: Data + Transport Header
+                    Net->>Data: Data + Network Header
+                    Data->>Phys: Data + Data Link Header
+                    Phys->>Phys: Physical Transmission
+                    
+                    Note over App,Phys: Data Decapsulation (Receiving)
+                    
+                    Phys->>Data: Physical Signal
+                    Data->>Net: Remove Data Link Header
+                    Net->>Trans: Remove Network Header
+                    Trans->>Sess: Remove Transport Header
+                    Sess->>Pres: Remove Session Header
+                    Pres->>App: Remove Presentation Header
+            `;
+
+            // Render Encapsulation diagram
+            const encapsulationDiagram = `
+                graph TD
+                    A["Application Data<br/>(HTTP Request)"] --> B["+ Presentation Header<br/>(SSL/TLS)"]
+                    B --> C["+ Session Header<br/>(NetBIOS)"]
+                    C --> D["+ Transport Header<br/>(TCP)"]
+                    D --> E["+ Network Header<br/>(IP)"]
+                    E --> F["+ Data Link Header<br/>(Ethernet)"]
+                    F --> G["+ Physical Header<br/>(Frame)"]
+                    G --> H["Transmitted Bits<br/>(Electrical/Optical)"]
+                    
+                    style A fill:#3b82f6,stroke:#1e40af,stroke-width:2px,color:#fff
+                    style B fill:#8b5cf6,stroke:#7c3aed,stroke-width:2px,color:#fff
+                    style C fill:#06b6d4,stroke:#0891b2,stroke-width:2px,color:#fff
+                    style D fill:#10b981,stroke:#059669,stroke-width:2px,color:#fff
+                    style E fill:#f59e0b,stroke:#d97706,stroke-width:2px,color:#fff
+                    style F fill:#ef4444,stroke:#dc2626,stroke-width:2px,color:#fff
+                    style G fill:#6b7280,stroke:#4b5563,stroke-width:2px,color:#fff
+                    style H fill:#f97316,stroke:#ea580c,stroke-width:2px,color:#fff
+            `;
+
+            // Render all diagrams
+            Promise.all([
+                mermaid.render('osi-model-svg', osiModelDiagram),
+                mermaid.render('data-flow-svg', dataFlowDiagram),
+                mermaid.render('encapsulation-svg', encapsulationDiagram)
+            ]).then(([model, flow, encapsulation]) => {
+                document.getElementById('osi-model-diagram').innerHTML = model.svg;
+                document.getElementById('data-flow-diagram').innerHTML = flow.svg;
+                document.getElementById('encapsulation-diagram').innerHTML = encapsulation.svg;
+            });
+        });
+    </script>
+</body>
+</html>

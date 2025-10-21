@@ -1,0 +1,637 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HTTP Protocol Guide - DevDunia</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/mermaid@10.6.1/dist/mermaid.min.js"></script>
+    <style>
+        body {
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #0f172a 100%);
+        }
+        
+        .mermaid {
+            background: transparent !important;
+        }
+
+        #diagram svg {
+            max-width: 100% !important;
+            height: auto !important;
+            width: auto !important;
+            display: block;
+            margin: 0 auto;
+        }
+
+        #diagram {
+            display: flex;
+            align-items: flex-start;
+            justify-content: center;
+            width: 100%;
+            min-height: 100%;
+            padding: 20px;
+        }
+
+        #diagram-container {
+            overflow: auto;
+            height: 100%;
+        }
+
+        .code-block {
+            background: #1e293b;
+            border: 1px solid #334155;
+            border-radius: 8px;
+            padding: 16px;
+            font-family: 'Courier New', monospace;
+            overflow-x: auto;
+        }
+    </style>
+</head>
+<body class="h-screen">
+    <!-- Background -->
+    <div class="fixed inset-0 -z-10 bg-gradient-to-br from-gray-900 via-slate-900 to-gray-900"></div>
+
+    <!-- Main Container -->
+    <div class="relative z-10 w-full h-screen flex flex-col">
+        
+        <!-- Header -->
+        <div class="bg-slate-800/70 backdrop-blur-md border-b border-slate-700/60 px-6 py-4">
+            <div class="flex items-center justify-between">
+                <div class="flex items-center space-x-4">
+                    <button id="back-btn" class="px-3 py-2 bg-slate-600 hover:bg-slate-700 text-white text-sm rounded-lg transition-colors duration-200 flex items-center space-x-2">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path>
+                        </svg>
+                        <span>Back</span>
+                    </button>
+                    <div>
+                        <h1 class="text-2xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-cyan-500">
+                            HTTP Protocol Guide
+                        </h1>
+                        <p class="text-sm text-gray-400 mt-1">Hypertext Transfer Protocol - Web Communication Standard</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Main Content -->
+        <div class="flex-1 overflow-auto p-6">
+            <div class="max-w-6xl mx-auto">
+                
+                <!-- Introduction -->
+                <div class="mb-8">
+                    <h2 class="text-3xl font-bold text-white mb-4">What is HTTP?</h2>
+                    <p class="text-gray-300 text-lg leading-relaxed mb-6">
+                        HTTP (Hypertext Transfer Protocol) is an application-layer protocol for distributed, collaborative, 
+                        hypermedia information systems. It's the foundation of data communication for the World Wide Web.
+                    </p>
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+                        <div class="bg-blue-500/10 border border-blue-500/20 rounded-lg p-6">
+                            <h3 class="text-lg font-semibold text-blue-300 mb-2">Stateless</h3>
+                            <p class="text-gray-300 text-sm">Each request is independent and doesn't retain information about previous requests.</p>
+                        </div>
+                        <div class="bg-green-500/10 border border-green-500/20 rounded-lg p-6">
+                            <h3 class="text-lg font-semibold text-green-300 mb-2">Request/Response</h3>
+                            <p class="text-gray-300 text-sm">Client sends requests, server responds with data or status information.</p>
+                        </div>
+                        <div class="bg-purple-500/10 border border-purple-500/20 rounded-lg p-6">
+                            <h3 class="text-lg font-semibold text-purple-300 mb-2">Text-based</h3>
+                            <p class="text-gray-300 text-sm">Human-readable protocol that's easy to debug and understand.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- HTTP Request/Response Flow -->
+                <div class="mb-8">
+                    <h3 class="text-2xl font-bold text-white mb-4">HTTP Request/Response Flow</h3>
+                    <div class="bg-slate-800/50 border border-slate-700 rounded-lg p-6">
+                        <div id="http-flow-diagram" class="w-full"></div>
+                    </div>
+                </div>
+
+                <!-- HTTP Methods -->
+                <div class="mb-8">
+                    <h3 class="text-2xl font-bold text-white mb-4">HTTP Methods</h3>
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                        <div class="bg-slate-800/50 border border-slate-700 rounded-lg p-4">
+                            <h4 class="text-lg font-semibold text-green-300 mb-2">GET</h4>
+                            <p class="text-gray-300 text-sm mb-3">Retrieve data from server</p>
+                            <div class="code-block text-xs">
+GET /api/users HTTP/1.1
+Host: example.com
+                            </div>
+                        </div>
+                        
+                        <div class="bg-slate-800/50 border border-slate-700 rounded-lg p-4">
+                            <h4 class="text-lg font-semibold text-blue-300 mb-2">POST</h4>
+                            <p class="text-gray-300 text-sm mb-3">Send data to server</p>
+                            <div class="code-block text-xs">
+POST /api/users HTTP/1.1
+Content-Type: application/json
+{"name": "John"}
+                            </div>
+                        </div>
+                        
+                        <div class="bg-slate-800/50 border border-slate-700 rounded-lg p-4">
+                            <h4 class="text-lg font-semibold text-orange-300 mb-2">PUT</h4>
+                            <p class="text-gray-300 text-sm mb-3">Update existing resource</p>
+                            <div class="code-block text-xs">
+PUT /api/users/123 HTTP/1.1
+Content-Type: application/json
+{"name": "Jane"}
+                            </div>
+                        </div>
+                        
+                        <div class="bg-slate-800/50 border border-slate-700 rounded-lg p-4">
+                            <h4 class="text-lg font-semibold text-red-300 mb-2">DELETE</h4>
+                            <p class="text-gray-300 text-sm mb-3">Remove resource</p>
+                            <div class="code-block text-xs">
+DELETE /api/users/123 HTTP/1.1
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- HTTP Status Codes -->
+                <div class="mb-8">
+                    <h3 class="text-2xl font-bold text-white mb-4">HTTP Status Codes</h3>
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                        <div class="bg-green-500/10 border border-green-500/20 rounded-lg p-4">
+                            <h4 class="text-lg font-semibold text-green-300 mb-2">2xx Success</h4>
+                            <ul class="text-gray-300 text-sm space-y-1">
+                                <li>200 OK</li>
+                                <li>201 Created</li>
+                                <li>204 No Content</li>
+                            </ul>
+                        </div>
+                        
+                        <div class="bg-blue-500/10 border border-blue-500/20 rounded-lg p-4">
+                            <h4 class="text-lg font-semibold text-blue-300 mb-2">3xx Redirection</h4>
+                            <ul class="text-gray-300 text-sm space-y-1">
+                                <li>301 Moved Permanently</li>
+                                <li>302 Found</li>
+                                <li>304 Not Modified</li>
+                            </ul>
+                        </div>
+                        
+                        <div class="bg-orange-500/10 border border-orange-500/20 rounded-lg p-4">
+                            <h4 class="text-lg font-semibold text-orange-300 mb-2">4xx Client Error</h4>
+                            <ul class="text-gray-300 text-sm space-y-1">
+                                <li>400 Bad Request</li>
+                                <li>401 Unauthorized</li>
+                                <li>404 Not Found</li>
+                            </ul>
+                        </div>
+                        
+                        <div class="bg-red-500/10 border border-red-500/20 rounded-lg p-4">
+                            <h4 class="text-lg font-semibold text-red-300 mb-2">5xx Server Error</h4>
+                            <ul class="text-gray-300 text-sm space-y-1">
+                                <li>500 Internal Server Error</li>
+                                <li>502 Bad Gateway</li>
+                                <li>503 Service Unavailable</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- HTTP Headers -->
+                <div class="mb-8">
+                    <h3 class="text-2xl font-bold text-white mb-4">Common HTTP Headers (Sorted by Popularity)</h3>
+                    <div class="bg-slate-800/50 border border-slate-700 rounded-lg overflow-hidden">
+                        <table class="w-full">
+                            <thead class="bg-slate-700/50">
+                                <tr>
+                                    <th class="px-6 py-4 text-left text-white font-semibold">Header</th>
+                                    <th class="px-6 py-4 text-left text-white font-semibold">Type</th>
+                                    <th class="px-6 py-4 text-left text-white font-semibold">Description</th>
+                                    <th class="px-6 py-4 text-left text-white font-semibold">Example</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr class="border-t border-slate-700">
+                                    <td class="px-6 py-4 text-blue-300 font-medium">Content-Type</td>
+                                    <td class="px-6 py-4 text-gray-300">Response</td>
+                                    <td class="px-6 py-4 text-gray-300">Media type of the resource</td>
+                                    <td class="px-6 py-4 text-gray-300">application/json</td>
+                                </tr>
+                                <tr class="border-t border-slate-700">
+                                    <td class="px-6 py-4 text-blue-300 font-medium">User-Agent</td>
+                                    <td class="px-6 py-4 text-gray-300">Request</td>
+                                    <td class="px-6 py-4 text-gray-300">Client application info</td>
+                                    <td class="px-6 py-4 text-gray-300">Mozilla/5.0...</td>
+                                </tr>
+                                <tr class="border-t border-slate-700">
+                                    <td class="px-6 py-4 text-blue-300 font-medium">Host</td>
+                                    <td class="px-6 py-4 text-gray-300">Request</td>
+                                    <td class="px-6 py-4 text-gray-300">Target server hostname</td>
+                                    <td class="px-6 py-4 text-gray-300">example.com</td>
+                                </tr>
+                                <tr class="border-t border-slate-700">
+                                    <td class="px-6 py-4 text-blue-300 font-medium">Accept</td>
+                                    <td class="px-6 py-4 text-gray-300">Request</td>
+                                    <td class="px-6 py-4 text-gray-300">Acceptable response types</td>
+                                    <td class="px-6 py-4 text-gray-300">application/json</td>
+                                </tr>
+                                <tr class="border-t border-slate-700">
+                                    <td class="px-6 py-4 text-blue-300 font-medium">Cache-Control</td>
+                                    <td class="px-6 py-4 text-gray-300">Both</td>
+                                    <td class="px-6 py-4 text-gray-300">Caching directives</td>
+                                    <td class="px-6 py-4 text-gray-300">no-cache</td>
+                                </tr>
+                                <tr class="border-t border-slate-700">
+                                    <td class="px-6 py-4 text-blue-300 font-medium">Content-Length</td>
+                                    <td class="px-6 py-4 text-gray-300">Response</td>
+                                    <td class="px-6 py-4 text-gray-300">Size of response body</td>
+                                    <td class="px-6 py-4 text-gray-300">1024</td>
+                                </tr>
+                                <tr class="border-t border-slate-700">
+                                    <td class="px-6 py-4 text-blue-300 font-medium">Authorization</td>
+                                    <td class="px-6 py-4 text-gray-300">Request</td>
+                                    <td class="px-6 py-4 text-gray-300">Authentication credentials</td>
+                                    <td class="px-6 py-4 text-gray-300">Bearer token123</td>
+                                </tr>
+                                <tr class="border-t border-slate-700">
+                                    <td class="px-6 py-4 text-blue-300 font-medium">Accept-Encoding</td>
+                                    <td class="px-6 py-4 text-gray-300">Request</td>
+                                    <td class="px-6 py-4 text-gray-300">Acceptable compression</td>
+                                    <td class="px-6 py-4 text-gray-300">gzip, deflate</td>
+                                </tr>
+                                <tr class="border-t border-slate-700">
+                                    <td class="px-6 py-4 text-blue-300 font-medium">Content-Encoding</td>
+                                    <td class="px-6 py-4 text-gray-300">Response</td>
+                                    <td class="px-6 py-4 text-gray-300">Compression used</td>
+                                    <td class="px-6 py-4 text-gray-300">gzip</td>
+                                </tr>
+                                <tr class="border-t border-slate-700">
+                                    <td class="px-6 py-4 text-blue-300 font-medium">Connection</td>
+                                    <td class="px-6 py-4 text-gray-300">Both</td>
+                                    <td class="px-6 py-4 text-gray-300">Connection control</td>
+                                    <td class="px-6 py-4 text-gray-300">keep-alive</td>
+                                </tr>
+                                <tr class="border-t border-slate-700">
+                                    <td class="px-6 py-4 text-blue-300 font-medium">Set-Cookie</td>
+                                    <td class="px-6 py-4 text-gray-300">Response</td>
+                                    <td class="px-6 py-4 text-gray-300">Cookie to set</td>
+                                    <td class="px-6 py-4 text-gray-300">session=abc123</td>
+                                </tr>
+                                <tr class="border-t border-slate-700">
+                                    <td class="px-6 py-4 text-blue-300 font-medium">Cookie</td>
+                                    <td class="px-6 py-4 text-gray-300">Request</td>
+                                    <td class="px-6 py-4 text-gray-300">Cookies to send</td>
+                                    <td class="px-6 py-4 text-gray-300">session=abc123</td>
+                                </tr>
+                                <tr class="border-t border-slate-700">
+                                    <td class="px-6 py-4 text-blue-300 font-medium">Location</td>
+                                    <td class="px-6 py-4 text-gray-300">Response</td>
+                                    <td class="px-6 py-4 text-gray-300">Redirect URL</td>
+                                    <td class="px-6 py-4 text-gray-300">https://example.com/new</td>
+                                </tr>
+                                <tr class="border-t border-slate-700">
+                                    <td class="px-6 py-4 text-blue-300 font-medium">Referer</td>
+                                    <td class="px-6 py-4 text-gray-300">Request</td>
+                                    <td class="px-6 py-4 text-gray-300">Previous page URL</td>
+                                    <td class="px-6 py-4 text-gray-300">https://google.com</td>
+                                </tr>
+                                <tr class="border-t border-slate-700">
+                                    <td class="px-6 py-4 text-blue-300 font-medium">Accept-Language</td>
+                                    <td class="px-6 py-4 text-gray-300">Request</td>
+                                    <td class="px-6 py-4 text-gray-300">Preferred languages</td>
+                                    <td class="px-6 py-4 text-gray-300">en-US, en</td>
+                                </tr>
+                                <tr class="border-t border-slate-700">
+                                    <td class="px-6 py-4 text-blue-300 font-medium">X-Forwarded-For</td>
+                                    <td class="px-6 py-4 text-gray-300">Request</td>
+                                    <td class="px-6 py-4 text-gray-300">Client IP address</td>
+                                    <td class="px-6 py-4 text-gray-300">192.168.1.1</td>
+                                </tr>
+                                <tr class="border-t border-slate-700">
+                                    <td class="px-6 py-4 text-blue-300 font-medium">ETag</td>
+                                    <td class="px-6 py-4 text-gray-300">Response</td>
+                                    <td class="px-6 py-4 text-gray-300">Resource version identifier</td>
+                                    <td class="px-6 py-4 text-gray-300">"abc123"</td>
+                                </tr>
+                                <tr class="border-t border-slate-700">
+                                    <td class="px-6 py-4 text-blue-300 font-medium">If-None-Match</td>
+                                    <td class="px-6 py-4 text-gray-300">Request</td>
+                                    <td class="px-6 py-4 text-gray-300">Conditional request</td>
+                                    <td class="px-6 py-4 text-gray-300">"abc123"</td>
+                                </tr>
+                                <tr class="border-t border-slate-700">
+                                    <td class="px-6 py-4 text-blue-300 font-medium">Server</td>
+                                    <td class="px-6 py-4 text-gray-300">Response</td>
+                                    <td class="px-6 py-4 text-gray-300">Server software info</td>
+                                    <td class="px-6 py-4 text-gray-300">nginx/1.18.0</td>
+                                </tr>
+                                <tr class="border-t border-slate-700">
+                                    <td class="px-6 py-4 text-blue-300 font-medium">X-Requested-With</td>
+                                    <td class="px-6 py-4 text-gray-300">Request</td>
+                                    <td class="px-6 py-4 text-gray-300">AJAX request indicator</td>
+                                    <td class="px-6 py-4 text-gray-300">XMLHttpRequest</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- HTTP Versions Evolution -->
+                <div class="mb-8">
+                    <h3 class="text-2xl font-bold text-white mb-4">HTTP Versions Evolution</h3>
+                    <p class="text-gray-300 text-lg leading-relaxed mb-6">
+                        HTTP has evolved through several versions, each bringing new features and improvements to web communication.
+                    </p>
+                    
+                    <!-- HTTP/0.9 -->
+                    <div class="mb-8">
+                        <h4 class="text-xl font-semibold text-orange-300 mb-4">HTTP/0.9 (1991) - The Original</h4>
+                        <div class="bg-slate-800/50 border border-slate-700 rounded-lg p-6">
+                            <div id="http-09-diagram" class="w-full"></div>
+                        </div>
+                        <div class="mt-4 grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div class="bg-orange-500/10 border border-orange-500/20 rounded-lg p-4">
+                                <h5 class="text-lg font-semibold text-orange-300 mb-2">Features</h5>
+                                <ul class="text-gray-300 text-sm space-y-1">
+                                    <li>• Only GET method</li>
+                                    <li>• No headers</li>
+                                    <li>• HTML only responses</li>
+                                    <li>• Connection closes after response</li>
+                                </ul>
+                            </div>
+                            <div class="bg-orange-500/10 border border-orange-500/20 rounded-lg p-4">
+                                <h5 class="text-lg font-semibold text-orange-300 mb-2">Example</h5>
+                                <div class="code-block text-xs">
+                                    <div class="text-orange-400">Request:</div>
+                                    <div class="text-gray-300">GET /index.html</div>
+                                    <div class="text-orange-400">Response:</div>
+                                    <div class="text-gray-300">&lt;html&gt;...&lt;/html&gt;</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- HTTP/1.0 -->
+                    <div class="mb-8">
+                        <h4 class="text-xl font-semibold text-blue-300 mb-4">HTTP/1.0 (1996) - Headers & Status Codes</h4>
+                        <div class="bg-slate-800/50 border border-slate-700 rounded-lg p-6">
+                            <div id="http-10-diagram" class="w-full"></div>
+                        </div>
+                        <div class="mt-4 grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div class="bg-blue-500/10 border border-blue-500/20 rounded-lg p-4">
+                                <h5 class="text-lg font-semibold text-blue-300 mb-2">New Features</h5>
+                                <ul class="text-gray-300 text-sm space-y-1">
+                                    <li>• HTTP headers introduced</li>
+                                    <li>• Status codes (200, 404, etc.)</li>
+                                    <li>• Content-Type support</li>
+                                    <li>• POST, HEAD methods</li>
+                                </ul>
+                            </div>
+                            <div class="bg-blue-500/10 border border-blue-500/20 rounded-lg p-4">
+                                <h5 class="text-lg font-semibold text-blue-300 mb-2">Example</h5>
+                                <div class="code-block text-xs">
+                                    <div class="text-blue-400">Request:</div>
+                                    <div class="text-gray-300">GET /index.html HTTP/1.0</div>
+                                    <div class="text-gray-300">Host: example.com</div>
+                                    <div class="text-blue-400">Response:</div>
+                                    <div class="text-gray-300">HTTP/1.0 200 OK</div>
+                                    <div class="text-gray-300">Content-Type: text/html</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- HTTP/1.1 -->
+                    <div class="mb-8">
+                        <h4 class="text-xl font-semibold text-green-300 mb-4">HTTP/1.1 (1997) - Persistent Connections</h4>
+                        <div class="bg-slate-800/50 border border-slate-700 rounded-lg p-6">
+                            <div id="http-11-diagram" class="w-full"></div>
+                        </div>
+                        <div class="mt-4 grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div class="bg-green-500/10 border border-green-500/20 rounded-lg p-4">
+                                <h5 class="text-lg font-semibold text-green-300 mb-2">Major Improvements</h5>
+                                <ul class="text-gray-300 text-sm space-y-1">
+                                    <li>• Persistent connections</li>
+                                    <li>• Pipelining support</li>
+                                    <li>• Chunked transfer encoding</li>
+                                    <li>• Host header required</li>
+                                    <li>• PUT, DELETE, OPTIONS methods</li>
+                                </ul>
+                            </div>
+                            <div class="bg-green-500/10 border border-green-500/20 rounded-lg p-4">
+                                <h5 class="text-lg font-semibold text-green-300 mb-2">Example</h5>
+                                <div class="code-block text-xs">
+                                    <div class="text-green-400">Multiple requests on same connection:</div>
+                                    <div class="text-gray-300">GET /page1.html HTTP/1.1</div>
+                                    <div class="text-gray-300">GET /page2.html HTTP/1.1</div>
+                                    <div class="text-gray-300">Connection: keep-alive</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- HTTP/2 -->
+                    <div class="mb-8">
+                        <h4 class="text-xl font-semibold text-purple-300 mb-4">HTTP/2 (2015) - Multiplexing & Binary</h4>
+                        <div class="bg-slate-800/50 border border-slate-700 rounded-lg p-6">
+                            <div id="http-2-diagram" class="w-full"></div>
+                        </div>
+                        <div class="mt-4 grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div class="bg-purple-500/10 border border-purple-500/20 rounded-lg p-4">
+                                <h5 class="text-lg font-semibold text-purple-300 mb-2">Revolutionary Features</h5>
+                                <ul class="text-gray-300 text-sm space-y-1">
+                                    <li>• Binary protocol (not text)</li>
+                                    <li>• Multiplexing (multiple streams)</li>
+                                    <li>• Server push capability</li>
+                                    <li>• Header compression (HPACK)</li>
+                                    <li>• Stream prioritization</li>
+                                </ul>
+                            </div>
+                            <div class="bg-purple-500/10 border border-purple-500/20 rounded-lg p-4">
+                                <h5 class="text-lg font-semibold text-purple-300 mb-2">Benefits</h5>
+                                <ul class="text-gray-300 text-sm space-y-1">
+                                    <li>• Faster page loading</li>
+                                    <li>• Reduced latency</li>
+                                    <li>• Better resource utilization</li>
+                                    <li>• Backward compatible</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- HTTP vs HTTPS -->
+                <div class="mb-8">
+                    <h3 class="text-2xl font-bold text-white mb-4">HTTP vs HTTPS</h3>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div class="bg-slate-800/50 border border-slate-700 rounded-lg p-6">
+                            <h4 class="text-xl font-semibold text-orange-300 mb-4">HTTP (Port 80)</h4>
+                            <ul class="text-gray-300 space-y-2">
+                                <li>• Unencrypted communication</li>
+                                <li>• Faster performance</li>
+                                <li>• No SSL/TLS overhead</li>
+                                <li>• Vulnerable to attacks</li>
+                                <li>• Data can be intercepted</li>
+                            </ul>
+                        </div>
+                        
+                        <div class="bg-slate-800/50 border border-slate-700 rounded-lg p-6">
+                            <h4 class="text-xl font-semibold text-green-300 mb-4">HTTPS (Port 443)</h4>
+                            <ul class="text-gray-300 space-y-2">
+                                <li>• Encrypted with SSL/TLS</li>
+                                <li>• Secure data transmission</li>
+                                <li>• Certificate validation</li>
+                                <li>• Slightly slower due to encryption</li>
+                                <li>• Required for modern web apps</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const backBtn = document.getElementById('back-btn');
+
+            // Back button
+            backBtn.addEventListener('click', () => {
+                window.history.back();
+            });
+
+            // Initialize Mermaid
+            mermaid.initialize({
+                startOnLoad: false,
+                theme: 'dark',
+                themeVariables: {
+                    primaryColor: '#3b82f6',
+                    primaryTextColor: '#f8fafc',
+                    primaryBorderColor: '#334155',
+                    lineColor: '#64748b',
+                    secondaryColor: '#1e293b',
+                    tertiaryColor: '#0f172a',
+                    background: '#0f172a',
+                    mainBkg: '#1e293b',
+                    secondBkg: '#334155'
+                }
+            });
+
+            // Render all HTTP diagrams
+            const httpFlowDiagram = `
+                sequenceDiagram
+                    participant C as Client
+                    participant S as Server
+                    
+                    C->>S: HTTP Request
+                    Note over C,S: GET /api/users HTTP/1.1<br/>Host: example.com
+                    
+                    S->>S: Process Request
+                    Note over S: Validate request<br/>Query database<br/>Prepare response
+                    
+                    S->>C: HTTP Response
+                    Note over C,S: HTTP/1.1 200 OK<br/>Content-Type: application/json<br/>JSON data response
+                    
+                    Note over C,S: Connection may close<br/>(HTTP/1.0) or persist<br/>(HTTP/1.1+)
+            `;
+
+            const http09Diagram = `
+                sequenceDiagram
+                    participant C as Client
+                    participant S as Server
+                    
+                    Note over C,S: HTTP/0.9 - Simple Request/Response
+                    
+                    C->>S: GET /index.html
+                    Note over C: Simple request<br/>No headers<br/>No version
+                    
+                    S->>C: HTML Response
+                    Note over S: Direct HTML response<br/>No status code<br/>No headers
+                    
+                    Note over C,S: Connection closes immediately
+            `;
+
+            const http10Diagram = `
+                sequenceDiagram
+                    participant C as Client
+                    participant S as Server
+                    
+                    Note over C,S: HTTP/1.0 - Headers & Status Codes
+                    
+                    C->>S: GET /index.html HTTP/1.0
+                    Note over C: Request with version<br/>Optional headers
+                    
+                    S->>S: Process Request
+                    Note over S: Check resource<br/>Prepare response
+                    
+                    S->>C: HTTP/1.0 200 OK
+                    Note over S: Status line<br/>Content-Type: text/html<br/>Content-Length: 1024
+                    
+                    S->>C: HTML Content
+                    
+                    Note over C,S: Connection closes after response
+            `;
+
+            const http11Diagram = `
+                sequenceDiagram
+                    participant C as Client
+                    participant S as Server
+                    
+                    Note over C,S: HTTP/1.1 - Persistent Connections
+                    
+                    C->>S: GET /page1.html HTTP/1.1
+                    Note over C: Host header required<br/>Connection: keep-alive
+                    
+                    S->>C: HTTP/1.1 200 OK
+                    Note over S: Response with headers<br/>Connection: keep-alive
+                    
+                    C->>S: GET /page2.html HTTP/1.1
+                    Note over C: Reuse same connection<br/>Pipelining possible
+                    
+                    S->>C: HTTP/1.1 200 OK
+                    Note over S: Multiple requests<br/>on same connection
+                    
+                    Note over C,S: Connection stays open<br/>for multiple requests
+            `;
+
+            const http2Diagram = `
+                sequenceDiagram
+                    participant C as Client
+                    participant S as Server
+                    
+                    Note over C,S: HTTP/2 - Binary Multiplexing
+                    
+                    C->>S: Connection Setup
+                    Note over C: TLS handshake<br/>HTTP/2 negotiation
+                    
+                    C->>S: GET /page1.html (Stream 1)
+                    C->>S: GET /style.css (Stream 2)
+                    C->>S: GET /script.js (Stream 3)
+                    
+                    S->>C: 200 OK + HTML (Stream 1)
+                    S->>C: 200 OK + CSS (Stream 2)
+                    S->>C: 200 OK + JS (Stream 3)
+                    
+                    Note over C,S: Multiple streams<br/>in parallel<br/>Binary frames
+                    
+                    S->>C: Server Push
+                    Note over S: Push resources<br/>before requested
+            `;
+
+            // Render all diagrams
+            Promise.all([
+                mermaid.render('http-flow-svg', httpFlowDiagram),
+                mermaid.render('http-09-svg', http09Diagram),
+                mermaid.render('http-10-svg', http10Diagram),
+                mermaid.render('http-11-svg', http11Diagram),
+                mermaid.render('http-2-svg', http2Diagram)
+            ]).then(([flow, http09, http10, http11, http2]) => {
+                document.getElementById('http-flow-diagram').innerHTML = flow.svg;
+                document.getElementById('http-09-diagram').innerHTML = http09.svg;
+                document.getElementById('http-10-diagram').innerHTML = http10.svg;
+                document.getElementById('http-11-diagram').innerHTML = http11.svg;
+                document.getElementById('http-2-diagram').innerHTML = http2.svg;
+            });
+        });
+    </script>
+</body>
+</html>

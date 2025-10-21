@@ -1,0 +1,434 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>UDP Protocol Guide - DevDunia</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/mermaid@10.6.1/dist/mermaid.min.js"></script>
+    <style>
+        body {
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #0f172a 100%);
+        }
+        
+        .mermaid {
+            background: transparent !important;
+        }
+
+        #diagram svg {
+            max-width: 100% !important;
+            height: auto !important;
+            width: auto !important;
+            display: block;
+            margin: 0 auto;
+        }
+
+        #diagram {
+            display: flex;
+            align-items: flex-start;
+            justify-content: center;
+            width: 100%;
+            min-height: 100%;
+            padding: 20px;
+        }
+
+        #diagram-container {
+            overflow: auto;
+            height: 100%;
+        }
+
+        .code-block {
+            background: #1e293b;
+            border: 1px solid #334155;
+            border-radius: 8px;
+            padding: 16px;
+            font-family: 'Courier New', monospace;
+            overflow-x: auto;
+        }
+    </style>
+</head>
+<body class="h-screen">
+    <!-- Background -->
+    <div class="fixed inset-0 -z-10 bg-gradient-to-br from-gray-900 via-slate-900 to-gray-900"></div>
+
+    <!-- Main Container -->
+    <div class="relative z-10 w-full h-screen flex flex-col">
+        
+        <!-- Header -->
+        <div class="bg-slate-800/70 backdrop-blur-md border-b border-slate-700/60 px-6 py-4">
+            <div class="flex items-center justify-between">
+                <div class="flex items-center space-x-4">
+                    <button id="back-btn" class="px-3 py-2 bg-slate-600 hover:bg-slate-700 text-white text-sm rounded-lg transition-colors duration-200 flex items-center space-x-2">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path>
+                        </svg>
+                        <span>Back</span>
+                    </button>
+                    <div>
+                        <h1 class="text-2xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-orange-400 to-red-500">
+                            UDP Protocol Guide
+                        </h1>
+                        <p class="text-sm text-gray-400 mt-1">User Datagram Protocol - Fast, Connectionless Communication</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Main Content -->
+        <div class="flex-1 overflow-auto p-6">
+            <div class="max-w-6xl mx-auto">
+                
+                <!-- Introduction -->
+                <div class="mb-8">
+                    <h2 class="text-3xl font-bold text-white mb-4">What is UDP?</h2>
+                    <p class="text-gray-300 text-lg leading-relaxed mb-6">
+                        UDP (User Datagram Protocol) is a connectionless, lightweight transport protocol that provides 
+                        fast data transmission with minimal overhead. It's ideal for real-time applications where speed 
+                        is more important than reliability.
+                    </p>
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+                        <div class="bg-orange-500/10 border border-orange-500/20 rounded-lg p-6">
+                            <h3 class="text-lg font-semibold text-orange-300 mb-2">Fast</h3>
+                            <p class="text-gray-300 text-sm">Minimal overhead and no connection establishment delays.</p>
+                        </div>
+                        <div class="bg-red-500/10 border border-red-500/20 rounded-lg p-6">
+                            <h3 class="text-lg font-semibold text-red-300 mb-2">Connectionless</h3>
+                            <p class="text-gray-300 text-sm">No handshake required - data is sent immediately.</p>
+                        </div>
+                        <div class="bg-purple-500/10 border border-purple-500/20 rounded-lg p-6">
+                            <h3 class="text-lg font-semibold text-purple-300 mb-2">Best Effort</h3>
+                            <p class="text-gray-300 text-sm">No guarantee of delivery, ordering, or error checking.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- UDP Communication Flow -->
+                <div class="mb-8">
+                    <h3 class="text-2xl font-bold text-white mb-4">UDP Communication Flow</h3>
+                    <div class="bg-slate-800/50 border border-slate-700 rounded-lg p-6">
+                        <div id="udp-flow-diagram" class="w-full"></div>
+                    </div>
+                </div>
+
+                <!-- UDP Header Structure -->
+                <div class="mb-8">
+                    <h3 class="text-2xl font-bold text-white mb-4">UDP Header Structure</h3>
+                    <div class="bg-slate-800/50 border border-slate-700 rounded-lg p-6">
+                        <div id="udp-header-diagram" class="w-full"></div>
+                    </div>
+                </div>
+
+                <!-- UDP Characteristics -->
+                <div class="mb-8">
+                    <h3 class="text-2xl font-bold text-white mb-4">UDP Characteristics</h3>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div class="bg-slate-800/50 border border-slate-700 rounded-lg p-6">
+                            <h4 class="text-xl font-semibold text-orange-300 mb-4">Advantages</h4>
+                            <ul class="text-gray-300 space-y-3">
+                                <li class="flex items-start">
+                                    <span class="text-green-400 mr-2">✓</span>
+                                    <span>Low latency - no connection setup</span>
+                                </li>
+                                <li class="flex items-start">
+                                    <span class="text-green-400 mr-2">✓</span>
+                                    <span>Minimal overhead - only 8-byte header</span>
+                                </li>
+                                <li class="flex items-start">
+                                    <span class="text-green-400 mr-2">✓</span>
+                                    <span>No flow control - constant data rate</span>
+                                </li>
+                                <li class="flex items-start">
+                                    <span class="text-green-400 mr-2">✓</span>
+                                    <span>Multicast and broadcast support</span>
+                                </li>
+                                <li class="flex items-start">
+                                    <span class="text-green-400 mr-2">✓</span>
+                                    <span>Simple implementation</span>
+                                </li>
+                            </ul>
+                        </div>
+                        
+                        <div class="bg-slate-800/50 border border-slate-700 rounded-lg p-6">
+                            <h4 class="text-xl font-semibold text-red-300 mb-4">Disadvantages</h4>
+                            <ul class="text-gray-300 space-y-3">
+                                <li class="flex items-start">
+                                    <span class="text-red-400 mr-2">✗</span>
+                                    <span>No delivery guarantee</span>
+                                </li>
+                                <li class="flex items-start">
+                                    <span class="text-red-400 mr-2">✗</span>
+                                    <span>No ordering guarantee</span>
+                                </li>
+                                <li class="flex items-start">
+                                    <span class="text-red-400 mr-2">✗</span>
+                                    <span>No error detection</span>
+                                </li>
+                                <li class="flex items-start">
+                                    <span class="text-red-400 mr-2">✗</span>
+                                    <span>No congestion control</span>
+                                </li>
+                                <li class="flex items-start">
+                                    <span class="text-red-400 mr-2">✗</span>
+                                    <span>No flow control</span>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- UDP vs TCP Comparison -->
+                <div class="mb-8">
+                    <h3 class="text-2xl font-bold text-white mb-4">UDP vs TCP Comparison</h3>
+                    <div class="bg-slate-800/50 border border-slate-700 rounded-lg overflow-hidden">
+                        <table class="w-full">
+                            <thead class="bg-slate-700/50">
+                                <tr>
+                                    <th class="px-6 py-4 text-left text-white font-semibold">Feature</th>
+                                    <th class="px-6 py-4 text-left text-orange-300 font-semibold">UDP</th>
+                                    <th class="px-6 py-4 text-left text-green-300 font-semibold">TCP</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr class="border-t border-slate-700">
+                                    <td class="px-6 py-4 text-white font-medium">Connection</td>
+                                    <td class="px-6 py-4 text-gray-300">Connectionless</td>
+                                    <td class="px-6 py-4 text-gray-300">Connection-oriented</td>
+                                </tr>
+                                <tr class="border-t border-slate-700">
+                                    <td class="px-6 py-4 text-white font-medium">Reliability</td>
+                                    <td class="px-6 py-4 text-orange-300">Best effort</td>
+                                    <td class="px-6 py-4 text-green-300">Guaranteed</td>
+                                </tr>
+                                <tr class="border-t border-slate-700">
+                                    <td class="px-6 py-4 text-white font-medium">Ordering</td>
+                                    <td class="px-6 py-4 text-orange-300">Not guaranteed</td>
+                                    <td class="px-6 py-4 text-green-300">Guaranteed</td>
+                                </tr>
+                                <tr class="border-t border-slate-700">
+                                    <td class="px-6 py-4 text-white font-medium">Speed</td>
+                                    <td class="px-6 py-4 text-green-300">Very fast</td>
+                                    <td class="px-6 py-4 text-gray-300">Slower</td>
+                                </tr>
+                                <tr class="border-t border-slate-700">
+                                    <td class="px-6 py-4 text-white font-medium">Header Size</td>
+                                    <td class="px-6 py-4 text-green-300">8 bytes</td>
+                                    <td class="px-6 py-4 text-gray-300">20+ bytes</td>
+                                </tr>
+                                <tr class="border-t border-slate-700">
+                                    <td class="px-6 py-4 text-white font-medium">Error Checking</td>
+                                    <td class="px-6 py-4 text-orange-300">Optional checksum</td>
+                                    <td class="px-6 py-4 text-green-300">Full error detection</td>
+                                </tr>
+                                <tr class="border-t border-slate-700">
+                                    <td class="px-6 py-4 text-white font-medium">Use Cases</td>
+                                    <td class="px-6 py-4 text-gray-300">Gaming, streaming, DNS</td>
+                                    <td class="px-6 py-4 text-gray-300">Web, email, file transfer</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Common UDP Applications -->
+                <div class="mb-8">
+                    <h3 class="text-2xl font-bold text-white mb-4">Common UDP Applications</h3>
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                        <div class="bg-slate-800/50 border border-slate-700 rounded-lg p-6">
+                            <h4 class="text-xl font-semibold text-blue-300 mb-4">DNS (Port 53)</h4>
+                            <p class="text-gray-300 mb-4">Domain name resolution - fast lookups are more important than reliability.</p>
+                            <div class="code-block text-sm">
+                                <div class="text-blue-400">// DNS Query</div>
+                                <div class="text-gray-300">Query: example.com</div>
+                                <div class="text-gray-300">Response: 192.168.1.1</div>
+                                <div class="text-gray-300">If lost, client retries</div>
+                            </div>
+                        </div>
+                        
+                        <div class="bg-slate-800/50 border border-slate-700 rounded-lg p-6">
+                            <h4 class="text-xl font-semibold text-green-300 mb-4">Gaming (Port 27015)</h4>
+                            <p class="text-gray-300 mb-4">Real-time multiplayer games - low latency is critical.</p>
+                            <div class="code-block text-sm">
+                                <div class="text-green-400">// Game Packet</div>
+                                <div class="text-gray-300">Player position: (x, y, z)</div>
+                                <div class="text-gray-300">Action: shoot, move, jump</div>
+                                <div class="text-gray-300">Timestamp: 1234567890</div>
+                            </div>
+                        </div>
+                        
+                        <div class="bg-slate-800/50 border border-slate-700 rounded-lg p-6">
+                            <h4 class="text-xl font-semibold text-purple-300 mb-4">Streaming (Port 1234)</h4>
+                            <p class="text-gray-300 mb-4">Video/audio streaming - missing frames are acceptable.</p>
+                            <div class="code-block text-sm">
+                                <div class="text-purple-400">// Video Frame</div>
+                                <div class="text-gray-300">Frame data: [binary]</div>
+                                <div class="text-gray-300">Sequence: 001, 002, 003...</div>
+                                <div class="text-gray-300">If lost, skip to next</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Common UDP Ports -->
+                <div class="mb-8">
+                    <h3 class="text-2xl font-bold text-white mb-4">Common UDP Ports</h3>
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                        <div class="bg-slate-800/50 border border-slate-700 rounded-lg p-4">
+                            <h4 class="text-lg font-semibold text-blue-300 mb-2">Network Services</h4>
+                            <ul class="text-gray-300 text-sm space-y-1">
+                                <li>53 - DNS</li>
+                                <li>67 - DHCP Server</li>
+                                <li>68 - DHCP Client</li>
+                                <li>123 - NTP</li>
+                            </ul>
+                        </div>
+                        
+                        <div class="bg-slate-800/50 border border-slate-700 rounded-lg p-4">
+                            <h4 class="text-lg font-semibold text-green-300 mb-2">Gaming</h4>
+                            <ul class="text-gray-300 text-sm space-y-1">
+                                <li>27015 - Steam</li>
+                                <li>25565 - Minecraft</li>
+                                <li>7777 - Terraria</li>
+                                <li>27005 - Source Engine</li>
+                            </ul>
+                        </div>
+                        
+                        <div class="bg-slate-800/50 border border-slate-700 rounded-lg p-4">
+                            <h4 class="text-lg font-semibold text-purple-300 mb-2">Streaming</h4>
+                            <ul class="text-gray-300 text-sm space-y-1">
+                                <li>5004 - RTP</li>
+                                <li>5005 - RTCP</li>
+                                <li>1935 - RTMP</li>
+                                <li>8080 - HTTP Alt</li>
+                            </ul>
+                        </div>
+                        
+                        <div class="bg-slate-800/50 border border-slate-700 rounded-lg p-4">
+                            <h4 class="text-lg font-semibold text-orange-300 mb-2">System Services</h4>
+                            <ul class="text-gray-300 text-sm space-y-1">
+                                <li>161 - SNMP</li>
+                                <li>162 - SNMP Trap</li>
+                                <li>514 - Syslog</li>
+                                <li>69 - TFTP</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- UDP Programming Example -->
+                <div class="mb-8">
+                    <h3 class="text-2xl font-bold text-white mb-4">UDP Programming Example</h3>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div class="bg-slate-800/50 border border-slate-700 rounded-lg p-6">
+                            <h4 class="text-xl font-semibold text-blue-300 mb-4">Python UDP Server</h4>
+                            <div class="code-block text-sm">
+                                <div class="text-blue-400">import socket</div>
+                                <div class="text-gray-300"></div>
+                                <div class="text-gray-300"># Create UDP socket</div>
+                                <div class="text-gray-300">sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)</div>
+                                <div class="text-gray-300">sock.bind(('localhost', 8080))</div>
+                                <div class="text-gray-300"></div>
+                                <div class="text-gray-300">while True:</div>
+                                <div class="text-gray-300">    data, addr = sock.recvfrom(1024)</div>
+                                <div class="text-gray-300">    print(f"Received: {data} from {addr}")</div>
+                                <div class="text-gray-300">    sock.sendto(b"Hello Client", addr)</div>
+                            </div>
+                        </div>
+                        
+                        <div class="bg-slate-800/50 border border-slate-700 rounded-lg p-6">
+                            <h4 class="text-xl font-semibold text-green-300 mb-4">Python UDP Client</h4>
+                            <div class="code-block text-sm">
+                                <div class="text-green-400">import socket</div>
+                                <div class="text-gray-300"></div>
+                                <div class="text-gray-300"># Create UDP socket</div>
+                                <div class="text-gray-300">sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)</div>
+                                <div class="text-gray-300"></div>
+                                <div class="text-gray-300"># Send message</div>
+                                <div class="text-gray-300">message = b"Hello Server"</div>
+                                <div class="text-gray-300">sock.sendto(message, ('localhost', 8080))</div>
+                                <div class="text-gray-300"></div>
+                                <div class="text-gray-300"># Receive response</div>
+                                <div class="text-gray-300">data, addr = sock.recvfrom(1024)</div>
+                                <div class="text-gray-300">print(f"Received: {data} from {addr}")</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const backBtn = document.getElementById('back-btn');
+
+            // Back button
+            backBtn.addEventListener('click', () => {
+                window.history.back();
+            });
+
+            // Initialize Mermaid
+            mermaid.initialize({
+                startOnLoad: false,
+                theme: 'dark',
+                themeVariables: {
+                    primaryColor: '#f97316',
+                    primaryTextColor: '#f8fafc',
+                    primaryBorderColor: '#334155',
+                    lineColor: '#64748b',
+                    secondaryColor: '#1e293b',
+                    tertiaryColor: '#0f172a',
+                    background: '#0f172a',
+                    mainBkg: '#1e293b',
+                    secondBkg: '#334155'
+                }
+            });
+
+            // Render UDP Flow diagram
+            const udpFlowDiagram = `
+                sequenceDiagram
+                    participant C as Client
+                    participant S as Server
+                    
+                    Note over C,S: UDP Communication (No Handshake)
+                    
+                    C->>S: UDP Packet (Data)
+                    Note over C: Send data immediately<br/>No connection setup
+                    
+                    S->>S: Process Packet
+                    Note over S: Process data<br/>(if received)
+                    
+                    S->>C: UDP Response (Optional)
+                    Note over S: Send response<br/>(if needed)
+                    
+                    Note over C,S: No acknowledgment<br/>No retransmission
+            `;
+
+            // Render UDP Header diagram
+            const udpHeaderDiagram = `
+                graph LR
+                    A["Source Port<br/>(16 bits)"] --> B["Dest Port<br/>(16 bits)"]
+                    B --> C["Length<br/>(16 bits)"]
+                    C --> D["Checksum<br/>(16 bits)"]
+                    D --> E["Data<br/>(Variable)"]
+                    
+                    style A fill:#f97316,stroke:#ea580c,stroke-width:2px,color:#fff
+                    style B fill:#f97316,stroke:#ea580c,stroke-width:2px,color:#fff
+                    style C fill:#3b82f6,stroke:#2563eb,stroke-width:2px,color:#fff
+                    style D fill:#3b82f6,stroke:#2563eb,stroke-width:2px,color:#fff
+                    style E fill:#6b7280,stroke:#4b5563,stroke-width:2px,color:#fff
+            `;
+
+            // Render all diagrams
+            Promise.all([
+                mermaid.render('udp-flow-svg', udpFlowDiagram),
+                mermaid.render('udp-header-svg', udpHeaderDiagram)
+            ]).then(([flow, header]) => {
+                document.getElementById('udp-flow-diagram').innerHTML = flow.svg;
+                document.getElementById('udp-header-diagram').innerHTML = header.svg;
+            });
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,380 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TCP Protocol Guide - DevDunia</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/mermaid@10.6.1/dist/mermaid.min.js"></script>
+    <style>
+        body {
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #0f172a 100%);
+        }
+        
+        .mermaid {
+            background: transparent !important;
+        }
+
+        #diagram svg {
+            max-width: 100% !important;
+            height: auto !important;
+            width: auto !important;
+            display: block;
+            margin: 0 auto;
+        }
+
+        #diagram {
+            display: flex;
+            align-items: flex-start;
+            justify-content: center;
+            width: 100%;
+            min-height: 100%;
+            padding: 20px;
+        }
+
+        #diagram-container {
+            overflow: auto;
+            height: 100%;
+        }
+
+        .code-block {
+            background: #1e293b;
+            border: 1px solid #334155;
+            border-radius: 8px;
+            padding: 16px;
+            font-family: 'Courier New', monospace;
+            overflow-x: auto;
+        }
+    </style>
+</head>
+<body class="h-screen">
+    <!-- Background -->
+    <div class="fixed inset-0 -z-10 bg-gradient-to-br from-gray-900 via-slate-900 to-gray-900"></div>
+
+    <!-- Main Container -->
+    <div class="relative z-10 w-full h-screen flex flex-col">
+        
+        <!-- Header -->
+        <div class="bg-slate-800/70 backdrop-blur-md border-b border-slate-700/60 px-6 py-4">
+            <div class="flex items-center justify-between">
+                <div class="flex items-center space-x-4">
+                    <button id="back-btn" class="px-3 py-2 bg-slate-600 hover:bg-slate-700 text-white text-sm rounded-lg transition-colors duration-200 flex items-center space-x-2">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path>
+                        </svg>
+                        <span>Back</span>
+                    </button>
+                    <div>
+                        <h1 class="text-2xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-green-400 to-cyan-500">
+                            TCP Protocol Guide
+                        </h1>
+                        <p class="text-sm text-gray-400 mt-1">Transmission Control Protocol - Reliable Data Transmission</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Main Content -->
+        <div class="flex-1 overflow-auto p-6">
+            <div class="max-w-6xl mx-auto">
+                
+                <!-- Introduction -->
+                <div class="mb-8">
+                    <h2 class="text-3xl font-bold text-white mb-4">What is TCP?</h2>
+                    <p class="text-gray-300 text-lg leading-relaxed mb-6">
+                        TCP (Transmission Control Protocol) is a connection-oriented, reliable transport protocol 
+                        that ensures data is delivered correctly and in order. It's one of the core protocols of the Internet.
+                    </p>
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+                        <div class="bg-green-500/10 border border-green-500/20 rounded-lg p-6">
+                            <h3 class="text-lg font-semibold text-green-300 mb-2">Reliable</h3>
+                            <p class="text-gray-300 text-sm">Guarantees data delivery with error checking and retransmission.</p>
+                        </div>
+                        <div class="bg-blue-500/10 border border-blue-500/20 rounded-lg p-6">
+                            <h3 class="text-lg font-semibold text-blue-300 mb-2">Connection-oriented</h3>
+                            <p class="text-gray-300 text-sm">Establishes a connection before data transmission begins.</p>
+                        </div>
+                        <div class="bg-purple-500/10 border border-purple-500/20 rounded-lg p-6">
+                            <h3 class="text-lg font-semibold text-purple-300 mb-2">Ordered</h3>
+                            <p class="text-gray-300 text-sm">Ensures data packets arrive in the correct sequence.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- TCP Three-Way Handshake -->
+                <div class="mb-8">
+                    <h3 class="text-2xl font-bold text-white mb-4">TCP Three-Way Handshake</h3>
+                    <div class="bg-slate-800/50 border border-slate-700 rounded-lg p-6">
+                        <div id="tcp-handshake-diagram" class="w-full"></div>
+                    </div>
+                </div>
+
+                <!-- TCP Features -->
+                <div class="mb-8">
+                    <h3 class="text-2xl font-bold text-white mb-4">Key TCP Features</h3>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div class="bg-slate-800/50 border border-slate-700 rounded-lg p-6">
+                            <h4 class="text-xl font-semibold text-green-300 mb-4">Flow Control</h4>
+                            <p class="text-gray-300 mb-4">Prevents overwhelming the receiver by controlling data transmission rate.</p>
+                            <div class="code-block text-sm">
+                                <div class="text-green-400">// Sliding Window Protocol</div>
+                                <div class="text-gray-300">Window Size = min(receiver_buffer, network_capacity)</div>
+                                <div class="text-gray-300">Sender waits for ACK before sending more data</div>
+                            </div>
+                        </div>
+                        
+                        <div class="bg-slate-800/50 border border-slate-700 rounded-lg p-6">
+                            <h4 class="text-xl font-semibold text-blue-300 mb-4">Error Detection</h4>
+                            <p class="text-gray-300 mb-4">Uses checksums to detect corrupted data and requests retransmission.</p>
+                            <div class="code-block text-sm">
+                                <div class="text-blue-400">// Checksum Calculation</div>
+                                <div class="text-gray-300">checksum = sum_of_all_bytes % 65536</div>
+                                <div class="text-gray-300">if (checksum != received_checksum) {</div>
+                                <div class="text-gray-300">  request_retransmission();</div>
+                                <div class="text-gray-300">}</div>
+                            </div>
+                        </div>
+                        
+                        <div class="bg-slate-800/50 border border-slate-700 rounded-lg p-6">
+                            <h4 class="text-xl font-semibold text-purple-300 mb-4">Congestion Control</h4>
+                            <p class="text-gray-300 mb-4">Manages network traffic to prevent network congestion and collapse.</p>
+                            <div class="code-block text-sm">
+                                <div class="text-purple-400">// Slow Start Algorithm</div>
+                                <div class="text-gray-300">cwnd = 1; // Congestion Window</div>
+                                <div class="text-gray-300">while (cwnd < ssthresh) {</div>
+                                <div class="text-gray-300">  cwnd *= 2; // Exponential growth</div>
+                                <div class="text-gray-300">}</div>
+                            </div>
+                        </div>
+                        
+                        <div class="bg-slate-800/50 border border-slate-700 rounded-lg p-6">
+                            <h4 class="text-xl font-semibold text-orange-300 mb-4">Ordered Delivery</h4>
+                            <p class="text-gray-300 mb-4">Sequences packets to ensure they arrive in the correct order.</p>
+                            <div class="code-block text-sm">
+                                <div class="text-orange-400">// Sequence Numbers</div>
+                                <div class="text-gray-300">seq_num = initial_seq + bytes_sent</div>
+                                <div class="text-gray-300">receiver buffers out-of-order packets</div>
+                                <div class="text-gray-300">delivers in sequence to application</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- TCP Header Structure -->
+                <div class="mb-8">
+                    <h3 class="text-2xl font-bold text-white mb-4">TCP Header Structure</h3>
+                    <div class="bg-slate-800/50 border border-slate-700 rounded-lg p-6">
+                        <div id="tcp-header-diagram" class="w-full"></div>
+                    </div>
+                </div>
+
+                <!-- TCP vs UDP Comparison -->
+                <div class="mb-8">
+                    <h3 class="text-2xl font-bold text-white mb-4">TCP vs UDP Comparison</h3>
+                    <div class="bg-slate-800/50 border border-slate-700 rounded-lg overflow-hidden">
+                        <table class="w-full">
+                            <thead class="bg-slate-700/50">
+                                <tr>
+                                    <th class="px-6 py-4 text-left text-white font-semibold">Feature</th>
+                                    <th class="px-6 py-4 text-left text-green-300 font-semibold">TCP</th>
+                                    <th class="px-6 py-4 text-left text-orange-300 font-semibold">UDP</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr class="border-t border-slate-700">
+                                    <td class="px-6 py-4 text-white font-medium">Connection</td>
+                                    <td class="px-6 py-4 text-gray-300">Connection-oriented</td>
+                                    <td class="px-6 py-4 text-gray-300">Connectionless</td>
+                                </tr>
+                                <tr class="border-t border-slate-700">
+                                    <td class="px-6 py-4 text-white font-medium">Reliability</td>
+                                    <td class="px-6 py-4 text-green-300">High (guaranteed delivery)</td>
+                                    <td class="px-6 py-4 text-orange-300">Low (best effort)</td>
+                                </tr>
+                                <tr class="border-t border-slate-700">
+                                    <td class="px-6 py-4 text-white font-medium">Ordering</td>
+                                    <td class="px-6 py-4 text-green-300">Guaranteed</td>
+                                    <td class="px-6 py-4 text-orange-300">Not guaranteed</td>
+                                </tr>
+                                <tr class="border-t border-slate-700">
+                                    <td class="px-6 py-4 text-white font-medium">Speed</td>
+                                    <td class="px-6 py-4 text-gray-300">Slower (overhead)</td>
+                                    <td class="px-6 py-4 text-green-300">Faster (minimal overhead)</td>
+                                </tr>
+                                <tr class="border-t border-slate-700">
+                                    <td class="px-6 py-4 text-white font-medium">Header Size</td>
+                                    <td class="px-6 py-4 text-gray-300">20 bytes (minimum)</td>
+                                    <td class="px-6 py-4 text-green-300">8 bytes</td>
+                                </tr>
+                                <tr class="border-t border-slate-700">
+                                    <td class="px-6 py-4 text-white font-medium">Use Cases</td>
+                                    <td class="px-6 py-4 text-gray-300">Web browsing, email, file transfer</td>
+                                    <td class="px-6 py-4 text-gray-300">Gaming, streaming, DNS</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- TCP States -->
+                <div class="mb-8">
+                    <h3 class="text-2xl font-bold text-white mb-4">TCP Connection States</h3>
+                    <div class="bg-slate-800/50 border border-slate-700 rounded-lg p-6">
+                        <div id="tcp-states-diagram" class="w-full"></div>
+                    </div>
+                </div>
+
+                <!-- Common TCP Ports -->
+                <div class="mb-8">
+                    <h3 class="text-2xl font-bold text-white mb-4">Common TCP Ports</h3>
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                        <div class="bg-slate-800/50 border border-slate-700 rounded-lg p-4">
+                            <h4 class="text-lg font-semibold text-blue-300 mb-2">Web Services</h4>
+                            <ul class="text-gray-300 text-sm space-y-1">
+                                <li>80 - HTTP</li>
+                                <li>443 - HTTPS</li>
+                                <li>8080 - HTTP Alt</li>
+                            </ul>
+                        </div>
+                        
+                        <div class="bg-slate-800/50 border border-slate-700 rounded-lg p-4">
+                            <h4 class="text-lg font-semibold text-green-300 mb-2">Email</h4>
+                            <ul class="text-gray-300 text-sm space-y-1">
+                                <li>25 - SMTP</li>
+                                <li>110 - POP3</li>
+                                <li>143 - IMAP</li>
+                            </ul>
+                        </div>
+                        
+                        <div class="bg-slate-800/50 border border-slate-700 rounded-lg p-4">
+                            <h4 class="text-lg font-semibold text-purple-300 mb-2">File Transfer</h4>
+                            <ul class="text-gray-300 text-sm space-y-1">
+                                <li>21 - FTP</li>
+                                <li>22 - SSH/SFTP</li>
+                                <li>23 - Telnet</li>
+                            </ul>
+                        </div>
+                        
+                        <div class="bg-slate-800/50 border border-slate-700 rounded-lg p-4">
+                            <h4 class="text-lg font-semibold text-orange-300 mb-2">Database</h4>
+                            <ul class="text-gray-300 text-sm space-y-1">
+                                <li>3306 - MySQL</li>
+                                <li>5432 - PostgreSQL</li>
+                                <li>1433 - SQL Server</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const backBtn = document.getElementById('back-btn');
+
+            // Back button
+            backBtn.addEventListener('click', () => {
+                window.history.back();
+            });
+
+            // Initialize Mermaid
+            mermaid.initialize({
+                startOnLoad: false,
+                theme: 'dark',
+                themeVariables: {
+                    primaryColor: '#10b981',
+                    primaryTextColor: '#f8fafc',
+                    primaryBorderColor: '#334155',
+                    lineColor: '#64748b',
+                    secondaryColor: '#1e293b',
+                    tertiaryColor: '#0f172a',
+                    background: '#0f172a',
+                    mainBkg: '#1e293b',
+                    secondBkg: '#334155'
+                }
+            });
+
+            // Render TCP Handshake diagram
+            const tcpHandshakeDiagram = `
+                sequenceDiagram
+                    participant C as Client
+                    participant S as Server
+                    
+                    Note over C,S: TCP Three-Way Handshake
+                    
+                    C->>S: SYN (seq=x)
+                    Note over C: Client sends SYN packet<br/>with initial sequence number
+                    
+                    S->>C: SYN-ACK (seq=y, ack=x+1)
+                    Note over S: Server responds with SYN-ACK<br/>acknowledging client's SYN
+                    
+                    C->>S: ACK (seq=x+1, ack=y+1)
+                    Note over C: Client acknowledges server's SYN<br/>Connection established
+                    
+                    Note over C,S: Data transmission can now begin
+            `;
+
+            // Render TCP Header diagram
+            const tcpHeaderDiagram = `
+                graph LR
+                    A["Source Port<br/>(16 bits)"] --> B["Dest Port<br/>(16 bits)"]
+                    B --> C["Sequence Number<br/>(32 bits)"]
+                    C --> D["Acknowledgment<br/>(32 bits)"]
+                    D --> E["Header Length<br/>(4 bits)"]
+                    E --> F["Flags<br/>(6 bits)"]
+                    F --> G["Window Size<br/>(16 bits)"]
+                    G --> H["Checksum<br/>(16 bits)"]
+                    H --> I["Urgent Pointer<br/>(16 bits)"]
+                    I --> J["Options<br/>(Variable)"]
+                    J --> K["Data<br/>(Variable)"]
+                    
+                    style A fill:#10b981,stroke:#059669,stroke-width:2px,color:#fff
+                    style B fill:#10b981,stroke:#059669,stroke-width:2px,color:#fff
+                    style C fill:#3b82f6,stroke:#2563eb,stroke-width:2px,color:#fff
+                    style D fill:#3b82f6,stroke:#2563eb,stroke-width:2px,color:#fff
+                    style E fill:#8b5cf6,stroke:#7c3aed,stroke-width:2px,color:#fff
+                    style F fill:#8b5cf6,stroke:#7c3aed,stroke-width:2px,color:#fff
+                    style G fill:#f59e0b,stroke:#d97706,stroke-width:2px,color:#fff
+                    style H fill:#f59e0b,stroke:#d97706,stroke-width:2px,color:#fff
+                    style I fill:#ef4444,stroke:#dc2626,stroke-width:2px,color:#fff
+                    style J fill:#ef4444,stroke:#dc2626,stroke-width:2px,color:#fff
+                    style K fill:#6b7280,stroke:#4b5563,stroke-width:2px,color:#fff
+            `;
+
+            // Render TCP States diagram
+            const tcpStatesDiagram = `
+                stateDiagram-v2
+                    [*] --> CLOSED
+                    CLOSED --> LISTEN : Server starts listening
+                    CLOSED --> SYN_SENT : Client sends SYN
+                    LISTEN --> SYN_RCVD : Server receives SYN
+                    SYN_SENT --> ESTABLISHED : Client receives SYN-ACK
+                    SYN_RCVD --> ESTABLISHED : Server receives ACK
+                    ESTABLISHED --> FIN_WAIT_1 : Client sends FIN
+                    ESTABLISHED --> CLOSE_WAIT : Server receives FIN
+                    FIN_WAIT_1 --> FIN_WAIT_2 : Client receives ACK
+                    FIN_WAIT_1 --> CLOSING : Client receives FIN
+                    FIN_WAIT_2 --> TIME_WAIT : Client receives FIN
+                    CLOSE_WAIT --> LAST_ACK : Server sends FIN
+                    CLOSING --> TIME_WAIT : Client receives ACK
+                    LAST_ACK --> CLOSED : Server receives ACK
+                    TIME_WAIT --> CLOSED : Timeout expires
+            `;
+
+            // Render all diagrams
+            Promise.all([
+                mermaid.render('tcp-handshake-svg', tcpHandshakeDiagram),
+                mermaid.render('tcp-header-svg', tcpHeaderDiagram),
+                mermaid.render('tcp-states-svg', tcpStatesDiagram)
+            ]).then(([handshake, header, states]) => {
+                document.getElementById('tcp-handshake-diagram').innerHTML = handshake.svg;
+                document.getElementById('tcp-header-diagram').innerHTML = header.svg;
+                document.getElementById('tcp-states-diagram').innerHTML = states.svg;
+            });
+        });
+    </script>
+</body>
+</html>

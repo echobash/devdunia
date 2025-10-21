@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Network Protocols Guide - DevDunia</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/mermaid@10.6.1/dist/mermaid.min.js"></script>
+    <style>
+        body {
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #0f172a 100%);
+        }
+        
+        .mermaid {
+            background: transparent !important;
+        }
+
+        #diagram svg {
+            max-width: 100% !important;
+            height: auto !important;
+            width: auto !important;
+            display: block;
+            margin: 0 auto;
+        }
+
+        #diagram {
+            display: flex;
+            align-items: flex-start;
+            justify-content: center;
+            width: 100%;
+            min-height: 100%;
+            padding: 20px;
+        }
+
+        #diagram-container {
+            overflow: auto;
+            height: 100%;
+        }
+
+        .protocol-card {
+            transition: all 0.3s ease;
+        }
+        
+        .protocol-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+        }
+    </style>
+</head>
+<body class="h-screen">
+    <!-- Background -->
+    <div class="fixed inset-0 -z-10 bg-gradient-to-br from-gray-900 via-slate-900 to-gray-900"></div>
+
+    <!-- Main Container -->
+    <div class="relative z-10 w-full h-screen flex flex-col">
+        
+        <!-- Header -->
+        <div class="bg-slate-800/70 backdrop-blur-md border-b border-slate-700/60 px-6 py-4">
+            <div class="flex items-center justify-between">
+                <div class="flex items-center space-x-4">
+                    <button id="back-btn" class="px-3 py-2 bg-slate-600 hover:bg-slate-700 text-white text-sm rounded-lg transition-colors duration-200 flex items-center space-x-2">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path>
+                        </svg>
+                        <span>Back</span>
+                    </button>
+                    <div>
+                        <h1 class="text-2xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-cyan-500">
+                            Network Protocols Guide
+                        </h1>
+                        <p class="text-sm text-gray-400 mt-1">Comprehensive guide to networking protocols and models</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Main Content -->
+        <div class="flex-1 overflow-auto p-6">
+            <div class="max-w-6xl mx-auto">
+                
+                <!-- Introduction -->
+                <div class="mb-8">
+                    <h2 class="text-3xl font-bold text-white mb-4">Network Protocols Overview</h2>
+                    <p class="text-gray-300 text-lg leading-relaxed">
+                        Network protocols are the rules and standards that govern how data is transmitted and received over networks. 
+                        They ensure reliable communication between devices across different networks and systems.
+                    </p>
+                </div>
+
+                <!-- OSI Model Diagram -->
+                <div class="mb-8">
+                    <h3 class="text-2xl font-bold text-white mb-4">OSI Model (Open Systems Interconnection)</h3>
+                    <div class="bg-slate-800/50 border border-slate-700 rounded-lg p-6">
+                        <div id="osi-diagram" class="w-full"></div>
+                    </div>
+                </div>
+
+                <!-- Protocol Cards -->
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+                    
+                    <!-- HTTP Protocol -->
+                    <div class="protocol-card bg-slate-800/50 border border-slate-700 rounded-lg p-6">
+                        <div class="flex items-center mb-4">
+                            <div class="w-12 h-12 bg-blue-500/20 rounded-lg flex items-center justify-center mr-4">
+                                <span class="text-2xl">🌐</span>
+                            </div>
+                            <div>
+                                <h3 class="text-xl font-bold text-white">HTTP</h3>
+                                <p class="text-sm text-gray-400">Hypertext Transfer Protocol</p>
+                            </div>
+                        </div>
+                        <p class="text-gray-300 text-sm mb-4">
+                            Application layer protocol for web communication. Defines how messages are formatted and transmitted.
+                        </p>
+                        <div class="flex flex-wrap gap-2 mb-4">
+                            <span class="px-2 py-1 bg-blue-500/20 text-blue-300 text-xs rounded-full">Application</span>
+                            <span class="px-2 py-1 bg-green-500/20 text-green-300 text-xs rounded-full">Web</span>
+                            <span class="px-2 py-1 bg-purple-500/20 text-purple-300 text-xs rounded-full">Request/Response</span>
+                        </div>
+                        <a href="http-protocol.html" class="w-full bg-blue-600 hover:bg-blue-700 text-white text-center py-2 px-4 rounded-lg transition-colors duration-200 block">
+                            Learn More →
+                        </a>
+                    </div>
+
+                    <!-- TCP Protocol -->
+                    <div class="protocol-card bg-slate-800/50 border border-slate-700 rounded-lg p-6">
+                        <div class="flex items-center mb-4">
+                            <div class="w-12 h-12 bg-green-500/20 rounded-lg flex items-center justify-center mr-4">
+                                <span class="text-2xl">🔗</span>
+                            </div>
+                            <div>
+                                <h3 class="text-xl font-bold text-white">TCP</h3>
+                                <p class="text-sm text-gray-400">Transmission Control Protocol</p>
+                            </div>
+                        </div>
+                        <p class="text-gray-300 text-sm mb-4">
+                            Reliable, connection-oriented protocol that ensures data delivery with error checking and flow control.
+                        </p>
+                        <div class="flex flex-wrap gap-2 mb-4">
+                            <span class="px-2 py-1 bg-green-500/20 text-green-300 text-xs rounded-full">Transport</span>
+                            <span class="px-2 py-1 bg-blue-500/20 text-blue-300 text-xs rounded-full">Reliable</span>
+                            <span class="px-2 py-1 bg-orange-500/20 text-orange-300 text-xs rounded-full">Connection-oriented</span>
+                        </div>
+                        <a href="tcp-protocol.html" class="w-full bg-green-600 hover:bg-green-700 text-white text-center py-2 px-4 rounded-lg transition-colors duration-200 block">
+                            Learn More →
+                        </a>
+                    </div>
+
+                    <!-- UDP Protocol -->
+                    <div class="protocol-card bg-slate-800/50 border border-slate-700 rounded-lg p-6">
+                        <div class="flex items-center mb-4">
+                            <div class="w-12 h-12 bg-orange-500/20 rounded-lg flex items-center justify-center mr-4">
+                                <span class="text-2xl">⚡</span>
+                            </div>
+                            <div>
+                                <h3 class="text-xl font-bold text-white">UDP</h3>
+                                <p class="text-sm text-gray-400">User Datagram Protocol</p>
+                            </div>
+                        </div>
+                        <p class="text-gray-300 text-sm mb-4">
+                            Fast, connectionless protocol for real-time applications. No error checking or flow control.
+                        </p>
+                        <div class="flex flex-wrap gap-2 mb-4">
+                            <span class="px-2 py-1 bg-orange-500/20 text-orange-300 text-xs rounded-full">Transport</span>
+                            <span class="px-2 py-1 bg-red-500/20 text-red-300 text-xs rounded-full">Fast</span>
+                            <span class="px-2 py-1 bg-purple-500/20 text-purple-300 text-xs rounded-full">Connectionless</span>
+                        </div>
+                        <a href="udp-protocol.html" class="w-full bg-orange-600 hover:bg-orange-700 text-white text-center py-2 px-4 rounded-lg transition-colors duration-200 block">
+                            Learn More →
+                        </a>
+                    </div>
+
+                    <!-- OSI Model -->
+                    <div class="protocol-card bg-slate-800/50 border border-slate-700 rounded-lg p-6">
+                        <div class="flex items-center mb-4">
+                            <div class="w-12 h-12 bg-purple-500/20 rounded-lg flex items-center justify-center mr-4">
+                                <span class="text-2xl">🏗️</span>
+                            </div>
+                            <div>
+                                <h3 class="text-xl font-bold text-white">OSI Model</h3>
+                                <p class="text-sm text-gray-400">7-Layer Network Model</p>
+                            </div>
+                        </div>
+                        <p class="text-gray-300 text-sm mb-4">
+                            Conceptual framework that standardizes network communication into 7 distinct layers.
+                        </p>
+                        <div class="flex flex-wrap gap-2 mb-4">
+                            <span class="px-2 py-1 bg-purple-500/20 text-purple-300 text-xs rounded-full">Model</span>
+                            <span class="px-2 py-1 bg-blue-500/20 text-blue-300 text-xs rounded-full">7 Layers</span>
+                            <span class="px-2 py-1 bg-green-500/20 text-green-300 text-xs rounded-full">Standard</span>
+                        </div>
+                        <a href="osi-model.html" class="w-full bg-purple-600 hover:bg-purple-700 text-white text-center py-2 px-4 rounded-lg transition-colors duration-200 block">
+                            Learn More →
+                        </a>
+                    </div>
+
+                </div>
+
+                <!-- Comparison Table -->
+                <div class="mb-8">
+                    <h3 class="text-2xl font-bold text-white mb-4">Protocol Comparison</h3>
+                    <div class="bg-slate-800/50 border border-slate-700 rounded-lg overflow-hidden">
+                        <table class="w-full">
+                            <thead class="bg-slate-700/50">
+                                <tr>
+                                    <th class="px-6 py-4 text-left text-white font-semibold">Protocol</th>
+                                    <th class="px-6 py-4 text-left text-white font-semibold">Layer</th>
+                                    <th class="px-6 py-4 text-left text-white font-semibold">Connection</th>
+                                    <th class="px-6 py-4 text-left text-white font-semibold">Reliability</th>
+                                    <th class="px-6 py-4 text-left text-white font-semibold">Speed</th>
+                                    <th class="px-6 py-4 text-left text-white font-semibold">Use Cases</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr class="border-t border-slate-700">
+                                    <td class="px-6 py-4 text-blue-300 font-medium">HTTP</td>
+                                    <td class="px-6 py-4 text-gray-300">Application (7)</td>
+                                    <td class="px-6 py-4 text-gray-300">Stateless</td>
+                                    <td class="px-6 py-4 text-gray-300">Depends on TCP</td>
+                                    <td class="px-6 py-4 text-gray-300">Medium</td>
+                                    <td class="px-6 py-4 text-gray-300">Web browsing, APIs</td>
+                                </tr>
+                                <tr class="border-t border-slate-700">
+                                    <td class="px-6 py-4 text-green-300 font-medium">TCP</td>
+                                    <td class="px-6 py-4 text-gray-300">Transport (4)</td>
+                                    <td class="px-6 py-4 text-gray-300">Connection-oriented</td>
+                                    <td class="px-6 py-4 text-green-300">High</td>
+                                    <td class="px-6 py-4 text-gray-300">Slower</td>
+                                    <td class="px-6 py-4 text-gray-300">File transfer, email</td>
+                                </tr>
+                                <tr class="border-t border-slate-700">
+                                    <td class="px-6 py-4 text-orange-300 font-medium">UDP</td>
+                                    <td class="px-6 py-4 text-gray-300">Transport (4)</td>
+                                    <td class="px-6 py-4 text-gray-300">Connectionless</td>
+                                    <td class="px-6 py-4 text-orange-300">Low</td>
+                                    <td class="px-6 py-4 text-green-300">Faster</td>
+                                    <td class="px-6 py-4 text-gray-300">Gaming, streaming</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const backBtn = document.getElementById('back-btn');
+
+            // Back button
+            backBtn.addEventListener('click', () => {
+                window.history.back();
+            });
+
+            // Initialize Mermaid
+            mermaid.initialize({
+                startOnLoad: false,
+                theme: 'dark',
+                themeVariables: {
+                    primaryColor: '#3b82f6',
+                    primaryTextColor: '#f8fafc',
+                    primaryBorderColor: '#334155',
+                    lineColor: '#64748b',
+                    secondaryColor: '#1e293b',
+                    tertiaryColor: '#0f172a',
+                    background: '#0f172a',
+                    mainBkg: '#1e293b',
+                    secondBkg: '#334155'
+                }
+            });
+
+            // Render OSI Model diagram
+            const osiDiagram = `
+                graph TD
+                    A["Application Layer<br/>HTTP, FTP, SMTP"] --> B["Presentation Layer<br/>SSL/TLS, Encryption"]
+                    B --> C["Session Layer<br/>RPC, NetBIOS"]
+                    C --> D["Transport Layer<br/>TCP, UDP"]
+                    D --> E["Network Layer<br/>IP, ICMP, ARP"]
+                    E --> F["Data Link Layer<br/>Ethernet, WiFi"]
+                    F --> G["Physical Layer<br/>Cables, Radio"]
+                    
+                    style A fill:#3b82f6,stroke:#1e40af,stroke-width:2px,color:#fff
+                    style B fill:#8b5cf6,stroke:#7c3aed,stroke-width:2px,color:#fff
+                    style C fill:#06b6d4,stroke:#0891b2,stroke-width:2px,color:#fff
+                    style D fill:#10b981,stroke:#059669,stroke-width:2px,color:#fff
+                    style E fill:#f59e0b,stroke:#d97706,stroke-width:2px,color:#fff
+                    style F fill:#ef4444,stroke:#dc2626,stroke-width:2px,color:#fff
+                    style G fill:#6b7280,stroke:#4b5563,stroke-width:2px,color:#fff
+            `;
+
+            mermaid.render('osi-diagram-svg', osiDiagram).then(({ svg }) => {
+                document.getElementById('osi-diagram').innerHTML = svg;
+            });
+        });
+    </script>
+</body>
+</html>
