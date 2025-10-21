@@ -11,57 +11,37 @@
             background: linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #0f172a 100%);
         }
         
-        .diff-added {
-            background-color: rgba(34, 197, 94, 0.2);
-            border-left: 3px solid #22c55e;
-        }
-        
-        .diff-removed {
-            background-color: rgba(239, 68, 68, 0.2);
-            border-left: 3px solid #ef4444;
-        }
-        
-        .diff-modified {
-            background-color: rgba(251, 191, 36, 0.2);
-            border-left: 3px solid #fbbf24;
-        }
-        
-        .line-number {
-            background-color: #1e293b;
-            color: #64748b;
-            user-select: none;
-            border-right: 1px solid #334155;
-        }
-        
-        .diff-line {
-            font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
-            font-size: 14px;
-            line-height: 1.5;
-            white-space: pre-wrap;
-            word-break: break-all;
-        }
-
         .mermaid {
             background: transparent !important;
         }
 
         #diagram svg {
-            max-width: none !important;
+            max-width: 100% !important;
             height: auto !important;
             width: auto !important;
             display: block;
             margin: 0 auto;
         }
 
+        /* Specific fixes for state diagrams */
+        #diagram .stateDiagram svg {
+            max-width: none !important;
+            width: auto !important;
+            height: auto !important;
+        }
+
         #diagram {
-            display: block;
+            display: flex;
+            align-items: flex-start;
+            justify-content: center;
             width: 100%;
-            overflow: visible;
+            min-height: 100%;
             padding: 20px;
         }
 
         #diagram-container {
-            overflow: visible !important;
+            overflow: auto;
+            height: 100%;
         }
 
         .example-btn {
@@ -181,7 +161,7 @@
                 <div class="flex-1 relative">
                     <div id="diagram-container" class="w-full h-full p-4 bg-slate-900/50 overflow-auto">
                         <div id="loading" class="hidden text-center text-gray-400 py-8">Rendering diagram...</div>
-                        <div id="diagram" class="w-full"></div>
+                        <div id="diagram" class="w-full h-full"></div>
                         <div id="error" class="hidden text-red-400 bg-red-900/20 border border-red-500/30 rounded-lg p-4 mt-4"></div>
                     </div>
                 </div>
@@ -259,43 +239,29 @@
                     flowchart: {
                         useMaxWidth: false,
                         htmlLabels: true,
-                        curve: 'basis'
                     },
                     sequence: {
-                        useMaxWidth: false,
-                        htmlLabels: true,
-                        diagramMarginX: 20,
-                        diagramMarginY: 10,
-                        actorMargin: 30,
-                        width: 150,
-                        height: 65,
-                        boxMargin: 10,
-                        boxTextMargin: 5,
-                        noteMargin: 10,
-                        messageMargin: 35
+                        useMaxWidth: true,
+                        htmlLabels: true
                     },
                     gantt: {
-                        useMaxWidth: false,
-                        leftPadding: 75,
-                        gridLineStartPadding: 35,
-                        fontSize: 11,
-                        sectionFontSize: 24,
-                        numberSectionStyles: 4
+                        useMaxWidth: true
                     },
                     timeline: {
-                        useMaxWidth: false
+                        useMaxWidth: true
                     },
                     class: {
-                        useMaxWidth: false
+                        useMaxWidth: true
                     },
                     state: {
-                        useMaxWidth: false
+                        useMaxWidth: false,
+                        padding: 20
                     },
                     mindmap: {
-                        useMaxWidth: false
+                        useMaxWidth: true
                     },
                     gitgraph: {
-                        useMaxWidth: false
+                        useMaxWidth: true
                     }
                 });
             }
@@ -346,6 +312,15 @@
                 try {
                     const { svg } = await mermaid.render('mermaid-diagram', code);
                     diagram.innerHTML = svg;
+                    
+                    // Apply specific fixes for state diagrams
+                    const svgElement = diagram.querySelector('svg');
+                    if (svgElement && code.includes('stateDiagram')) {
+                        svgElement.style.maxWidth = 'none';
+                        svgElement.style.width = 'auto';
+                        svgElement.style.height = 'auto';
+                    }
+                    
                     loading.classList.add('hidden');
                 } catch (err) {
                     loading.classList.add('hidden');
