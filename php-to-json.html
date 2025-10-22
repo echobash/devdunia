@@ -214,25 +214,55 @@
                 const items = [];
                 let isIndexed = true;
                 
-                // Split by lines and process each line
-                const lines = content.split('\n').map(line => line.trim()).filter(line => line);
+                // Split by top-level commas (not inside brackets or strings)
+                const tokens = [];
+                let currentToken = '';
+                let bracketCount = 0;
+                let inString = false;
+                let stringChar = '';
                 
-                for (const line of lines) {
-                    const cleanLine = line.replace(/,$/, '').trim();
+                for (let i = 0; i < content.length; i++) {
+                    const char = content[i];
                     
-                    if (cleanLine.includes('=>')) {
-                        isIndexed = false;
-                        const arrowIndex = cleanLine.indexOf('=>');
-                        const key = cleanLine.substring(0, arrowIndex).trim();
-                        const value = cleanLine.substring(arrowIndex + 2).trim();
-                        
-                        const cleanKey = parsePhpValue(key);
-                        const cleanValue = parsePhpValue(value);
-                        
-                        result[cleanKey] = cleanValue;
+                    if (!inString && (char === '"' || char === "'")) {
+                        inString = true;
+                        stringChar = char;
+                        currentToken += char;
+                    } else if (inString && char === stringChar && content[i-1] !== '\\') {
+                        inString = false;
+                        currentToken += char;
+                    } else if (!inString && char === '[') {
+                        bracketCount++;
+                        currentToken += char;
+                    } else if (!inString && char === ']') {
+                        bracketCount--;
+                        currentToken += char;
+                    } else if (!inString && char === ',' && bracketCount === 0) {
+                        tokens.push(currentToken.trim());
+                        currentToken = '';
                     } else {
-                        const value = parsePhpValue(cleanLine);
-                        items.push(value);
+                        currentToken += char;
+                    }
+                }
+                
+                // Add the last token
+                if (currentToken.trim()) {
+                    tokens.push(currentToken.trim());
+                }
+                
+                // Process each token
+                for (const token of tokens) {
+                    if (token.includes('=>')) {
+                        // Associative array
+                        isIndexed = false;
+                        const arrowIndex = token.indexOf('=>');
+                        const key = token.substring(0, arrowIndex).trim();
+                        const value = token.substring(arrowIndex + 2).trim();
+                        
+                        result[parsePhpValue(key)] = parsePhpValue(value);
+                    } else {
+                        // Indexed array
+                        items.push(parsePhpValue(token));
                     }
                 }
                 
@@ -264,7 +294,7 @@
                 // Handle null
                 if (value === 'null') return null;
                 
-                // Handle nested arrays
+                // Handle nested arrays - improved parsing
                 if (value.startsWith('[') && value.endsWith(']')) {
                     return parsePhpArraySimple(value);
                 }
