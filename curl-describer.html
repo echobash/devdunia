@@ -241,42 +241,78 @@
                     options: []
                 };
 
-                // Remove curl prefix and split into parts
-                let command = curlCommand.replace(/^curl\s+/, '');
-                const parts = command.split(/\s+/);
+                // Remove curl prefix
+                let command = curlCommand.replace(/^curl\s+/, '').trim();
+                
+                // Parse the command properly handling quoted strings
+                const tokens = parseCurlTokens(command);
+                
+                for (let i = 0; i < tokens.length; i++) {
+                    const token = tokens[i];
 
-                for (let i = 0; i < parts.length; i++) {
-                    const part = parts[i];
-
-                    if (part.startsWith('-X') || part.startsWith('--request')) {
-                        analysis.method = parts[i + 1] || 'GET';
+                    if (token === '-X' || token === '--request') {
+                        analysis.method = tokens[i + 1] || 'GET';
                         i++;
-                    } else if (part.startsWith('-H') || part.startsWith('--header')) {
-                        const header = parts[i + 1];
-                        if (header) {
-                            const [key, value] = header.split(':');
-                            if (key && value) {
-                                analysis.headers[key.trim()] = value.trim();
+                    } else if (token === '-H' || token === '--header') {
+                        const headerValue = tokens[i + 1];
+                        if (headerValue) {
+                            const colonIndex = headerValue.indexOf(':');
+                            if (colonIndex > 0) {
+                                const key = headerValue.substring(0, colonIndex).trim();
+                                const value = headerValue.substring(colonIndex + 1).trim();
+                                analysis.headers[key] = value;
                             }
                         }
                         i++;
-                    } else if (part.startsWith('-d') || part.startsWith('--data')) {
-                        analysis.data = parts[i + 1] || '';
+                    } else if (token === '-d' || token === '--data' || token === '--data-raw') {
+                        analysis.data = tokens[i + 1] || '';
                         i++;
-                    } else if (part.startsWith('--data-raw')) {
-                        analysis.data = parts[i + 1] || '';
+                    } else if (token === '-u' || token === '--user') {
+                        analysis.auth = tokens[i + 1] || '';
                         i++;
-                    } else if (part.startsWith('-u') || part.startsWith('--user')) {
-                        analysis.auth = parts[i + 1] || '';
-                        i++;
-                    } else if (part.startsWith('-')) {
-                        analysis.options.push(part);
-                    } else if (!part.startsWith('-') && part.startsWith('http')) {
-                        analysis.url = part;
+                    } else if (token.startsWith('-')) {
+                        analysis.options.push(token);
+                    } else if (token.startsWith('http')) {
+                        analysis.url = token;
                     }
                 }
 
                 return analysis;
+            }
+
+            function parseCurlTokens(command) {
+                const tokens = [];
+                let currentToken = '';
+                let inQuotes = false;
+                let quoteChar = '';
+                let i = 0;
+
+                while (i < command.length) {
+                    const char = command[i];
+                    
+                    if (!inQuotes && (char === '"' || char === "'")) {
+                        inQuotes = true;
+                        quoteChar = char;
+                        currentToken += char;
+                    } else if (inQuotes && char === quoteChar) {
+                        inQuotes = false;
+                        currentToken += char;
+                    } else if (!inQuotes && /\s/.test(char)) {
+                        if (currentToken.trim()) {
+                            tokens.push(currentToken.trim());
+                            currentToken = '';
+                        }
+                    } else {
+                        currentToken += char;
+                    }
+                    i++;
+                }
+                
+                if (currentToken.trim()) {
+                    tokens.push(currentToken.trim());
+                }
+                
+                return tokens;
             }
 
             function displayAnalysis(analysis) {
