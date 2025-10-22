@@ -1,0 +1,712 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Email Header Analyzer - DevDunia</title>
+    <meta name="description" content="Analyze email headers for SPF, DKIM, DMARC validation, email spoofing detection, and security analysis.">
+    <meta name="keywords" content="email security, SPF, DKIM, DMARC, email headers, phishing detection, email analysis">
+    
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://devdunia.com/email-header-analyzer.html">
+    <meta property="og:title" content="Email Header Analyzer - DevDunia">
+    <meta property="og:description" content="Analyze email headers for SPF, DKIM, DMARC validation, email spoofing detection, and security analysis.">
+    
+    <!-- Twitter -->
+    <meta property="twitter:card" content="summary_large_image">
+    <meta property="twitter:url" content="https://devdunia.com/email-header-analyzer.html">
+    <meta property="twitter:title" content="Email Header Analyzer - DevDunia">
+    <meta property="twitter:description" content="Analyze email headers for SPF, DKIM, DMARC validation, email spoofing detection, and security analysis.">
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        .glass {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        .header-input {
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            color: white;
+            resize: vertical;
+            min-height: 200px;
+        }
+        .header-input::placeholder {
+            color: rgba(255, 255, 255, 0.6);
+        }
+        .header-input:focus {
+            outline: none;
+            border-color: #3b82f6;
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+        }
+        .status-pass { color: #10b981; }
+        .status-fail { color: #ef4444; }
+        .status-warning { color: #f59e0b; }
+        .status-info { color: #3b82f6; }
+        .header-line {
+            font-family: 'Courier New', monospace;
+            font-size: 0.875rem;
+            line-height: 1.5;
+            word-break: break-all;
+        }
+        .copy-btn {
+            transition: all 0.2s ease;
+        }
+        .copy-btn:hover {
+            transform: scale(1.05);
+        }
+    </style>
+</head>
+<body class="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900">
+    <!-- Navbar -->
+    <div id="navbar-container"></div>
+    
+    <!-- Sidebar -->
+    <div id="sidebar-container"></div>
+    
+    <!-- Main Content -->
+    <main class="h-screen lg:ml-72 flex flex-col">
+        <!-- Header -->
+        <header class="bg-gradient-to-r from-blue-600 to-indigo-500 text-white p-6">
+            <div class="container mx-auto">
+                <h1 class="text-3xl font-bold mb-2">
+                    <i class="fas fa-envelope-open-text mr-3"></i>
+                    Email Header Analyzer
+                </h1>
+                <p class="text-lg opacity-90">
+                    Analyze email headers for SPF, DKIM, DMARC validation and security assessment
+                </p>
+            </div>
+        </header>
+
+        <!-- Content -->
+        <div class="flex-1 p-6 overflow-y-auto">
+            <div class="container mx-auto">
+                <!-- Input Section -->
+                <div class="glass rounded-lg p-6 mb-6">
+                    <h2 class="text-2xl font-bold text-white mb-4">
+                        <i class="fas fa-upload mr-2 text-blue-400"></i>
+                        Paste Email Headers
+                    </h2>
+                    <p class="text-gray-300 mb-4">
+                        Paste the raw email headers below to analyze SPF, DKIM, DMARC records and detect potential security issues.
+                    </p>
+                    
+                    <div class="mb-4">
+                        <label for="email-headers" class="block text-sm font-medium text-gray-300 mb-2">
+                            Email Headers (Raw Format)
+                        </label>
+                        <textarea 
+                            id="email-headers" 
+                            class="header-input w-full p-4 rounded-lg"
+                            placeholder="Received: from mail.example.com (mail.example.com [192.168.1.1])
+    by mx.google.com with ESMTPS id abc123def456
+    for user@gmail.com; Mon, 01 Jan 2024 12:00:00 -0800 (PST)
+Return-Path: sender@example.com
+Delivered-To: user@gmail.com
+Received: by 2002:a05:6a00:1234:0:0:0:0 with SMTP id abc123def456;
+    Mon, 01 Jan 2024 12:00:00 -0800 (PST)
+X-Google-Smtp-Source: ABCHJkLmNOPqRsTUVwXyZ1234567890
+X-Received: by 2002:a05:6a00:1234:0:0:0:0 with SMTP id abc123def456;
+    Mon, 01 Jan 2024 12:00:00 -0800 (PST)
+ARC-Seal: i=1; a=rsa-sha256; t=1640995200; cv=none;
+    d=example.com; s=arc-20240101; b=abc123def456...
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=example.com;
+    h=from:to:subject:date:message-id:mime-version;
+    s=arc-20240101; t=1640995200; bh=def456ghi789...; b=abc123def456...
+ARC-Authentication-Results: i=1; mx.google.com;
+    dkim=pass header.i=@example.com header.s=20240101 header.b=abc123def456;
+    spf=pass (google.com: domain of sender@example.com designates 192.168.1.1 as permitted sender) smtp.mailfrom=sender@example.com;
+    dmarc=pass (p=quarantine sp=quarantine dis=none) header.from=example.com
+Authentication-Results: mx.google.com;
+    dkim=pass header.i=@example.com header.s=20240101 header.b=abc123def456;
+    spf=pass (google.com: domain of sender@example.com designates 192.168.1.1 as permitted sender) smtp.mailfrom=sender@example.com;
+    dmarc=pass (p=quarantine sp=quarantine dis=none) header.from=example.com
+Received-SPF: pass (google.com: domain of sender@example.com designates 192.168.1.1 as permitted sender) client-ip=192.168.1.1;
+Authentication-Results: mx.google.com;
+    dkim=pass header.i=@example.com header.s=20240101 header.b=abc123def456;
+    spf=pass (google.com: domain of sender@example.com designates 192.168.1.1 as permitted sender) smtp.mailfrom=sender@example.com;
+    dmarc=pass (p=quarantine sp=quarantine dis=none) header.from=example.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=example.com;
+    h=from:to:subject:date:message-id:mime-version;
+    s=20240101; t=1640995200; bh=def456ghi789...; b=abc123def456...
+From: Sender Name <sender@example.com>
+To: user@gmail.com
+Subject: Test Email
+Date: Mon, 01 Jan 2024 12:00:00 -0800
+Message-ID: <abc123def456@example.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8"
+                        ></textarea>
+                    </div>
+                    
+                    <div class="flex gap-4">
+                        <button 
+                            id="analyze-btn" 
+                            class="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-lg font-semibold transition-colors duration-200 flex items-center"
+                        >
+                            <i class="fas fa-search mr-2"></i>
+                            Analyze Headers
+                        </button>
+                        <button 
+                            id="clear-btn" 
+                            class="bg-gray-600 hover:bg-gray-700 text-white px-6 py-3 rounded-lg font-semibold transition-colors duration-200 flex items-center"
+                        >
+                            <i class="fas fa-trash mr-2"></i>
+                            Clear
+                        </button>
+                        <button 
+                            id="example-btn" 
+                            class="bg-green-600 hover:bg-green-700 text-white px-6 py-3 rounded-lg font-semibold transition-colors duration-200 flex items-center"
+                        >
+                            <i class="fas fa-lightbulb mr-2"></i>
+                            Load Example
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Analysis Results -->
+                <div id="analysis-results" class="hidden">
+                    <!-- Security Status Overview -->
+                    <div class="glass rounded-lg p-6 mb-6">
+                        <h2 class="text-2xl font-bold text-white mb-4">
+                            <i class="fas fa-shield-alt mr-2 text-green-400"></i>
+                            Security Status Overview
+                        </h2>
+                        <div id="security-overview" class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                            <!-- Will be populated by JavaScript -->
+                        </div>
+                    </div>
+
+                    <!-- Detailed Analysis -->
+                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
+                        <!-- SPF Analysis -->
+                        <div class="glass rounded-lg p-6">
+                            <h3 class="text-xl font-bold text-white mb-4">
+                                <i class="fas fa-check-circle mr-2 text-blue-400"></i>
+                                SPF (Sender Policy Framework)
+                            </h3>
+                            <div id="spf-analysis">
+                                <!-- Will be populated by JavaScript -->
+                            </div>
+                        </div>
+
+                        <!-- DKIM Analysis -->
+                        <div class="glass rounded-lg p-6">
+                            <h3 class="text-xl font-bold text-white mb-4">
+                                <i class="fas fa-key mr-2 text-purple-400"></i>
+                                DKIM (DomainKeys Identified Mail)
+                            </h3>
+                            <div id="dkim-analysis">
+                                <!-- Will be populated by JavaScript -->
+                            </div>
+                        </div>
+
+                        <!-- DMARC Analysis -->
+                        <div class="glass rounded-lg p-6">
+                            <h3 class="text-xl font-bold text-white mb-4">
+                                <i class="fas fa-shield-alt mr-2 text-orange-400"></i>
+                                DMARC (Domain-based Message Authentication)
+                            </h3>
+                            <div id="dmarc-analysis">
+                                <!-- Will be populated by JavaScript -->
+                            </div>
+                        </div>
+
+                        <!-- Additional Security Checks -->
+                        <div class="glass rounded-lg p-6">
+                            <h3 class="text-xl font-bold text-white mb-4">
+                                <i class="fas fa-exclamation-triangle mr-2 text-yellow-400"></i>
+                                Additional Security Checks
+                            </h3>
+                            <div id="additional-checks">
+                                <!-- Will be populated by JavaScript -->
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Raw Headers Display -->
+                    <div class="glass rounded-lg p-6">
+                        <div class="flex items-center justify-between mb-4">
+                            <h3 class="text-xl font-bold text-white">
+                                <i class="fas fa-code mr-2 text-gray-400"></i>
+                                Parsed Headers
+                            </h3>
+                            <button 
+                                id="copy-headers-btn" 
+                                class="copy-btn bg-gray-600 hover:bg-gray-700 text-white px-4 py-2 rounded-lg text-sm font-semibold transition-all duration-200 flex items-center"
+                            >
+                                <i class="fas fa-copy mr-2"></i>
+                                Copy Headers
+                            </button>
+                        </div>
+                        <div id="parsed-headers" class="bg-gray-900 rounded-lg p-4 max-h-96 overflow-y-auto">
+                            <!-- Will be populated by JavaScript -->
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Educational Content -->
+                <div class="glass rounded-lg p-6">
+                    <h2 class="text-2xl font-bold text-white mb-4">
+                        <i class="fas fa-graduation-cap mr-2 text-indigo-400"></i>
+                        Email Security Explained
+                    </h2>
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                        <!-- SPF Explanation -->
+                        <div class="bg-blue-900/30 border border-blue-500/30 rounded-lg p-4">
+                            <h3 class="font-bold text-blue-300 mb-2">
+                                <i class="fas fa-check-circle mr-2"></i>
+                                SPF (Sender Policy Framework)
+                            </h3>
+                            <p class="text-blue-200 text-sm mb-3">
+                                SPF allows domain owners to specify which mail servers are authorized to send emails for their domain.
+                            </p>
+                            <div class="text-xs text-blue-300">
+                                <strong>Example:</strong> v=spf1 include:_spf.google.com ~all
+                            </div>
+                        </div>
+
+                        <!-- DKIM Explanation -->
+                        <div class="bg-purple-900/30 border border-purple-500/30 rounded-lg p-4">
+                            <h3 class="font-bold text-purple-300 mb-2">
+                                <i class="fas fa-key mr-2"></i>
+                                DKIM (DomainKeys Identified Mail)
+                            </h3>
+                            <p class="text-purple-200 text-sm mb-3">
+                                DKIM provides email authentication by allowing the sender to digitally sign emails with a private key.
+                            </p>
+                            <div class="text-xs text-purple-300">
+                                <strong>Example:</strong> DKIM-Signature: v=1; a=rsa-sha256; d=example.com
+                            </div>
+                        </div>
+
+                        <!-- DMARC Explanation -->
+                        <div class="bg-orange-900/30 border border-orange-500/30 rounded-lg p-4">
+                            <h3 class="font-bold text-orange-300 mb-2">
+                                <i class="fas fa-shield-alt mr-2"></i>
+                                DMARC (Domain-based Message Authentication)
+                            </h3>
+                            <p class="text-orange-200 text-sm mb-3">
+                                DMARC builds on SPF and DKIM to provide domain-level email authentication and policy enforcement.
+                            </p>
+                            <div class="text-xs text-orange-300">
+                                <strong>Example:</strong> v=DMARC1; p=quarantine; rua=mailto:dmarc@example.com
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Prevention Tips -->
+                    <div class="mt-6 bg-green-900/30 border border-green-500/30 rounded-lg p-4">
+                        <h3 class="font-bold text-green-300 mb-3">
+                            <i class="fas fa-lightbulb mr-2"></i>
+                            Email Security Best Practices
+                        </h3>
+                        <ul class="text-green-200 text-sm space-y-1">
+                            <li>• Always check SPF, DKIM, and DMARC records before trusting emails</li>
+                            <li>• Be suspicious of emails with mismatched sender domains</li>
+                            <li>• Look for suspicious header patterns and unusual routing</li>
+                            <li>• Verify sender information through multiple channels</li>
+                            <li>• Report suspicious emails to your IT security team</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        // Load navbar and sidebar
+        document.addEventListener('DOMContentLoaded', function() {
+            // Load navbar
+            fetch('navbar.html')
+                .then(response => response.text())
+                .then(data => {
+                    document.getElementById('navbar-container').innerHTML = data;
+                })
+                .catch(error => console.error('Error loading navbar:', error));
+
+            // Load sidebar
+            fetch('final_sidebar.html')
+                .then(response => response.text())
+                .then(data => {
+                    document.getElementById('sidebar-container').innerHTML = data;
+                })
+                .catch(error => console.error('Error loading sidebar:', error));
+        });
+
+        // Email header analysis functions
+        function parseEmailHeaders(headers) {
+            const lines = headers.split('\n');
+            const parsedHeaders = {};
+            
+            lines.forEach(line => {
+                if (line.trim() && line.includes(':')) {
+                    const colonIndex = line.indexOf(':');
+                    const key = line.substring(0, colonIndex).trim();
+                    const value = line.substring(colonIndex + 1).trim();
+                    
+                    if (parsedHeaders[key]) {
+                        if (Array.isArray(parsedHeaders[key])) {
+                            parsedHeaders[key].push(value);
+                        } else {
+                            parsedHeaders[key] = [parsedHeaders[key], value];
+                        }
+                    } else {
+                        parsedHeaders[key] = value;
+                    }
+                }
+            });
+            
+            return parsedHeaders;
+        }
+
+        function analyzeSPF(headers) {
+            const spfResults = [];
+            let spfStatus = 'unknown';
+            let spfDetails = '';
+
+            // Check Authentication-Results for SPF
+            const authResults = headers['Authentication-Results'] || headers['ARC-Authentication-Results'];
+            if (authResults) {
+                const authString = Array.isArray(authResults) ? authResults.join(' ') : authResults;
+                if (authString.includes('spf=pass')) {
+                    spfStatus = 'pass';
+                    spfDetails = 'SPF authentication passed';
+                } else if (authString.includes('spf=fail')) {
+                    spfStatus = 'fail';
+                    spfDetails = 'SPF authentication failed';
+                } else if (authString.includes('spf=softfail')) {
+                    spfStatus = 'softfail';
+                    spfDetails = 'SPF softfail - domain not authorized but not explicitly forbidden';
+                } else if (authString.includes('spf=neutral')) {
+                    spfStatus = 'neutral';
+                    spfDetails = 'SPF neutral - no policy found';
+                }
+            }
+
+            // Check Received-SPF header
+            const receivedSPF = headers['Received-SPF'];
+            if (receivedSPF) {
+                const spfString = Array.isArray(receivedSPF) ? receivedSPF.join(' ') : receivedSPF;
+                if (spfString.includes('pass')) {
+                    spfStatus = 'pass';
+                    spfDetails = 'SPF check passed';
+                } else if (spfString.includes('fail')) {
+                    spfStatus = 'fail';
+                    spfDetails = 'SPF check failed';
+                }
+            }
+
+            return { status: spfStatus, details: spfDetails, raw: receivedSPF || authResults };
+        }
+
+        function analyzeDKIM(headers) {
+            const dkimResults = [];
+            let dkimStatus = 'unknown';
+            let dkimDetails = '';
+
+            // Check for DKIM signature
+            const dkimSignature = headers['DKIM-Signature'];
+            if (!dkimSignature) {
+                return { status: 'fail', details: 'No DKIM signature found', raw: null };
+            }
+
+            // Check Authentication-Results for DKIM
+            const authResults = headers['Authentication-Results'] || headers['ARC-Authentication-Results'];
+            if (authResults) {
+                const authString = Array.isArray(authResults) ? authResults.join(' ') : authResults;
+                if (authString.includes('dkim=pass')) {
+                    dkimStatus = 'pass';
+                    dkimDetails = 'DKIM signature verification passed';
+                } else if (authString.includes('dkim=fail')) {
+                    dkimStatus = 'fail';
+                    dkimDetails = 'DKIM signature verification failed';
+                } else if (authString.includes('dkim=neutral')) {
+                    dkimStatus = 'neutral';
+                    dkimDetails = 'DKIM signature verification neutral';
+                }
+            }
+
+            return { status: dkimStatus, details: dkimDetails, raw: dkimSignature };
+        }
+
+        function analyzeDMARC(headers) {
+            let dmarcStatus = 'unknown';
+            let dmarcDetails = '';
+
+            // Check Authentication-Results for DMARC
+            const authResults = headers['Authentication-Results'] || headers['ARC-Authentication-Results'];
+            if (authResults) {
+                const authString = Array.isArray(authResults) ? authResults.join(' ') : authResults;
+                if (authString.includes('dmarc=pass')) {
+                    dmarcStatus = 'pass';
+                    dmarcDetails = 'DMARC policy check passed';
+                } else if (authString.includes('dmarc=fail')) {
+                    dmarcStatus = 'fail';
+                    dmarcDetails = 'DMARC policy check failed';
+                } else if (authString.includes('dmarc=neutral')) {
+                    dmarcStatus = 'neutral';
+                    dmarcDetails = 'DMARC policy check neutral';
+                }
+            }
+
+            return { status: dmarcStatus, details: dmarcDetails, raw: authResults };
+        }
+
+        function performAdditionalChecks(headers) {
+            const checks = [];
+
+            // Check for suspicious headers
+            const suspiciousHeaders = ['X-Originating-IP', 'X-Forwarded-For', 'X-Real-IP'];
+            suspiciousHeaders.forEach(header => {
+                if (headers[header]) {
+                    checks.push({
+                        type: 'warning',
+                        message: `Suspicious header found: ${header}`,
+                        details: headers[header]
+                    });
+                }
+            });
+
+            // Check for missing security headers
+            if (!headers['Authentication-Results'] && !headers['ARC-Authentication-Results']) {
+                checks.push({
+                    type: 'warning',
+                    message: 'No authentication results found',
+                    details: 'This email may not have been properly authenticated'
+                });
+            }
+
+            // Check for multiple Received headers (potential relay)
+            const receivedHeaders = Object.keys(headers).filter(key => key.toLowerCase().startsWith('received'));
+            if (receivedHeaders.length > 5) {
+                checks.push({
+                    type: 'info',
+                    message: `Multiple relay hops detected (${receivedHeaders.length})`,
+                    details: 'Email has been relayed through multiple servers'
+                });
+            }
+
+            // Check for spoofed From address
+            const from = headers['From'];
+            const returnPath = headers['Return-Path'];
+            if (from && returnPath) {
+                const fromEmail = from.match(/<([^>]+)>/) ? from.match(/<([^>]+)>/)[1] : from;
+                const returnPathEmail = returnPath.match(/<([^>]+)>/) ? returnPath.match(/<([^>]+)>/)[1] : returnPath;
+                
+                if (fromEmail !== returnPathEmail) {
+                    checks.push({
+                        type: 'warning',
+                        message: 'From address mismatch',
+                        details: `From: ${fromEmail}, Return-Path: ${returnPathEmail}`
+                    });
+                }
+            }
+
+            return checks;
+        }
+
+        function getStatusIcon(status) {
+            switch (status) {
+                case 'pass': return '<i class="fas fa-check-circle status-pass"></i>';
+                case 'fail': return '<i class="fas fa-times-circle status-fail"></i>';
+                case 'softfail': return '<i class="fas fa-exclamation-triangle status-warning"></i>';
+                case 'neutral': return '<i class="fas fa-question-circle status-info"></i>';
+                default: return '<i class="fas fa-question-circle status-info"></i>';
+            }
+        }
+
+        function getStatusColor(status) {
+            switch (status) {
+                case 'pass': return 'text-green-400';
+                case 'fail': return 'text-red-400';
+                case 'softfail': return 'text-yellow-400';
+                case 'neutral': return 'text-blue-400';
+                default: return 'text-gray-400';
+            }
+        }
+
+        function analyzeEmailHeaders() {
+            const headersText = document.getElementById('email-headers').value.trim();
+            
+            if (!headersText) {
+                alert('Please paste email headers to analyze.');
+                return;
+            }
+
+            const headers = parseEmailHeaders(headersText);
+            const spfResult = analyzeSPF(headers);
+            const dkimResult = analyzeDKIM(headers);
+            const dmarcResult = analyzeDMARC(headers);
+            const additionalChecks = performAdditionalChecks(headers);
+
+            // Update security overview
+            const securityOverview = document.getElementById('security-overview');
+            securityOverview.innerHTML = `
+                <div class="bg-blue-900/30 border border-blue-500/30 rounded-lg p-4">
+                    <div class="flex items-center justify-between mb-2">
+                        <span class="font-semibold text-blue-300">SPF</span>
+                        ${getStatusIcon(spfResult.status)}
+                    </div>
+                    <p class="text-blue-200 text-sm">${spfResult.details}</p>
+                </div>
+                <div class="bg-purple-900/30 border border-purple-500/30 rounded-lg p-4">
+                    <div class="flex items-center justify-between mb-2">
+                        <span class="font-semibold text-purple-300">DKIM</span>
+                        ${getStatusIcon(dkimResult.status)}
+                    </div>
+                    <p class="text-purple-200 text-sm">${dkimResult.details}</p>
+                </div>
+                <div class="bg-orange-900/30 border border-orange-500/30 rounded-lg p-4">
+                    <div class="flex items-center justify-between mb-2">
+                        <span class="font-semibold text-orange-300">DMARC</span>
+                        ${getStatusIcon(dmarcResult.status)}
+                    </div>
+                    <p class="text-orange-200 text-sm">${dmarcResult.details}</p>
+                </div>
+            `;
+
+            // Update detailed analysis
+            document.getElementById('spf-analysis').innerHTML = `
+                <div class="space-y-3">
+                    <div class="flex items-center justify-between">
+                        <span class="text-gray-300">Status:</span>
+                        <span class="${getStatusColor(spfResult.status)} font-semibold">${spfResult.status.toUpperCase()}</span>
+                    </div>
+                    <div class="text-sm text-gray-400">
+                        <strong>Details:</strong> ${spfResult.details}
+                    </div>
+                    ${spfResult.raw ? `
+                        <div class="text-xs text-gray-500">
+                            <strong>Raw:</strong> ${spfResult.raw}
+                        </div>
+                    ` : ''}
+                </div>
+            `;
+
+            document.getElementById('dkim-analysis').innerHTML = `
+                <div class="space-y-3">
+                    <div class="flex items-center justify-between">
+                        <span class="text-gray-300">Status:</span>
+                        <span class="${getStatusColor(dkimResult.status)} font-semibold">${dkimResult.status.toUpperCase()}</span>
+                    </div>
+                    <div class="text-sm text-gray-400">
+                        <strong>Details:</strong> ${dkimResult.details}
+                    </div>
+                    ${dkimResult.raw ? `
+                        <div class="text-xs text-gray-500">
+                            <strong>Signature:</strong> ${dkimResult.raw.substring(0, 100)}...
+                        </div>
+                    ` : ''}
+                </div>
+            `;
+
+            document.getElementById('dmarc-analysis').innerHTML = `
+                <div class="space-y-3">
+                    <div class="flex items-center justify-between">
+                        <span class="text-gray-300">Status:</span>
+                        <span class="${getStatusColor(dmarcResult.status)} font-semibold">${dmarcResult.status.toUpperCase()}</span>
+                    </div>
+                    <div class="text-sm text-gray-400">
+                        <strong>Details:</strong> ${dmarcResult.details}
+                    </div>
+                </div>
+            `;
+
+            // Update additional checks
+            const additionalChecksHtml = additionalChecks.map(check => `
+                <div class="flex items-start space-x-3 p-3 rounded-lg ${check.type === 'warning' ? 'bg-yellow-900/30 border border-yellow-500/30' : 'bg-blue-900/30 border border-blue-500/30'}">
+                    <i class="fas ${check.type === 'warning' ? 'fa-exclamation-triangle text-yellow-400' : 'fa-info-circle text-blue-400'} mt-1"></i>
+                    <div>
+                        <div class="font-semibold text-white">${check.message}</div>
+                        <div class="text-sm text-gray-300">${check.details}</div>
+                    </div>
+                </div>
+            `).join('');
+
+            document.getElementById('additional-checks').innerHTML = additionalChecksHtml || '<p class="text-gray-400">No additional security issues detected.</p>';
+
+            // Update parsed headers
+            const parsedHeadersHtml = Object.entries(headers).map(([key, value]) => `
+                <div class="header-line mb-2">
+                    <span class="text-blue-400 font-semibold">${key}:</span>
+                    <span class="text-gray-300 ml-2">${Array.isArray(value) ? value.join(', ') : value}</span>
+                </div>
+            `).join('');
+
+            document.getElementById('parsed-headers').innerHTML = parsedHeadersHtml;
+
+            // Show results
+            document.getElementById('analysis-results').classList.remove('hidden');
+            document.getElementById('analysis-results').scrollIntoView({ behavior: 'smooth' });
+        }
+
+        // Event listeners
+        document.addEventListener('DOMContentLoaded', function() {
+            document.getElementById('analyze-btn').addEventListener('click', analyzeEmailHeaders);
+            
+            document.getElementById('clear-btn').addEventListener('click', function() {
+                document.getElementById('email-headers').value = '';
+                document.getElementById('analysis-results').classList.add('hidden');
+            });
+
+            document.getElementById('example-btn').addEventListener('click', function() {
+                const exampleHeaders = `Received: from mail.example.com (mail.example.com [192.168.1.1])
+    by mx.google.com with ESMTPS id abc123def456
+    for user@gmail.com; Mon, 01 Jan 2024 12:00:00 -0800 (PST)
+Return-Path: sender@example.com
+Delivered-To: user@gmail.com
+Received: by 2002:a05:6a00:1234:0:0:0:0 with SMTP id abc123def456;
+    Mon, 01 Jan 2024 12:00:00 -0800 (PST)
+X-Google-Smtp-Source: ABCHJkLmNOPqRsTUVwXyZ1234567890
+X-Received: by 2002:a05:6a00:1234:0:0:0:0 with SMTP id abc123def456;
+    Mon, 01 Jan 2024 12:00:00 -0800 (PST)
+ARC-Seal: i=1; a=rsa-sha256; t=1640995200; cv=none;
+    d=example.com; s=arc-20240101; b=abc123def456...
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=example.com;
+    h=from:to:subject:date:message-id:mime-version;
+    s=arc-20240101; t=1640995200; bh=def456ghi789...; b=abc123def456...
+ARC-Authentication-Results: i=1; mx.google.com;
+    dkim=pass header.i=@example.com header.s=20240101 header.b=abc123def456;
+    spf=pass (google.com: domain of sender@example.com designates 192.168.1.1 as permitted sender) smtp.mailfrom=sender@example.com;
+    dmarc=pass (p=quarantine sp=quarantine dis=none) header.from=example.com
+Authentication-Results: mx.google.com;
+    dkim=pass header.i=@example.com header.s=20240101 header.b=abc123def456;
+    spf=pass (google.com: domain of sender@example.com designates 192.168.1.1 as permitted sender) smtp.mailfrom=sender@example.com;
+    dmarc=pass (p=quarantine sp=quarantine dis=none) header.from=example.com
+Received-SPF: pass (google.com: domain of sender@example.com designates 192.168.1.1 as permitted sender) client-ip=192.168.1.1;
+Authentication-Results: mx.google.com;
+    dkim=pass header.i=@example.com header.s=20240101 header.b=abc123def456;
+    spf=pass (google.com: domain of sender@example.com designates 192.168.1.1 as permitted sender) smtp.mailfrom=sender@example.com;
+    dmarc=pass (p=quarantine sp=quarantine dis=none) header.from=example.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=example.com;
+    h=from:to:subject:date:message-id:mime-version;
+    s=20240101; t=1640995200; bh=def456ghi789...; b=abc123def456...
+From: Sender Name <sender@example.com>
+To: user@gmail.com
+Subject: Test Email
+Date: Mon, 01 Jan 2024 12:00:00 -0800
+Message-ID: <abc123def456@example.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8`;
+                document.getElementById('email-headers').value = exampleHeaders;
+            });
+
+            document.getElementById('copy-headers-btn').addEventListener('click', function() {
+                const headersText = document.getElementById('email-headers').value;
+                navigator.clipboard.writeText(headersText).then(() => {
+                    this.innerHTML = '<i class="fas fa-check mr-2"></i>Copied!';
+                    setTimeout(() => {
+                        this.innerHTML = '<i class="fas fa-copy mr-2"></i>Copy Headers';
+                    }, 2000);
+                });
+            });
+        });
+    </script>
+</body>
+</html>
