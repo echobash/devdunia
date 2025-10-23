@@ -190,18 +190,24 @@ skills:
                 yamlToJsonBtn.classList.add('bg-slate-600');
             });
 
-            function updateUI() {
-                if (conversionMode === 'yaml-to-json') {
-                    inputLabel.textContent = 'YAML Input';
-                    outputLabel.textContent = 'JSON Output';
-                    inputText.placeholder = 'Paste your YAML data here...';
-                } else {
-                    inputLabel.textContent = 'JSON Input';
-                    outputLabel.textContent = 'YAML Output';
-                    inputText.placeholder = 'Paste your JSON data here...';
-                }
-                hideOutput();
-                hideError();
+           function updateUI() {
+    if (conversionMode === 'yaml-to-json') {
+        inputLabel.textContent = 'YAML Input';
+        outputLabel.textContent = 'JSON Output';
+        inputText.placeholder = 'Paste your YAML data here...';
+    } else {
+        inputLabel.textContent = 'JSON Input';
+        outputLabel.textContent = 'YAML Output';
+        inputText.placeholder = 'Paste your JSON data here...';
+    }
+
+    // If there is previous conversion output, move it into the input so users can flip conversion quickly
+    if (!outputSection.classList.contains('hidden') && outputText.value.trim()) {
+        inputText.value = outputText.value;
+    }
+
+    hideOutput();
+    hideError();
             }
 
             // Convert
