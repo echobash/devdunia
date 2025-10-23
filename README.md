@@ -12,6 +12,14 @@
 [![Tools](https://img.shields.io/badge/Tools-50+-green)](https://devdunia.com)
 [![Support](https://img.shields.io/badge/Support-❤️_DevDunia-red)](#support-my-work)
 
+## 👥 Contributors
+
+[![Contributors](https://img.shields.io/github/contributors/echobash/devdunia.svg)](https://github.com/echobash/devdunia/graphs/contributors)
+
+[![Contributors](https://contrib.rocks/image?repo=echobash/devdunia)](https://github.com/echobash/devdunia/graphs/contributors)
+
+**Thank you to all contributors who help make this project better!** 🎉
+
 > **50+ essential developer tools including VAPT, encoders, formatters, and more — all free, fast, and privacy-first.**
 
 [![Try DevDunia](https://img.shields.io/badge/Try%20DevDunia-Now-brightgreen?style=for-the-badge)](https://devdunia.com)
