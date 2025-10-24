@@ -336,3 +336,55 @@ document.addEventListener('DOMContentLoaded', function() {
 
 // Export for use in other scripts
 window.DevDuniaUtils = DevDuniaUtils;
+
+// Theme switching logic
+document.addEventListener('DOMContentLoaded', function() {
+    const themeToggleButton = document.getElementById('theme-toggle');
+    const htmlElement = document.documentElement;
+
+    // Set initial theme
+    const currentTheme = localStorage.getItem('theme') || 'light';
+    htmlElement.classList.add(currentTheme);
+/**
+ * Initializes and handles the theme switching functionality for the application.
+ * On DOMContentLoaded, it retrieves the current theme from localStorage, applies it to the
+ * document's root element, and sets up a click event listener on the theme toggle button
+ * to switch between 'light' and 'dark' themes, persisting the selection.
+ * @param {Event} event - The DOMContentLoaded event object.
+ * @returns {void}
+ */
+document.addEventListener('DOMContentLoaded', function() {
+    const themeToggleButton = document.getElementById('theme-toggle');
+    const htmlElement = document.documentElement;
+
+    // Set initial theme
+    const currentTheme = localStorage.getItem('theme') || 'light';
+    htmlElement.classList.add(currentTheme);
+    if (currentTheme === 'dark') {
+        htmlElement.classList.add('dark');
+    }
+
+    themeToggleButton.addEventListener('click', function() {
+        if (htmlElement.classList.contains('dark')) {
+            htmlElement.classList.remove('dark');
+            localStorage.setItem('theme', 'light');
+        } else {
+            htmlElement.classList.add('dark');
+            localStorage.setItem('theme', 'dark');
+        }
+    });
+});
+    if (currentTheme === 'dark') {
+        htmlElement.classList.add('dark');
+    }
+
+    themeToggleButton.addEventListener('click', function() {
+        if (htmlElement.classList.contains('dark')) {
+            htmlElement.classList.remove('dark');
+            localStorage.setItem('theme', 'light');
+        } else {
+            htmlElement.classList.add('dark');
+            localStorage.setItem('theme', 'dark');
+        }
+    });
+});

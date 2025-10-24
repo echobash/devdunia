@@ -5,17 +5,55 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Support DevDunia Development</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="css/theme.css">
     <link rel="icon" type="image/x-icon" href="images/echobashFav.png">
+    <style>
+        body {
+            background: var(--bg-primary);
+            color: var(--text-primary);
+        }
+        .space-y-6 p {
+            color: var(--text-secondary);
+        }
+        h1 {
+            color: var(--text-primary);
+        }
+        footer p {
+            color: var(--text-muted);
+        }
+        footer a {
+            color: var(--accent-blue);
+        }
+        footer a:hover {
+            color: var(--accent-blue);
+        }
+        .bg-green-600:hover {
+            background-color: var(--accent-green);
+        }
+        .bg-blue-600:hover {
+            background-color: var(--accent-blue);
+        }
+        .border-gray-700 {
+            border-color: var(--border-primary);
+        }
+    </style>
 </head>
-<body class="min-h-screen bg-gray-900 text-white">
+<body class="min-h-screen">
+    <!-- Theme Toggle Button -->
+    <button id="theme-toggle" class="fixed top-5 right-5 z-50 w-12 h-12 rounded-full border-2 border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-700 transition-all duration-300 flex items-center justify-center shadow-lg">
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" class="w-6 h-6 text-gray-800 dark:text-gray-200">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" />
+        </svg>
+    </button>
+
     <!-- Background -->
-    <div class="fixed inset-0 -z-10 bg-gradient-to-br from-gray-900 via-slate-900 to-gray-900"></div>
+    <div class="fixed inset-0 -z-10 bg-gradient-to-br from-gray-900 via-slate-900 to-gray-900 dark:from-gray-900 dark:via-slate-900 dark:to-gray-900 light:from-white light:via-gray-50 light:to-white" style="background: var(--bg-gradient);"></div>
     
     <!-- Main Content -->
     <main class="relative z-10 container mx-auto px-4 py-12 max-w-4xl">
         <h1 class="text-4xl font-bold mb-8">Support DevDunia Development ❤️</h1>
         
-        <div class="space-y-6 text-gray-300">
+        <div class="space-y-6">
             <p>
                 My goal with DevDunia is to democratize access to essential developer tools and security utilities. To that end, DevDunia provides 50+ foundational tools such as: JSON formatters, Base64 encoders, hash generators, VAPT security tools, and educational content. These tools enable developers to work more efficiently and securely.
             </p>
@@ -31,31 +69,29 @@
 
         <!-- Support Buttons -->
         <div class="grid md:grid-cols-2 gap-4 mt-8">
-            <a href="https://github.com/sponsors/echobash" 
+            <a href="https://github.com/sponsors/echobash"
                class="bg-green-600 hover:bg-green-700 text-white px-6 py-3 rounded-lg text-center font-semibold transition-colors">
                 Patronage via GitHub
             </a>
-<!--             
-            <a href="https://patreon.com/echobash" 
+<!--
+            <a href="https://patreon.com/echobash"
                class="bg-orange-600 hover:bg-orange-700 text-white px-6 py-3 rounded-lg text-center font-semibold transition-colors">
                 Patronage via Patreon
             </a> -->
-            
-            <a href="https://ko-fi.com/echobash" 
+
+            <a href="https://ko-fi.com/echobash"
                class="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-lg text-center font-semibold transition-colors">
                 One time support via Ko-fi
             </a>
-            
-            <!-- <a href="https://liberapay.com/echobash" 
-               class="bg-yellow-600 hover:bg-yellow-700 text-white px-6 py-3 rounded-lg text-center font-semibold transition-colors">
-                Patronage via Liberapay
-            </a> -->
-        </div>
+
 
         <!-- Footer -->
-        <footer class="mt-16 pt-8 border-t border-gray-700 text-center text-gray-400">
-            <p>Made with ❤️ by <a href="https://echobash.com" class="text-blue-400 hover:text-blue-300">echobash.com</a></p>
+        <footer class="mt-16 pt-8 border-t text-center">
+            <p>Made with ❤️ by <a href="https://echobash.com">echobash.com</a></p>
         </footer>
     </main>
+
+    <!-- Theme Script -->
+    <script src="js/theme.js"></script>
 </body>
 </html>

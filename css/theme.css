@@ -97,7 +97,7 @@ body.dark {
 }
 
 body.light {
-    background: var(--bg-gradient);
+   background: white !important;
 }
 
 /* Theme Toggle Button */
@@ -533,11 +533,6 @@ code {
     color: white !important;
 }
 
-/* Make background white in light mode for all HTML pages */
-.light body {
-    background: white !important;
-}
-
 /* CTA section text in light mode */
 .light .text-2xl.text-gray-400 {
     color: white !important;
@@ -649,5 +644,42 @@ code {
 
 /* Or more specific selector */
 .light #cta-section a.border-gray-400 {
+    color: white !important;
+}
+/* Force white background for all pages in light mode */
+body.light {
+    background: white !important;
+}
+
+/* Override any specific background classes in light mode */
+body.light.bg-slate-900,
+body.light.bg-gray-900,
+body.light.bg-slate-800,
+body.light[style*="background"] {
+    background: white !important;
+}
+
+/* Ensure main content areas also have white background */
+body.light main,
+body.light .min-h-screen {
+    background: white !important;
+}
+html.light {
+   background: white !important;
+}
+
+html.light .min-h-screen {
+    background: white !important;
+}
+
+html.dark body {
+    background: var(--bg-gradient);
+}
+
+html.light .tool-content h3 {
+    color: white !important;
+}
+
+html.light .cta-github-btn {
     color: white !important;
 }
