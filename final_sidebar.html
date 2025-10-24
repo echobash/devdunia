@@ -353,7 +353,7 @@
 
 <!-- Mobile Sidebar Toggle -->
 <div class="lg:hidden fixed top-4 left-4 z-[60]">
-    <button id="mobile-sidebar-toggle" class="p-3 bg-slate-800/95 backdrop-blur-md border border-slate-700/60 rounded-lg text-white hover:bg-slate-700/90 transition-colors duration-200 shadow-lg" style="pointer-events: auto;">
+    <button id="mobile-sidebar-toggle" class="p-3 bg-slate-800/95 backdrop-blur-md border border-slate-700/60 rounded-lg text-white hover:bg-slate-700/90 transition-colors duration-200 shadow-lg" style="pointer-events: auto;" onclick="(function(){var s=document.getElementById('sidebar');var o=document.getElementById('mobile-sidebar-overlay');if(!s)return;var isOpen=!s.classList.contains('-translate-x-full');if(isOpen){s.classList.add('-translate-x-full');if(o)o.classList.add('hidden');document.body.style.overflow='';this.setAttribute('aria-expanded','false');if(s)s.setAttribute('aria-hidden','true');}else{s.classList.remove('-translate-x-full');if(o)o.classList.remove('hidden');document.body.style.overflow='hidden';this.setAttribute('aria-expanded','true');if(s)s.setAttribute('aria-hidden','false');}})()">
         <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
         </svg>
@@ -361,7 +361,7 @@
 </div>
 
 <!-- Mobile Sidebar Overlay -->
-<div id="mobile-sidebar-overlay" class="lg:hidden fixed inset-0 bg-black/50 backdrop-blur-sm z-40 hidden"></div>
+<div id="mobile-sidebar-overlay" class="lg:hidden fixed inset-0 bg-black/50 backdrop-blur-sm z-40 hidden" onclick="(function(){var s=document.getElementById('sidebar');var o=document.getElementById('mobile-sidebar-overlay');if(s)s.classList.add('-translate-x-full');if(o)o.classList.add('hidden');document.body.style.overflow='';})()"></div>
 
 <script>
 // Initialize sidebar functionality
