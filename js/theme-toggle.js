@@ -9,7 +9,7 @@
         }
         const button = document.createElement('button');
         button.id = 'theme-toggle-float';
-        button.className = 'fixed bottom-6 right-6 p-3 rounded-full bg-slate-800 dark:bg-white shadow-lg hover:scale-110 transition-all duration-300 z-50';
+        button.className = 'fixed bottom-6 right-6 p-3 rounded-full bg-white dark:bg-slate-800 text-slate-800 dark:text-white shadow-lg hover:scale-110 hover:bg-gray-100 dark:hover:bg-slate-700 transition-all duration-300 z-50';
         button.innerHTML = `
             <svg class="w-6 h-6 theme-toggle-dark hidden" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12.79A9 9 0 1111.21 3c.27 0 .54.01.8.04A7 7 0 0021 12.79z" />
