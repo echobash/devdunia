@@ -1,0 +1,621 @@
+/* DevDunia Theme Styles - Dark and Light Mode */
+
+/* Root CSS Variables for Dark Theme (Default) */
+:root,
+:root.dark {
+    /* Background colors */
+    --bg-primary: #0f172a;
+    --bg-secondary: #1e293b;
+    --bg-tertiary: #334155;
+    --bg-overlay: rgba(15, 23, 42, 0.95);
+
+    /* Text colors */
+    --text-primary: #ffffff;
+    --text-secondary: #cbd5e1;
+    --text-tertiary: #94a3b8;
+    --text-muted: #64748b;
+
+    /* Border colors */
+    --border-primary: rgba(71, 85, 105, 0.3);
+    --border-secondary: rgba(71, 85, 105, 0.5);
+    --border-hover: rgba(59, 130, 246, 0.5);
+
+    /* Card backgrounds */
+    --card-bg: rgba(255, 255, 255, 0.05);
+    --card-bg-hover: rgba(255, 255, 255, 0.08);
+    --card-border: rgba(255, 255, 255, 0.1);
+
+    /* Glass effects */
+    --glass-bg: rgba(255, 255, 255, 0.05);
+    --glass-border: rgba(255, 255, 255, 0.1);
+
+    /* Accent colors */
+    --accent-blue: #3b82f6;
+    --accent-purple: #8b5cf6;
+    --accent-green: #10b981;
+    --accent-red: #ef4444;
+    --accent-orange: #f97316;
+
+    /* Gradients */
+    --gradient-primary: linear-gradient(135deg, #3b82f6, #8b5cf6);
+    --gradient-secondary: linear-gradient(135deg, #10b981, #3b82f6);
+    --gradient-hero: linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #0f172a 100%);
+    --bg-gradient: linear-gradient(135deg, #0f172a 0%, #121826 50%, #0f172a 100%);
+}
+
+/* Light Theme Variables */
+:root.light {
+    /* Background colors */
+    --bg-primary: #ffffff;
+    --bg-secondary: #f8fafc;
+    --bg-tertiary: #f1f5f9;
+    --bg-overlay: rgba(255, 255, 255, 0.95);
+
+    /* Text colors */
+    --text-primary: #0f172a;
+    --text-secondary: #334155;
+    --text-tertiary: #475569;
+    --text-muted: #94a3b8;
+
+    /* Border colors */
+    --border-primary: rgba(226, 232, 240, 1);
+    --border-secondary: rgba(203, 213, 225, 1);
+    --border-hover: rgba(59, 130, 246, 0.5);
+
+    /* Card backgrounds */
+    --card-bg: #ffffff;
+    --card-bg-hover: #f8fafc;
+    --card-border: rgba(226, 232, 240, 1);
+
+    /* Glass effects */
+    --glass-bg: rgba(255, 255, 255, 0.9);
+    --glass-border: rgba(226, 232, 240, 1);
+
+    /* Accent colors remain the same */
+    --accent-blue: #3b82f6;
+    --accent-purple: #8b5cf6;
+    --accent-green: #10b981;
+    --accent-red: #ef4444;
+    --accent-orange: #f97316;
+
+    /* Gradients */
+    --gradient-primary: linear-gradient(135deg, #3b82f6, #8b5cf6);
+    --gradient-secondary: linear-gradient(135deg, #10b981, #3b82f6);
+    --gradient-hero: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 50%, #f8fafc 100%);
+    --bg-gradient: linear-gradient(135deg, #ffffff 0%, #f8fafc 50%, #ffffff 100%);
+}
+
+/* Global Body Styles */
+body {
+    background: var(--bg-primary);
+    color: var(--text-primary);
+    transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+body.dark {
+    background: var(--bg-gradient);
+}
+
+body.light {
+    background: var(--bg-gradient);
+}
+
+/* Theme Toggle Button */
+#theme-toggle {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    z-index: 1000;
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    border: 2px solid var(--border-primary);
+    background: var(--glass-bg);
+    backdrop-filter: blur(10px);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+#theme-toggle:hover {
+    background: var(--card-bg-hover);
+    border-color: var(--border-hover);
+    transform: scale(1.05);
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+}
+
+#theme-toggle svg {
+    width: 24px;
+    height: 24px;
+    color: var(--text-primary);
+    transition: all 0.3s ease;
+}
+
+.rotate-animation {
+    animation: rotate 0.3s ease-in-out;
+}
+
+@keyframes rotate {
+    0% { transform: rotate(0deg) scale(1); }
+    50% { transform: rotate(180deg) scale(1.1); }
+    100% { transform: rotate(360deg) scale(1); }
+}
+
+/* Navigation */
+nav {
+    background: var(--glass-bg) !important;
+    backdrop-filter: blur(20px);
+    border-bottom: 1px solid var(--border-primary);
+}
+
+/* Cards and Glass Effects */
+.glass,
+.glass-card {
+    background: var(--glass-bg);
+    backdrop-filter: blur(15px);
+    border: 1px solid var(--glass-border);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.tool-card {
+    background: var(--card-bg);
+    border: 1px solid var(--card-border);
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.tool-card:hover {
+    background: var(--card-bg-hover);
+    border-color: var(--border-hover);
+}
+
+/* Light theme specific card styles */
+.light .tool-card {
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+}
+
+.light .tool-card:hover {
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+}
+
+/* Text Colors */
+.text-white {
+    color: var(--text-primary) !important;
+}
+
+.text-gray-300,
+.text-gray-400 {
+    color: var(--text-secondary) !important;
+}
+
+.text-gray-500 {
+    color: var(--text-tertiary) !important;
+}
+
+/* Search Bar */
+.search-bar {
+    background: var(--glass-bg);
+    border: 1px solid var(--border-primary);
+    color: var(--text-primary);
+}
+
+.search-bar:focus {
+    background: var(--card-bg-hover);
+    border-color: var(--border-hover);
+}
+
+.search-bar::placeholder {
+    color: var(--text-muted);
+}
+
+/* Sidebar Styles */
+.sidebar {
+    background: var(--bg-overlay) !important;
+    backdrop-filter: blur(10px);
+    border-right: 1px solid var(--border-primary) !important;
+}
+
+.light .sidebar {
+    background: rgba(255, 255, 255, 0.98) !important;
+    box-shadow: 2px 0 10px rgba(0, 0, 0, 0.05);
+}
+
+.sidebar-item {
+    color: var(--text-secondary);
+}
+
+.sidebar-item:hover {
+    background: var(--card-bg-hover);
+    color: var(--text-primary);
+}
+
+.sidebar-item.active {
+    background: rgba(59, 130, 246, 0.2);
+    color: var(--accent-blue);
+}
+
+.sidebar-section-title {
+    color: var(--text-muted);
+}
+
+/* Tool Icons */
+.tool-icon {
+    background: linear-gradient(135deg, rgba(59, 130, 246, 0.2), rgba(139, 92, 246, 0.2));
+    border: 1px solid rgba(59, 130, 246, 0.3);
+}
+
+.light .tool-icon {
+    background: linear-gradient(135deg, rgba(59, 130, 246, 0.1), rgba(139, 92, 246, 0.1));
+    border: 1px solid rgba(59, 130, 246, 0.2);
+}
+
+/* Inputs and Textareas */
+input[type="text"],
+input[type="number"],
+input[type="email"],
+input[type="password"],
+textarea,
+select {
+    background: var(--card-bg);
+    border: 1px solid var(--border-primary);
+    color: var(--text-primary);
+    transition: all 0.3s ease;
+}
+
+input:focus,
+textarea:focus,
+select:focus {
+    background: var(--bg-primary);
+    border-color: var(--border-hover);
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+
+.light input:focus,
+.light textarea:focus,
+.light select:focus {
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.05);
+}
+
+/* Buttons */
+button,
+.btn {
+    transition: all 0.3s ease;
+}
+
+/* Code Blocks */
+pre,
+code {
+    background: var(--bg-secondary);
+    color: var(--text-primary);
+    border: 1px solid var(--border-primary);
+}
+
+.light pre,
+.light code {
+    background: var(--bg-tertiary);
+}
+
+/* Scrollbar Theming */
+::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+}
+
+::-webkit-scrollbar-track {
+    background: var(--bg-secondary);
+}
+
+::-webkit-scrollbar-thumb {
+    background: var(--gradient-primary);
+    border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: var(--accent-blue);
+}
+
+/* Light theme scrollbar */
+.light ::-webkit-scrollbar-track {
+    background: var(--bg-tertiary);
+}
+
+.light ::-webkit-scrollbar-thumb {
+    background: var(--accent-blue);
+}
+
+/* GitHub Banner */
+.github-banner {
+    background: var(--gradient-primary);
+}
+
+/* Stats and Badges */
+.light .bg-green-400,
+.light .bg-blue-400,
+.light .bg-purple-400,
+.light .bg-red-400 {
+    opacity: 0.9;
+}
+
+/* Section Divider */
+.section-divider {
+    background: linear-gradient(90deg, transparent, var(--border-secondary), transparent);
+}
+
+/* Dropdown and Modals */
+.dropdown-menu,
+.modal {
+    background: var(--bg-primary);
+    border: 1px solid var(--border-primary);
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+}
+
+.light .dropdown-menu,
+.light .modal {
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+}
+
+/* Search Results */
+#searchResults {
+    background: var(--bg-overlay);
+    backdrop-filter: blur(10px);
+    border: 1px solid var(--border-primary);
+}
+
+/* Status Messages */
+.status-success {
+    background: rgba(16, 185, 129, 0.1);
+    border-color: rgba(16, 185, 129, 0.3);
+    color: #10b981;
+}
+
+.status-error {
+    background: rgba(239, 68, 68, 0.1);
+    border-color: rgba(239, 68, 68, 0.3);
+    color: #ef4444;
+}
+
+.status-warning {
+    background: rgba(249, 115, 22, 0.1);
+    border-color: rgba(249, 115, 22, 0.3);
+    color: #f97316;
+}
+
+.status-info {
+    background: rgba(59, 130, 246, 0.1);
+    border-color: rgba(59, 130, 246, 0.3);
+    color: #3b82f6;
+}
+
+/* Light theme adjustments for status messages */
+.light .status-success,
+.light .status-error,
+.light .status-warning,
+.light .status-info {
+    background-color: rgba(255, 255, 255, 0.9);
+}
+
+/* Animations */
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+@keyframes slideUp {
+    from { 
+        transform: translateY(20px); 
+        opacity: 0; 
+    }
+    to { 
+        transform: translateY(0); 
+        opacity: 1; 
+    }
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    #theme-toggle {
+        top: 10px;
+        right: 10px;
+        width: 40px;
+        height: 40px;
+    }
+    
+    #theme-toggle svg {
+        width: 20px;
+        height: 20px;
+    }
+}
+
+/* Print styles */
+@media print {
+    #theme-toggle {
+        display: none !important;
+    }
+    
+    body {
+        background: white !important;
+        color: black !important;
+    }
+}
+
+/* Support Button in Navigation */
+.nav-support-btn {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.5rem 0.75rem;
+    border-radius: 0.5rem;
+    font-weight: 500;
+    font-size: 0.875rem;
+    text-decoration: none;
+    transition: all 0.3s ease;
+    border: 1px solid transparent;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.nav-support-btn:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.nav-support-btn .indicator {
+    width: 0.5rem;
+    height: 0.5rem;
+    border-radius: 50%;
+    flex-shrink: 0;
+}
+
+/* Dark mode styles */
+.dark .nav-support-btn {
+    background: rgba(147, 51, 234, 0.1);
+    border-color: rgba(147, 51, 234, 0.3);
+    color: rgb(196, 181, 253);
+}
+
+.dark .nav-support-btn:hover {
+    background: rgba(147, 51, 234, 0.2);
+    border-color: rgba(147, 51, 234, 0.5);
+    color: rgb(221, 214, 254);
+}
+
+.dark .nav-support-btn .indicator {
+    background: rgb(196, 181, 253);
+}
+
+/* Light mode styles */
+.light .nav-support-btn {
+    background: rgba(147, 51, 234, 0.05);
+    border-color: rgba(147, 51, 234, 0.2);
+    color: rgb(88, 28, 135);
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+}
+
+.light .nav-support-btn:hover {
+    background: rgba(147, 51, 234, 0.1);
+    border-color: rgba(147, 51, 234, 0.3);
+    color: rgb(59, 7, 100);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.light .nav-support-btn .indicator {
+    background: rgb(147, 51, 234);
+}
+
+/* Light mode specific text overrides for tool headings */
+.light .tool-content h3 {
+    color: white !important;
+}
+
+.light .tool-content label {
+    color: white !important;
+}
+
+/* Specific overrides for tool headings in light mode */
+.light #ip-content h3,
+.light #password-content h3,
+.light #json-content label,
+.light .tool-tab[data-tool="ip"],
+.light .tool-tab[data-tool="password"],
+.light .tool-tab[data-tool="json"] {
+    color: white !important;
+}
+
+/* Star on GitHub button text in light mode */
+.light .cta-github-btn {
+    color: white !important;
+}
+
+/* CTA section text in light mode */
+.light .text-2xl.text-gray-400 {
+    color: white !important;
+}
+
+/* CTA buttons text in light mode */
+.light .bg-gradient-to-r.from-purple-500.to-blue-500 {
+    color: white !important;
+}
+
+/* CTA section heading in light mode */
+.light .text-5xl.sm\\:text-6xl.font-bold {
+    color: white !important;
+}
+
+/* Force all text in CTA section to be white in light mode */
+.light .py-24.dark\\:bg-slate-900.light\\:bg-gray-50 h2,
+.light .py-24.dark\\:bg-slate-900.light\\:bg-gray-50 p,
+.light .py-24.dark\\:bg-slate-900.light\\:bg-gray-50 .text-2xl.text-gray-400,
+.light .py-24.dark\\:bg-slate-900.light\\:bg-gray-50 .text-5xl.sm\\:text-6xl.font-bold {
+    color: white !important;
+}
+
+/* Demo tool box styling - same for both light and dark modes */
+.light .bg-slate-800\/90.backdrop-blur-sm.rounded-3xl,
+.dark .bg-slate-800\/90.backdrop-blur-sm.rounded-3xl {
+    background: rgba(15, 23, 42, 0.9) !important;
+    border-color: rgba(71, 85, 105, 0.5) !important;
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25) !important;
+}
+
+/* Force all text inside the box to be white in both modes */
+.light .bg-slate-800\/90.backdrop-blur-sm.rounded-3xl h3,
+.light .bg-slate-800\/90.backdrop-blur-sm.rounded-3xl label,
+.light .bg-slate-800\/90.backdrop-blur-sm.rounded-3xl p,
+.light .bg-slate-800\/90.backdrop-blur-sm.rounded-3xl span,
+.light .bg-slate-800\/90.backdrop-blur-sm.rounded-3xl div {
+    color: white !important;
+}
+
+/* Force buttons inside the box to use dark mode styles in light mode */
+.light .bg-slate-800\/90.backdrop-blur-sm.rounded-3xl button {
+    background: rgba(59, 130, 246, 0.2) !important;
+    border-color: rgba(59, 130, 246, 0.3) !important;
+    color: #3b82f6 !important;
+}
+
+.light .bg-slate-800\/90.backdrop-blur-sm.rounded-3xl button:hover {
+    background: rgba(59, 130, 246, 0.3) !important;
+    border-color: rgba(59, 130, 246, 0.5) !important;
+}
+
+/* Force inputs and selects inside the box to use dark mode styles in light mode */
+.light .bg-slate-800\/90.backdrop-blur-sm.rounded-3xl input,
+.light .bg-slate-800\/90.backdrop-blur-sm.rounded-3xl textarea,
+.light .bg-slate-800\/90.backdrop-blur-sm.rounded-3xl select {
+    background: rgba(255, 255, 255, 0.05) !important;
+    border-color: rgba(71, 85, 105, 0.3) !important;
+    color: white !important;
+}
+
+.light .bg-slate-800\/90.backdrop-blur-sm.rounded-3xl input:focus,
+.light .bg-slate-800\/90.backdrop-blur-sm.rounded-3xl textarea:focus,
+.light .bg-slate-800\/90.backdrop-blur-sm.rounded-3xl select:focus {
+    background: rgba(15, 23, 42, 1) !important;
+    border-color: rgba(59, 130, 246, 0.5) !important;
+}
+
+/* Force pre and code blocks inside the box to use dark mode styles in light mode */
+.light .bg-slate-800\/90.backdrop-blur-sm.rounded-3xl pre,
+.light .bg-slate-800\/90.backdrop-blur-sm.rounded-3xl code {
+    background: rgba(30, 41, 59, 1) !important;
+    color: white !important;
+    border-color: rgba(71, 85, 105, 0.3) !important;
+}
+
+/* CTA section styling - same dark background for both light and dark modes */
+.light .py-24.dark\\:bg-slate-900.light\\:bg-gray-50 {
+    background: #0f172a !important;
+}
+
+
+
+/* Reduced motion */
+@media (prefers-reduced-motion: reduce) {
+    * {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+    }
+}

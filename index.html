@@ -74,6 +74,12 @@
     }
     </script>
     <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Theme Styles -->
+    <link rel="stylesheet" href="css/theme.css">
+    
+    <!-- Theme Script (Load early for no flash) -->
+    <script src="js/theme.js"></script>
   <style>
         .hero-bg {
             background: linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #0f172a 100%);
@@ -100,6 +106,12 @@
   </style>
 </head>
 <body class="min-h-screen hero-bg">
+    <!-- Theme Toggle Button -->
+    <button id="theme-toggle" aria-label="Toggle dark/light mode" class="fixed top-4 right-4 z-50 p-3 bg-slate-800/90 backdrop-blur-sm border border-slate-700/50 rounded-full shadow-lg hover:bg-slate-700/90 transition-all duration-300 dark:bg-slate-800/90 dark:border-slate-700/50 dark:hover:bg-slate-700/90 light:bg-white/90 light:border-gray-200/60 light:hover:bg-gray-100/90">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-gray-300 dark:text-gray-300 light:text-gray-700" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" />
+        </svg>
+    </button>
     <!-- Hero Section -->
     <div class="relative min-h-screen flex items-center justify-center overflow-hidden">
         <!-- Background Pattern -->
@@ -175,17 +187,17 @@
                 
                 <!-- Right Side - Tool Demo -->
                 <div class="relative">
-                    <div class="bg-slate-800/90 backdrop-blur-sm rounded-3xl border border-slate-700/50 p-8 shadow-2xl">
+                    <div class="bg-slate-800/90 backdrop-blur-sm rounded-3xl border border-slate-700/50 p-8 shadow-2xl dark:bg-slate-800/90 dark:border-slate-700/50 light:bg-white/95 light:border-gray-200/60 light:shadow-xl">
                         <!-- Tool Selector -->
-                        <div class="flex space-x-2 mb-8 bg-slate-900/50 rounded-xl p-2">
+                        <div class="flex space-x-2 mb-8 bg-slate-900/50 rounded-xl p-2 dark:bg-slate-900/50 light:bg-gray-100/80">
                             
-                            <button class="tool-tab active flex-1 px-4 py-3 text-sm font-medium text-gray-400 hover:text-white transition-colors" data-tool="ip">
+                            <button class="tool-tab active flex-1 px-4 py-3 text-sm font-medium text-gray-400 hover:text-white transition-colors dark:text-gray-400 dark:hover:text-white light:text-gray-800 light:hover:text-gray-900" data-tool="ip">
                                 IP Address Tools
                             </button>
-                            <button class="tool-tab flex-1 px-4 py-3 text-sm font-medium text-purple-400 bg-slate-700/50 rounded-lg transition-colors" data-tool="password">
+                            <button class="tool-tab flex-1 px-4 py-3 text-sm font-medium text-purple-400 bg-slate-700/50 rounded-lg transition-colors dark:bg-slate-700/50 light:bg-purple-200/60 light:text-purple-800" data-tool="password">
                                 Password Generator
                             </button>
-                            <button class="tool-tab flex-1 px-4 py-3 text-sm font-medium text-gray-400 hover:text-white transition-colors" data-tool="json">
+                            <button class="tool-tab flex-1 px-4 py-3 text-sm font-medium text-gray-400 hover:text-white transition-colors dark:text-gray-400 dark:hover:text-white light:text-gray-800 light:hover:text-gray-900" data-tool="json">
                                 JSON Beautifier
                             </button>
                         </div>
@@ -195,58 +207,58 @@
                             <!-- Password Generator Content -->
                             <div id="password-content" class="tool-content">
                                 <div class="mb-6">
-                                    <h3 class="text-lg font-semibold text-white mb-4">Generated Password</h3>
-                                    <div class="bg-slate-900/50 rounded-xl p-4 border border-slate-600/50 flex items-center justify-between">
-                                        <span id="generated-password" class="text-lg font-mono text-green-400">Kx9#mP2$vL8@nQ4!</span>
-                                        <button id="copy-password" class="px-3 py-1 bg-blue-600/20 border border-blue-500/30 rounded-lg text-blue-400 hover:bg-blue-600/30 transition-colors text-sm">
+                                    <h3 class="text-lg font-semibold text-white mb-4 dark:text-white light:text-white">Password Generator</h3>
+                                    <div class="bg-slate-900/50 rounded-xl p-4 border border-slate-600/50 flex items-center justify-between dark:bg-slate-900/50 dark:border-slate-600/50 light:bg-white light:border-gray-300">
+                                        <span id="generated-password" class="text-lg font-mono text-green-400 dark:text-green-400 light:text-green-600">Kx9#mP2$vL8@nQ4!</span>
+                                        <button id="copy-password" class="px-3 py-1 bg-blue-600/20 border border-blue-500/30 rounded-lg text-blue-400 hover:bg-blue-600/30 transition-colors text-sm dark:bg-blue-600/20 dark:border-blue-500/30 dark:text-blue-400 dark:hover:bg-blue-600/30 light:bg-blue-100 light:border-blue-300 light:text-blue-700 light:hover:bg-blue-200">
                                             Copy
                                         </button>
                                     </div>
                             </div>
                                 
                                 <div class="mb-6">
-                                    <label class="text-sm font-medium text-gray-300 mb-2 block">Password Length: <span id="length-value">16</span></label>
-                                    <input type="range" id="length-slider" min="8" max="32" value="16" class="w-full h-2 bg-slate-700 rounded-lg appearance-none cursor-pointer slider">
+                                    <label class="text-sm font-medium text-gray-300 mb-2 block dark:text-gray-300 light:text-gray-700">Password Length: <span id="length-value">16</span></label>
+                                    <input type="range" id="length-slider" min="8" max="32" value="16" class="w-full h-2 bg-slate-700 rounded-lg appearance-none cursor-pointer slider dark:bg-slate-700 light:bg-gray-300" style="background: var(--bg-primary);">
                         </div>
-                                
+
                                 <div class="mb-6">
                                     <div class="flex items-center justify-between mb-2">
-                                        <span class="text-sm font-medium text-gray-300">Password Strength:</span>
-                                        <span class="text-sm font-medium text-green-400">Strong</span>
+                                        <span class="text-sm font-medium text-gray-300 dark:text-gray-300 light:text-gray-700">Password Strength:</span>
+                                        <span class="text-sm font-medium text-green-400 dark:text-green-400 light:text-green-600">Strong</span>
                                     </div>
-                                    <div class="w-full bg-slate-700 rounded-full h-2">
+                                    <div class="w-full bg-slate-700 rounded-full h-2 dark:bg-slate-700 light:bg-gray-300" style="background: var(--bg-primary);">
                                         <div class="bg-gradient-to-r from-red-500 via-yellow-500 to-green-500 h-2 rounded-full" style="width: 100%"></div>
                             </div>
-                                    <p class="text-xs text-gray-400 mt-1">Contains: lowercase, uppercase, numbers, symbols</p>
+                                    <p class="text-xs text-gray-400 mt-1 dark:text-gray-400 light:text-gray-800">Contains: lowercase, uppercase, numbers, symbols</p>
                         </div>
-                                
+
                                 <div class="grid grid-cols-2 gap-4 mb-6">
                                     <label class="flex items-center space-x-2">
-                                        <input type="checkbox" checked class="w-4 h-4 text-purple-600 bg-slate-700 border-slate-600 rounded focus:ring-purple-500">
-                                        <span class="text-sm text-gray-300">Uppercase (A-Z)</span>
+                                        <input type="checkbox" checked class="w-4 h-4 text-purple-600 bg-slate-700 border-slate-600 rounded focus:ring-purple-500 dark:bg-slate-700 dark:border-slate-600 light:bg-gray-200 light:border-gray-300" style="background: var(--bg-primary); border-color: var(--border-primary);">
+                                        <span class="text-sm text-gray-300 dark:text-gray-300 light:text-gray-800">Uppercase (A-Z)</span>
                                     </label>
                                     <label class="flex items-center space-x-2">
-                                        <input type="checkbox" checked class="w-4 h-4 text-purple-600 bg-slate-700 border-slate-600 rounded focus:ring-purple-500">
-                                        <span class="text-sm text-gray-300">Lowercase (a-z)</span>
+                                        <input type="checkbox" checked class="w-4 h-4 text-purple-600 bg-slate-700 border-slate-600 rounded focus:ring-purple-500 dark:bg-slate-700 dark:border-slate-600 light:bg-gray-200 light:border-gray-300" style="background: var(--bg-primary); border-color: var(--border-primary);">
+                                        <span class="text-sm text-gray-300 dark:text-gray-300 light:text-gray-800">Lowercase (a-z)</span>
                                     </label>
                                     <label class="flex items-center space-x-2">
-                                        <input type="checkbox" checked class="w-4 h-4 text-purple-600 bg-slate-700 border-slate-600 rounded focus:ring-purple-500">
-                                        <span class="text-sm text-gray-300">Numbers (0-9)</span>
+                                        <input type="checkbox" checked class="w-4 h-4 text-purple-600 bg-slate-700 border-slate-600 rounded focus:ring-purple-500 dark:bg-slate-700 dark:border-slate-600 light:bg-gray-200 light:border-gray-300" style="background: var(--bg-primary); border-color: var(--border-primary);">
+                                        <span class="text-sm text-gray-300 dark:text-gray-300 light:text-gray-800">Numbers (0-9)</span>
                                     </label>
                                     <label class="flex items-center space-x-2">
-                                        <input type="checkbox" checked class="w-4 h-4 text-purple-600 bg-slate-700 border-slate-600 rounded focus:ring-purple-500">
-                                        <span class="text-sm text-gray-300">Symbols (!@#$)</span>
+                                        <input type="checkbox" checked class="w-4 h-4 text-purple-600 bg-slate-700 border-slate-600 rounded focus:ring-purple-500 dark:bg-slate-700 dark:border-slate-600 light:bg-gray-200 light:border-gray-300" style="background: var(--bg-primary); border-color: var(--border-primary);">
+                                        <span class="text-sm text-gray-300 dark:text-gray-300 light:text-gray-800">Symbols (!@#$)</span>
                                     </label>
                 </div>
                                 
                                 <div class="flex space-x-3">
-                                    <button id="generate-password" class="flex-1 px-4 py-2 bg-purple-600 hover:bg-purple-700 text-white rounded-lg transition-colors flex items-center justify-center space-x-2">
+                                    <button id="generate-password" class="flex-1 px-4 py-2 bg-purple-600 hover:bg-purple-700 text-white rounded-lg transition-colors flex items-center justify-center space-x-2 dark:bg-purple-600 dark:hover:bg-purple-700 dark:text-white light:bg-purple-500 light:hover:bg-purple-600 light:text-white">
                                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
                                         </svg>
                                         <span>Generate Password</span>
                                     </button>
-                                    <button class="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors flex items-center justify-center space-x-2">
+                                    <button class="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors flex items-center justify-center space-x-2 dark:bg-blue-600 dark:hover:bg-blue-700 dark:text-white light:bg-blue-500 light:hover:bg-blue-600 light:text-white">
                                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
                                 </svg>
@@ -258,14 +270,14 @@
                             <!-- IP Address Tools Content -->
                             <div id="ip-content" class="tool-content hidden">
                                 <div class="mb-6">
-                                    <h3 class="text-lg font-semibold text-white mb-4">Your Public IP Address</h3>
-                                    <div class="bg-slate-900/50 rounded-xl p-4 border border-slate-600/50">
+                                    <h3 class="text-lg font-semibold text-white mb-4 dark:text-white light:text-white">Your Public IP Address</h3>
+                                    <div class="bg-slate-900/50 rounded-xl p-4 border border-slate-600/50 dark:bg-slate-900/50 dark:border-slate-600/50 light:bg-white light:border-gray-300">
                                         <div class="flex items-center justify-between">
                                             <div>
-                                                <span class="text-sm text-gray-400">Public IP</span>
-                                                <div class="text-lg font-mono text-blue-400">223.190.80.209</div>
+                                                <span class="text-sm text-gray-400 dark:text-gray-400 light:text-gray-600">Public IP</span>
+                                                <div class="text-lg font-mono text-blue-400 dark:text-blue-400 light:text-blue-600">223.190.80.209</div>
                                             </div>
-                                            <button class="px-3 py-1 bg-blue-600/20 border border-blue-500/30 rounded-lg text-blue-400 hover:bg-blue-600/30 transition-colors text-sm">
+                                            <button class="px-3 py-1 bg-blue-600/20 border border-blue-500/30 rounded-lg text-blue-400 hover:bg-blue-600/30 transition-colors text-sm dark:bg-blue-600/20 dark:border-blue-500/30 dark:text-blue-400 dark:hover:bg-blue-600/30 light:bg-blue-100 light:border-blue-300 light:text-blue-700 light:hover:bg-blue-200">
                                                 Copy
                                             </button>
                                         </div>
@@ -273,10 +285,10 @@
                 </div>
                                 
                                 <div class="mb-6">
-                                    <h3 class="text-lg font-semibold text-white mb-4">IP Address Lookup</h3>
+                                    <h3 class="text-lg font-semibold text-white mb-4 dark:text-white light:text-white">IP Address Lookup</h3>
                                     <div class="flex space-x-3">
-                                        <input id="ip-lookup-input" type="text" placeholder="Enter IP address (e.g., 8.8.8.8)" class="flex-1 px-4 py-2 bg-slate-700/50 border border-slate-600/50 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500">
-                                        <button id="ip-lookup-btn" class="px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded-lg transition-colors flex items-center space-x-2">
+                                        <input id="ip-lookup-input" type="text" placeholder="Enter IP address (e.g., 8.8.8.8)" class="flex-1 px-4 py-2 bg-slate-700/50 border border-slate-600/50 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500 dark:bg-slate-700/50 dark:border-slate-600/50 dark:text-white dark:placeholder-gray-400 light:bg-white light:border-gray-300 light:text-gray-900 light:placeholder-gray-500">
+                                        <button id="ip-lookup-btn" class="px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded-lg transition-colors flex items-center space-x-2 dark:bg-red-600 dark:hover:bg-red-700 dark:text-white light:bg-red-500 light:hover:bg-red-600 light:text-white">
                                             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
                                 </svg>
@@ -287,32 +299,32 @@
                                 
                                 <!-- IP Information Results -->
                                 <div id="ip-results" class="mb-6 hidden">
-                                    <h3 class="text-lg font-semibold text-white mb-4">IP Information</h3>
-                                    <div class="bg-slate-900/50 rounded-xl p-6 border border-slate-600/50">
+                                    <h3 class="text-lg font-semibold text-white mb-4 dark:text-white light:text-gray-900">IP Information</h3>
+                                    <div class="bg-slate-900/50 rounded-xl p-6 border border-slate-600/50 dark:bg-slate-900/50 dark:border-slate-600/50 light:bg-white light:border-gray-300">
                                         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                            <div class="bg-slate-700/50 p-4 rounded-lg border border-slate-600/30">
-                                                <h4 class="font-semibold text-blue-400 mb-2 text-sm">IP Address</h4>
-                                                <p id="result-ip" class="text-blue-300 font-mono text-sm"></p>
+                                            <div class="bg-slate-700/50 p-4 rounded-lg border border-slate-600/30 dark:bg-slate-700/50 dark:border-slate-600/30 light:bg-gray-100 light:border-gray-300" style="background: var(--card-bg); border-color: var(--border-primary);">
+                                                <h4 class="font-semibold text-blue-400 mb-2 text-sm dark:text-blue-400 light:text-blue-600">IP Address</h4>
+                                                <p id="result-ip" class="text-blue-300 font-mono text-sm dark:text-blue-300 light:text-blue-700"></p>
                                             </div>
-                                            <div class="bg-slate-700/50 p-4 rounded-lg border border-slate-600/30">
-                                                <h4 class="font-semibold text-green-400 mb-2 text-sm">Country</h4>
-                                                <p id="result-country" class="text-green-300 text-sm"></p>
+                                            <div class="bg-slate-700/50 p-4 rounded-lg border border-slate-600/30 dark:bg-slate-700/50 dark:border-slate-600/30 light:bg-gray-100 light:border-gray-300" style="background: var(--card-bg); border-color: var(--border-primary);">
+                                                <h4 class="font-semibold text-green-400 mb-2 text-sm dark:text-green-400 light:text-green-600">Country</h4>
+                                                <p id="result-country" class="text-green-300 text-sm dark:text-green-300 light:text-green-700"></p>
                                             </div>
-                                            <div class="bg-slate-700/50 p-4 rounded-lg border border-slate-600/30">
-                                                <h4 class="font-semibold text-purple-400 mb-2 text-sm">Region</h4>
-                                                <p id="result-region" class="text-purple-300 text-sm"></p>
+                                            <div class="bg-slate-700/50 p-4 rounded-lg border border-slate-600/30 dark:bg-slate-700/50 dark:border-slate-600/30 light:bg-gray-100 light:border-gray-300" style="background: var(--card-bg); border-color: var(--border-primary);">
+                                                <h4 class="font-semibold text-purple-400 mb-2 text-sm dark:text-purple-400 light:text-purple-600">Region</h4>
+                                                <p id="result-region" class="text-purple-300 text-sm dark:text-purple-300 light:text-purple-700"></p>
                                             </div>
-                                            <div class="bg-slate-700/50 p-4 rounded-lg border border-slate-600/30">
-                                                <h4 class="font-semibold text-orange-400 mb-2 text-sm">City</h4>
-                                                <p id="result-city" class="text-orange-300 text-sm"></p>
+                                            <div class="bg-slate-700/50 p-4 rounded-lg border border-slate-600/30 dark:bg-slate-700/50 dark:border-slate-600/30 light:bg-gray-100 light:border-gray-300" style="background: var(--card-bg); border-color: var(--border-primary);">
+                                                <h4 class="font-semibold text-orange-400 mb-2 text-sm dark:text-orange-400 light:text-orange-600">City</h4>
+                                                <p id="result-city" class="text-orange-300 text-sm dark:text-orange-300 light:text-orange-700"></p>
                                             </div>
-                                            <div class="bg-slate-700/50 p-4 rounded-lg border border-slate-600/30">
-                                                <h4 class="font-semibold text-blue-400 mb-2 text-sm">ISP</h4>
-                                                <p id="result-isp" class="text-blue-300 text-sm"></p>
+                                            <div class="bg-slate-700/50 p-4 rounded-lg border border-slate-600/30 dark:bg-slate-700/50 dark:border-slate-600/30 light:bg-gray-100 light:border-gray-300" style="background: var(--card-bg); border-color: var(--border-primary);">
+                                                <h4 class="font-semibold text-blue-400 mb-2 text-sm dark:text-blue-400 light:text-blue-600">ISP</h4>
+                                                <p id="result-isp" class="text-blue-300 text-sm dark:text-blue-300 light:text-blue-700"></p>
                                             </div>
-                                            <div class="bg-slate-700/50 p-4 rounded-lg border border-slate-600/30">
-                                                <h4 class="font-semibold text-yellow-400 mb-2 text-sm">Organization</h4>
-                                                <p id="result-org" class="text-yellow-300 text-sm"></p>
+                                            <div class="bg-slate-700/50 p-4 rounded-lg border border-slate-600/30 dark:bg-slate-700/50 dark:border-slate-600/30 light:bg-gray-100 light:border-gray-300" style="background: var(--card-bg); border-color: var(--border-primary);">
+                                                <h4 class="font-semibold text-yellow-400 mb-2 text-sm dark:text-yellow-400 light:text-yellow-600">Organization</h4>
+                                                <p id="result-org" class="text-yellow-300 text-sm dark:text-yellow-300 light:text-yellow-700"></p>
                                             </div>
                                         </div>
                             </div>
@@ -323,27 +335,27 @@
                             <div id="json-content" class="tool-content hidden">
                                 <div class="mb-6">
                                     <div class="flex items-center justify-between mb-3">
-                                        <label class="text-base font-medium text-gray-300">Input:</label>
-                                        <button id="clear-json" class="text-sm text-gray-400 hover:text-white transition-colors px-3 py-1 rounded-lg hover:bg-slate-700/50">Clear</button>
+                                        <label class="text-base font-medium text-gray-300 dark:text-gray-300 light:text-white">JSON Beautifier</label>
+                                        <button id="clear-json" class="text-sm text-gray-400 hover:text-white transition-colors px-3 py-1 rounded-lg hover:bg-slate-700/50 dark:text-gray-400 dark:hover:text-white dark:hover:bg-slate-700/50 light:text-gray-700 light:hover:text-gray-900 light:hover:bg-gray-200">Clear</button>
                                     </div>
-                                    <div class="bg-slate-900/50 rounded-xl p-6 border border-slate-600/50">
-                                        <textarea id="json-input" class="w-full h-32 bg-transparent text-gray-300 font-mono text-sm resize-none focus:outline-none" placeholder="Enter your JSON here...">{"name":"DevDunia","tools":50,"features":["JSON Beautifier","Password Generator","IP Address Tools","Hash Generator","JWT Decoder","SQL Formatter"],"status":"active"}</textarea>
+                                    <div class="bg-slate-900/50 rounded-xl p-6 border border-slate-600/50 dark:bg-slate-900/50 dark:border-slate-600/50 light:bg-white light:border-gray-300">
+                                        <textarea id="json-input" class="w-full h-32 bg-transparent text-gray-300 font-mono text-sm resize-none focus:outline-none dark:bg-transparent dark:text-gray-300 light:bg-white light:text-gray-900" placeholder="Enter your JSON here...">{"name":"DevDunia","tools":50,"features":["JSON Beautifier","Password Generator","IP Address Tools","Hash Generator","JWT Decoder","SQL Formatter"],"status":"active"}</textarea>
                         </div>
                     </div>
-                    
+
                                 <div>
                                     <div class="flex items-center justify-between mb-3">
-                                        <label class="text-base font-medium text-gray-300">Output:</label>
+                                        <label class="text-base font-medium text-gray-300 dark:text-gray-300 light:text-gray-800">Output:</label>
                                         <div class="flex items-center space-x-3">
-                                            <select id="indent-select" class="text-sm bg-slate-700 text-gray-300 rounded-lg px-3 py-1">
+                                            <select id="indent-select" class="text-sm bg-slate-700 text-gray-300 rounded-lg px-3 py-1 dark:bg-slate-700 dark:text-gray-300 light:bg-gray-200 light:text-gray-800">
                                                 <option value="2">2 spaces</option>
                                                 <option value="4">4 spaces</option>
                                             </select>
-                                            <button id="copy-json" class="text-sm text-gray-400 hover:text-white transition-colors px-3 py-1 rounded-lg hover:bg-slate-700/50">Copy</button>
+                                            <button id="copy-json" class="text-sm text-gray-400 hover:text-white transition-colors px-3 py-1 rounded-lg hover:bg-slate-700/50 dark:text-gray-400 dark:hover:text-white dark:hover:bg-slate-700/50 light:text-gray-700 light:hover:text-gray-900 light:hover:bg-gray-200">Copy</button>
                                         </div>
                                     </div>
-                                    <div class="bg-slate-900/50 rounded-xl p-6 border border-slate-600/50">
-                                        <pre id="json-output" class="text-sm text-green-400 font-mono overflow-x-auto"><code>{
+                                    <div class="bg-slate-900/50 rounded-xl p-6 border border-slate-600/50 dark:bg-slate-900/50 dark:border-slate-600/50 light:bg-white light:border-gray-300">
+                                        <pre id="json-output" class="text-sm text-green-400 font-mono overflow-x-auto dark:text-green-400 light:text-green-800"><code>{
   "name": "DevDunia",
   "tools": 50,
   "features": [
@@ -367,62 +379,62 @@
                         </div>
 
     <!-- Features Section -->
-    <div class="py-24 bg-slate-800/40">
+    <div class="py-24 bg-slate-800/40 dark:bg-slate-800/40 light:bg-gray-100/80">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="text-center mb-20">
-                <p class="text-xl text-gray-400 mb-6">All your essential tools in one place.</p>
-                <h2 class="text-5xl sm:text-6xl font-bold text-white mb-8">
+                <p class="text-xl text-gray-400 mb-6 dark:text-gray-400 light:text-gray-600">All your essential tools in one place.</p>
+                <h2 class="text-5xl sm:text-6xl font-bold text-white mb-8 dark:text-white light:text-gray-900">
                     Why developers love DevDunia?
                 </h2>
                     </div>
                     
             <div class="grid grid-cols-1 md:grid-cols-3 gap-10">
                 <!-- Feature 1 -->
-                <div class="bg-slate-800/60 backdrop-blur-sm rounded-3xl p-10 border border-slate-700/50 hover:border-purple-500/50 transition-all duration-300 hover:transform hover:scale-105">
-                    <div class="w-16 h-16 bg-purple-500/20 rounded-2xl flex items-center justify-center mb-8">
-                        <svg class="w-8 h-8 text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <div class="bg-slate-800/60 backdrop-blur-sm rounded-3xl p-10 border border-slate-700/50 hover:border-purple-500/50 transition-all duration-300 hover:transform hover:scale-105 dark:bg-slate-800/60 dark:border-slate-700/50 dark:hover:border-purple-500/50 light:bg-white light:border-gray-200 light:hover:border-purple-300">
+                    <div class="w-16 h-16 bg-purple-500/20 rounded-2xl flex items-center justify-center mb-8 dark:bg-purple-500/20 light:bg-purple-100">
+                        <svg class="w-8 h-8 text-purple-400 dark:text-purple-400 light:text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
                                 </svg>
                             </div>
-                    <h3 class="text-2xl font-bold text-white mb-6">100% Open Source</h3>
-                    <p class="text-gray-400 mb-6 text-lg leading-relaxed">The entire codebase is open source and available on GitHub. You can contribute, modify, or even self-host your own version.</p>
-                    <a href="https://github.com/echobash/devdunia" class="text-purple-400 hover:text-purple-300 transition-colors font-semibold text-lg">Learn more →</a>
+                    <h3 class="text-2xl font-bold text-white mb-6 dark:text-white light:text-gray-900">100% Open Source</h3>
+                    <p class="text-gray-400 mb-6 text-lg leading-relaxed dark:text-gray-400 light:text-gray-600">The entire codebase is open source and available on GitHub. You can contribute, modify, or even self-host your own version.</p>
+                    <a href="https://github.com/echobash/devdunia" class="text-purple-400 hover:text-purple-300 transition-colors font-semibold text-lg dark:text-purple-400 dark:hover:text-purple-300 light:text-purple-600 light:hover:text-purple-700">Learn more →</a>
                     </div>
                     
                 <!-- Feature 2 -->
-                <div class="bg-slate-800/60 backdrop-blur-sm rounded-3xl p-10 border border-slate-700/50 hover:border-purple-500/50 transition-all duration-300 hover:transform hover:scale-105">
-                    <div class="w-16 h-16 bg-purple-500/20 rounded-2xl flex items-center justify-center mb-8">
-                        <svg class="w-8 h-8 text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <div class="bg-slate-800/60 backdrop-blur-sm rounded-3xl p-10 border border-slate-700/50 hover:border-purple-500/50 transition-all duration-300 hover:transform hover:scale-105 dark:bg-slate-800/60 dark:border-slate-700/50 dark:hover:border-purple-500/50 light:bg-white light:border-gray-200 light:hover:border-purple-300">
+                    <div class="w-16 h-16 bg-purple-500/20 rounded-2xl flex items-center justify-center mb-8 dark:bg-purple-500/20 light:bg-purple-100">
+                        <svg class="w-8 h-8 text-purple-400 dark:text-purple-400 light:text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path>
                                 </svg>
                             </div>
-                    <h3 class="text-2xl font-bold text-white mb-6">Free To Use</h3>
-                    <p class="text-gray-400 mb-6 text-lg leading-relaxed">No subscriptions, no hidden costs, no limits. All 50+ tools are completely free to use with no restrictions.</p>
-                    <a href="home.html" class="text-purple-400 hover:text-purple-300 transition-colors font-semibold text-lg">Learn more →</a>
+                    <h3 class="text-2xl font-bold text-white mb-6 dark:text-white light:text-gray-900">Free To Use</h3>
+                    <p class="text-gray-400 mb-6 text-lg leading-relaxed dark:text-gray-400 light:text-gray-600">No subscriptions, no hidden costs, no limits. All 50+ tools are completely free to use with no restrictions.</p>
+                    <a href="home.html" class="text-purple-400 hover:text-purple-300 transition-colors font-semibold text-lg dark:text-purple-400 dark:hover:text-purple-300 light:text-purple-600 light:hover:text-purple-700">Learn more →</a>
                     </div>
                     
                 <!-- Feature 3 -->
-                <div class="bg-slate-800/60 backdrop-blur-sm rounded-3xl p-10 border border-slate-700/50 hover:border-purple-500/50 transition-all duration-300 hover:transform hover:scale-105">
-                    <div class="w-16 h-16 bg-purple-500/20 rounded-2xl flex items-center justify-center mb-8">
-                        <svg class="w-8 h-8 text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <div class="bg-slate-800/60 backdrop-blur-sm rounded-3xl p-10 border border-slate-700/50 hover:border-purple-500/50 transition-all duration-300 hover:transform hover:scale-105 dark:bg-slate-800/60 dark:border-slate-700/50 dark:hover:border-purple-500/50 light:bg-white light:border-gray-200 light:hover:border-purple-300">
+                    <div class="w-16 h-16 bg-purple-500/20 rounded-2xl flex items-center justify-center mb-8 dark:bg-purple-500/20 light:bg-purple-100">
+                        <svg class="w-8 h-8 text-purple-400 dark:text-purple-400 light:text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path>
                                 </svg>
                     </div>
-                    <h3 class="text-2xl font-bold text-white mb-6">Constant Updates</h3>
-                    <p class="text-gray-400 mb-6 text-lg leading-relaxed">We're constantly adding new tools and features based on community feedback. Request new tools and see them implemented.</p>
-                    <a href="https://github.com/echobash/devdunia/issues" class="text-purple-400 hover:text-purple-300 transition-colors font-semibold text-lg">Learn more →</a>
+                    <h3 class="text-2xl font-bold text-white mb-6 dark:text-white light:text-gray-900">Constant Updates</h3>
+                    <p class="text-gray-400 mb-6 text-lg leading-relaxed dark:text-gray-400 light:text-gray-600">We're constantly adding new tools and features based on community feedback. Request new tools and see them implemented.</p>
+                    <a href="https://github.com/echobash/devdunia/issues" class="text-purple-400 hover:text-purple-300 transition-colors font-semibold text-lg dark:text-purple-400 dark:hover:text-purple-300 light:text-purple-600 light:hover:text-purple-700">Learn more →</a>
                 </div>
             </div>
         </div>
     </div>
 
     <!-- CTA Section -->
-    <div class="py-24">
+    <div class="py-24 dark:bg-slate-900 light:bg-gray-50">
         <div class="max-w-4xl mx-auto text-center px-4 sm:px-6 lg:px-8">
-            <h2 class="text-5xl sm:text-6xl font-bold text-white mb-8">
+            <h2 class="text-5xl sm:text-6xl font-bold text-white mb-8 dark:text-white light:text-gray-900">
                 Ready to boost your productivity?
                 </h2>
-            <p class="text-2xl text-gray-400 mb-12">Join thousands of developers who trust DevDunia for their daily workflow.</p>
+            <p class="text-2xl text-gray-400 mb-12 dark:text-gray-400 light:text-gray-600">Join thousands of developers who trust DevDunia for their daily workflow.</p>
             
             <div class="flex flex-col sm:flex-row gap-6 justify-center">
                 <a href="home.html" class="inline-flex items-center px-12 py-6 bg-gradient-to-r from-purple-500 to-blue-500 hover:from-purple-600 hover:to-blue-600 text-white font-bold rounded-2xl transition-all duration-300 transform hover:scale-105 shadow-2xl text-xl">
@@ -431,10 +443,10 @@
                     </svg>
                     Start Using Tools Now
                 </a>
-                <a href="https://github.com/echobash/devdunia" target="_blank" class="inline-flex items-center px-12 py-6 border-2 border-gray-600 hover:border-gray-500 text-white font-bold rounded-2xl transition-all duration-300 text-xl">
+                <a href="https://github.com/echobash/devdunia" target="_blank" class="cta-github-btn inline-flex items-center px-12 py-6 border-2 border-gray-600 hover:border-gray-500 text-white font-bold rounded-2xl transition-all duration-300 text-xl dark:border-gray-600 dark:hover:border-gray-500 dark:text-white light:border-gray-300 light:hover:border-gray-400 light:text-gray-900">
                     <svg class="w-6 h-6 mr-3" fill="currentColor" viewBox="0 0 24 24">
                         <path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/>
-                                </svg>
+                    </svg>
                     Star on GitHub
                     </a>
                 </div>
@@ -442,13 +454,13 @@
     </div>
 
     <!-- Footer -->
-    <div class="py-12 border-t border-slate-700/50">
+    <div class="py-12 border-t border-slate-700/50 dark:border-slate-700/50 light:border-gray-200">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="text-center">
-                <p class="text-gray-400 text-lg">
-                    Powered by <a href="https://echobash.com" target="_blank" class="text-purple-400 hover:text-purple-300 transition-colors font-semibold">echobash.com</a>
+                <p class="text-gray-400 text-lg dark:text-gray-400 light:text-gray-600">
+                    Powered by <a href="https://echobash.com" target="_blank" class="text-purple-400 hover:text-purple-300 transition-colors font-semibold dark:text-purple-400 dark:hover:text-purple-300 light:text-purple-600 light:hover:text-purple-700">echobash.com</a>
                 </p>
-                <p class="text-gray-500 text-sm mt-2">
+                <p class="text-gray-500 text-sm mt-2 dark:text-gray-500 light:text-gray-400">
                     Made with ❤️ for the developer community
                 </p>
             </div>
