@@ -40,6 +40,21 @@
     <link rel="canonical" href="https://devdunia.com/">
     
     <!-- Structured Data -->
+    <style>
+        #theme-toggle-float {
+            color: #94a3b8;
+        }
+        .dark #theme-toggle-float {
+            color: #475569;
+        }
+        #theme-toggle-float:hover {
+            color: #f8fafc;
+        }
+        .dark #theme-toggle-float:hover {
+            color: #0f172a;
+        }
+    </style>
+    
     <script type="application/ld+json">
     {
       "@context": "https://schema.org",
@@ -74,10 +89,28 @@
     }
     </script>
     <script src="https://cdn.tailwindcss.com"></script>
-  <style>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        dark: {
+                            bg: '#0f172a',
+                            surface: '#1e293b'
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
         .hero-bg {
             background: linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #0f172a 100%);
-    }
+        }
+        .dark .hero-bg {
+            background: linear-gradient(135deg, #000 0%, #111827 50%, #000 100%);
+        }
         .grid-pattern {
             background-image: radial-gradient(circle at 1px 1px, rgba(255,255,255,0.1) 1px, transparent 0);
             background-size: 20px 20px;
@@ -367,11 +400,11 @@
                         </div>
 
     <!-- Features Section -->
-    <div class="py-24 bg-slate-800/40">
+    <div class="py-24 bg-slate-800/40 dark:bg-black/40">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="text-center mb-20">
-                <p class="text-xl text-gray-400 mb-6">All your essential tools in one place.</p>
-                <h2 class="text-5xl sm:text-6xl font-bold text-white mb-8">
+                <p class="text-xl text-gray-400 dark:text-gray-300 mb-6">All your essential tools in one place.</p>
+                <h2 class="text-5xl sm:text-6xl font-bold text-white dark:text-gray-50 mb-8">
                     Why developers love DevDunia?
                 </h2>
                     </div>
@@ -696,6 +729,7 @@
             });
         });
     </script>
+    <script src="js/theme-toggle.js"></script>
 </body>
 </html>
 

@@ -285,8 +285,71 @@ const DevDuniaUtils = {
     }
 };
 
+// Theme management
+const ThemeManager = {
+    init() {
+        this.injectLightStyles();
+        const savedTheme = localStorage.getItem('theme');
+        if (savedTheme) {
+            document.documentElement.classList.toggle('dark', savedTheme === 'dark');
+            document.documentElement.classList.toggle('light', savedTheme === 'light');
+        } else if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
+            document.documentElement.classList.add('dark');
+            document.documentElement.classList.remove('light');
+            localStorage.setItem('theme', 'dark');
+        } else {
+            document.documentElement.classList.remove('dark');
+            document.documentElement.classList.add('light');
+            localStorage.setItem('theme', 'light');
+        }
+
+        this.updateThemeToggle();
+        const themeToggle = document.getElementById('theme-toggle');
+        if (themeToggle) {
+            themeToggle.addEventListener('click', () => this.toggleTheme());
+        }
+        const floatToggle = document.getElementById('theme-toggle-float');
+        if (floatToggle) {
+            floatToggle.addEventListener('click', () => this.toggleTheme());
+        }
+    },
+
+    
+    injectLightStyles() {
+        if (document.getElementById('light-theme-overrides')) return;
+        const css = `
+html.light body { background: #ffffff !important; color: #0f172a !important; }
+html.light nav, html.light [class*="bg-slate-900"], html.light [class*="bg-slate-800"], html.light .hero-bg { background: #ffffff !important; color: #0f172a !important; }
+html.light [class*="text-white"] { color: #0f172a !important; }
+html.light [class*="text-gray-300"], html.light [class*="text-gray-400"], html.light [class*="text-gray-500"] { color: #475569 !important; }
+html.light [class*="bg-slate-800"] { background-color: #f8fafc !important; }
+html.light [class*="border-slate-700"], html.light [class*="border-slate-600"], html.light [class*="border-slate-700\\/50"] { border-color: rgba(15,23,42,0.08) !important; }
+html.light .bg-slate-900\\/95 { background-color: #ffffff !important; }
+        `;
+        const style = document.createElement('style');
+        style.id = 'light-theme-overrides';
+        style.appendChild(document.createTextNode(css));
+        document.head.appendChild(style);
+    },
+
+    updateThemeToggle() {
+        const isDark = document.documentElement.classList.contains('dark');
+        document.querySelectorAll('.theme-toggle-dark').forEach(el => el.classList.toggle('hidden', !isDark));
+        document.querySelectorAll('.theme-toggle-light').forEach(el => el.classList.toggle('hidden', isDark));
+    },
+
+    toggleTheme() {
+        const isDark = document.documentElement.classList.toggle('dark');
+        document.documentElement.classList.toggle('light', !isDark);
+        localStorage.setItem('theme', isDark ? 'dark' : 'light');
+        this.updateThemeToggle();
+    }
+};
+
 // Common event listeners setup
 document.addEventListener('DOMContentLoaded', function() {
+    ThemeManager.init();
+    
     // Auto-resize all textareas
     document.querySelectorAll('textarea').forEach(textarea => {
         textarea.addEventListener('input', function() {
@@ -336,3 +399,5 @@ document.addEventListener('DOMContentLoaded', function() {
 
 // Export for use in other scripts
 window.DevDuniaUtils = DevDuniaUtils;
+// Expose ThemeManager so other scripts (floating toggle) can call it
+window.ThemeManager = ThemeManager;
