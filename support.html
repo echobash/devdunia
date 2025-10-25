@@ -3,6 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" type="image/png" href="images/logo.png">
+    <link rel="apple-touch-icon" href="images/logo.png">
     <title>Support DevDunia Development</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="icon" type="image/x-icon" href="images/echobashFav.png">
@@ -52,10 +54,16 @@
             </a> -->
         </div>
 
-        <!-- Footer -->
-        <footer class="mt-16 pt-8 border-t border-gray-700 text-center text-gray-400">
-            <p>Made with ❤️ by <a href="https://echobash.com" class="text-blue-400 hover:text-blue-300">echobash.com</a></p>
-        </footer>
+        <!-- Footer include -->
+    <div id="footer"></div>
+    <script>
+    fetch("footer.html")
+    .then(response => response.text())
+    .then(data => {
+        document.getElementById("footer").innerHTML = data;
+    })
+    .catch(err => console.error("Failed to load footer:", err));
+    </script>
     </main>
 </body>
 </html>

@@ -3,6 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" type="image/png" href="images/logo.png">
+    <link rel="apple-touch-icon" href="images/logo.png">
     <title>YAML ⇄ JSON Converter - Developer Toolkit | DevDunia</title>
     <meta name="description" content="Convert between YAML and JSON formats with proper syntax. Free online YAML to JSON and JSON to YAML converter tool for developers.">
     <script src="https://cdn.tailwindcss.com"></script>
@@ -150,10 +152,16 @@ skills:
 
     </div>
 
-    <!-- Footer -->
-    <footer class="text-center text-gray-500 mt-10 pb-6">
-        © 2025 DevDunia – Free Developer Tools by <a href="https://echobash.com" class="text-blue-500 hover:underline" target="_blank">echobash</a>
-    </footer>
+    <!-- Footer include -->
+    <div id="footer"></div>
+    <script>
+    fetch("footer.html")
+    .then(response => response.text())
+    .then(data => {
+        document.getElementById("footer").innerHTML = data;
+    })
+    .catch(err => console.error("Failed to load footer:", err));
+    </script>
 
     <script>
         document.addEventListener('DOMContentLoaded', function() {
@@ -190,18 +198,24 @@ skills:
                 yamlToJsonBtn.classList.add('bg-slate-600');
             });
 
-            function updateUI() {
-                if (conversionMode === 'yaml-to-json') {
-                    inputLabel.textContent = 'YAML Input';
-                    outputLabel.textContent = 'JSON Output';
-                    inputText.placeholder = 'Paste your YAML data here...';
-                } else {
-                    inputLabel.textContent = 'JSON Input';
-                    outputLabel.textContent = 'YAML Output';
-                    inputText.placeholder = 'Paste your JSON data here...';
-                }
-                hideOutput();
-                hideError();
+           function updateUI() {
+    if (conversionMode === 'yaml-to-json') {
+        inputLabel.textContent = 'YAML Input';
+        outputLabel.textContent = 'JSON Output';
+        inputText.placeholder = 'Paste your YAML data here...';
+    } else {
+        inputLabel.textContent = 'JSON Input';
+        outputLabel.textContent = 'YAML Output';
+        inputText.placeholder = 'Paste your JSON data here...';
+    }
+
+    // If there is previous conversion output, move it into the input so users can flip conversion quickly
+    if (!outputSection.classList.contains('hidden') && outputText.value.trim()) {
+        inputText.value = outputText.value;
+    }
+
+    hideOutput();
+    hideError();
             }
 
             // Convert

@@ -3,7 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Blank Page - Developer Toolkit | DevDunia</title>
+    <link rel="icon" type="image/png" href="images/logo.png">
+    <link rel="apple-touch-icon" href="images/logo.png">
     <meta name="description" content="A blank full-page editor for writing, note-taking, and text preview. Perfect for drafting content, taking notes, or testing text formatting.">
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
@@ -12,7 +13,7 @@
         }
     </style>
 </head>
-<body class="h-screen w-full">
+<body class="h-screen w-full" class="h-screen lg:ml-72">
     <!-- Background: Consistent Subtle Dark Gradient -->
     <div class="fixed inset-0 -z-10 bg-gradient-to-br from-gray-900 via-slate-900 to-gray-900"></div>
 
@@ -111,6 +112,19 @@
                 }
             });
         });
+    </script>
+    <!-- Include Final Sidebar -->
+    <div id="sidebar-container"></div>
+    <script>
+        // Load final_sidebar.html content
+        fetch('final_sidebar.html')
+            .then(response => response.text())
+            .then(html => {
+                document.getElementById('sidebar-container').innerHTML = html;
+            })
+            .catch(error => {
+                console.error('Error loading sidebar:', error);
+            });
     </script>
 </body>
 </html>

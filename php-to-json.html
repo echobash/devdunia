@@ -3,6 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" type="image/png" href="images/logo.png">
+    <link rel="apple-touch-icon" href="images/logo.png">
     <title>PHP Array to JSON Converter - Developer Toolkit | DevDunia</title>
     <meta name="description" content="Convert PHP arrays to JSON format with proper syntax. Free online PHP to JSON converter tool for developers.">
     <script src="https://cdn.tailwindcss.com"></script>
@@ -130,10 +132,16 @@
 
     </div>
 
-    <!-- Footer -->
-    <footer class="text-center text-gray-500 mt-10 pb-6">
-        © 2025 DevDunia – Free Developer Tools by <a href="https://echobash.com" class="text-blue-500 hover:underline" target="_blank">echobash</a>
-    </footer>
+   <!-- Footer include -->
+    <div id="footer"></div>
+    <script>
+    fetch("footer.html")
+    .then(response => response.text())
+    .then(data => {
+        document.getElementById("footer").innerHTML = data;
+    })
+    .catch(err => console.error("Failed to load footer:", err));
+    </script>
 
     <script>
         document.addEventListener('DOMContentLoaded', function() {

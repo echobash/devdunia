@@ -3,7 +3,7 @@
     <div class="container mx-auto px-4 sm:px-6 lg:px-8">
         <div class="flex items-center justify-between h-16">
             <!-- Mobile Menu Button -->
-            <button id="sidebar-toggle" class="p-2 rounded-lg text-gray-400 hover:text-white hover:bg-slate-800 transition-colors md:hidden">
+            <button id="sidebar-toggle" class="p-2 rounded-lg text-gray-400 hover:text-white hover:bg-slate-800 transition-colors md:hidden" onclick="(function(){var s=document.getElementById('sidebar');var o=document.getElementById('mobile-sidebar-overlay');if(!s)return;var isOpen=!s.classList.contains('-translate-x-full');if(isOpen){s.classList.add('-translate-x-full');if(o)o.classList.add('hidden');document.body.style.overflow='';this.setAttribute('aria-expanded','false');if(s)s.setAttribute('aria-hidden','true');}else{s.classList.remove('-translate-x-full');if(o)o.classList.remove('hidden');document.body.style.overflow='hidden';this.setAttribute('aria-expanded','true');if(s)s.setAttribute('aria-hidden','false');}})()">
                 <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
                 </svg>

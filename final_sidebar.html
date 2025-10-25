@@ -66,6 +66,14 @@
                     <span class="text-blue-400 group-hover:text-blue-300">📥</span>
                     <span class="text-sm">Base64 Decoder</span>
                 </a>
+                <a href="base32encode/index.html" class="flex items-center space-x-3 px-3 py-2 text-gray-300 hover:text-white hover:bg-slate-800/50 rounded-lg transition-all duration-200 group">
+                    <span class="text-blue-400 group-hover:text-blue-300">📤</span>
+                    <span class="text-sm">Base32 Encoder</span>
+                </a>
+                <a href="base32decode/index.html" class="flex items-center space-x-3 px-3 py-2 text-gray-300 hover:text-white hover:bg-slate-800/50 rounded-lg transition-all duration-200 group">
+                    <span class="text-blue-400 group-hover:text-blue-300">📥</span>
+                    <span class="text-sm">Base32 Decoder</span>
+                </a>
                 <a href="hash-generator.html" class="flex items-center space-x-3 px-3 py-2 text-gray-300 hover:text-white hover:bg-slate-800/50 rounded-lg transition-all duration-200 group">
                     <span class="text-blue-400 group-hover:text-blue-300">🔐</span>
                     <span class="text-sm">Hash Generator</span>
@@ -334,26 +342,29 @@
                     <span class="text-teal-400 group-hover:text-teal-300">🌍</span>
                     <span class="text-sm">IP Address Tools</span>
                 </a>
+                <a href="emoji_picker/index.html" class="flex items-center space-x-3 px-3 py-2 text-gray-300 hover:text-white hover:bg-slate-800/50 rounded-lg transition-all duration-200 group">
+                    <span class="text-teal-400 group-hover:text-teal-300">😀</span>
+                    <span class="text-sm">Emoji Picker</span>
+                </a>
             </div>
         </div>
 
-        <!-- Footer -->
-        <div class="mt-8 pt-4 border-t border-slate-700/60">
-            <div class="text-center">
-                <p class="text-xs text-gray-500">
-                    © 2025 DevDunia
-                </p>
-                <p class="text-xs text-gray-600 mt-1">
-                    Free Developer Tools
-                </p>
-            </div>
-        </div>
+       <!-- Footer include -->
+    <div id="footer"></div>
+    <script>
+    fetch("footer.html")
+    .then(response => response.text())
+    .then(data => {
+        document.getElementById("footer").innerHTML = data;
+    })
+    .catch(err => console.error("Failed to load footer:", err));
+    </script>
     </div>
 </aside>
 
 <!-- Mobile Sidebar Toggle -->
 <div class="lg:hidden fixed top-4 left-4 z-[60]">
-    <button id="mobile-sidebar-toggle" class="p-3 bg-slate-800/95 backdrop-blur-md border border-slate-700/60 rounded-lg text-white hover:bg-slate-700/90 transition-colors duration-200 shadow-lg" style="pointer-events: auto;">
+    <button id="mobile-sidebar-toggle" class="p-3 bg-slate-800/95 backdrop-blur-md border border-slate-700/60 rounded-lg text-white hover:bg-slate-700/90 transition-colors duration-200 shadow-lg" style="pointer-events: auto;" onclick="(function(){var s=document.getElementById('sidebar');var o=document.getElementById('mobile-sidebar-overlay');if(!s)return;var isOpen=!s.classList.contains('-translate-x-full');if(isOpen){s.classList.add('-translate-x-full');if(o)o.classList.add('hidden');document.body.style.overflow='';this.setAttribute('aria-expanded','false');if(s)s.setAttribute('aria-hidden','true');}else{s.classList.remove('-translate-x-full');if(o)o.classList.remove('hidden');document.body.style.overflow='hidden';this.setAttribute('aria-expanded','true');if(s)s.setAttribute('aria-hidden','false');}})()">
         <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
         </svg>
@@ -361,7 +372,7 @@
 </div>
 
 <!-- Mobile Sidebar Overlay -->
-<div id="mobile-sidebar-overlay" class="lg:hidden fixed inset-0 bg-black/50 backdrop-blur-sm z-40 hidden"></div>
+<div id="mobile-sidebar-overlay" class="lg:hidden fixed inset-0 bg-black/50 backdrop-blur-sm z-40 hidden" onclick="(function(){var s=document.getElementById('sidebar');var o=document.getElementById('mobile-sidebar-overlay');if(s)s.classList.add('-translate-x-full');if(o)o.classList.add('hidden');document.body.style.overflow='';})()"></div>
 
 <script>
 // Initialize sidebar functionality
