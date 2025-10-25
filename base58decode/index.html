@@ -1,0 +1,327 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" type="image/png" href="images/logo.png">
+    <link rel="apple-touch-icon" href="images/logo.png">
+    <title>Base58 Decoder - Developer Toolkit | DevDunia</title>
+    <meta name="description" content="Decode Base58 encoded data back to original format. Free online Base58 decoder tool for developers.">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="../js/common.js"></script>
+    <style>
+        body {
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #0f172a 100%);
+        }
+    </style>
+</head>
+<body class="h-screen lg:ml-72">
+    <!-- Background: Consistent Subtle Dark Gradient -->
+    <div class="fixed inset-0 -z-10 bg-gradient-to-br from-gray-900 via-slate-900 to-gray-900"></div>
+
+    <!-- Sidebar -->
+    <div id="sidebar-container"></div>
+
+    <!-- Main Content -->
+    <div class="main-content">
+        <!-- Main Container -->
+    <div class="relative z-10 container mx-auto px-4 pt-16 pb-24 sm:px-6 lg:px-8">
+
+        <!-- Page Header -->
+        <div class="text-center mb-12">
+            <h1 class="text-3xl sm:text-4xl font-bold mb-4 tracking-tight
+                       text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-cyan-500">
+                Base58 Decoder
+            </h1>
+            <p class="text-lg text-gray-400 max-w-2xl mx-auto">
+                Decode Base58 encoded data back to its original format.
+            </p>
+        </div>
+
+        <!-- Tool Container -->
+        <div class="max-w-4xl mx-auto">
+            <div class="bg-slate-800/70 backdrop-blur-md rounded-lg shadow-lg border border-slate-700/60 p-6">
+
+                <!-- Input Section -->
+                <div class="mb-6">
+                    <label for="base58-input" class="block text-sm font-medium text-gray-300 mb-2">
+                        Base58 Input
+                    </label>
+                    <textarea
+                        id="base58-input"
+                        rows="4"
+                        class="w-full px-4 py-3 bg-slate-700/50 border border-slate-600 rounded-lg text-gray-200 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-none font-mono text-sm"
+                        placeholder="Enter Base58 encoded string to decode..."
+                    ></textarea>
+                </div>
+
+                <!-- Action Buttons -->
+                <div class="flex flex-wrap gap-3 mb-6">
+                    <button id="decode-btn" class="px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-lg transition-colors duration-200 flex items-center space-x-2">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l-4 4m0 0l-4-4m4 4V4"></path>
+                        </svg>
+                        <span>Decode from Base58</span>
+                    </button>
+
+                    <button class="clear-btn px-6 py-3 bg-slate-600 hover:bg-slate-700 text-white font-medium rounded-lg transition-colors duration-200 flex items-center space-x-2">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
+                        </svg>
+                        <span>Clear All</span>
+                    </button>
+                </div>
+
+                <!-- Error Display -->
+                <div id="error-display" class="hidden mb-6 p-4 bg-red-900/50 border border-red-600/50 rounded-lg">
+                    <div class="flex items-center space-x-2">
+                        <svg class="w-5 h-5 text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                        </svg>
+                        <span id="error-message" class="text-red-300"></span>
+                    </div>
+                </div>
+
+                <!-- Output Section -->
+                <div id="output-section" class="hidden">
+                    <label for="base58-output" class="block text-sm font-medium text-gray-300 mb-2">
+                        Decoded Result
+                    </label>
+                    <div class="relative">
+                        <textarea
+                            id="base58-output"
+                            rows="6"
+                            class="w-full px-4 py-3 bg-slate-700/50 border border-slate-600 rounded-lg text-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-none font-mono text-sm"
+                            readonly
+                        ></textarea>
+
+                        <!-- Copy Button -->
+                        <button class="copy-btn absolute top-2 right-2 px-3 py-1 bg-slate-600 hover:bg-slate-700 text-white text-sm rounded transition-colors duration-200 flex items-center space-x-1" data-target="base58-output">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v8a2 2 0 01-2 2h-2m-6-4l2 2m0 0l2-2m-2 2V10"></path>
+                            </svg>
+                            <span>Copy</span>
+                        </button>
+                    </div>
+
+                    <!-- Stats -->
+                    <div class="mt-3 flex flex-wrap gap-4 text-sm text-gray-400">
+                        <div class="flex items-center space-x-2">
+                            <span>Base58 Size:</span>
+                            <span id="base58-size" class="text-blue-400 font-medium">0 B</span>
+                        </div>
+                        <div class="flex items-center space-x-2">
+                            <span>Decoded Size:</span>
+                            <span id="decoded-size" class="text-green-400 font-medium">0 B</span>
+                        </div>
+                        <div class="flex items-center space-x-2">
+                            <span>Compression:</span>
+                            <span id="compression" class="text-purple-400 font-medium">0%</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Examples Section -->
+                <div class="mt-8 p-4 bg-slate-700/30 rounded-lg border border-slate-600/50">
+                    <h3 class="text-lg font-semibold text-cyan-400 mb-3">Common Examples</h3>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
+                        <div>
+                            <p class="text-gray-300 font-medium mb-2">Bitcoin address:</p>
+                            <p class="text-gray-400">"1BvBMSEYstWetqTFn5Au4m4GFg7xJaNVN2"</p>
+                            <p class="text-gray-500">→ Decodes to binary data</p>
+                        </div>
+                        <div>
+                            <p class="text-gray-300 font-medium mb-2">IPFS hash:</p>
+                            <p class="text-gray-400">"QmYwAPJzv5CZsnAztxH8uLfH8y"</p>
+                            <p class="text-gray-500">→ Decodes to hash bytes</p>
+                        </div>
+                        <div>
+                            <p class="text-gray-300 font-medium mb-2">Simple text:</p>
+                            <p class="text-gray-400">"JxF12TrwUP45BMd"</p>
+                            <p class="text-gray-500">→ "Hello World"</p>
+                        </div>
+                        <div>
+                            <p class="text-gray-300 font-medium mb-2">Binary data:</p>
+                            <p class="text-gray-400">"StV1DL6CwTryKyV"</p>
+                            <p class="text-gray-500">→ [0x48, 0x65, 0x6C, 0x6C, 0x6F]</p>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+    </div>
+
+        <!-- Footer -->
+        <footer class="text-center text-gray-500 mt-10 pb-6">
+            © 2025 DevDunia – Free Developer Tools by <a href="https://echobash.com" class="text-blue-500 hover:underline" target="_blank">echobash</a>
+        </footer>
+    </div>
+
+
+    <script src="../sidebar.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const base58Input = document.getElementById('base58-input');
+            const base58Output = document.getElementById('base58-output');
+            const decodeBtn = document.getElementById('decode-btn');
+            const outputSection = document.getElementById('output-section');
+            const errorDisplay = document.getElementById('error-display');
+            const errorMessage = document.getElementById('error-message');
+            const base58Size = document.getElementById('base58-size');
+            const decodedSize = document.getElementById('decoded-size');
+            const compression = document.getElementById('compression');
+
+            // Base58 alphabet (Bitcoin/IPFS standard)
+            const base58Alphabet = '123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz';
+
+            // Decode from Base58
+            decodeBtn.addEventListener('click', function() {
+                const input = base58Input.value.trim();
+                if (!input) {
+                    showError('Please enter a Base58 string to decode');
+                    return;
+                }
+
+                if (!isValidBase58(input)) {
+                    showError('Invalid Base58 string. Base58 can only contain: 123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz');
+                    return;
+                }
+
+                try {
+                    const decoded = decodeFromBase58(input);
+                    base58Output.value = decoded;
+                    showOutput();
+                    updateStats(input, decoded);
+                    hideError();
+                } catch (error) {
+                    showError('Error decoding from Base58: ' + error.message);
+                    hideOutput();
+                }
+            });
+
+            // Helper functions
+            function showOutput() {
+                outputSection.classList.remove('hidden');
+            }
+
+            function hideOutput() {
+                outputSection.classList.add('hidden');
+            }
+
+            function showError(message) {
+                errorMessage.textContent = message;
+                errorDisplay.classList.remove('hidden');
+            }
+
+            function hideError() {
+                errorDisplay.classList.add('hidden');
+            }
+
+            function isValidBase58(str) {
+                for (let char of str) {
+                    if (base58Alphabet.indexOf(char) === -1) {
+                        return false;
+                    }
+                }
+                return true;
+            }
+
+            function decodeFromBase58(input) {
+                // Handle empty input
+                if (!input || input === '1') {
+                    return '';
+                }
+
+                // Count leading '1's (which represent leading zeros)
+                let leadingZeros = 0;
+                for (let i = 0; i < input.length && input[i] === '1'; i++) {
+                    leadingZeros++;
+                }
+
+                // Convert Base58 to big integer
+                let num = BigInt(0);
+                for (let i = 0; i < input.length; i++) {
+                    const char = input[i];
+                    const index = base58Alphabet.indexOf(char);
+                    if (index === -1) {
+                        throw new Error('Invalid Base58 character: ' + char);
+                    }
+                    num = num * BigInt(58) + BigInt(index);
+                }
+
+                // Convert to bytes
+                const bytes = [];
+                while (num > 0) {
+                    bytes.unshift(Number(num % BigInt(256)));
+                    num = num / BigInt(256);
+                }
+
+                // Add leading zeros
+                const result = new Uint8Array(leadingZeros + bytes.length);
+                for (let i = 0; i < leadingZeros; i++) {
+                    result[i] = 0;
+                }
+                for (let i = 0; i < bytes.length; i++) {
+                    result[leadingZeros + i] = bytes[i];
+                }
+
+                // Try to decode as text, fallback to hex representation
+                try {
+                    return new TextDecoder().decode(result);
+                } catch (e) {
+                    // If not valid UTF-8, show as hex
+                    return Array.from(result).map(b => b.toString(16).padStart(2, '0')).join(' ');
+                }
+            }
+
+            function updateStats(encoded, decoded) {
+                const encodedBytes = new Blob([encoded]).size;
+                const decodedBytes = new Blob([decoded]).size;
+                const compressionPercent = ((encodedBytes - decodedBytes) / decodedBytes * 100).toFixed(1);
+
+                base58Size.textContent = DevDuniaUtils.formatBytes(encodedBytes);
+                decodedSize.textContent = DevDuniaUtils.formatBytes(decodedBytes);
+                compression.textContent = compressionPercent + '%';
+            }
+
+            // Example text on page load
+            window.addEventListener('load', () => {
+                base58Input.value = 'JxF12TrwUP45BMd';
+            });
+        });
+    </script>
+    <!-- Include Final Sidebar -->
+    <div id="sidebar-container"></div>
+    <script>
+        // Load final_sidebar.html content
+        fetch('../final_sidebar.html')
+            .then(response => response.text())
+            .then(html => {
+                document.getElementById('sidebar-container').innerHTML = html;
+                // Fix links and assets for subdirectory
+                const container = document.getElementById('sidebar-container');
+                const links = container.querySelectorAll('a[href]');
+                const images = container.querySelectorAll('img[src]');
+
+                links.forEach(link => {
+                    const href = link.getAttribute('href');
+                    if (href && !href.startsWith('http') && !href.startsWith('../') && !href.startsWith('./') && !href.startsWith('#')) {
+                        link.setAttribute('href', '../' + href);
+                    }
+                });
+
+                images.forEach(img => {
+                    const src = img.getAttribute('src');
+                    if (src && !src.startsWith('http') && !src.startsWith('../') && !src.startsWith('./')) {
+                        img.setAttribute('src', '../' + src);
+                    }
+                });
+            })
+            .catch(error => {
+                console.error('Error loading sidebar:', error);
+            });
+    </script>
+</body>
+</html>
