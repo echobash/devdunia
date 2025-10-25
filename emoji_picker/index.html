@@ -71,7 +71,7 @@
 
   <link rel="stylesheet" href="style.css">
 </head>
-<body class="text-white">
+<body class="text-white" class="h-screen lg:ml-72">
   <!-- Navigation -->
   <nav class="fixed top-0 w-full z-40 glass">
     <div class="max-w-7xl mx-auto px-6 py-4">
@@ -174,5 +174,18 @@
   </footer>
 
   <script src="script.js"></script>
+    <!-- Include Final Sidebar -->
+    <div id="sidebar-container"></div>
+    <script>
+        // Load final_sidebar.html content
+        fetch('final_sidebar.html')
+            .then(response => response.text())
+            .then(html => {
+                document.getElementById('sidebar-container').innerHTML = html;
+            })
+            .catch(error => {
+                console.error('Error loading sidebar:', error);
+            });
+    </script>
 </body>
 </html>
