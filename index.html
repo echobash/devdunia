@@ -441,19 +441,18 @@
         </div>
     </div>
 
-    <!-- Footer -->
-    <div class="py-12 border-t border-slate-700/50">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="text-center">
-                <p class="text-gray-400 text-lg">
-                    Powered by <a href="https://echobash.com" target="_blank" class="text-purple-400 hover:text-purple-300 transition-colors font-semibold">echobash.com</a>
-                </p>
-                <p class="text-gray-500 text-sm mt-2">
-                    Made with ❤️ for the developer community
-                </p>
-            </div>
-        </div>
-    </div>
+    <!-- Footer include -->
+    <div id="footer"></div>
+    <script>
+    fetch("footer.html")
+    .then(response => response.text())
+    .then(data => {
+        document.getElementById("footer").innerHTML = data;
+    })
+    .catch(err => console.error("Failed to load footer:", err));
+    </script>
+
+
 
     <script>
         document.addEventListener('DOMContentLoaded', function() {
