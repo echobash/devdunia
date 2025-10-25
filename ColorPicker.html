@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Image Color Picker - Developer Toolkit | DevDunia</title>
+  <meta name="description" content="Upload an image and click anywhere to get the color at that point. Free online image color picker tool for developers.">
+
+  <!-- TailwindCSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="js/common.js"></script>
+
+  <style>
+    body {
+      background: linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #0f172a 100%);
+    }
+    canvas {
+      cursor: crosshair;
+      max-width: 100%;
+      height: auto;
+      display: block;
+      margin: 0 auto;
+    }
+  </style>
+</head>
+
+<body class="min-h-screen lg:ml-72 ml-0 transition-all duration-300">
+  <!-- Background Layer -->
+  <div class="fixed inset-0 -z-10 bg-gradient-to-br from-gray-900 via-slate-900 to-gray-900"></div>
+
+  <!-- Sidebar -->
+  <div id="sidebar-container" aria-label="Sidebar navigation"></div>
+
+  <!-- Main Content -->
+  <main class="relative z-10 container mx-auto px-4 pt-16 pb-24 sm:px-6 lg:px-8">
+    <div class="text-center mb-12">
+      <h1 class="text-3xl sm:text-4xl font-bold mb-4 tracking-tight text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-cyan-500">
+        Image Color Picker
+      </h1>
+      <p class="text-lg text-gray-400 max-w-2xl mx-auto">
+        Upload an image and click anywhere to find the exact color at that point.
+      </p>
+    </div>
+
+    <div class="max-w-4xl mx-auto">
+      <div class="bg-slate-800/70 backdrop-blur-md rounded-lg shadow-lg border border-slate-700/60 p-6 text-center">
+        
+        <!-- Image Upload -->
+        <div class="mb-6">
+          <label for="image-upload" class="block text-sm font-medium text-gray-300 mb-2">Upload Image</label>
+          <input 
+            type="file" 
+            id="image-upload" 
+            accept="image/*" 
+            aria-label="Upload image for color picking"
+            class="w-full text-gray-300 bg-slate-700/50 border border-slate-600 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+          >
+          <p id="upload-error" class="hidden mt-2 text-sm text-red-400"></p>
+        </div>
+
+        <!-- Canvas -->
+        <canvas id="image-canvas" class="hidden mx-auto rounded-lg border border-slate-600"></canvas>
+
+        <!-- Color Info Panel -->
+        <div id="color-info" class="hidden mt-6 p-4 bg-slate-700/50 border border-slate-600 rounded-lg text-left max-w-md mx-auto">
+          <div class="flex items-center mb-3">
+            <div id="color-preview" class="w-10 h-10 rounded-lg border border-gray-400 mr-3"></div>
+            <div>
+              <p class="text-gray-300 font-medium text-sm">Selected Color</p>
+              <div class="flex items-center space-x-2">
+                <p id="hex-value" class="text-blue-400 font-mono text-sm">#000000</p>
+                <button 
+                  id="copy-color" 
+                  class="text-gray-400 hover:text-blue-400 focus:outline-none" 
+                  aria-label="Copy color hex value to clipboard"
+                  title="Copy HEX color"
+                >
+                  📋
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <div class="grid grid-cols-3 gap-4 text-sm text-gray-400">
+            <div>R: <span id="r-value" class="text-red-400 font-medium">0</span></div>
+            <div>G: <span id="g-value" class="text-green-400 font-medium">0</span></div>
+            <div>B: <span id="b-value" class="text-blue-400 font-medium">0</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <!-- Footer -->
+  <footer class="text-center text-gray-500 mt-10 pb-6">
+    © 2025 DevDunia – Free Developer Tools by 
+    <a href="https://echobash.com" class="text-blue-500 hover:underline" target="_blank" rel="noopener">echobash</a>
+  </footer>
+
+  <!-- Load Sidebar -->
+  <script>
+    fetch('final_sidebar.html')
+      .then(r => r.text())
+      .then(html => document.getElementById('sidebar-container').innerHTML = html)
+      .catch(err => console.error('Error loading sidebar:', err));
+  </script>
+
+  <!-- Main Script -->
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const upload = document.getElementById('image-upload');
+      const canvas = document.getElementById('image-canvas');
+      const ctx = canvas.getContext('2d');
+      const colorInfo = document.getElementById('color-info');
+      const colorPreview = document.getElementById('color-preview');
+      const hexValue = document.getElementById('hex-value');
+      const rValue = document.getElementById('r-value');
+      const gValue = document.getElementById('g-value');
+      const bValue = document.getElementById('b-value');
+      const copyButton = document.getElementById('copy-color');
+      const errorMsg = document.getElementById('upload-error');
+
+      // Handle image upload
+      upload.addEventListener('change', e => {
+        const file = e.target.files[0];
+        if (!file) return;
+
+        // Validate file type
+        if (!file.type.startsWith('image/')) {
+          errorMsg.textContent = 'Please upload a valid image file.';
+          errorMsg.classList.remove('hidden');
+          canvas.classList.add('hidden');
+          colorInfo.classList.add('hidden');
+          return;
+        }
+
+        errorMsg.classList.add('hidden');
+        const reader = new FileReader();
+
+        reader.onload = function(ev) {
+          const img = new Image();
+          img.onload = function() {
+            // Draw image to canvas
+            canvas.width = img.width;
+            canvas.height = img.height;
+            ctx.drawImage(img, 0, 0);
+            canvas.classList.remove('hidden');
+          };
+
+          img.onerror = () => {
+            errorMsg.textContent = 'Error loading image. Please try again.';
+            errorMsg.classList.remove('hidden');
+          };
+
+          img.src = ev.target.result;
+        };
+
+        reader.onerror = () => {
+          errorMsg.textContent = 'Error reading file. Please try again.';
+          errorMsg.classList.remove('hidden');
+        };
+
+        reader.readAsDataURL(file);
+      });
+
+      // Handle color picking
+      canvas.addEventListener('click', e => {
+        const rect = canvas.getBoundingClientRect();
+        const scaleX = canvas.width / rect.width;
+        const scaleY = canvas.height / rect.height;
+
+        const x = Math.floor((e.clientX - rect.left) * scaleX);
+        const y = Math.floor((e.clientY - rect.top) * scaleY);
+
+        const pixel = ctx.getImageData(x, y, 1, 1).data;
+        const [r, g, b] = [pixel[0], pixel[1], pixel[2]];
+        const hex = '#' + ((1 << 24) + (r << 16) + (g << 8) + b).toString(16).slice(1).toUpperCase();
+
+        // Update UI
+        colorPreview.style.backgroundColor = hex;
+        hexValue.textContent = hex;
+        rValue.textContent = r;
+        gValue.textContent = g;
+        bValue.textContent = b;
+        colorInfo.classList.remove('hidden');
+      });
+
+      // Copy hex color to clipboard
+      copyButton.addEventListener('click', () => {
+        navigator.clipboard.writeText(hexValue.textContent).then(() => {
+          copyButton.textContent = '✅';
+          setTimeout(() => (copyButton.textContent = '📋'), 1500);
+        }).catch(() => {
+          alert('Failed to copy color.');
+        });
+      });
+    });
+  </script>
+</body>
+</html>
