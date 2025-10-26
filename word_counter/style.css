@@ -1,0 +1,143 @@
+:root {
+    /* Use your repo theme variables if available; these are safe fallbacks */
+    --bg: #ffffff;
+    --text: #111827;
+    --muted: #6b7280;
+    --primary: #2563eb;
+    --accent: #10b981;
+    --border: #e5e7eb;
+    --surface: #f8fafc;
+    --btn-text: #ffffff;
+    --radius: 8px;
+}
+
+* {
+    box-sizing: border-box
+}
+
+html,
+body {
+    height: 100%
+}
+
+body {
+    margin: 0;
+    font-family: system-ui, -apple-system, Segoe UI, Roboto, "Helvetica Neue", Arial;
+    background: var(--bg);
+    color: var(--text);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    padding: 24px;
+}
+
+.container {
+    max-width: 980px;
+    margin: 0 auto;
+}
+
+.tool-header h1 {
+    margin: 0 0 6px 0;
+    font-size: 1.5rem;
+}
+
+.lead {
+    color: var(--muted);
+    margin: 0 0 18px 0
+}
+
+.editor textarea {
+    width: 100%;
+    resize: vertical;
+    min-height: 180px;
+    padding: 14px;
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    background: var(--surface);
+    font-size: 1rem;
+    line-height: 1.5;
+    color: var(--text);
+}
+
+.controls {
+    display: flex;
+    gap: 8px;
+    margin-top: 10px;
+    flex-wrap: wrap;
+}
+
+.btn {
+    background: var(--primary);
+    color: var(--btn-text);
+    border: none;
+    padding: 8px 12px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: 600;
+}
+
+.btn:focus {
+    outline: 2px solid color-mix(in srgb, var(--primary) 40%, transparent);
+    outline-offset: 2px
+}
+
+.btn-secondary {
+    background: transparent;
+    border: 1px solid var(--border);
+    color: var(--text);
+}
+
+.stats {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+    gap: 12px;
+    margin-top: 18px;
+}
+
+.stat {
+    border: 1px solid var(--border);
+    padding: 12px;
+    border-radius: 8px;
+    background: linear-gradient(180deg, rgba(255, 255, 255, 0.6), transparent);
+}
+
+.stat-value {
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: var(--accent);
+}
+
+.stat-label {
+    color: var(--muted);
+    font-size: .9rem;
+    margin-top: 6px
+}
+
+.notes {
+    margin-top: 16px;
+    color: var(--muted);
+    font-size: .9rem
+}
+
+/* Accessibility helper */
+.visually-hidden {
+    position: absolute !important;
+    height: 1px;
+    width: 1px;
+    overflow: hidden;
+    clip: rect(1px, 1px, 1px, 1px);
+    white-space: nowrap;
+    border: 0;
+    padding: 0;
+    margin: -1px;
+}
+
+/* Responsive */
+@media (max-width:600px) {
+    body {
+        padding: 16px
+    }
+
+    .tool-header h1 {
+        font-size: 1.25rem
+    }
+}

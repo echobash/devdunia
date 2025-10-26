@@ -1,0 +1,50 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>Words & Characters Counter — DevDunia</title>
+    <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+    <main class="container" role="main">
+        <header class="tool-header">
+            <h1>Words & Characters Counter</h1>
+        </header>
+        <section class="editor" aria-labelledby="editor-label">
+            <label id="editor-label" for="textInput" class="visually-hidden">Text input</label>
+            <textarea id="textInput" placeholder="Type or paste text here..." aria-describedby="stats"
+                rows="10"></textarea>
+
+            <div class="controls">
+                <button id="btnCopy" type="button" class="btn">Copy</button>
+                <button id="btnClear" type="button" class="btn btn-secondary">Clear</button>
+                <button id="btnDownload" type="button" class="btn">Download</button>
+            </div>
+        </section>
+        <section id="stats" class="stats" aria-live="polite" aria-atomic="true">
+            <div class="stat">
+                <div class="stat-value" id="chars">0</div>
+                <div class="stat-label">Characters</div>
+            </div>
+
+            <div class="stat">
+                <div class="stat-value" id="charsNoSpaces">0</div>
+                <div class="stat-label">Characters (no spaces)</div>
+            </div>
+
+            <div class="stat">
+                <div class="stat-value" id="words">0</div>
+                <div class="stat-label">Words</div>
+            </div>
+        </section>
+
+        <footer class="notes">
+            <p>Counts are updated live. Word calculation trims leading/trailing whitespace and splits on whitespace.</p>
+        </footer>
+    </main>
+
+    <script src="script.js"></script>
+</body>
+
+</html>
