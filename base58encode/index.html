@@ -131,9 +131,9 @@
                             <p class="text-gray-500">→ "JxF12TrwUP45BMd"</p>
                         </div>
                         <div>
-                            <p class="text-gray-300 font-medium mb-2">Binary data:</p>
-                            <p class="text-gray-400">[0x48, 0x65, 0x6C, 0x6C, 0x6F]</p>
-                            <p class="text-gray-500">→ "StV1DL6CwTryKyV"</p>
+                            <p class="text-gray-300 font-medium mb-2">Short text:</p>
+                            <p class="text-gray-400">"test"</p>
+                            <p class="text-gray-500">→ "3yZe7d"</p>
                         </div>
                         <div>
                             <p class="text-gray-300 font-medium mb-2">JSON data:</p>
@@ -141,9 +141,9 @@
                             <p class="text-gray-500">→ "7vxA8pHnqW5aXc2Y9zB"</p>
                         </div>
                         <div>
-                            <p class="text-gray-300 font-medium mb-2">File content:</p>
-                            <p class="text-gray-400">Image files, PDFs, etc.</p>
-                            <p class="text-gray-500">→ Long Base58 string</p>
+                            <p class="text-gray-300 font-medium mb-2">Binary data:</p>
+                            <p class="text-gray-400">[0x48, 0x65, 0x6C, 0x6C, 0x6F]</p>
+                            <p class="text-gray-500">→ "StV1DL6CwTryKyV"</p>
                         </div>
                     </div>
                 </div>
@@ -216,27 +216,27 @@
 
             function encodeToBase58(input) {
                 const bytes = new TextEncoder().encode(input);
-                let binary = '';
-
-                // Convert bytes to binary string
+                
+                // Convert bytes to big integer
+                let num = 0n;
                 for (let i = 0; i < bytes.length; i++) {
-                    binary += bytes[i].toString(2).padStart(8, '0');
+                    num = num * 256n + BigInt(bytes[i]);
                 }
-
-                // Pad binary to multiple of 8 bits (1 byte)
-                while (binary.length % 8 !== 0) {
-                    binary += '0';
-                }
-
+                
+                // Convert to Base58
                 let result = '';
-                // Group by 8 bits and convert to Base58
-                for (let i = 0; i < binary.length; i += 8) {
-                    const chunk = binary.substr(i, 8);
-                    const index = parseInt(chunk, 2);
-                    result += base58Alphabet[index];
+                while (num > 0n) {
+                    const remainder = num % 58n;
+                    result = base58Alphabet[Number(remainder)] + result;
+                    num = num / 58n;
                 }
-
-                return result;
+                
+                // Handle leading zeros (they become '1' in Base58)
+                for (let i = 0; i < bytes.length && bytes[i] === 0; i++) {
+                    result = '1' + result;
+                }
+                
+                return result || '1'; // Handle empty input
             }
 
             function updateStats(original, encoded) {
