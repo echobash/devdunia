@@ -1,0 +1,479 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="icon" type="image/png" href="images/logo.png" />
+    <link rel="apple-touch-icon" href="images/logo.png" />
+    <title>Epoch Converter - Developer Toolkit | DevDunia</title>
+    <meta
+      name="description"
+      content="Convert between epoch timestamps and human-readable dates. Free online epoch converter tool for developers."
+    />
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body class="h-screen lg:ml-72">
+    <!-- Background: Consistent Subtle Dark Gradient -->
+    <div
+      class="fixed inset-0 -z-10 bg-gradient-to-br from-gray-900 via-slate-900 to-gray-900"
+    ></div>
+
+    <!-- Sidebar -->
+    <div id="sidebar-container"></div>
+
+    <!-- Main Content -->
+    <div class="main-content">
+      <!-- Main Container -->
+      <div
+        class="relative z-10 container mx-auto px-4 pt-16 pb-24 sm:px-6 lg:px-8"
+      >
+        <!-- Page Header -->
+        <div class="text-center mb-12">
+          <h1
+            class="text-3xl sm:text-4xl font-bold mb-4 tracking-tight text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-cyan-500"
+          >
+            Epoch Converter
+          </h1>
+          <p class="text-lg text-gray-400 max-w-2xl mx-auto">
+            Convert between epoch timestamps and human-readable dates.
+          </p>
+        </div>
+
+        <!-- Tool Container -->
+        <div class="max-w-4xl mx-auto">
+          <div
+            class="bg-slate-800/70 backdrop-blur-md rounded-lg shadow-lg border border-slate-700/60 p-6"
+          >
+            <!-- Conversion Type Selection -->
+            <div class="mb-6">
+              <label class="block text-sm font-medium text-gray-300 mb-3">
+                Conversion Type
+              </label>
+              <div
+                class="flex flex-col w-full gap-4 justify-center sm:flex-row sm:flex-wrap"
+              >
+                <button
+                  id="epoch-to-date-btn"
+                  class="conversion-type-btn w-full sm:w-[45%] px-3 py-2 sm:px-6 sm:py-3 bg-blue-600 text-white font-medium rounded-lg transition-colors duration-200 flex items-center justify-center space-x-2"
+                >
+                  <svg
+                    class="w-5 h-5"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      stroke-width="2"
+                      d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"
+                    ></path>
+                  </svg>
+                  <span>Epoch to Date</span>
+                </button>
+
+                <button
+                  id="date-to-epoch-btn"
+                  class="conversion-type-btn w-full sm:w-[45%] px-3 py-2 sm:px-6 sm:py-3 bg-slate-600 text-white font-medium rounded-lg transition-colors duration-200 flex items-center justify-center space-x-2"
+                >
+                  <svg
+                    class="w-5 h-5"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      stroke-width="2"
+                      d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"
+                    ></path>
+                  </svg>
+                  <span>Date to Epoch</span>
+                </button>
+              </div>
+            </div>
+
+            <!-- Epoch to Date Section -->
+            <div id="epoch-to-date-section" class="conversion-section">
+              <div class="mb-6">
+                <label
+                  for="epoch-input"
+                  class="block text-sm font-medium text-gray-300 mb-2"
+                >
+                  Epoch Timestamp (seconds)
+                </label>
+                <input
+                  type="text"
+                  id="epoch-input"
+                  class="w-full px-4 py-3 bg-slate-700/50 border border-slate-600 rounded-lg text-gray-200 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent font-mono text-sm"
+                  placeholder="Enter epoch timestamp (e.g., 1672531200)"
+                />
+              </div>
+
+              <!-- Convert Button -->
+              <div class="mb-6">
+                <button
+                  id="convert-epoch-btn"
+                  class="px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-lg transition-colors duration-200 flex items-center space-x-2 w-full justify-center"
+                >
+                  <svg
+                    class="w-5 h-5"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      stroke-width="2"
+                      d="M13 10V3L4 14h7v7l9-11h-7z"
+                    ></path>
+                  </svg>
+                  <span>Convert to Date</span>
+                </button>
+              </div>
+            </div>
+
+            <!-- Date to Epoch Section -->
+            <div id="date-to-epoch-section" class="conversion-section hidden">
+              <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
+                <div>
+                  <label
+                    for="date-input"
+                    class="block text-sm font-medium text-gray-300 mb-2"
+                  >
+                    Date
+                  </label>
+                  <input
+                    type="date"
+                    id="date-input"
+                    class="w-full px-4 py-3 bg-slate-700/50 border border-slate-600 rounded-lg text-gray-200 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent font-mono text-sm"
+                  />
+                </div>
+                <div>
+                  <label
+                    for="time-input"
+                    class="block text-sm font-medium text-gray-300 mb-2"
+                  >
+                    Time
+                  </label>
+                  <input
+                    type="time"
+                    id="time-input"
+                    step="1"
+                    class="w-full px-4 py-3 bg-slate-700/50 border border-slate-600 rounded-lg text-gray-200 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent font-mono text-sm"
+                  />
+                </div>
+                <div>
+                  <label
+                    for="timezone-select"
+                    class="block text-sm font-medium text-gray-300 mb-2"
+                  >
+                    Timezone
+                  </label>
+                  <select
+                    id="timezone-select"
+                    class="w-full px-4 py-3 bg-slate-700/50 border border-slate-600 rounded-lg text-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent font-mono text-sm"
+                  >
+                    <option value="local">Local Time</option>
+                    <option value="utc" selected>UTC</option>
+                  </select>
+                </div>
+              </div>
+
+              <!-- Convert Button -->
+              <div class="mb-6">
+                <button
+                  id="convert-date-btn"
+                  class="px-6 py-3 bg-green-600 hover:bg-green-700 text-white font-medium rounded-lg transition-colors duration-200 flex items-center space-x-2 w-full justify-center"
+                >
+                  <svg
+                    class="w-5 h-5"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      stroke-width="2"
+                      d="M13 10V3L4 14h7v7l9-11h-7z"
+                    ></path>
+                  </svg>
+                  <span>Convert to Epoch</span>
+                </button>
+              </div>
+            </div>
+
+            <!-- Current Time Button -->
+            <div class="mb-6">
+              <button
+                id="current-time-btn"
+                class="px-6 py-3 bg-purple-600 hover:bg-purple-700 text-white font-medium rounded-lg transition-colors duration-200 flex items-center space-x-2 w-full justify-center"
+              >
+                <svg
+                  class="w-5 h-5"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"
+                  ></path>
+                </svg>
+                <span>Use Current Time</span>
+              </button>
+            </div>
+
+            <!-- Error Display -->
+            <div
+              id="error-display"
+              class="hidden mb-6 p-4 bg-red-900/50 border border-red-600/50 rounded-lg"
+            >
+              <div class="flex items-center space-x-2">
+                <svg
+                  class="w-5 h-5 text-red-400"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+                  ></path>
+                </svg>
+                <span id="error-message" class="text-red-300"></span>
+              </div>
+            </div>
+
+            <!-- Output Section -->
+            <div id="output-section" class="hidden">
+              <label
+                for="epoch-output"
+                class="block text-sm font-medium text-gray-300 mb-2"
+              >
+                Conversion Result
+              </label>
+              <div class="relative">
+                <textarea
+                  id="epoch-output"
+                  rows="3"
+                  class="w-full px-4 py-3 bg-slate-700/50 border border-slate-600 rounded-lg text-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-none font-mono text-xl font-bold"
+                  readonly
+                ></textarea>
+
+                <!-- Copy Button -->
+                <button
+                  class="copy-btn absolute bottom-2 right-2 px-1 sm:px-3 py-1 bg-slate-600 hover:bg-slate-700 text-white text-sm rounded transition-colors duration-200 flex items-center space-x-1"
+                  data-target="epoch-output"
+                >
+                  <svg
+                    class="w-4 h-4 sm:w-5 sm:h-5"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                    stroke-width="2"
+                  >
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m0 0h2a2 2 0 012 2v3m2 4H10m0 0l3-3m-3 3l3 3"
+                    />
+                  </svg>
+                  <span class="hidden sm:block">Copy</span>
+                </button>
+              </div>
+
+              <!-- Additional Info -->
+              <div class="mt-4 grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
+                <div class="bg-slate-700/30 p-3 rounded-lg">
+                  <h4 class="text-cyan-400 font-medium mb-2">
+                    Human-Readable Date
+                  </h4>
+                  <div id="human-date" class="text-gray-300 font-mono"></div>
+                </div>
+                <div class="bg-slate-700/30 p-3 rounded-lg">
+                  <h4 class="text-cyan-400 font-medium mb-2">
+                    Time in Different Formats
+                  </h4>
+                  <div class="space-y-1">
+                    <div class="flex justify-between">
+                      <span class="text-gray-400">ISO 8601:</span>
+                      <span
+                        id="iso-format"
+                        class="text-gray-300 font-mono text-xs"
+                      ></span>
+                    </div>
+                    <div class="flex justify-between">
+                      <span class="text-gray-400">UTC:</span>
+                      <span
+                        id="utc-format"
+                        class="text-gray-300 font-mono text-xs"
+                      ></span>
+                    </div>
+                    <div class="flex justify-between">
+                      <span class="text-gray-400">Local:</span>
+                      <div class="local-format-2 flex flex-col items-end">
+                        <span
+                          id="local-format"
+                          class="text-gray-300 font-mono text-xs"
+                        ></span>
+                        <span
+                          id="timezone-display"
+                          class="text-gray-400 font-mono text-xs"
+                        ></span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Clear Button -->
+            <div class="mt-6">
+              <button
+                class="clear-btn px-6 py-3 bg-slate-600 hover:bg-slate-700 text-white font-medium rounded-lg transition-colors duration-200 flex items-center space-x-2 w-full justify-center"
+              >
+                <svg
+                  class="w-5 h-5"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
+                  ></path>
+                </svg>
+                <span>Clear All</span>
+              </button>
+            </div>
+
+            <!-- Examples Section -->
+            <div
+              class="mt-8 p-4 bg-slate-700/30 rounded-lg border border-slate-600/50"
+            >
+              <h3 class="text-lg font-semibold text-cyan-400 mb-3">
+                Common Examples
+              </h3>
+              <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
+                <div>
+                  <p class="text-gray-300 font-medium mb-2">Current Time:</p>
+                  <p class="text-gray-400">
+                    Epoch:
+                    <span
+                      id="current-epoch-example"
+                      class="text-blue-400 font-mono"
+                    ></span>
+                  </p>
+                  <p class="text-gray-500">
+                    Date:
+                    <span
+                      id="current-date-example"
+                      class="text-green-400"
+                    ></span>
+                  </p>
+                </div>
+                <div>
+                  <p class="text-gray-300 font-medium mb-2">January 1, 2020:</p>
+                  <p class="text-gray-400">
+                    Epoch:
+                    <span class="text-blue-400 font-mono">1577836800</span>
+                  </p>
+                  <p class="text-gray-500">
+                    Date: Wed, 01 Jan 2020 00:00:00 GMT
+                  </p>
+                </div>
+                <div>
+                  <p class="text-gray-300 font-medium mb-2">January 1, 2023:</p>
+                  <p class="text-gray-400">
+                    Epoch:
+                    <span class="text-blue-400 font-mono">1672531200</span>
+                  </p>
+                  <p class="text-gray-500">
+                    Date: Sun, 01 Jan 2023 00:00:00 GMT
+                  </p>
+                </div>
+                <div>
+                  <p class="text-gray-300 font-medium mb-2">
+                    Unix Epoch Start:
+                  </p>
+                  <p class="text-gray-400">
+                    Epoch: <span class="text-blue-400 font-mono">0</span>
+                  </p>
+                  <p class="text-gray-500">
+                    Date: Thu, 01 Jan 1970 00:00:00 GMT
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Footer -->
+      <footer class="text-center text-gray-500 mt-10 pb-6">
+        © 2025 DevDunia – Free Developer Tools by
+        <a
+          href="https://echobash.com"
+          class="text-blue-500 hover:underline"
+          target="_blank"
+          >echobash</a
+        >
+      </footer>
+    </div>
+
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="script.js"></script>
+
+    <!-- Sidebar Script -->
+    <script>
+      // Load sidebar content
+      fetch("../final_sidebar.html")
+        .then((response) => response.text())
+        .then((html) => {
+          document.getElementById("sidebar-container").innerHTML = html;
+          // Fix links and assets for subdirectory
+          const container = document.getElementById("sidebar-container");
+          const links = container.querySelectorAll("a[href]");
+          const images = container.querySelectorAll("img[src]");
+
+          links.forEach((link) => {
+            const href = link.getAttribute("href");
+            if (
+              href &&
+              !href.startsWith("http") &&
+              !href.startsWith("../") &&
+              !href.startsWith("./") &&
+              !href.startsWith("#")
+            ) {
+              link.setAttribute("href", "../" + href);
+            }
+          });
+
+          images.forEach((img) => {
+            const src = img.getAttribute("src");
+            if (
+              src &&
+              !src.startsWith("http") &&
+              !src.startsWith("../") &&
+              !src.startsWith("./")
+            ) {
+              img.setAttribute("src", "../" + src);
+            }
+          });
+        })
+        .catch((error) => {
+          console.error("Error loading sidebar:", error);
+        });
+    </script>
+  </body>
+</html>
