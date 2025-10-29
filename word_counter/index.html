@@ -1,50 +1,222 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width,initial-scale=1" />
-    <title>Words & Characters Counter — DevDunia</title>
-    <link rel="stylesheet" href="style.css" />
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" type="image/png" href="images/logo.png">
+    <link rel="apple-touch-icon" href="images/logo.png">
+    <title>Word/Character/Line Counter - Developer Toolkit | DevDunia</title>
+    <meta name="description" content="Count words, characters, lines, and more in your text. Free online word counter and text analyzer for developers.">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="../js/common.js"></script>
+    <link rel="stylesheet" href="style.css">
 </head>
-<body>
-    <main class="container" role="main">
-        <header class="tool-header">
-            <h1>Words & Characters Counter</h1>
-        </header>
-        <section class="editor" aria-labelledby="editor-label">
-            <label id="editor-label" for="textInput" class="visually-hidden">Text input</label>
-            <textarea id="textInput" placeholder="Type or paste text here..." aria-describedby="stats"
-                rows="10"></textarea>
+<body class="h-screen lg:ml-72">
+    <!-- Background: Consistent Subtle Dark Gradient -->
+    <div class="fixed inset-0 -z-10 bg-gradient-to-br from-gray-900 via-slate-900 to-gray-900"></div>
 
-            <div class="controls">
-                <button id="btnCopy" type="button" class="btn">Copy</button>
-                <button id="btnClear" type="button" class="btn btn-secondary">Clear</button>
-                <button id="btnDownload" type="button" class="btn">Download</button>
-            </div>
-        </section>
-        <section id="stats" class="stats" aria-live="polite" aria-atomic="true">
-            <div class="stat">
-                <div class="stat-value" id="chars">0</div>
-                <div class="stat-label">Characters</div>
-            </div>
+    <!-- Main Container -->
+    <div class="main-content">
+        <div class="relative z-10 container mx-auto px-4 pt-16 pb-24 sm:px-6 lg:px-8">
+        
+        <!-- Page Header -->
+        <div class="text-center mb-12">
+            <h1 class="text-3xl sm:text-4xl font-bold mb-4 tracking-tight
+                       text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-cyan-500">
+                Word/Character/Line Counter
+            </h1>
+            <p class="text-lg text-gray-400 max-w-2xl mx-auto">
+                Analyze your text with detailed statistics including word count, character count, line count, and more.
+            </p>
+        </div>
 
-            <div class="stat">
-                <div class="stat-value" id="charsNoSpaces">0</div>
-                <div class="stat-label">Characters (no spaces)</div>
-            </div>
+        <!-- Tool Container -->
+        <div class="max-w-4xl mx-auto">
+            <div class="bg-slate-800/70 backdrop-blur-md rounded-lg shadow-lg border border-slate-700/60 p-6">
+                
+                <!-- Input Section -->
+                <div class="mb-6">
+                    <label for="input-text" class="block text-sm font-medium text-gray-300 mb-2">
+                        Input Text
+                    </label>
+                    <textarea 
+                        id="input-text" 
+                        rows="8" 
+                        class="w-full px-4 py-3 bg-slate-700/50 border border-slate-600 rounded-lg text-gray-200 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-none font-mono text-sm"
+                        placeholder="Enter or paste your text here to analyze..."
+                    ></textarea>
+                </div>
 
-            <div class="stat">
-                <div class="stat-value" id="words">0</div>
-                <div class="stat-label">Words</div>
-            </div>
-        </section>
+                <!-- Action Buttons -->
+                <div class="flex flex-wrap gap-3 mb-6">
+                    <button id="analyze-btn" class="px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-lg transition-colors duration-200 flex items-center space-x-2">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
+                        </svg>
+                        <span>Analyze Text</span>
+                    </button>
+                    
+                    <button class="clear-btn px-6 py-3 bg-slate-600 hover:bg-slate-700 text-white font-medium rounded-lg transition-colors duration-200 flex items-center space-x-2">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
+                        </svg>
+                        <span>Clear All</span>
+                    </button>
+                </div>
 
-        <footer class="notes">
-            <p>Counts are updated live. Word calculation trims leading/trailing whitespace and splits on whitespace.</p>
-        </footer>
-    </main>
+                <!-- Statistics Section -->
+                <div id="stats-section" class="hidden">
+                    <h3 class="text-lg font-semibold text-blue-400 mb-4">Text Statistics</h3>
+                    
+                    <!-- Basic Stats -->
+                    <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
+                        <div class="bg-slate-700/50 rounded-lg p-4 text-center">
+                            <div class="text-2xl font-bold text-blue-400" id="word-count">0</div>
+                            <div class="text-sm text-gray-400">Words</div>
+                        </div>
+                        <div class="bg-slate-700/50 rounded-lg p-4 text-center">
+                            <div class="text-2xl font-bold text-green-400" id="char-count">0</div>
+                            <div class="text-sm text-gray-400">Characters</div>
+                        </div>
+                        <div class="bg-slate-700/50 rounded-lg p-4 text-center">
+                            <div class="text-2xl font-bold text-purple-400" id="char-no-spaces">0</div>
+                            <div class="text-sm text-gray-400">Characters (no spaces)</div>
+                        </div>
+                        <div class="bg-slate-700/50 rounded-lg p-4 text-center">
+                            <div class="text-2xl font-bold text-orange-400" id="line-count">0</div>
+                            <div class="text-sm text-gray-400">Lines</div>
+                        </div>
+                    </div>
+
+                    <!-- Detailed Stats -->
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div class="bg-slate-700/30 rounded-lg p-4">
+                            <h4 class="text-md font-semibold text-gray-300 mb-3">Text Analysis</h4>
+                            <div class="space-y-2 text-sm">
+                                <div class="flex justify-between">
+                                    <span class="text-gray-400">Sentences:</span>
+                                    <span class="text-gray-200" id="sentence-count">0</span>
+                                </div>
+                                <div class="flex justify-between">
+                                    <span class="text-gray-400">Paragraphs:</span>
+                                    <span class="text-gray-200" id="paragraph-count">0</span>
+                                </div>
+                                <div class="flex justify-between">
+                                    <span class="text-gray-400">Average words per sentence:</span>
+                                    <span class="text-gray-200" id="avg-words-per-sentence">0</span>
+                                </div>
+                                <div class="flex justify-between">
+                                    <span class="text-gray-400">Average characters per word:</span>
+                                    <span class="text-gray-200" id="avg-chars-per-word">0</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="bg-slate-700/30 rounded-lg p-4">
+                            <h4 class="text-md font-semibold text-gray-300 mb-3">Character Breakdown</h4>
+                            <div class="space-y-2 text-sm">
+                                <div class="flex justify-between">
+                                    <span class="text-gray-400">Letters:</span>
+                                    <span class="text-gray-200" id="letter-count">0</span>
+                                </div>
+                                <div class="flex justify-between">
+                                    <span class="text-gray-400">Numbers:</span>
+                                    <span class="text-gray-200" id="number-count">0</span>
+                                </div>
+                                <div class="flex justify-between">
+                                    <span class="text-gray-400">Spaces:</span>
+                                    <span class="text-gray-200" id="space-count">0</span>
+                                </div>
+                                <div class="flex justify-between">
+                                    <span class="text-gray-400">Special characters:</span>
+                                    <span class="text-gray-200" id="special-count">0</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Reading Time -->
+                    <div class="mt-6 bg-slate-700/30 rounded-lg p-4">
+                        <h4 class="text-md font-semibold text-gray-300 mb-3">Reading Time</h4>
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm">
+                            <div class="text-center">
+                                <div class="text-lg font-bold text-blue-400" id="reading-time-slow">0 min</div>
+                                <div class="text-gray-400">Slow (200 WPM)</div>
+                            </div>
+                            <div class="text-center">
+                                <div class="text-lg font-bold text-green-400" id="reading-time-avg">0 min</div>
+                                <div class="text-gray-400">Average (250 WPM)</div>
+                            </div>
+                            <div class="text-center">
+                                <div class="text-lg font-bold text-purple-400" id="reading-time-fast">0 min</div>
+                                <div class="text-gray-400">Fast (300 WPM)</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Examples Section -->
+                <div class="mt-8 p-4 bg-slate-700/30 rounded-lg border border-slate-600/50">
+                    <h3 class="text-lg font-semibold text-blue-400 mb-3">Features</h3>
+                    <div class="text-sm text-gray-300 space-y-2">
+                        <ul class="list-disc list-inside ml-4 space-y-1">
+                            <li><strong>Word Count:</strong> Counts words separated by whitespace</li>
+                            <li><strong>Character Count:</strong> Total characters including spaces</li>
+                            <li><strong>Character Count (no spaces):</strong> Characters excluding spaces</li>
+                            <li><strong>Line Count:</strong> Number of lines in the text</li>
+                            <li><strong>Sentence Analysis:</strong> Counts sentences and calculates averages</li>
+                            <li><strong>Reading Time:</strong> Estimates reading time at different speeds</li>
+                            <li><strong>Character Breakdown:</strong> Analyzes different character types</li>
+                        </ul>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+    </div>
+
+    <!-- Footer -->
+    <footer class="text-center text-gray-500 mt-10 pb-6">
+        © 2025 DevDunia – Free Developer Tools by <a href="https://echobash.com" class="text-blue-500 hover:underline" target="_blank">echobash</a>
+    </footer>
 
     <script src="script.js"></script>
-</body>
+        </div>
+    </div>
 
+    <!-- Sidebar Scripts -->
+    
+    <!-- Include Final Sidebar -->
+    <div id="sidebar-container"></div>
+    <script>
+        // Load final_sidebar.html content
+        fetch('../final_sidebar.html')
+            .then(response => response.text())
+            .then(html => {
+                document.getElementById('sidebar-container').innerHTML = html;
+                // Fix links and assets for subdirectory
+                const container = document.getElementById('sidebar-container');
+                const links = container.querySelectorAll('a[href]');
+                const images = container.querySelectorAll('img[src]');
+
+                links.forEach(link => {
+                    const href = link.getAttribute('href');
+                    if (href && !href.startsWith('http') && !href.startsWith('../') && !href.startsWith('./') && !href.startsWith('#')) {
+                        link.setAttribute('href', '../' + href);
+                    }
+                });
+
+                images.forEach(img => {
+                    const src = img.getAttribute('src');
+                    if (src && !src.startsWith('http') && !src.startsWith('../') && !src.startsWith('./')) {
+                        img.setAttribute('src', '../' + src);
+                    }
+                });
+            })
+            .catch(error => {
+                console.error('Error loading sidebar:', error);
+            });
+    </script>
+</body>
 </html>
