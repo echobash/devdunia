@@ -1,143 +1,101 @@
-:root {
-    /* Use your repo theme variables if available; these are safe fallbacks */
-    --bg: #ffffff;
-    --text: #111827;
-    --muted: #6b7280;
-    --primary: #2563eb;
-    --accent: #10b981;
-    --border: #e5e7eb;
-    --surface: #f8fafc;
-    --btn-text: #ffffff;
-    --radius: 8px;
-}
-
-* {
-    box-sizing: border-box
-}
-
-html,
+/* Word Counter Custom Styles */
 body {
-    height: 100%
+    background: linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #0f172a 100%);
 }
 
-body {
-    margin: 0;
-    font-family: system-ui, -apple-system, Segoe UI, Roboto, "Helvetica Neue", Arial;
-    background: var(--bg);
-    color: var(--text);
-    -webkit-font-smoothing: antialiased;
-    -moz-osx-font-smoothing: grayscale;
-    padding: 24px;
-}
-
-.container {
-    max-width: 980px;
-    margin: 0 auto;
-}
-
-.tool-header h1 {
-    margin: 0 0 6px 0;
-    font-size: 1.5rem;
-}
-
-.lead {
-    color: var(--muted);
-    margin: 0 0 18px 0
-}
-
-.editor textarea {
-    width: 100%;
-    resize: vertical;
-    min-height: 180px;
-    padding: 14px;
-    border: 1px solid var(--border);
-    border-radius: var(--radius);
-    background: var(--surface);
-    font-size: 1rem;
-    line-height: 1.5;
-    color: var(--text);
-}
-
-.controls {
-    display: flex;
-    gap: 8px;
-    margin-top: 10px;
-    flex-wrap: wrap;
-}
-
-.btn {
-    background: var(--primary);
-    color: var(--btn-text);
-    border: none;
-    padding: 8px 12px;
-    border-radius: 6px;
-    cursor: pointer;
-    font-weight: 600;
-}
-
-.btn:focus {
-    outline: 2px solid color-mix(in srgb, var(--primary) 40%, transparent);
-    outline-offset: 2px
-}
-
-.btn-secondary {
-    background: transparent;
-    border: 1px solid var(--border);
-    color: var(--text);
-}
-
-.stats {
+/* Additional custom styles for word counter specific elements */
+.stats-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
-    gap: 12px;
-    margin-top: 18px;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1rem;
+    margin-top: 1.5rem;
 }
 
-.stat {
-    border: 1px solid var(--border);
-    padding: 12px;
-    border-radius: 8px;
-    background: linear-gradient(180deg, rgba(255, 255, 255, 0.6), transparent);
+.stat-card {
+    background: rgba(255, 255, 255, 0.05);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 0.75rem;
+    padding: 1.5rem;
+    transition: all 0.3s ease;
+}
+
+.stat-card:hover {
+    background: rgba(255, 255, 255, 0.08);
+    border-color: rgba(59, 130, 246, 0.3);
+    transform: translateY(-2px);
 }
 
 .stat-value {
-    font-size: 1.25rem;
+    font-size: 2rem;
     font-weight: 700;
-    color: var(--accent);
+    color: #60a5fa;
+    margin-bottom: 0.5rem;
 }
 
 .stat-label {
-    color: var(--muted);
-    font-size: .9rem;
-    margin-top: 6px
+    color: #9ca3af;
+    font-size: 0.875rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
 }
 
-.notes {
-    margin-top: 16px;
-    color: var(--muted);
-    font-size: .9rem
+.reading-time-section {
+    background: rgba(16, 185, 129, 0.1);
+    border: 1px solid rgba(16, 185, 129, 0.2);
+    border-radius: 0.75rem;
+    padding: 1.5rem;
+    margin-top: 1rem;
 }
 
-/* Accessibility helper */
-.visually-hidden {
-    position: absolute !important;
-    height: 1px;
-    width: 1px;
-    overflow: hidden;
-    clip: rect(1px, 1px, 1px, 1px);
-    white-space: nowrap;
-    border: 0;
-    padding: 0;
-    margin: -1px;
+.reading-time-title {
+    color: #10b981;
+    font-weight: 600;
+    margin-bottom: 1rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
 }
 
-/* Responsive */
-@media (max-width:600px) {
-    body {
-        padding: 16px
+.reading-time-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+    gap: 1rem;
+}
+
+.reading-time-item {
+    text-align: center;
+}
+
+.reading-time-value {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: #10b981;
+}
+
+.reading-time-label {
+    color: #6b7280;
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .stats-grid {
+        grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+        gap: 0.75rem;
     }
-
-    .tool-header h1 {
-        font-size: 1.25rem
+    
+    .stat-card {
+        padding: 1rem;
+    }
+    
+    .stat-value {
+        font-size: 1.5rem;
+    }
+    
+    .reading-time-grid {
+        grid-template-columns: repeat(3, 1fr);
     }
 }
