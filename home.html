@@ -1,25 +1,27 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link rel="icon" type="image/png" href="images/logo.png">
-    <link rel="apple-touch-icon" href="images/logo.png">
+  <link rel="apple-touch-icon" href="images/logo.png">
   <title>DevDunia - Developer & VAPT Tools Dashboard | 50+ Free Dev & Security Utilities</title>
-  <meta name="description" content="Modern developer and VAPT tools dashboard with 50+ free utilities. JSON formatter, clickjacking checker, password generator, HTTP header analyzer, and more essential development and security tools.">
-  <meta name="keywords" content="developer tools, VAPT tools, security tools, dev tools, JSON formatter, clickjacking checker, password generator, HTTP headers, vulnerability assessment, penetration testing, free tools, development utilities">
-  
+  <meta name="description"
+    content="Modern developer and VAPT tools dashboard with 50+ free utilities. JSON formatter, clickjacking checker, password generator, HTTP header analyzer, and more essential development and security tools.">
+  <meta name="keywords"
+    content="developer tools, VAPT tools, security tools, dev tools, JSON formatter, clickjacking checker, password generator, HTTP headers, vulnerability assessment, penetration testing, free tools, development utilities">
+
   <!-- Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
-  
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap"
+    rel="stylesheet">
+
   <!-- Tailwind CSS -->
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script src="js/common.js"></script>
-    <script>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
     tailwind.config = {
-      darkMode: 'class',
       theme: {
         extend: {
           fontFamily: {
@@ -70,95 +72,48 @@
       }
     }
   </script>
-  
-    <style>
+
+  <style>
     /* Custom CSS for advanced effects */
     body {
       font-family: 'Inter', system-ui, -apple-system, sans-serif;
+      background: linear-gradient(135deg, #0d1117 0%, #121826 50%, #0d1117 100%);
       min-height: 100vh;
       overflow-x: hidden;
     }
-    
-    :root[class~="dark"] body, html.dark body {
-      background: linear-gradient(135deg, #0d1117 0%, #121826 50%, #0d1117 100%);
-      color: white;
-    }
-    
-    :root:not([class~="dark"]) body, html:not(.dark) body {
-      background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 50%, #f8fafc 100%);
-      color: #1e293b;
-    }
-    
-    body:not(.dark) .glass {
-      background: rgba(255, 255, 255, 0.7);
-      backdrop-filter: blur(20px);
-      border: 1px solid rgba(0, 0, 0, 0.1);
-    }
-    
+
     /* Glass morphism base */
-    :root[class~="dark"] .glass, html.dark .glass {
+    .glass {
       background: rgba(255, 255, 255, 0.05);
       backdrop-filter: blur(20px);
       border: 1px solid rgba(255, 255, 255, 0.1);
       box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
     }
-    
-    :root:not([class~="dark"]) .glass, html:not(.dark) .glass {
-      background: rgba(255, 255, 255, 0.8);
-      backdrop-filter: blur(20px);
-      border: 1px solid rgba(0, 0, 0, 0.1);
-      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
-    }
-    
-    :root[class~="dark"] .glass-card, html.dark .glass-card {
+
+    .glass-card {
       background: rgba(255, 255, 255, 0.03);
       backdrop-filter: blur(15px);
       border: 1px solid rgba(255, 255, 255, 0.08);
       transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     }
-    
-    :root:not([class~="dark"]) .glass-card, html:not(.dark) .glass-card {
-      background: rgba(255, 255, 255, 0.9);
-      backdrop-filter: blur(15px);
-      border: 1px solid rgba(148, 163, 184, 0.2);
-      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
-      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    }
-    
-    :root[class~="dark"] .glass-card:hover, html.dark .glass-card:hover {
+
+    .glass-card:hover {
       background: rgba(255, 255, 255, 0.08);
       border-color: rgba(59, 130, 246, 0.3);
       transform: translateY(-8px) scale(1.02);
       box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4), 0 0 20px rgba(59, 130, 246, 0.2);
     }
-    
-    :root:not([class~="dark"]) .glass-card:hover, html:not(.dark) .glass-card:hover {
-      background: rgba(255, 255, 255, 1);
-      border-color: rgba(59, 130, 246, 0.4);
-      transform: translateY(-8px) scale(1.02);
-      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1), 0 0 20px rgba(59, 130, 246, 0.2);
-    }
-    
+
     /* Tool card specific styling */
     .tool-card {
+      background: linear-gradient(135deg, rgba(255, 255, 255, 0.05) 0%, rgba(255, 255, 255, 0.02) 100%);
+      backdrop-filter: blur(15px);
+      border: 1px solid rgba(255, 255, 255, 0.1);
       transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
       position: relative;
       overflow: hidden;
     }
-    
-    :root[class~="dark"] .tool-card, html.dark .tool-card {
-      background: linear-gradient(135deg, rgba(255, 255, 255, 0.05) 0%, rgba(255, 255, 255, 0.02) 100%);
-      backdrop-filter: blur(15px);
-      border: 1px solid rgba(255, 255, 255, 0.1);
-    }
-    
-    :root:not([class~="dark"]) .tool-card, html:not(.dark) .tool-card {
-      background: rgba(255, 255, 255, 0.95);
-      backdrop-filter: blur(15px);
-      border: 1px solid rgba(148, 163, 184, 0.25);
-      box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
-    }
-    
+
     .tool-card::before {
       content: '';
       position: absolute;
@@ -169,30 +124,20 @@
       background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
       transition: left 0.6s ease;
     }
-    
+
     .tool-card:hover::before {
       left: 100%;
     }
-    
-    :root[class~="dark"] .tool-card:hover, html.dark .tool-card:hover {
+
+    .tool-card:hover {
       transform: translateY(-12px) scale(1.05);
       border-color: rgba(59, 130, 246, 0.4);
-      box-shadow: 
+      box-shadow:
         0 25px 50px rgba(0, 0, 0, 0.5),
         0 0 30px rgba(59, 130, 246, 0.3),
         inset 0 1px 0 rgba(255, 255, 255, 0.2);
     }
 
-    :root:not([class~="dark"]) .tool-card:hover, html:not(.dark) .tool-card:hover {
-      transform: translateY(-12px) scale(1.05);
-      background: rgba(255, 255, 255, 1);
-      border-color: rgba(59, 130, 246, 0.3);
-      box-shadow: 
-        0 20px 30px rgba(0, 0, 0, 0.1),
-        0 0 20px rgba(59, 130, 246, 0.15),
-        inset 0 1px 0 rgba(255, 255, 255, 0.9);
-    }
-    
     /* Gradient text */
     .gradient-text {
       background: linear-gradient(135deg, #3b82f6, #8b5cf6, #10b981);
@@ -200,174 +145,159 @@
       -webkit-text-fill-color: transparent;
       background-clip: text;
     }
-    
+
     /* Search bar styling */
-    :root[class~="dark"] .search-bar, html.dark .search-bar {
+    .search-bar {
       background: rgba(255, 255, 255, 0.05);
       backdrop-filter: blur(20px);
       border: 1px solid rgba(255, 255, 255, 0.1);
-      color: white;
       transition: all 0.3s ease;
     }
-    
-    :root:not([class~="dark"]) .search-bar, html:not(.dark) .search-bar {
-      background: rgba(255, 255, 255, 0.8);
-      backdrop-filter: blur(20px);
-      border: 1px solid rgba(0, 0, 0, 0.1);
-      color: #1e293b;
-      transition: all 0.3s ease;
-    }
-    
-    :root[class~="dark"] .search-bar:focus, html.dark .search-bar:focus {
+
+    .search-bar:focus {
       background: rgba(255, 255, 255, 0.08);
       border-color: rgba(59, 130, 246, 0.5);
       box-shadow: 0 0 20px rgba(59, 130, 246, 0.3);
     }
-    
-    :root:not([class~="dark"]) .search-bar:focus, html:not(.dark) .search-bar:focus {
-      background: rgba(255, 255, 255, 0.95);
-      border-color: rgba(59, 130, 246, 0.5);
-      box-shadow: 0 0 20px rgba(59, 130, 246, 0.2);
-    }
-    
-    :root:not([class~="dark"]) .search-bar::placeholder, html:not(.dark) .search-bar::placeholder {
-      color: #64748b;
-    }
-    
+
     /* GitHub star banner */
     .github-banner {
       background: linear-gradient(135deg, #3b82f6, #8b5cf6);
       animation: float 6s ease-in-out infinite;
       box-shadow: 0 10px 30px rgba(59, 130, 246, 0.4);
     }
-    
+
     /* Section dividers */
     .section-divider {
       background: linear-gradient(90deg, transparent, rgba(59, 130, 246, 0.3), transparent);
       height: 1px;
     }
-    
+
     /* Tool icon containers */
     .tool-icon {
       background: linear-gradient(135deg, rgba(59, 130, 246, 0.2), rgba(139, 92, 246, 0.2));
       border: 1px solid rgba(59, 130, 246, 0.3);
       transition: all 0.3s ease;
     }
-    
+
     .tool-card:hover .tool-icon {
       background: linear-gradient(135deg, rgba(59, 130, 246, 0.3), rgba(139, 92, 246, 0.3));
       border-color: rgba(59, 130, 246, 0.5);
       transform: scale(1.1);
     }
-    
+
     /* Responsive grid */
     .tools-grid {
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
       gap: 1.5rem;
     }
-    
+
     @media (max-width: 768px) {
       .tools-grid {
         grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
         gap: 1rem;
       }
     }
-    
+
     /* Smooth scrolling */
     html {
       scroll-behavior: smooth;
     }
-    
+
     /* Custom scrollbar */
     ::-webkit-scrollbar {
       width: 8px;
     }
-    
+
     ::-webkit-scrollbar-track {
       background: rgba(255, 255, 255, 0.05);
     }
-    
+
     ::-webkit-scrollbar-thumb {
       background: linear-gradient(135deg, #3b82f6, #8b5cf6);
       border-radius: 4px;
     }
-    
+
     ::-webkit-scrollbar-thumb:hover {
       background: linear-gradient(135deg, #2563eb, #7c3aed);
     }
   </style>
 </head>
+
 <body class="text-white">
   <!-- Navigation -->
   <nav class="fixed top-0 w-full z-40 glass">
     <div class="max-w-7xl mx-auto px-6 py-4">
       <div class="flex items-center justify-between">
-            <!-- Logo -->
+        <!-- Logo -->
         <div class="flex items-center space-x-3">
           <a href="index.html" class="flex items-center space-x-3 hover:opacity-80 transition-opacity duration-200">
             <img src="images/logo.png" alt="DevDunia" class="w-10 h-10 rounded-xl object-contain">
             <div>
               <h1 class="text-xl font-bold gradient-text">DevDunia</h1>
               <p class="text-xs text-gray-400">Developer Tools</p>
-                </div>
+            </div>
           </a>
-            </div>
+        </div>
 
-                <!-- Search Bar -->
-                <div class="flex-1 max-w-md mx-8">
-                    <div class="relative">
-                        <input 
-                            type="text" 
-              placeholder="Search 50+ tools..." 
+        <!-- Search Bar -->
+        <div class="flex-1 max-w-md mx-8">
+          <div class="relative">
+            <input type="text" placeholder="Search 50+ tools..."
               class="search-bar w-full px-4 py-3 pl-12 rounded-xl text-white placeholder-gray-400 focus:outline-none"
-              id="searchInput"
-            >
-            <svg class="absolute left-4 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
-                        </svg>
-                        <!-- Clear search button -->
-                        <button id="clearSearch" class="absolute right-4 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400 hover:text-white transition-colors hidden">
-                            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
-                            </svg>
-                        </button>
-            </div>
+              id="searchInput">
+            <svg class="absolute left-4 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" fill="none"
+              stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+            </svg>
+            <!-- Clear search button -->
+            <button id="clearSearch"
+              class="absolute right-4 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400 hover:text-white transition-colors hidden">
+              <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+              </svg>
+            </button>
+          </div>
 
-                    <!-- Search Results Area -->
-                    <div id="searchResults" class="absolute top-full left-0 right-0 mt-2 bg-slate-800/95 backdrop-blur-md border border-slate-700/60 rounded-xl shadow-2xl z-50 hidden">
-        <div class="p-4">
-                            <div id="searchResultsContent" class="space-y-2">
-                                <!-- Search results will be populated here -->
+          <!-- Search Results Area -->
+          <div id="searchResults"
+            class="absolute top-full left-0 right-0 mt-2 bg-slate-800/95 backdrop-blur-md border border-slate-700/60 rounded-xl shadow-2xl z-50 hidden">
+            <div class="p-4">
+              <div id="searchResultsContent" class="space-y-2">
+                <!-- Search results will be populated here -->
+              </div>
+              <div id="noResults" class="text-center py-8 text-gray-400 hidden">
+                <svg class="w-12 h-12 mx-auto mb-3 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                    d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+                </svg>
+                <p class="text-sm">No tools found matching your search</p>
+              </div>
             </div>
-                            <div id="noResults" class="text-center py-8 text-gray-400 hidden">
-                                <svg class="w-12 h-12 mx-auto mb-3 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
-                                </svg>
-                                <p class="text-sm">No tools found matching your search</p>
-            </div>
-            </div>
-                </div>
-            </div>
+          </div>
+        </div>
 
-                <!-- Stats -->
+        <!-- Stats -->
         <div class="flex items-center space-x-6 text-sm">
           <div class="flex items-center space-x-2">
             <div class="w-2 h-2 bg-green-400 rounded-full animate-pulse"></div>
             <span class="text-gray-300">50+ Tools</span>
-            </div>
+          </div>
           <div class="flex items-center space-x-2">
             <div class="w-2 h-2 bg-blue-400 rounded-full"></div>
             <span class="text-gray-300">Free Forever</span>
           </div>
-          <a href="support.html" class="flex items-center space-x-2 bg-purple-600/20 hover:bg-purple-600/30 border border-purple-500/30 hover:border-purple-500/50 px-3 py-2 rounded-lg text-purple-300 hover:text-purple-200 transition-all duration-200">
+          <a href="support.html"
+            class="flex items-center space-x-2 bg-purple-600/20 hover:bg-purple-600/30 border border-purple-500/30 hover:border-purple-500/50 px-3 py-2 rounded-lg text-purple-300 hover:text-purple-200 transition-all duration-200">
             <div class="w-2 h-2 bg-purple-400 rounded-full"></div>
             <span class="text-sm font-medium">Support</span>
           </a>
-                </div>
-            </div>
         </div>
-    </nav>
+      </div>
+    </div>
+  </nav>
 
   <!-- Main Content -->
   <main class="pt-24 pb-16">
@@ -380,20 +310,22 @@
         <p class="text-lg text-gray-400 mb-6">Developer & VAPT Tools Dashboard</p>
         <!-- GitHub Star Button -->
         <div class="mb-8">
-          <a href="https://github.com/echobash/devdunia" target="_blank" class="github-banner px-6 py-3 rounded-xl text-base font-bold flex items-center space-x-2 mx-auto w-fit hover:scale-105 transition-all duration-300">
-                        <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
-                            <path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/>
-                        </svg>
+          <a href="https://github.com/echobash/devdunia" target="_blank"
+            class="github-banner px-6 py-3 rounded-xl text-base font-bold flex items-center space-x-2 mx-auto w-fit hover:scale-105 transition-all duration-300">
+            <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+              <path
+                d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z" />
+            </svg>
             <span>⭐ Star us on GitHub</span>
-                </a>
-            </div>
+          </a>
+        </div>
 
         <!-- Quick Stats -->
         <div class="flex flex-wrap justify-center gap-6">
           <div class="glass-card px-4 py-3 rounded-xl">
             <div class="text-xl font-bold text-blue-400">50+</div>
             <div class="text-xs text-gray-400">Dev & VAPT Tools</div>
-            </div>
+          </div>
           <div class="glass-card px-4 py-3 rounded-xl">
             <div class="text-xl font-bold text-green-400">100%</div>
             <div class="text-xs text-gray-400">Free to Use</div>
@@ -412,29 +344,30 @@
           <div class="flex items-center justify-between mb-8">
             <div>
               <h2 class="text-3xl font-bold mb-2 flex items-center">
-                <span class="w-8 h-8 bg-gradient-to-r from-blue-500 to-purple-500 rounded-lg flex items-center justify-center mr-3">
+                <span
+                  class="w-8 h-8 bg-gradient-to-r from-blue-500 to-purple-500 rounded-lg flex items-center justify-center mr-3">
                   🔧
-                            </span>
+                </span>
                 Encoders/Decoders
               </h2>
               <p class="text-gray-400">Transform and convert data formats seamlessly</p>
-                    </div>
-            <div class="section-divider w-32"></div>
             </div>
+            <div class="section-divider w-32"></div>
+          </div>
 
           <div class="tools-grid">
             <a href="php-to-json.html" class="tool-card p-6 rounded-2xl group">
               <div class="flex items-center space-x-4">
                 <div class="tool-icon w-12 h-12 rounded-xl flex items-center justify-center">
                   <span class="text-xl">🔄</span>
-                    </div>
+                </div>
                 <div>
                   <h3 class="font-semibold text-lg">JSON to PHP</h3>
                   <p class="text-sm text-gray-400">Convert JSON data to PHP arrays</p>
                 </div>
               </div>
             </a>
-            
+
             <a href="json-beautifier.html" class="tool-card p-6 rounded-2xl group">
               <div class="flex items-center space-x-4">
                 <div class="tool-icon w-12 h-12 rounded-xl flex items-center justify-center">
@@ -443,70 +376,70 @@
                 <div>
                   <h3 class="font-semibold text-lg">JSON Beautifier</h3>
                   <p class="text-sm text-gray-400">Format and validate JSON data</p>
-            </div>
-        </div>
+                </div>
+              </div>
             </a>
-            
+
             <a href="json-minifier.html" class="tool-card p-6 rounded-2xl group">
               <div class="flex items-center space-x-4">
                 <div class="tool-icon w-12 h-12 rounded-xl flex items-center justify-center">
                   <span class="text-xl">📦</span>
-            </div>
+                </div>
                 <div>
                   <h3 class="font-semibold text-lg">JSON Minifier</h3>
                   <p class="text-sm text-gray-400">Compress JSON for production</p>
                 </div>
               </div>
             </a>
-            
+
             <a href="string-transformer.html" class="tool-card p-6 rounded-2xl group">
               <div class="flex items-center space-x-4">
                 <div class="tool-icon w-12 h-12 rounded-xl flex items-center justify-center">
                   <span class="text-xl">🔄</span>
-                    </div>
+                </div>
                 <div>
                   <h3 class="font-semibold text-lg">String Transformer</h3>
                   <p class="text-sm text-gray-400">Transform text between formats</p>
-                        </div>
+                </div>
               </div>
             </a>
-            
+
             <a href="url-encoder.html" class="tool-card p-6 rounded-2xl group">
               <div class="flex items-center space-x-4">
                 <div class="tool-icon w-12 h-12 rounded-xl flex items-center justify-center">
                   <span class="text-xl">🔗</span>
-            </div>
+                </div>
                 <div>
                   <h3 class="font-semibold text-lg">URL Encoder</h3>
                   <p class="text-sm text-gray-400">Encode URLs safely</p>
-        </div>
-                            </div>
+                </div>
+              </div>
             </a>
-            
+
             <a href="url-decoder.html" class="tool-card p-6 rounded-2xl group">
               <div class="flex items-center space-x-4">
                 <div class="tool-icon w-12 h-12 rounded-xl flex items-center justify-center">
                   <span class="text-xl">🔓</span>
-                    </div>
+                </div>
                 <div>
                   <h3 class="font-semibold text-lg">URL Decoder</h3>
                   <p class="text-sm text-gray-400">Decode URL-encoded strings</p>
                 </div>
               </div>
             </a>
-            
+
             <a href="base64-encoder.html" class="tool-card p-6 rounded-2xl group">
               <div class="flex items-center space-x-4">
                 <div class="tool-icon w-12 h-12 rounded-xl flex items-center justify-center">
                   <span class="text-xl">📤</span>
-                    </div>
+                </div>
                 <div>
                   <h3 class="font-semibold text-lg">Base64 Encoder</h3>
                   <p class="text-sm text-gray-400">Encode to Base64 format</p>
                 </div>
               </div>
             </a>
-            
+
             <a href="base64-decoder.html" class="tool-card p-6 rounded-2xl group">
               <div class="flex items-center space-x-4">
                 <div class="tool-icon w-12 h-12 rounded-xl flex items-center justify-center">
@@ -515,54 +448,6 @@
                 <div>
                   <h3 class="font-semibold text-lg">Base64 Decoder</h3>
                   <p class="text-sm text-gray-400">Decode Base64 strings</p>
-            </div>
-        </div>
-            </a>
-
-            <a href="base32encode/index.html" class="tool-card p-6 rounded-2xl group">
-              <div class="flex items-center space-x-4">
-                <div class="tool-icon w-12 h-12 rounded-xl flex items-center justify-center">
-                  <span class="text-xl">📤</span>
-                </div>
-                <div>
-                  <h3 class="font-semibold text-lg">Base32 Encoder</h3>
-                  <p class="text-sm text-gray-400">Encode to Base32 format</p>
-                </div>
-              </div>
-            </a>
-
-            <a href="base32decode/index.html" class="tool-card p-6 rounded-2xl group">
-              <div class="flex items-center space-x-4">
-                <div class="tool-icon w-12 h-12 rounded-xl flex items-center justify-center">
-                  <span class="text-xl">📥</span>
-                </div>
-                <div>
-                  <h3 class="font-semibold text-lg">Base32 Decoder</h3>
-                  <p class="text-sm text-gray-400">Decode Base32 strings</p>
-                </div>
-              </div>
-            </a>
-
-            <a href="base58encode/index.html" class="tool-card p-6 rounded-2xl group">
-              <div class="flex items-center space-x-4">
-                <div class="tool-icon w-12 h-12 rounded-xl flex items-center justify-center">
-                  <span class="text-xl">📤</span>
-                </div>
-                <div>
-                  <h3 class="font-semibold text-lg">Base58 Encoder</h3>
-                  <p class="text-sm text-gray-400">Encode to Base58 format</p>
-                </div>
-              </div>
-            </a>
-
-            <a href="base58decode/index.html" class="tool-card p-6 rounded-2xl group">
-              <div class="flex items-center space-x-4">
-                <div class="tool-icon w-12 h-12 rounded-xl flex items-center justify-center">
-                  <span class="text-xl">📥</span>
-                </div>
-                <div>
-                  <h3 class="font-semibold text-lg">Base58 Decoder</h3>
-                  <p class="text-sm text-gray-400">Decode Base58 strings</p>
                 </div>
               </div>
             </a>
@@ -571,14 +456,14 @@
               <div class="flex items-center space-x-4">
                 <div class="tool-icon w-12 h-12 rounded-xl flex items-center justify-center">
                   <span class="text-xl">🔐</span>
-                    </div>
+                </div>
                 <div>
                   <h3 class="font-semibold text-lg">Hash Generator</h3>
                   <p class="text-sm text-gray-400">Generate secure hashes</p>
                 </div>
               </div>
             </a>
-            
+
             <a href="jwt-decoder.html" class="tool-card p-6 rounded-2xl group">
               <div class="flex items-center space-x-4">
                 <div class="tool-icon w-12 h-12 rounded-xl flex items-center justify-center">
@@ -587,46 +472,46 @@
                 <div>
                   <h3 class="font-semibold text-lg">JWT Decoder</h3>
                   <p class="text-sm text-gray-400">Decode JWT tokens</p>
-            </div>
+                </div>
               </div>
             </a>
-            
+
             <a href="csv-json-converter.html" class="tool-card p-6 rounded-2xl group">
               <div class="flex items-center space-x-4">
                 <div class="tool-icon w-12 h-12 rounded-xl flex items-center justify-center">
                   <span class="text-xl">📊</span>
-            </div>
+                </div>
                 <div>
                   <h3 class="font-semibold text-lg">CSV to JSON</h3>
                   <p class="text-sm text-gray-400">Convert CSV to JSON</p>
-        </div>
+                </div>
               </div>
             </a>
-            
+
             <a href="yaml-json-converter.html" class="tool-card p-6 rounded-2xl group">
               <div class="flex items-center space-x-4">
                 <div class="tool-icon w-12 h-12 rounded-xl flex items-center justify-center">
                   <span class="text-xl">⚖️</span>
-            </div>
+                </div>
                 <div>
                   <h3 class="font-semibold text-lg">YAML ⇄ JSON</h3>
                   <p class="text-sm text-gray-400">Convert between YAML and JSON</p>
-                        </div>
+                </div>
               </div>
             </a>
-            
+
             <a href="xml-formatter.html" class="tool-card p-6 rounded-2xl group">
               <div class="flex items-center space-x-4">
                 <div class="tool-icon w-12 h-12 rounded-xl flex items-center justify-center">
                   <span class="text-xl">📄</span>
-                        </div>
+                </div>
                 <div>
                   <h3 class="font-semibold text-lg">XML Formatter</h3>
                   <p class="text-sm text-gray-400">Format and validate XML</p>
-                        </div>
-                            </div>
-                </a>
-            </div>
+                </div>
+              </div>
+            </a>
+          </div>
         </section>
 
         <!-- VAPT Tools Section -->
@@ -634,16 +519,17 @@
           <div class="flex items-center justify-between mb-8">
             <div>
               <h2 class="text-3xl font-bold mb-2 flex items-center">
-                <span class="w-8 h-8 bg-gradient-to-r from-red-500 to-orange-500 rounded-lg flex items-center justify-center mr-3">
+                <span
+                  class="w-8 h-8 bg-gradient-to-r from-red-500 to-orange-500 rounded-lg flex items-center justify-center mr-3">
                   🛡️
                 </span>
                 VAPT Tools
               </h2>
               <p class="text-gray-400">Vulnerability Assessment and Penetration Testing tools</p>
-                    </div>
+            </div>
             <div class="section-divider w-32"></div>
           </div>
-          
+
           <div class="tools-grid">
             <a href="clickjacking-checker.html" class="tool-card p-6 rounded-2xl group">
               <div class="flex items-center space-x-4">
@@ -656,19 +542,19 @@
                 </div>
               </div>
             </a>
-            
+
             <a href="http-response-header-printer.html" class="tool-card p-6 rounded-2xl group">
               <div class="flex items-center space-x-4">
                 <div class="tool-icon w-12 h-12 rounded-xl flex items-center justify-center">
                   <span class="text-xl">📋</span>
-            </div>
+                </div>
                 <div>
                   <h3 class="font-semibold text-lg">HTTP Headers</h3>
                   <p class="text-sm text-gray-400">Analyze HTTP response headers</p>
-        </div>
+                </div>
               </div>
             </a>
-            
+
             <a href="owasp-top10.html" class="tool-card p-6 rounded-2xl group">
               <div class="flex items-center space-x-4">
                 <div class="tool-icon w-12 h-12 rounded-xl flex items-center justify-center">
@@ -680,7 +566,7 @@
                 </div>
               </div>
             </a>
-            
+
             <a href="email-header-analyzer.html" class="tool-card p-6 rounded-2xl group">
               <div class="flex items-center space-x-4">
                 <div class="tool-icon w-12 h-12 rounded-xl flex items-center justify-center">
@@ -700,29 +586,30 @@
           <div class="flex items-center justify-between mb-8">
             <div>
               <h2 class="text-3xl font-bold mb-2 flex items-center">
-                <span class="w-8 h-8 bg-gradient-to-r from-green-500 to-blue-500 rounded-lg flex items-center justify-center mr-3">
+                <span
+                  class="w-8 h-8 bg-gradient-to-r from-green-500 to-blue-500 rounded-lg flex items-center justify-center mr-3">
                   ⚡
-                        </span>
+                </span>
                 Generators
               </h2>
               <p class="text-gray-400">Create passwords, UUIDs, and more</p>
-                            </div>
+            </div>
             <div class="section-divider w-32"></div>
-                    </div>
+          </div>
 
           <div class="tools-grid">
             <a href="password-generator.html" class="tool-card p-6 rounded-2xl group">
               <div class="flex items-center space-x-4">
                 <div class="tool-icon w-12 h-12 rounded-xl flex items-center justify-center">
                   <span class="text-xl">🔑</span>
-                    </div>
+                </div>
                 <div>
                   <h3 class="font-semibold text-lg">Password Generator</h3>
                   <p class="text-sm text-gray-400">Generate secure passwords</p>
                 </div>
               </div>
             </a>
-            
+
             <a href="guid-generator.html" class="tool-card p-6 rounded-2xl group">
               <div class="flex items-center space-x-4">
                 <div class="tool-icon w-12 h-12 rounded-xl flex items-center justify-center">
@@ -731,88 +618,89 @@
                 <div>
                   <h3 class="font-semibold text-lg">UUID Generator</h3>
                   <p class="text-sm text-gray-400">Generate unique identifiers</p>
-            </div>
-        </div>
+                </div>
+              </div>
             </a>
-            
+
             <a href="qr-generator.html" class="tool-card p-6 rounded-2xl group">
               <div class="flex items-center space-x-4">
                 <div class="tool-icon w-12 h-12 rounded-xl flex items-center justify-center">
                   <span class="text-xl">📱</span>
-            </div>
+                </div>
                 <div>
                   <h3 class="font-semibold text-lg">QR Generator</h3>
                   <p class="text-sm text-gray-400">Create QR codes</p>
-        </div>
+                </div>
               </div>
             </a>
-            
+
             <a href="guid-generator.html" class="tool-card p-6 rounded-2xl group">
               <div class="flex items-center space-x-4">
                 <div class="tool-icon w-12 h-12 rounded-xl flex items-center justify-center">
                   <span class="text-xl">🎯</span>
-        </div>
+                </div>
                 <div>
                   <h3 class="font-semibold text-lg">GUID Generator</h3>
                   <p class="text-sm text-gray-400">Generate GUIDs</p>
-                        </div>
+                </div>
               </div>
             </a>
-            
+
             <a href="lorem-ipsum-generator.html" class="tool-card p-6 rounded-2xl group">
               <div class="flex items-center space-x-4">
                 <div class="tool-icon w-12 h-12 rounded-xl flex items-center justify-center">
                   <span class="text-xl">📝</span>
-                        </div>
+                </div>
                 <div>
                   <h3 class="font-semibold text-lg">Lorem Ipsum</h3>
                   <p class="text-sm text-gray-400">Generate placeholder text</p>
-                        </div>
-                            </div>
-                    </a>
-                        </div>
-            </section>
+                </div>
+              </div>
+            </a>
+          </div>
+        </section>
 
         <!-- API & Integration Tools Section -->
         <section id="api-tools" class="animate-slide-up">
           <div class="flex items-center justify-between mb-8">
             <div>
               <h2 class="text-3xl font-bold mb-2 flex items-center">
-                <span class="w-8 h-8 bg-gradient-to-r from-purple-500 to-pink-500 rounded-lg flex items-center justify-center mr-3">
+                <span
+                  class="w-8 h-8 bg-gradient-to-r from-purple-500 to-pink-500 rounded-lg flex items-center justify-center mr-3">
                   🌐
-                        </span>
+                </span>
                 API & Integration Tools
-                </h2>
+              </h2>
               <p class="text-gray-400">Test APIs and integrate with external services</p>
-                            </div>
+            </div>
             <div class="section-divider w-32"></div>
-                        </div>
-          
+          </div>
+
           <div class="tools-grid">
             <a href="curl-describer.html" class="tool-card p-6 rounded-2xl group">
               <div class="flex items-center space-x-4">
                 <div class="tool-icon w-12 h-12 rounded-xl flex items-center justify-center">
                   <span class="text-xl">🔄</span>
-                            </div>
+                </div>
                 <div>
                   <h3 class="font-semibold text-lg">cURL Describer</h3>
                   <p class="text-sm text-gray-400">Convert cURL to code</p>
-                        </div>
+                </div>
               </div>
             </a>
-            
+
             <a href="cron-describer.html" class="tool-card p-6 rounded-2xl group">
               <div class="flex items-center space-x-4">
                 <div class="tool-icon w-12 h-12 rounded-xl flex items-center justify-center">
                   <span class="text-xl">⏰</span>
-                    </div>
+                </div>
                 <div>
                   <h3 class="font-semibold text-lg">Cron Describer</h3>
                   <p class="text-sm text-gray-400">Explain cron expressions</p>
                 </div>
               </div>
             </a>
-            
+
             <a href="regex-tester.html" class="tool-card p-6 rounded-2xl group">
               <div class="flex items-center space-x-4">
                 <div class="tool-icon w-12 h-12 rounded-xl flex items-center justify-center">
@@ -821,134 +709,137 @@
                 <div>
                   <h3 class="font-semibold text-lg">Regex Tester</h3>
                   <p class="text-sm text-gray-400">Test regular expressions</p>
-            </div>
+                </div>
               </div>
             </a>
-                </div>
-            </section>
+          </div>
+        </section>
 
         <!-- Development Tools Section -->
         <section id="dev-tools" class="animate-slide-up">
           <div class="flex items-center justify-between mb-8">
             <div>
               <h2 class="text-3xl font-bold mb-2 flex items-center">
-                <span class="w-8 h-8 bg-gradient-to-r from-orange-500 to-red-500 rounded-lg flex items-center justify-center mr-3">
+                <span
+                  class="w-8 h-8 bg-gradient-to-r from-orange-500 to-red-500 rounded-lg flex items-center justify-center mr-3">
                   🛠️
                 </span>
                 Development Tools
-                </h2>
+              </h2>
               <p class="text-gray-400">Essential tools for developers</p>
             </div>
             <div class="section-divider w-32"></div>
-        </div>
+          </div>
 
           <div class="tools-grid">
             <a href="sql-formatter.html" class="tool-card p-6 rounded-2xl group">
               <div class="flex items-center space-x-4">
                 <div class="tool-icon w-12 h-12 rounded-xl flex items-center justify-center">
                   <span class="text-xl">🗄️</span>
-                            </div>
+                </div>
                 <div>
                   <h3 class="font-semibold text-lg">SQL Formatter</h3>
                   <p class="text-sm text-gray-400">Format SQL queries</p>
-                        </div>
+                </div>
               </div>
             </a>
-            
+
             <a href="payment-tester.html" class="tool-card p-6 rounded-2xl group">
               <div class="flex items-center space-x-4">
                 <div class="tool-icon w-12 h-12 rounded-xl flex items-center justify-center">
                   <span class="text-xl">🧪</span>
-                            </div>
+                </div>
                 <div>
                   <h3 class="font-semibold text-lg">API Response Tester</h3>
                   <p class="text-sm text-gray-400">Test API responses</p>
-                        </div>
-                            </div>
+                </div>
+              </div>
             </a>
-            
+
             <a href="env-generator.html" class="tool-card p-6 rounded-2xl group">
               <div class="flex items-center space-x-4">
                 <div class="tool-icon w-12 h-12 rounded-xl flex items-center justify-center">
                   <span class="text-xl">🌍</span>
-                            </div>
+                </div>
                 <div>
                   <h3 class="font-semibold text-lg">Environment Generator</h3>
                   <p class="text-sm text-gray-400">Generate .env files</p>
-                        </div>
+                </div>
               </div>
             </a>
-            
+
             <a href="elasticsearch-tools.html" class="tool-card p-6 rounded-2xl group">
               <div class="flex items-center space-x-4">
                 <div class="tool-icon w-12 h-12 rounded-xl flex items-center justify-center">
                   <span class="text-xl">🔍</span>
-                            </div>
+                </div>
                 <div>
                   <h3 class="font-semibold text-lg">Elasticsearch Tools</h3>
                   <p class="text-sm text-gray-400">Elasticsearch utilities</p>
-                        </div>
+                </div>
               </div>
             </a>
-            
+
             <a href="markdown-editor.html" class="tool-card p-6 rounded-2xl group">
               <div class="flex items-center space-x-4">
                 <div class="tool-icon w-12 h-12 rounded-xl flex items-center justify-center">
                   <span class="text-xl">📝</span>
-                            </div>
+                </div>
                 <div>
                   <h3 class="font-semibold text-lg">Markdown Editor</h3>
                   <p class="text-sm text-gray-400">Live markdown editor</p>
-                        </div>
+                </div>
               </div>
             </a>
-            
+
             <a href="diff-checker.html" class="tool-card p-6 rounded-2xl group">
               <div class="flex items-center space-x-4">
                 <div class="tool-icon w-12 h-12 rounded-xl flex items-center justify-center">
                   <span class="text-xl">🔍</span>
-                            </div>
+                </div>
                 <div>
                   <h3 class="font-semibold text-lg">Diff Checker</h3>
                   <p class="text-sm text-gray-400">Compare text differences</p>
-                        </div>
+                </div>
               </div>
             </a>
-            
+
             <a href="mermaid-renderer.html" class="tool-card p-6 rounded-2xl group">
               <div class="flex items-center space-x-4">
                 <div class="tool-icon w-12 h-12 rounded-xl flex items-center justify-center">
                   <span class="text-xl">🌊</span>
-                            </div>
+                </div>
                 <div>
                   <h3 class="font-semibold text-lg">Mermaid Renderer</h3>
                   <p class="text-sm text-gray-400">Create beautiful diagrams</p>
-                        </div>
-              </div>
-                    </a>
                 </div>
-            </section>
+              </div>
+            </a>
+          </div>
+        </section>
 
         <!-- Network Protocols Section -->
         <section id="network-protocols" class="animate-slide-up">
           <div class="flex items-center justify-between mb-8">
             <div>
-              <h2 class="text-3xl font-bold mb-2 flex items-center cursor-pointer" onclick="toggleSection('network-protocols')">
-                <span class="w-8 h-8 bg-gradient-to-r from-purple-500 to-pink-500 rounded-lg flex items-center justify-center mr-3">
+              <h2 class="text-3xl font-bold mb-2 flex items-center cursor-pointer"
+                onclick="toggleSection('network-protocols')">
+                <span
+                  class="w-8 h-8 bg-gradient-to-r from-purple-500 to-pink-500 rounded-lg flex items-center justify-center mr-3">
                   🌐
                 </span>
                 Network Protocols
                 <svg class="w-5 h-5 ml-2 transform transition-transform duration-200" id="network-protocols-arrow">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
-                                </svg>
+                </svg>
               </h2>
               <p class="text-gray-400">Comprehensive networking protocols and models</p>
               <div class="flex flex-wrap gap-2 mt-2">
                 <span class="px-2 py-1 bg-purple-500/20 text-purple-300 text-xs rounded-full">Network</span>
                 <span class="px-2 py-1 bg-blue-500/20 text-blue-300 text-xs rounded-full">Protocols</span>
                 <span class="px-2 py-1 bg-green-500/20 text-green-300 text-xs rounded-full">Communication</span>
-                            </div>
-                        </div>
+              </div>
+            </div>
             <div class="section-divider w-32"></div>
           </div>
 
@@ -957,137 +848,187 @@
               <div class="flex items-center space-x-4">
                 <div class="tool-icon w-12 h-12 rounded-xl flex items-center justify-center">
                   <span class="text-xl">🌐</span>
-                            </div>
+                </div>
                 <div class="flex-1">
                   <h3 class="font-semibold text-lg">Network Protocols</h3>
                   <p class="text-sm text-gray-400">Complete guide to networking protocols</p>
                   <div class="flex flex-wrap gap-1 mt-2">
                     <span class="px-2 py-1 bg-purple-500/20 text-purple-300 text-xs rounded-full">Network</span>
                     <span class="px-2 py-1 bg-blue-500/20 text-blue-300 text-xs rounded-full">Guide</span>
-                        </div>
+                  </div>
                 </div>
-                <button class="share-btn opacity-0 group-hover:opacity-100 transition-opacity p-2 hover:bg-slate-700 rounded-lg" onclick="shareTool('Network Protocols', 'network-protocols.html', event)">
+                <button
+                  class="share-btn opacity-0 group-hover:opacity-100 transition-opacity p-2 hover:bg-slate-700 rounded-lg"
+                  onclick="shareTool('Network Protocols', 'network-protocols.html', event)">
                   <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.367 2.684 3 3 0 00-5.367-2.684z"></path>
-                                </svg>
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                      d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.367 2.684 3 3 0 00-5.367-2.684z">
+                    </path>
+                  </svg>
                 </button>
-                            </div>
+              </div>
             </a>
-            
+
             <a href="http-protocol.html" class="tool-card p-6 rounded-2xl group relative">
               <div class="flex items-center space-x-4">
                 <div class="tool-icon w-12 h-12 rounded-xl flex items-center justify-center">
                   <span class="text-xl">🌐</span>
-                            </div>
+                </div>
                 <div class="flex-1">
                   <h3 class="font-semibold text-lg">HTTP Protocol</h3>
                   <p class="text-sm text-gray-400">Hypertext Transfer Protocol guide</p>
                   <div class="flex flex-wrap gap-1 mt-2">
                     <span class="px-2 py-1 bg-blue-500/20 text-blue-300 text-xs rounded-full">Web</span>
                     <span class="px-2 py-1 bg-green-500/20 text-green-300 text-xs rounded-full">HTTP</span>
-                        </div>
+                  </div>
                 </div>
-                <button class="share-btn opacity-0 group-hover:opacity-100 transition-opacity p-2 hover:bg-slate-700 rounded-lg" onclick="shareTool('HTTP Protocol', 'http-protocol.html', event)">
+                <button
+                  class="share-btn opacity-0 group-hover:opacity-100 transition-opacity p-2 hover:bg-slate-700 rounded-lg"
+                  onclick="shareTool('HTTP Protocol', 'http-protocol.html', event)">
                   <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.367 2.684 3 3 0 00-5.367-2.684z"></path>
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                      d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.367 2.684 3 3 0 00-5.367-2.684z">
+                    </path>
                   </svg>
                 </button>
               </div>
             </a>
-            
+
             <a href="tcp-protocol.html" class="tool-card p-6 rounded-2xl group relative">
               <div class="flex items-center space-x-4">
                 <div class="tool-icon w-12 h-12 rounded-xl flex items-center justify-center">
                   <span class="text-xl">🔗</span>
-                            </div>
+                </div>
                 <div class="flex-1">
                   <h3 class="font-semibold text-lg">TCP Protocol</h3>
                   <p class="text-sm text-gray-400">Transmission Control Protocol guide</p>
                   <div class="flex flex-wrap gap-1 mt-2">
                     <span class="px-2 py-1 bg-green-500/20 text-green-300 text-xs rounded-full">Reliable</span>
                     <span class="px-2 py-1 bg-blue-500/20 text-blue-300 text-xs rounded-full">TCP</span>
-                        </div>
+                  </div>
                 </div>
-                <button class="share-btn opacity-0 group-hover:opacity-100 transition-opacity p-2 hover:bg-slate-700 rounded-lg" onclick="shareTool('TCP Protocol', 'tcp-protocol.html', event)">
+                <button
+                  class="share-btn opacity-0 group-hover:opacity-100 transition-opacity p-2 hover:bg-slate-700 rounded-lg"
+                  onclick="shareTool('TCP Protocol', 'tcp-protocol.html', event)">
                   <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.367 2.684 3 3 0 00-5.367-2.684z"></path>
-                                </svg>
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                      d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.367 2.684 3 3 0 00-5.367-2.684z">
+                    </path>
+                  </svg>
                 </button>
-                            </div>
+              </div>
             </a>
-            
+
             <a href="udp-protocol.html" class="tool-card p-6 rounded-2xl group relative">
               <div class="flex items-center space-x-4">
                 <div class="tool-icon w-12 h-12 rounded-xl flex items-center justify-center">
                   <span class="text-xl">⚡</span>
-                            </div>
+                </div>
                 <div class="flex-1">
                   <h3 class="font-semibold text-lg">UDP Protocol</h3>
                   <p class="text-sm text-gray-400">User Datagram Protocol guide</p>
                   <div class="flex flex-wrap gap-1 mt-2">
                     <span class="px-2 py-1 bg-orange-500/20 text-orange-300 text-xs rounded-full">Fast</span>
                     <span class="px-2 py-1 bg-red-500/20 text-red-300 text-xs rounded-full">UDP</span>
-                        </div>
+                  </div>
                 </div>
-                <button class="share-btn opacity-0 group-hover:opacity-100 transition-opacity p-2 hover:bg-slate-700 rounded-lg" onclick="shareTool('UDP Protocol', 'udp-protocol.html', event)">
+                <button
+                  class="share-btn opacity-0 group-hover:opacity-100 transition-opacity p-2 hover:bg-slate-700 rounded-lg"
+                  onclick="shareTool('UDP Protocol', 'udp-protocol.html', event)">
                   <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.367 2.684 3 3 0 00-5.367-2.684z"></path>
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                      d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.367 2.684 3 3 0 00-5.367-2.684z">
+                    </path>
                   </svg>
                 </button>
               </div>
             </a>
-            
+
             <a href="osi-model.html" class="tool-card p-6 rounded-2xl group relative">
               <div class="flex items-center space-x-4">
                 <div class="tool-icon w-12 h-12 rounded-xl flex items-center justify-center">
                   <span class="text-xl">🏗️</span>
-                            </div>
+                </div>
                 <div class="flex-1">
                   <h3 class="font-semibold text-lg">OSI Model</h3>
                   <p class="text-sm text-gray-400">7-layer network model guide</p>
                   <div class="flex flex-wrap gap-1 mt-2">
                     <span class="px-2 py-1 bg-purple-500/20 text-purple-300 text-xs rounded-full">Model</span>
                     <span class="px-2 py-1 bg-blue-500/20 text-blue-300 text-xs rounded-full">OSI</span>
-                        </div>
+                  </div>
                 </div>
-                <button class="share-btn opacity-0 group-hover:opacity-100 transition-opacity p-2 hover:bg-slate-700 rounded-lg" onclick="shareTool('OSI Model', 'osi-model.html', event)">
+                <button
+                  class="share-btn opacity-0 group-hover:opacity-100 transition-opacity p-2 hover:bg-slate-700 rounded-lg"
+                  onclick="shareTool('OSI Model', 'osi-model.html', event)">
                   <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.367 2.684 3 3 0 00-5.367-2.684z"></path>
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                      d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.367 2.684 3 3 0 00-5.367-2.684z">
+                    </path>
                   </svg>
                 </button>
               </div>
-                    </a>
+            </a>
+          </div>
+        </section>
+
+        <section id="api-tools" class="animate-slide-up">
+          <div class="flex items-center justify-between mb-8">
+            <div>
+              <h2 class="text-3xl font-bold mb-2 flex items-center">
+                <span
+                  class="w-8 h-8 bg-gradient-to-r from-purple-500 to-pink-500 rounded-lg flex items-center justify-center mr-3">
+                  🗄️
+                </span>
+                Text Tools
+              </h2>
+            </div>
+            <div class="section-divider w-32"></div>
+          </div>  
+
+          <div class="tools-grid">
+            <a href="word_counter/index.html" class="tool-card p-6 rounded-2xl group">
+              <div class="flex items-center space-x-4">
+                <div class="tool-icon w-12 h-12 rounded-xl flex items-center justify-center">
+                  <span class="text-xl">�</span>
                 </div>
-            </section>
+                <div>
+                  <h3 class="font-semibold text-lg">Word Counter</h3>
+                  <p class="text-sm text-gray-400">Quickly count words and characters</p>
+                </div>
+              </div>
+            </a>
+
+        </section>
 
         <!-- Database Tools Section -->
         <section id="api-tools" class="animate-slide-up">
           <div class="flex items-center justify-between mb-8">
             <div>
               <h2 class="text-3xl font-bold mb-2 flex items-center">
-                <span class="w-8 h-8 bg-gradient-to-r from-purple-500 to-pink-500 rounded-lg flex items-center justify-center mr-3">
+                <span
+                  class="w-8 h-8 bg-gradient-to-r from-purple-500 to-pink-500 rounded-lg flex items-center justify-center mr-3">
                   🗄️
                 </span>
                 Database Tools
-                </h2>
+              </h2>
               <p class="text-gray-400">Database utilities and commands</p>
-                            </div>
+            </div>
             <div class="section-divider w-32"></div>
-                        </div>
-          
+          </div>
+
           <div class="tools-grid">
             <a href="postgresql-guide.html" class="tool-card p-6 rounded-2xl group">
               <div class="flex items-center space-x-4">
                 <div class="tool-icon w-12 h-12 rounded-xl flex items-center justify-center">
                   <span class="text-xl">�</span>
-                            </div>
+                </div>
                 <div>
                   <h3 class="font-semibold text-lg">PostgreSQL Guide</h3>
                   <p class="text-sm text-gray-400">PostgreSQL utilities and commands</p>
-                        </div>
+                </div>
               </div>
             </a>
-            
+
             <!-- <a href="cron-describer.html" class="tool-card p-6 rounded-2xl group">
               <div class="flex items-center space-x-4">
                 <div class="tool-icon w-12 h-12 rounded-xl flex items-center justify-center">
@@ -1123,34 +1064,35 @@
                         </div>
               </div>
                     </a> -->
-                </div>
-            </section>
+          </div>
+        </section>
 
         <!-- Redis Section -->
         <section id="redis" class="animate-slide-up">
           <div class="flex items-center justify-between mb-8">
             <div>
               <h2 class="text-3xl font-bold mb-2 flex items-center">
-                <span class="w-8 h-8 bg-gradient-to-r from-red-500 to-orange-500 rounded-lg flex items-center justify-center mr-3">
+                <span
+                  class="w-8 h-8 bg-gradient-to-r from-red-500 to-orange-500 rounded-lg flex items-center justify-center mr-3">
                   🔴
                 </span>
                 Redis Tools
-                </h2>
+              </h2>
               <p class="text-gray-400">Redis database utilities and commands</p>
-                            </div>
+            </div>
             <div class="section-divider w-32"></div>
-                        </div>
-          
+          </div>
+
           <div class="tools-grid">
             <a href="redis-command-explorer.html" class="tool-card p-6 rounded-2xl group">
               <div class="flex items-center space-x-4">
                 <div class="tool-icon w-12 h-12 rounded-xl flex items-center justify-center">
                   <span class="text-xl">📚</span>
-                            </div>
+                </div>
                 <div>
                   <h3 class="font-semibold text-lg">Redis Command Explorer</h3>
                   <p class="text-sm text-gray-400">Explore Redis commands</p>
-                        </div>
+                </div>
               </div>
             </a>
           </div>
@@ -1161,46 +1103,48 @@
           <div class="flex items-center justify-between mb-8">
             <div>
               <h2 class="text-3xl font-bold mb-2 flex items-center">
-                <span class="w-8 h-8 bg-gradient-to-r from-green-500 to-emerald-500 rounded-lg flex items-center justify-center mr-3">
+                <span
+                  class="w-8 h-8 bg-gradient-to-r from-green-500 to-emerald-500 rounded-lg flex items-center justify-center mr-3">
                   💳
                 </span>
                 Payment Tools
               </h2>
               <p class="text-gray-400">Payment processing and testing utilities</p>
-                            </div>
+            </div>
             <div class="section-divider w-32"></div>
-                        </div>
-          
+          </div>
+
           <div class="tools-grid">
             <a href="payment-tester.html" class="tool-card p-6 rounded-2xl group">
               <div class="flex items-center space-x-4">
                 <div class="tool-icon w-12 h-12 rounded-xl flex items-center justify-center">
                   <span class="text-xl">🧪</span>
-                            </div>
+                </div>
                 <div>
                   <h3 class="font-semibold text-lg">Payment Tester</h3>
                   <p class="text-sm text-gray-400">Test payment integrations</p>
-                        </div>
-              </div>
-                    </a>
                 </div>
-            </section>
+              </div>
+            </a>
+          </div>
+        </section>
 
         <!-- Python Toolkit Section -->
         <section id="python" class="animate-slide-up">
           <div class="flex items-center justify-between mb-8">
             <div>
               <h2 class="text-3xl font-bold mb-2 flex items-center">
-                <span class="w-8 h-8 bg-gradient-to-r from-yellow-500 to-orange-500 rounded-lg flex items-center justify-center mr-3">
+                <span
+                  class="w-8 h-8 bg-gradient-to-r from-yellow-500 to-orange-500 rounded-lg flex items-center justify-center mr-3">
                   🐍
                 </span>
                 Python Toolkit
-                </h2>
+              </h2>
               <p class="text-gray-400">Python development utilities and code generators</p>
-                            </div>
+            </div>
             <div class="section-divider w-32"></div>
-                        </div>
-          
+          </div>
+
           <div class="tools-grid">
             <a href="python-requests.html" class="tool-card p-6 rounded-2xl group">
               <div class="flex items-center space-x-4">
@@ -1213,31 +1157,31 @@
                 </div>
               </div>
             </a>
-            
+
             <a href="python-urllib.html" class="tool-card p-6 rounded-2xl group">
               <div class="flex items-center space-x-4">
                 <div class="tool-icon w-12 h-12 rounded-xl flex items-center justify-center">
                   <span class="text-xl">🔗</span>
-                            </div>
+                </div>
                 <div>
                   <h3 class="font-semibold text-lg">urllib</h3>
                   <p class="text-sm text-gray-400">urllib examples</p>
-                        </div>
+                </div>
               </div>
             </a>
-            
+
             <a href="python-flask.html" class="tool-card p-6 rounded-2xl group">
               <div class="flex items-center space-x-4">
                 <div class="tool-icon w-12 h-12 rounded-xl flex items-center justify-center">
                   <span class="text-xl">🌶️</span>
-                            </div>
+                </div>
                 <div>
                   <h3 class="font-semibold text-lg">Flask API</h3>
                   <p class="text-sm text-gray-400">Flask API templates</p>
-                        </div>
+                </div>
               </div>
-                    </a>
-            
+            </a>
+
             <a href="python-pandas.html" class="tool-card p-6 rounded-2xl group">
               <div class="flex items-center space-x-4">
                 <div class="tool-icon w-12 h-12 rounded-xl flex items-center justify-center">
@@ -1246,75 +1190,76 @@
                 <div>
                   <h3 class="font-semibold text-lg">Pandas</h3>
                   <p class="text-sm text-gray-400">Data manipulation examples</p>
-                        </div>
+                </div>
               </div>
             </a>
-            
+
             <a href="python-openai.html" class="tool-card p-6 rounded-2xl group">
               <div class="flex items-center space-x-4">
                 <div class="tool-icon w-12 h-12 rounded-xl flex items-center justify-center">
                   <span class="text-xl">🤖</span>
-                            </div>
+                </div>
                 <div>
                   <h3 class="font-semibold text-lg">OpenAI API</h3>
                   <p class="text-sm text-gray-400">OpenAI integration examples</p>
-                        </div>
+                </div>
               </div>
             </a>
-            
+
             <a href="jupyter-notebooks.html" class="tool-card p-6 rounded-2xl group">
               <div class="flex items-center space-x-4">
                 <div class="tool-icon w-12 h-12 rounded-xl flex items-center justify-center">
                   <span class="text-xl">📓</span>
-                            </div>
+                </div>
                 <div>
                   <h3 class="font-semibold text-lg">Jupyter Notebooks</h3>
                   <p class="text-sm text-gray-400">Notebook templates</p>
-                        </div>
+                </div>
               </div>
             </a>
-            
+
             <a href="prophet.html" class="tool-card p-6 rounded-2xl group">
               <div class="flex items-center space-x-4">
                 <div class="tool-icon w-12 h-12 rounded-xl flex items-center justify-center">
                   <span class="text-xl">📈</span>
-                            </div>
+                </div>
                 <div>
                   <h3 class="font-semibold text-lg">Prophet</h3>
                   <p class="text-sm text-gray-400">Time series forecasting</p>
-                        </div>
+                </div>
               </div>
             </a>
-            
+
             <a href="plotly.html" class="tool-card p-6 rounded-2xl group">
               <div class="flex items-center space-x-4">
                 <div class="tool-icon w-12 h-12 rounded-xl flex items-center justify-center">
                   <span class="text-xl">📊</span>
-                            </div>
+                </div>
                 <div>
                   <h3 class="font-semibold text-lg">Plotly</h3>
                   <p class="text-sm text-gray-400">Interactive visualizations</p>
-                        </div>
-              </div>
-                    </a>
                 </div>
-            </section>
+              </div>
+            </a>
+          </div>
+        </section>
 
         <!-- Data Structures & Algorithms Section -->
         <section id="data-structures" class="animate-slide-up">
           <div class="flex items-center justify-between mb-8">
             <div>
               <h2 class="text-3xl font-bold mb-2 flex items-center">
-                <span class="w-8 h-8 bg-gradient-to-r from-indigo-500 to-purple-500 rounded-lg flex items-center justify-center mr-3">
+                <span
+                  class="w-8 h-8 bg-gradient-to-r from-indigo-500 to-purple-500 rounded-lg flex items-center justify-center mr-3">
                   📊
                 </span>
                 Data Structures & Algorithms
-                </h2>
+              </h2>
               <p class="text-gray-400">Learn and practice data structures and algorithms</p>
-                            </div>
+            </div>
             <div class="section-divider w-32"></div>
-                        </div>
-          
+          </div>
+
           <div class="tools-grid">
             <a href="data-structures.html" class="tool-card p-6 rounded-2xl group">
               <div class="flex items-center space-x-4">
@@ -1327,43 +1272,43 @@
                 </div>
               </div>
             </a>
-            
+
             <a href="datastructures/array-ds.html" class="tool-card p-6 rounded-2xl group">
               <div class="flex items-center space-x-4">
                 <div class="tool-icon w-12 h-12 rounded-xl flex items-center justify-center">
                   <span class="text-xl">📋</span>
-                            </div>
+                </div>
                 <div>
                   <h3 class="font-semibold text-lg">Array</h3>
                   <p class="text-sm text-gray-400">Array operations and algorithms</p>
-                        </div>
+                </div>
               </div>
             </a>
-            
+
             <a href="datastructures/linkedlist-ds.html" class="tool-card p-6 rounded-2xl group">
               <div class="flex items-center space-x-4">
                 <div class="tool-icon w-12 h-12 rounded-xl flex items-center justify-center">
                   <span class="text-xl">🔗</span>
-                            </div>
+                </div>
                 <div>
                   <h3 class="font-semibold text-lg">Linked List</h3>
                   <p class="text-sm text-gray-400">Linked list implementations</p>
-                        </div>
+                </div>
               </div>
             </a>
-            
+
             <a href="datastructures/stack-ds.html" class="tool-card p-6 rounded-2xl group">
               <div class="flex items-center space-x-4">
                 <div class="tool-icon w-12 h-12 rounded-xl flex items-center justify-center">
                   <span class="text-xl">📚</span>
-                            </div>
+                </div>
                 <div>
                   <h3 class="font-semibold text-lg">Stack</h3>
                   <p class="text-sm text-gray-400">Stack data structure</p>
-                        </div>
+                </div>
               </div>
             </a>
-            
+
             <a href="datastructures/queue-ds.html" class="tool-card p-6 rounded-2xl group">
               <div class="flex items-center space-x-4">
                 <div class="tool-icon w-12 h-12 rounded-xl flex items-center justify-center">
@@ -1375,191 +1320,147 @@
                 </div>
               </div>
             </a>
-            
-                </div>
-            </section>
+
+          </div>
+        </section>
 
         <!-- Information & Reference Section -->
-<section id="information" class="animate-slide-up">
-  <div class="flex items-center justify-between mb-8">
-    <div>
-      <h2 class="text-3xl font-bold mb-2 flex items-center">
-        <span class="w-8 h-8 bg-gradient-to-r from-teal-500 to-cyan-500 rounded-lg flex items-center justify-center mr-3">
-          📚
-        </span>
-        Information & Reference
-      </h2>
-      <p class="text-gray-400">Reference materials and information tools</p>
-    </div>
-    <div class="section-divider w-32"></div>
-  </div>
-  
-  <div class="tools-grid">
-    <a href="emoji_picker/index.html" class="tool-card p-6 rounded-2xl group">
-      <div class="flex items-center space-x-4">
-        <div class="tool-icon w-12 h-12 rounded-xl flex items-center justify-center">
-          <span class="text-xl">😀</span>
-        </div>
-        <div>
-          <h3 class="font-semibold text-lg">Emoji Picker</h3>
-          <p class="text-sm text-gray-400">Browse and copy emojis instantly</p>
-        </div>
-      </div>
-    </a>
+        <section id="information" class="animate-slide-up">
+          <div class="flex items-center justify-between mb-8">
+            <div>
+              <h2 class="text-3xl font-bold mb-2 flex items-center">
+                <span
+                  class="w-8 h-8 bg-gradient-to-r from-teal-500 to-cyan-500 rounded-lg flex items-center justify-center mr-3">
+                  📚
+                </span>
+                Information & Reference
+              </h2>
+              <p class="text-gray-400">Reference materials and information tools</p>
+            </div>
+            <div class="section-divider w-32"></div>
+          </div>
 
-    <a href="ip-address.html" class="tool-card p-6 rounded-2xl group">
-      <div class="flex items-center space-x-4">
-        <div class="tool-icon w-12 h-12 rounded-xl flex items-center justify-center">
-          <span class="text-xl">🌍</span>
-        </div>
-        <div>
-          <h3 class="font-semibold text-lg">IP Address Tool</h3>
-          <p class="text-sm text-gray-400">Get IP address and location info</p>
-        </div>
+          <div class="tools-grid">
+            <a href="ip-address.html" class="tool-card p-6 rounded-2xl group">
+              <div class="flex items-center space-x-4">
+                <div class="tool-icon w-12 h-12 rounded-xl flex items-center justify-center">
+                  <span class="text-xl">🌍</span>
+                </div>
+                <div>
+                  <h3 class="font-semibold text-lg">IP Address Tools</h3>
+                  <p class="text-sm text-gray-400">IP address utilities</p>
+                </div>
+              </div>
+            </a>
+          </div>
+        </section>
       </div>
-    </a>
-
-    <a href="epoch_convertor/index.html" class="tool-card p-6 rounded-2xl group">
-      <div class="flex items-center space-x-4">
-        <div class="tool-icon w-12 h-12 rounded-xl flex items-center justify-center">
-          <span class="text-xl">⏰</span>
-        </div>
-        <div>
-          <h3 class="font-semibold text-lg">Epoch Converter</h3>
-          <p class="text-sm text-gray-400">Convert Unix timestamps to dates</p>
-        </div>
-      </div>
-    </a>
-    
-
-    <a href="leetcode-commit-message.html" class="tool-card p-6 rounded-2xl group">
-      <div class="flex items-center space-x-4">
-        <div class="tool-icon w-12 h-12 rounded-xl flex items-center justify-center">
-          <span class="text-xl">📝</span>
-        </div>
-        <div>
-          <h3 class="font-semibold text-lg">LeetCode Commit Generator</h3>
-          <p class="text-sm text-gray-400">Generate commit messages for LeetCode</p>
-        </div>
-      </div>
-    </a>
-    <a href="all_tools/index.html" class="tool-card p-6 rounded-2xl group">
-      <div class="flex items-center space-x-4">
-        <div class="tool-icon w-12 h-12 rounded-xl flex items-center justify-center">
-          <span class="text-xl">📝</span>
-        </div>
-        <div>
-          <h3 class="font-semibold text-lg">All tools</h3>
-          <p class="text-sm text-gray-400">Check the list of all tools available right now</p>
-        </div>
-      </div>
-    </a>
-    <a href="blank-page.html" class="tool-card p-6 rounded-2xl group">
-      <div class="flex items-center space-x-4">
-        <div class="tool-icon w-12 h-12 rounded-xl flex items-center justify-center">
-          <span class="text-xl">📝</span>
-        </div>
-        <div>
-          <h3 class="font-semibold text-lg">Blank Page</h3>
-          <p class="text-sm text-gray-400">A blank page to write and document notes online</p>
-        </div>
-      </div>
-    </a>
-  </div>
-</section>
-        </div>
     </div>
   </main>
 
-  <!-- Footer include -->
-    <div id="footer"></div>
-    <script>
-    fetch("footer.html")
-    .then(response => response.text())
-    .then(data => {
-        document.getElementById("footer").innerHTML = data;
-    })
-    .catch(err => console.error("Failed to load footer:", err));
-    </script>
+  <!-- Footer CTA -->
+  <footer class="py-16 border-t border-white/10">
+    <div class="max-w-4xl mx-auto px-6 text-center">
+      <div class="glass-card p-8 rounded-3xl">
+        <h2 class="text-3xl font-bold mb-4 gradient-text">
+          Dev & Security Tools
+          <br>
+          <span class="text-2xl">Hand in Hand</span>
+        </h2>
+        <p class="text-xl text-gray-300 mb-6">
+          Open Source & Free Forever
+          <br>
+          <span class="text-lg text-gray-400">Made with ❤️ by echobash.com</span>
+        </p>
+        <div class="flex flex-col sm:flex-row gap-4 justify-center">
+          <a href="https://github.com/echobash/devdunia" target="_blank"
+            class="btn-primary px-8 py-4 rounded-xl font-semibold text-lg">
+            Star on GitHub
+          </a>
+          <a href="https://echobash.com" target="_blank"
+            class="btn-secondary px-8 py-4 rounded-xl font-semibold text-lg">
+            Visit echobash.com
+          </a>
+        </div>
+      </div>
+    </div>
+  </footer>
 
   <!-- JavaScript for interactions -->
-    <!-- Theme Manager -->
-    <script src="js/theme-toggle.js"></script>
-    <script>
-        
-        // Enhanced Search functionality
-        const searchInput = document.getElementById('searchInput');
-        const clearSearchBtn = document.getElementById('clearSearch');
-        const searchResults = document.getElementById('searchResults');
-        const searchResultsContent = document.getElementById('searchResultsContent');
-        const noResults = document.getElementById('noResults');
-        const toolCards = document.querySelectorAll('.tool-card');
-        
-        // Create tools data array for search
-        const toolsData = Array.from(toolCards).map(card => ({
-            element: card,
-            title: card.querySelector('h3').textContent,
-            description: card.querySelector('p').textContent,
-            href: card.getAttribute('href'),
-            icon: card.querySelector('.tool-icon span').textContent
-        }));
+  <script>
+    // Enhanced Search functionality
+    const searchInput = document.getElementById('searchInput');
+    const clearSearchBtn = document.getElementById('clearSearch');
+    const searchResults = document.getElementById('searchResults');
+    const searchResultsContent = document.getElementById('searchResultsContent');
+    const noResults = document.getElementById('noResults');
+    const toolCards = document.querySelectorAll('.tool-card');
 
-        // Search function
-        function performSearch(searchTerm) {
-            const term = searchTerm.toLowerCase().trim();
-            
-            if (term === '') {
-                // Show all tools
-            toolCards.forEach(card => {
-                    card.style.display = 'block';
-                    card.style.animation = 'scaleIn 0.3s ease-out';
-                });
-                searchResults.classList.add('hidden');
-                clearSearchBtn.classList.add('hidden');
-                return;
-            }
+    // Create tools data array for search
+    const toolsData = Array.from(toolCards).map(card => ({
+      element: card,
+      title: card.querySelector('h3').textContent,
+      description: card.querySelector('p').textContent,
+      href: card.getAttribute('href'),
+      icon: card.querySelector('.tool-icon span').textContent
+    }));
 
-            // Filter tools - only search in tool names (titles)
-            const matchingTools = toolsData.filter(tool => 
-                tool.title.toLowerCase().includes(term)
-            );
+    // Search function
+    function performSearch(searchTerm) {
+      const term = searchTerm.toLowerCase().trim();
 
-            // Hide all tool cards
-            toolCards.forEach(card => {
-                    card.style.display = 'none';
-            });
+      if (term === '') {
+        // Show all tools
+        toolCards.forEach(card => {
+          card.style.display = 'block';
+          card.style.animation = 'scaleIn 0.3s ease-out';
+        });
+        searchResults.classList.add('hidden');
+        clearSearchBtn.classList.add('hidden');
+        return;
+      }
 
-            // Show matching tool cards
-            matchingTools.forEach(tool => {
-                tool.element.style.display = 'block';
-                tool.element.style.animation = 'scaleIn 0.3s ease-out';
-            });
+      // Filter tools - only search in tool names (titles)
+      const matchingTools = toolsData.filter(tool =>
+        tool.title.toLowerCase().includes(term)
+      );
 
-            // Show search results dropdown
-            if (matchingTools.length > 0) {
-                displaySearchResults(matchingTools, term);
-                noResults.classList.add('hidden');
-            } else {
-                showNoResults();
-            }
-            
-            searchResults.classList.remove('hidden');
-            clearSearchBtn.classList.remove('hidden');
-        }
+      // Hide all tool cards
+      toolCards.forEach(card => {
+        card.style.display = 'none';
+      });
 
-        // Display search results in dropdown
-        function displaySearchResults(tools, searchTerm) {
-            searchResultsContent.innerHTML = '';
-            
-            tools.forEach(tool => {
-                const resultItem = document.createElement('a');
-                resultItem.href = tool.href;
-                resultItem.className = 'flex items-center space-x-3 p-3 rounded-lg hover:bg-slate-700/50 transition-colors duration-200 group';
-                
-                const highlightedTitle = highlightSearchTerm(tool.title, searchTerm);
-                const highlightedDescription = tool.description; // No highlighting in description
-                
-                resultItem.innerHTML = `
+      // Show matching tool cards
+      matchingTools.forEach(tool => {
+        tool.element.style.display = 'block';
+        tool.element.style.animation = 'scaleIn 0.3s ease-out';
+      });
+
+      // Show search results dropdown
+      if (matchingTools.length > 0) {
+        displaySearchResults(matchingTools, term);
+        noResults.classList.add('hidden');
+      } else {
+        showNoResults();
+      }
+
+      searchResults.classList.remove('hidden');
+      clearSearchBtn.classList.remove('hidden');
+    }
+
+    // Display search results in dropdown
+    function displaySearchResults(tools, searchTerm) {
+      searchResultsContent.innerHTML = '';
+
+      tools.forEach(tool => {
+        const resultItem = document.createElement('a');
+        resultItem.href = tool.href;
+        resultItem.className = 'flex items-center space-x-3 p-3 rounded-lg hover:bg-slate-700/50 transition-colors duration-200 group';
+
+        const highlightedTitle = highlightSearchTerm(tool.title, searchTerm);
+        const highlightedDescription = tool.description; // No highlighting in description
+
+        resultItem.innerHTML = `
                     <div class="tool-icon w-10 h-10 rounded-lg flex items-center justify-center bg-slate-700/50 group-hover:bg-slate-600/50 transition-colors">
                         <span class="text-lg">${tool.icon}</span>
                     </div>
@@ -1568,80 +1469,80 @@
                         <p class="text-xs text-gray-400 truncate">${highlightedDescription}</p>
                     </div>
                 `;
-                
-                searchResultsContent.appendChild(resultItem);
-            });
-        }
 
-        // Highlight search terms in text
-        function highlightSearchTerm(text, term) {
-            if (!term) return text;
-            const regex = new RegExp(`(${term})`, 'gi');
-            return text.replace(regex, '<span class="bg-blue-500/20 text-blue-300 px-1 rounded">$1</span>');
-        }
+        searchResultsContent.appendChild(resultItem);
+      });
+    }
 
-        // Show no results message
-        function showNoResults() {
-            searchResultsContent.innerHTML = '';
-            noResults.classList.remove('hidden');
-        }
+    // Highlight search terms in text
+    function highlightSearchTerm(text, term) {
+      if (!term) return text;
+      const regex = new RegExp(`(${term})`, 'gi');
+      return text.replace(regex, '<span class="bg-blue-500/20 text-blue-300 px-1 rounded">$1</span>');
+    }
 
-        // Clear search
-        function clearSearch() {
-            searchInput.value = '';
-            searchResults.classList.add('hidden');
-            clearSearchBtn.classList.add('hidden');
-            noResults.classList.add('hidden');
-            
-            // Show all tools
-            toolCards.forEach(card => {
-                card.style.display = 'block';
-                card.style.animation = 'scaleIn 0.3s ease-out';
-            });
-        }
+    // Show no results message
+    function showNoResults() {
+      searchResultsContent.innerHTML = '';
+      noResults.classList.remove('hidden');
+    }
 
-        // Event listeners
-        searchInput.addEventListener('input', function(e) {
-            performSearch(e.target.value);
-        });
+    // Clear search
+    function clearSearch() {
+      searchInput.value = '';
+      searchResults.classList.add('hidden');
+      clearSearchBtn.classList.add('hidden');
+      noResults.classList.add('hidden');
 
-        clearSearchBtn.addEventListener('click', clearSearch);
+      // Show all tools
+      toolCards.forEach(card => {
+        card.style.display = 'block';
+        card.style.animation = 'scaleIn 0.3s ease-out';
+      });
+    }
 
-        // Hide search results when clicking outside
-        document.addEventListener('click', function(e) {
-            if (!e.target.closest('#searchInput') && !e.target.closest('#searchResults') && !e.target.closest('#clearSearch')) {
-                searchResults.classList.add('hidden');
-            }
-        });
+    // Event listeners
+    searchInput.addEventListener('input', function (e) {
+      performSearch(e.target.value);
+    });
 
-        // Keyboard navigation for search results
-        searchInput.addEventListener('keydown', function(e) {
-            if (e.key === 'Escape') {
-                clearSearch();
-                searchInput.blur();
-            }
-        });
+    clearSearchBtn.addEventListener('click', clearSearch);
+
+    // Hide search results when clicking outside
+    document.addEventListener('click', function (e) {
+      if (!e.target.closest('#searchInput') && !e.target.closest('#searchResults') && !e.target.closest('#clearSearch')) {
+        searchResults.classList.add('hidden');
+      }
+    });
+
+    // Keyboard navigation for search results
+    searchInput.addEventListener('keydown', function (e) {
+      if (e.key === 'Escape') {
+        clearSearch();
+        searchInput.blur();
+      }
+    });
 
     // Smooth scroll for navigation
-        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-            anchor.addEventListener('click', function (e) {
-                e.preventDefault();
-                const target = document.querySelector(this.getAttribute('href'));
-                if (target) {
-                    target.scrollIntoView({
-                        behavior: 'smooth',
-                        block: 'start'
-                    });
-                }
-            });
-        });
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+      anchor.addEventListener('click', function (e) {
+        e.preventDefault();
+        const target = document.querySelector(this.getAttribute('href'));
+        if (target) {
+          target.scrollIntoView({
+            behavior: 'smooth',
+            block: 'start'
+          });
+        }
+      });
+    });
 
     // Intersection Observer for animations
     const observerOptions = {
       threshold: 0.1,
       rootMargin: '0px 0px -50px 0px'
     };
-    
+
     const observer = new IntersectionObserver((entries) => {
       entries.forEach(entry => {
         if (entry.isIntersecting) {
@@ -1650,7 +1551,7 @@
         }
       });
     }, observerOptions);
-    
+
     // Observe all sections for scroll animations
     document.querySelectorAll('section').forEach(section => {
       section.style.opacity = '0';
@@ -1658,29 +1559,30 @@
       section.style.transition = 'opacity 0.6s ease-out, transform 0.6s ease-out';
       observer.observe(section);
     });
-    
+
     // Add hover effects to tool cards
     toolCards.forEach(card => {
-      card.addEventListener('mouseenter', function() {
+      card.addEventListener('mouseenter', function () {
         this.style.transform = 'translateY(-12px) scale(1.05)';
       });
-      
-      card.addEventListener('mouseleave', function() {
+
+      card.addEventListener('mouseleave', function () {
         this.style.transform = 'translateY(0) scale(1)';
-            });
-        });
+      });
+    });
 
     // GitHub banner animation
     const githubBanner = document.querySelector('.github-banner');
     if (githubBanner) {
-      githubBanner.addEventListener('mouseenter', function() {
+      githubBanner.addEventListener('mouseenter', function () {
         this.style.transform = 'scale(1.05)';
       });
-      
-      githubBanner.addEventListener('mouseleave', function() {
+
+      githubBanner.addEventListener('mouseleave', function () {
         this.style.transform = 'scale(1)';
       });
     }
-    </script>
+  </script>
 </body>
+
 </html>
