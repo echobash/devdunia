@@ -54,10 +54,16 @@
             </a> -->
         </div>
 
-        <!-- Footer -->
-        <footer class="mt-16 pt-8 border-t border-gray-700 text-center text-gray-400">
-            <p>Made with ❤️ by <a href="https://echobash.com" class="text-blue-400 hover:text-blue-300">echobash.com</a></p>
-        </footer>
+        <!-- Footer include -->
+    <div id="footer"></div>
+    <script>
+    fetch("footer.html")
+    .then(response => response.text())
+    .then(data => {
+        document.getElementById("footer").innerHTML = data;
+    })
+    .catch(err => console.error("Failed to load footer:", err));
+    </script>
     </main>
 </body>
 </html>

@@ -1,0 +1,121 @@
+body {
+    background: linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #0f172a 100%);
+}
+
+.glass-card {
+    background: rgba(255, 255, 255, 0.05);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.gradient-text {
+    background: linear-gradient(135deg, #3b82f6, #06b6d4);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+.animate-fade-in {
+    animation: fadeIn 0.6s ease-out;
+}
+
+.animate-slide-up {
+    animation: slideUp 0.5s ease-out;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+@keyframes slideUp {
+    from {
+        transform: translateY(20px);
+        opacity: 0;
+    }
+    to {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+    width: 8px;
+}
+
+::-webkit-scrollbar-track {
+    background: rgba(255, 255, 255, 0.05);
+}
+
+::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.2);
+    border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: rgba(255, 255, 255, 0.3);
+}
+
+/* Custom styles for date and time inputs */
+input[type="date"],
+input[type="time"] {
+    color-scheme: dark;
+}
+
+/* Focus states for better accessibility */
+input:focus, select:focus, textarea:focus {
+    outline: 2px solid transparent;
+    outline-offset: 2px;
+}
+
+/* Button hover effects */
+button {
+    transition: all 0.2s ease-in-out;
+}
+
+button:hover {
+    transform: translateY(-1px);
+}
+
+/* Loading state for buttons */
+button.loading {
+    opacity: 0.7;
+    cursor: not-allowed;
+}
+
+/* Success state for copy button */
+.copy-btn.copied {
+    background-color: #10b981 !important;
+}
+
+.copy-btn.copied:hover {
+    background-color: #059669 !important;
+}
+
+/* Conversion type button active state */
+.conversion-type-btn.active {
+    box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.5);
+}
+
+/* Conversion section transitions */
+.conversion-section {
+    transition: all 0.3s ease-in-out;
+}
+
+
+.local-format-2 {
+    text-align: right;
+    max-width: 200px;
+    word-break: break-word;
+}
+
+#local-format, #timezone-display {
+    line-height: 1.2;
+}
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .lg\:ml-72 {
+        margin-left: 0;
+    }
+}

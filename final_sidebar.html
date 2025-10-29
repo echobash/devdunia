@@ -66,6 +66,22 @@
                     <span class="text-blue-400 group-hover:text-blue-300">📥</span>
                     <span class="text-sm">Base64 Decoder</span>
                 </a>
+                <a href="base32encode/index.html" class="flex items-center space-x-3 px-3 py-2 text-gray-300 hover:text-white hover:bg-slate-800/50 rounded-lg transition-all duration-200 group">
+                    <span class="text-blue-400 group-hover:text-blue-300">📤</span>
+                    <span class="text-sm">Base32 Encoder</span>
+                </a>
+                <a href="base32decode/index.html" class="flex items-center space-x-3 px-3 py-2 text-gray-300 hover:text-white hover:bg-slate-800/50 rounded-lg transition-all duration-200 group">
+                    <span class="text-blue-400 group-hover:text-blue-300">📥</span>
+                    <span class="text-sm">Base32 Decoder</span>
+                </a>
+                <a href="base58encode/index.html" class="flex items-center space-x-3 px-3 py-2 text-gray-300 hover:text-white hover:bg-slate-800/50 rounded-lg transition-all duration-200 group">
+                    <span class="text-blue-400 group-hover:text-blue-300">📤</span>
+                    <span class="text-sm">Base58 Encoder</span>
+                </a>
+                <a href="base58decode/index.html" class="flex items-center space-x-3 px-3 py-2 text-gray-300 hover:text-white hover:bg-slate-800/50 rounded-lg transition-all duration-200 group">
+                    <span class="text-blue-400 group-hover:text-blue-300">📥</span>
+                    <span class="text-sm">Base58 Decoder</span>
+                </a>
                 <a href="hash-generator.html" class="flex items-center space-x-3 px-3 py-2 text-gray-300 hover:text-white hover:bg-slate-800/50 rounded-lg transition-all duration-200 group">
                     <span class="text-blue-400 group-hover:text-blue-300">🔐</span>
                     <span class="text-sm">Hash Generator</span>
@@ -334,20 +350,39 @@
                     <span class="text-teal-400 group-hover:text-teal-300">🌍</span>
                     <span class="text-sm">IP Address Tools</span>
                 </a>
+                <a href="emoji_picker/index.html" class="flex items-center space-x-3 px-3 py-2 text-gray-300 hover:text-white hover:bg-slate-800/50 rounded-lg transition-all duration-200 group">
+                    <span class="text-teal-400 group-hover:text-teal-300">😀</span>
+                    <span class="text-sm">Emoji Picker</span>
+                </a>
+                <a href="epoch_convertor/index.html" class="flex items-center space-x-3 px-3 py-2 text-gray-300 hover:text-white hover:bg-slate-800/50 rounded-lg transition-all duration-200 group">
+                    <span class="text-teal-400 group-hover:text-teal-300">⏰</span>
+                    <span class="text-sm">Epoch Converter</span>
+                </a>
+                <a href="leetcode-commit-message.html" class="flex items-center space-x-3 px-3 py-2 text-gray-300 hover:text-white hover:bg-slate-800/50 rounded-lg transition-all duration-200 group">
+                    <span class="text-teal-400 group-hover:text-teal-300">📝</span>
+                    <span class="text-sm">LeetCode Commit Generator</span>
+                </a>
+                <a href="all_tools/index.html" class="flex items-center space-x-3 px-3 py-2 text-gray-300 hover:text-white hover:bg-slate-800/50 rounded-lg transition-all duration-200 group">
+                    <span class="text-teal-400 group-hover:text-teal-300">📝</span>
+                    <span class="text-sm">All available tools</span>
+                </a>
+                <a href="blank-page.html" class="flex items-center space-x-3 px-3 py-2 text-gray-300 hover:text-white hover:bg-slate-800/50 rounded-lg transition-all duration-200 group">
+                    <span class="text-teal-400 group-hover:text-teal-300">📝</span>
+                    <span class="text-sm">Blank page</span>
+                </a>
             </div>
         </div>
 
-        <!-- Footer -->
-        <div class="mt-8 pt-4 border-t border-slate-700/60">
-            <div class="text-center">
-                <p class="text-xs text-gray-500">
-                    © 2025 DevDunia
-                </p>
-                <p class="text-xs text-gray-600 mt-1">
-                    Free Developer Tools
-                </p>
-            </div>
-        </div>
+       <!-- Footer include -->
+    <div id="footer"></div>
+    <script>
+    fetch("footer.html")
+    .then(response => response.text())
+    .then(data => {
+        document.getElementById("footer").innerHTML = data;
+    })
+    .catch(err => console.error("Failed to load footer:", err));
+    </script>
     </div>
 </aside>
 

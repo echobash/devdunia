@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" type="image/png" href="images/logo.png">
+    <link rel="apple-touch-icon" href="images/logo.png">
+    <title>Base58 Encoder - Developer Toolkit | DevDunia</title>
+    <meta name="description" content="Convert text and binary data to Base58 encoding format. Free online Base58 encoder tool for developers.">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="../js/common.js"></script>
+    <style>
+        body {
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #0f172a 100%);
+        }
+    </style>
+</head>
+<body class="h-screen lg:ml-72">
+    <!-- Background: Consistent Subtle Dark Gradient -->
+    <div class="fixed inset-0 -z-10 bg-gradient-to-br from-gray-900 via-slate-900 to-gray-900"></div>
+
+    <!-- Sidebar -->
+    <div id="sidebar-container"></div>
+
+    <!-- Main Content -->
+    <div class="main-content">
+        <!-- Main Container -->
+    <div class="relative z-10 container mx-auto px-4 pt-16 pb-24 sm:px-6 lg:px-8">
+
+        <!-- Page Header -->
+        <div class="text-center mb-12">
+            <h1 class="text-3xl sm:text-4xl font-bold mb-4 tracking-tight
+                       text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-cyan-500">
+                Base58 Encoder
+            </h1>
+            <p class="text-lg text-gray-400 max-w-2xl mx-auto">
+                Convert text and binary data to Base58 encoding format.
+            </p>
+        </div>
+
+        <!-- Tool Container -->
+        <div class="max-w-4xl mx-auto">
+            <div class="bg-slate-800/70 backdrop-blur-md rounded-lg shadow-lg border border-slate-700/60 p-6">
+
+                <!-- Input Section -->
+                <div class="mb-6">
+                    <label for="base58-input" class="block text-sm font-medium text-gray-300 mb-2">
+                        Input Text or Data
+                    </label>
+                    <textarea
+                        id="base58-input"
+                        rows="6"
+                        class="w-full px-4 py-3 bg-slate-700/50 border border-slate-600 rounded-lg text-gray-200 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-none font-mono text-sm"
+                        placeholder="Enter text, binary data, or file content to encode to Base58..."
+                    ></textarea>
+                </div>
+
+                <!-- Action Buttons -->
+                <div class="flex flex-wrap gap-3 mb-6">
+                    <button id="encode-btn" class="px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-lg transition-colors duration-200 flex items-center space-x-2">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16l-4-4m0 0l4-4m-4 4h18"></path>
+                        </svg>
+                        <span>Encode to Base58</span>
+                    </button>
+
+                    <button class="clear-btn px-6 py-3 bg-slate-600 hover:bg-slate-700 text-white font-medium rounded-lg transition-colors duration-200 flex items-center space-x-2">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
+                        </svg>
+                        <span>Clear All</span>
+                    </button>
+                </div>
+
+                <!-- Error Display -->
+                <div id="error-display" class="hidden mb-6 p-4 bg-red-900/50 border border-red-600/50 rounded-lg">
+                    <div class="flex items-center space-x-2">
+                        <svg class="w-5 h-5 text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                        </svg>
+                        <span id="error-message" class="text-red-300"></span>
+                    </div>
+                </div>
+
+                <!-- Output Section -->
+                <div id="output-section" class="hidden">
+                    <label for="base58-output" class="block text-sm font-medium text-gray-300 mb-2">
+                        Base58 Result
+                    </label>
+                    <div class="relative">
+                        <textarea
+                            id="base58-output"
+                            rows="8"
+                            class="w-full px-4 py-3 bg-slate-700/50 border border-slate-600 rounded-lg text-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-none font-mono text-sm"
+                            readonly
+                        ></textarea>
+
+                        <!-- Copy Button -->
+                        <button class="copy-btn absolute top-2 right-2 px-3 py-1 bg-slate-600 hover:bg-slate-700 text-white text-sm rounded transition-colors duration-200 flex items-center space-x-1" data-target="base58-output">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v8a2 2 0 01-2 2h-2m-6-4l2 2m0 0l2-2m-2 2V10"></path>
+                            </svg>
+                            <span>Copy</span>
+                        </button>
+                    </div>
+
+                    <!-- Stats -->
+                    <div class="mt-3 flex flex-wrap gap-4 text-sm text-gray-400">
+                        <div class="flex items-center space-x-2">
+                            <span>Original Size:</span>
+                            <span id="original-size" class="text-blue-400 font-medium">0 B</span>
+                        </div>
+                        <div class="flex items-center space-x-2">
+                            <span>Base58 Size:</span>
+                            <span id="base58-size" class="text-green-400 font-medium">0 B</span>
+                        </div>
+                        <div class="flex items-center space-x-2">
+                            <span>Overhead:</span>
+                            <span id="overhead" class="text-purple-400 font-medium">0%</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Examples Section -->
+                <div class="mt-8 p-4 bg-slate-700/30 rounded-lg border border-slate-600/50">
+                    <h3 class="text-lg font-semibold text-cyan-400 mb-3">Common Examples</h3>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
+                        <div>
+                            <p class="text-gray-300 font-medium mb-2">Simple text:</p>
+                            <p class="text-gray-400">"Hello World"</p>
+                            <p class="text-gray-500">→ "JxF12TrwUP45BMd"</p>
+                        </div>
+                        <div>
+                            <p class="text-gray-300 font-medium mb-2">Short text:</p>
+                            <p class="text-gray-400">"test"</p>
+                            <p class="text-gray-500">→ "3yZe7d"</p>
+                        </div>
+                        <div>
+                            <p class="text-gray-300 font-medium mb-2">JSON data:</p>
+                            <p class="text-gray-400">{"name": "John", "age": 30}</p>
+                            <p class="text-gray-500">→ "7vxA8pHnqW5aXc2Y9zB"</p>
+                        </div>
+                        <div>
+                            <p class="text-gray-300 font-medium mb-2">Binary data:</p>
+                            <p class="text-gray-400">[0x48, 0x65, 0x6C, 0x6C, 0x6F]</p>
+                            <p class="text-gray-500">→ "StV1DL6CwTryKyV"</p>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+    </div>
+
+        <!-- Footer -->
+        <footer class="text-center text-gray-500 mt-10 pb-6">
+            © 2025 DevDunia – Free Developer Tools by <a href="https://echobash.com" class="text-blue-500 hover:underline" target="_blank">echobash</a>
+        </footer>
+    </div>
+
+
+    <script src="../sidebar.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const base58Input = document.getElementById('base58-input');
+            const base58Output = document.getElementById('base58-output');
+            const encodeBtn = document.getElementById('encode-btn');
+            const outputSection = document.getElementById('output-section');
+            const errorDisplay = document.getElementById('error-display');
+            const errorMessage = document.getElementById('error-message');
+            const originalSize = document.getElementById('original-size');
+            const base58Size = document.getElementById('base58-size');
+            const overhead = document.getElementById('overhead');
+
+            // Base58 alphabet (Bitcoin/IPFS standard)
+            const base58Alphabet = '123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz';
+
+            // Encode to Base58
+            encodeBtn.addEventListener('click', function() {
+                const input = base58Input.value.trim();
+                if (!input) {
+                    showError('Please enter some text to encode');
+                    return;
+                }
+
+                try {
+                    const encoded = encodeToBase58(input);
+                    base58Output.value = encoded;
+                    showOutput();
+                    updateStats(input, encoded);
+                    hideError();
+                } catch (error) {
+                    showError('Error encoding to Base58: ' + error.message);
+                    hideOutput();
+                }
+            });
+
+            // Helper functions
+            function showOutput() {
+                outputSection.classList.remove('hidden');
+            }
+
+            function hideOutput() {
+                outputSection.classList.add('hidden');
+            }
+
+            function showError(message) {
+                errorMessage.textContent = message;
+                errorDisplay.classList.remove('hidden');
+            }
+
+            function hideError() {
+                errorDisplay.classList.add('hidden');
+            }
+
+            function encodeToBase58(input) {
+                const bytes = new TextEncoder().encode(input);
+                
+                // Convert bytes to big integer
+                let num = 0n;
+                for (let i = 0; i < bytes.length; i++) {
+                    num = num * 256n + BigInt(bytes[i]);
+                }
+                
+                // Convert to Base58
+                let result = '';
+                while (num > 0n) {
+                    const remainder = num % 58n;
+                    result = base58Alphabet[Number(remainder)] + result;
+                    num = num / 58n;
+                }
+                
+                // Handle leading zeros (they become '1' in Base58)
+                for (let i = 0; i < bytes.length && bytes[i] === 0; i++) {
+                    result = '1' + result;
+                }
+                
+                return result || '1'; // Handle empty input
+            }
+
+            function updateStats(original, encoded) {
+                const originalBytes = new Blob([original]).size;
+                const base58Bytes = new Blob([encoded]).size;
+                const overheadPercent = ((base58Bytes - originalBytes) / originalBytes * 100).toFixed(1);
+
+                originalSize.textContent = DevDuniaUtils.formatBytes(originalBytes);
+                base58Size.textContent = DevDuniaUtils.formatBytes(base58Bytes);
+                overhead.textContent = overheadPercent + '%';
+            }
+
+            // Example text on page load
+            window.addEventListener('load', () => {
+                base58Input.value = 'Hello, DevDunia!';
+            });
+        });
+    </script>
+    <!-- Include Final Sidebar -->
+    <div id="sidebar-container"></div>
+    <script>
+        // Load final_sidebar.html content
+        fetch('../final_sidebar.html')
+            .then(response => response.text())
+            .then(html => {
+                document.getElementById('sidebar-container').innerHTML = html;
+                // Fix links and assets for subdirectory
+                const container = document.getElementById('sidebar-container');
+                const links = container.querySelectorAll('a[href]');
+                const images = container.querySelectorAll('img[src]');
+
+                links.forEach(link => {
+                    const href = link.getAttribute('href');
+                    if (href && !href.startsWith('http') && !href.startsWith('../') && !href.startsWith('./') && !href.startsWith('#')) {
+                        link.setAttribute('href', '../' + href);
+                    }
+                });
+
+                images.forEach(img => {
+                    const src = img.getAttribute('src');
+                    if (src && !src.startsWith('http') && !src.startsWith('../') && !src.startsWith('./')) {
+                        img.setAttribute('src', '../' + src);
+                    }
+                });
+            })
+            .catch(error => {
+                console.error('Error loading sidebar:', error);
+            });
+    </script>
+</body>
+</html>
