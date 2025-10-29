@@ -296,9 +296,9 @@
                                         <div class="flex items-center justify-between">
                                             <div>
                                                 <span class="text-sm text-gray-400">Public IP</span>
-                                                <div class="text-lg font-mono text-blue-400">223.190.80.209</div>
+                                                <div id="public-ip" class="text-lg font-mono text-blue-400">223.190.80.209</div>
                                             </div>
-                                            <button class="px-3 py-1 bg-blue-600/20 border border-blue-500/30 rounded-lg text-blue-400 hover:bg-blue-600/30 transition-colors text-sm">
+                                            <button id="copy-public-ip" class="px-3 py-1 bg-blue-600/20 border border-blue-500/30 rounded-lg text-blue-400 hover:bg-blue-600/30 transition-colors text-sm">
                                                 Copy
                                             </button>
                                         </div>
@@ -581,6 +581,26 @@
                             copyPasswordBtn.textContent = originalText;
                             copyPasswordBtn.classList.remove('bg-green-600/20', 'border-green-500/30', 'text-green-400');
                             copyPasswordBtn.classList.add('bg-blue-600/20', 'border-blue-500/30', 'text-blue-400');
+                        }, 2000);
+                    });
+                });
+            }
+
+            // Public IP copy functionality
+            const publicIpEl = document.getElementById('public-ip');
+            const copyPublicIpBtn = document.getElementById('copy-public-ip');
+            if (copyPublicIpBtn && publicIpEl) {
+                copyPublicIpBtn.addEventListener('click', function() {
+                    navigator.clipboard.writeText(publicIpEl.textContent.trim()).then(() => {
+                        const originalText = copyPublicIpBtn.textContent;
+                        copyPublicIpBtn.textContent = 'Copied!';
+                        copyPublicIpBtn.classList.add('bg-green-600/20', 'border-green-500/30', 'text-green-400');
+                        copyPublicIpBtn.classList.remove('bg-blue-600/20', 'border-blue-500/30', 'text-blue-400');
+
+                        setTimeout(() => {
+                            copyPublicIpBtn.textContent = originalText;
+                            copyPublicIpBtn.classList.remove('bg-green-600/20', 'border-green-500/30', 'text-green-400');
+                            copyPublicIpBtn.classList.add('bg-blue-600/20', 'border-blue-500/30', 'text-blue-400');
                         }, 2000);
                     });
                 });
