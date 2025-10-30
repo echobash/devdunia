@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Text Case Converter - DevDunia</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gradient-to-br from-gray-900 via-gray-800 to-black min-h-screen flex items-center justify-center p-6 text-white">
+
+  <div class="w-full max-w-2xl bg-gray-800/70 backdrop-blur-xl border border-gray-700 rounded-2xl shadow-2xl p-8 space-y-6">
+    
+    <h1 class="text-3xl font-extrabold text-center bg-gradient-to-r from-blue-400 to-blue-600 bg-clip-text text-transparent drop-shadow-md">
+      Text Case Converter
+    </h1>
+
+    <textarea id="inputText"
+      class="w-full h-40 p-3 rounded-lg bg-gray-900/70 border border-gray-700 focus:ring-2 focus:ring-blue-500 focus:outline-none"
+      placeholder="Type or paste text here..."></textarea>
+
+    <div class="grid grid-cols-2 md:grid-cols-3 gap-3">
+      <button class="btn" data-type="upper">UPPERCASE</button>
+      <button class="btn" data-type="lower">lowercase</button>
+      <button class="btn" data-type="title">Title Case</button>
+      <button class="btn" data-type="camel">camelCase</button>
+      <button class="btn" data-type="snake">snake_case</button>
+      <button id="clearBtn" class="btn bg-red-600 hover:bg-red-700">Clear</button>
+    </div>
+
+    <textarea id="outputText"
+      class="w-full h-40 p-3 rounded-lg bg-gray-900/70 border border-gray-700 focus:ring-2 focus:ring-blue-500 focus:outline-none"
+      placeholder="Converted text appears here..."></textarea>
+
+    <button id="copyBtn"
+      class="btn w-full bg-blue-600 hover:bg-blue-700">Copy Output</button>
+  </div>
+
+  <style>
+    .btn {
+      @apply bg-blue-500 hover:bg-blue-600 text-white py-2 px-3 rounded-lg font-semibold transition shadow-md hover:shadow-xl;
+    }
+  </style>
+
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+  const input = document.getElementById('inputText');
+  const output = document.getElementById('outputText');
+
+  const toTitleCase = text => text.toLowerCase().replace(/\b\w/g, c => c.toUpperCase());
+  const toCamelCase = text => text.toLowerCase().replace(/[^a-zA-Z0-9]+(.)/g, (m, chr) => chr.toUpperCase());
+  const toSnakeCase = text => text.toLowerCase().replace(/\s+/g, '_').replace(/[^a-z0-9_]/g, '');
+
+  document.querySelectorAll('.btn[data-type]').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const type = btn.getAttribute('data-type');
+      const text = input.value;
+      if (!text) return;
+      const result = ({
+        upper: text.toUpperCase(),
+        lower: text.toLowerCase(),
+        title: toTitleCase(text),
+        camel: toCamelCase(text),
+        snake: toSnakeCase(text)
+      })[type];
+      output.value = result;
+    });
+  });
+
+  document.getElementById('clearBtn').onclick = () => {
+    input.value = '';
+    output.value = '';
+  };
+
+  document.getElementById('copyBtn').onclick = async () => {
+    if (!output.value) return;
+    await navigator.clipboard.writeText(output.value);
+
+    const toast = document.createElement("div");
+    toast.textContent = "Copied ✅";
+    toast.className = "fixed bottom-5 right-5 bg-blue-600 text-white px-4 py-2 rounded-lg shadow-lg";
+    document.body.appendChild(toast);
+    setTimeout(() => toast.remove(), 1500);
+  };
+});
+</script>
+
+</body>
+</html>
