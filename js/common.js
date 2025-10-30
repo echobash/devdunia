@@ -397,6 +397,40 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 });
 
+// --- Back to Top Button ---
+(function() {
+  function createBackToTopBtn() {
+    if (document.getElementById('back-to-top-btn')) return;
+    const btn = document.createElement('button');
+    btn.id = 'back-to-top-btn';
+    btn.type = 'button';
+    btn.setAttribute('aria-label', 'Back to top');
+    btn.className = 'fixed bottom-6 right-6 z-50 hidden p-3 rounded-full bg-white/80 dark:bg-slate-900 text-slate-700 dark:text-white shadow-lg border border-slate-200 dark:border-slate-700 hover:bg-blue-100 dark:hover:bg-slate-700 transition-all duration-300';
+    btn.innerHTML = `<svg class="w-6 h-6 mx-auto" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M5 10l7-7m0 0l7 7m-7-7v18"/></svg>`;
+    document.body.appendChild(btn);
+
+    // Scroll to top
+    btn.addEventListener('click', function() {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    });
+  }
+
+  function toggleBackToTop() {
+    const btn = document.getElementById('back-to-top-btn');
+    if (!btn) return;
+    if (window.scrollY > 200) {
+      btn.classList.remove('hidden');
+      btn.classList.add('animate-fade-in');
+    } else {
+      btn.classList.add('hidden');
+      btn.classList.remove('animate-fade-in');
+    }
+  }
+
+  document.addEventListener('DOMContentLoaded', createBackToTopBtn);
+  window.addEventListener('scroll', DevDuniaUtils.throttle(toggleBackToTop, 100));
+})();
+
 // Export for use in other scripts
 window.DevDuniaUtils = DevDuniaUtils;
 // Expose ThemeManager so other scripts (floating toggle) can call it

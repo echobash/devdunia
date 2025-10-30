@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Contact Us - DevDunia</title>
+  <link rel="icon" type="image/png" href="images/logo.png">
+  <link rel="apple-touch-icon" href="images/logo.png">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body class="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 text-white">
+  <!-- DevDunia Logo top left as main page link -->
+  <a href="index.html" class="fixed top-4 left-4 z-30 flex items-center gap-3" style="text-decoration: none;">
+    <img src="images/logo.png" alt="DevDunia logo" class="h-14 w-14 rounded-2xl object-contain drop-shadow-lg">
+    <div class="flex flex-col">
+      <span class="text-2xl md:text-3xl font-bold bg-gradient-to-r from-blue-400 via-purple-500 to-teal-400 bg-clip-text text-transparent">DevDunia</span>
+      <span class="text-xs md:text-sm text-gray-400 -mt-1">Developer Tools</span>
+    </div>
+  </a>
+
+  <main class="flex flex-col items-center justify-center min-h-[70vh] p-4">
+    <div class="glass-card max-w-lg w-full p-8 rounded-3xl mt-12 animate-fade-in">
+      <h1 class="text-5xl font-extrabold mb-8 gradient-text text-center">Contact Us</h1>
+      <p class="mb-6 text-gray-300 text-center">Have feedback, questions, feature requests, or want to collaborate? Reach out using the form below and we’ll get back to you soon!</p>
+      <form class="space-y-6" id="contact-form" autocomplete="off" novalidate>
+        <div>
+          <label for="name" class="block mb-2 text-sm font-medium text-gray-200">Your Name</label>
+          <input type="text" id="name" name="name" required class="w-full px-4 py-3 rounded-xl bg-slate-900/80 border border-slate-700/60 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500" placeholder="Enter your name">
+        </div>
+        <div>
+          <label for="email" class="block mb-2 text-sm font-medium text-gray-200">Your Email</label>
+          <input type="email" id="email" name="email" required class="w-full px-4 py-3 rounded-xl bg-slate-900/80 border border-slate-700/60 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500" placeholder="you@email.com">
+        </div>
+        <div>
+          <label for="message" class="block mb-2 text-sm font-medium text-gray-200">Message</label>
+          <textarea id="message" name="message" rows="5" required class="w-full px-4 py-3 rounded-xl bg-slate-900/80 border border-slate-700/60 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500" placeholder="How can we help?"></textarea>
+        </div>
+        <button type="submit" class="w-full px-6 py-3 bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 rounded-xl font-semibold text-lg transition-all duration-200 shadow-lg">Send Message</button>
+        <p id="form-status" class="text-center text-sm mt-3"></p>
+      </form>
+    </div>
+  </main>
+
+  <!-- Footer include -->
+  <div id="footer"></div>
+  <script>
+    fetch('footer.html').then(r => r.text()).then(html => { document.getElementById('footer').innerHTML = html; })
+  </script>
+  <script>
+    document.getElementById('contact-form')?.addEventListener('submit', function(e) {
+      e.preventDefault();
+      const status = document.getElementById('form-status');
+      status.textContent = 'Thank you for contacting us! We have received your message.';
+      status.className = 'text-green-400 text-center mt-4';
+      this.reset();
+    });
+  </script>
+</body>
+</html>
