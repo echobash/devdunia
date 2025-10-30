@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" type="image/png" href="images/logo.png">
+    <link rel="apple-touch-icon" href="images/logo.png">
+    <title>NFC Reader - DevDunia</title>
+    <meta name="description" content="Read NFC tags using the Web NFC API (Chrome on Android, HTTPS).">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body { background: linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #0f172a 100%); }
+        .mono { font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace; }
+    </style>
+</head>
+<body class="h-screen lg:ml-72">
+    <div class="fixed inset-0 -z-10 bg-gradient-to-br from-gray-900 via-slate-900 to-gray-900"></div>
+
+    <div class="main-content">
+        <div class="relative z-10 container mx-auto px-4 pt-16 pb-24 sm:px-6 lg:px-8">
+
+            <!-- Header -->
+            <div class="text-center mb-10">
+                <h1 class="text-3xl sm:text-4xl font-bold mb-4 tracking-tight text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-cyan-500">NFC Reader</h1>
+                <p class="text-lg text-gray-400 max-w-3xl mx-auto">Read NFC tags from your browser using the Web NFC API. Works on Chrome (Android) over HTTPS or localhost.</p>
+            </div>
+
+            <!-- Tool Card -->
+            <div class="max-w-4xl mx-auto bg-slate-800/70 backdrop-blur-md rounded-2xl border border-slate-700/60 p-6">
+                <!-- Status -->
+                <div id="support" class="mb-4 text-sm"></div>
+
+                <!-- Controls -->
+                <div class="flex flex-wrap gap-3 mb-6">
+                    <button id="startBtn" class="px-5 py-3 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-lg transition-colors">Start Scan</button>
+                    <button id="stopBtn" class="px-5 py-3 bg-slate-600 hover:bg-slate-700 text-white font-medium rounded-lg transition-colors" disabled>Stop Scan</button>
+                    <button id="clearBtn" class="px-5 py-3 bg-slate-600/60 hover:bg-slate-700 text-white font-medium rounded-lg transition-colors">Clear</button>
+                </div>
+
+                <!-- Live Status -->
+                <div class="mb-6 p-4 rounded-lg border border-slate-700 bg-slate-900/40">
+                    <div class="flex items-center gap-2 text-sm">
+                        <div id="dot" class="w-2.5 h-2.5 rounded-full bg-red-500"></div>
+                        <span id="status" class="text-gray-300">Idle</span>
+                    </div>
+                </div>
+
+                <!-- Records Output -->
+                <div>
+                    <h2 class="text-lg font-semibold text-gray-200 mb-3">Tag Data</h2>
+                    <div id="output" class="space-y-3"></div>
+                </div>
+            </div>
+
+            <!-- Info -->
+            <div class="max-w-4xl mx-auto mt-6 text-sm text-gray-400">
+                <ul class="list-disc pl-5 space-y-1">
+                    <li>Requires Chrome on Android (Web NFC) and a secure context (HTTPS) or localhost.</li>
+                    <li>Bring an NFC tag close to your device after you press "Start Scan".</li>
+                    <li>Supported record types parsed: text, URL, JSON (mime), and raw payloads.</li>
+                </ul>
+            </div>
+
+        </div>
+    </div>
+
+    <script>
+    (function(){
+        const support = document.getElementById('support');
+        const startBtn = document.getElementById('startBtn');
+        const stopBtn = document.getElementById('stopBtn');
+        const clearBtn = document.getElementById('clearBtn');
+        const statusEl = document.getElementById('status');
+        const dotEl = document.getElementById('dot');
+        const output = document.getElementById('output');
+
+        let reader = null;
+        let abortController = null;
+
+        const isSupported = 'NDEFReader' in window;
+        support.innerHTML = isSupported
+            ? '<span class="text-green-400">✔ Web NFC supported</span>'
+            : '<span class="text-red-400">✖ Web NFC not supported on this device/browser. Try Chrome on Android.</span>';
+
+        function setActive(active){
+            if(active){
+                statusEl.textContent = 'Scanning... Tap an NFC tag';
+                dotEl.classList.remove('bg-red-500');
+                dotEl.classList.add('bg-green-500');
+            } else {
+                statusEl.textContent = 'Idle';
+                dotEl.classList.remove('bg-green-500');
+                dotEl.classList.add('bg-red-500');
+            }
+        }
+
+        function addLog(html){
+            const card = document.createElement('div');
+            card.className = 'p-4 rounded-lg border border-slate-700 bg-slate-900/40';
+            card.innerHTML = html;
+            output.prepend(card);
+        }
+
+        function escapeHtml(str){
+            return str.replace(/[&<>"']/g, s => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;','\'':'&#39;'}[s]));
+        }
+
+        function parseRecord(record){
+            try {
+                if(record.recordType === 'text'){
+                    return `<div class="text-gray-300">Text: <span class="mono">${escapeHtml(record.data)}</span></div>`;
+                }
+                if(record.recordType === 'url'){
+                    const url = typeof record.data === 'string' ? record.data : '';
+                    return `<div class="text-gray-300">URL: <a href="${escapeHtml(url)}" class="text-blue-400 hover:text-blue-300" target="_blank" rel="noopener noreferrer">${escapeHtml(url)}</a></div>`;
+                }
+                if(record.mediaType){
+                    // Try decode as text/json
+                    const textDecoder = new TextDecoder();
+                    const asText = textDecoder.decode(record.data);
+                    let pretty = asText;
+                    if(record.mediaType.includes('json')){
+                        try { pretty = JSON.stringify(JSON.parse(asText), null, 2); } catch(e) {}
+                        return `<div class="text-gray-300">MIME (${escapeHtml(record.mediaType)}):</div><pre class="mono text-sm text-green-300 whitespace-pre-wrap">${escapeHtml(pretty)}</pre>`;
+                    }
+                    return `<div class="text-gray-300">MIME (${escapeHtml(record.mediaType)}):</div><pre class="mono text-sm text-gray-300 whitespace-pre-wrap">${escapeHtml(pretty)}</pre>`;
+                }
+                // Fallback raw
+                const bytes = new Uint8Array(record.data.buffer ?? record.data);
+                const hex = Array.from(bytes).map(b=>b.toString(16).padStart(2,'0')).join(' ');
+                return `<div class="text-gray-300">Raw payload:</div><pre class="mono text-sm text-gray-400">${hex}</pre>`;
+            } catch(err){
+                return `<div class="text-red-400">Error parsing record: ${escapeHtml(String(err))}</div>`;
+            }
+        }
+
+        async function startScan(){
+            if(!isSupported){ return; }
+            try{
+                reader = new NDEFReader();
+                abortController = new AbortController();
+                await reader.scan({ signal: abortController.signal });
+                setActive(true);
+
+                reader.onreadingerror = () => {
+                    addLog('<div class="text-red-400">Reading error. Try again and keep the tag close.</div>');
+                };
+                reader.onreading = (event) => {
+                    const { serialNumber, message } = event;
+                    const time = new Date().toLocaleTimeString();
+                    let html = `<div class=\"text-sm text-gray-400 mb-2\">${escapeHtml(time)} • Serial: ${escapeHtml(serialNumber || 'N/A')}</div>`;
+                    for (const record of message.records) {
+                        html += parseRecord(record);
+                    }
+                    addLog(html);
+                };
+
+                startBtn.disabled = true; stopBtn.disabled = false;
+            }catch(err){
+                addLog(`<div class=\"text-red-400\">${escapeHtml(err.name || 'Error')}: ${escapeHtml(err.message || String(err))}</div>`);
+                setActive(false);
+            }
+        }
+
+        function stopScan(){
+            if(abortController){ abortController.abort(); }
+            setActive(false);
+            startBtn.disabled = false; stopBtn.disabled = true;
+        }
+
+        function clearLogs(){ output.innerHTML = ''; }
+
+        startBtn.addEventListener('click', startScan);
+        stopBtn.addEventListener('click', stopScan);
+        clearBtn.addEventListener('click', clearLogs);
+    })();
+    </script>
+
+    <!-- Include Final Sidebar -->
+    <div id="sidebar-container"></div>
+    <script>
+        fetch('final_sidebar.html')
+            .then(r => r.text())
+            .then(html => { document.getElementById('sidebar-container').innerHTML = html; })
+            .catch(() => {});
+    </script>
+</body>
+</html>
+
+
