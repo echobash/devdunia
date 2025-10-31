@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Timezone Converter - DevDunia</title>
+    <link rel="icon" type="image/png" href="../images/logo.png">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <header class="header">
+            <div class="header-content">
+                <a href="../home.html" class="back-btn">
+                    <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+                        <path d="M12.5 15L7.5 10L12.5 5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                    Back to Tools
+                </a>
+                <h1>🌍 Timezone Converter</h1>
+                <p class="subtitle">Convert dates and times between different timezones</p>
+            </div>
+        </header>
+
+        <main class="main-content">
+            <!-- Input Section -->
+            <div class="card">
+                <h2 class="card-title">Input Date & Time</h2>
+                
+                <div class="form-group">
+                    <label for="dateInput">Select Date & Time</label>
+                    <input type="datetime-local" id="dateInput" class="input-field">
+                </div>
+
+                <div class="form-group">
+                    <label for="sourceTimezone">From Timezone</label>
+                    <select id="sourceTimezone" class="input-field">
+                        <option value="Asia/Kolkata">IST - India Standard Time (GMT+5:30)</option>
+                        <option value="UTC">UTC - Coordinated Universal Time (GMT+0)</option>
+                        <option value="America/New_York">EST - Eastern Time (GMT-5)</option>
+                        <option value="America/Chicago">CST - Central Time (GMT-6)</option>
+                        <option value="America/Denver">MST - Mountain Time (GMT-7)</option>
+                        <option value="America/Los_Angeles">PST - Pacific Time (GMT-8)</option>
+                        <option value="Europe/London">GMT - London (GMT+0)</option>
+                        <option value="Europe/Paris">CET - Central European Time (GMT+1)</option>
+                        <option value="Europe/Moscow">MSK - Moscow Time (GMT+3)</option>
+                        <option value="Asia/Dubai">GST - Gulf Standard Time (GMT+4)</option>
+                        <option value="Asia/Shanghai">CST - China Standard Time (GMT+8)</option>
+                        <option value="Asia/Tokyo">JST - Japan Standard Time (GMT+9)</option>
+                        <option value="Australia/Sydney">AEDT - Sydney Time (GMT+11)</option>
+                        <option value="Pacific/Auckland">NZDT - New Zealand Time (GMT+13)</option>
+                    </select>
+                </div>
+
+                <button id="convertBtn" class="btn btn-primary">
+                    <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+                        <path d="M4 10H16M16 10L12 6M16 10L12 14" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                    Convert Timezones
+                </button>
+            </div>
+
+            <!-- Results Section -->
+            <div class="card" id="resultsCard" style="display: none;">
+                <h2 class="card-title">Conversion Results</h2>
+                
+                <div class="result-section">
+                    <h3 class="result-label">🕐 Source Time</h3>
+                    <div class="result-box">
+                        <div class="result-value" id="sourceTime">-</div>
+                        <div class="result-timezone" id="sourceTimezoneLabel">-</div>
+                    </div>
+                </div>
+
+                <div class="divider"></div>
+
+                <div class="result-section">
+                    <h3 class="result-label">⏰ Unix Timestamp (Epoch)</h3>
+                    <div class="result-box epoch-box">
+                        <div class="result-value" id="epochTime">-</div>
+                        <button class="copy-btn" id="copyEpoch" title="Copy to clipboard">
+                            <svg width="18" height="18" viewBox="0 0 20 20" fill="none">
+                                <path d="M8 4V2C8 1.44772 8.44772 1 9 1H17C17.5523 1 18 1.44772 18 2V14C18 14.5523 17.5523 15 17 15H15M8 4H9C9.55228 4 10 4.44772 10 5V6M8 4H3C2.44772 4 2 4.44772 2 5V18C2 18.5523 2.44772 19 3 19H9C9.55228 19 10 18.5523 10 18V17" stroke="currentColor" stroke-width="1.5"/>
+                            </svg>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="divider"></div>
+
+                <div class="result-section">
+                    <h3 class="result-label">🌐 Common Timezones</h3>
+                    <div class="timezone-grid" id="timezoneGrid">
+                        <!-- Timezone results will be inserted here -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- Quick Actions -->
+            <div class="card">
+                <h2 class="card-title">Quick Actions</h2>
+                <div class="quick-actions">
+                    <button class="btn btn-secondary" id="useCurrentTime">
+                        <svg width="18" height="18" viewBox="0 0 20 20" fill="none">
+                            <circle cx="10" cy="10" r="8" stroke="currentColor" stroke-width="1.5"/>
+                            <path d="M10 5V10L13 13" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+                        </svg>
+                        Use Current Time
+                    </button>
+                    <button class="btn btn-secondary" id="clearBtn">
+                        <svg width="18" height="18" viewBox="0 0 20 20" fill="none">
+                            <path d="M4 4L16 16M16 4L4 16" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+                        </svg>
+                        Clear All
+                    </button>
+                </div>
+            </div>
+
+            <!-- Info Card -->
+            <div class="card info-card">
+                <h3 class="info-title">ℹ️ About Timezone Converter</h3>
+                <p class="info-text">
+                    This tool helps you convert dates and times between different timezones around the world. 
+                    It also displays the Unix timestamp (epoch time) which is useful for developers working with 
+                    timestamps in databases and APIs.
+                </p>
+                <ul class="info-list">
+                    <li>✅ Convert between any timezones</li>
+                    <li>✅ Get Unix timestamp (epoch)</li>
+                    <li>✅ See multiple timezone conversions at once</li>
+                    <li>✅ Copy results with one click</li>
+                </ul>
+            </div>
+        </main>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
