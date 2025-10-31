@@ -1,0 +1,43 @@
+:root{
+  --dd-bg: var(--bg, #0b0e14);
+  --dd-fg: var(--fg, #e6e6e6);
+  --dd-muted: var(--muted, #9aa4ad);
+  --dd-card: var(--card, #11161f);
+  --dd-border: var(--border, #202634);
+  --dd-primary: var(--primary, #5ac8fa);
+  --dd-primary-contrast: var(--on-primary, #051016);
+  --dd-radius: 12px;
+  --dd-gap: 14px;
+  --dd-shadow: 0 6px 20px rgba(0,0,0,.25);
+}
+*{box-sizing:border-box}
+html,body{height:100%}
+body{
+  margin:0;background:var(--dd-bg);color:var(--dd-fg);
+  font:400 16px/1.5 system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,Cantarell,Arial
+}
+.dd-header{padding:24px;text-align:center}
+.dd-title{margin:0 0 4px;font-size:clamp(22px,3.5vw,30px)}
+.dd-subtitle{margin:0;color:var(--dd-muted)}
+.dd-main{max-width:1100px;margin:0 auto;padding:16px;display:grid;gap:var(--dd-gap)}
+.dd-card{background:var(--dd-card);border:1px solid var(--dd-border);border-radius:var(--dd-radius);box-shadow:var(--dd-shadow);padding:16px}
+.dd-form{display:grid;gap:var(--dd-gap)}
+.dd-form-row{display:grid;gap:6px}
+.dd-form-row input{
+  padding:10px 12px;border-radius:10px;border:1px solid var(--dd-border);
+  background:#0f141d;color:var(--dd-fg);outline:none
+}
+.dd-form-row input:focus{border-color:var(--dd-primary)}
+.dd-actions{display:flex;gap:10px;flex-wrap:wrap}
+.dd-btn{border:1px solid var(--dd-border);background:var(--dd-primary);color:var(--dd-primary-contrast);padding:10px 14px;border-radius:10px;font-weight:600;cursor:pointer}
+.dd-btn:hover{filter:brightness(.95)}
+.dd-btn-ghost{background:transparent;color:var(--dd-fg)}
+.dd-status{min-height:20px;color:var(--dd-muted);padding:0 4px}
+.dd-grid{display:grid;gap:var(--dd-gap);grid-template-columns:repeat(auto-fill,minmax(220px,1fr));align-items:start}
+.dd-contrib{background:var(--dd-card);border:1px solid var(--dd-border);border-radius:var(--dd-radius);box-shadow:var(--dd-shadow);padding:14px;display:grid;gap:10px}
+.dd-contrib .row{display:flex;align-items:center;gap:10px}
+.dd-contrib img{width:44px;height:44px;border-radius:50%;border:1px solid var(--dd-border)}
+.dd-contrib a{color:var(--dd-primary);text-decoration:none}
+.dd-contrib a:hover{text-decoration:underline}
+.dd-badge{display:inline-block;padding:2px 8px;border-radius:999px;border:1px solid var(--dd-border);color:var(--dd-muted);font-size:12px}
+.dd-footer{text-align:center;color:var(--dd-muted);padding:24px 8px}
