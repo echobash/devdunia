@@ -1,10 +1,11 @@
-<!-- Final Sidebar for DevDunia -->
-<aside class="fixed left-0 top-0 h-full w-72 bg-slate-900/95 backdrop-blur-md border-r border-slate-700/60 z-50 overflow-y-auto transform -translate-x-full lg:translate-x-0 transition-transform duration-300 ease-in-out" id="sidebar">
+<!-- final_sidebar.html:
+  Final Sidebar for DevDunia - WITH DYNAMIC PATH RESOLUTION FOR SUBDIRECTORIES -->
+<aside class="fixed left-0 top-0 h-full w-72 bg-slate-900 border-r border-slate-700/60 z-50 overflow-y-auto transform -translate-x-full lg:translate-x-0 transition-transform duration-300 ease-in-out" id="sidebar">
     <div class="p-4">
         <!-- Logo -->
         <div class="flex items-center justify-center mb-8">
-            <a href="index.html" class="flex items-center justify-center hover:opacity-80 transition-opacity duration-200">
-                <img src="images/logo.png" alt="DevDunia" class="h-32 w-32 rounded-lg object-contain">
+            <a href="/index.html" id="logo-link" class="flex items-center justify-center hover:opacity-80 transition-opacity duration-200">
+                <img id="logo-img" src="/images/logo.png" alt="DevDunia" class="h-32 w-32 rounded-lg object-contain">
             </a>
         </div>
 
@@ -17,7 +18,7 @@
 
         <!-- Dashboard Link -->
         <div class="mb-6">
-            <a href="home.html" class="flex items-center space-x-3 px-4 py-3 bg-gradient-to-r from-blue-600/20 to-cyan-600/20 border border-blue-500/30 rounded-lg hover:from-blue-600/30 hover:to-cyan-600/30 transition-all duration-200 group">
+            <a href="/home.html" data-page="home.html" class="sidebar-link flex items-center space-x-3 px-4 py-3 bg-gradient-to-r from-blue-600/20 to-cyan-600/20 border border-blue-500/30 rounded-lg hover:from-blue-600/30 hover:to-cyan-600/30 transition-all duration-200 group">
                 <div class="w-8 h-8 bg-gradient-to-r from-blue-500 to-cyan-500 rounded-lg flex items-center justify-center">
                     <span class="text-white text-sm">🏠</span>
                 </div>
@@ -34,71 +35,71 @@
                 <h3 class="text-sm font-semibold text-gray-300 uppercase tracking-wider">Encoders/Decoders</h3>
             </div>
             <div class="space-y-1">
-                <a href="php-to-json.html" class="flex items-center space-x-3 px-3 py-2 text-gray-300 hover:text-white hover:bg-slate-800/50 rounded-lg transition-all duration-200 group">
+                <a href="/php-to-json.html" data-page="php-to-json.html" class="sidebar-link flex items-center space-x-3 px-3 py-2 text-gray-300 hover:text-white hover:bg-slate-800/50 rounded-lg transition-all duration-200 group">
                     <span class="text-blue-400 group-hover:text-blue-300">🔄</span>
                     <span class="text-sm">PHP to JSON</span>
                 </a>
-                <a href="json-beautifier.html" class="flex items-center space-x-3 px-3 py-2 text-gray-300 hover:text-white hover:bg-slate-800/50 rounded-lg transition-all duration-200 group">
+                <a href="/json-beautifier.html" data-page="json-beautifier.html" class="sidebar-link flex items-center space-x-3 px-3 py-2 text-gray-300 hover:text-white hover:bg-slate-800/50 rounded-lg transition-all duration-200 group">
                     <span class="text-blue-400 group-hover:text-blue-300">✨</span>
                     <span class="text-sm">JSON Beautifier</span>
                 </a>
-                <a href="json-minifier.html" class="flex items-center space-x-3 px-3 py-2 text-gray-300 hover:text-white hover:bg-slate-800/50 rounded-lg transition-all duration-200 group">
+                <a href="/json-minifier.html" data-page="json-minifier.html" class="sidebar-link flex items-center space-x-3 px-3 py-2 text-gray-300 hover:text-white hover:bg-slate-800/50 rounded-lg transition-all duration-200 group">
                     <span class="text-blue-400 group-hover:text-blue-300">📦</span>
                     <span class="text-sm">JSON Minifier</span>
                 </a>
-                <a href="string-transformer.html" class="flex items-center space-x-3 px-3 py-2 text-gray-300 hover:text-white hover:bg-slate-800/50 rounded-lg transition-all duration-200 group">
+                <a href="/string-transformer.html" data-page="string-transformer.html" class="sidebar-link flex items-center space-x-3 px-3 py-2 text-gray-300 hover:text-white hover:bg-slate-800/50 rounded-lg transition-all duration-200 group">
                     <span class="text-blue-400 group-hover:text-blue-300">🔄</span>
                     <span class="text-sm">String Transformer</span>
                 </a>
-                <a href="url-encoder.html" class="flex items-center space-x-3 px-3 py-2 text-gray-300 hover:text-white hover:bg-slate-800/50 rounded-lg transition-all duration-200 group">
+                <a href="/url-encoder.html" data-page="url-encoder.html" class="sidebar-link flex items-center space-x-3 px-3 py-2 text-gray-300 hover:text-white hover:bg-slate-800/50 rounded-lg transition-all duration-200 group">
                     <span class="text-blue-400 group-hover:text-blue-300">🔗</span>
                     <span class="text-sm">URL Encoder</span>
                 </a>
-                <a href="url-decoder.html" class="flex items-center space-x-3 px-3 py-2 text-gray-300 hover:text-white hover:bg-slate-800/50 rounded-lg transition-all duration-200 group">
+                <a href="/url-decoder.html" data-page="url-decoder.html" class="sidebar-link flex items-center space-x-3 px-3 py-2 text-gray-300 hover:text-white hover:bg-slate-800/50 rounded-lg transition-all duration-200 group">
                     <span class="text-blue-400 group-hover:text-blue-300">🔓</span>
                     <span class="text-sm">URL Decoder</span>
                 </a>
-                <a href="base64-encoder.html" class="flex items-center space-x-3 px-3 py-2 text-gray-300 hover:text-white hover:bg-slate-800/50 rounded-lg transition-all duration-200 group">
+                <a href="/base64-encoder.html" data-page="base64-encoder.html" class="sidebar-link flex items-center space-x-3 px-3 py-2 text-gray-300 hover:text-white hover:bg-slate-800/50 rounded-lg transition-all duration-200 group">
                     <span class="text-blue-400 group-hover:text-blue-300">📤</span>
                     <span class="text-sm">Base64 Encoder</span>
                 </a>
-                <a href="base64-decoder.html" class="flex items-center space-x-3 px-3 py-2 text-gray-300 hover:text-white hover:bg-slate-800/50 rounded-lg transition-all duration-200 group">
+                <a href="/base64-decoder.html" data-page="base64-decoder.html" class="sidebar-link flex items-center space-x-3 px-3 py-2 text-gray-300 hover:text-white hover:bg-slate-800/50 rounded-lg transition-all duration-200 group">
                     <span class="text-blue-400 group-hover:text-blue-300">📥</span>
                     <span class="text-sm">Base64 Decoder</span>
                 </a>
-                <a href="base32encode/index.html" class="flex items-center space-x-3 px-3 py-2 text-gray-300 hover:text-white hover:bg-slate-800/50 rounded-lg transition-all duration-200 group">
+                <a href="/base32encode/index.html" data-page="base32encode/index.html" class="sidebar-link flex items-center space-x-3 px-3 py-2 text-gray-300 hover:text-white hover:bg-slate-800/50 rounded-lg transition-all duration-200 group">
                     <span class="text-blue-400 group-hover:text-blue-300">📤</span>
                     <span class="text-sm">Base32 Encoder</span>
                 </a>
-                <a href="base32decode/index.html" class="flex items-center space-x-3 px-3 py-2 text-gray-300 hover:text-white hover:bg-slate-800/50 rounded-lg transition-all duration-200 group">
+                <a href="/base32decode/index.html" data-page="base32decode/index.html" class="sidebar-link flex items-center space-x-3 px-3 py-2 text-gray-300 hover:text-white hover:bg-slate-800/50 rounded-lg transition-all duration-200 group">
                     <span class="text-blue-400 group-hover:text-blue-300">📥</span>
                     <span class="text-sm">Base32 Decoder</span>
                 </a>
-                <a href="base58encode/index.html" class="flex items-center space-x-3 px-3 py-2 text-gray-300 hover:text-white hover:bg-slate-800/50 rounded-lg transition-all duration-200 group">
+                <a href="/base58encode/index.html" data-page="base58encode/index.html" class="sidebar-link flex items-center space-x-3 px-3 py-2 text-gray-300 hover:text-white hover:bg-slate-800/50 rounded-lg transition-all duration-200 group">
                     <span class="text-blue-400 group-hover:text-blue-300">📤</span>
                     <span class="text-sm">Base58 Encoder</span>
                 </a>
-                <a href="base58decode/index.html" class="flex items-center space-x-3 px-3 py-2 text-gray-300 hover:text-white hover:bg-slate-800/50 rounded-lg transition-all duration-200 group">
+                <a href="/base58decode/index.html" data-page="base58decode/index.html" class="sidebar-link flex items-center space-x-3 px-3 py-2 text-gray-300 hover:text-white hover:bg-slate-800/50 rounded-lg transition-all duration-200 group">
                     <span class="text-blue-400 group-hover:text-blue-300">📥</span>
                     <span class="text-sm">Base58 Decoder</span>
                 </a>
-                <a href="hash-generator.html" class="flex items-center space-x-3 px-3 py-2 text-gray-300 hover:text-white hover:bg-slate-800/50 rounded-lg transition-all duration-200 group">
+                <a href="/hash-generator.html" data-page="hash-generator.html" class="sidebar-link flex items-center space-x-3 px-3 py-2 text-gray-300 hover:text-white hover:bg-slate-800/50 rounded-lg transition-all duration-200 group">
                     <span class="text-blue-400 group-hover:text-blue-300">🔐</span>
                     <span class="text-sm">Hash Generator</span>
                 </a>
-                <a href="jwt-decoder.html" class="flex items-center space-x-3 px-3 py-2 text-gray-300 hover:text-white hover:bg-slate-800/50 rounded-lg transition-all duration-200 group">
+                <a href="/jwt-decoder.html" data-page="jwt-decoder.html" class="sidebar-link flex items-center space-x-3 px-3 py-2 text-gray-300 hover:text-white hover:bg-slate-800/50 rounded-lg transition-all duration-200 group">
                     <span class="text-blue-400 group-hover:text-blue-300">🔓</span>
                     <span class="text-sm">JWT Decoder</span>
                 </a>
-                <a href="csv-json-converter.html" class="flex items-center space-x-3 px-3 py-2 text-gray-300 hover:text-white hover:bg-slate-800/50 rounded-lg transition-all duration-200 group">
+                <a href="/csv-json-converter.html" data-page="csv-json-converter.html" class="sidebar-link flex items-center space-x-3 px-3 py-2 text-gray-300 hover:text-white hover:bg-slate-800/50 rounded-lg transition-all duration-200 group">
                     <span class="text-blue-400 group-hover:text-blue-300">📊</span>
                     <span class="text-sm">CSV to JSON</span>
                 </a>
-                <a href="yaml-json-converter.html" class="flex items-center space-x-3 px-3 py-2 text-gray-300 hover:text-white hover:bg-slate-800/50 rounded-lg transition-all duration-200 group">
+                <a href="/yaml-json-converter.html" data-page="yaml-json-converter.html" class="sidebar-link flex items-center space-x-3 px-3 py-2 text-gray-300 hover:text-white hover:bg-slate-800/50 rounded-lg transition-all duration-200 group">
                     <span class="text-blue-400 group-hover:text-blue-300">⚖️</span>
                     <span class="text-sm">YAML to JSON</span>
                 </a>
-                <a href="xml-formatter.html" class="flex items-center space-x-3 px-3 py-2 text-gray-300 hover:text-white hover:bg-slate-800/50 rounded-lg transition-all duration-200 group">
+                <a href="/xml-formatter.html" data-page="xml-formatter.html" class="sidebar-link flex items-center space-x-3 px-3 py-2 text-gray-300 hover:text-white hover:bg-slate-800/50 rounded-lg transition-all duration-200 group">
                     <span class="text-blue-400 group-hover:text-blue-300">📄</span>
                     <span class="text-sm">XML Formatter</span>
                 </a>
@@ -114,15 +115,15 @@
                 <h3 class="text-sm font-semibold text-gray-300 uppercase tracking-wider">Generators</h3>
             </div>
             <div class="space-y-1">
-                <a href="password-generator.html" class="flex items-center space-x-3 px-3 py-2 text-gray-300 hover:text-white hover:bg-slate-800/50 rounded-lg transition-all duration-200 group">
+                <a href="/password-generator.html" data-page="password-generator.html" class="sidebar-link flex items-center space-x-3 px-3 py-2 text-gray-300 hover:text-white hover:bg-slate-800/50 rounded-lg transition-all duration-200 group">
                     <span class="text-green-400 group-hover:text-green-300">🔑</span>
                     <span class="text-sm">Password Generator</span>
                 </a>
-                <a href="guid-generator.html" class="flex items-center space-x-3 px-3 py-2 text-gray-300 hover:text-white hover:bg-slate-800/50 rounded-lg transition-all duration-200 group">
+                <a href="/guid-generator.html" data-page="guid-generator.html" class="sidebar-link flex items-center space-x-3 px-3 py-2 text-gray-300 hover:text-white hover:bg-slate-800/50 rounded-lg transition-all duration-200 group">
                     <span class="text-green-400 group-hover:text-green-300">🆔</span>
                     <span class="text-sm">GUID Generator</span>
                 </a>
-                <a href="qr-generator.html" class="flex items-center space-x-3 px-3 py-2 text-gray-300 hover:text-white hover:bg-slate-800/50 rounded-lg transition-all duration-200 group">
+                <a href="/qr-generator.html" data-page="qr-generator.html" class="sidebar-link flex items-center space-x-3 px-3 py-2 text-gray-300 hover:text-white hover:bg-slate-800/50 rounded-lg transition-all duration-200 group">
                     <span class="text-green-400 group-hover:text-green-300">📱</span>
                     <span class="text-sm">QR Generator</span>
                 </a>
@@ -146,15 +147,15 @@
                 <h3 class="text-sm font-semibold text-gray-300 uppercase tracking-wider">API & Integration</h3>
             </div>
             <div class="space-y-1">
-                <a href="curl-describer.html" class="flex items-center space-x-3 px-3 py-2 text-gray-300 hover:text-white hover:bg-slate-800/50 rounded-lg transition-all duration-200 group">
+                <a href="/curl-describer.html" data-page="curl-describer.html" class="sidebar-link flex items-center space-x-3 px-3 py-2 text-gray-300 hover:text-white hover:bg-slate-800/50 rounded-lg transition-all duration-200 group">
                     <span class="text-purple-400 group-hover:text-purple-300">🌐</span>
                     <span class="text-sm">cURL Describer</span>
                 </a>
-                <a href="cron-describer.html" class="flex items-center space-x-3 px-3 py-2 text-gray-300 hover:text-white hover:bg-slate-800/50 rounded-lg transition-all duration-200 group">
+                <a href="/cron-describer.html" data-page="cron-describer.html" class="sidebar-link flex items-center space-x-3 px-3 py-2 text-gray-300 hover:text-white hover:bg-slate-800/50 rounded-lg transition-all duration-200 group">
                     <span class="text-purple-400 group-hover:text-purple-300">⏰</span>
                     <span class="text-sm">Cron Describer</span>
                 </a>
-                <a href="regex-tester.html" class="flex items-center space-x-3 px-3 py-2 text-gray-300 hover:text-white hover:bg-slate-800/50 rounded-lg transition-all duration-200 group">
+                <a href="/regex-tester.html" data-page="regex-tester.html" class="sidebar-link flex items-center space-x-3 px-3 py-2 text-gray-300 hover:text-white hover:bg-slate-800/50 rounded-lg transition-all duration-200 group">
                     <span class="text-purple-400 group-hover:text-purple-300">🔍</span>
                     <span class="text-sm">Regex Tester</span>
                 </a>
@@ -170,43 +171,43 @@
                 <h3 class="text-sm font-semibold text-gray-300 uppercase tracking-wider">Development Tools</h3>
             </div>
             <div class="space-y-1">
-                <a href="sql-formatter.html" class="flex items-center space-x-3 px-3 py-2 text-gray-300 hover:text-white hover:bg-slate-800/50 rounded-lg transition-all duration-200 group">
+                <a href="/sql-formatter.html" data-page="sql-formatter.html" class="sidebar-link flex items-center space-x-3 px-3 py-2 text-gray-300 hover:text-white hover:bg-slate-800/50 rounded-lg transition-all duration-200 group">
                     <span class="text-orange-400 group-hover:text-orange-300">🗄️</span>
                     <span class="text-sm">SQL Formatter</span>
                 </a>
-                <a href="payment-tester.html" class="flex items-center space-x-3 px-3 py-2 text-gray-300 hover:text-white hover:bg-slate-800/50 rounded-lg transition-all duration-200 group">
+                <a href="/payment-tester.html" data-page="payment-tester.html" class="sidebar-link flex items-center space-x-3 px-3 py-2 text-gray-300 hover:text-white hover:bg-slate-800/50 rounded-lg transition-all duration-200 group">
                     <span class="text-orange-400 group-hover:text-orange-300">🧪</span>
                     <span class="text-sm">Payment Tester</span>
                 </a>
-                <a href="env-generator.html" class="flex items-center space-x-3 px-3 py-2 text-gray-300 hover:text-white hover:bg-slate-800/50 rounded-lg transition-all duration-200 group">
+                <a href="/env-generator.html" data-page="env-generator.html" class="sidebar-link flex items-center space-x-3 px-3 py-2 text-gray-300 hover:text-white hover:bg-slate-800/50 rounded-lg transition-all duration-200 group">
                     <span class="text-orange-400 group-hover:text-orange-300">🌍</span>
                     <span class="text-sm">Environment Generator</span>
                 </a>
-                <a href="elasticsearch-tools.html" class="flex items-center space-x-3 px-3 py-2 text-gray-300 hover:text-white hover:bg-slate-800/50 rounded-lg transition-all duration-200 group">
+                <a href="/elasticsearch-tools.html" data-page="elasticsearch-tools.html" class="sidebar-link flex items-center space-x-3 px-3 py-2 text-gray-300 hover:text-white hover:bg-slate-800/50 rounded-lg transition-all duration-200 group">
                     <span class="text-orange-400 group-hover:text-orange-300">🔍</span>
                     <span class="text-sm">Elasticsearch Tools</span>
                 </a>
-                <a href="markdown-editor.html" class="flex items-center space-x-3 px-3 py-2 text-gray-300 hover:text-white hover:bg-slate-800/50 rounded-lg transition-all duration-200 group">
+                <a href="/markdown-editor.html" data-page="markdown-editor.html" class="sidebar-link flex items-center space-x-3 px-3 py-2 text-gray-300 hover:text-white hover:bg-slate-800/50 rounded-lg transition-all duration-200 group">
                     <span class="text-orange-400 group-hover:text-orange-300">📝</span>
                     <span class="text-sm">Markdown Editor</span>
                 </a>
-                <a href="diff-checker.html" class="flex items-center space-x-3 px-3 py-2 text-gray-300 hover:text-white hover:bg-slate-800/50 rounded-lg transition-all duration-200 group">
+                <a href="/diff-checker.html" data-page="diff-checker.html" class="sidebar-link flex items-center space-x-3 px-3 py-2 text-gray-300 hover:text-white hover:bg-slate-800/50 rounded-lg transition-all duration-200 group">
                     <span class="text-orange-400 group-hover:text-orange-300">🔍</span>
                     <span class="text-sm">Diff Checker</span>
                 </a>
-                <a href="blank-page.html" class="flex items-center space-x-3 px-3 py-2 text-gray-300 hover:text-white hover:bg-slate-800/50 rounded-lg transition-all duration-200 group">
+                <a href="/blank-page.html" data-page="blank-page.html" class="sidebar-link flex items-center space-x-3 px-3 py-2 text-gray-300 hover:text-white hover:bg-slate-800/50 rounded-lg transition-all duration-200 group">
                     <span class="text-orange-400 group-hover:text-orange-300">📄</span>
                     <span class="text-sm">Blank Page</span>
                 </a>
-                <a href="mermaid-renderer.html" class="flex items-center space-x-3 px-3 py-2 text-gray-300 hover:text-white hover:bg-slate-800/50 rounded-lg transition-all duration-200 group">
+                <a href="/mermaid-renderer.html" data-page="mermaid-renderer.html" class="sidebar-link flex items-center space-x-3 px-3 py-2 text-gray-300 hover:text-white hover:bg-slate-800/50 rounded-lg transition-all duration-200 group">
                     <span class="text-orange-400 group-hover:text-orange-300">🌊</span>
                     <span class="text-sm">Mermaid Renderer</span>
                 </a>
-                <a href="nfc-reader.html" class="flex items-center space-x-3 px-3 py-2 text-gray-300 hover:text-white hover:bg-slate-800/50 rounded-lg transition-all duration-200 group">
+                <a href="/nfc-reader.html" data-page="nfc-reader.html" class="sidebar-link flex items-center space-x-3 px-3 py-2 text-gray-300 hover:text-white hover:bg-slate-800/50 rounded-lg transition-all duration-200 group">
                     <span class="text-orange-400 group-hover:text-orange-300">📶</span>
                     <span class="text-sm">NFC Reader</span>
                 </a>
-                <a href="text-sharer.html" class="flex items-center space-x-3 px-3 py-2 text-gray-300 hover:text-white hover:bg-slate-800/50 rounded-lg transition-all duration-200 group">
+                <a href="/text-sharer.html" data-page="text-sharer.html" class="sidebar-link flex items-center space-x-3 px-3 py-2 text-gray-300 hover:text-white hover:bg-slate-800/50 rounded-lg transition-all duration-200 group">
                     <span class="text-orange-400 group-hover:text-orange-300">🔗</span>
                     <span class="text-sm">Text Sharer</span>
                 </a>
@@ -222,7 +223,7 @@
                 <h3 class="text-sm font-semibold text-gray-300 uppercase tracking-wider">Database Tools</h3>
             </div>
             <div class="space-y-1">
-                <a href="postgresql-guide.html" class="flex items-center space-x-3 px-3 py-2 text-gray-300 hover:text-white hover:bg-slate-800/50 rounded-lg transition-all duration-200 group">
+                <a href="/postgresql-guide.html" data-page="postgresql-guide.html" class="sidebar-link flex items-center space-x-3 px-3 py-2 text-gray-300 hover:text-white hover:bg-slate-800/50 rounded-lg transition-all duration-200 group">
                     <span class="text-red-400 group-hover:text-red-300">🔍</span>
                     <span class="text-sm">PostgreSQL Guide</span>
                 </a>
@@ -238,7 +239,7 @@
                 <h3 class="text-sm font-semibold text-gray-300 uppercase tracking-wider">Redis</h3>
             </div>
             <div class="space-y-1">
-                <a href="redis-command-explorer.html" class="flex items-center space-x-3 px-3 py-2 text-gray-300 hover:text-white hover:bg-slate-800/50 rounded-lg transition-all duration-200 group">
+                <a href="/redis-command-explorer.html" data-page="redis-command-explorer.html" class="sidebar-link flex items-center space-x-3 px-3 py-2 text-gray-300 hover:text-white hover:bg-slate-800/50 rounded-lg transition-all duration-200 group">
                     <span class="text-red-400 group-hover:text-red-300">🔍</span>
                     <span class="text-sm">Redis Commands</span>
                 </a>
@@ -254,35 +255,35 @@
                 <h3 class="text-sm font-semibold text-gray-300 uppercase tracking-wider">Python Toolkit</h3>
             </div>
             <div class="space-y-1">
-                <a href="python-requests.html" class="flex items-center space-x-3 px-3 py-2 text-gray-300 hover:text-white hover:bg-slate-800/50 rounded-lg transition-all duration-200 group">
+                <a href="/python-requests.html" data-page="python-requests.html" class="sidebar-link flex items-center space-x-3 px-3 py-2 text-gray-300 hover:text-white hover:bg-slate-800/50 rounded-lg transition-all duration-200 group">
                     <span class="text-yellow-400 group-hover:text-yellow-300">🌐</span>
                     <span class="text-sm">Requests Library</span>
                 </a>
-                <a href="python-urllib.html" class="flex items-center space-x-3 px-3 py-2 text-gray-300 hover:text-white hover:bg-slate-800/50 rounded-lg transition-all duration-200 group">
+                <a href="/python-urllib.html" data-page="python-urllib.html" class="sidebar-link flex items-center space-x-3 px-3 py-2 text-gray-300 hover:text-white hover:bg-slate-800/50 rounded-lg transition-all duration-200 group">
                     <span class="text-yellow-400 group-hover:text-yellow-300">🔗</span>
                     <span class="text-sm">urllib</span>
                 </a>
-                <a href="python-flask.html" class="flex items-center space-x-3 px-3 py-2 text-gray-300 hover:text-white hover:bg-slate-800/50 rounded-lg transition-all duration-200 group">
+                <a href="/python-flask.html" data-page="python-flask.html" class="sidebar-link flex items-center space-x-3 px-3 py-2 text-gray-300 hover:text-white hover:bg-slate-800/50 rounded-lg transition-all duration-200 group">
                     <span class="text-yellow-400 group-hover:text-yellow-300">🌶️</span>
                     <span class="text-sm">Flask API</span>
                 </a>
-                <a href="python-pandas.html" class="flex items-center space-x-3 px-3 py-2 text-gray-300 hover:text-white hover:bg-slate-800/50 rounded-lg transition-all duration-200 group">
+                <a href="/python-pandas.html" data-page="python-pandas.html" class="sidebar-link flex items-center space-x-3 px-3 py-2 text-gray-300 hover:text-white hover:bg-slate-800/50 rounded-lg transition-all duration-200 group">
                     <span class="text-yellow-400 group-hover:text-yellow-300">🐼</span>
                     <span class="text-sm">Pandas</span>
                 </a>
-                <a href="python-openai.html" class="flex items-center space-x-3 px-3 py-2 text-gray-300 hover:text-white hover:bg-slate-800/50 rounded-lg transition-all duration-200 group">
+                <a href="/python-openai.html" data-page="python-openai.html" class="sidebar-link flex items-center space-x-3 px-3 py-2 text-gray-300 hover:text-white hover:bg-slate-800/50 rounded-lg transition-all duration-200 group">
                     <span class="text-yellow-400 group-hover:text-yellow-300">🤖</span>
                     <span class="text-sm">OpenAI API</span>
                 </a>
-                <a href="jupyter-notebooks.html" class="flex items-center space-x-3 px-3 py-2 text-gray-300 hover:text-white hover:bg-slate-800/50 rounded-lg transition-all duration-200 group">
+                <a href="/jupyter-notebooks.html" data-page="jupyter-notebooks.html" class="sidebar-link flex items-center space-x-3 px-3 py-2 text-gray-300 hover:text-white hover:bg-slate-800/50 rounded-lg transition-all duration-200 group">
                     <span class="text-yellow-400 group-hover:text-yellow-300">📓</span>
                     <span class="text-sm">Jupyter Notebooks</span>
                 </a>
-                <a href="prophet.html" class="flex items-center space-x-3 px-3 py-2 text-gray-300 hover:text-white hover:bg-slate-800/50 rounded-lg transition-all duration-200 group">
+                <a href="/prophet.html" data-page="prophet.html" class="sidebar-link flex items-center space-x-3 px-3 py-2 text-gray-300 hover:text-white hover:bg-slate-800/50 rounded-lg transition-all duration-200 group">
                     <span class="text-yellow-400 group-hover:text-yellow-300">📈</span>
                     <span class="text-sm">Prophet</span>
                 </a>
-                <a href="plotly.html" class="flex items-center space-x-3 px-3 py-2 text-gray-300 hover:text-white hover:bg-slate-800/50 rounded-lg transition-all duration-200 group">
+                <a href="/plotly.html" data-page="plotly.html" class="sidebar-link flex items-center space-x-3 px-3 py-2 text-gray-300 hover:text-white hover:bg-slate-800/50 rounded-lg transition-all duration-200 group">
                     <span class="text-yellow-400 group-hover:text-yellow-300">📊</span>
                     <span class="text-sm">Plotly</span>
                 </a>
@@ -298,23 +299,23 @@
                 <h3 class="text-sm font-semibold text-gray-300 uppercase tracking-wider">Data Structures</h3>
             </div>
             <div class="space-y-1">
-                <a href="data-structures.html" class="flex items-center space-x-3 px-3 py-2 text-gray-300 hover:text-white hover:bg-slate-800/50 rounded-lg transition-all duration-200 group">
+                <a href="/data-structures.html" data-page="data-structures.html" class="sidebar-link flex items-center space-x-3 px-3 py-2 text-gray-300 hover:text-white hover:bg-slate-800/50 rounded-lg transition-all duration-200 group">
                     <span class="text-indigo-400 group-hover:text-indigo-300">📋</span>
                     <span class="text-sm">Data Structures</span>
                 </a>
-                <a href="datastructures/array-ds.html" class="flex items-center space-x-3 px-3 py-2 text-gray-300 hover:text-white hover:bg-slate-800/50 rounded-lg transition-all duration-200 group">
+                <a href="/datastructures/array-ds.html" data-page="datastructures/array-ds.html" class="sidebar-link flex items-center space-x-3 px-3 py-2 text-gray-300 hover:text-white hover:bg-slate-800/50 rounded-lg transition-all duration-200 group">
                     <span class="text-indigo-400 group-hover:text-indigo-300">📋</span>
                     <span class="text-sm">Array DS</span>
                 </a>
-                <a href="datastructures/linkedlist-ds.html" class="flex items-center space-x-3 px-3 py-2 text-gray-300 hover:text-white hover:bg-slate-800/50 rounded-lg transition-all duration-200 group">
+                <a href="/datastructures/linkedlist-ds.html" data-page="datastructures/linkedlist-ds.html" class="sidebar-link flex items-center space-x-3 px-3 py-2 text-gray-300 hover:text-white hover:bg-slate-800/50 rounded-lg transition-all duration-200 group">
                     <span class="text-indigo-400 group-hover:text-indigo-300">🔗</span>
                     <span class="text-sm">Linked List DS</span>
                 </a>
-                <a href="datastructures/stack-ds.html" class="flex items-center space-x-3 px-3 py-2 text-gray-300 hover:text-white hover:bg-slate-800/50 rounded-lg transition-all duration-200 group">
+                <a href="/datastructures/stack-ds.html" data-page="datastructures/stack-ds.html" class="sidebar-link flex items-center space-x-3 px-3 py-2 text-gray-300 hover:text-white hover:bg-slate-800/50 rounded-lg transition-all duration-200 group">
                     <span class="text-indigo-400 group-hover:text-indigo-300">📚</span>
                     <span class="text-sm">Stack DS</span>
                 </a>
-                <a href="datastructures/queue-ds.html" class="flex items-center space-x-3 px-3 py-2 text-gray-300 hover:text-white hover:bg-slate-800/50 rounded-lg transition-all duration-200 group">
+                <a href="/datastructures/queue-ds.html" data-page="datastructures/queue-ds.html" class="sidebar-link flex items-center space-x-3 px-3 py-2 text-gray-300 hover:text-white hover:bg-slate-800/50 rounded-lg transition-all duration-200 group">
                     <span class="text-indigo-400 group-hover:text-indigo-300">🚶</span>
                     <span class="text-sm">Queue DS</span>
                 </a>
@@ -330,19 +331,19 @@
                 <h3 class="text-sm font-semibold text-gray-300 uppercase tracking-wider">VAPT Tools</h3>
             </div>
             <div class="space-y-1">
-                <a href="clickjacking-checker.html" class="flex items-center space-x-3 px-3 py-2 text-gray-300 hover:text-white hover:bg-slate-800/50 rounded-lg transition-all duration-200 group">
+                <a href="/clickjacking-checker.html" data-page="clickjacking-checker.html" class="sidebar-link flex items-center space-x-3 px-3 py-2 text-gray-300 hover:text-white hover:bg-slate-800/50 rounded-lg transition-all duration-200 group">
                     <span class="text-red-400 group-hover:text-red-300">🔒</span>
                     <span class="text-sm">Clickjacking Checker</span>
                 </a>
-                <a href="http-response-header-printer.html" class="flex items-center space-x-3 px-3 py-2 text-gray-300 hover:text-white hover:bg-slate-800/50 rounded-lg transition-all duration-200 group">
+                <a href="/http-response-header-printer.html" data-page="http-response-header-printer.html" class="sidebar-link flex items-center space-x-3 px-3 py-2 text-gray-300 hover:text-white hover:bg-slate-800/50 rounded-lg transition-all duration-200 group">
                     <span class="text-red-400 group-hover:text-red-300">📋</span>
                     <span class="text-sm">HTTP Headers</span>
                 </a>
-                <a href="owasp-top10.html" class="flex items-center space-x-3 px-3 py-2 text-gray-300 hover:text-white hover:bg-slate-800/50 rounded-lg transition-all duration-200 group">
+                <a href="/owasp-top10.html" data-page="owasp-top10.html" class="sidebar-link flex items-center space-x-3 px-3 py-2 text-gray-300 hover:text-white hover:bg-slate-800/50 rounded-lg transition-all duration-200 group">
                     <span class="text-red-400 group-hover:text-red-300">🐛</span>
                     <span class="text-sm">OWASP Top 10</span>
                 </a>
-                <a href="email-header-analyzer.html" class="flex items-center space-x-3 px-3 py-2 text-gray-300 hover:text-white hover:bg-slate-800/50 rounded-lg transition-all duration-200 group">
+                <a href="/email-header-analyzer.html" data-page="email-header-analyzer.html" class="sidebar-link flex items-center space-x-3 px-3 py-2 text-gray-300 hover:text-white hover:bg-slate-800/50 rounded-lg transition-all duration-200 group">
                     <span class="text-red-400 group-hover:text-red-300">📧</span>
                     <span class="text-sm">Email Header Analyzer</span>
                 </a>
@@ -358,27 +359,35 @@
                 <h3 class="text-sm font-semibold text-gray-300 uppercase tracking-wider">Information</h3>
             </div>
             <div class="space-y-1">
-                <a href="ip-address.html" class="flex items-center space-x-3 px-3 py-2 text-gray-300 hover:text-white hover:bg-slate-800/50 rounded-lg transition-all duration-200 group">
+                <a href="/ip-address.html" data-page="ip-address.html" class="sidebar-link flex items-center space-x-3 px-3 py-2 text-gray-300 hover:text-white hover:bg-slate-800/50 rounded-lg transition-all duration-200 group">
                     <span class="text-teal-400 group-hover:text-teal-300">🌍</span>
                     <span class="text-sm">IP Address Tools</span>
                 </a>
-                <a href="emoji_picker/index.html" class="flex items-center space-x-3 px-3 py-2 text-gray-300 hover:text-white hover:bg-slate-800/50 rounded-lg transition-all duration-200 group">
+                <a href="/timezone_convertor/index.html" data-page="timezone_convertor/index.html" class="sidebar-link flex items-center space-x-3 px-3 py-2 text-gray-300 hover:text-white hover:bg-slate-800/50 rounded-lg transition-all duration-200 group">
+                    <span class="text-teal-400 group-hover:text-teal-300">🌍</span>
+                    <span class="text-sm">Timezone Converter</span>
+                </a>
+                <a href="/emoji_picker/index.html" data-page="emoji_picker/index.html" class="sidebar-link flex items-center space-x-3 px-3 py-2 text-gray-300 hover:text-white hover:bg-slate-800/50 rounded-lg transition-all duration-200 group">
                     <span class="text-teal-400 group-hover:text-teal-300">😀</span>
                     <span class="text-sm">Emoji Picker</span>
                 </a>
-                <a href="epoch_convertor/index.html" class="flex items-center space-x-3 px-3 py-2 text-gray-300 hover:text-white hover:bg-slate-800/50 rounded-lg transition-all duration-200 group">
+                <a href="/epoch_convertor/index.html" data-page="epoch_convertor/index.html" class="sidebar-link flex items-center space-x-3 px-3 py-2 text-gray-300 hover:text-white hover:bg-slate-800/50 rounded-lg transition-all duration-200 group">
                     <span class="text-teal-400 group-hover:text-teal-300">⏰</span>
                     <span class="text-sm">Epoch Converter</span>
                 </a>
-                <a href="leetcode-commit-message.html" class="flex items-center space-x-3 px-3 py-2 text-gray-300 hover:text-white hover:bg-slate-800/50 rounded-lg transition-all duration-200 group">
+                <a href="/word_counter/index.html" data-page="word_counter/index.html" class="sidebar-link flex items-center space-x-3 px-3 py-2 text-gray-300 hover:text-white hover:bg-slate-800/50 rounded-lg transition-all duration-200 group">
+                    <span class="text-teal-400 group-hover:text-teal-300">📝</span>
+                    <span class="text-sm">Word Counter</span>
+                </a>
+                <a href="/leetcode-commit-message.html" data-page="leetcode-commit-message.html" class="sidebar-link flex items-center space-x-3 px-3 py-2 text-gray-300 hover:text-white hover:bg-slate-800/50 rounded-lg transition-all duration-200 group">
                     <span class="text-teal-400 group-hover:text-teal-300">📝</span>
                     <span class="text-sm">LeetCode Commit Generator</span>
                 </a>
-                <a href="all_tools/index.html" class="flex items-center space-x-3 px-3 py-2 text-gray-300 hover:text-white hover:bg-slate-800/50 rounded-lg transition-all duration-200 group">
+                <a href="/all_tools/index.html" data-page="all_tools/index.html" class="sidebar-link flex items-center space-x-3 px-3 py-2 text-gray-300 hover:text-white hover:bg-slate-800/50 rounded-lg transition-all duration-200 group">
                     <span class="text-teal-400 group-hover:text-teal-300">📝</span>
                     <span class="text-sm">All available tools</span>
                 </a>
-                <a href="blank-page.html" class="flex items-center space-x-3 px-3 py-2 text-gray-300 hover:text-white hover:bg-slate-800/50 rounded-lg transition-all duration-200 group">
+                <a href="/blank-page.html" data-page="blank-page.html" class="sidebar-link flex items-center space-x-3 px-3 py-2 text-gray-300 hover:text-white hover:bg-slate-800/50 rounded-lg transition-all duration-200 group">
                     <span class="text-teal-400 group-hover:text-teal-300">📝</span>
                     <span class="text-sm">Blank page</span>
                 </a>
@@ -387,14 +396,6 @@
 
        <!-- Footer include -->
     <div id="footer"></div>
-    <script>
-    fetch("footer.html")
-    .then(response => response.text())
-    .then(data => {
-        document.getElementById("footer").innerHTML = data;
-    })
-    .catch(err => console.error("Failed to load footer:", err));
-    </script>
     </div>
 </aside>
 
@@ -411,6 +412,70 @@
 <div id="mobile-sidebar-overlay" class="lg:hidden fixed inset-0 bg-black/50 backdrop-blur-sm z-40 hidden" onclick="(function(){var s=document.getElementById('sidebar');var o=document.getElementById('mobile-sidebar-overlay');if(s)s.classList.add('-translate-x-full');if(o)o.classList.add('hidden');document.body.style.overflow='';})()"></div>
 
 <script>
+// 🚀 DYNAMIC PATH RESOLUTION FOR SUBDIRECTORIES
+(function() {
+    // Detect depth and compute proper relative prefix that works for both
+    // /subdir/ and /subdir/file.html cases
+    const currentPath = window.location.pathname;
+    const segmentsRaw = currentPath.split('/');
+    // Remove empty segments created by leading/trailing slashes, but keep structure to infer depth
+    const pathSegments = segmentsRaw.filter(s => s);
+    const lastSegment = pathSegments[pathSegments.length - 1] || '';
+    // If last segment looks like a file (has a dot), depth excludes it; otherwise it's a directory index
+    const looksLikeFile = lastSegment.includes('.');
+    const depth = looksLikeFile ? Math.max(0, pathSegments.length - 1) : pathSegments.length;
+    const pathPrefix = depth > 0 ? '../'.repeat(depth) : '';
+    
+    console.log('🔍 Sidebar Path Detection:', {
+        currentPath,
+        pathSegments,
+        depth,
+        pathPrefix,
+        looksLikeFile
+    });
+
+    // Fix logo image path
+    const logoImg = document.getElementById('logo-img');
+    if (logoImg) {
+        logoImg.src = pathPrefix + 'images/logo.png';
+        console.log('✅ Logo path fixed:', logoImg.src);
+    }
+
+    // Fix logo link
+    const logoLink = document.getElementById('logo-link');
+    if (logoLink) {
+        logoLink.href = pathPrefix + 'index.html';
+    }
+
+    // Fix all sidebar navigation links
+    const sidebarLinks = document.querySelectorAll('.sidebar-link');
+    sidebarLinks.forEach(link => {
+        const targetPage = link.getAttribute('data-page');
+        if (targetPage) {
+            link.href = pathPrefix + targetPage;
+            
+            // Add click handler to ensure navigation works
+            link.addEventListener('click', function(e) {
+                e.preventDefault();
+                window.location.href = this.href;
+            });
+        }
+    });
+    console.log(`✅ Fixed ${sidebarLinks.length} sidebar links`);
+
+    // Fix footer path
+    const footerDiv = document.getElementById('footer');
+    if (footerDiv) {
+        fetch(pathPrefix + "footer.html")
+            .then(response => response.text())
+            .then(data => {
+                footerDiv.innerHTML = data;
+                console.log('✅ Footer loaded');
+            })
+            .catch(err => console.error("❌ Failed to load footer:", err));
+    }
+})();
+
 // Initialize sidebar functionality
 function initializeSidebar() {
     const sidebar = document.getElementById('sidebar');
@@ -459,28 +524,31 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Handle window resize
     window.addEventListener('resize', function() {
+        const sidebar = document.getElementById('sidebar');
+        const overlay = document.getElementById('mobile-sidebar-overlay');
+        
         if (window.innerWidth >= 1024) {
             // Desktop: show sidebar, hide overlay
-            sidebar.classList.remove('-translate-x-full');
-            overlay.classList.add('hidden');
+            if (sidebar) sidebar.classList.remove('-translate-x-full');
+            if (overlay) overlay.classList.add('hidden');
         } else {
             // Mobile: hide sidebar by default
-            sidebar.classList.add('-translate-x-full');
-            overlay.classList.add('hidden');
+            if (sidebar) sidebar.classList.add('-translate-x-full');
+            if (overlay) overlay.classList.add('hidden');
         }
     });
 
     // Set active sidebar item based on current page
     function setActiveSidebarItem() {
         const currentPage = window.location.pathname.split('/').pop();
-        const sidebarItems = document.querySelectorAll('aside a[href$=".html"]');
+        const sidebarItems = document.querySelectorAll('.sidebar-link');
         
         sidebarItems.forEach(item => {
             item.classList.remove('bg-slate-800/50', 'text-white');
             item.classList.add('text-gray-300');
             
-            const itemHref = item.getAttribute('href');
-            if (itemHref === currentPage || (currentPage === '' && itemHref === 'index.html')) {
+            const dataPage = item.getAttribute('data-page');
+            if (dataPage && (dataPage.includes(currentPage) || (currentPage === '' && dataPage === 'index.html'))) {
                 item.classList.add('bg-slate-800/50', 'text-white');
                 item.classList.remove('text-gray-300');
             }
@@ -507,10 +575,10 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     // Add click tracking to all tool links
-    document.querySelectorAll('aside a[href$=".html"]').forEach(link => {
+    document.querySelectorAll('.sidebar-link').forEach(link => {
         link.addEventListener('click', function() {
             const toolName = this.querySelector('span:last-child')?.textContent.trim() || 'Unknown Tool';
-            const toolUrl = this.getAttribute('href');
+            const toolUrl = this.getAttribute('data-page');
             trackToolUsage(toolName, toolUrl);
         });
     });
