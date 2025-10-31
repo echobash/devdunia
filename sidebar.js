@@ -1,4 +1,4 @@
-// Sidebar.js : Common Sidebar JavaScript for DevDunia
+// Common Sidebar JavaScript for DevDunia
 
 document.addEventListener('DOMContentLoaded', function() {
     // Track tool usage
