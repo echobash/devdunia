@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Sorting Algorithms Visualizer</title>
+
+  <!-- Linking external stylesheet -->
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <h1>Sorting Algorithms Visualizer</h1>
+  <p>Visualize popular sorting algorithms in action! Click any button below to see how the array gets sorted step-by-step.</p>
+
+  <div class="controls">
+    <button onclick="generateBars()">Generate New Array</button>
+    <button onclick="runSort('bubble')">Bubble Sort</button>
+    <button onclick="runSort('selection')">Selection Sort</button>
+    <button onclick="runSort('insertion')">Insertion Sort</button>
+    <button onclick="runSort('merge')">Merge Sort</button>
+    <button onclick="runSort('quick')">Quick Sort</button>
+  </div>
+
+  <div class="bars-container" id="bars-container"></div>
+  <div id="description">Algorithm description will appear here...</div>
+
+  <!-- Linking external script -->
+  <script src="script.js"></script>
+</body>
+</html>
