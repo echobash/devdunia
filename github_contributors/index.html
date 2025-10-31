@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>GitHub Contributors | DevDunia</title>
+  <link rel="stylesheet" href="../github_contributors/style.css" />
+  <link rel="icon" href="../images/favicon.ico" />
+</head>
+<body>
+  <header class="dd-header">
+    <h1 class="dd-title">GitHub Contributors</h1>
+    <p class="dd-subtitle">Fetch contributors for any public repository.</p>
+  </header>
+
+  <main class="dd-main">
+    <section class="dd-card dd-inputs">
+      <form id="contributors-form" class="dd-form" autocomplete="on">
+        <div class="dd-form-row">
+          <label for="owner">GitHub Username/Org</label>
+          <input id="owner" name="owner" placeholder="ej. vercel" required />
+        </div>
+        <div class="dd-form-row">
+          <label for="repo">Repository</label>
+          <input id="repo" name="repo" placeholder="ej. next.js" required />
+        </div>
+        <div class="dd-actions">
+          <button type="submit" class="dd-btn">Fetch contributors</button>
+          <button type="button" id="clear-btn" class="dd-btn dd-btn-ghost">Clear</button>
+        </div>
+      </form>
+    </section>
+
+    <section id="status" class="dd-status" role="status" aria-live="polite"></section>
+    <section id="results" class="dd-grid" aria-label="Contributors list"></section>
+  </main>
+
+  <footer class="dd-footer">
+    <small>Data from GitHub REST API (public endpoints). Unauthenticated, rate-limited.</small>
+  </footer>
+
+  <script src="../github_contributors/script.js" defer></script>
+</body>
+</html>
