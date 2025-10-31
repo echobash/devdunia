@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Color Palette Generator</title>
+
+  <style>
+    /* ---------------------------  
+       BASIC PAGE STYLING
+    --------------------------- */
+    body {
+      font-family: Arial, sans-serif;         /* Clean, readable font */
+      background: #1e1e1e;                    /* Dark background to highlight colors */
+      color: #fff;                            /* White text for contrast */
+      display: flex;                          /* Center elements using flexbox */
+      flex-direction: column;                 /* Stack elements vertically */
+      align-items: center;                    /* Horizontally center */
+      justify-content: center;                /* Vertically center */
+      height: 100vh;                          /* Full viewport height */
+      margin: 0;
+    }
+
+    h1 {
+      margin-bottom: 20px;                    /* Space between title and palette */
+    }
+
+    /* ---------------------------  
+       COLOR PALETTE SECTION
+    --------------------------- */
+    .palette {
+      display: flex;                          /* Display colors in a row */
+      gap: 15px;                              /* Space between color boxes */
+      margin-bottom: 20px;                    /* Space below palette */
+    }
+
+    /* ---------------------------  
+       COLOR BOX STYLING
+    --------------------------- */
+    .color-box {
+      width: 100px;
+      height: 100px;
+      border-radius: 8px;                     /* Rounded corners */
+      cursor: pointer;                        /* Indicate clickable color */
+      position: relative;                     /* For positioning child elements (text, copied msg) */
+      transition: transform 0.2s;             /* Smooth hover zoom effect */
+    }
+
+    /* Slight zoom on hover */
+    .color-box:hover {
+      transform: scale(1.05);
+    }
+
+    /* Display the HEX code on the color box */
+    .color-code {
+      position: absolute;
+      bottom: 8px;                            /* Place near bottom */
+      left: 50%;
+      transform: translateX(-50%);            /* Center horizontally */
+      background: rgba(0, 0, 0, 0.5);         /* Semi-transparent background for readability */
+      color: #fff;
+      padding: 4px 6px;
+      border-radius: 4px;
+      font-size: 0.85rem;
+    }
+
+    /* ---------------------------  
+       BUTTON STYLING
+    --------------------------- */
+    button {
+      background-color: #ff9800;              /* Orange button color */
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      font-size: 16px;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: 0.3s;                       /* Smooth hover transition */
+    }
+
+    /* Darker shade when hovered */
+    button:hover {
+      background-color: #e68900;
+    }
+
+    /* ---------------------------  
+       "COPIED!" MESSAGE STYLING
+    --------------------------- */
+    .copied {
+      position: absolute;
+      top: 10px;                              /* Display near top of box */
+      left: 50%;
+      transform: translateX(-50%);
+      background: #000;
+      color: #fff;
+      font-size: 0.8rem;
+      padding: 3px 6px;
+      border-radius: 3px;
+      display: none;                          /* Hidden by default */
+    }
+  </style>
+</head>
+<body>
+
+  <!-- PAGE HEADING -->
+  <h1>Color Palette Generator 🎨</h1>
+
+  <!-- CONTAINER THAT HOLDS ALL COLOR BOXES -->
+  <div class="palette" id="palette"></div>
+
+  <!-- BUTTON TO GENERATE NEW PALETTE -->
+  <button onclick="generatePalette()">Generate Palette</button>
+
+  <script>
+    /* ---------------------------
+       FUNCTION: Generate a random HEX color
+       Example output: "#A1C3F7"
+    --------------------------- */
+    function randomColor() {
+      const letters = '0123456789ABCDEF'; // All possible HEX digits
+      let color = '#';                    // Start with #
+      for (let i = 0; i < 6; i++) {
+        color += letters[Math.floor(Math.random() * 16)]; // Add 6 random HEX characters
+      }
+      return color;
+    }
+
+    /* ---------------------------
+       FUNCTION: Generate a new color palette
+       - Creates 5 random colors
+       - Displays them as clickable boxes
+       - Copies HEX code on click
+    --------------------------- */
+    function generatePalette() {
+      const palette = document.getElementById('palette'); // Get container div
+      palette.innerHTML = ''; // Clear previous colors
+
+      // Generate 5 random colors
+      for (let i = 0; i < 5; i++) {
+        const color = randomColor(); // Get random color
+
+        // Create a color box div
+        const box = document.createElement('div');
+        box.className = 'color-box';
+        box.style.background = color; // Apply color to box
+
+        // Display HEX code inside box
+        const colorText = document.createElement('div');
+        colorText.className = 'color-code';
+        colorText.textContent = color;
+
+        // Create hidden "Copied!" message
+        const copiedText = document.createElement('div');
+        copiedText.className = 'copied';
+        copiedText.textContent = 'Copied!';
+
+        // Add elements inside box
+        box.appendChild(copiedText);
+        box.appendChild(colorText);
+        palette.appendChild(box);
+
+        /* When user clicks the box:
+           1. Copy color code to clipboard
+           2. Show 'Copied!' message temporarily
+        */
+        box.addEventListener('click', () => {
+          navigator.clipboard.writeText(color);        // Copy color to clipboard
+          copiedText.style.display = 'block';          // Show copied message
+          setTimeout(() => (copiedText.style.display = 'none'), 800); // Hide after 0.8s
+        });
+      }
+    }
+
+    // ---------------------------
+    // Run function when page loads
+    // ---------------------------
+    generatePalette();
+  </script>
+
+</body>
+</html>
