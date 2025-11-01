@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gradient Background Generator</title>
+    <style>
+        /* 🎨 General page styling */
+        body {
+            font-family: 'Poppins', sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            background: linear-gradient(to right, #00C9FF, #92FE9D);
+            color: #333;
+            transition: background 0.5s ease;
+        }
+
+        /* 🧭 Title styling */
+        h1 {
+            margin-bottom: 20px;
+            font-size: 28px;
+            color: #222;
+        }
+
+        /* 🎛️ Control panel styling */
+        .controls {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 15px;
+            background-color: #ffffffc9;
+            padding: 25px;
+            border-radius: 15px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        /* 🔘 Button styling */
+        button {
+            background-color: #00C9FF;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            font-size: 16px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+
+        button:hover {
+            background-color: #009edb;
+        }
+
+        /* 🎨 Gradient preview box */
+        .preview {
+            width: 300px;
+            height: 150px;
+            border-radius: 12px;
+            border: 2px solid #eee;
+            margin-top: 20px;
+            transition: background 0.5s;
+        }
+
+        /* 📋 Code box */
+        .code-box {
+            margin-top: 15px;
+            background: #f5f5f5;
+            padding: 10px 15px;
+            border-radius: 8px;
+            font-family: monospace;
+            font-size: 14px;
+            user-select: all;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>🌈 Gradient Background Generator</h1>
+
+    <!-- 🧰 Main Control Panel -->
+    <div class="controls">
+        <div>
+            <label>First Color: </label>
+            <input type="color" id="color1" value="#00C9FF">
+        </div>
+        <div>
+            <label>Second Color: </label>
+            <input type="color" id="color2" value="#92FE9D">
+        </div>
+        <div>
+            <label>Direction: </label>
+            <select id="direction">
+                <option value="to right">Left → Right</option>
+                <option value="to left">Right → Left</option>
+                <option value="to bottom">Top → Bottom</option>
+                <option value="to top">Bottom → Top</option>
+                <option value="to top right">Diagonal ↗️</option>
+                <option value="to bottom right">Diagonal ↘️</option>
+            </select>
+        </div>
+
+        <!-- Buttons for actions -->
+        <button onclick="generateGradient()">Generate Random Gradient</button>
+        <button onclick="copyCode()">Copy CSS Code</button>
+    </div>
+
+    <!-- 🎨 Preview area -->
+    <div class="preview" id="preview"></div>
+
+    <!-- 📋 Code display -->
+    <div class="code-box" id="cssCode">
+        background: linear-gradient(to right, #00C9FF, #92FE9D);
+    </div>
+
+    <script>
+        // Function to generate a random hex color
+        function getRandomColor() {
+            const letters = '0123456789ABCDEF';
+            let color = '#';
+            for (let i = 0; i < 6; i++) {
+                color += letters[Math.floor(Math.random() * 16)];
+            }
+            return color;
+        }
+
+        // 🎨 Function to generate random gradient
+        function generateGradient() {
+            const color1 = getRandomColor();
+            const color2 = getRandomColor();
+            const directions = [
+                "to right", "to left", "to bottom", 
+                "to top", "to top right", "to bottom right"
+            ];
+            const randomDirection = directions[Math.floor(Math.random() * directions.length)];
+
+            const gradient = `linear-gradient(${randomDirection}, ${color1}, ${color2})`;
+
+            document.body.style.background = gradient;
+            document.getElementById("preview").style.background = gradient;
+            document.getElementById("cssCode").innerText = `background: ${gradient};`;
+
+            // Update input colors
+            document.getElementById("color1").value = color1;
+            document.getElementById("color2").value = color2;
+            document.getElementById("direction").value = randomDirection;
+        }
+
+        // 📋 Function to copy the gradient CSS to clipboard
+        function copyCode() {
+            const cssCode = document.getElementById("cssCode").innerText;
+            navigator.clipboard.writeText(cssCode);
+            alert("CSS gradient code copied to clipboard! 💅");
+        }
+
+        // Initialize preview when user manually changes input
+        const inputs = ["color1", "color2", "direction"];
+        inputs.forEach(id => {
+            document.getElementById(id).addEventListener("input", updateGradient);
+        });
+
+        function updateGradient() {
+            const color1 = document.getElementById("color1").value;
+            const color2 = document.getElementById("color2").value;
+            const direction = document.getElementById("direction").value;
+            const gradient = `linear-gradient(${direction}, ${color1}, ${color2})`;
+            document.body.style.background = gradient;
+            document.getElementById("preview").style.background = gradient;
+            document.getElementById("cssCode").innerText = `background: ${gradient};`;
+        }
+    </script>
+</body>
+</html>
