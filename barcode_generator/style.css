@@ -1,0 +1,106 @@
+/* base background & small theme utilities */
+body {
+  background: rgba(15, 23, 42, 0.95);
+  color: #e6eef8;
+  font-family: "Inter", system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+  margin: 0;
+}
+
+/* your original helpers */
+.glass-card {
+  background: rgba(255, 255, 255, 0.05);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+.gradient-text {
+  background: linear-gradient(135deg, #3b82f6, #06b6d4);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+.animate-fade-in { animation: fadeIn 0.6s ease-out; }
+.animate-slide-up { animation: slideUp 0.5s ease-out; }
+@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+@keyframes slideUp { from { transform: translateY(20px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+
+/* Custom scrollbar */
+::-webkit-scrollbar { width: 8px; }
+::-webkit-scrollbar-track { background: rgba(255,255,255,0.03); }
+::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.12); border-radius: 4px; }
+::-webkit-scrollbar-thumb:hover { background: rgba(255,255,255,0.18); }
+
+/* layout: sidebar & main content  */
+#sidebar {
+  position: fixed;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 18rem; /* 288px -> similar to w-72 */
+  padding: 1.5rem 1rem;
+  overflow-y: auto;
+  z-index: 40;
+  background: linear-gradient(180deg, rgba(10,16,26,0.95), rgba(15,23,42,0.98));
+  border-right: 1px solid rgba(255,255,255,0.02);
+}
+
+/* make sure sidebar links inherited styles are readable */
+#sidebar a { color: #dbeafe; font-weight: 600; display: flex; align-items:center; gap:0.6rem; padding:0.6rem 0.6rem; border-radius:0.6rem; text-decoration:none; }
+#sidebar a:hover { background: rgba(59,130,246,0.08); color: #fff; }
+
+/* main content shift to right (space for sidebar) */
+/* .main-content { margin-left: 18rem; padding: 2.5rem 1.5rem; } */
+
+/* card appearance (match QR generator) */
+.bg-slate-800\/70, .glass-card {
+  background: rgba(15, 23, 42, 0.7);
+  backdrop-filter: blur(6px);
+  border-radius: 0.75rem;
+  border: 1px solid rgba(148,163,184,0.04);
+}
+
+/* inputs */
+textarea, input[type="text"], select {
+  background: rgba(30,41,59,0.55);
+  border: 1px solid rgba(148,163,184,0.04);
+  color: #e6eef8;
+  padding: 0.65rem 0.85rem;
+  border-radius: 0.5rem;
+}
+
+/* small helper for color pickers spacing */
+input[type="color"] { width: 3rem; height: 2.25rem; padding:0; border-radius:0.5rem; border:1px solid rgba(148,163,184,0.04); }
+
+/* primary buttons like QR page */
+button {
+  transition: transform 0.12s ease, box-shadow 0.12s ease, opacity 0.12s ease;
+}
+button:active { transform: translateY(1px); }
+.btn-primary {
+  background: linear-gradient(90deg,#60a5fa,#06b6d4);
+  color: #fff;
+}
+
+/* generated barcode svg area */
+#barcode-svg {
+  width: 100%;
+  max-width: 640px;
+  background: white;
+  padding: 1rem;
+  border-radius: 0.6rem;
+  box-shadow: 0 6px 20px rgba(2,6,23,0.6);
+  display:block;
+  margin: 0 auto;
+}
+
+/* info text */
+.text-info { color: #94a3b8; font-size: 0.9rem; }
+
+/* small responsive rules */
+@media (max-width: 1024px) {
+  .main-content { margin-left: 0; padding: 1rem; }
+  #sidebar { position: relative; width:100%; height:auto; border-right:none; border-bottom:1px solid rgba(255,255,255,0.02);}
+  .lg\:ml-72 { margin-left: 0 !important; }
+}
+
+/* small utility */
+.hidden { display:none !important; }

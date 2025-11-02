@@ -12,7 +12,7 @@ const sidebarHTML = `    <!-- Common Sidebar for DevDunia -->
             <!-- Powered by echobash.com -->
             <div class="text-center mb-4">
                 <p class="text-xs text-gray-500">
-                    Powered by <a href="https://echobash.com" target="_blank" class="text-blue-400 hover:text-blue-300 transition-colors">echobash.com</a>
+                    Powered by <a href="https://echobash.com/" target="_blank" class="text-blue-400 hover:text-blue-300 transition-colors">echobash.com</a>
                 </p>
             </div>
 
