@@ -9,12 +9,7 @@ const sidebarHTML = `    <!-- Common Sidebar for DevDunia -->
                 </a>
             </div>
 
-            <!-- Powered by echobash.com -->
-            <div class="text-center mb-4">
-                <p class="text-xs text-gray-500">
-                    Powered by <a href="https://echobash.com/" target="_blank" class="text-blue-400 hover:text-blue-300 transition-colors">echobash.com</a>
-                </p>
-            </div>
+            
 
             <!-- Encoders/Decoders Section -->
             <div class="sidebar-section">
@@ -128,6 +123,10 @@ const sidebarHTML = `    <!-- Common Sidebar for DevDunia -->
             <a href="qr-generator.html" class="sidebar-item">
                 <div class="sidebar-icon">📱</div>
                 <span class="sidebar-text">QR Code Generator</span>
+            </a>
+            <a href="barcode_generator/index.html" class="sidebar-item">
+                <div class="sidebar-icon">💻</div>
+                <span class="sidebar-text">BAR Code Generator</span>
             </a>
             <a href="lorem-ipsum-generator.html" class="sidebar-item">
                 <div class="sidebar-icon">📝</div>

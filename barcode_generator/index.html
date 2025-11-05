@@ -4,6 +4,7 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>Barcode Generator - DevDunia</title>
+  <link rel="apple-touch-icon" href="images/logo.png">
 
   <!-- Tailwind (same as QR generator) -->
   <script src="https://cdn.tailwindcss.com"></script>
@@ -17,6 +18,7 @@
 <body class="h-screen lg:ml-72">
 
   <!-- Sidebar placeholder (loaded from parent folder) -->
+  <!-- <div id="sidebar-container"></div> -->
   <div id="sidebar"></div>
 
   <!-- Main Container -->
@@ -163,6 +165,27 @@
     fetch('../final_sidebar.html').then(r => r.text()).then(t => document.getElementById('sidebar').innerHTML = t).catch(()=>{});
   </script>
 
+  <footer>
+    <div class="flex flex-col md:flex-row justify-between items-center gap-3 py-2">
+      <div class="text-center md:text-left">
+        <p class="text-gray-400 text-sm">
+          &copy; 2024-2025 DevDunia. All rights reserved.
+        </p>
+        <p class="text-gray-500 text-xs mt-0.5">
+          Made with <span class="text-red-400">❤</span> by <a href="https://echobash.com" target="_blank" class="text-purple-400 hover:text-purple-300 font-semibold transition-colors">echobash.com</a> for the developer community
+        </p>
+      </div>
+      
+      <div class="flex flex-wrap justify-center gap-4 text-xs text-gray-400">
+        <a href="CODE_OF_CONDUCT.md" class="hover:text-purple-400 transition-colors">Code of Conduct</a>
+        <span class="text-gray-600">|</span>
+        <a href="https://github.com/echobash/devdunia/blob/main/LICENSE" target="_blank" class="hover:text-purple-400 transition-colors">License</a>
+        <span class="text-gray-600">|</span>
+        <a href="https://github.com/echobash/devdunia" target="_blank" class="hover:text-purple-400 transition-colors">Open Source</a>
+      </div>
+    </div>
+
+  </footer>
   <!-- main behavior -->
   <script src="script.js"></script>
 </body>
