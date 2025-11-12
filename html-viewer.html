@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" type="image/png" href="images/logo.png">
+    <link rel="apple-touch-icon" href="images/logo.png">
+    <title>HTML Viewer - Developer Toolkit | DevDunia</title>
+    <meta name="description" content="Preview and render HTML code in real-time. Free online HTML viewer tool for developers.">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="js/common.js"></script>
+    <style>
+        body {
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #0f172a 100%);
+        }
+        #html-preview {
+            background: white;
+            border: 0;
+        }
+    </style>
+</head>
+<body class="h-screen lg:ml-72">
+    <!-- Background -->
+    <div class="fixed inset-0 -z-10 bg-gradient-to-br from-gray-900 via-slate-900 to-gray-900"></div>
+
+    <!-- Sidebar -->
+    <div id="sidebar-container"></div>
+
+    <!-- Main Container -->
+    <div class="relative z-10 w-full h-screen flex flex-col">
+        
+        <!-- Header -->
+        <div class="bg-slate-800/70 backdrop-blur-md border-b border-slate-700/60 px-6 py-4">
+            <div class="flex items-center justify-between">
+                <div>
+                    <h1 class="text-2xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-cyan-500">
+                        HTML Viewer
+                    </h1>
+                    <p class="text-sm text-gray-400 mt-1">Preview and render HTML code in real-time</p>
+                </div>
+                <div class="flex items-center space-x-3">
+                    <button id="auto-preview-toggle" class="px-4 py-2 bg-green-600 hover:bg-green-700 text-white text-sm rounded-lg transition-colors duration-200 flex items-center space-x-2">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                        </svg>
+                        <span id="auto-preview-text">Enable Auto Preview</span>
+                    </button>
+                    <button id="preview-btn" class="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white text-sm rounded-lg transition-colors duration-200 flex items-center space-x-2">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path>
+                        </svg>
+                        <span>Preview HTML</span>
+                    </button>
+                    <button id="clear-all-btn" class="px-4 py-2 bg-slate-600 hover:bg-slate-700 text-white text-sm rounded-lg transition-colors duration-200 flex items-center space-x-2">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
+                        </svg>
+                        <span>Clear All</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Main Content Area -->
+        <div class="flex-1 flex overflow-hidden">
+            
+            <!-- Left Panel - HTML Code -->
+            <div class="flex-1 flex flex-col border-r border-slate-700/60">
+                <div class="bg-slate-800/50 px-4 py-2 border-b border-slate-700/60">
+                    <div class="flex items-center justify-between">
+                        <h3 class="text-sm font-medium text-gray-300">HTML Code</h3>
+                        <div class="flex items-center space-x-2">
+                            <button id="load-file-btn" class="px-2 py-1 bg-slate-600 hover:bg-slate-700 text-white text-xs rounded transition-colors duration-200">
+                                Load File
+                            </button>
+                            <button id="copy-html-btn" class="px-2 py-1 bg-slate-600 hover:bg-slate-700 text-white text-xs rounded transition-colors duration-200">
+                                Copy
+                            </button>
+                            <span class="text-xs text-gray-400" id="char-count">0 chars</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="flex-1 relative">
+                    <textarea 
+                        id="html-input" 
+                        class="w-full h-full p-4 bg-slate-900/50 border-0 text-gray-200 placeholder-gray-400 focus:outline-none resize-none font-mono text-sm leading-relaxed"
+                        placeholder="Enter your HTML code here...&#10;&#10;Example:&#10;&lt;h1&gt;Hello World&lt;/h1&gt;&#10;&lt;p&gt;This is a paragraph.&lt;/p&gt;"
+                    ></textarea>
+                </div>
+            </div>
+
+            <!-- Right Panel - HTML Preview -->
+            <div class="flex-1 flex flex-col">
+                <div class="bg-slate-800/50 px-4 py-2 border-b border-slate-700/60">
+                    <div class="flex items-center justify-between">
+                        <h3 class="text-sm font-medium text-gray-300">HTML Preview</h3>
+                        <div class="flex items-center space-x-2">
+                            <button id="refresh-preview-btn" class="px-2 py-1 bg-slate-600 hover:bg-slate-700 text-white text-xs rounded transition-colors duration-200">
+                                Refresh
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                <div class="flex-1 relative bg-white">
+                    <iframe
+                        id="html-preview"
+                        class="w-full h-full border-0"
+                        sandbox="allow-same-origin allow-scripts"
+                        title="HTML Preview"
+                    ></iframe>
+                </div>
+            </div>
+        </div>
+
+        <!-- Error Display -->
+        <div id="error-display" class="hidden bg-red-900/50 border-t border-red-600/50 px-6 py-3">
+            <div class="flex items-center space-x-2">
+                <svg class="w-5 h-5 text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                </svg>
+                <span id="error-message" class="text-red-300 text-sm"></span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Hidden file input -->
+    <input type="file" id="file-input" accept=".html,.htm,.txt" style="display: none;">
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const htmlInput = document.getElementById('html-input');
+            const previewBtn = document.getElementById('preview-btn');
+            const autoPreviewToggle = document.getElementById('auto-preview-toggle');
+            const autoPreviewText = document.getElementById('auto-preview-text');
+            const htmlPreview = document.getElementById('html-preview');
+            const errorDisplay = document.getElementById('error-display');
+            const errorMessage = document.getElementById('error-message');
+            const charCount = document.getElementById('char-count');
+            const clearAllBtn = document.getElementById('clear-all-btn');
+            const copyHtmlBtn = document.getElementById('copy-html-btn');
+            const loadFileBtn = document.getElementById('load-file-btn');
+            const refreshPreviewBtn = document.getElementById('refresh-preview-btn');
+            const fileInput = document.getElementById('file-input');
+            let autoPreviewEnabled = false;
+
+            // Character counter
+            htmlInput.addEventListener('input', function() {
+                const count = this.value.length;
+                charCount.textContent = count + ' chars';
+                
+                if (autoPreviewEnabled && this.value.trim()) {
+                    updatePreview();
+                }
+            });
+
+            // Preview button
+            previewBtn.addEventListener('click', function() {
+                updatePreview();
+            });
+
+            // Refresh preview button
+            refreshPreviewBtn.addEventListener('click', function() {
+                updatePreview();
+            });
+
+            // Auto preview toggle
+            autoPreviewToggle.addEventListener('click', function() {
+                autoPreviewEnabled = !autoPreviewEnabled;
+                if (autoPreviewEnabled) {
+                    autoPreviewText.textContent = 'Disable Auto Preview';
+                    autoPreviewToggle.classList.remove('bg-green-600', 'hover:bg-green-700');
+                    autoPreviewToggle.classList.add('bg-yellow-600', 'hover:bg-yellow-700');
+                    if (htmlInput.value.trim()) {
+                        updatePreview();
+                    }
+                } else {
+                    autoPreviewText.textContent = 'Enable Auto Preview';
+                    autoPreviewToggle.classList.remove('bg-yellow-600', 'hover:bg-yellow-700');
+                    autoPreviewToggle.classList.add('bg-green-600', 'hover:bg-green-700');
+                }
+            });
+
+            // File loading
+            loadFileBtn.addEventListener('click', () => fileInput.click());
+
+            fileInput.addEventListener('change', function(e) {
+                const file = e.target.files[0];
+                if (file) {
+                    const reader = new FileReader();
+                    reader.onload = function(e) {
+                        htmlInput.value = e.target.result;
+                        charCount.textContent = htmlInput.value.length + ' chars';
+                        if (autoPreviewEnabled) {
+                            updatePreview();
+                        }
+                    };
+                    reader.readAsText(file);
+                }
+            });
+
+            // Copy HTML
+            copyHtmlBtn.addEventListener('click', () => {
+                navigator.clipboard.writeText(htmlInput.value);
+                showCopyFeedback(copyHtmlBtn);
+            });
+
+            // Clear all
+            clearAllBtn.addEventListener('click', function() {
+                htmlInput.value = '';
+                charCount.textContent = '0 chars';
+                const iframeDoc = htmlPreview.contentDocument || htmlPreview.contentWindow.document;
+                iframeDoc.open();
+                iframeDoc.write('');
+                iframeDoc.close();
+                hideError();
+            });
+
+            function updatePreview() {
+                const html = htmlInput.value.trim();
+                
+                if (!html) {
+                    showError('Please enter some HTML code to preview');
+                    return;
+                }
+
+                try {
+                    // Write HTML to iframe
+                    const iframeDoc = htmlPreview.contentDocument || htmlPreview.contentWindow.document;
+                    iframeDoc.open();
+                    iframeDoc.write(html);
+                    iframeDoc.close();
+                    
+                    hideError();
+                } catch (error) {
+                    showError('Error rendering HTML: ' + error.message);
+                }
+            }
+
+            function showError(message) {
+                errorMessage.textContent = message;
+                errorDisplay.classList.remove('hidden');
+            }
+
+            function hideError() {
+                errorDisplay.classList.add('hidden');
+            }
+
+            // Copy feedback
+            function showCopyFeedback(button) {
+                const originalText = button.textContent;
+                button.textContent = 'Copied!';
+                button.classList.add('bg-green-600');
+                setTimeout(() => {
+                    button.textContent = originalText;
+                    button.classList.remove('bg-green-600');
+                }, 2000);
+            }
+
+            // Example HTML on page load
+            window.addEventListener('load', () => {
+                htmlInput.value = `<!DOCTYPE html>
+<html>
+<head>
+    <title>Hello DevDunia</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+        h1 {
+            text-align: center;
+            margin-top: 50px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Welcome to HTML Viewer!</h1>
+    <p style="text-align: center; font-size: 18px;">Edit the HTML code on the left to see live preview.</p>
+</body>
+</html>`;
+                charCount.textContent = htmlInput.value.length + ' chars';
+                updatePreview();
+            });
+        });
+    </script>
+
+    <!-- Include Final Sidebar -->
+    <script>
+        fetch('final_sidebar.html')
+            .then(response => response.text())
+            .then(html => {
+                document.getElementById('sidebar-container').innerHTML = html;
+            })
+            .catch(error => {
+                console.error('Error loading sidebar:', error);
+            });
+    </script>
+</body>
+</html>
