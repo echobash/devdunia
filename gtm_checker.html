@@ -1,0 +1,515 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" type="image/png" href="images/logo.png">
+    <link rel="apple-touch-icon" href="images/logo.png">
+    <title>Clickjacking Checker - Security Testing Tool | DevDunia</title>
+    <meta name="description" content="Test websites for clickjacking vulnerabilities. Check X-Frame-Options, CSP headers, and iframe embedding protection.">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body {
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #0f172a 100%);
+        }
+        .glass {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        .test-iframe {
+            width: 100%;
+            height: 300px;
+            border: 2px solid #374151;
+            border-radius: 8px;
+            background: #f3f4f6;
+            overflow: hidden;
+            display: block;
+        }
+        
+        .iframe-container {
+            width: 100%;
+            height: 300px;
+            position: relative;
+        }
+    </style>
+</head>
+<body class="h-screen">
+    <!-- Main Container -->
+    <div class="min-h-screen flex flex-col">
+        
+        <!-- Header -->
+        <div class="glass border-b border-slate-700/50">
+            <div class="container mx-auto px-4 py-6">
+                <div class="flex items-center justify-between">
+                    <div class="flex items-center space-x-3">
+                        <div class="w-10 h-10 bg-gradient-to-r from-red-500 to-orange-500 rounded-lg flex items-center justify-center">
+                            <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path>
+                            </svg>
+                        </div>
+                        <div>
+                            <h1 class="text-2xl font-bold text-white">Clickjacking Checker</h1>
+                            <p class="text-sm text-gray-400">Test websites for clickjacking vulnerabilities</p>
+                        </div>
+                    </div>
+                    <a href="home.html" class="px-4 py-2 bg-slate-700 hover:bg-slate-600 text-white rounded-lg transition-colors duration-200 flex items-center space-x-2">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path>
+                        </svg>
+                        <span>Back to Home</span>
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Main Content -->
+        <div class="flex-1 container mx-auto px-4 py-4">
+            
+            <!-- Input Section -->
+            <div class="max-w-4xl mx-auto mb-4">
+                <div class="glass rounded-lg p-4">
+                    <div class="flex gap-4">
+                        <div class="flex-1">
+                            <div class="flex">
+                                <select id="protocol-select" class="px-3 py-3 bg-slate-700 border border-slate-600 rounded-l-lg text-gray-200 focus:outline-none focus:ring-2 focus:ring-red-500">
+                                    <option value="https://">https://</option>
+                                    <option value="http://">http://</option>
+                                </select>
+                                <input 
+                                    type="text" 
+                                    id="url-input" 
+                                    class="flex-1 px-4 py-3 bg-slate-700 border border-slate-600 rounded-r-lg text-gray-200 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent"
+                                    placeholder="example.com"
+                                >
+                            </div>
+                        </div>
+                        <div class="flex items-center">
+                            <button 
+                                id="test-btn" 
+                                class="px-6 py-3 bg-gradient-to-r from-red-500 to-orange-500 hover:from-red-600 hover:to-orange-600 text-white font-semibold rounded-lg transition-all duration-200 transform hover:scale-105 shadow-lg flex items-center space-x-2"
+                            >
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                                </svg>
+                                <span>Test Website</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Results Section -->
+            <div id="results-section" class="hidden max-w-6xl mx-auto">
+                <div class="glass rounded-lg p-6">
+                    <h4 class="text-xl font-medium text-white mb-4">Clickjacking Test</h4>
+                    
+                    <div class="iframe-container">
+                        <iframe 
+                            id="test-iframe" 
+                            class="test-iframe"
+                            sandbox="allow-scripts allow-same-origin allow-forms allow-popups"
+                            loading="lazy"
+                        ></iframe>
+                    </div>
+                    
+                    <div class="mt-6 text-sm text-gray-400">
+                        <p><strong>What this shows:</strong></p>
+                        <ul class="list-disc list-inside mt-2 space-y-1">
+                            <li>If the website loads → <span class="text-red-400">Vulnerable to clickjacking</span></li>
+                            <li>If the website is blocked → <span class="text-green-400">Protected against clickjacking</span></li>
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Educational Content -->
+                <div class="mt-8 grid grid-cols-1 lg:grid-cols-2 gap-8">
+                    
+                    <!-- What is Clickjacking -->
+                    <div class="glass rounded-lg p-6">
+                        <h4 class="text-xl font-medium text-white mb-4 flex items-center">
+                            <svg class="w-6 h-6 text-blue-400 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                            </svg>
+                            What is Clickjacking?
+                        </h4>
+                        <div class="space-y-4 text-gray-300">
+                            <p><strong>Clickjacking</strong> is a malicious technique where an attacker tricks a user into clicking on something different from what the user perceives.</p>
+                            
+                            <div class="bg-slate-800/50 rounded-lg p-4">
+                                <h5 class="font-semibold text-white mb-2">How it works:</h5>
+                                <ol class="list-decimal list-inside space-y-2 text-sm">
+                                    <li>Attacker creates a malicious webpage</li>
+                                    <li>Embeds your website in a hidden iframe</li>
+                                    <li>Overlays invisible elements on top</li>
+                                    <li>User thinks they're clicking on one thing</li>
+                                    <li>Actually clicking on your website's buttons</li>
+                                </ol>
+                            </div>
+
+                            <div class="bg-red-900/20 border border-red-500/30 rounded-lg p-4">
+                                <h5 class="font-semibold text-red-300 mb-2">Real-world examples:</h5>
+                                <ul class="list-disc list-inside space-y-1 text-sm">
+                                    <li>Like/Follow buttons on social media</li>
+                                    <li>Bank transfer confirmations</li>
+                                    <li>Admin panel actions</li>
+                                    <li>Purchase confirmations</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- How to Prevent -->
+                    <div class="glass rounded-lg p-6">
+                        <h4 class="text-xl font-medium text-white mb-4 flex items-center">
+                            <svg class="w-6 h-6 text-green-400 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                            </svg>
+                            How to Prevent Clickjacking
+                        </h4>
+                        <div class="space-y-4 text-gray-300">
+                            
+                            <!-- Method 1: X-Frame-Options -->
+                            <div class="bg-slate-800/50 rounded-lg p-4">
+                                <h5 class="font-semibold text-white mb-2">Method 1: X-Frame-Options Header</h5>
+                                <div class="bg-slate-900/50 rounded-lg p-3 mb-3">
+                                    <code class="text-green-400 text-sm">X-Frame-Options: DENY</code>
+                                </div>
+                                <div class="text-xs text-gray-400 space-y-1">
+                                    <p><strong>Options:</strong></p>
+                                    <p>• <code>DENY</code> - Never allow framing</p>
+                                    <p>• <code>SAMEORIGIN</code> - Only allow same-origin framing</p>
+                                    <p>• <code>ALLOW-FROM uri</code> - Allow framing from specific URI</p>
+                                </div>
+                            </div>
+
+                            <!-- Method 2: CSP -->
+                            <div class="bg-slate-800/50 rounded-lg p-4">
+                                <h5 class="font-semibold text-white mb-2">Method 2: Content Security Policy</h5>
+                                <div class="bg-slate-900/50 rounded-lg p-3 mb-3">
+                                    <code class="text-green-400 text-sm">Content-Security-Policy: frame-ancestors 'none'</code>
+                                </div>
+                                <div class="text-xs text-gray-400 space-y-1">
+                                    <p><strong>Options:</strong></p>
+                                    <p>• <code>'none'</code> - Never allow framing</p>
+                                    <p>• <code>'self'</code> - Only allow same-origin framing</p>
+                                    <p>• <code>'self' example.com</code> - Allow specific domains</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- X-Frame-Options Reference -->
+                    <div class="glass rounded-lg p-6">
+                        <h4 class="text-xl font-medium text-white mb-4 flex items-center">
+                            <svg class="w-6 h-6 text-blue-400 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                            </svg>
+                            X-Frame-Options Reference
+                        </h4>
+                        <div class="space-y-4 text-gray-300">
+                            
+                            <!-- X-Frame-Options values -->
+                            <div class="bg-slate-800/50 rounded-lg p-4">
+                                <h5 class="font-semibold text-white mb-2">X-Frame-Options Values</h5>
+                                <div class="space-y-3">
+                                    <div class="bg-slate-900/50 rounded-lg p-3">
+                                        <code class="text-green-400 text-sm">X-Frame-Options: DENY</code>
+                                        <p class="text-xs text-gray-400 mt-1">Never allow framing from any source (most secure)</p>
+                                    </div>
+                                    <div class="bg-slate-900/50 rounded-lg p-3">
+                                        <code class="text-green-400 text-sm">X-Frame-Options: SAMEORIGIN</code>
+                                        <p class="text-xs text-gray-400 mt-1">Only allow framing from same origin</p>
+                                    </div>
+                                    <div class="bg-slate-900/50 rounded-lg p-3">
+                                        <code class="text-green-400 text-sm">X-Frame-Options: ALLOW-FROM https://trusted.com</code>
+                                        <p class="text-xs text-gray-400 mt-1">Allow framing from specific URI (deprecated)</p>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Browser Support -->
+                            <div class="bg-slate-800/50 rounded-lg p-4">
+                                <h5 class="font-semibold text-white mb-2">Browser Support</h5>
+                                <div class="grid grid-cols-1 md:grid-cols-2 gap-3 text-sm">
+                                    <div class="space-y-2">
+                                        <div class="flex justify-between">
+                                            <span class="text-blue-400">Chrome</span>
+                                            <span class="text-gray-400">✓ Supported</span>
+                                        </div>
+                                        <div class="flex justify-between">
+                                            <span class="text-blue-400">Firefox</span>
+                                            <span class="text-gray-400">✓ Supported</span>
+                                        </div>
+                                        <div class="flex justify-between">
+                                            <span class="text-blue-400">Safari</span>
+                                            <span class="text-gray-400">✓ Supported</span>
+                                        </div>
+                                        <div class="flex justify-between">
+                                            <span class="text-blue-400">Edge</span>
+                                            <span class="text-gray-400">✓ Supported</span>
+                                        </div>
+                                    </div>
+                                    <div class="space-y-2">
+                                        <div class="flex justify-between">
+                                            <span class="text-blue-400">IE 8+</span>
+                                            <span class="text-gray-400">✓ Supported</span>
+                                        </div>
+                                        <div class="flex justify-between">
+                                            <span class="text-blue-400">Mobile</span>
+                                            <span class="text-gray-400">✓ Supported</span>
+                                        </div>
+                                        <div class="flex justify-between">
+                                            <span class="text-blue-400">ALLOW-FROM</span>
+                                            <span class="text-red-400">⚠ Deprecated</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Implementation Notes -->
+                            <div class="bg-slate-800/50 rounded-lg p-4">
+                                <h5 class="font-semibold text-white mb-2">Implementation Notes</h5>
+                                <ul class="list-disc list-inside space-y-1 text-sm text-gray-300">
+                                    <li><strong>DENY</strong> is the most secure option for most websites</li>
+                                    <li><strong>SAMEORIGIN</strong> allows embedding in same-origin pages</li>
+                                    <li><strong>ALLOW-FROM</strong> is deprecated and not supported in modern browsers</li>
+                                    <li>Use <strong>CSP frame-ancestors</strong> for more granular control</li>
+                                    <li>Both headers can be used together for maximum compatibility</li>
+                                    <li>X-Frame-Options is simpler but less flexible than CSP</li>
+                                </ul>
+                            </div>
+
+                            <!-- Common Mistakes -->
+                            <div class="bg-red-900/20 border border-red-500/30 rounded-lg p-4">
+                                <h5 class="font-semibold text-red-300 mb-2">Common Mistakes</h5>
+                                <ul class="list-disc list-inside space-y-1 text-sm text-gray-300">
+                                    <li>Using <code>ALLOW-FROM</code> (deprecated, use CSP instead)</li>
+                                    <li>Not setting the header on all pages</li>
+                                    <li>Conflicting CSP and X-Frame-Options policies</li>
+                                    <li>Not testing the implementation</li>
+                                    <li>Forgetting to set headers on error pages</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- CSP Headers Reference -->
+                    <div class="glass rounded-lg p-6">
+                        <h4 class="text-xl font-medium text-white mb-4 flex items-center">
+                            <svg class="w-6 h-6 text-purple-400 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                            </svg>
+                            CSP Headers Reference
+                        </h4>
+                        <div class="space-y-4 text-gray-300">
+                            
+                            <!-- frame-ancestors directive -->
+                            <div class="bg-slate-800/50 rounded-lg p-4">
+                                <h5 class="font-semibold text-white mb-2">frame-ancestors Directive</h5>
+                                <div class="space-y-3">
+                                    <div class="bg-slate-900/50 rounded-lg p-3">
+                                        <code class="text-green-400 text-sm">frame-ancestors 'none'</code>
+                                        <p class="text-xs text-gray-400 mt-1">Never allow framing from any source</p>
+                                    </div>
+                                    <div class="bg-slate-900/50 rounded-lg p-3">
+                                        <code class="text-green-400 text-sm">frame-ancestors 'self'</code>
+                                        <p class="text-xs text-gray-400 mt-1">Only allow framing from same origin</p>
+                                    </div>
+                                    <div class="bg-slate-900/50 rounded-lg p-3">
+                                        <code class="text-green-400 text-sm">frame-ancestors 'self' https://trusted.com</code>
+                                        <p class="text-xs text-gray-400 mt-1">Allow framing from same origin and trusted domain</p>
+                                    </div>
+                                    <div class="bg-slate-900/50 rounded-lg p-3">
+                                        <code class="text-green-400 text-sm">frame-ancestors https://*.example.com</code>
+                                        <p class="text-xs text-gray-400 mt-1">Allow framing from any subdomain of example.com</p>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Other CSP directives -->
+                            <div class="bg-slate-800/50 rounded-lg p-4">
+                                <h5 class="font-semibold text-white mb-2">Other CSP Directives</h5>
+                                <div class="space-y-2 text-sm">
+                                    <div class="flex justify-between">
+                                        <code class="text-blue-400">default-src</code>
+                                        <span class="text-gray-400">Fallback for other directives</span>
+                                    </div>
+                                    <div class="flex justify-between">
+                                        <code class="text-blue-400">script-src</code>
+                                        <span class="text-gray-400">Controls JavaScript execution</span>
+                                    </div>
+                                    <div class="flex justify-between">
+                                        <code class="text-blue-400">style-src</code>
+                                        <span class="text-gray-400">Controls CSS stylesheets</span>
+                                    </div>
+                                    <div class="flex justify-between">
+                                        <code class="text-blue-400">img-src</code>
+                                        <span class="text-gray-400">Controls image sources</span>
+                                    </div>
+                                    <div class="flex justify-between">
+                                        <code class="text-blue-400">connect-src</code>
+                                        <span class="text-gray-400">Controls AJAX/fetch requests</span>
+                                    </div>
+                                    <div class="flex justify-between">
+                                        <code class="text-blue-400">font-src</code>
+                                        <span class="text-gray-400">Controls font loading</span>
+                                    </div>
+                                    <div class="flex justify-between">
+                                        <code class="text-blue-400">object-src</code>
+                                        <span class="text-gray-400">Controls plugins (Flash, etc.)</span>
+                                    </div>
+                                    <div class="flex justify-between">
+                                        <code class="text-blue-400">media-src</code>
+                                        <span class="text-gray-400">Controls video/audio sources</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- CSP Keywords -->
+                            <div class="bg-slate-800/50 rounded-lg p-4">
+                                <h5 class="font-semibold text-white mb-2">CSP Keywords</h5>
+                                <div class="grid grid-cols-1 md:grid-cols-2 gap-3 text-sm">
+                                    <div class="space-y-2">
+                                        <div class="flex justify-between">
+                                            <code class="text-green-400">'none'</code>
+                                            <span class="text-gray-400">Block all sources</span>
+                                        </div>
+                                        <div class="flex justify-between">
+                                            <code class="text-green-400">'self'</code>
+                                            <span class="text-gray-400">Same origin only</span>
+                                        </div>
+                                        <div class="flex justify-between">
+                                            <code class="text-green-400">'unsafe-inline'</code>
+                                            <span class="text-gray-400">Allow inline scripts/styles</span>
+                                        </div>
+                                        <div class="flex justify-between">
+                                            <code class="text-green-400">'unsafe-eval'</code>
+                                            <span class="text-gray-400">Allow eval() and similar</span>
+                                        </div>
+                                    </div>
+                                    <div class="space-y-2">
+                                        <div class="flex justify-between">
+                                            <code class="text-green-400">'strict-dynamic'</code>
+                                            <span class="text-gray-400">Trust dynamically loaded scripts</span>
+                                        </div>
+                                        <div class="flex justify-between">
+                                            <code class="text-green-400">'unsafe-hashes'</code>
+                                            <span class="text-gray-400">Allow specific inline scripts</span>
+                                        </div>
+                                        <div class="flex justify-between">
+                                            <code class="text-green-400">'report-sample'</code>
+                                            <span class="text-gray-400">Include sample in reports</span>
+                                        </div>
+                                        <div class="flex justify-between">
+                                            <code class="text-green-400">'nonce-*'</code>
+                                            <span class="text-gray-400">Allow scripts with specific nonce</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Additional Security Tips -->
+                <div class="mt-8 glass rounded-lg p-6">
+                    <h4 class="text-xl font-medium text-white mb-4 flex items-center">
+                        <svg class="w-6 h-6 text-yellow-400 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"></path>
+                        </svg>
+                        Additional Security Tips
+                    </h4>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div class="space-y-4">
+                            <div class="bg-slate-800/50 rounded-lg p-4">
+                                <h5 class="font-semibold text-white mb-2">Best Practices</h5>
+                                <ul class="list-disc list-inside space-y-1 text-sm text-gray-300">
+                                    <li>Use both X-Frame-Options and CSP headers</li>
+                                    <li>Test your headers regularly with this tool</li>
+                                    <li>Monitor for missing security headers</li>
+                                    <li>Consider JavaScript frame-busting as backup</li>
+                                </ul>
+                            </div>
+                        </div>
+                        <div class="space-y-4">
+                            <div class="bg-slate-800/50 rounded-lg p-4">
+                                <h5 class="font-semibold text-white mb-2">Testing & Monitoring</h5>
+                                <ul class="list-disc list-inside space-y-1 text-sm text-gray-300">
+                                    <li>Use this tool to test your websites</li>
+                                    <li>Set up automated security scans</li>
+                                    <li>Check headers with browser dev tools</li>
+                                    <li>Verify protection on staging environments</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const urlInput = document.getElementById('url-input');
+            const protocolSelect = document.getElementById('protocol-select');
+            const testBtn = document.getElementById('test-btn');
+            const resultsSection = document.getElementById('results-section');
+            const testIframe = document.getElementById('test-iframe');
+
+            // Set default value
+            urlInput.value = 'devdunia.com';
+
+            // Test button handler
+            testBtn.addEventListener('click', function() {
+                const protocol = protocolSelect.value;
+                const domain = urlInput.value.trim();
+                
+                if (!domain) {
+                    alert('Please enter a domain to test');
+                    return;
+                }
+
+                const fullUrl = protocol + domain;
+                testWebsite(fullUrl);
+            });
+
+            // Enter key handler
+            urlInput.addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') {
+                    testBtn.click();
+                }
+            });
+
+            function testWebsite(url) {
+                // Show loading state
+                testBtn.disabled = true;
+                testBtn.innerHTML = `
+                    <svg class="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                    </svg>
+                    Testing...
+                `;
+
+                // Simply load the iframe with the URL
+                testIframe.src = url;
+                
+                // Show results section
+                resultsSection.classList.remove('hidden');
+                
+                // Reset button after a short delay
+                setTimeout(() => {
+                    testBtn.disabled = false;
+                    testBtn.innerHTML = `
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                        </svg>
+                        <span>Test Website</span>
+                    `;
+                }, 2000);
+            }
+        });
+    </script>
+</body>
+</html>
