@@ -1,0 +1,471 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" type="image/png" href="images/logo.png">
+    <link rel="apple-touch-icon" href="images/logo.png">
+    <title>GTM Tag Checker - Google Tag Manager Detection Tool | DevDunia</title>
+    <meta name="description" content="Check if a website has Google Tag Manager (GTM) installed. Detect GTM container IDs and verify GTM implementation.">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body {
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #0f172a 100%);
+        }
+        .glass {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        .code-block {
+            background: #1e293b;
+            border: 1px solid #334155;
+            border-radius: 8px;
+            padding: 1rem;
+            font-family: 'Courier New', monospace;
+            overflow-x: auto;
+        }
+    </style>
+</head>
+<body class="h-screen">
+    <!-- Main Container -->
+    <div class="min-h-screen flex flex-col">
+        
+        <!-- Header -->
+        <div class="glass border-b border-slate-700/50">
+            <div class="container mx-auto px-4 py-6">
+                <div class="flex items-center justify-between">
+                    <div class="flex items-center space-x-3">
+                        <div class="w-10 h-10 bg-gradient-to-r from-blue-500 to-purple-500 rounded-lg flex items-center justify-center">
+                            <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                            </svg>
+                        </div>
+                        <div>
+                            <h1 class="text-2xl font-bold text-white">GTM Tag Checker</h1>
+                            <p class="text-sm text-gray-400">Check if a website has Google Tag Manager installed</p>
+                        </div>
+                    </div>
+                    <a href="home.html" class="px-4 py-2 bg-slate-700 hover:bg-slate-600 text-white rounded-lg transition-colors duration-200 flex items-center space-x-2">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path>
+                        </svg>
+                        <span>Back to Home</span>
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Main Content -->
+        <div class="flex-1 container mx-auto px-4 py-4">
+            
+            <!-- Input Section -->
+            <div class="max-w-4xl mx-auto mb-4">
+                <div class="glass rounded-lg p-4">
+                    <div class="flex gap-4">
+                        <div class="flex-1">
+                            <div class="flex">
+                                <select id="protocol-select" class="px-3 py-3 bg-slate-700 border border-slate-600 rounded-l-lg text-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                                    <option value="https://">https://</option>
+                                    <option value="http://">http://</option>
+                                </select>
+                                <input 
+                                    type="text" 
+                                    id="url-input" 
+                                    class="flex-1 px-4 py-3 bg-slate-700 border border-slate-600 rounded-r-lg text-gray-200 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                                    placeholder="example.com"
+                                >
+                            </div>
+                        </div>
+                        <div class="flex items-center">
+                            <button 
+                                id="check-btn" 
+                                class="px-6 py-3 bg-gradient-to-r from-blue-500 to-purple-500 hover:from-blue-600 hover:to-purple-600 text-white font-semibold rounded-lg transition-all duration-200 transform hover:scale-105 shadow-lg flex items-center space-x-2"
+                            >
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+                                </svg>
+                                <span>Check GTM</span>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="mt-4">
+                        <p class="text-sm text-gray-400 mb-2">Or paste HTML source code directly:</p>
+                        <textarea 
+                            id="html-input" 
+                            class="w-full px-4 py-3 bg-slate-700 border border-slate-600 rounded-lg text-gray-200 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                            placeholder="Paste HTML source code here..."
+                            rows="4"
+                        ></textarea>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Results Section -->
+            <div id="results-section" class="max-w-4xl mx-auto hidden">
+                
+                <!-- GTM Detection Results -->
+                <div class="glass rounded-lg p-6 mb-4">
+                    <h2 class="text-2xl font-bold text-white mb-4 flex items-center">
+                        <svg class="w-6 h-6 text-blue-400 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                        </svg>
+                        GTM Detection Results
+                    </h2>
+                    
+                    <div id="gtm-status" class="mb-6"></div>
+                    <div id="gtm-details" class="space-y-4"></div>
+                </div>
+
+                <!-- GTM Implementation Details -->
+                <div id="gtm-implementation" class="glass rounded-lg p-6 mb-4 hidden">
+                    <h3 class="text-xl font-semibold text-white mb-4">GTM Implementation Details</h3>
+                    <div id="gtm-code-snippets" class="space-y-4"></div>
+                </div>
+
+                <!-- GTM Reference -->
+                <div class="glass rounded-lg p-6">
+                    <h3 class="text-xl font-semibold text-white mb-4 flex items-center">
+                        <svg class="w-6 h-6 text-purple-400 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                        </svg>
+                        GTM Implementation Guide
+                    </h3>
+                    <div class="space-y-4 text-gray-300">
+                        
+                        <!-- Standard GTM Implementation -->
+                        <div class="bg-slate-800/50 rounded-lg p-4">
+                            <h4 class="font-semibold text-white mb-3">Standard GTM Implementation</h4>
+                            <div class="code-block text-sm text-gray-300 mb-3">
+                                <div class="text-green-400">// Place this code in the &lt;head&gt; section</div>
+                                <div class="text-gray-400">&lt;!-- Google Tag Manager --&gt;</div>
+                                <div class="text-gray-300">&lt;script&gt;(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':</div>
+                                <div class="text-gray-300">new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],</div>
+                                <div class="text-gray-300">j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=</div>
+                                <div class="text-gray-300">'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);</div>
+                                <div class="text-gray-300">})(window,document,'script','dataLayer','GTM-XXXXXXX');&lt;/script&gt;</div>
+                                <div class="text-gray-400">&lt;!-- End Google Tag Manager --&gt;</div>
+                            </div>
+                            <div class="code-block text-sm text-gray-300">
+                                <div class="text-green-400">// Place this code immediately after the opening &lt;body&gt; tag</div>
+                                <div class="text-gray-400">&lt;!-- Google Tag Manager (noscript) --&gt;</div>
+                                <div class="text-gray-300">&lt;noscript&gt;&lt;iframe src="https://www.googletagmanager.com/ns.html?id=GTM-XXXXXXX"</div>
+                                <div class="text-gray-300">height="0" width="0" style="display:none;visibility:hidden"&gt;&lt;/iframe&gt;&lt;/noscript&gt;</div>
+                                <div class="text-gray-400">&lt;!-- End Google Tag Manager (noscript) --&gt;</div>
+                            </div>
+                        </div>
+
+                        <!-- GTM Container ID Format -->
+                        <div class="bg-slate-800/50 rounded-lg p-4">
+                            <h4 class="font-semibold text-white mb-3">GTM Container ID Format</h4>
+                            <div class="space-y-2 text-sm">
+                                <div class="flex items-center space-x-2">
+                                    <span class="text-blue-400 font-mono">GTM-XXXXXXX</span>
+                                    <span class="text-gray-400">- Standard format (7 characters)</span>
+                                </div>
+                                <div class="flex items-center space-x-2">
+                                    <span class="text-blue-400 font-mono">GTM-XXXXXX</span>
+                                    <span class="text-gray-400">- Alternative format (6 characters)</span>
+                                </div>
+                                <div class="text-gray-400 text-xs mt-3">
+                                    The container ID is unique to each GTM account and container.
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Common GTM Locations -->
+                        <div class="bg-slate-800/50 rounded-lg p-4">
+                            <h4 class="font-semibold text-white mb-3">Where to Find GTM Tags</h4>
+                            <ul class="list-disc list-inside space-y-2 text-sm">
+                                <li><strong>Head section:</strong> GTM script tag with container ID</li>
+                                <li><strong>Body section:</strong> GTM noscript iframe tag</li>
+                                <li><strong>DataLayer:</strong> JavaScript dataLayer variable initialization</li>
+                                <li><strong>GTM Preview Mode:</strong> Additional GTM debug scripts</li>
+                            </ul>
+                        </div>
+
+                        <!-- Benefits of GTM -->
+                        <div class="bg-green-900/20 border border-green-500/30 rounded-lg p-4">
+                            <h4 class="font-semibold text-green-300 mb-2">Benefits of Google Tag Manager</h4>
+                            <ul class="list-disc list-inside space-y-1 text-sm text-gray-300">
+                                <li>Manage tags without modifying website code</li>
+                                <li>Centralized tag management interface</li>
+                                <li>Version control and rollback capabilities</li>
+                                <li>Faster website loading with async tag loading</li>
+                                <li>Built-in templates for popular tags</li>
+                                <li>Advanced debugging and preview mode</li>
+                            </ul>
+                        </div>
+
+                    </div>
+                </div>
+
+            </div>
+
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const urlInput = document.getElementById('url-input');
+            const protocolSelect = document.getElementById('protocol-select');
+            const htmlInput = document.getElementById('html-input');
+            const checkBtn = document.getElementById('check-btn');
+            const resultsSection = document.getElementById('results-section');
+            const gtmStatus = document.getElementById('gtm-status');
+            const gtmDetails = document.getElementById('gtm-details');
+            const gtmImplementation = document.getElementById('gtm-implementation');
+            const gtmCodeSnippets = document.getElementById('gtm-code-snippets');
+
+            // Set default value
+            urlInput.value = 'devdunia.com';
+
+            // Check button handler
+            checkBtn.addEventListener('click', function() {
+                const htmlContent = htmlInput.value.trim();
+                
+                if (htmlContent) {
+                    // Check from pasted HTML
+                    checkGTMFromHTML(htmlContent);
+                } else {
+                    // Check from URL
+                    const protocol = protocolSelect.value;
+                    const domain = urlInput.value.trim();
+                    
+                    if (!domain) {
+                        alert('Please enter a domain or paste HTML source code');
+                        return;
+                    }
+
+                    const fullUrl = protocol + domain;
+                    checkGTMFromURL(fullUrl);
+                }
+            });
+
+            // Enter key handler
+            urlInput.addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') {
+                    checkBtn.click();
+                }
+            });
+
+            function checkGTMFromHTML(html) {
+                const gtmResults = findGTMTags(html);
+                displayResults(gtmResults, 'HTML Source');
+            }
+
+            async function checkGTMFromURL(url) {
+                // Show loading state
+                checkBtn.disabled = true;
+                checkBtn.innerHTML = `
+                    <svg class="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                    </svg>
+                    Checking...
+                `;
+
+                try {
+                    // Use CORS proxy to fetch the page
+                    const proxyUrl = `https://api.allorigins.win/get?url=${encodeURIComponent(url)}`;
+                    const response = await fetch(proxyUrl);
+                    const data = await response.json();
+                    
+                    if (data.contents) {
+                        const gtmResults = findGTMTags(data.contents);
+                        displayResults(gtmResults, url);
+                    } else {
+                        throw new Error('Could not fetch page content');
+                    }
+                } catch (error) {
+                    gtmStatus.innerHTML = `
+                        <div class="bg-red-900/20 border border-red-500/50 rounded-lg p-4">
+                            <div class="flex items-center space-x-3">
+                                <svg class="w-6 h-6 text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                                </svg>
+                                <div>
+                                    <h3 class="text-red-300 font-semibold">Error Fetching Website</h3>
+                                    <p class="text-red-200 text-sm mt-1">${error.message}</p>
+                                    <p class="text-gray-400 text-xs mt-2">Tip: Try pasting the HTML source code directly in the textarea below.</p>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                    resultsSection.classList.remove('hidden');
+                } finally {
+                    checkBtn.disabled = false;
+                    checkBtn.innerHTML = `
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+                        </svg>
+                        <span>Check GTM</span>
+                    `;
+                }
+            }
+
+            function findGTMTags(html) {
+                const results = {
+                    found: false,
+                    containerIds: [],
+                    scriptTag: null,
+                    noscriptTag: null,
+                    dataLayer: null,
+                    implementation: 'none'
+                };
+
+                // Find GTM container IDs (GTM-XXXXXXX format)
+                const gtmIdPattern = /GTM-[A-Z0-9]{6,7}/gi;
+                const foundIds = html.match(gtmIdPattern);
+                
+                if (foundIds) {
+                    results.found = true;
+                    results.containerIds = [...new Set(foundIds.map(id => id.toUpperCase()))];
+                }
+
+                // Check for GTM script tag
+                const scriptPattern = /<script[^>]*>[\s\S]*?googletagmanager\.com\/gtm\.js[\s\S]*?<\/script>/gi;
+                const scriptMatch = html.match(scriptPattern);
+                if (scriptMatch) {
+                    results.scriptTag = scriptMatch[0];
+                    results.implementation = 'standard';
+                }
+
+                // Check for GTM noscript tag
+                const noscriptPattern = /<noscript[^>]*>[\s\S]*?googletagmanager\.com\/ns\.html[\s\S]*?<\/noscript>/gi;
+                const noscriptMatch = html.match(noscriptPattern);
+                if (noscriptMatch) {
+                    results.noscriptTag = noscriptMatch[0];
+                }
+
+                // Check for dataLayer
+                const dataLayerPattern = /dataLayer\s*=\s*(\[[\s\S]*?\]|window\.dataLayer)/gi;
+                const dataLayerMatch = html.match(dataLayerPattern);
+                if (dataLayerMatch) {
+                    results.dataLayer = dataLayerMatch[0];
+                }
+
+                return results;
+            }
+
+            function displayResults(results, source) {
+                resultsSection.classList.remove('hidden');
+
+                // Status display
+                if (results.found) {
+                    gtmStatus.innerHTML = `
+                        <div class="bg-green-900/20 border border-green-500/50 rounded-lg p-4">
+                            <div class="flex items-center space-x-3">
+                                <svg class="w-8 h-8 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                                </svg>
+                                <div>
+                                    <h3 class="text-green-300 font-bold text-lg">Google Tag Manager Found!</h3>
+                                    <p class="text-green-200 text-sm mt-1">GTM is installed on this website</p>
+                                    <p class="text-gray-400 text-xs mt-1">Source: ${source}</p>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                } else {
+                    gtmStatus.innerHTML = `
+                        <div class="bg-yellow-900/20 border border-yellow-500/50 rounded-lg p-4">
+                            <div class="flex items-center space-x-3">
+                                <svg class="w-8 h-8 text-yellow-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path>
+                                </svg>
+                                <div>
+                                    <h3 class="text-yellow-300 font-bold text-lg">GTM Not Detected</h3>
+                                    <p class="text-yellow-200 text-sm mt-1">No Google Tag Manager tags found on this website</p>
+                                    <p class="text-gray-400 text-xs mt-1">Source: ${source}</p>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                }
+
+                // Details display
+                gtmDetails.innerHTML = '';
+
+                if (results.containerIds.length > 0) {
+                    const containerDiv = document.createElement('div');
+                    containerDiv.className = 'bg-slate-800/50 rounded-lg p-4';
+                    containerDiv.innerHTML = `
+                        <h4 class="font-semibold text-white mb-3 flex items-center">
+                            <svg class="w-5 h-5 text-blue-400 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z"></path>
+                            </svg>
+                            GTM Container ID(s)
+                        </h4>
+                        <div class="space-y-2">
+                            ${results.containerIds.map(id => `
+                                <div class="flex items-center space-x-3 bg-slate-900/50 rounded-lg p-3">
+                                    <span class="text-blue-400 font-mono font-bold text-lg">${id}</span>
+                                    <a href="https://tagmanager.google.com/#/container/accounts/${id.replace('GTM-', '')}" target="_blank" class="text-sm text-purple-400 hover:text-purple-300 flex items-center space-x-1">
+                                        <span>View in GTM</span>
+                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path>
+                                        </svg>
+                                    </a>
+                                </div>
+                            `).join('')}
+                        </div>
+                    `;
+                    gtmDetails.appendChild(containerDiv);
+                }
+
+                // Implementation details
+                if (results.scriptTag || results.noscriptTag) {
+                    gtmImplementation.classList.remove('hidden');
+                    gtmCodeSnippets.innerHTML = '';
+
+                    if (results.scriptTag) {
+                        const scriptDiv = document.createElement('div');
+                        scriptDiv.className = 'bg-slate-800/50 rounded-lg p-4';
+                        scriptDiv.innerHTML = `
+                            <h4 class="font-semibold text-white mb-3">GTM Script Tag (in &lt;head&gt;)</h4>
+                            <div class="code-block text-xs text-gray-300 max-h-40 overflow-y-auto">
+                                ${escapeHtml(results.scriptTag.substring(0, 500))}${results.scriptTag.length > 500 ? '...' : ''}
+                            </div>
+                        `;
+                        gtmCodeSnippets.appendChild(scriptDiv);
+                    }
+
+                    if (results.noscriptTag) {
+                        const noscriptDiv = document.createElement('div');
+                        noscriptDiv.className = 'bg-slate-800/50 rounded-lg p-4';
+                        noscriptDiv.innerHTML = `
+                            <h4 class="font-semibold text-white mb-3">GTM Noscript Tag (after &lt;body&gt;)</h4>
+                            <div class="code-block text-xs text-gray-300">
+                                ${escapeHtml(results.noscriptTag)}
+                            </div>
+                        `;
+                        gtmCodeSnippets.appendChild(noscriptDiv);
+                    }
+
+                    if (results.dataLayer) {
+                        const dataLayerDiv = document.createElement('div');
+                        dataLayerDiv.className = 'bg-slate-800/50 rounded-lg p-4';
+                        dataLayerDiv.innerHTML = `
+                            <h4 class="font-semibold text-white mb-3">DataLayer Found</h4>
+                            <div class="code-block text-xs text-gray-300 max-h-32 overflow-y-auto">
+                                ${escapeHtml(results.dataLayer.substring(0, 300))}${results.dataLayer.length > 300 ? '...' : ''}
+                            </div>
+                        `;
+                        gtmCodeSnippets.appendChild(dataLayerDiv);
+                    }
+                } else {
+                    gtmImplementation.classList.add('hidden');
+                }
+            }
+
+            function escapeHtml(text) {
+                const div = document.createElement('div');
+                div.textContent = text;
+                return div.innerHTML;
+            }
+        });
+    </script>
+</body>
+</html>
+
