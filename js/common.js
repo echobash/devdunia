@@ -304,30 +304,39 @@ const ThemeManager = {
         }
 
         this.updateThemeToggle();
-        this.attachThemeToggleListeners();
         
-        // Use event delegation as fallback for dynamically loaded navbars
+        // Use event delegation to handle both existing and dynamically loaded buttons
+        // This ensures the toggle works even if navbar is loaded asynchronously
         document.addEventListener('click', (e) => {
             if (e.target.closest('#theme-toggle') || e.target.closest('#theme-toggle-float')) {
+                e.preventDefault();
+                e.stopPropagation();
                 this.toggleTheme();
             }
         });
+        
+        // Also attach direct listeners if buttons exist (for immediate feedback)
+        this.attachThemeToggleListeners();
     },
 
     attachThemeToggleListeners() {
         const themeToggle = document.getElementById('theme-toggle');
-        if (themeToggle) {
-            // Remove existing listeners to avoid duplicates
-            const newToggle = themeToggle.cloneNode(true);
-            themeToggle.parentNode.replaceChild(newToggle, themeToggle);
-            newToggle.addEventListener('click', () => this.toggleTheme());
+        if (themeToggle && !themeToggle.dataset.listenerAttached) {
+            themeToggle.addEventListener('click', (e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                this.toggleTheme();
+            });
+            themeToggle.dataset.listenerAttached = 'true';
         }
         const floatToggle = document.getElementById('theme-toggle-float');
-        if (floatToggle) {
-            // Remove existing listeners to avoid duplicates
-            const newFloatToggle = floatToggle.cloneNode(true);
-            floatToggle.parentNode.replaceChild(newFloatToggle, floatToggle);
-            newFloatToggle.addEventListener('click', () => this.toggleTheme());
+        if (floatToggle && !floatToggle.dataset.listenerAttached) {
+            floatToggle.addEventListener('click', (e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                this.toggleTheme();
+            });
+            floatToggle.dataset.listenerAttached = 'true';
         }
     },
 
