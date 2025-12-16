@@ -304,13 +304,30 @@ const ThemeManager = {
         }
 
         this.updateThemeToggle();
+        this.attachThemeToggleListeners();
+        
+        // Use event delegation as fallback for dynamically loaded navbars
+        document.addEventListener('click', (e) => {
+            if (e.target.closest('#theme-toggle') || e.target.closest('#theme-toggle-float')) {
+                this.toggleTheme();
+            }
+        });
+    },
+
+    attachThemeToggleListeners() {
         const themeToggle = document.getElementById('theme-toggle');
         if (themeToggle) {
-            themeToggle.addEventListener('click', () => this.toggleTheme());
+            // Remove existing listeners to avoid duplicates
+            const newToggle = themeToggle.cloneNode(true);
+            themeToggle.parentNode.replaceChild(newToggle, themeToggle);
+            newToggle.addEventListener('click', () => this.toggleTheme());
         }
         const floatToggle = document.getElementById('theme-toggle-float');
         if (floatToggle) {
-            floatToggle.addEventListener('click', () => this.toggleTheme());
+            // Remove existing listeners to avoid duplicates
+            const newFloatToggle = floatToggle.cloneNode(true);
+            floatToggle.parentNode.replaceChild(newFloatToggle, floatToggle);
+            newFloatToggle.addEventListener('click', () => this.toggleTheme());
         }
     },
 
@@ -343,6 +360,12 @@ html.light .bg-slate-900\\/95 { background-color: #ffffff !important; }
         document.documentElement.classList.toggle('light', !isDark);
         localStorage.setItem('theme', isDark ? 'dark' : 'light');
         this.updateThemeToggle();
+    },
+
+    // Call this after navbar is loaded to ensure icons are updated
+    refresh() {
+        this.updateThemeToggle();
+        this.attachThemeToggleListeners();
     }
 };
 
