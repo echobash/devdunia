@@ -317,6 +317,27 @@ const ThemeManager = {
         
         // Also attach direct listeners if buttons exist (for immediate feedback)
         this.attachThemeToggleListeners();
+        
+        // Watch for dynamically loaded navbar/theme toggle buttons
+        const observer = new MutationObserver((mutations) => {
+            mutations.forEach((mutation) => {
+                mutation.addedNodes.forEach((node) => {
+                    if (node.nodeType === 1) { // Element node
+                        // Check if the added node or its children contain theme toggle buttons
+                        if (node.id === 'theme-toggle' || node.id === 'theme-toggle-float' || 
+                            node.querySelector && (node.querySelector('#theme-toggle') || node.querySelector('#theme-toggle-float'))) {
+                            this.updateThemeToggle();
+                            this.attachThemeToggleListeners();
+                        }
+                    }
+                });
+            });
+        });
+        
+        observer.observe(document.body, {
+            childList: true,
+            subtree: true
+        });
     },
 
     attachThemeToggleListeners() {

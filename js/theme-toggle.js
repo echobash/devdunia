@@ -20,11 +20,10 @@
         `;
         document.body.appendChild(button);
 
-        // If ThemeManager from common.js is available, use it; otherwise do a simple toggle fallback
-        button.addEventListener('click', () => {
-            if (window.ThemeManager && typeof window.ThemeManager.toggleTheme === 'function') {
-                window.ThemeManager.toggleTheme();
-            } else {
+        // If ThemeManager from common.js is available, it will handle clicks via event delegation
+        // Otherwise, add a fallback listener
+        if (!window.ThemeManager || typeof window.ThemeManager.toggleTheme !== 'function') {
+            button.addEventListener('click', () => {
                 const isDark = document.documentElement.classList.toggle('dark');
                 document.documentElement.classList.toggle('light', !isDark);
                 localStorage.setItem('theme', isDark ? 'dark' : 'light');
@@ -32,8 +31,8 @@
                 // Update icons if present
                 document.querySelectorAll('.theme-toggle-dark').forEach(el => el.classList.toggle('hidden', !isDark));
                 document.querySelectorAll('.theme-toggle-light').forEach(el => el.classList.toggle('hidden', isDark));
-            }
-        });
+            });
+        }
 
         // Sync icon initially
         if (window.ThemeManager && typeof window.ThemeManager.updateThemeToggle === 'function') {
@@ -42,6 +41,11 @@
             const isDark = document.documentElement.classList.contains('dark');
             document.querySelectorAll('.theme-toggle-dark').forEach(el => el.classList.toggle('hidden', !isDark));
             document.querySelectorAll('.theme-toggle-light').forEach(el => el.classList.toggle('hidden', isDark));
+        }
+        
+        // If ThemeManager exists, refresh it to attach listeners to the new button
+        if (window.ThemeManager && typeof window.ThemeManager.refresh === 'function') {
+            window.ThemeManager.refresh();
         }
     }
 
