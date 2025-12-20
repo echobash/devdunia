@@ -198,6 +198,10 @@ const sidebarHTML = `    <!-- Common Sidebar for DevDunia -->
                 <div class="sidebar-icon">🔍</div>
                 <span class="sidebar-text">Diff Checker</span>
             </a>
+            <a href="docker-comprehensive.html" class="sidebar-item">
+                <div class="sidebar-icon">🐳</div>
+                <span class="sidebar-text">Docker Guide</span>
+            </a>
             </div>
 
             <!-- Payments Section -->

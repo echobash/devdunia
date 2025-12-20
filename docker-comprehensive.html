@@ -1,0 +1,844 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" type="image/png" href="images/logo.png">
+    <link rel="apple-touch-icon" href="images/logo.png">
+    <title>Docker Comprehensive Guide - Developer Toolkit | DevDunia</title>
+    <meta name="description" content="Complete Docker guide covering images, containers, lifecycle, volumes, networks, Dockerfile, and best practices. Learn Docker from basics to advanced.">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="js/common.js"></script>
+    <style>
+        body {
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #0f172a 100%);
+        }
+        .code-block {
+            font-family: 'Courier New', monospace;
+            background: #1e293b;
+            border-left: 4px solid #3b82f6;
+        }
+        .section-card {
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+        .section-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+        }
+    </style>
+</head>
+<body class="h-screen lg:ml-72">
+    <!-- Background: Consistent Subtle Dark Gradient -->
+    <div class="fixed inset-0 -z-10 bg-gradient-to-br from-gray-900 via-slate-900 to-gray-900"></div>
+
+    <!-- Sidebar -->
+    <div id="sidebar-container"></div>
+
+    <!-- Main Content -->
+    <div class="main-content">
+    <div class="relative z-10 container mx-auto px-4 pt-16 pb-24 sm:px-6 lg:px-8">
+        
+        <!-- Page Header -->
+        <div class="text-center mb-12">
+            <h1 class="text-3xl sm:text-4xl font-bold mb-4 tracking-tight
+                       text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-cyan-500">
+                Docker Comprehensive Guide
+            </h1>
+            <p class="text-lg text-gray-400 max-w-2xl mx-auto">
+                Complete guide to Docker: Images, Containers, Lifecycle, Volumes, Networks, and Best Practices
+            </p>
+        </div>
+
+        <!-- Navigation Tabs -->
+        <div class="max-w-6xl mx-auto mb-8">
+            <div class="flex flex-wrap gap-2 mb-6 bg-slate-800/50 rounded-lg p-2">
+                <button class="tab-btn px-4 py-2 bg-blue-600 text-white rounded-lg transition-colors" data-tab="overview">Overview</button>
+                <button class="tab-btn px-4 py-2 bg-slate-700 text-gray-300 rounded-lg transition-colors hover:bg-slate-600" data-tab="images">Images</button>
+                <button class="tab-btn px-4 py-2 bg-slate-700 text-gray-300 rounded-lg transition-colors hover:bg-slate-600" data-tab="containers">Containers</button>
+                <button class="tab-btn px-4 py-2 bg-slate-700 text-gray-300 rounded-lg transition-colors hover:bg-slate-600" data-tab="dockerfile">Dockerfile</button>
+                <button class="tab-btn px-4 py-2 bg-slate-700 text-gray-300 rounded-lg transition-colors hover:bg-slate-600" data-tab="volumes">Volumes</button>
+                <button class="tab-btn px-4 py-2 bg-slate-700 text-gray-300 rounded-lg transition-colors hover:bg-slate-600" data-tab="networks">Networks</button>
+                <button class="tab-btn px-4 py-2 bg-slate-700 text-gray-300 rounded-lg transition-colors hover:bg-slate-600" data-tab="compose">Docker Compose</button>
+                <button class="tab-btn px-4 py-2 bg-slate-700 text-gray-300 rounded-lg transition-colors hover:bg-slate-600" data-tab="best-practices">Best Practices</button>
+            </div>
+        </div>
+
+        <!-- Content Sections -->
+        <div class="max-w-6xl mx-auto">
+            
+            <!-- Overview Section -->
+            <div id="overview" class="tab-content">
+                <div class="bg-slate-800/70 backdrop-blur-md rounded-lg shadow-lg border border-slate-700/60 p-6 mb-6 section-card">
+                    <h2 class="text-2xl font-bold text-white mb-4">What is Docker?</h2>
+                    <p class="text-gray-300 mb-4">
+                        Docker is a platform for developing, shipping, and running applications using containerization. 
+                        Containers package an application with all its dependencies, ensuring it runs consistently across different environments.
+                    </p>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-6">
+                        <div class="bg-slate-700/50 p-4 rounded-lg">
+                            <h3 class="text-lg font-semibold text-cyan-400 mb-2">Key Benefits</h3>
+                            <ul class="text-gray-300 space-y-1 text-sm">
+                                <li>✓ Consistent environments</li>
+                                <li>✓ Isolation and security</li>
+                                <li>✓ Resource efficiency</li>
+                                <li>✓ Easy scaling</li>
+                                <li>✓ Fast deployment</li>
+                            </ul>
+                        </div>
+                        <div class="bg-slate-700/50 p-4 rounded-lg">
+                            <h3 class="text-lg font-semibold text-cyan-400 mb-2">Core Concepts</h3>
+                            <ul class="text-gray-300 space-y-1 text-sm">
+                                <li>• <strong>Image:</strong> Read-only template</li>
+                                <li>• <strong>Container:</strong> Running instance</li>
+                                <li>• <strong>Volume:</strong> Persistent storage</li>
+                                <li>• <strong>Network:</strong> Communication layer</li>
+                                <li>• <strong>Dockerfile:</strong> Build instructions</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bg-slate-800/70 backdrop-blur-md rounded-lg shadow-lg border border-slate-700/60 p-6 mb-6 section-card">
+                    <h2 class="text-2xl font-bold text-white mb-4">Docker Architecture</h2>
+                    <div class="bg-slate-900/50 p-4 rounded-lg mb-4">
+                        <pre class="text-gray-300 text-sm overflow-x-auto"><code>┌─────────────────────────────────────────┐
+│         Docker Architecture              │
+├─────────────────────────────────────────┤
+│                                         │
+│  ┌──────────────┐    ┌──────────────┐  │
+│  │   Client     │───▶│   Daemon     │  │
+│  │  (CLI)       │    │  (dockerd)   │  │
+│  └──────────────┘    └──────────────┘  │
+│         │                    │           │
+│         │                    ▼           │
+│         │            ┌──────────────┐   │
+│         │            │  Containers  │   │
+│         │            │   Images     │   │
+│         │            │   Volumes     │   │
+│         │            │   Networks   │   │
+│         │            └──────────────┘   │
+│         │                               │
+│         └───────────▶ Registry          │
+│                    (Docker Hub)         │
+└─────────────────────────────────────────┘</code></pre>
+                    </div>
+                    <p class="text-gray-300 text-sm">
+                        <strong>Docker Client:</strong> CLI tool to interact with Docker<br>
+                        <strong>Docker Daemon:</strong> Background service managing containers<br>
+                        <strong>Docker Registry:</strong> Repository for storing images (Docker Hub, private registries)
+                    </p>
+                </div>
+            </div>
+
+            <!-- Images Section -->
+            <div id="images" class="tab-content hidden">
+                <div class="bg-slate-800/70 backdrop-blur-md rounded-lg shadow-lg border border-slate-700/60 p-6 mb-6 section-card">
+                    <h2 class="text-2xl font-bold text-white mb-4">Docker Images</h2>
+                    <p class="text-gray-300 mb-4">
+                        A Docker image is a read-only template used to create containers. Images are built from Dockerfiles 
+                        and consist of multiple layers that are stacked on top of each other.
+                    </p>
+                    
+                    <h3 class="text-xl font-semibold text-cyan-400 mt-6 mb-3">Image Layers</h3>
+                    <div class="bg-slate-900/50 p-4 rounded-lg mb-4">
+                        <pre class="text-gray-300 text-sm"><code>┌─────────────────────────┐
+│   Application Layer     │  ← Your app code
+├─────────────────────────┤
+│   Dependencies Layer    │  ← npm packages, pip packages
+├─────────────────────────┤
+│   Runtime Layer         │  ← Node.js, Python, etc.
+├─────────────────────────┤
+│   OS Layer              │  ← Alpine, Ubuntu, etc.
+└─────────────────────────┘</code></pre>
+                    </div>
+
+                    <h3 class="text-xl font-semibold text-cyan-400 mt-6 mb-3">Image Lifecycle</h3>
+                    <div class="space-y-3">
+                        <div class="bg-slate-700/50 p-4 rounded-lg">
+                            <h4 class="font-semibold text-white mb-2">1. Build</h4>
+                            <p class="text-gray-300 text-sm mb-2">Create an image from a Dockerfile</p>
+                            <div class="code-block p-3 rounded text-sm text-gray-200">
+                                docker build -t myapp:latest .
+                            </div>
+                        </div>
+                        <div class="bg-slate-700/50 p-4 rounded-lg">
+                            <h4 class="font-semibold text-white mb-2">2. Tag</h4>
+                            <p class="text-gray-300 text-sm mb-2">Tag an image with a name and version</p>
+                            <div class="code-block p-3 rounded text-sm text-gray-200">
+                                docker tag myapp:latest myapp:v1.0.0
+                            </div>
+                        </div>
+                        <div class="bg-slate-700/50 p-4 rounded-lg">
+                            <h4 class="font-semibold text-white mb-2">3. Push</h4>
+                            <p class="text-gray-300 text-sm mb-2">Upload image to a registry</p>
+                            <div class="code-block p-3 rounded text-sm text-gray-200">
+                                docker push myapp:latest
+                            </div>
+                        </div>
+                        <div class="bg-slate-700/50 p-4 rounded-lg">
+                            <h4 class="font-semibold text-white mb-2">4. Pull</h4>
+                            <p class="text-gray-300 text-sm mb-2">Download image from a registry</p>
+                            <div class="code-block p-3 rounded text-sm text-gray-200">
+                                docker pull nginx:latest
+                            </div>
+                        </div>
+                        <div class="bg-slate-700/50 p-4 rounded-lg">
+                            <h4 class="font-semibold text-white mb-2">5. Remove</h4>
+                            <p class="text-gray-300 text-sm mb-2">Delete unused images</p>
+                            <div class="code-block p-3 rounded text-sm text-gray-200">
+                                docker rmi myapp:latest
+                            </div>
+                        </div>
+                    </div>
+
+                    <h3 class="text-xl font-semibold text-cyan-400 mt-6 mb-3">Common Image Commands</h3>
+                    <div class="bg-slate-900/50 p-4 rounded-lg">
+                        <div class="space-y-2 text-sm">
+                            <div class="flex justify-between items-center">
+                                <span class="text-gray-300">List all images</span>
+                                <code class="code-block px-2 py-1 rounded text-gray-200">docker images</code>
+                            </div>
+                            <div class="flex justify-between items-center">
+                                <span class="text-gray-300">Inspect image details</span>
+                                <code class="code-block px-2 py-1 rounded text-gray-200">docker inspect image:tag</code>
+                            </div>
+                            <div class="flex justify-between items-center">
+                                <span class="text-gray-300">View image history</span>
+                                <code class="code-block px-2 py-1 rounded text-gray-200">docker history image:tag</code>
+                            </div>
+                            <div class="flex justify-between items-center">
+                                <span class="text-gray-300">Save image to tar</span>
+                                <code class="code-block px-2 py-1 rounded text-gray-200">docker save -o image.tar image:tag</code>
+                            </div>
+                            <div class="flex justify-between items-center">
+                                <span class="text-gray-300">Load image from tar</span>
+                                <code class="code-block px-2 py-1 rounded text-gray-200">docker load -i image.tar</code>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Containers Section -->
+            <div id="containers" class="tab-content hidden">
+                <div class="bg-slate-800/70 backdrop-blur-md rounded-lg shadow-lg border border-slate-700/60 p-6 mb-6 section-card">
+                    <h2 class="text-2xl font-bold text-white mb-4">Docker Containers</h2>
+                    <p class="text-gray-300 mb-4">
+                        A container is a running instance of an image. Containers are isolated, lightweight, and share the host OS kernel.
+                    </p>
+
+                    <h3 class="text-xl font-semibold text-cyan-400 mt-6 mb-3">Container Lifecycle</h3>
+                    <div class="bg-slate-900/50 p-4 rounded-lg mb-4">
+                        <pre class="text-gray-300 text-sm overflow-x-auto"><code>Created → Running → Paused → Stopped → Removed
+   │         │         │         │         │
+   │         │         │         │         └─ docker rm
+   │         │         │         └─ docker stop
+   │         │         └─ docker pause/unpause
+   │         └─ docker start
+   └─ docker create</code></pre>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-6">
+                        <div class="bg-slate-700/50 p-4 rounded-lg">
+                            <h4 class="font-semibold text-white mb-2">Container States</h4>
+                            <ul class="text-gray-300 text-sm space-y-1">
+                                <li><strong class="text-green-400">Created:</strong> Initialized but not started</li>
+                                <li><strong class="text-blue-400">Running:</strong> Currently executing</li>
+                                <li><strong class="text-yellow-400">Paused:</strong> Temporarily suspended</li>
+                                <li><strong class="text-red-400">Stopped:</strong> Exited or stopped</li>
+                                <li><strong class="text-gray-400">Removed:</strong> Deleted from system</li>
+                            </ul>
+                        </div>
+                        <div class="bg-slate-700/50 p-4 rounded-lg">
+                            <h4 class="font-semibold text-white mb-2">Container Properties</h4>
+                            <ul class="text-gray-300 text-sm space-y-1">
+                                <li>• Unique ID and name</li>
+                                <li>• Isolated filesystem</li>
+                                <li>• Network interface</li>
+                                <li>• Resource limits (CPU, memory)</li>
+                                <li>• Environment variables</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <h3 class="text-xl font-semibold text-cyan-400 mt-6 mb-3">Container Commands</h3>
+                    <div class="space-y-3">
+                        <div class="bg-slate-700/50 p-4 rounded-lg">
+                            <h4 class="font-semibold text-white mb-2">Create & Run</h4>
+                            <div class="code-block p-3 rounded text-sm text-gray-200 mb-2">
+                                docker run -d --name mycontainer nginx:latest
+                            </div>
+                            <p class="text-gray-400 text-xs">-d: detached mode, --name: container name</p>
+                        </div>
+                        <div class="bg-slate-700/50 p-4 rounded-lg">
+                            <h4 class="font-semibold text-white mb-2">Interactive Container</h4>
+                            <div class="code-block p-3 rounded text-sm text-gray-200 mb-2">
+                                docker run -it ubuntu:latest /bin/bash
+                            </div>
+                            <p class="text-gray-400 text-xs">-it: interactive terminal</p>
+                        </div>
+                        <div class="bg-slate-700/50 p-4 rounded-lg">
+                            <h4 class="font-semibold text-white mb-2">With Port Mapping</h4>
+                            <div class="code-block p-3 rounded text-sm text-gray-200 mb-2">
+                                docker run -d -p 8080:80 nginx:latest
+                            </div>
+                            <p class="text-gray-400 text-xs">-p host:container maps port 8080 to container's port 80</p>
+                        </div>
+                        <div class="bg-slate-700/50 p-4 rounded-lg">
+                            <h4 class="font-semibold text-white mb-2">With Environment Variables</h4>
+                            <div class="code-block p-3 rounded text-sm text-gray-200 mb-2">
+                                docker run -d -e DB_HOST=localhost -e DB_PORT=5432 myapp
+                            </div>
+                            <p class="text-gray-400 text-xs">-e: set environment variable</p>
+                        </div>
+                        <div class="bg-slate-700/50 p-4 rounded-lg">
+                            <h4 class="font-semibold text-white mb-2">Management Commands</h4>
+                            <div class="space-y-1 text-sm text-gray-300">
+                                <div class="flex justify-between">
+                                    <span>List running containers</span>
+                                    <code class="code-block px-2 py-1 rounded">docker ps</code>
+                                </div>
+                                <div class="flex justify-between">
+                                    <span>List all containers</span>
+                                    <code class="code-block px-2 py-1 rounded">docker ps -a</code>
+                                </div>
+                                <div class="flex justify-between">
+                                    <span>Stop container</span>
+                                    <code class="code-block px-2 py-1 rounded">docker stop container_name</code>
+                                </div>
+                                <div class="flex justify-between">
+                                    <span>Start container</span>
+                                    <code class="code-block px-2 py-1 rounded">docker start container_name</code>
+                                </div>
+                                <div class="flex justify-between">
+                                    <span>Remove container</span>
+                                    <code class="code-block px-2 py-1 rounded">docker rm container_name</code>
+                                </div>
+                                <div class="flex justify-between">
+                                    <span>View logs</span>
+                                    <code class="code-block px-2 py-1 rounded">docker logs container_name</code>
+                                </div>
+                                <div class="flex justify-between">
+                                    <span>Execute command</span>
+                                    <code class="code-block px-2 py-1 rounded">docker exec -it container_name /bin/bash</code>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Dockerfile Section -->
+            <div id="dockerfile" class="tab-content hidden">
+                <div class="bg-slate-800/70 backdrop-blur-md rounded-lg shadow-lg border border-slate-700/60 p-6 mb-6 section-card">
+                    <h2 class="text-2xl font-bold text-white mb-4">Dockerfile</h2>
+                    <p class="text-gray-300 mb-4">
+                        A Dockerfile is a text file containing instructions to build a Docker image. Each instruction creates a new layer.
+                    </p>
+
+                    <h3 class="text-xl font-semibold text-cyan-400 mt-6 mb-3">Common Dockerfile Instructions</h3>
+                    <div class="space-y-3">
+                        <div class="bg-slate-700/50 p-4 rounded-lg">
+                            <h4 class="font-semibold text-white mb-2">FROM</h4>
+                            <p class="text-gray-300 text-sm mb-2">Sets the base image</p>
+                            <div class="code-block p-3 rounded text-sm text-gray-200">
+                                FROM node:18-alpine
+                            </div>
+                        </div>
+                        <div class="bg-slate-700/50 p-4 rounded-lg">
+                            <h4 class="font-semibold text-white mb-2">WORKDIR</h4>
+                            <p class="text-gray-300 text-sm mb-2">Sets working directory</p>
+                            <div class="code-block p-3 rounded text-sm text-gray-200">
+                                WORKDIR /app
+                            </div>
+                        </div>
+                        <div class="bg-slate-700/50 p-4 rounded-lg">
+                            <h4 class="font-semibold text-white mb-2">COPY / ADD</h4>
+                            <p class="text-gray-300 text-sm mb-2">Copies files into image</p>
+                            <div class="code-block p-3 rounded text-sm text-gray-200">
+                                COPY package.json .<br>
+                                COPY . .
+                            </div>
+                        </div>
+                        <div class="bg-slate-700/50 p-4 rounded-lg">
+                            <h4 class="font-semibold text-white mb-2">RUN</h4>
+                            <p class="text-gray-300 text-sm mb-2">Executes commands during build</p>
+                            <div class="code-block p-3 rounded text-sm text-gray-200">
+                                RUN npm install<br>
+                                RUN apt-get update && apt-get install -y curl
+                            </div>
+                        </div>
+                        <div class="bg-slate-700/50 p-4 rounded-lg">
+                            <h4 class="font-semibold text-white mb-2">ENV</h4>
+                            <p class="text-gray-300 text-sm mb-2">Sets environment variables</p>
+                            <div class="code-block p-3 rounded text-sm text-gray-200">
+                                ENV NODE_ENV=production<br>
+                                ENV PORT=3000
+                            </div>
+                        </div>
+                        <div class="bg-slate-700/50 p-4 rounded-lg">
+                            <h4 class="font-semibold text-white mb-2">EXPOSE</h4>
+                            <p class="text-gray-300 text-sm mb-2">Documents which port the app listens on</p>
+                            <div class="code-block p-3 rounded text-sm text-gray-200">
+                                EXPOSE 3000
+                            </div>
+                        </div>
+                        <div class="bg-slate-700/50 p-4 rounded-lg">
+                            <h4 class="font-semibold text-white mb-2">CMD / ENTRYPOINT</h4>
+                            <p class="text-gray-300 text-sm mb-2">Defines default command to run</p>
+                            <div class="code-block p-3 rounded text-sm text-gray-200">
+                                CMD ["npm", "start"]<br>
+                                ENTRYPOINT ["node", "server.js"]
+                            </div>
+                        </div>
+                    </div>
+
+                    <h3 class="text-xl font-semibold text-cyan-400 mt-6 mb-3">Example Dockerfile</h3>
+                    <div class="bg-slate-900/50 p-4 rounded-lg">
+                        <pre class="text-gray-300 text-sm overflow-x-auto"><code># Node.js Application Dockerfile
+FROM node:18-alpine
+
+# Set working directory
+WORKDIR /app
+
+# Copy package files
+COPY package*.json ./
+
+# Install dependencies
+RUN npm ci --only=production
+
+# Copy application code
+COPY . .
+
+# Set environment variables
+ENV NODE_ENV=production
+ENV PORT=3000
+
+# Expose port
+EXPOSE 3000
+
+# Health check
+HEALTHCHECK --interval=30s --timeout=3s \
+  CMD node healthcheck.js
+
+# Run application
+CMD ["node", "server.js"]</code></pre>
+                    </div>
+
+                    <h3 class="text-xl font-semibold text-cyan-400 mt-6 mb-3">Multi-stage Build Example</h3>
+                    <div class="bg-slate-900/50 p-4 rounded-lg">
+                        <pre class="text-gray-300 text-sm overflow-x-auto"><code># Build stage
+FROM node:18-alpine AS builder
+WORKDIR /app
+COPY package*.json ./
+RUN npm ci
+COPY . .
+RUN npm run build
+
+# Production stage
+FROM node:18-alpine
+WORKDIR /app
+COPY --from=builder /app/dist ./dist
+COPY --from=builder /app/node_modules ./node_modules
+COPY package*.json ./
+EXPOSE 3000
+CMD ["node", "dist/server.js"]</code></pre>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Volumes Section -->
+            <div id="volumes" class="tab-content hidden">
+                <div class="bg-slate-800/70 backdrop-blur-md rounded-lg shadow-lg border border-slate-700/60 p-6 mb-6 section-card">
+                    <h2 class="text-2xl font-bold text-white mb-4">Docker Volumes</h2>
+                    <p class="text-gray-300 mb-4">
+                        Volumes provide persistent storage for containers. Data in volumes persists even after containers are removed.
+                    </p>
+
+                    <h3 class="text-xl font-semibold text-cyan-400 mt-6 mb-3">Volume Types</h3>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                        <div class="bg-slate-700/50 p-4 rounded-lg">
+                            <h4 class="font-semibold text-white mb-2">Named Volumes</h4>
+                            <p class="text-gray-300 text-sm mb-2">Managed by Docker, stored in Docker's directory</p>
+                            <div class="code-block p-2 rounded text-xs text-gray-200">
+                                docker volume create myvolume
+                            </div>
+                        </div>
+                        <div class="bg-slate-700/50 p-4 rounded-lg">
+                            <h4 class="font-semibold text-white mb-2">Bind Mounts</h4>
+                            <p class="text-gray-300 text-sm mb-2">Mount host directory into container</p>
+                            <div class="code-block p-2 rounded text-xs text-gray-200">
+                                -v /host/path:/container/path
+                            </div>
+                        </div>
+                        <div class="bg-slate-700/50 p-4 rounded-lg">
+                            <h4 class="font-semibold text-white mb-2">tmpfs Mounts</h4>
+                            <p class="text-gray-300 text-sm mb-2">Stored in host memory (temporary)</p>
+                            <div class="code-block p-2 rounded text-xs text-gray-200">
+                                --tmpfs /tmp
+                            </div>
+                        </div>
+                    </div>
+
+                    <h3 class="text-xl font-semibold text-cyan-400 mt-6 mb-3">Volume Commands</h3>
+                    <div class="space-y-3">
+                        <div class="bg-slate-700/50 p-4 rounded-lg">
+                            <h4 class="font-semibold text-white mb-2">Create Named Volume</h4>
+                            <div class="code-block p-3 rounded text-sm text-gray-200">
+                                docker volume create mydata
+                            </div>
+                        </div>
+                        <div class="bg-slate-700/50 p-4 rounded-lg">
+                            <h4 class="font-semibold text-white mb-2">Use Volume in Container</h4>
+                            <div class="code-block p-3 rounded text-sm text-gray-200">
+                                docker run -d -v mydata:/data nginx:latest
+                            </div>
+                        </div>
+                        <div class="bg-slate-700/50 p-4 rounded-lg">
+                            <h4 class="font-semibold text-white mb-2">Bind Mount</h4>
+                            <div class="code-block p-3 rounded text-sm text-gray-200">
+                                docker run -d -v /host/data:/container/data nginx:latest
+                            </div>
+                        </div>
+                        <div class="bg-slate-700/50 p-4 rounded-lg">
+                            <h4 class="font-semibold text-white mb-2">Volume Management</h4>
+                            <div class="space-y-1 text-sm text-gray-300">
+                                <div class="flex justify-between">
+                                    <span>List volumes</span>
+                                    <code class="code-block px-2 py-1 rounded">docker volume ls</code>
+                                </div>
+                                <div class="flex justify-between">
+                                    <span>Inspect volume</span>
+                                    <code class="code-block px-2 py-1 rounded">docker volume inspect mydata</code>
+                                </div>
+                                <div class="flex justify-between">
+                                    <span>Remove volume</span>
+                                    <code class="code-block px-2 py-1 rounded">docker volume rm mydata</code>
+                                </div>
+                                <div class="flex justify-between">
+                                    <span>Remove unused volumes</span>
+                                    <code class="code-block px-2 py-1 rounded">docker volume prune</code>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <h3 class="text-xl font-semibold text-cyan-400 mt-6 mb-3">Volume Use Cases</h3>
+                    <div class="bg-slate-700/50 p-4 rounded-lg">
+                        <ul class="text-gray-300 text-sm space-y-2">
+                            <li>• <strong>Database data:</strong> Persist database files across container restarts</li>
+                            <li>• <strong>Configuration files:</strong> Share configs between host and container</li>
+                            <li>• <strong>Application logs:</strong> Store logs outside container</li>
+                            <li>• <strong>Source code:</strong> Mount code for development (bind mount)</li>
+                            <li>• <strong>Shared data:</strong> Share data between multiple containers</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Networks Section -->
+            <div id="networks" class="tab-content hidden">
+                <div class="bg-slate-800/70 backdrop-blur-md rounded-lg shadow-lg border border-slate-700/60 p-6 mb-6 section-card">
+                    <h2 class="text-2xl font-bold text-white mb-4">Docker Networks</h2>
+                    <p class="text-gray-300 mb-4">
+                        Docker networks enable communication between containers and with external networks. Containers can be isolated or connected.
+                    </p>
+
+                    <h3 class="text-xl font-semibold text-cyan-400 mt-6 mb-3">Network Types</h3>
+                    <div class="space-y-3">
+                        <div class="bg-slate-700/50 p-4 rounded-lg">
+                            <h4 class="font-semibold text-white mb-2">Bridge Network (Default)</h4>
+                            <p class="text-gray-300 text-sm mb-2">Isolated network for containers on same host</p>
+                            <div class="code-block p-3 rounded text-sm text-gray-200">
+                                docker network create mynetwork<br>
+                                docker run --network=mynetwork nginx
+                            </div>
+                        </div>
+                        <div class="bg-slate-700/50 p-4 rounded-lg">
+                            <h4 class="font-semibold text-white mb-2">Host Network</h4>
+                            <p class="text-gray-300 text-sm mb-2">Container uses host's network directly</p>
+                            <div class="code-block p-3 rounded text-sm text-gray-200">
+                                docker run --network=host nginx
+                            </div>
+                        </div>
+                        <div class="bg-slate-700/50 p-4 rounded-lg">
+                            <h4 class="font-semibold text-white mb-2">None Network</h4>
+                            <p class="text-gray-300 text-sm mb-2">No network access (complete isolation)</p>
+                            <div class="code-block p-3 rounded text-sm text-gray-200">
+                                docker run --network=none nginx
+                            </div>
+                        </div>
+                        <div class="bg-slate-700/50 p-4 rounded-lg">
+                            <h4 class="font-semibold text-white mb-2">Overlay Network</h4>
+                            <p class="text-gray-300 text-sm mb-2">Multi-host networking for Swarm clusters</p>
+                            <div class="code-block p-3 rounded text-sm text-gray-200">
+                                docker network create --driver overlay myoverlay
+                            </div>
+                        </div>
+                    </div>
+
+                    <h3 class="text-xl font-semibold text-cyan-400 mt-6 mb-3">Network Commands</h3>
+                    <div class="bg-slate-700/50 p-4 rounded-lg">
+                        <div class="space-y-2 text-sm">
+                            <div class="flex justify-between items-center">
+                                <span class="text-gray-300">List networks</span>
+                                <code class="code-block px-2 py-1 rounded text-gray-200">docker network ls</code>
+                            </div>
+                            <div class="flex justify-between items-center">
+                                <span class="text-gray-300">Create network</span>
+                                <code class="code-block px-2 py-1 rounded text-gray-200">docker network create mynetwork</code>
+                            </div>
+                            <div class="flex justify-between items-center">
+                                <span class="text-gray-300">Inspect network</span>
+                                <code class="code-block px-2 py-1 rounded text-gray-200">docker network inspect mynetwork</code>
+                            </div>
+                            <div class="flex justify-between items-center">
+                                <span class="text-gray-300">Connect container</span>
+                                <code class="code-block px-2 py-1 rounded text-gray-200">docker network connect mynetwork container</code>
+                            </div>
+                            <div class="flex justify-between items-center">
+                                <span class="text-gray-300">Disconnect container</span>
+                                <code class="code-block px-2 py-1 rounded text-gray-200">docker network disconnect mynetwork container</code>
+                            </div>
+                            <div class="flex justify-between items-center">
+                                <span class="text-gray-300">Remove network</span>
+                                <code class="code-block px-2 py-1 rounded text-gray-200">docker network rm mynetwork</code>
+                            </div>
+                        </div>
+                    </div>
+
+                    <h3 class="text-xl font-semibold text-cyan-400 mt-6 mb-3">Container Communication</h3>
+                    <div class="bg-slate-900/50 p-4 rounded-lg">
+                        <pre class="text-gray-300 text-sm overflow-x-auto"><code># Create network
+docker network create app-network
+
+# Run containers on same network
+docker run -d --name web --network app-network nginx
+docker run -d --name db --network app-network postgres
+
+# Containers can communicate using container names
+# From web container: curl http://db:5432</code></pre>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Docker Compose Section -->
+            <div id="compose" class="tab-content hidden">
+                <div class="bg-slate-800/70 backdrop-blur-md rounded-lg shadow-lg border border-slate-700/60 p-6 mb-6 section-card">
+                    <h2 class="text-2xl font-bold text-white mb-4">Docker Compose</h2>
+                    <p class="text-gray-300 mb-4">
+                        Docker Compose is a tool for defining and running multi-container Docker applications using a YAML file.
+                    </p>
+
+                    <h3 class="text-xl font-semibold text-cyan-400 mt-6 mb-3">docker-compose.yml Structure</h3>
+                    <div class="bg-slate-900/50 p-4 rounded-lg mb-4">
+                        <pre class="text-gray-300 text-sm overflow-x-auto"><code>version: '3.8'
+
+services:
+  web:
+    build: .
+    ports:
+      - "3000:3000"
+    environment:
+      - NODE_ENV=production
+    volumes:
+      - ./app:/app
+    depends_on:
+      - db
+    networks:
+      - app-network
+
+  db:
+    image: postgres:14
+    environment:
+      - POSTGRES_DB=mydb
+      - POSTGRES_USER=user
+      - POSTGRES_PASSWORD=pass
+    volumes:
+      - db-data:/var/lib/postgresql/data
+    networks:
+      - app-network
+
+volumes:
+  db-data:
+
+networks:
+  app-network:
+    driver: bridge</code></pre>
+                    </div>
+
+                    <h3 class="text-xl font-semibold text-cyan-400 mt-6 mb-3">Compose Commands</h3>
+                    <div class="space-y-3">
+                        <div class="bg-slate-700/50 p-4 rounded-lg">
+                            <h4 class="font-semibold text-white mb-2">Start Services</h4>
+                            <div class="code-block p-3 rounded text-sm text-gray-200">
+                                docker-compose up -d
+                            </div>
+                            <p class="text-gray-400 text-xs mt-2">-d: detached mode</p>
+                        </div>
+                        <div class="bg-slate-700/50 p-4 rounded-lg">
+                            <h4 class="font-semibold text-white mb-2">Stop Services</h4>
+                            <div class="code-block p-3 rounded text-sm text-gray-200">
+                                docker-compose down
+                            </div>
+                        </div>
+                        <div class="bg-slate-700/50 p-4 rounded-lg">
+                            <h4 class="font-semibold text-white mb-2">View Logs</h4>
+                            <div class="code-block p-3 rounded text-sm text-gray-200">
+                                docker-compose logs -f
+                            </div>
+                        </div>
+                        <div class="bg-slate-700/50 p-4 rounded-lg">
+                            <h4 class="font-semibold text-white mb-2">Scale Services</h4>
+                            <div class="code-block p-3 rounded text-sm text-gray-200">
+                                docker-compose up -d --scale web=3
+                            </div>
+                        </div>
+                        <div class="bg-slate-700/50 p-4 rounded-lg">
+                            <h4 class="font-semibold text-white mb-2">Build Images</h4>
+                            <div class="code-block p-3 rounded text-sm text-gray-200">
+                                docker-compose build
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Best Practices Section -->
+            <div id="best-practices" class="tab-content hidden">
+                <div class="bg-slate-800/70 backdrop-blur-md rounded-lg shadow-lg border border-slate-700/60 p-6 mb-6 section-card">
+                    <h2 class="text-2xl font-bold text-white mb-4">Docker Best Practices</h2>
+
+                    <h3 class="text-xl font-semibold text-cyan-400 mt-6 mb-3">Image Best Practices</h3>
+                    <div class="space-y-3">
+                        <div class="bg-slate-700/50 p-4 rounded-lg">
+                            <h4 class="font-semibold text-white mb-2">✓ Use Multi-stage Builds</h4>
+                            <p class="text-gray-300 text-sm">Reduce final image size by using separate build and runtime stages</p>
+                        </div>
+                        <div class="bg-slate-700/50 p-4 rounded-lg">
+                            <h4 class="font-semibold text-white mb-2">✓ Use .dockerignore</h4>
+                            <p class="text-gray-300 text-sm">Exclude unnecessary files from build context</p>
+                            <div class="code-block p-2 rounded text-xs text-gray-200 mt-2">
+                                node_modules<br>
+                                .git<br>
+                                *.log
+                            </div>
+                        </div>
+                        <div class="bg-slate-700/50 p-4 rounded-lg">
+                            <h4 class="font-semibold text-white mb-2">✓ Use Specific Tags</h4>
+                            <p class="text-gray-300 text-sm">Avoid using 'latest' tag in production</p>
+                            <div class="code-block p-2 rounded text-xs text-gray-200 mt-2">
+                                FROM node:18.17.0-alpine
+                            </div>
+                        </div>
+                        <div class="bg-slate-700/50 p-4 rounded-lg">
+                            <h4 class="font-semibold text-white mb-2">✓ Minimize Layers</h4>
+                            <p class="text-gray-300 text-sm">Combine RUN commands to reduce layers</p>
+                            <div class="code-block p-2 rounded text-xs text-gray-200 mt-2">
+                                RUN apt-get update && apt-get install -y \<br>
+                                &nbsp;&nbsp;&nbsp;&nbsp;curl && rm -rf /var/lib/apt/lists/*
+                            </div>
+                        </div>
+                    </div>
+
+                    <h3 class="text-xl font-semibold text-cyan-400 mt-6 mb-3">Security Best Practices</h3>
+                    <div class="space-y-3">
+                        <div class="bg-slate-700/50 p-4 rounded-lg">
+                            <h4 class="font-semibold text-white mb-2">✓ Run as Non-root User</h4>
+                            <div class="code-block p-2 rounded text-xs text-gray-200 mt-2">
+                                RUN useradd -m appuser<br>
+                                USER appuser
+                            </div>
+                        </div>
+                        <div class="bg-slate-700/50 p-4 rounded-lg">
+                            <h4 class="font-semibold text-white mb-2">✓ Scan Images for Vulnerabilities</h4>
+                            <div class="code-block p-2 rounded text-xs text-gray-200 mt-2">
+                                docker scan myimage:tag
+                            </div>
+                        </div>
+                        <div class="bg-slate-700/50 p-4 rounded-lg">
+                            <h4 class="font-semibold text-white mb-2">✓ Use Secrets Management</h4>
+                            <p class="text-gray-300 text-sm">Never hardcode secrets in Dockerfiles</p>
+                        </div>
+                        <div class="bg-slate-700/50 p-4 rounded-lg">
+                            <h4 class="font-semibold text-white mb-2">✓ Limit Container Resources</h4>
+                            <div class="code-block p-2 rounded text-xs text-gray-200 mt-2">
+                                docker run --memory="512m" --cpus="1.0" myapp
+                            </div>
+                        </div>
+                    </div>
+
+                    <h3 class="text-xl font-semibold text-cyan-400 mt-6 mb-3">Performance Best Practices</h3>
+                    <div class="space-y-3">
+                        <div class="bg-slate-700/50 p-4 rounded-lg">
+                            <h4 class="font-semibold text-white mb-2">✓ Use .dockerignore</h4>
+                            <p class="text-gray-300 text-sm">Reduce build context size</p>
+                        </div>
+                        <div class="bg-slate-700/50 p-4 rounded-lg">
+                            <h4 class="font-semibold text-white mb-2">✓ Leverage Build Cache</h4>
+                            <p class="text-gray-300 text-sm">Order Dockerfile instructions from least to most frequently changing</p>
+                        </div>
+                        <div class="bg-slate-700/50 p-4 rounded-lg">
+                            <h4 class="font-semibold text-white mb-2">✓ Use Alpine Images</h4>
+                            <p class="text-gray-300 text-sm">Smaller base images reduce image size</p>
+                        </div>
+                        <div class="bg-slate-700/50 p-4 rounded-lg">
+                            <h4 class="font-semibold text-white mb-2">✓ Clean Up Regularly</h4>
+                            <div class="code-block p-2 rounded text-xs text-gray-200 mt-2">
+                                docker system prune -a
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+    </div>
+    </div>
+
+    <!-- Footer include -->
+    <div id="footer"></div>
+    <script>
+    fetch("footer.html")
+    .then(response => response.text())
+    .then(data => {
+        document.getElementById("footer").innerHTML = data;
+    })
+    .catch(err => console.error("Failed to load footer:", err));
+    </script>
+
+    <script src="sidebar.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Tab switching functionality
+            const tabBtns = document.querySelectorAll('.tab-btn');
+            const tabContents = document.querySelectorAll('.tab-content');
+
+            tabBtns.forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const targetTab = this.getAttribute('data-tab');
+                    
+                    // Update button states
+                    tabBtns.forEach(b => {
+                        b.classList.remove('bg-blue-600', 'text-white');
+                        b.classList.add('bg-slate-700', 'text-gray-300');
+                    });
+                    this.classList.remove('bg-slate-700', 'text-gray-300');
+                    this.classList.add('bg-blue-600', 'text-white');
+                    
+                    // Show/hide content
+                    tabContents.forEach(content => {
+                        content.classList.add('hidden');
+                    });
+                    document.getElementById(targetTab).classList.remove('hidden');
+                });
+            });
+
+            // Set initial tab
+            document.querySelector('[data-tab="overview"]').click();
+        });
+    </script>
+</body>
+</html>
+
