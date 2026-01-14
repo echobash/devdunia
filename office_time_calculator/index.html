@@ -1,0 +1,1471 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Office Hours Calculator</title>
+  <style>
+    :root {
+      --bg-gradient: linear-gradient(135deg, #0f172a, #1e293b, #3b82f6);
+      --text-color: white;
+      --glass-bg: rgba(255,255,255,0.05);
+      --glass-border: rgba(255,255,255,0.2);
+      --accent-gradient: linear-gradient(90deg, #60a5fa, #8b5cf6);
+    }
+
+    [data-theme="light"] {
+      --bg-gradient: linear-gradient(135deg, #f1f5f9, #e2e8f0, #3b82f6);
+      --text-color: #1e293b;
+      --glass-bg: rgba(255,255,255,0.8);
+      --glass-border: rgba(0,0,0,0.1);
+      --accent-gradient: linear-gradient(90deg, #3b82f6, #8b5cf6);
+    }
+
+    body {
+      margin: 0;
+      font-family: 'Inter', system-ui, sans-serif;
+      background: var(--bg-gradient);
+      color: var(--text-color);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      padding: 1rem 0;
+      transition: all 0.3s ease;
+    }
+
+    .container {
+      background: var(--glass-bg);
+      backdrop-filter: blur(15px);
+      border-radius: 24px;
+      padding: 2rem;
+      max-width: 600px;
+      width: 90%;
+      text-align: center;
+      box-shadow: 0 10px 40px rgba(0,0,0,0.6);
+      border: 1px solid var(--glass-border);
+      transition: all 0.3s ease;
+    }
+
+    .header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 1rem;
+    }
+
+    .title {
+      font-size: 2rem;
+      font-weight: 700;
+      background: var(--accent-gradient);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      margin: 0;
+    }
+
+    .theme-toggle {
+      background: var(--glass-bg);
+      border: 1px solid var(--glass-border);
+      border-radius: 12px;
+      padding: 0.5rem;
+      cursor: pointer;
+      font-size: 1.2rem;
+      transition: all 0.3s ease;
+    }
+
+    .theme-toggle:hover {
+      transform: scale(1.1);
+      background: rgba(255,255,255,0.1);
+    }
+
+    .quick-presets {
+      display: flex;
+      justify-content: center;
+      gap: 0.5rem;
+      margin-bottom: 1.5rem;
+      flex-wrap: wrap;
+    }
+
+    .preset-btn {
+      background: var(--glass-bg);
+      border: 1px solid var(--glass-border);
+      border-radius: 12px;
+      padding: 0.5rem 1rem;
+      color: var(--text-color);
+      cursor: pointer;
+      font-size: 0.9rem;
+      font-weight: 600;
+      transition: all 0.3s ease;
+    }
+
+    .preset-btn:hover {
+      background: rgba(59, 130, 246, 0.3);
+      transform: translateY(-2px);
+    }
+
+    .progress-container {
+      margin: 1.5rem 0;
+      padding: 1rem;
+      background: var(--glass-bg);
+      border-radius: 16px;
+      border: 1px solid var(--glass-border);
+    }
+
+    .progress-label {
+      font-size: 0.9rem;
+      color: var(--text-color);
+      opacity: 0.8;
+      margin-bottom: 0.5rem;
+    }
+
+    .progress-bar {
+      width: 100%;
+      height: 12px;
+      background: rgba(255,255,255,0.1);
+      border-radius: 6px;
+      overflow: hidden;
+      position: relative;
+    }
+
+    .progress-fill {
+      height: 100%;
+      background: linear-gradient(90deg, #34d399, #10b981);
+      border-radius: 6px;
+      transition: width 0.5s ease;
+      position: relative;
+    }
+
+    .progress-fill::after {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: linear-gradient(45deg, transparent 30%, rgba(255,255,255,0.3) 50%, transparent 70%);
+      animation: shine 2s infinite;
+    }
+
+    @keyframes shine {
+      0% { transform: translateX(-100%); }
+      100% { transform: translateX(100%); }
+    }
+
+    .progress-text {
+      font-size: 1.1rem;
+      font-weight: 600;
+      margin-top: 0.5rem;
+      color: #34d399;
+    }
+
+    .keyboard-hint {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      background: var(--glass-bg);
+      backdrop-filter: blur(10px);
+      border: 1px solid var(--glass-border);
+      border-radius: 12px;
+      padding: 0.5rem 1rem;
+      font-size: 0.8rem;
+      color: var(--text-color);
+      opacity: 0.7;
+      z-index: 1000;
+    }
+
+    .subtitle {
+      font-size: 1rem;
+      color: #cbd5e1;
+      margin-bottom: 2rem;
+    }
+
+    .clock-container {
+      margin-bottom: 2rem;
+      display: flex;
+      justify-content: center;
+    }
+
+    .analog-clock {
+  display: none; /* completely hidden */
+}
+
+    .clock-center {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      width: 12px;
+      height: 12px;
+      background: #facc15;
+      border-radius: 50%;
+      transform: translate(-50%, -50%);
+      z-index: 10;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+    }
+
+    .clock-hand {
+      position: absolute;
+      left: 50%;
+      transform-origin: bottom center;
+      border-radius: 4px;
+      user-select: none;
+      -webkit-user-select: none;
+      -moz-user-select: none;
+      -ms-user-select: none;
+      transition: transform 0.5s ease;
+    }
+
+    .hour-hand {
+      width: 4px;
+      height: 60px;
+      background: linear-gradient(to top, #facc15, #fbbf24);
+      top: calc(50% - 60px);
+      transform-origin: bottom center;
+      z-index: 3;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.3);
+    }
+
+    .minute-hand {
+      width: 3px;
+      height: 80px;
+      background: linear-gradient(to top, #60a5fa, #3b82f6);
+      top: calc(50% - 80px);
+      transform-origin: bottom center;
+      z-index: 2;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.3);
+    }
+
+    .second-hand {
+      width: 1px;
+      height: 90px;
+      background: #ef4444;
+      top: calc(50% - 90px);
+      transform-origin: bottom center;
+      z-index: 4;
+      box-shadow: 0 1px 2px rgba(0,0,0,0.3);
+    }
+
+    .clock-number {
+      position: absolute;
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--text-color);
+      opacity: 0.8;
+      width: 20px;
+      height: 20px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .clock-tick {
+      position: absolute;
+      background: var(--text-color);
+      opacity: 0.4;
+      border-radius: 1px;
+    }
+
+    .clock-tick.major {
+      width: 2px;
+      height: 15px;
+      opacity: 0.6;
+    }
+
+    .clock-tick.minor {
+      width: 1px;
+      height: 8px;
+      opacity: 0.3;
+    }
+
+    .time-inputs {
+      display: flex;
+      justify-content: center;
+      gap: 1rem;
+      margin-bottom: 2rem;
+      flex-wrap: wrap;
+    }
+
+    .time-group {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .time-label {
+      font-size: 0.8rem;
+      font-weight: 600;
+      color: #a5b4fc;
+      margin-bottom: 0.3rem;
+    }
+
+    .time-field, .period-select {
+      width: 70px;
+      height: 50px;
+      border-radius: 14px;
+      border: none;
+      background: rgba(255,255,255,0.9);
+      color: #1e293b;
+      font-size: 1.2rem;
+      font-weight: 700;
+      text-align: center;
+      transition: all 0.3s ease;
+    }
+
+    .time-field:focus, .period-select:focus {
+      outline: none;
+      box-shadow: 0 0 0 3px rgba(59,130,246,0.4);
+    }
+
+    .result {
+      margin-top: 2rem;
+      padding: 1.5rem;
+      background: rgba(255,255,255,0.05);
+      border-radius: 16px;
+      opacity: 0;
+      transform: translateY(20px);
+      transition: all 0.5s ease;
+    }
+
+    .result.show {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .time-display {
+      font-size: 1.5rem;
+      font-weight: 700;
+      margin-bottom: 0.5rem;
+      color: #facc15;
+    }
+
+    .time-label-small {
+      font-size: 0.9rem;
+      color: #cbd5e1;
+      margin-bottom: 0.3rem;
+    }
+
+    .time-row {
+      display: flex;
+      gap: 1rem;
+      margin-bottom: 1rem;
+    }
+
+    .time-card {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      padding: 1rem;
+      background: rgba(255, 255, 255, 0.05);
+      border-radius: 14px;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .time-card-icon {
+      font-size: 1.5rem;
+      opacity: 0.9;
+    }
+
+    .time-card-content {
+      flex: 1;
+    }
+
+    .stats-row {
+      display: flex;
+      gap: 1rem;
+      margin-top: 0.5rem;
+    }
+
+    .stat-card {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      padding: 1.25rem;
+      border-radius: 16px;
+      position: relative;
+      overflow: hidden;
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .stat-card:hover {
+      transform: translateY(-2px);
+    }
+
+    .stat-worked {
+      background: linear-gradient(135deg, rgba(96, 165, 250, 0.2), rgba(59, 130, 246, 0.3));
+      border: 1px solid rgba(96, 165, 250, 0.3);
+      box-shadow: 0 4px 20px rgba(59, 130, 246, 0.15);
+    }
+
+    .stat-worked:hover {
+      box-shadow: 0 6px 25px rgba(59, 130, 246, 0.25);
+    }
+
+    .stat-left {
+      background: linear-gradient(135deg, rgba(52, 211, 153, 0.2), rgba(16, 185, 129, 0.3));
+      border: 1px solid rgba(52, 211, 153, 0.3);
+      box-shadow: 0 4px 20px rgba(16, 185, 129, 0.15);
+    }
+
+    .stat-left:hover {
+      box-shadow: 0 6px 25px rgba(16, 185, 129, 0.25);
+    }
+
+    .stat-icon {
+      font-size: 2rem;
+      line-height: 1;
+    }
+
+    .stat-content {
+      flex: 1;
+    }
+
+    .stat-label {
+      font-size: 0.75rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      opacity: 0.7;
+      margin-bottom: 0.25rem;
+    }
+
+    .stat-value {
+      font-size: 1.25rem;
+      font-weight: 700;
+    }
+
+    .stat-worked .stat-value {
+      color: #60a5fa;
+    }
+
+    .stat-left .stat-value {
+      color: #34d399;
+    }
+
+    @media(max-width: 480px) {
+      .time-row, .stats-row {
+        flex-direction: column;
+        gap: 0.75rem;
+      }
+
+      .stat-card {
+        padding: 1rem;
+      }
+
+      .stat-icon {
+        font-size: 1.5rem;
+      }
+
+      .stat-value {
+        font-size: 1.1rem;
+      }
+    }
+
+    @media(max-width: 480px) {
+      .container {
+        padding: 1.5rem;
+      }
+
+      .analog-clock {
+        width: 160px;
+        height: 160px;
+      }
+
+      .hour-hand {
+        height: 48px;
+        top: calc(50% - 48px);
+      }
+
+      .minute-hand {
+        height: 64px;
+        top: calc(50% - 64px);
+      }
+
+      .clock-number {
+        font-size: 12px;
+      }
+
+      .time-field, .period-select {
+        width: 60px;
+        height: 45px;
+        font-size: 1rem;
+      }
+
+      .title {
+        font-size: 1.5rem;
+      }
+    }
+
+    @media(max-width: 360px) {
+      .analog-clock {
+        width: 140px;
+        height: 140px;
+      }
+
+      .hour-hand {
+        height: 42px;
+        top: calc(50% - 42px);
+      }
+
+      .minute-hand {
+        height: 56px;
+        top: calc(50% - 56px);
+      }
+    }
+
+    /* Toast Notification */
+    .toast {
+      position: fixed;
+      bottom: 40px;
+      left: 50%;
+      transform: translateX(-50%) translateY(120px);
+      background: linear-gradient(145deg, rgba(15, 23, 42, 0.98), rgba(30, 41, 59, 0.98));
+      backdrop-filter: blur(25px);
+      border-radius: 24px;
+      padding: 0;
+      box-shadow: 0 25px 60px rgba(0, 0, 0, 0.6),
+                  0 0 0 1px rgba(255, 255, 255, 0.08),
+                  0 0 100px rgba(59, 130, 246, 0.1);
+      z-index: 10000;
+      opacity: 0;
+      transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+      max-width: 420px;
+      width: calc(100% - 2rem);
+      overflow: hidden;
+    }
+
+    .toast.show {
+      transform: translateX(-50%) translateY(0);
+      opacity: 1;
+    }
+
+    .toast-header {
+      background: linear-gradient(135deg, rgba(59, 130, 246, 0.15), rgba(139, 92, 246, 0.15));
+      padding: 1.25rem 1.5rem;
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+    }
+
+    .toast-avatar {
+      width: 48px;
+      height: 48px;
+      border-radius: 14px;
+      flex-shrink: 0;
+      overflow: hidden;
+      border: 2px solid rgba(255, 255, 255, 0.15);
+    }
+
+    .toast-avatar img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .toast-intro {
+      flex: 1;
+    }
+
+    .toast-title {
+      font-size: 1.1rem;
+      font-weight: 800;
+      color: white;
+      margin-bottom: 0.2rem;
+    }
+
+    .toast-subtitle {
+      font-size: 0.8rem;
+      color: rgba(255, 255, 255, 0.5);
+    }
+
+    .toast-close {
+      background: rgba(255, 255, 255, 0.08);
+      border: none;
+      color: rgba(255, 255, 255, 0.5);
+      width: 32px;
+      height: 32px;
+      border-radius: 10px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1rem;
+    }
+
+    .toast-close:hover {
+      background: rgba(255, 255, 255, 0.15);
+      color: white;
+    }
+
+    .toast-links {
+      padding: 1rem 1.5rem 1.5rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.6rem;
+    }
+
+    .toast-link {
+      display: flex;
+      align-items: center;
+      gap: 0.85rem;
+      padding: 0.85rem 1rem;
+      border-radius: 14px;
+      text-decoration: none;
+      transition: all 0.25s ease;
+      border: 1px solid transparent;
+    }
+
+    .toast-link:hover {
+      transform: translateX(4px);
+    }
+
+    .toast-link.portfolio {
+      background: rgba(168, 85, 247, 0.1);
+      border-color: rgba(168, 85, 247, 0.2);
+    }
+
+    .toast-link.portfolio:hover {
+      background: rgba(168, 85, 247, 0.2);
+      box-shadow: 0 4px 20px rgba(168, 85, 247, 0.2);
+    }
+
+    .toast-link.devdunia {
+      background: rgba(59, 130, 246, 0.1);
+      border-color: rgba(59, 130, 246, 0.2);
+    }
+
+    .toast-link.devdunia:hover {
+      background: rgba(59, 130, 246, 0.2);
+      box-shadow: 0 4px 20px rgba(59, 130, 246, 0.2);
+    }
+
+    .toast-link.github {
+      background: rgba(250, 204, 21, 0.1);
+      border-color: rgba(250, 204, 21, 0.2);
+    }
+
+    .toast-link.github:hover {
+      background: rgba(250, 204, 21, 0.15);
+      box-shadow: 0 4px 20px rgba(250, 204, 21, 0.15);
+    }
+
+    .toast-link-icon {
+      font-size: 1.4rem;
+      width: 36px;
+      height: 36px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+
+    .toast-link-content {
+      flex: 1;
+      min-width: 0;
+    }
+
+    .toast-link-title {
+      font-size: 0.9rem;
+      font-weight: 700;
+      color: white;
+      margin-bottom: 0.1rem;
+    }
+
+    .toast-link-desc {
+      font-size: 0.75rem;
+      color: rgba(255, 255, 255, 0.5);
+    }
+
+    .toast-link-arrow {
+      color: rgba(255, 255, 255, 0.3);
+      font-size: 1rem;
+      transition: all 0.2s ease;
+    }
+
+    .toast-link:hover .toast-link-arrow {
+      color: rgba(255, 255, 255, 0.7);
+      transform: translateX(3px);
+    }
+
+    @media(max-width: 600px) {
+      .toast {
+        bottom: 16px;
+        left: 16px;
+        right: 16px;
+        transform: translateX(0) translateY(120px);
+        max-width: none;
+        width: auto;
+        border-radius: 20px;
+      }
+
+      .toast.show {
+        transform: translateX(0) translateY(0);
+      }
+
+      .toast-header {
+        padding: 1rem 1.15rem;
+        gap: 0.85rem;
+      }
+
+      .toast-avatar {
+        width: 40px;
+        height: 40px;
+        border-radius: 12px;
+      }
+
+      .toast-title {
+        font-size: 0.95rem;
+      }
+
+      .toast-subtitle {
+        font-size: 0.7rem;
+      }
+
+      .toast-close {
+        width: 28px;
+        height: 28px;
+        font-size: 0.85rem;
+      }
+
+      .toast-links {
+        padding: 0.75rem 1rem 1rem;
+        gap: 0.5rem;
+      }
+
+      .toast-link {
+        padding: 0.7rem 0.85rem;
+        border-radius: 12px;
+        gap: 0.7rem;
+      }
+
+      .toast-link-icon {
+        font-size: 1.15rem;
+        width: 30px;
+        height: 30px;
+      }
+
+      .toast-link-title {
+        font-size: 0.8rem;
+      }
+
+      .toast-link-desc {
+        font-size: 0.68rem;
+      }
+
+      .toast-link-arrow {
+        font-size: 0.85rem;
+      }
+    }
+
+    @media(max-width: 380px) {
+      .toast {
+        bottom: 12px;
+        left: 12px;
+        right: 12px;
+        border-radius: 16px;
+      }
+
+      .toast-header {
+        padding: 0.85rem 1rem;
+      }
+
+      .toast-avatar {
+        width: 36px;
+        height: 36px;
+      }
+
+      .toast-title {
+        font-size: 0.88rem;
+      }
+
+      .toast-links {
+        padding: 0.6rem 0.85rem 0.85rem;
+      }
+
+      .toast-link {
+        padding: 0.6rem 0.75rem;
+      }
+
+      .toast-link-icon {
+        font-size: 1rem;
+        width: 26px;
+        height: 26px;
+      }
+
+      .toast-link-title {
+        font-size: 0.75rem;
+      }
+
+      .toast-link-desc {
+        font-size: 0.65rem;
+      }
+    }
+
+    /* Footer CTA */
+    .footer-cta {
+      margin-top: 2rem;
+      padding: 1.25rem;
+      background: rgba(255, 255, 255, 0.03);
+      border-radius: 16px;
+      border: 1px solid rgba(255, 255, 255, 0.08);
+    }
+
+    .footer-cta-label {
+      font-size: 0.7rem;
+      text-transform: uppercase;
+      letter-spacing: 1.5px;
+      color: rgba(255, 255, 255, 0.4);
+      margin-bottom: 1rem;
+      text-align: center;
+    }
+
+    .footer-cta-links {
+      display: flex;
+      gap: 0.75rem;
+    }
+
+    .footer-cta-card {
+      flex: 1;
+      padding: 1rem;
+      border-radius: 12px;
+      text-decoration: none;
+      transition: all 0.3s ease;
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+
+    .footer-cta-card:hover {
+      transform: translateY(-2px);
+    }
+
+    .footer-cta-card.devdunia {
+      background: linear-gradient(135deg, rgba(59, 130, 246, 0.15), rgba(96, 165, 250, 0.1));
+      border: 1px solid rgba(59, 130, 246, 0.2);
+    }
+
+    .footer-cta-card.devdunia:hover {
+      background: linear-gradient(135deg, rgba(59, 130, 246, 0.25), rgba(96, 165, 250, 0.15));
+      box-shadow: 0 8px 25px rgba(59, 130, 246, 0.2);
+    }
+
+    .footer-cta-card.echobash {
+      background: linear-gradient(135deg, rgba(139, 92, 246, 0.15), rgba(168, 85, 247, 0.1));
+      border: 1px solid rgba(139, 92, 246, 0.2);
+    }
+
+    .footer-cta-card.echobash:hover {
+      background: linear-gradient(135deg, rgba(139, 92, 246, 0.25), rgba(168, 85, 247, 0.15));
+      box-shadow: 0 8px 25px rgba(139, 92, 246, 0.2);
+    }
+
+    .footer-cta-icon {
+      font-size: 1.5rem;
+      line-height: 1;
+    }
+
+    .footer-cta-content {
+      flex: 1;
+      min-width: 0;
+    }
+
+    .footer-cta-title {
+      font-size: 0.9rem;
+      font-weight: 700;
+      color: var(--text-color);
+      margin-bottom: 0.15rem;
+    }
+
+    .footer-cta-desc {
+      font-size: 0.7rem;
+      color: rgba(255, 255, 255, 0.5);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .footer-cta-arrow {
+      font-size: 1rem;
+      color: rgba(255, 255, 255, 0.3);
+      transition: transform 0.3s ease, color 0.3s ease;
+    }
+
+    .footer-cta-card:hover .footer-cta-arrow {
+      transform: translateX(3px);
+      color: rgba(255, 255, 255, 0.6);
+    }
+
+    @media(max-width: 480px) {
+      .footer-cta-links {
+        flex-direction: column;
+      }
+    }
+
+    [data-theme="light"] .footer-cta-desc {
+      color: rgba(0, 0, 0, 0.5);
+    }
+
+    [data-theme="light"] .footer-cta-arrow {
+      color: rgba(0, 0, 0, 0.3);
+    }
+
+    [data-theme="light"] .footer-cta-card:hover .footer-cta-arrow {
+      color: rgba(0, 0, 0, 0.6);
+    }
+
+
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <div class="title">Chalo</div>
+      <button class="theme-toggle" id="themeToggle">🌙</button>
+    </div>
+
+    <div class="quick-presets">
+      <button class="preset-btn" data-time="9:00" data-period="AM">9:00 AM</button>
+      <button class="preset-btn" data-time="9:30" data-period="AM">9:30 AM</button>
+      <button class="preset-btn" data-time="10:00" data-period="AM">10:00 AM</button>
+      <button class="preset-btn" data-time="10:30" data-period="AM">10:30 AM</button>
+      <button class="preset-btn" data-time="11:00" data-period="AM">11:00 AM</button>
+      <button class="preset-btn" data-time="11:30" data-period="AM">11:30 AM</button>
+    </div>
+
+    <div class="clock-container">
+      <div class="analog-clock" id="analogClock">
+        <div class="clock-center"></div>
+        <div class="clock-hand hour-hand" id="hourHand"></div>
+        <div class="clock-hand minute-hand" id="minuteHand"></div>
+        <div class="clock-hand second-hand" id="secondHand"></div>
+      </div>
+    </div>
+
+    <div class="time-inputs">
+      <div class="time-group">
+        <label class="time-label">HOURS</label>
+        <input type="number" id="hourInput" class="time-field" min="1" max="12">
+      </div>
+      <div class="time-group">
+        <label class="time-label">MINUTES</label>
+        <input type="number" id="minuteInput" class="time-field" min="0" max="59">
+      </div>
+      <div class="time-group">
+        <label class="time-label">PERIOD</label>
+        <select id="periodSelect" class="period-select">
+          <option value="AM">AM</option>
+          <option value="PM">PM</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="progress-container" id="progressContainer">
+      <div class="progress-label">Workday Progress</div>
+      <div class="progress-bar">
+        <div class="progress-fill" id="progressFill"></div>
+      </div>
+      <div class="progress-text" id="progressText">0% Complete</div>
+    </div>
+
+    <div class="result show" id="result">
+      <div class="time-row">
+        <div class="time-card">
+          <div class="time-card-icon">🔓</div>
+          <div class="time-card-content">
+            <div class="time-label-small">Login Time</div>
+            <div class="time-display" id="loginTime">--:--</div>
+          </div>
+        </div>
+        <div class="time-card">
+          <div class="time-card-icon">🔒</div>
+          <div class="time-card-content">
+            <div class="time-label-small">Logout Time</div>
+            <div class="time-display" id="logoutTime">--:--</div>
+          </div>
+        </div>
+      </div>
+      
+      <div class="stats-row">
+        <div class="stat-card stat-worked">
+          <div class="stat-icon">⏱️</div>
+          <div class="stat-content">
+            <div class="stat-label">Time Worked</div>
+            <div class="stat-value" id="timeWorked">0h 0m 0s</div>
+          </div>
+        </div>
+        <div class="stat-card stat-left">
+          <div class="stat-icon">⏳</div>
+          <div class="stat-content">
+            <div class="stat-label">Time Left</div>
+            <div class="stat-value" id="timeLeft">Calculating...</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Footer CTA -->
+    <div class="footer-cta">
+      <div class="footer-cta-label">More from the creator</div>
+      <div class="footer-cta-links">
+        <a href="https://devdunia.com" target="_blank" class="footer-cta-card devdunia">
+          <div class="footer-cta-icon">🛠️</div>
+          <div class="footer-cta-content">
+            <div class="footer-cta-title">DevDunia</div>
+            <div class="footer-cta-desc">100+ free developer tools</div>
+          </div>
+          <div class="footer-cta-arrow">→</div>
+        </a>
+        <a href="https://echobash.com" target="_blank" class="footer-cta-card echobash">
+          <div class="footer-cta-icon">👨‍💻</div>
+          <div class="footer-cta-content">
+            <div class="footer-cta-title">EchoBash</div>
+            <div class="footer-cta-desc">Portfolio & blog</div>
+          </div>
+          <div class="footer-cta-arrow">→</div>
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <div class="keyboard-hint">
+    Use ↑↓ arrows to adjust time
+  </div>
+
+  <!-- Toast Notification -->
+  <div class="toast" id="promoToast">
+    <div class="toast-header">
+      <div class="toast-avatar">
+        <img src="https://avatars.githubusercontent.com/u/17334155" alt="Author">
+      </div>
+      <div class="toast-intro">
+        <div class="toast-title">Liked the tool? Star the repo on GitHub!</div>
+        <div class="toast-subtitle">Support the creator & explore more</div>
+      </div>
+      <button class="toast-close" id="toastClose">✕</button>
+    </div>
+    <div class="toast-links">
+      <a href="https://echobash.com" target="_blank" class="toast-link portfolio">
+        <div class="toast-link-icon">👨‍💻</div>
+        <div class="toast-link-content">
+          <div class="toast-link-title">EchoBash</div>
+          <div class="toast-link-desc">Learn about the author</div>
+        </div>
+        <div class="toast-link-arrow">→</div>
+      </a>
+      <a href="https://devdunia.com" target="_blank" class="toast-link devdunia">
+        <div class="toast-link-icon">🛠️</div>
+        <div class="toast-link-content">
+          <div class="toast-link-title">Try DevDunia.com</div>
+          <div class="toast-link-desc">100+ free developer tools</div>
+        </div>
+        <div class="toast-link-arrow">→</div>
+      </a>
+      <a href="https://github.com/echobash/devdunia" target="_blank" class="toast-link github">
+        <div class="toast-link-icon">⭐</div>
+        <div class="toast-link-content">
+          <div class="toast-link-title">Star on GitHub</div>
+          <div class="toast-link-desc">Support the project</div>
+        </div>
+        <div class="toast-link-arrow">→</div>
+      </a>
+    </div>
+  </div>
+
+
+  <script>
+    const hourInput = document.getElementById("hourInput");
+    const minuteInput = document.getElementById("minuteInput");
+    const periodSelect = document.getElementById("periodSelect");
+    const loginTimeDisplay = document.getElementById("loginTime");
+    const logoutTimeDisplay = document.getElementById("logoutTime");
+    const timeLeftDisplay = document.getElementById("timeLeft");
+    const timeWorkedDisplay = document.getElementById("timeWorked");
+    const resultBox = document.getElementById("result");
+    const analogClock = document.getElementById("analogClock");
+    const hourHand = document.getElementById("hourHand");
+    const minuteHand = document.getElementById("minuteHand");
+    const secondHand = document.getElementById("secondHand");
+    const themeToggle = document.getElementById("themeToggle");
+    const progressFill = document.getElementById("progressFill");
+    const progressText = document.getElementById("progressText");
+    let loginDate, logoutDate;
+    let currentTheme = 'dark';
+    let focusedInput = null;
+
+    // Initialize clock with numbers and ticks
+    function initializeClock() {
+      // Add clock numbers
+      for (let i = 1; i <= 12; i++) {
+        const number = document.createElement('div');
+        number.className = 'clock-number';
+        number.textContent = i;
+        const angle = (i * 30 - 90) * Math.PI / 180;
+        const radius = 75;
+        const x = radius * Math.cos(angle);
+        const y = radius * Math.sin(angle);
+        number.style.left = `calc(50% + ${x}px - 10px)`;
+        number.style.top = `calc(50% + ${y}px - 10px)`;
+        analogClock.appendChild(number);
+      }
+
+      // Add clock ticks
+      for (let i = 0; i < 60; i++) {
+        const tick = document.createElement('div');
+        tick.className = `clock-tick ${i % 5 === 0 ? 'major' : 'minor'}`;
+        const angle = (i * 6 - 90) * Math.PI / 180;
+        const radius = i % 5 === 0 ? 85 : 88;
+        const x = radius * Math.cos(angle);
+        const y = radius * Math.sin(angle);
+        tick.style.left = `calc(50% + ${x}px - ${i % 5 === 0 ? '1px' : '0.5px'})`;
+        tick.style.top = `calc(50% + ${y}px - ${i % 5 === 0 ? '7.5px' : '4px'})`;
+        tick.style.transform = `rotate(${i * 6}deg)`;
+        analogClock.appendChild(tick);
+      }
+    }
+
+    function saveTimeToStorage() {
+      const timeData = {
+        hours: hourInput.value,
+        minutes: minuteInput.value,
+        period: periodSelect.value
+      };
+      localStorage.setItem('chalo_saved_time', JSON.stringify(timeData));
+    }
+
+    function prefillCurrentTime() {
+      // Try to load saved time from localStorage
+      const savedTime = localStorage.getItem('chalo_saved_time');
+      
+      if (savedTime) {
+        try {
+          const timeData = JSON.parse(savedTime);
+          hourInput.value = timeData.hours;
+          minuteInput.value = timeData.minutes;
+          periodSelect.value = timeData.period;
+        } catch (e) {
+          // Fallback to default if parsing fails
+          hourInput.value = 9;
+          minuteInput.value = 0;
+          periodSelect.value = "AM";
+        }
+      } else {
+        // Default time if nothing saved
+        hourInput.value = 9;
+        minuteInput.value = 0;
+        periodSelect.value = "AM";
+      }
+
+      updateClockHands();
+      calculateTime();
+    }
+
+    function updateClockHands() {
+      // Update clock to show current time only
+      const now = new Date();
+      const hours = now.getHours();
+      const minutes = now.getMinutes();
+      const seconds = now.getSeconds();
+
+      const hourAngle = (hours % 12) * 30 + (minutes * 0.5) - 90;
+      const minuteAngle = minutes * 6 - 90;
+      const secondAngle = seconds * 6 - 90;
+
+      hourHand.style.transform = `translateX(-50%) rotate(${hourAngle}deg)`;
+      minuteHand.style.transform = `translateX(-50%) rotate(${minuteAngle}deg)`;
+      secondHand.style.transform = `translateX(-50%) rotate(${secondAngle}deg)`;
+    }
+
+    function calculateTime() {
+      let hour = parseInt(hourInput.value) || 12;
+      let minute = parseInt(minuteInput.value) || 0;
+      const period = periodSelect.value;
+
+      if (period === "PM" && hour !== 12) hour += 12;
+      if (period === "AM" && hour === 12) hour = 0;
+
+      loginDate = new Date();
+      loginDate.setHours(hour, minute, 0, 0);
+      logoutDate = new Date(loginDate.getTime() + 8.5 * 60 * 60000);
+
+      const formatTime = (date) => {
+        let h = date.getHours();
+        let m = String(date.getMinutes()).padStart(2, "0");
+        const ampm = h >= 12 ? "PM" : "AM";
+        h = h % 12 || 12;
+        return `${h}:${m} ${ampm}`;
+      };
+
+      loginTimeDisplay.textContent = formatTime(loginDate);
+      logoutTimeDisplay.textContent = formatTime(logoutDate);
+
+      updateTimeLeft();
+      resultBox.classList.add("show");
+    }
+
+    function updateTimeLeft() {
+      const now = new Date();
+      if (!logoutDate || !loginDate) return;
+
+      let progress = 0;
+
+      if (loginDate > now) {
+        timeLeftDisplay.textContent = "Not started";
+        timeWorkedDisplay.textContent = "0h 0m 0s";
+        progress = 0;
+      } else if (logoutDate <= now) {
+        timeLeftDisplay.textContent = "Done! 🎉";
+        timeWorkedDisplay.textContent = "8h 30m ✅";
+        progress = 100;
+      } else {
+        const totalWorkTime = 8.5 * 60 * 60 * 1000; // 8.5 hours in milliseconds
+        const elapsedTime = now - loginDate;
+        progress = Math.min((elapsedTime / totalWorkTime) * 100, 100);
+
+        // Calculate time worked
+        const hoursWorked = Math.floor(elapsedTime / (1000 * 60 * 60));
+        const minutesWorked = Math.floor((elapsedTime % (1000 * 60 * 60)) / (1000 * 60));
+        const secondsWorked = Math.floor((elapsedTime % (1000 * 60)) / 1000);
+        timeWorkedDisplay.textContent = `${hoursWorked}h ${minutesWorked}m ${secondsWorked}s`;
+
+        // Calculate time left
+        const diff = logoutDate - now;
+        const hoursLeft = Math.floor(diff / (1000 * 60 * 60));
+        const minutesLeft = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+        const secondsLeft = Math.floor((diff % (1000 * 60)) / 1000);
+
+        timeLeftDisplay.textContent = `${hoursLeft}h ${minutesLeft}m ${secondsLeft}s`;
+      }
+
+      // Update progress bar
+      progressFill.style.width = `${progress}%`;
+      progressText.textContent = `${Math.round(progress)}% Complete`;
+    }
+
+    // Theme toggle functionality
+    function toggleTheme() {
+      currentTheme = currentTheme === 'dark' ? 'light' : 'dark';
+      document.documentElement.setAttribute('data-theme', currentTheme);
+      themeToggle.textContent = currentTheme === 'dark' ? '🌙' : '☀️';
+    }
+
+    // Quick preset functionality
+    function setTimePreset(timeString, period) {
+      const [hours, minutes] = timeString.split(':');
+      hourInput.value = parseInt(hours);
+      minuteInput.value = parseInt(minutes);
+      periodSelect.value = period;
+      calculateTime();
+      saveTimeToStorage();
+    }
+
+    // Keyboard shortcuts
+    function handleKeyboard(event) {
+      if (!focusedInput) return;
+
+      const step = event.shiftKey ? 5 : 1; // Hold Shift for 5-minute/hour steps
+
+      if (event.key === 'ArrowUp') {
+        event.preventDefault();
+        if (focusedInput === hourInput) {
+          let newValue = (parseInt(hourInput.value) || 1) + step;
+          if (newValue > 12) newValue = 1;
+          hourInput.value = newValue;
+        } else if (focusedInput === minuteInput) {
+          let newValue = (parseInt(minuteInput.value) || 0) + step;
+          if (newValue >= 60) newValue = newValue - 60;
+          minuteInput.value = newValue;
+        }
+        calculateTime();
+        saveTimeToStorage();
+      } else if (event.key === 'ArrowDown') {
+        event.preventDefault();
+        if (focusedInput === hourInput) {
+          let newValue = (parseInt(hourInput.value) || 1) - step;
+          if (newValue < 1) newValue = 12;
+          hourInput.value = newValue;
+        } else if (focusedInput === minuteInput) {
+          let newValue = (parseInt(minuteInput.value) || 0) - step;
+          if (newValue < 0) newValue = newValue + 60;
+          minuteInput.value = newValue;
+        }
+        calculateTime();
+        saveTimeToStorage();
+      }
+    }
+
+    function getAngleFromCenter(clientX, clientY) {
+      const rect = analogClock.getBoundingClientRect();
+      const centerX = rect.left + rect.width / 2;
+      const centerY = rect.top + rect.height / 2;
+      const x = clientX - centerX;
+      const y = clientY - centerY;
+      let angle = Math.atan2(y, x) * 180 / Math.PI + 90;
+
+      // Normalize angle to 0-360
+      if (angle < 0) angle += 360;
+      if (angle >= 360) angle -= 360;
+
+      return angle;
+    }
+
+    function updateTimeFromHand(hand, angle) {
+      if (hand === hourHand) {
+        let hours = Math.round(angle / 30);
+        if (hours === 0) hours = 12;
+        if (hours > 12) hours = hours - 12;
+        hourInput.value = hours;
+      } else if (hand === minuteHand) {
+        let minutes = Math.round(angle / 6);
+        if (minutes >= 60) minutes = 0;
+        minuteInput.value = minutes;
+      }
+    }
+
+    // Clock interaction handlers
+    function handleMouseStart(event) {
+      const target = event.target;
+      if (target.classList.contains('clock-hand')) {
+        event.preventDefault();
+        isDragging = true;
+        currentHand = target;
+
+        // Add visual feedback
+        currentHand.classList.add('dragging');
+
+        // Add event listeners to document for better tracking
+        document.addEventListener('mousemove', handleMouseMove, { passive: false });
+        document.addEventListener('mouseup', handleMouseEnd);
+        document.addEventListener('touchmove', handleMouseMove, { passive: false });
+        document.addEventListener('touchend', handleMouseEnd);
+
+        // Disable transitions during drag for smoother movement
+        currentHand.style.transition = 'none';
+      }
+    }
+
+    function handleMouseMove(event) {
+      if (!isDragging || !currentHand) return;
+      event.preventDefault();
+
+      // Get coordinates from mouse or touch event
+      let clientX, clientY;
+      if (event.type === 'touchmove') {
+        clientX = event.touches[0].clientX;
+        clientY = event.touches[0].clientY;
+      } else {
+        clientX = event.clientX;
+        clientY = event.clientY;
+      }
+
+      const angle = getAngleFromCenter(clientX, clientY);
+
+      // Update the hand position immediately for smooth visual feedback
+      currentHand.style.transform = `translateX(-50%) rotate(${angle - 90}deg)`;
+
+      // Update time values
+      updateTimeFromHand(currentHand, angle);
+
+      // Throttle the calculation updates for better performance
+      if (!currentHand.updateTimeout) {
+        currentHand.updateTimeout = setTimeout(() => {
+          calculateTime();
+          currentHand.updateTimeout = null;
+        }, 16); // ~60fps
+      }
+    }
+
+    function handleMouseEnd() {
+      if (isDragging && currentHand) {
+        // Remove visual feedback
+        currentHand.classList.remove('dragging');
+
+        // Re-enable transitions
+        currentHand.style.transition = 'all 0.1s ease';
+
+        // Clear any pending updates
+        if (currentHand.updateTimeout) {
+          clearTimeout(currentHand.updateTimeout);
+          currentHand.updateTimeout = null;
+        }
+
+        // Final update to sync everything
+        updateClockHands();
+        calculateTime();
+      }
+
+      isDragging = false;
+      currentHand = null;
+
+      document.removeEventListener('mousemove', handleMouseMove);
+      document.removeEventListener('mouseup', handleMouseEnd);
+      document.removeEventListener('touchmove', handleMouseMove);
+      document.removeEventListener('touchend', handleMouseEnd);
+    }
+
+    // Event listeners
+    [hourInput, minuteInput, periodSelect].forEach(input => {
+      input.addEventListener("input", () => {
+        calculateTime();
+        saveTimeToStorage();
+      });
+      input.addEventListener("change", () => {
+        calculateTime();
+        saveTimeToStorage();
+      });
+      input.addEventListener("focus", () => {
+        focusedInput = input;
+      });
+      input.addEventListener("blur", () => {
+        focusedInput = null;
+      });
+    });
+
+    // Theme toggle event
+    themeToggle.addEventListener('click', toggleTheme);
+
+    // Quick preset events
+    document.querySelectorAll('.preset-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const time = btn.dataset.time;
+        const period = btn.dataset.period;
+        setTimePreset(time, period);
+      });
+    });
+
+    // Keyboard shortcuts
+    document.addEventListener('keydown', handleKeyboard);
+
+    // Update clock hands every second and time left
+    setInterval(() => {
+      updateClockHands();
+      updateTimeLeft();
+    }, 1000);
+
+    // Toast notification (shows every refresh)
+    const promoToast = document.getElementById('promoToast');
+    const toastClose = document.getElementById('toastClose');
+
+    function showToast() {
+      // Show toast after 3 seconds
+      setTimeout(() => {
+        promoToast.classList.add('show');
+      }, 3000);
+    }
+
+    function hideToast() {
+      promoToast.classList.remove('show');
+    }
+
+    toastClose.addEventListener('click', hideToast);
+
+    // Initialize everything
+    window.onload = () => {
+      initializeClock();
+      prefillCurrentTime();
+      showToast();
+    };
+  </script>
+</body>
+</html>
