@@ -1214,28 +1214,31 @@
         timeLeftDisplay.textContent = "Not started";
         timeWorkedDisplay.textContent = "0h 0m 0s";
         progress = 0;
-      } else if (logoutDate <= now) {
-        timeLeftDisplay.textContent = "Done! 🎉";
-        timeWorkedDisplay.textContent = "8h 30m ✅";
-        progress = 100;
       } else {
         const totalWorkTime = 8.5 * 60 * 60 * 1000; // 8.5 hours in milliseconds
         const elapsedTime = now - loginDate;
         progress = Math.min((elapsedTime / totalWorkTime) * 100, 100);
 
-        // Calculate time worked
+        // Calculate time worked (always show actual time, even overtime)
         const hoursWorked = Math.floor(elapsedTime / (1000 * 60 * 60));
         const minutesWorked = Math.floor((elapsedTime % (1000 * 60 * 60)) / (1000 * 60));
         const secondsWorked = Math.floor((elapsedTime % (1000 * 60)) / 1000);
-        timeWorkedDisplay.textContent = `${hoursWorked}h ${minutesWorked}m ${secondsWorked}s`;
+        
+        // Show overtime indicator if past 8.5 hours
+        if (logoutDate <= now) {
+          timeLeftDisplay.textContent = "Done! 🎉";
+          timeWorkedDisplay.textContent = `${hoursWorked}h ${minutesWorked}m ✅`;
+        } else {
+          timeWorkedDisplay.textContent = `${hoursWorked}h ${minutesWorked}m ${secondsWorked}s`;
 
-        // Calculate time left
-        const diff = logoutDate - now;
-        const hoursLeft = Math.floor(diff / (1000 * 60 * 60));
-        const minutesLeft = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
-        const secondsLeft = Math.floor((diff % (1000 * 60)) / 1000);
+          // Calculate time left
+          const diff = logoutDate - now;
+          const hoursLeft = Math.floor(diff / (1000 * 60 * 60));
+          const minutesLeft = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+          const secondsLeft = Math.floor((diff % (1000 * 60)) / 1000);
 
-        timeLeftDisplay.textContent = `${hoursLeft}h ${minutesLeft}m ${secondsLeft}s`;
+          timeLeftDisplay.textContent = `${hoursLeft}h ${minutesLeft}m ${secondsLeft}s`;
+        }
       }
 
       // Update progress bar
