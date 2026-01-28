@@ -343,6 +343,183 @@
       margin-bottom: 0.3rem;
     }
 
+    /* Hero metric + timeline */
+    .hero-metric {
+      padding: 1.25rem;
+      border-radius: 18px;
+      border: 1px solid rgba(255, 255, 255, 0.10);
+      background: linear-gradient(135deg, rgba(52, 211, 153, 0.12), rgba(16, 185, 129, 0.20));
+      box-shadow: 0 10px 40px rgba(16, 185, 129, 0.12);
+      text-align: left;
+    }
+
+    [data-theme="light"] .hero-metric {
+      background: linear-gradient(135deg, rgba(16, 185, 129, 0.12), rgba(59, 130, 246, 0.10));
+      border-color: rgba(0,0,0,0.08);
+      box-shadow: 0 10px 30px rgba(15, 23, 42, 0.12);
+    }
+
+    .hero-metric-top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 0.75rem;
+      margin-bottom: 0.75rem;
+    }
+
+    .hero-metric-label {
+      font-size: 0.75rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.8px;
+      opacity: 0.8;
+    }
+
+    .hero-metric-badge {
+      font-size: 0.75rem;
+      font-weight: 700;
+      padding: 0.35rem 0.6rem;
+      border-radius: 999px;
+      background: rgba(15, 23, 42, 0.35);
+      border: 1px solid rgba(255,255,255,0.10);
+      color: rgba(255,255,255,0.9);
+      white-space: nowrap;
+    }
+
+    [data-theme="light"] .hero-metric-badge {
+      background: rgba(255,255,255,0.7);
+      color: #1e293b;
+      border-color: rgba(0,0,0,0.10);
+    }
+
+    .hero-metric-value {
+      font-size: 2.2rem;
+      font-weight: 900;
+      letter-spacing: -0.02em;
+      color: #34d399;
+      line-height: 1.15;
+    }
+
+    .hero-metric-sub {
+      margin-top: 0.35rem;
+      font-size: 0.95rem;
+      color: rgba(255,255,255,0.75);
+    }
+
+    [data-theme="light"] .hero-metric-sub {
+      color: rgba(30,41,59,0.75);
+    }
+
+    .timeline {
+      margin-top: 1rem;
+      padding: 1rem;
+      border-radius: 16px;
+      border: 1px solid rgba(255,255,255,0.10);
+      background: rgba(255,255,255,0.04);
+      text-align: left;
+    }
+
+    [data-theme="light"] .timeline {
+      background: rgba(0,0,0,0.03);
+      border-color: rgba(0,0,0,0.08);
+    }
+
+    .timeline-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 0.75rem;
+      margin-bottom: 0.75rem;
+    }
+
+    .timeline-title {
+      font-size: 0.85rem;
+      font-weight: 700;
+      color: rgba(255,255,255,0.85);
+    }
+
+    [data-theme="light"] .timeline-title {
+      color: rgba(30,41,59,0.85);
+    }
+
+    .timeline-hint {
+      font-size: 0.8rem;
+      color: rgba(255,255,255,0.55);
+      white-space: nowrap;
+    }
+
+    [data-theme="light"] .timeline-hint {
+      color: rgba(30,41,59,0.55);
+    }
+
+    .timeline-bar {
+      position: relative;
+      height: 12px;
+      border-radius: 999px;
+      background: rgba(255,255,255,0.10);
+      overflow: hidden;
+    }
+
+    [data-theme="light"] .timeline-bar {
+      background: rgba(0,0,0,0.10);
+    }
+
+    .timeline-fill {
+      position: absolute;
+      inset: 0;
+      width: 0%;
+      background: linear-gradient(90deg, rgba(52, 211, 153, 0.95), rgba(16, 185, 129, 0.95));
+      border-radius: 999px;
+      transition: width 0.4s ease;
+    }
+
+    .timeline-now {
+      position: absolute;
+      top: 50%;
+      transform: translate(-50%, -50%);
+      width: 16px;
+      height: 16px;
+      border-radius: 50%;
+      background: #facc15;
+      border: 3px solid rgba(15, 23, 42, 0.65);
+      box-shadow: 0 8px 18px rgba(0,0,0,0.35);
+      left: 0%;
+      transition: left 0.4s ease;
+    }
+
+    [data-theme="light"] .timeline-now {
+      border-color: rgba(255,255,255,0.85);
+    }
+
+    .timeline-labels {
+      display: flex;
+      justify-content: space-between;
+      gap: 1rem;
+      margin-top: 0.6rem;
+      font-size: 0.8rem;
+      color: rgba(255,255,255,0.65);
+    }
+
+    [data-theme="light"] .timeline-labels {
+      color: rgba(30,41,59,0.65);
+    }
+
+    .timeline-labels strong {
+      color: rgba(255,255,255,0.90);
+      font-weight: 700;
+    }
+
+    [data-theme="light"] .timeline-labels strong {
+      color: rgba(30,41,59,0.90);
+    }
+
+    /* Preset active state */
+    .preset-btn.active {
+      background: rgba(59, 130, 246, 0.35);
+      border-color: rgba(59, 130, 246, 0.45);
+      transform: translateY(-1px);
+    }
+
     .time-row {
       display: flex;
       gap: 1rem;
@@ -970,7 +1147,34 @@
     </div>
 
     <div class="result show" id="result">
-      <div class="time-row">
+      <!-- Hero metric -->
+      <div class="hero-metric">
+        <div class="hero-metric-top">
+          <div class="hero-metric-label">Time left</div>
+          <div class="hero-metric-badge" id="heroStatus">Ready</div>
+        </div>
+        <div class="hero-metric-value" id="heroTimeLeft">--</div>
+        <div class="hero-metric-sub" id="heroInsight">Tip: press ↑↓ to adjust time (Shift for +5)</div>
+      </div>
+
+      <!-- Timeline -->
+      <div class="timeline">
+        <div class="timeline-head">
+          <div class="timeline-title">Today’s timeline</div>
+          <div class="timeline-hint" id="timelineHint">Login → Now → Logout</div>
+        </div>
+        <div class="timeline-bar">
+          <div class="timeline-fill" id="timelineFill"></div>
+          <div class="timeline-now" id="timelineNow"></div>
+        </div>
+        <div class="timeline-labels">
+          <div><strong id="timelineLogin">--:--</strong><div style="opacity:.7">Login</div></div>
+          <div style="text-align:right"><strong id="timelineLogout">--:--</strong><div style="opacity:.7">Logout</div></div>
+        </div>
+      </div>
+
+      <!-- Compact stats -->
+      <div class="time-row" style="margin-top: 1rem;">
         <div class="time-card">
           <div class="time-card-icon">🔓</div>
           <div class="time-card-content">
@@ -986,7 +1190,7 @@
           </div>
         </div>
       </div>
-      
+
       <div class="stats-row">
         <div class="stat-card stat-worked">
           <div class="stat-icon">⏱️</div>
@@ -998,7 +1202,7 @@
         <div class="stat-card stat-left">
           <div class="stat-icon">⏳</div>
           <div class="stat-content">
-            <div class="stat-label">Time Left</div>
+            <div class="stat-label">Countdown</div>
             <div class="stat-value" id="timeLeft">Calculating...</div>
           </div>
         </div>
@@ -1082,6 +1286,14 @@
     const logoutTimeDisplay = document.getElementById("logoutTime");
     const timeLeftDisplay = document.getElementById("timeLeft");
     const timeWorkedDisplay = document.getElementById("timeWorked");
+    const heroTimeLeft = document.getElementById("heroTimeLeft");
+    const heroStatus = document.getElementById("heroStatus");
+    const heroInsight = document.getElementById("heroInsight");
+    const timelineFill = document.getElementById("timelineFill");
+    const timelineNow = document.getElementById("timelineNow");
+    const timelineLogin = document.getElementById("timelineLogin");
+    const timelineLogout = document.getElementById("timelineLogout");
+    const timelineHint = document.getElementById("timelineHint");
     const resultBox = document.getElementById("result");
     const analogClock = document.getElementById("analogClock");
     const hourHand = document.getElementById("hourHand");
@@ -1199,6 +1411,8 @@
 
       loginTimeDisplay.textContent = formatTime(loginDate);
       logoutTimeDisplay.textContent = formatTime(logoutDate);
+      timelineLogin.textContent = formatTime(loginDate);
+      timelineLogout.textContent = formatTime(logoutDate);
 
       updateTimeLeft();
       resultBox.classList.add("show");
@@ -1209,13 +1423,20 @@
       if (!logoutDate || !loginDate) return;
 
       let progress = 0;
+      const totalWorkTime = 8.5 * 60 * 60 * 1000; // 8.5 hours in ms
 
       if (loginDate > now) {
         timeLeftDisplay.textContent = "Not started";
         timeWorkedDisplay.textContent = "0h 0m 0s";
+        heroTimeLeft.textContent = "--";
+        heroStatus.textContent = "Not started";
+        heroInsight.textContent = "Set your login time to see your timeline.";
+        progress = 0;
+        timelineFill.style.width = `0%`;
+        timelineNow.style.left = `0%`;
+        timelineHint.textContent = "Login → Now → Logout";
         progress = 0;
       } else {
-        const totalWorkTime = 8.5 * 60 * 60 * 1000; // 8.5 hours in milliseconds
         const elapsedTime = now - loginDate;
         progress = Math.min((elapsedTime / totalWorkTime) * 100, 100);
 
@@ -1228,17 +1449,41 @@
         if (logoutDate <= now) {
           timeLeftDisplay.textContent = "Done! 🎉";
           timeWorkedDisplay.textContent = `${hoursWorked}h ${minutesWorked}m ✅`;
+          heroTimeLeft.textContent = "Done!";
+          heroStatus.textContent = "Completed";
+          const overtimeMs = now - logoutDate;
+          const otH = Math.floor(overtimeMs / (1000 * 60 * 60));
+          const otM = Math.floor((overtimeMs % (1000 * 60 * 60)) / (1000 * 60));
+          heroInsight.textContent = `Overtime: +${otH}h ${otM}m. Great job finishing your target.`;
+          timelineHint.textContent = "You’re past logout (overtime)";
         } else {
-          timeWorkedDisplay.textContent = `${hoursWorked}h ${minutesWorked}m ${secondsWorked}s`;
+        timeWorkedDisplay.textContent = `${hoursWorked}h ${minutesWorked}m ${secondsWorked}s`;
 
-          // Calculate time left
-          const diff = logoutDate - now;
-          const hoursLeft = Math.floor(diff / (1000 * 60 * 60));
-          const minutesLeft = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
-          const secondsLeft = Math.floor((diff % (1000 * 60)) / 1000);
+        // Calculate time left
+        const diff = logoutDate - now;
+        const hoursLeft = Math.floor(diff / (1000 * 60 * 60));
+        const minutesLeft = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+        const secondsLeft = Math.floor((diff % (1000 * 60)) / 1000);
 
-          timeLeftDisplay.textContent = `${hoursLeft}h ${minutesLeft}m ${secondsLeft}s`;
+        timeLeftDisplay.textContent = `${hoursLeft}h ${minutesLeft}m ${secondsLeft}s`;
+        heroTimeLeft.textContent = `${hoursLeft}h ${minutesLeft}m ${secondsLeft}s`;
+        heroStatus.textContent = `${Math.round(progress)}%`;
+        const breakMs = 30 * 60 * 1000;
+        const breakLogout = new Date(logoutDate.getTime() + breakMs);
+        const formatTime = (date) => {
+          let h = date.getHours();
+          let m = String(date.getMinutes()).padStart(2, "0");
+          const ampm = h >= 12 ? "PM" : "AM";
+          h = h % 12 || 12;
+          return `${h}:${m} ${ampm}`;
+        };
+        heroInsight.textContent = `If you take a 30m break, logout becomes ${formatTime(breakLogout)}.`;
+        timelineHint.textContent = `Worked ${hoursWorked}h ${minutesWorked}m so far`;
         }
+
+        // Timeline visuals
+        timelineFill.style.width = `${progress}%`;
+        timelineNow.style.left = `${progress}%`;
       }
 
       // Update progress bar
@@ -1261,6 +1506,10 @@
       periodSelect.value = period;
       calculateTime();
       saveTimeToStorage();
+      // Active preset styling
+      document.querySelectorAll('.preset-btn').forEach(b => b.classList.remove('active'));
+      const btn = Array.from(document.querySelectorAll('.preset-btn')).find(b => b.dataset.time === timeString && b.dataset.period === period);
+      if (btn) btn.classList.add('active');
     }
 
     // Keyboard shortcuts

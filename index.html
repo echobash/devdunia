@@ -11,8 +11,8 @@
     <!-- Primary SEO Meta Tags -->
     <title>DevDunia - Developer & VAPT Tools Platform | 50+ Free Dev & Security Tools</title>
     <meta name="title" content="DevDunia - Developer & VAPT Tools Platform | 50+ Free Dev & Security Tools">
-    <meta name="description" content="DevDunia offers 50+ free developer and VAPT tools including JSON beautifier, password generator, clickjacking checker, HTTP header analyzer, and more. Essential utilities for developers, security professionals, and programmers.">
-    <meta name="keywords" content="developer tools, VAPT tools, security tools, dev tools, online tools, free tools, JSON beautifier, password generator, clickjacking checker, HTTP headers, vulnerability assessment, penetration testing, developer utilities, programming tools, coding tools, DevDunia">
+    <meta name="description" content="All developer tools in one place. JSON formatter, Base64 encoder, password generator, JWT decoder, SQL formatter, regex tester, and 50+ more free tools. Stop switching between sites - everything you need in one unified platform.">
+    <meta name="keywords" content="json formatter, base64 encoder, password generator, jwt decoder, sql formatter, regex tester, url encoder, hash generator, developer tools, VAPT tools, security tools, dev tools, online tools, free tools, JSON beautifier, clickjacking checker, HTTP headers, vulnerability assessment, penetration testing, developer utilities, programming tools, coding tools, DevDunia, all in one developer tools">
     <meta name="author" content="DevDunia">
     <meta name="robots" content="index, follow">
     <meta name="language" content="English">
@@ -22,7 +22,7 @@
     <meta property="og:type" content="website">
     <meta property="og:url" content="https://devdunia.com/">
     <meta property="og:title" content="DevDunia - Developer & VAPT Tools Platform">
-    <meta property="og:description" content="50+ free developer and VAPT tools including JSON beautifier, password generator, clickjacking checker, HTTP header analyzer, and more. Essential utilities for developers and security professionals.">
+    <meta property="og:description" content="All developer tools in one place. JSON formatter, Base64 encoder, password generator, JWT decoder, SQL formatter, and 50+ more. Stop switching between sites.">
     <meta property="og:image" content="https://devdunia.com/images/og-image.png">
     <meta property="og:site_name" content="DevDunia">
     <meta property="og:locale" content="en_US">
@@ -31,823 +31,677 @@
     <meta property="twitter:card" content="summary_large_image">
     <meta property="twitter:url" content="https://devdunia.com/">
     <meta property="twitter:title" content="DevDunia - Developer & VAPT Tools Platform">
-    <meta property="twitter:description" content="50+ free developer and VAPT tools including JSON beautifier, password generator, clickjacking checker, HTTP header analyzer, and more.">
+    <meta property="twitter:description" content="All developer tools in one place. JSON formatter, Base64 encoder, password generator, JWT decoder, SQL formatter, and 50+ more. Stop switching between sites.">
     <meta property="twitter:image" content="https://devdunia.com/images/twitter-card.png">
     
     <!-- Additional SEO -->
-    <meta name="theme-color" content="#0f172a">
-    <meta name="msapplication-TileColor" content="#0f172a">
+    <meta name="theme-color" content="#0F172A">
+    <meta name="msapplication-TileColor" content="#0F172A">
     <link rel="canonical" href="https://devdunia.com/">
-     <!-- Structured Data -->
-    <style>
-        #theme-toggle-float {
-            color: #94a3b8;
-        }
-        .dark #theme-toggle-float {
-            color: #475569;
-        }
-        #theme-toggle-float:hover {
-            color: #f8fafc;
-        }
-        .dark #theme-toggle-float:hover {
-            color: #0f172a;
-        }
-    </style>
-
-    <script type="application/ld+json">
-    {
-      "@context": "https://schema.org",
-      "@type": "WebApplication",
-      "name": "DevDunia",
-      "description": "Free developer tools and utilities for programmers and coders",
-      "url": "https://devdunia.com",
-      "applicationCategory": "DeveloperApplication",
-      "operatingSystem": "Web Browser",
-      "offers": {
-        "@type": "Offer",
-        "price": "0",
-        "priceCurrency": "USD"
-      },
-      "creator": {
-        "@type": "Organization",
-        "name": "DevDunia",
-        "url": "https://devdunia.com"
-      },
-      "featureList": [
-        "JSON Beautifier",
-        "Password Generator", 
-        "CSV to JSON Converter",
-        "Hash Generator",
-        "Base64 Encoder/Decoder",
-        "URL Encoder/Decoder",
-        "JWT Decoder",
-        "SQL Formatter",
-        "Regex Tester",
-        "QR Code Generator"
-      ]
-    }
-    </script>
+    
     <script src="https://cdn.tailwindcss.com"></script>
-    <script>
-        tailwind.config = {
-            darkMode: 'class',
-            theme: {
-                extend: {
-                    colors: {
-                        dark: {
-                            bg: '#0f172a',
-                            surface: '#1e293b'
-                        }
-                    }
-                }
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --green: #10B981;
+            --green-dark: #059669;
+            --bg: #0A0A0A;
+            --surface: #141414;
+            --surface-light: #1F1F1F;
+            --text: #FFFFFF;
+            --text-secondary: #A0A0A0;
+            --border: #2A2A2A;
+        }
+
+        body {
+            font-family: 'Inter', system-ui, -apple-system, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            overflow-x: hidden;
+            line-height: 1.5;
+        }
+
+        body::before {
+            content: '';
+            position: fixed;
+            inset: 0;
+            background-image: 
+                linear-gradient(rgba(16, 185, 129, 0.03) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(16, 185, 129, 0.03) 1px, transparent 1px);
+            background-size: 50px 50px;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .container {
+            position: relative;
+            z-index: 1;
+        }
+
+        /* Navigation */
+        nav {
+            background: rgba(10, 10, 10, 0.8);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid var(--border);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        /* Hero */
+        .hero-title {
+            font-size: clamp(56px, 10vw, 120px);
+            line-height: 1;
+            letter-spacing: -0.04em;
+            font-weight: 700;
+            text-transform: uppercase;
+        }
+
+        .hero-subtitle {
+            font-size: clamp(18px, 2vw, 24px);
+            color: var(--text-secondary);
+            max-width: 700px;
+            margin: 32px auto 0;
+            line-height: 1.6;
+        }
+
+        /* Input Field */
+        .search-input-wrapper {
+            max-width: 800px;
+            margin: 64px auto 0;
+            position: relative;
+        }
+
+        .search-input {
+            width: 100%;
+            padding: 24px 80px 24px 32px;
+            font-size: 18px;
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            color: var(--text);
+            transition: all 0.2s ease;
+        }
+
+        .search-input:focus {
+            outline: none;
+            border-color: var(--green);
+            box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.1);
+        }
+
+        .search-input::placeholder {
+            color: var(--text-secondary);
+        }
+
+        .search-button {
+            position: absolute;
+            right: 8px;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 64px;
+            height: 64px;
+            background: var(--green);
+            border: none;
+            border-radius: 10px;
+            color: white;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s ease;
+        }
+
+        .search-button:hover {
+            background: var(--green-dark);
+            transform: translateY(-50%) scale(1.05);
+        }
+
+        .search-results {
+            position: absolute;
+            top: calc(100% + 12px);
+            left: 0;
+            right: 0;
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+            overflow: hidden;
+            z-index: 50;
+            max-height: 500px;
+            overflow-y: auto;
+        }
+
+        .search-result-item {
+            padding: 20px 24px;
+            border-bottom: 1px solid var(--border);
+            transition: all 0.15s ease;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .search-result-item:hover {
+            background: var(--surface-light);
+        }
+
+        .search-result-item:last-child {
+            border-bottom: none;
+        }
+
+        /* Buttons */
+        .btn-primary {
+            background: var(--green);
+            color: white;
+            padding: 16px 32px;
+            border-radius: 10px;
+            font-weight: 600;
+            font-size: 16px;
+            border: none;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .btn-primary:hover {
+            background: var(--green-dark);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 24px rgba(16, 185, 129, 0.3);
+        }
+
+        .btn-secondary {
+            background: transparent;
+            color: var(--text);
+            padding: 16px 32px;
+            border-radius: 10px;
+            font-weight: 600;
+            font-size: 16px;
+            border: 1px solid var(--border);
+            cursor: pointer;
+            transition: all 0.2s ease;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .btn-secondary:hover {
+            border-color: var(--green);
+            color: var(--green);
+        }
+
+        /* Section Headers */
+        .section-header {
+            font-size: clamp(32px, 5vw, 64px);
+            line-height: 1.1;
+            letter-spacing: -0.02em;
+            font-weight: 700;
+            text-transform: uppercase;
+            margin-bottom: 16px;
+        }
+
+        .section-subtitle {
+            font-size: 18px;
+            color: var(--text-secondary);
+            max-width: 600px;
+        }
+
+        /* Cards */
+        .card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 32px;
+            transition: all 0.3s ease;
+        }
+
+        .card:hover {
+            border-color: var(--green);
+            transform: translateY(-4px);
+            box-shadow: 0 20px 40px rgba(16, 185, 129, 0.15);
+        }
+
+        /* Tabs */
+        .tabs {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 32px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .tab {
+            padding: 16px 24px;
+            background: transparent;
+            border: none;
+            border-bottom: 2px solid transparent;
+            color: var(--text-secondary);
+            font-weight: 600;
+            font-size: 14px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .tab:hover {
+            color: var(--text);
+        }
+
+        .tab.active {
+            color: var(--green);
+            border-bottom-color: var(--green);
+        }
+
+        /* Text Colors */
+        .text-green {
+            color: var(--green);
+        }
+
+        .scrollbar-hide::-webkit-scrollbar {
+            display: none;
+        }
+
+        .scrollbar-hide {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+
+        /* Animations */
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
             }
         }
-    </script>
-    <style>
-        .hero-bg {
-            background: linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #0f172a 100%);
-        }
-        .dark .hero-bg {
-            background: linear-gradient(135deg, #000 0%, #111827 50%, #000 100%);
-        }
-        .grid-pattern {
-            background-image: radial-gradient(circle at 1px 1px, rgba(255,255,255,0.1) 1px, transparent 0);
-            background-size: 20px 20px;
-        }
-        .floating-animation {
-            animation: float 6s ease-in-out infinite;
-        }
-        @keyframes float {
-            0%, 100% { transform: translateY(0px); }
-            50% { transform: translateY(-20px); }
-        }
-        .pulse-glow {
-            animation: pulse-glow 2s ease-in-out infinite alternate;
-        }
-        @keyframes pulse-glow {
-            from { box-shadow: 0 0 20px rgba(147, 51, 234, 0.3); }
-            to { box-shadow: 0 0 40px rgba(147, 51, 234, 0.6); }
-    }
 
+        .fade-in {
+            animation: fadeIn 0.6s ease-out;
+        }
   </style>
 </head>
-<body class="min-h-screen hero-bg">
-    <!-- Hero Section -->
-    <div class="relative min-h-screen flex items-center justify-center overflow-hidden">
-        <!-- Background Pattern -->
-        <div class="absolute inset-0 grid-pattern"></div>
-        
-        <!-- Content -->
-        <div class="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
-                <!-- Left Side - Hero Content -->
-                <div class="text-center lg:text-left">
-                    <!-- Logo/Icon -->
-                    <div class="flex justify-center lg:justify-start mb-8">
-                        <div class="floating-animation pulse-glow">
-                            <img src="images/logo.png" alt="DevDunia" class="h-24 w-auto hover:scale-105 transition-transform duration-300">
+<body>
+    <!-- Navigation -->
+    <nav>
+        <div class="container max-w-7xl mx-auto px-6 py-4">
+            <div class="flex items-center justify-between">
+                <div class="flex items-center gap-3">
+                    <img src="images/logo.png" alt="DevDunia" class="h-8 w-auto">
+                    <span class="text-xl font-bold text-green">DEVDUNIA</span>
                             </div>
-                    </div>
-                    
-                    <!-- Main Heading -->
-                    <h1 class="text-4xl sm:text-5xl lg:text-6xl font-bold text-white mb-6 leading-tight">
-                        Developer and
-                        <br>
-                        <span class="bg-gradient-to-r from-purple-400 via-pink-400 to-blue-400 bg-clip-text text-transparent">
-                            Pen Testing Tools
-                        </span>
-                        <span class="bg-gradient-to-r from-green-400 via-teal-400 to-cyan-400 bg-clip-text text-transparent">
-                            at your fingertips
-                        </span>
-                    </h1>
-                    
-                    <!-- Subtitle -->
-                    <p class="text-2xl text-gray-300 mb-8 max-w-2xl leading-relaxed">
-                        Where development meets security. 50+ powerful tools for developers and VAPT professionals. From JSON beautifying to clickjacking testing, everything you need in one unified platform.
-                    </p>
-                    
-                    <!-- CTA Buttons -->
-                    <div class="flex flex-col sm:flex-row gap-6 justify-center lg:justify-start mb-12">
-                        <a href="home.html" class="inline-flex items-center px-10 py-5 bg-gradient-to-r from-purple-500 to-blue-500 hover:from-purple-600 hover:to-blue-600 text-white font-bold rounded-2xl transition-all duration-300 transform hover:scale-105 shadow-2xl text-lg">
-                            <svg class="w-6 h-6 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-                            </svg>
-                            Explore All Tools
-                        </a>
-                        <a href="https://github.com/echobash/devdunia" target="_blank" class="inline-flex items-center px-10 py-5 border-2 border-gray-600 hover:border-gray-500 text-white font-bold rounded-2xl transition-all duration-300 text-lg">
-                            <svg class="w-6 h-6 mr-3" fill="currentColor" viewBox="0 0 24 24">
+                <div class="flex items-center gap-6">
+                    <a href="home.html" class="text-sm font-medium text-gray-400 hover:text-white transition-colors">ALL TOOLS</a>
+                    <a href="https://github.com/echobash/devdunia" target="_blank" class="btn-secondary text-sm py-2 px-4">
+                        <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
                                 <path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/>
                             </svg>
-                            Star on GitHub
-                        </a>
-                        <a href="support.html" class="inline-flex items-center px-10 py-5 border-2 border-purple-600 hover:border-purple-500 text-purple-400 hover:text-purple-300 font-bold rounded-2xl transition-all duration-300 text-lg">
-                            <svg class="w-6 h-6 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"></path>
-                            </svg>
-                            Support DevDunia
+                        STAR
                         </a>
                     </div>
-                    
-                    <!-- Stats -->
-                    <div class="flex flex-wrap justify-center lg:justify-start gap-8 text-lg text-gray-400">
-                        <div class="flex items-center space-x-3">
-                            <div class="w-3 h-3 bg-green-400 rounded-full animate-pulse"></div>
-                            <span class="font-semibold">50+ Tools</span>
-                        </div>
-                        <div class="flex items-center space-x-3">
-                            <div class="w-3 h-3 bg-blue-400 rounded-full animate-pulse"></div>
-                            <span class="font-semibold">100% Free</span>
-                        </div>
-                        <div class="flex items-center space-x-3">
-                            <div class="w-3 h-3 bg-purple-400 rounded-full animate-pulse"></div>
-                            <span class="font-semibold">Open Source</span>
                         </div>
                         </div>
-                </div>
-                
-                <!-- Right Side - Tool Demo -->
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="container py-32 px-6">
+        <div class="max-w-7xl mx-auto text-center">
+            <h1 class="hero-title fade-in">
+                CHEAT CODE TO
+                <br>
+                <span class="text-green">ALL DEV TOOLS</span>
+            </h1>
+            <p class="hero-subtitle fade-in">
+                Stop switching between 50 sites. JSON formatter, Base64 encoder, password generator, JWT decoder, SQL formatter, and 50+ more tools. Everything you need, one place.
+            </p>
+
+            <!-- Search Input -->
+            <div class="search-input-wrapper fade-in">
                 <div class="relative">
-                    <div class="bg-slate-800/90 backdrop-blur-sm rounded-3xl border border-slate-700/50 p-8 shadow-2xl">
-                        <!-- Tool Selector -->
-                        <div class="flex space-x-2 mb-8 bg-slate-900/50 rounded-xl p-2">
-                            
-                            <button class="tool-tab active flex-1 px-4 py-3 text-sm font-medium text-gray-400 hover:text-white transition-colors" data-tool="ip">
-                                IP Address Tools
-                            </button>
-                            <button class="tool-tab flex-1 px-4 py-3 text-sm font-medium text-purple-400 bg-slate-700/50 rounded-lg transition-colors" data-tool="password">
-                                Password Generator
-                            </button>
-                            <button class="tool-tab flex-1 px-4 py-3 text-sm font-medium text-gray-400 hover:text-white transition-colors" data-tool="json">
-                                JSON Beautifier
+                    <input 
+                        type="text" 
+                        id="heroSearchInput"
+                        placeholder="Search for any tool... (JSON formatter, Base64 encoder, password generator...)"
+                        class="search-input"
+                        autocomplete="off"
+                    />
+                    <button class="search-button" id="searchButton">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+                        </svg>
                             </button>
                         </div>
                         
-                        <!-- Demo Content -->
-                        <div class="space-y-6">
-                            <!-- Password Generator Content -->
-                            <div id="password-content" class="tool-content">
-                                <div class="mb-6">
-                                    <h3 class="text-lg font-semibold text-white mb-4">Generated Password</h3>
-                                    <div class="bg-slate-900/50 rounded-xl p-4 border border-slate-600/50 flex items-center justify-between">
-                                        <span id="generated-password" class="text-lg font-mono text-green-400">Kx9#mP2$vL8@nQ4!</span>
-                                        <button id="copy-password" class="px-3 py-1 bg-blue-600/20 border border-blue-500/30 rounded-lg text-blue-400 hover:bg-blue-600/30 transition-colors text-sm">
-                                            Copy
-                                        </button>
-                                    </div>
-                                </div>
-                                
-                                <div class="mb-6">
-                                    <label class="text-sm font-medium text-gray-300 mb-2 block">Password Length: <span id="length-value">16</span></label>
-                                    <input type="range" id="length-slider" min="8" max="32" value="16" class="w-full h-2 bg-slate-700 rounded-lg appearance-none cursor-pointer slider">
-                                </div>
-                                
-                                <div class="mb-6">
-                                    <div class="flex items-center justify-between mb-2">
-                                        <span class="text-sm font-medium text-gray-300">Password Strength:</span>
-                                        <span class="text-sm font-medium text-green-400">Strong</span>
-                                    </div>
-                                    <div class="w-full bg-slate-700 rounded-full h-2">
-                                        <div class="bg-gradient-to-r from-red-500 via-yellow-500 to-green-500 h-2 rounded-full" style="width: 100%"></div>
-                                    </div>
-                                    <p class="text-xs text-gray-400 mt-1">Contains: lowercase, uppercase, numbers, symbols</p>
-                                </div>
-                                
-                                <div class="grid grid-cols-2 gap-4 mb-6">
-                                    <label class="flex items-center space-x-2">
-                                        <input type="checkbox" checked class="w-4 h-4 text-purple-600 bg-slate-700 border-slate-600 rounded focus:ring-purple-500">
-                                        <span class="text-sm text-gray-300">Uppercase (A-Z)</span>
-                                    </label>
-                                    <label class="flex items-center space-x-2">
-                                        <input type="checkbox" checked class="w-4 h-4 text-purple-600 bg-slate-700 border-slate-600 rounded focus:ring-purple-500">
-                                        <span class="text-sm text-gray-300">Lowercase (a-z)</span>
-                                    </label>
-                                    <label class="flex items-center space-x-2">
-                                        <input type="checkbox" checked class="w-4 h-4 text-purple-600 bg-slate-700 border-slate-600 rounded focus:ring-purple-500">
-                                        <span class="text-sm text-gray-300">Numbers (0-9)</span>
-                                    </label>
-                                    <label class="flex items-center space-x-2">
-                                        <input type="checkbox" checked class="w-4 h-4 text-purple-600 bg-slate-700 border-slate-600 rounded focus:ring-purple-500">
-                                        <span class="text-sm text-gray-300">Symbols (!@#$)</span>
-                                    </label>
-                </div>
-                                
-                                <div class="flex space-x-3">
-                                    <button id="generate-password" class="flex-1 px-4 py-2 bg-purple-600 hover:bg-purple-700 text-white rounded-lg transition-colors flex items-center justify-center space-x-2">
-                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
-                                        </svg>
-                                        <span>Generate Password</span>
-                                    </button>
-                                    <button id="generate-multiple" class="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors flex items-center justify-center space-x-2">
-                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
-                                        </svg>
-                                        <span>Multiple</span>
-                                    </button>
-                                </div>
-
-                                <!-- Multiple Passwords Display -->
-                                <div id="multiple-passwords-container" class="mt-6 hidden">
-                                    <div class="flex items-center justify-between mb-3">
-                                        <h3 class="text-lg font-semibold text-white">Generated Passwords (5)</h3>
-                                        <button id="copy-all-passwords" class="text-sm text-blue-400 hover:text-blue-300 transition-colors px-3 py-1 rounded-lg hover:bg-slate-700/50">
-                                            Copy All
-                                        </button>
-                                    </div>
-                                    <div id="multiple-passwords-list" class="space-y-2 max-h-64 overflow-y-auto">
-                                        <!-- Password items will be inserted here -->
+                <!-- Search Results -->
+                <div id="heroSearchResults" class="search-results hidden scrollbar-hide">
+                    <div id="heroSearchResultsContent"></div>
+                    <div id="heroNoResults" class="text-center py-12 text-gray-400 hidden">
+                        <svg class="w-12 h-12 mx-auto mb-3 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+                        </svg>
+                        <p class="text-sm">No tools found. Try a different search.</p>
                                     </div>
                                 </div>
                             </div>
                             
-                            <!-- IP Address Tools Content -->
-                            <div id="ip-content" class="tool-content hidden">
-                                <div class="mb-6">
-                                    <h3 class="text-lg font-semibold text-white mb-4">Your Public IP Address</h3>
-                                    <div class="bg-slate-900/50 rounded-xl p-4 border border-slate-600/50">
-                                        <div class="flex items-center justify-between">
-                                            <div>
-                                                <span class="text-sm text-gray-400">Public IP</span>
-                                                <div id="public-ip" class="text-lg font-mono text-blue-400">223.190.80.209</div>
-                                            </div>
-                                            <button id="copy-public-ip" class="px-3 py-1 bg-blue-600/20 border border-blue-500/30 rounded-lg text-blue-400 hover:bg-blue-600/30 transition-colors text-sm">
-                                                Copy
+            <!-- Action Buttons -->
+            <div class="flex flex-col sm:flex-row gap-4 justify-center mt-12 fade-in">
+                <a href="home.html" class="btn-primary">
+                    EXPLORE ALL TOOLS
+                </a>
+                <button class="btn-secondary">
+                    REMIX
                                             </button>
                                         </div>
                                     </div>
-                                </div>
-                                
-                                <div class="mb-6">
-                                    <h3 class="text-lg font-semibold text-white mb-4">IP Address Lookup</h3>
-                                    <div class="flex space-x-3">
-                                        <input id="ip-lookup-input" type="text" placeholder="Enter IP address (e.g., 8.8.8.8)" class="flex-1 px-4 py-2 bg-slate-700/50 border border-slate-600/50 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500">
-                                        <button id="ip-lookup-btn" class="px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded-lg transition-colors flex items-center space-x-2">
-                                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
-                                </svg>
-                                            <span>Lookup</span>
-                                        </button>
-                            </div>
-                        </div>
-                                
-                                <!-- IP Information Results -->
-                                <div id="ip-results" class="mb-6 hidden">
-                                    <h3 class="text-lg font-semibold text-white mb-4">IP Information</h3>
-                                    <div class="bg-slate-900/50 rounded-xl p-6 border border-slate-600/50">
-                                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                            <div class="bg-slate-700/50 p-4 rounded-lg border border-slate-600/30">
-                                                <h4 class="font-semibold text-blue-400 mb-2 text-sm">IP Address</h4>
-                                                <p id="result-ip" class="text-blue-300 font-mono text-sm"></p>
-                                            </div>
-                                            <div class="bg-slate-700/50 p-4 rounded-lg border border-slate-600/30">
-                                                <h4 class="font-semibold text-green-400 mb-2 text-sm">Country</h4>
-                                                <p id="result-country" class="text-green-300 text-sm"></p>
-                                            </div>
-                                            <div class="bg-slate-700/50 p-4 rounded-lg border border-slate-600/30">
-                                                <h4 class="font-semibold text-purple-400 mb-2 text-sm">Region</h4>
-                                                <p id="result-region" class="text-purple-300 text-sm"></p>
-                                            </div>
-                                            <div class="bg-slate-700/50 p-4 rounded-lg border border-slate-600/30">
-                                                <h4 class="font-semibold text-orange-400 mb-2 text-sm">City</h4>
-                                                <p id="result-city" class="text-orange-300 text-sm"></p>
-                                            </div>
-                                            <div class="bg-slate-700/50 p-4 rounded-lg border border-slate-600/30">
-                                                <h4 class="font-semibold text-blue-400 mb-2 text-sm">ISP</h4>
-                                                <p id="result-isp" class="text-blue-300 text-sm"></p>
-                                            </div>
-                                            <div class="bg-slate-700/50 p-4 rounded-lg border border-slate-600/30">
-                                                <h4 class="font-semibold text-yellow-400 mb-2 text-sm">Organization</h4>
-                                                <p id="result-org" class="text-yellow-300 text-sm"></p>
-                                            </div>
-                                        </div>
-                            </div>
-                        </div>
+    </section>
+
+    <!-- Everything to Ship Section -->
+    <section class="container py-32 px-6">
+        <div class="max-w-7xl mx-auto">
+            <h2 class="section-header text-green text-center mb-4">
+                EVERYTHING TO SHIP
+                <br>
+                AWESOME TOOLS
+            </h2>
+            <p class="section-subtitle text-center mx-auto mb-16">
+                All your developer tools organized and ready to use. No switching, no bookmarks, just tools.
+            </p>
+
+            <!-- Tabs -->
+            <div class="tabs">
+                <button class="tab active" data-tab="generation">GENERATION</button>
+                <button class="tab" data-tab="encoders">ENCODERS</button>
+                <button class="tab" data-tab="generators">GENERATORS</button>
+                <button class="tab" data-tab="vapt">VAPT</button>
+                <button class="tab" data-tab="dev">DEV TOOLS</button>
                             </div>
                             
-                            <!-- JSON Beautifier Content -->
-                            <div id="json-content" class="tool-content hidden">
-                                <div class="mb-6">
-                                    <div class="flex items-center justify-between mb-3">
-                                        <label class="text-base font-medium text-gray-300">Input:</label>
-                                        <button id="clear-json" class="text-sm text-gray-400 hover:text-white transition-colors px-3 py-1 rounded-lg hover:bg-slate-700/50">Clear</button>
-                                    </div>
-                                    <div class="bg-slate-900/50 rounded-xl p-6 border border-slate-600/50">
-                                        <textarea id="json-input" class="w-full h-32 bg-transparent text-gray-300 font-mono text-sm resize-none focus:outline-none" placeholder="Enter your JSON here...">{"name":"DevDunia","tools":50,"features":["JSON Beautifier","Password Generator","IP Address Tools","Hash Generator","JWT Decoder","SQL Formatter"],"status":"active"}</textarea>
+            <!-- Tab Content -->
+            <div id="tabContent" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                <!-- Content will be populated by JavaScript -->
                         </div>
                     </div>
-                    
-                                <div>
-                                    <div class="flex items-center justify-between mb-3">
-                                        <label class="text-base font-medium text-gray-300">Output:</label>
-                                        <div class="flex items-center space-x-3">
-                                            <select id="indent-select" class="text-sm bg-slate-700 text-gray-300 rounded-lg px-3 py-1">
-                                                <option value="2">2 spaces</option>
-                                                <option value="4">4 spaces</option>
-                                            </select>
-                                            <button id="copy-json" class="text-sm text-gray-400 hover:text-white transition-colors px-3 py-1 rounded-lg hover:bg-slate-700/50">Copy</button>
-                                        </div>
-                                    </div>
-                                    <div class="bg-slate-900/50 rounded-xl p-6 border border-slate-600/50">
-                                        <pre id="json-output" class="text-sm text-green-400 font-mono overflow-x-auto"><code>{
-  "name": "DevDunia",
-  "tools": 50,
-  "features": [
-    "JSON Beautifier",
-    "Password Generator",
-    "IP Address Tools",
-    "Hash Generator",
-    "JWT Decoder",
-    "SQL Formatter"
-  ],
-  "status": "active"
-}</code></pre>
-                            </div>
-                        </div>
-                            </div>
-                        </div>
-                    </div>
-                            </div>
-                        </div>
-                            </div>
-                        </div>
+    </section>
 
-    <!-- Features Section -->
-    <div class="py-24 bg-slate-800/40 dark:bg-black/40">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="text-center mb-20">
-                <p class="text-xl text-gray-400 dark:text-gray-300 mb-6">All your essential tools in one place.</p>
-                <h2 class="text-5xl sm:text-6xl font-bold text-white dark:text-gray-50 mb-8">
-                    Why developers love DevDunia?
+    <!-- Categories Section -->
+    <section class="container py-32 px-6">
+        <div class="max-w-7xl mx-auto">
+            <h2 class="section-header text-green text-center mb-4">
+                FIRST UNIFIED
+                <br>
+                DEV TOOLS PLATFORM
                 </h2>
-                    </div>
-                    
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-10">
-                <!-- Feature 1 -->
-                <div class="bg-slate-800/60 backdrop-blur-sm rounded-3xl p-10 border border-slate-700/50 hover:border-purple-500/50 transition-all duration-300 hover:transform hover:scale-105">
-                    <div class="w-16 h-16 bg-purple-500/20 rounded-2xl flex items-center justify-center mb-8">
-                        <svg class="w-8 h-8 text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
-                                </svg>
-                            </div>
-                    <h3 class="text-2xl font-bold text-white mb-6">100% Open Source</h3>
-                    <p class="text-gray-400 mb-6 text-lg leading-relaxed">The entire codebase is open source and available on GitHub. You can contribute, modify, or even self-host your own version.</p>
-                    <a href="https://github.com/echobash/devdunia" class="text-purple-400 hover:text-purple-300 transition-colors font-semibold text-lg">Learn more →</a>
-                    </div>
-                    
-                <!-- Feature 2 -->
-                <div class="bg-slate-800/60 backdrop-blur-sm rounded-3xl p-10 border border-slate-700/50 hover:border-purple-500/50 transition-all duration-300 hover:transform hover:scale-105">
-                    <div class="w-16 h-16 bg-purple-500/20 rounded-2xl flex items-center justify-center mb-8">
-                        <svg class="w-8 h-8 text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path>
-                                </svg>
-                            </div>
-                    <h3 class="text-2xl font-bold text-white mb-6">Free To Use</h3>
-                    <p class="text-gray-400 mb-6 text-lg leading-relaxed">No subscriptions, no hidden costs, no limits. All 50+ tools are completely free to use with no restrictions.</p>
-                    <a href="home.html" class="text-purple-400 hover:text-purple-300 transition-colors font-semibold text-lg">Learn more →</a>
-                    </div>
-                    
-                <!-- Feature 3 -->
-                <div class="bg-slate-800/60 backdrop-blur-sm rounded-3xl p-10 border border-slate-700/50 hover:border-purple-500/50 transition-all duration-300 hover:transform hover:scale-105">
-                    <div class="w-16 h-16 bg-purple-500/20 rounded-2xl flex items-center justify-center mb-8">
-                        <svg class="w-8 h-8 text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path>
-                                </svg>
-                    </div>
-                    <h3 class="text-2xl font-bold text-white mb-6">Constant Updates</h3>
-                    <p class="text-gray-400 mb-6 text-lg leading-relaxed">We're constantly adding new tools and features based on community feedback. Request new tools and see them implemented.</p>
-                    <a href="https://github.com/echobash/devdunia/issues" class="text-purple-400 hover:text-purple-300 transition-colors font-semibold text-lg">Learn more →</a>
-                </div>
+            <p class="section-subtitle text-center mx-auto mb-16">
+                Change any tool, search anything, use everything. You stay in control.
+            </p>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                <a href="home.html#encoders" class="card">
+                    <div class="text-5xl mb-6">🔧</div>
+                    <h3 class="text-2xl font-bold mb-4">ENCODERS/DECODERS</h3>
+                    <p class="text-sm text-gray-400 leading-relaxed">
+                        JSON formatter, Base64 encoder/decoder, URL encoder, hash generator, JWT decoder, Caesar cipher, and more
+                    </p>
+                </a>
+
+                <a href="home.html#generators" class="card">
+                    <div class="text-5xl mb-6">⚡</div>
+                    <h3 class="text-2xl font-bold mb-4">GENERATORS</h3>
+                    <p class="text-sm text-gray-400 leading-relaxed">
+                        Password generator, UUID generator, QR code generator, Lorem ipsum generator, and more
+                    </p>
+                </a>
+
+                <a href="home.html#vapt-tools" class="card">
+                    <div class="text-5xl mb-6">🛡️</div>
+                    <h3 class="text-2xl font-bold mb-4">VAPT TOOLS</h3>
+                    <p class="text-sm text-gray-400 leading-relaxed">
+                        Clickjacking checker, HTTP header analyzer, OWASP Top 10 guide, Email header analyzer
+                    </p>
+                </a>
+
+                <a href="home.html#dev-tools" class="card">
+                    <div class="text-5xl mb-6">🛠️</div>
+                    <h3 class="text-2xl font-bold mb-4">DEV TOOLS</h3>
+                    <p class="text-sm text-gray-400 leading-relaxed">
+                        SQL formatter, Regex tester, Markdown editor, Diff checker, Docker guide, Mermaid renderer, and more
+                    </p>
+                </a>
             </div>
         </div>
-    </div>
+    </section>
 
     <!-- CTA Section -->
-    <div class="py-24">
-        <div class="max-w-4xl mx-auto text-center px-4 sm:px-6 lg:px-8">
-            <h2 class="text-5xl sm:text-6xl font-bold text-white mb-8">
-                Ready to boost your productivity?
+    <section class="container py-32 px-6">
+        <div class="max-w-4xl mx-auto text-center">
+            <h2 class="section-header text-green mb-8">
+                YOUR PERFECT TOOLS,
+                <br>
+                READY IN SECONDS
                 </h2>
-            <p class="text-2xl text-gray-400 mb-12">Join thousands of developers who trust DevDunia for their daily workflow.</p>
-            
-            <div class="flex flex-col sm:flex-row gap-6 justify-center">
-                <a href="home.html" class="inline-flex items-center px-12 py-6 bg-gradient-to-r from-purple-500 to-blue-500 hover:from-purple-600 hover:to-blue-600 text-white font-bold rounded-2xl transition-all duration-300 transform hover:scale-105 shadow-2xl text-xl">
-                    <svg class="w-6 h-6 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
-                    </svg>
-                    Start Using Tools Now
+            <p class="section-subtitle mx-auto mb-12">
+                Type a tool name, search for what you need, or browse categories. Get on-brand tools tuned to your workflow.
+            </p>
+
+            <div class="flex flex-col sm:flex-row gap-4 justify-center">
+                <a href="home.html" class="btn-primary">
+                    GET STARTED
                 </a>
-                <a href="https://github.com/echobash/devdunia" target="_blank" class="inline-flex items-center px-12 py-6 border-2 border-gray-600 hover:border-gray-500 text-white font-bold rounded-2xl transition-all duration-300 text-xl">
-                    <svg class="w-6 h-6 mr-3" fill="currentColor" viewBox="0 0 24 24">
-                        <path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/>
-                                </svg>
-                    Star on GitHub
+                <a href="https://github.com/echobash/devdunia" target="_blank" class="btn-secondary">
+                    STAR ON GITHUB
                     </a>
                 </div>
         </div>
-    </div>
-
-    <!-- Footer include -->
-    <div id="footer"></div>
-    <script>
-    fetch("footer.html")
-    .then(response => response.text())
-    .then(data => {
-        document.getElementById("footer").innerHTML = data;
-    })
-    .catch(err => console.error("Failed to load footer:", err));
-    </script>
-
-
+    </section>
 
     <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            // Tool switching functionality
-            const toolTabs = document.querySelectorAll('.tool-tab');
-            const toolContents = document.querySelectorAll('.tool-content');
-            
-            function switchTool(tool) {
-                // Update tab states
-                toolTabs.forEach(tab => {
-                    tab.classList.remove('active', 'text-purple-400', 'bg-slate-700/50');
-                    tab.classList.add('text-gray-400');
-                });
-                
-                const activeTab = document.querySelector(`[data-tool="${tool}"]`);
-                activeTab.classList.add('active', 'text-purple-400', 'bg-slate-700/50');
-                activeTab.classList.remove('text-gray-400');
-                
-                // Show/hide content
-                toolContents.forEach(content => {
-                    content.classList.add('hidden');
-                });
-                
-                const activeContent = document.getElementById(`${tool}-content`);
-                if (activeContent) {
-                    activeContent.classList.remove('hidden');
-                }
-            }
-            
-            // Tab click handlers
-            toolTabs.forEach(tab => {
+        // Tools data
+        const allToolsData = [
+            { name: 'JSON Beautifier', href: 'json-beautifier.html', icon: '✨', description: 'Format and validate JSON data', keywords: 'json formatter, json beautifier, json validator', category: 'encoders' },
+            { name: 'JSON Minifier', href: 'json-minifier.html', icon: '📦', description: 'Compress JSON for production', keywords: 'json minify, json compress', category: 'encoders' },
+            { name: 'Base64 Encoder', href: 'base64-encoder.html', icon: '📤', description: 'Encode to Base64 format', keywords: 'base64 encode, base64 converter', category: 'encoders' },
+            { name: 'Base64 Decoder', href: 'base64-decoder.html', icon: '📥', description: 'Decode Base64 strings', keywords: 'base64 decode, base64 converter', category: 'encoders' },
+            { name: 'Password Generator', href: 'password-generator.html', icon: '🔑', description: 'Generate secure passwords', keywords: 'password generator, random password', category: 'generators' },
+            { name: 'JWT Decoder', href: 'jwt-decoder.html', icon: '🎫', description: 'Decode JWT tokens', keywords: 'jwt decode, jwt token, json web token', category: 'encoders' },
+            { name: 'URL Encoder', href: 'url-encoder.html', icon: '🔗', description: 'Encode URLs safely', keywords: 'url encode, url encoder', category: 'encoders' },
+            { name: 'URL Decoder', href: 'url-decoder.html', icon: '🔓', description: 'Decode URL-encoded strings', keywords: 'url decode, url decoder', category: 'encoders' },
+            { name: 'Hash Generator', href: 'hash-generator.html', icon: '🔐', description: 'Generate secure hashes', keywords: 'hash generator, md5, sha256', category: 'encoders' },
+            { name: 'SQL Formatter', href: 'sql-formatter.html', icon: '🗄️', description: 'Format SQL queries', keywords: 'sql formatter, sql beautifier', category: 'dev' },
+            { name: 'Regex Tester', href: 'regex-tester.html', icon: '🔍', description: 'Test regular expressions', keywords: 'regex tester, regex validator', category: 'dev' },
+            { name: 'Caesar Cipher', href: 'caesar-cipher.html', icon: '🔐', description: 'Encode and decode with Caesar cipher', keywords: 'caesar cipher, cipher encoder', category: 'encoders' },
+            { name: 'CSV to JSON', href: 'csv-json-converter.html', icon: '📊', description: 'Convert CSV to JSON', keywords: 'csv to json, csv converter', category: 'encoders' },
+            { name: 'YAML to JSON', href: 'yaml-json-converter.html', icon: '⚖️', description: 'Convert between YAML and JSON', keywords: 'yaml to json, yaml converter', category: 'encoders' },
+            { name: 'XML Formatter', href: 'xml-formatter.html', icon: '📄', description: 'Format and validate XML', keywords: 'xml formatter, xml beautifier', category: 'encoders' },
+            { name: 'Clickjacking Checker', href: 'clickjacking-checker.html', icon: '🔒', description: 'Test clickjacking vulnerabilities', keywords: 'clickjacking checker, security test', category: 'vapt' },
+            { name: 'HTTP Headers', href: 'http-response-header-printer.html', icon: '📋', description: 'Analyze HTTP response headers', keywords: 'http headers, header analyzer', category: 'vapt' },
+            { name: 'QR Generator', href: 'qr-generator.html', icon: '📱', description: 'Create QR codes', keywords: 'qr code generator, qr generator', category: 'generators' },
+            { name: 'UUID Generator', href: 'guid-generator.html', icon: '🆔', description: 'Generate unique identifiers', keywords: 'uuid generator, guid generator', category: 'generators' },
+            { name: 'cURL Describer', href: 'curl-describer.html', icon: '🔄', description: 'Convert cURL to code', keywords: 'curl converter, curl describer', category: 'dev' },
+            { name: 'Cron Describer', href: 'cron-describer.html', icon: '⏰', description: 'Explain cron expressions', keywords: 'cron describer, cron explainer', category: 'dev' },
+            { name: 'Markdown Editor', href: 'markdown-editor.html', icon: '📝', description: 'Live markdown editor', keywords: 'markdown editor, markdown preview', category: 'dev' },
+            { name: 'Diff Checker', href: 'diff-checker.html', icon: '🔍', description: 'Compare text differences', keywords: 'diff checker, text compare', category: 'dev' },
+            { name: 'IP Address Tools', href: 'ip-address.html', icon: '🌍', description: 'IP address utilities', keywords: 'ip address, ip lookup', category: 'dev' },
+            { name: 'Word Counter', href: 'word_counter/index.html', icon: '📝', description: 'Count words and characters', keywords: 'word counter, character counter', category: 'dev' }
+        ];
+
+        const heroSearchInput = document.getElementById('heroSearchInput');
+        const searchButton = document.getElementById('searchButton');
+        const heroSearchResults = document.getElementById('heroSearchResults');
+        const heroSearchResultsContent = document.getElementById('heroSearchResultsContent');
+        const heroNoResults = document.getElementById('heroNoResults');
+        const tabContent = document.getElementById('tabContent');
+        const tabs = document.querySelectorAll('.tab');
+
+        // Tab functionality
+        tabs.forEach(tab => {
                 tab.addEventListener('click', function() {
-                    switchTool(this.dataset.tool);
-                });
+                tabs.forEach(t => t.classList.remove('active'));
+                this.classList.add('active');
+                const tabName = this.dataset.tab;
+                displayTabContent(tabName);
             });
-            
-            // Password Generator functionality
-            const lengthSlider = document.getElementById('length-slider');
-            const lengthValue = document.getElementById('length-value');
-            const generatedPassword = document.getElementById('generated-password');
-            const generatePasswordBtn = document.getElementById('generate-password');
-            const copyPasswordBtn = document.getElementById('copy-password');
-            const generateMultipleBtn = document.getElementById('generate-multiple');
-            const multiplePasswordsContainer = document.getElementById('multiple-passwords-container');
-            const multiplePasswordsList = document.getElementById('multiple-passwords-list');
-            const copyAllPasswordsBtn = document.getElementById('copy-all-passwords');
-            
-            if (lengthSlider && lengthValue) {
-                lengthSlider.addEventListener('input', function() {
-                    lengthValue.textContent = this.value;
-                });
-            }
-            
-            function generatePassword() {
-                const length = parseInt(lengthSlider.value);
-                const uppercase = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
-                const lowercase = 'abcdefghijklmnopqrstuvwxyz';
-                const numbers = '0123456789';
-                const symbols = '!@#$%^&*()_+-=[]{}|;:,.<>?';
-                
-                // Get checkbox states from the password content section
-                const passwordContent = document.getElementById('password-content');
-                const checkboxes = passwordContent.querySelectorAll('input[type="checkbox"]');
-                
-                let charset = '';
-                if (checkboxes[0] && checkboxes[0].checked) charset += uppercase;
-                if (checkboxes[1] && checkboxes[1].checked) charset += lowercase;
-                if (checkboxes[2] && checkboxes[2].checked) charset += numbers;
-                if (checkboxes[3] && checkboxes[3].checked) charset += symbols;
-                
-                // If no character types selected, use all
-                if (charset === '') {
-                    charset = uppercase + lowercase + numbers + symbols;
-                }
-                
-                let password = '';
-                for (let i = 0; i < length; i++) {
-                    password += charset.charAt(Math.floor(Math.random() * charset.length));
-                }
-                
-                return password;
-            }
-            
-            if (generatePasswordBtn) {
-                generatePasswordBtn.addEventListener('click', function() {
-                    const password = generatePassword();
-                    generatedPassword.textContent = password;
-                });
-            }
-            
-            // Generate Multiple Passwords
-            if (generateMultipleBtn) {
-                generateMultipleBtn.addEventListener('click', function() {
-                    const passwords = [];
-                    for (let i = 0; i < 5; i++) {
-                        passwords.push(generatePassword());
-                    }
-                    
-                    // Clear previous passwords
-                    multiplePasswordsList.innerHTML = '';
-                    
-                    // Add new passwords
-                    passwords.forEach((pwd, index) => {
-                        const passwordItem = document.createElement('div');
-                        passwordItem.className = 'password-item bg-slate-900/50 rounded-lg p-3 border border-slate-600/50 flex items-center justify-between';
-                        passwordItem.innerHTML = `
-                            <div class="flex items-center space-x-3">
-                                <span class="text-gray-400 text-sm">${index + 1}.</span>
-                                <span class="font-mono text-green-400 text-sm">${pwd}</span>
-                            </div>
-                            <button class="copy-single-password px-2 py-1 bg-blue-600/20 border border-blue-500/30 rounded text-blue-400 hover:bg-blue-600/30 transition-colors text-xs" data-password="${pwd}">
-                                Copy
-                            </button>
-                        `;
-                        multiplePasswordsList.appendChild(passwordItem);
-                    });
-                    
-                    // Show the container
-                    multiplePasswordsContainer.classList.remove('hidden');
-                    
-                    // Add copy handlers for individual passwords
-                    document.querySelectorAll('.copy-single-password').forEach(btn => {
-                        btn.addEventListener('click', function() {
-                            const password = this.getAttribute('data-password');
-                            navigator.clipboard.writeText(password).then(() => {
-                                const originalText = this.textContent;
-                                this.textContent = 'Copied!';
-                                this.classList.add('bg-green-600/20', 'border-green-500/30', 'text-green-400');
-                                this.classList.remove('bg-blue-600/20', 'border-blue-500/30', 'text-blue-400');
-                                
-                                setTimeout(() => {
-                                    this.textContent = originalText;
-                                    this.classList.remove('bg-green-600/20', 'border-green-500/30', 'text-green-400');
-                                    this.classList.add('bg-blue-600/20', 'border-blue-500/30', 'text-blue-400');
-                                }, 2000);
-                            });
-                        });
-                    });
-                });
-            }
-            
-            // Copy All Passwords
-            if (copyAllPasswordsBtn) {
-                copyAllPasswordsBtn.addEventListener('click', function() {
-                    const passwords = Array.from(document.querySelectorAll('.copy-single-password'))
-                        .map(btn => btn.getAttribute('data-password'));
-                    const allPasswords = passwords.join('\n');
-                    
-                    navigator.clipboard.writeText(allPasswords).then(() => {
-                        const originalText = this.textContent;
-                        this.textContent = 'All Copied!';
-                        this.classList.add('text-green-400');
-                        this.classList.remove('text-blue-400');
-                        
-                        setTimeout(() => {
-                            this.textContent = originalText;
-                            this.classList.remove('text-green-400');
-                            this.classList.add('text-blue-400');
-                        }, 2000);
-                    });
-                });
-            }
-            
-            if (copyPasswordBtn) {
-                copyPasswordBtn.addEventListener('click', function() {
-                    navigator.clipboard.writeText(generatedPassword.textContent).then(() => {
-                        const originalText = copyPasswordBtn.textContent;
-                        copyPasswordBtn.textContent = 'Copied!';
-                        copyPasswordBtn.classList.add('bg-green-600/20', 'border-green-500/30', 'text-green-400');
-                        copyPasswordBtn.classList.remove('bg-blue-600/20', 'border-blue-500/30', 'text-blue-400');
-                        
-                        setTimeout(() => {
-                            copyPasswordBtn.textContent = originalText;
-                            copyPasswordBtn.classList.remove('bg-green-600/20', 'border-green-500/30', 'text-green-400');
-                            copyPasswordBtn.classList.add('bg-blue-600/20', 'border-blue-500/30', 'text-blue-400');
-                        }, 2000);
-                    });
-                });
-            }
+        });
 
-            // Public IP copy functionality
-            const publicIpEl = document.getElementById('public-ip');
-            const copyPublicIpBtn = document.getElementById('copy-public-ip');
-            if (copyPublicIpBtn && publicIpEl) {
-                copyPublicIpBtn.addEventListener('click', function() {
-                    navigator.clipboard.writeText(publicIpEl.textContent.trim()).then(() => {
-                        const originalText = copyPublicIpBtn.textContent;
-                        copyPublicIpBtn.textContent = 'Copied!';
-                        copyPublicIpBtn.classList.add('bg-green-600/20', 'border-green-500/30', 'text-green-400');
-                        copyPublicIpBtn.classList.remove('bg-blue-600/20', 'border-blue-500/30', 'text-blue-400');
-
-                        setTimeout(() => {
-                            copyPublicIpBtn.textContent = originalText;
-                            copyPublicIpBtn.classList.remove('bg-green-600/20', 'border-green-500/30', 'text-green-400');
-                            copyPublicIpBtn.classList.add('bg-blue-600/20', 'border-blue-500/30', 'text-blue-400');
-                        }, 2000);
-                    });
-                });
-            }
-            
-            // JSON Beautifier functionality
-            const jsonInput = document.getElementById('json-input');
-            const jsonOutput = document.getElementById('json-output');
-            const indentSelect = document.getElementById('indent-select');
-            const clearJsonBtn = document.getElementById('clear-json');
-            const copyJsonBtn = document.getElementById('copy-json');
-            
-            function beautifyJSON() {
-                try {
-                    const input = jsonInput.value;
-                    const parsed = JSON.parse(input);
-                    const indent = parseInt(indentSelect.value);
-                    const beautified = JSON.stringify(parsed, null, indent);
-                    jsonOutput.innerHTML = `<code>${beautified}</code>`;
-                } catch (e) {
-                    jsonOutput.innerHTML = `<code class="text-red-400">Invalid JSON format</code>`;
-                }
-            }
-            
-            if (jsonInput) {
-                jsonInput.addEventListener('input', beautifyJSON);
-            }
-            
-            if (indentSelect) {
-                indentSelect.addEventListener('change', beautifyJSON);
-            }
-            
-            if (clearJsonBtn) {
-                clearJsonBtn.addEventListener('click', function() {
-                    jsonInput.value = '';
-                    jsonOutput.innerHTML = '<code></code>';
-                });
-            }
-            
-            if (copyJsonBtn) {
-                copyJsonBtn.addEventListener('click', function() {
-                    const text = jsonOutput.textContent;
-                    navigator.clipboard.writeText(text).then(() => {
-                        const originalText = copyJsonBtn.textContent;
-                        copyJsonBtn.textContent = 'Copied!';
-                        copyJsonBtn.classList.add('text-green-400');
-                        copyJsonBtn.classList.remove('text-gray-400');
-                        
-                        setTimeout(() => {
-                            copyJsonBtn.textContent = originalText;
-                            copyJsonBtn.classList.remove('text-green-400');
-                            copyJsonBtn.classList.add('text-gray-400');
-                        }, 2000);
-                    });
-                });
-            }
-            
-            // IP Address Tools functionality
-            const ipLookupInput = document.getElementById('ip-lookup-input');
-            const ipLookupBtn = document.getElementById('ip-lookup-btn');
-            const ipResults = document.getElementById('ip-results');
-            
-            // IP Lookup functionality
-            if (ipLookupBtn && ipLookupInput) {
-                ipLookupBtn.addEventListener('click', async function() {
-                    const ip = ipLookupInput.value.trim();
-                    
-                    if (!ip) {
-                        alert('Please enter an IP address');
-                        return;
-                    }
-
-                    if (!isValidIP(ip)) {
-                        alert('Please enter a valid IP address');
-                        return;
-                    }
-
-                    try {
-                        // Using the same API as ip-address.html
-                        const response = await fetch(`https://ipapi.co/${ip}/json/`);
-                        const data = await response.json();
-                        
-                        if (data.error) {
-                            alert(data.reason || 'Unable to lookup IP information');
-                            return;
-                        }
-
-                        displayIPInfo(data);
-                    } catch (error) {
-                        alert('Unable to lookup IP information');
-                    }
-                });
-            }
-            
-            // Helper functions for IP tools
-            function isValidIP(ip) {
-                const ipRegex = /^(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$/;
-                return ipRegex.test(ip);
-            }
-            
-            function displayIPInfo(data) {
-                document.getElementById('result-ip').textContent = data.ip || 'N/A';
-                document.getElementById('result-country').textContent = data.country_name || 'N/A';
-                document.getElementById('result-region').textContent = data.region || 'N/A';
-                document.getElementById('result-city').textContent = data.city || 'N/A';
-                document.getElementById('result-isp').textContent = data.org || 'N/A';
-                document.getElementById('result-org').textContent = data.org || 'N/A';
-                ipResults.classList.remove('hidden');
-            }
-            
-            // Initialize with IP Address Tools
-            switchTool('ip');
-            beautifyJSON();
-            
-            // Animate stats on scroll
-            const observerOptions = {
-                threshold: 0.1,
-                rootMargin: '0px 0px -50px 0px'
+        function displayTabContent(category) {
+            const categoryMap = {
+                'generation': 'encoders',
+                'encoders': 'encoders',
+                'generators': 'generators',
+                'vapt': 'vapt',
+                'dev': 'dev'
             };
+            const targetCategory = categoryMap[category] || 'encoders';
+            const tools = allToolsData.filter(tool => tool.category === targetCategory).slice(0, 8);
+            
+            tabContent.innerHTML = tools.map(tool => `
+                <a href="${tool.href}" class="card">
+                    <div class="text-4xl mb-4">${tool.icon}</div>
+                    <h3 class="text-lg font-bold mb-2">${tool.name}</h3>
+                    <p class="text-sm text-gray-400">${tool.description}</p>
+                </a>
+            `).join('');
+        }
 
-            const observer = new IntersectionObserver((entries) => {
-                entries.forEach(entry => {
-                    if (entry.isIntersecting) {
-                        entry.target.style.opacity = '1';
-                        entry.target.style.transform = 'translateY(0)';
+        // Initialize with first tab
+        displayTabContent('generation');
+
+        // Search functionality
+        function performHeroSearch(searchTerm) {
+            const term = searchTerm.toLowerCase().trim();
+            if (term === '') return [];
+
+            return allToolsData.filter(tool => {
+                const nameMatch = tool.name.toLowerCase().includes(term);
+                const descMatch = tool.description.toLowerCase().includes(term);
+                const keywordMatch = tool.keywords.toLowerCase().includes(term);
+                return nameMatch || descMatch || keywordMatch;
+            }).sort((a, b) => {
+                const aTitleMatch = a.name.toLowerCase().includes(term);
+                const bTitleMatch = b.name.toLowerCase().includes(term);
+                if (aTitleMatch && !bTitleMatch) return -1;
+                if (!aTitleMatch && bTitleMatch) return 1;
+                return 0;
+            });
+        }
+
+        function highlightSearchTerm(text, term) {
+            if (!term) return text;
+            const regex = new RegExp(`(${term})`, 'gi');
+            return text.replace(regex, '<span class="text-green">$1</span>');
+        }
+
+        function displayHeroSearchResults(tools, searchTerm) {
+            if (tools.length === 0) {
+                heroSearchResultsContent.innerHTML = '';
+                heroNoResults.classList.remove('hidden');
+                heroSearchResults.classList.remove('hidden');
+                return;
+            }
+
+            heroNoResults.classList.add('hidden');
+            heroSearchResultsContent.innerHTML = tools.slice(0, 8).map(tool => {
+                const highlightedTitle = highlightSearchTerm(tool.name, searchTerm);
+                const highlightedDesc = highlightSearchTerm(tool.description, searchTerm);
+                
+                return `
+                    <a href="${tool.href}" class="search-result-item">
+                        <div class="w-12 h-12 rounded-lg flex items-center justify-center bg-gray-800 flex-shrink-0">
+                            <span class="text-2xl">${tool.icon}</span>
+                        </div>
+                        <div class="flex-1 min-w-0">
+                            <h4 class="font-semibold text-white text-base mb-1">${highlightedTitle}</h4>
+                            <p class="text-sm text-gray-400">${highlightedDesc}</p>
+                        </div>
+                        <svg class="w-5 h-5 text-gray-500 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+                        </svg>
+                    </a>
+                `;
+            }).join('');
+
+            heroSearchResults.classList.remove('hidden');
+        }
+
+        if (heroSearchInput) {
+            let heroSearchTimeout;
+            heroSearchInput.addEventListener('input', function(e) {
+                clearTimeout(heroSearchTimeout);
+                const term = e.target.value;
+                
+                heroSearchTimeout = setTimeout(() => {
+                    const results = performHeroSearch(term);
+                    displayHeroSearchResults(results, term);
+                }, 150);
+            });
+
+            heroSearchInput.addEventListener('keydown', function(e) {
+                if (e.key === 'Enter') {
+                    e.preventDefault();
+                    const term = this.value;
+                    const results = performHeroSearch(term);
+                    if (results.length > 0) {
+                        window.location.href = results[0].href;
                     }
-                });
-            }, observerOptions);
-
-            // Observe feature cards
-            document.querySelectorAll('.bg-slate-800\\/60').forEach(card => {
-                card.style.opacity = '0';
-                card.style.transform = 'translateY(30px)';
-                card.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
-                observer.observe(card);
+                } else if (e.key === 'Escape') {
+                    heroSearchResults.classList.add('hidden');
+                    this.blur();
+                }
             });
+        }
 
-            // Add click handlers for demo buttons
-            document.querySelectorAll('.bg-slate-900\\/50 button').forEach(button => {
-                button.addEventListener('click', function() {
-                    this.style.transform = 'scale(0.95)';
-                    setTimeout(() => {
-                        this.style.transform = 'scale(1)';
-                    }, 150);
-                });
+        if (searchButton) {
+            searchButton.addEventListener('click', function() {
+                const term = heroSearchInput.value;
+                const results = performHeroSearch(term);
+                displayHeroSearchResults(results, term);
             });
+        }
+
+        document.addEventListener('click', function(e) {
+            if (!e.target.closest('#heroSearchInput') && 
+                !e.target.closest('#heroSearchResults') && 
+                !e.target.closest('#searchButton')) {
+                if (heroSearchResults) heroSearchResults.classList.add('hidden');
+            }
+        });
+
+        document.addEventListener('keydown', function(e) {
+            if (e.key === '/' && !e.target.matches('input, textarea')) {
+                e.preventDefault();
+                if (heroSearchInput) heroSearchInput.focus();
+            }
         });
     </script>
     
-    <!-- Floating Contact Button (smaller size) -->
-    <a href="contact.html" aria-label="Contact Us" class="fixed bottom-20 right-6 z-50 p-2.5 rounded-full bg-gradient-to-r from-green-500 to-teal-500 text-white shadow-lg border border-white/20 hover:from-teal-600 hover:to-green-600 hover:scale-110 transition-all">
-        <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
-        </svg>
-    </a>
+    <script>
+        fetch("footer.html")
+        .then(response => response.text())
+        .then(data => {
+            document.getElementById("footer").innerHTML = data;
+        })
+        .catch(err => console.error("Failed to load footer:", err));
+    </script>
+
+    <div id="footer"></div>
     
     <script src="js/theme-toggle.js"></script>
     <script src="js/common.js"></script>
