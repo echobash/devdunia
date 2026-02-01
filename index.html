@@ -3,457 +3,221 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    
-    <!-- Favicon -->
     <link rel="icon" type="image/png" href="images/logo.png">
     <link rel="apple-touch-icon" href="images/logo.png">
-    
-    <!-- Primary SEO Meta Tags -->
-    <title>DevDunia - Developer & Pen Testing Tools | 50+ Free Dev & Security Tools</title>
-    <meta name="title" content="DevDunia - Developer & Pen Testing Tools | 50+ Free Dev & Security Tools">
-    <meta name="description" content="Where development meets security. 50+ powerful tools for developers and VAPT professionals. From JSON beautifying to clickjacking testing, everything you need in one unified platform.">
-    <meta name="keywords" content="json formatter, base64 encoder, password generator, jwt decoder, sql formatter, regex tester, url encoder, hash generator, developer tools, VAPT tools, security tools, dev tools, online tools, free tools, JSON beautifier, clickjacking checker, HTTP headers, vulnerability assessment, penetration testing, developer utilities, programming tools, coding tools, DevDunia">
-    <meta name="author" content="DevDunia">
-    <meta name="robots" content="index, follow">
-    <meta name="language" content="English">
-    <meta name="revisit-after" content="7 days">
-    
-    <!-- Open Graph / Facebook -->
-    <meta property="og:type" content="website">
-    <meta property="og:url" content="https://devdunia.com/">
-    <meta property="og:title" content="DevDunia - Developer & Pen Testing Tools Platform">
-    <meta property="og:description" content="Where development meets security. 50+ powerful tools for developers and VAPT professionals. From JSON beautifying to clickjacking testing, everything you need in one unified platform.">
-    <meta property="og:image" content="https://devdunia.com/images/og-image.png">
-    <meta property="og:site_name" content="DevDunia">
-    <meta property="og:locale" content="en_US">
-    
-    <!-- Twitter -->
-    <meta property="twitter:card" content="summary_large_image">
-    <meta property="twitter:url" content="https://devdunia.com/">
-    <meta property="twitter:title" content="DevDunia - Developer & Pen Testing Tools Platform">
-    <meta property="twitter:description" content="Where development meets security. 50+ powerful tools for developers and VAPT professionals.">
-    <meta property="twitter:image" content="https://devdunia.com/images/twitter-card.png">
-    
-    <!-- Additional SEO -->
+    <title>DevDunia - 100+ Free Dev & VAPT Tools in One Place</title>
+    <meta name="description" content="Encode, decode, format, generate, and test—all in the browser. JSON, Base64, JWT, regex, clickjacking checks, and 100+ more tools for developers and pentesters. Free and open source.">
     <meta name="theme-color" content="#0F172A">
-    <meta name="msapplication-TileColor" content="#0F172A">
     <link rel="canonical" href="https://devdunia.com/">
-    
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
-    
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        html { scroll-behavior: smooth; }
         body {
-            font-family: 'Inter', system-ui, -apple-system, sans-serif;
-            background: linear-gradient(135deg, #0c1929 0%, #0f172a 50%, #1a1a2e 100%);
-            color: #ffffff;
+            font-family: 'Inter', system-ui, sans-serif;
+            background: linear-gradient(165deg, #0c1929 0%, #0f172a 35%, #1a1a2e 100%);
+            color: #fff;
             min-height: 100vh;
-            overflow-x: hidden;
+            -webkit-font-smoothing: antialiased;
         }
-
-        /* Gradient text for headline */
         .gradient-text {
-            background: linear-gradient(90deg, #f472b6, #a855f7, #6366f1, #3b82f6);
+            background: linear-gradient(90deg, #f472b6, #a855f7, #6366f1);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             background-clip: text;
         }
-
-        /* Gradient button */
-        .btn-gradient {
-            background: linear-gradient(135deg, #6366f1, #8b5cf6, #a855f7);
-            border: none;
-            color: white;
-            padding: 16px 32px;
-            border-radius: 50px;
-            font-weight: 600;
-            font-size: 14px;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            display: inline-flex;
-            align-items: center;
-            gap: 12px;
-            text-decoration: none;
-        }
-
-        .btn-gradient:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 10px 30px rgba(139, 92, 246, 0.4);
-        }
-
-        /* Outline button */
-        .btn-outline {
-            background: transparent;
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            color: white;
-            padding: 16px 32px;
-            border-radius: 50px;
-            font-weight: 500;
-            font-size: 14px;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            display: inline-flex;
-            align-items: center;
-            gap: 12px;
-            text-decoration: none;
-        }
-
-        .btn-outline:hover {
-            background: rgba(255, 255, 255, 0.05);
-            border-color: rgba(255, 255, 255, 0.3);
-        }
-
-        /* Tool card */
-        .tool-card {
-            background: rgba(255, 255, 255, 0.03);
-            border: 1px solid rgba(255, 255, 255, 0.08);
+        .use-case-card {
+            background: rgba(255,255,255,0.04);
+            border: 1px solid rgba(255,255,255,0.08);
             border-radius: 16px;
-            backdrop-filter: blur(10px);
+            transition: transform 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
         }
-
-        /* Tab styles */
-        .tool-tab {
-            padding: 16px 24px;
-            font-size: 13px;
-            font-weight: 500;
-            color: rgba(255, 255, 255, 0.5);
-            background: transparent;
-            border: none;
-            cursor: pointer;
-            transition: all 0.2s ease;
-            white-space: nowrap;
+        .use-case-card:hover {
+            transform: translateY(-4px);
+            border-color: rgba(99, 102, 241, 0.3);
+            box-shadow: 0 12px 40px rgba(99, 102, 241, 0.12);
         }
-
-        .tool-tab:hover {
-            color: rgba(255, 255, 255, 0.8);
-        }
-
-        .tool-tab.active {
-            color: #6366f1;
-            border-bottom: 2px solid #6366f1;
-        }
-
-        /* Input styles */
-        .tool-input {
-            background: rgba(255, 255, 255, 0.05);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            border-radius: 8px;
-            padding: 14px 16px;
-            color: white;
-            font-size: 14px;
-            width: 100%;
-            transition: all 0.2s ease;
-        }
-
-        .tool-input:focus {
-            outline: none;
-            border-color: #6366f1;
-            background: rgba(255, 255, 255, 0.08);
-        }
-
-        .tool-input::placeholder {
-            color: rgba(255, 255, 255, 0.4);
-        }
-
-        /* Copy button */
-        .btn-copy {
-            background: rgba(255, 255, 255, 0.1);
-            border: none;
-            color: white;
-            padding: 10px 20px;
-            border-radius: 6px;
-            font-size: 13px;
-            font-weight: 500;
-            cursor: pointer;
-            transition: all 0.2s ease;
-        }
-
-        .btn-copy:hover {
-            background: rgba(255, 255, 255, 0.15);
-        }
-
-        /* Lookup button */
-        .btn-lookup {
-            background: linear-gradient(135deg, #ec4899, #f43f5e);
-            border: none;
-            color: white;
-            padding: 14px 24px;
-            border-radius: 8px;
-            font-size: 13px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.2s ease;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-
-        .btn-lookup:hover {
-            transform: translateY(-1px);
-            box-shadow: 0 5px 20px rgba(236, 72, 153, 0.4);
-        }
-
-        /* Stats dot */
-        .stat-dot {
-            width: 8px;
-            height: 8px;
-            border-radius: 50%;
-            background: #10b981;
-        }
-
-        /* IP display */
-        .ip-display {
-            font-family: 'Monaco', 'Menlo', monospace;
-            font-size: 18px;
-            color: #6366f1;
-            letter-spacing: 1px;
-        }
-
-        /* Floating elements */
-        .floating-btn {
-            position: fixed;
-            bottom: 24px;
-            right: 24px;
-            width: 56px;
-            height: 56px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            z-index: 50;
-        }
-
-        .floating-btn:hover {
-            transform: scale(1.1);
-        }
-
-        .chat-btn {
+        .use-case-card h3 { font-size: 1.1rem; font-weight: 600; margin-bottom: 0.5rem; }
+        .use-case-card p { font-size: 0.9rem; color: rgba(255,255,255,0.65); line-height: 1.5; }
+        .use-case-card ul { font-size: 0.85rem; color: rgba(255,255,255,0.6); line-height: 1.7; padding-left: 1.25rem; margin-top: 0.5rem; }
+        .pill { display: inline-block; padding: 0.25rem 0.6rem; border-radius: 9999px; font-size: 0.75rem; font-weight: 500; background: rgba(99,102,241,0.2); color: #a5b4fc; margin-right: 0.35rem; margin-bottom: 0.35rem; }
+        .btn-primary {
             background: linear-gradient(135deg, #6366f1, #8b5cf6);
             color: white;
+            padding: 14px 28px;
+            border-radius: 12px;
+            font-weight: 600;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+            box-shadow: 0 4px 14px rgba(99,102,241,0.25);
         }
-
-        .theme-btn {
-            background: rgba(255, 255, 255, 0.1);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            color: white;
-            bottom: 90px;
+        .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(139,92,246,0.4); }
+        .btn-outline {
+            background: rgba(255,255,255,0.05);
+            border: 1px solid rgba(255,255,255,0.15);
+            color: rgba(255,255,255,0.95);
+            padding: 14px 28px;
+            border-radius: 12px;
+            font-weight: 500;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            transition: background 0.2s, border-color 0.2s, transform 0.2s;
         }
+        .btn-outline:hover { background: rgba(255,255,255,0.1); border-color: rgba(255,255,255,0.25); transform: translateY(-1px); }
+        .section-title { font-size: clamp(1.5rem, 3vw, 2rem); font-weight: 700; letter-spacing: -0.02em; margin-bottom: 0.5rem; }
+        .section-sub { color: rgba(255,255,255,0.6); font-size: 1.05rem; max-width: 600px; }
+        .floating-btn {
+            position: fixed; bottom: 24px; right: 24px;
+            width: 52px; height: 52px; border-radius: 14px;
+            display: flex; align-items: center; justify-content: center;
+            background: linear-gradient(135deg, #6366f1, #8b5cf6);
+            color: white; border: 1px solid rgba(255,255,255,0.1);
+            box-shadow: 0 4px 20px rgba(0,0,0,0.2);
+            transition: transform 0.2s, box-shadow 0.2s; z-index: 50;
+        }
+        .floating-btn:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(0,0,0,0.3); }
+        .theme-btn { bottom: 88px; background: rgba(255,255,255,0.08); }
     </style>
 </head>
 <body>
-    <!-- Header -->
-    <header class="px-8 py-6">
-        <div class="flex items-center gap-3">
-            <img src="images/logo.png" alt="DevDunia" class="h-12 w-12 rounded-lg">
-            <span class="text-xl font-semibold text-blue-400">DevDunia</span>
+    <header class="border-b border-white/10 backdrop-blur-xl sticky top-0 z-40">
+        <div class="max-w-6xl mx-auto px-6 py-4 flex items-center justify-between">
+            <a href="index.html" class="flex items-center gap-3">
+                <img src="images/logo.png" alt="DevDunia" class="h-10 w-10 rounded-xl">
+                <span class="text-lg font-semibold text-white/95">DevDunia</span>
+            </a>
+            <a href="home.html" class="btn-primary text-sm py-2.5 px-5">
+                <span>Browse all tools</span>
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6"/></svg>
+            </a>
         </div>
     </header>
 
-    <!-- Main Content -->
-    <main class="container mx-auto px-8 py-12">
-        <div class="flex flex-col lg:flex-row items-start gap-16">
-            
-            <!-- Left: Hero Content -->
-            <div class="flex-1 max-w-2xl">
-                <!-- Headline -->
-                <h1 class="text-5xl lg:text-6xl font-bold leading-tight mb-8">
-                    Developer and<br>
-                    <span class="gradient-text">Pen Testing Tools</span> at<br>
-                    your fingertips
-                </h1>
-
-                <!-- Subtitle -->
-                <p class="text-lg text-gray-400 leading-relaxed mb-10 max-w-xl">
-                    Where development meets security. 50+ powerful tools for developers and VAPT professionals. From JSON beautifying to clickjacking testing, everything you need in one unified platform.
-                </p>
-
-                <!-- Action Buttons -->
-                <div class="flex flex-wrap gap-4 mb-12">
-                    <a href="home.html" class="btn-gradient">
-                        <span class="text-lg">🔧</span>
-                        Explore<br>All Tools
-                    </a>
-                    <a href="https://github.com/AliAnwar1/devdunia" target="_blank" class="btn-outline">
-                        <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
-                            <path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/>
-                        </svg>
-                        Star on<br>GitHub
-                    </a>
-                    <a href="support.html" class="btn-outline">
-                        <span class="text-lg">❤️</span>
-                        Support<br>DevDunia
-                    </a>
-                </div>
-
-                <!-- Stats -->
-                <div class="flex items-center gap-8 text-sm text-gray-400">
-                    <div class="flex items-center gap-2">
-                        <div class="stat-dot"></div>
-                        <span>50+ Tools</span>
-                    </div>
-                    <div class="flex items-center gap-2">
-                        <div class="stat-dot" style="background: #6366f1;"></div>
-                        <span>100% Free</span>
-                    </div>
-                    <div class="flex items-center gap-2">
-                        <div class="stat-dot" style="background: #f59e0b;"></div>
-                        <span>Open Source</span>
-                    </div>
-                </div>
+    <main>
+        <!-- Hero -->
+        <section class="max-w-4xl mx-auto px-6 pt-16 pb-20 text-center">
+            <h1 class="text-4xl sm:text-5xl lg:text-6xl font-bold leading-tight mb-6">
+                When you need to
+                <span class="gradient-text">encode, format, or test</span>,
+                <br class="hidden sm:block"> skip the tab hunt.
+            </h1>
+            <p class="text-lg sm:text-xl text-white/70 max-w-2xl mx-auto mb-10 leading-relaxed">
+                100+ dev and VAPT tools in one place. Run them in your browser—no signup, no install. Built for developers and pentesters who move fast.
+            </p>
+            <div class="flex flex-wrap gap-4 justify-center">
+                <a href="home.html" class="btn-primary">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/></svg>
+                    Explore all tools
+                </a>
+                <a href="https://github.com/AliAnwar1/devdunia" target="_blank" rel="noopener noreferrer" class="btn-outline">
+                    <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/></svg>
+                    Star on GitHub
+                </a>
             </div>
-
-            <!-- Right: Tool Card -->
-            <div class="flex-1 w-full max-w-md">
-                <div class="tool-card">
-                    <!-- Tabs -->
-                    <div class="flex border-b border-white/10">
-                        <button class="tool-tab active" data-tool="ip">IP Address Tools</button>
-                        <button class="tool-tab" data-tool="password">Password Generator</button>
-                        <button class="tool-tab" data-tool="json">JSON Beautifier</button>
-                    </div>
-
-                    <!-- Tab Content -->
-                    <div class="p-6">
-                        <!-- IP Address Tools -->
-                        <div id="tab-ip" class="tool-content">
-                            <h3 class="text-white font-semibold mb-4">IP Address Lookup</h3>
-                            <div class="flex gap-3">
-                                <input 
-                                    type="text" 
-                                    id="ip-lookup-input"
-                                    class="tool-input flex-1" 
-                                    placeholder="Enter IP address (e.g., 8.8.8.8)"
-                                >
-                                <button class="btn-lookup" onclick="lookupIP()">
-                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
-                                    </svg>
-                                    Lookup
-                                </button>
-                            </div>
-                        </div>
-
-                        <!-- Password Generator -->
-                        <div id="tab-password" class="tool-content hidden">
-                            <h3 class="text-white font-semibold mb-4">Generate Secure Password</h3>
-                            <div class="bg-black/20 rounded-lg p-4 mb-4">
-                                <p class="ip-display text-center" id="generated-password">Click Generate</p>
-                            </div>
-                            <div class="flex gap-3 mb-4">
-                                <input type="number" id="password-length" value="16" min="8" max="64" class="tool-input w-24" placeholder="Length">
-                                <button class="btn-lookup flex-1" onclick="generatePassword()">
-                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path>
-                                    </svg>
-                                    Generate
-                                </button>
-                            </div>
-                            <button class="btn-copy w-full" onclick="copyPassword()">Copy Password</button>
-                        </div>
-
-                        <!-- JSON Beautifier -->
-                        <div id="tab-json" class="tool-content hidden">
-                            <h3 class="text-white font-semibold mb-4">Format JSON</h3>
-                            <textarea 
-                                id="json-input"
-                                class="tool-input mb-4 h-32 resize-none" 
-                                placeholder='{"key": "value", "nested": {"example": true}}'
-                            ></textarea>
-                            <button class="btn-lookup w-full mb-4" onclick="beautifyJSON()">
-                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7"></path>
-                                </svg>
-                                Beautify JSON
-                            </button>
-                            <a href="json-beautifier.html" class="text-sm text-purple-400 hover:underline">Open full JSON Beautifier →</a>
-                        </div>
-                    </div>
-                </div>
+            <div class="flex flex-wrap gap-6 justify-center mt-10 text-sm text-white/50">
+                <span>100+ tools</span>
+                <span>•</span>
+                <span>Free</span>
+                <span>•</span>
+                <span>Open source</span>
             </div>
-        </div>
+        </section>
+
+        <!-- Use cases - interactive grid -->
+        <section class="max-w-6xl mx-auto px-6 pb-24" id="use-cases">
+            <h2 class="section-title text-center mb-2">What can you do here?</h2>
+            <p class="section-sub text-center mx-auto mb-12">Pick a use case and jump straight to the tools.</p>
+
+            <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-5">
+                <a href="home.html#encoders" class="use-case-card p-6 block text-left">
+                    <span class="text-2xl mb-3 block">🔐</span>
+                    <h3>Encode & decode</h3>
+                    <p>Transform data without leaving the browser.</p>
+                    <ul>
+                        <li>JSON beautifier & minifier</li>
+                        <li>Base64, URL, Base32, Base58, Base62</li>
+                        <li>String transformer, hash generator</li>
+                        <li>Caesar cipher, JWT decoder</li>
+                    </ul>
+                </a>
+                <a href="home.html#encoders" class="use-case-card p-6 block text-left">
+                    <span class="text-2xl mb-3 block">✨</span>
+                    <h3>Format & convert</h3>
+                    <p>Clean and convert between formats in one click.</p>
+                    <ul>
+                        <li>XML & SQL formatters</li>
+                        <li>CSV ⇄ JSON, YAML ⇄ JSON</li>
+                        <li>PHP to JSON</li>
+                    </ul>
+                </a>
+                <a href="home.html#generators" class="use-case-card p-6 block text-left">
+                    <span class="text-2xl mb-3 block">⚡</span>
+                    <h3>Generate</h3>
+                    <p>Create what you need on the fly.</p>
+                    <ul>
+                        <li>Password & GUID/UUID</li>
+                        <li>QR code, Lorem ipsum</li>
+                        <li>Env files</li>
+                    </ul>
+                </a>
+                <a href="home.html" class="use-case-card p-6 block text-left">
+                    <span class="text-2xl mb-3 block">🛠️</span>
+                    <h3>Dev utilities</h3>
+                    <p>Test, compare, and inspect—all client-side.</p>
+                    <ul>
+                        <li>Regex tester, cURL & cron describer</li>
+                        <li>Markdown editor, diff checker</li>
+                        <li>IP tools, word counter</li>
+                        <li>Epoch & timezone converters</li>
+                    </ul>
+                </a>
+                <a href="home.html#vapt-tools" class="use-case-card p-6 block text-left">
+                    <span class="text-2xl mb-3 block">🛡️</span>
+                    <h3>Security & VAPT</h3>
+                    <p>Quick checks for dev and pentest workflows.</p>
+                    <ul>
+                        <li>Clickjacking checker</li>
+                        <li>HTTP response headers</li>
+                        <li>OWASP Top 10, email header analyzer</li>
+                    </ul>
+                </a>
+                <a href="home.html" class="use-case-card p-6 block text-left">
+                    <span class="text-2xl mb-3 block">📚</span>
+                    <h3>Guides & reference</h3>
+                    <p>Docs and helpers when you’re deep in the stack.</p>
+                    <ul>
+                        <li>Docker, PostgreSQL, Redis</li>
+                        <li>Python (requests, Flask, pandas, etc.)</li>
+                        <li>Data structures, Mermaid renderer</li>
+                    </ul>
+                </a>
+            </div>
+        </section>
+
+        <!-- CTA -->
+        <section class="max-w-3xl mx-auto px-6 pb-24 text-center">
+            <p class="text-xl text-white/80 mb-6">No account, no install. Just open a tool and go.</p>
+            <a href="home.html" class="btn-primary text-base px-8 py-4">
+                Browse all 100+ tools
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6"/></svg>
+            </a>
+        </section>
     </main>
 
-    <!-- Floating Buttons -->
-    <button class="floating-btn chat-btn" title="Contact">
-        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"></path>
-        </svg>
+    <a href="contact.html" class="floating-btn" aria-label="Contact" title="Contact">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/></svg>
+    </a>
+    <button type="button" class="floating-btn theme-btn" aria-label="Toggle theme" title="Toggle theme">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"/></svg>
     </button>
-    <button class="floating-btn theme-btn" title="Toggle Theme">
-        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"></path>
-        </svg>
-    </button>
-
-    <script>
-        // Tab switching
-        const tabs = document.querySelectorAll('.tool-tab');
-        const contents = document.querySelectorAll('.tool-content');
-
-        tabs.forEach(tab => {
-            tab.addEventListener('click', () => {
-                tabs.forEach(t => t.classList.remove('active'));
-                tab.classList.add('active');
-
-                const toolName = tab.dataset.tool;
-                contents.forEach(content => {
-                    content.classList.add('hidden');
-                });
-                document.getElementById(`tab-${toolName}`).classList.remove('hidden');
-            });
-        });
-
-        // Lookup IP (redirect to IP tools page)
-        function lookupIP() {
-            const ip = document.getElementById('ip-lookup-input').value.trim();
-            if (ip) {
-                window.location.href = `ip-address.html?ip=${encodeURIComponent(ip)}`;
-            }
-        }
-
-        // Password Generator
-        function generatePassword() {
-            const length = parseInt(document.getElementById('password-length').value) || 16;
-            const charset = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^&*()_+-=[]{}|;:,.<>?';
-            let password = '';
-            for (let i = 0; i < length; i++) {
-                password += charset.charAt(Math.floor(Math.random() * charset.length));
-            }
-            document.getElementById('generated-password').textContent = password;
-        }
-
-        function copyPassword() {
-            const password = document.getElementById('generated-password').textContent;
-            if (password && password !== 'Click Generate') {
-                navigator.clipboard.writeText(password).then(() => {
-                    const btn = event.target;
-                    btn.textContent = 'Copied!';
-                    setTimeout(() => btn.textContent = 'Copy Password', 2000);
-                });
-            }
-        }
-
-        // JSON Beautifier
-        function beautifyJSON() {
-            const input = document.getElementById('json-input');
-            try {
-                const parsed = JSON.parse(input.value);
-                input.value = JSON.stringify(parsed, null, 2);
-            } catch (e) {
-                alert('Invalid JSON: ' + e.message);
-            }
-        }
-    </script>
 
     <script src="js/common.js"></script>
 </body>
