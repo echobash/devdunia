@@ -1,18 +1,18 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     
     <!-- Favicon -->
     <link rel="icon" type="image/png" href="images/logo.png">
     <link rel="apple-touch-icon" href="images/logo.png">
     
     <!-- Primary SEO Meta Tags -->
-    <title>DevDunia - Developer & VAPT Tools Platform | 50+ Free Dev & Security Tools</title>
-    <meta name="title" content="DevDunia - Developer & VAPT Tools Platform | 50+ Free Dev & Security Tools">
-    <meta name="description" content="All developer tools in one place. JSON formatter, Base64 encoder, password generator, JWT decoder, SQL formatter, regex tester, and 50+ more free tools. Stop switching between sites - everything you need in one unified platform.">
-    <meta name="keywords" content="json formatter, base64 encoder, password generator, jwt decoder, sql formatter, regex tester, url encoder, hash generator, developer tools, VAPT tools, security tools, dev tools, online tools, free tools, JSON beautifier, clickjacking checker, HTTP headers, vulnerability assessment, penetration testing, developer utilities, programming tools, coding tools, DevDunia, all in one developer tools">
+    <title>DevDunia - Developer & Pen Testing Tools | 50+ Free Dev & Security Tools</title>
+    <meta name="title" content="DevDunia - Developer & Pen Testing Tools | 50+ Free Dev & Security Tools">
+    <meta name="description" content="Where development meets security. 50+ powerful tools for developers and VAPT professionals. From JSON beautifying to clickjacking testing, everything you need in one unified platform.">
+    <meta name="keywords" content="json formatter, base64 encoder, password generator, jwt decoder, sql formatter, regex tester, url encoder, hash generator, developer tools, VAPT tools, security tools, dev tools, online tools, free tools, JSON beautifier, clickjacking checker, HTTP headers, vulnerability assessment, penetration testing, developer utilities, programming tools, coding tools, DevDunia">
     <meta name="author" content="DevDunia">
     <meta name="robots" content="index, follow">
     <meta name="language" content="English">
@@ -21,8 +21,8 @@
     <!-- Open Graph / Facebook -->
     <meta property="og:type" content="website">
     <meta property="og:url" content="https://devdunia.com/">
-    <meta property="og:title" content="DevDunia - Developer & VAPT Tools Platform">
-    <meta property="og:description" content="All developer tools in one place. JSON formatter, Base64 encoder, password generator, JWT decoder, SQL formatter, and 50+ more. Stop switching between sites.">
+    <meta property="og:title" content="DevDunia - Developer & Pen Testing Tools Platform">
+    <meta property="og:description" content="Where development meets security. 50+ powerful tools for developers and VAPT professionals. From JSON beautifying to clickjacking testing, everything you need in one unified platform.">
     <meta property="og:image" content="https://devdunia.com/images/og-image.png">
     <meta property="og:site_name" content="DevDunia">
     <meta property="og:locale" content="en_US">
@@ -30,8 +30,8 @@
     <!-- Twitter -->
     <meta property="twitter:card" content="summary_large_image">
     <meta property="twitter:url" content="https://devdunia.com/">
-    <meta property="twitter:title" content="DevDunia - Developer & VAPT Tools Platform">
-    <meta property="twitter:description" content="All developer tools in one place. JSON formatter, Base64 encoder, password generator, JWT decoder, SQL formatter, and 50+ more. Stop switching between sites.">
+    <meta property="twitter:title" content="DevDunia - Developer & Pen Testing Tools Platform">
+    <meta property="twitter:description" content="Where development meets security. 50+ powerful tools for developers and VAPT professionals.">
     <meta property="twitter:image" content="https://devdunia.com/images/twitter-card.png">
     
     <!-- Additional SEO -->
@@ -51,651 +51,410 @@
             box-sizing: border-box;
         }
 
-        :root {
-            --green: #10B981;
-            --green-dark: #059669;
-            --bg: #0A0A0A;
-            --surface: #141414;
-            --surface-light: #1F1F1F;
-            --text: #FFFFFF;
-            --text-secondary: #A0A0A0;
-            --border: #2A2A2A;
-        }
-
         body {
             font-family: 'Inter', system-ui, -apple-system, sans-serif;
-            background: var(--bg);
-            color: var(--text);
+            background: linear-gradient(135deg, #0c1929 0%, #0f172a 50%, #1a1a2e 100%);
+            color: #ffffff;
+            min-height: 100vh;
             overflow-x: hidden;
-            line-height: 1.5;
         }
 
-        body::before {
-            content: '';
-            position: fixed;
-            inset: 0;
-            background-image: 
-                linear-gradient(rgba(16, 185, 129, 0.03) 1px, transparent 1px),
-                linear-gradient(90deg, rgba(16, 185, 129, 0.03) 1px, transparent 1px);
-            background-size: 50px 50px;
-            pointer-events: none;
-            z-index: 0;
+        /* Gradient text for headline */
+        .gradient-text {
+            background: linear-gradient(90deg, #f472b6, #a855f7, #6366f1, #3b82f6);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
         }
 
-        .container {
-            position: relative;
-            z-index: 1;
+        /* Gradient button */
+        .btn-gradient {
+            background: linear-gradient(135deg, #6366f1, #8b5cf6, #a855f7);
+            border: none;
+            color: white;
+            padding: 16px 32px;
+            border-radius: 50px;
+            font-weight: 600;
+            font-size: 14px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 12px;
+            text-decoration: none;
         }
 
-        /* Navigation */
-        nav {
-            background: rgba(10, 10, 10, 0.8);
-            backdrop-filter: blur(20px);
-            border-bottom: 1px solid var(--border);
-            position: sticky;
-            top: 0;
-            z-index: 100;
+        .btn-gradient:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px rgba(139, 92, 246, 0.4);
         }
 
-        /* Hero */
-        .hero-title {
-            font-size: clamp(56px, 10vw, 120px);
-            line-height: 1;
-            letter-spacing: -0.04em;
-            font-weight: 700;
-            text-transform: uppercase;
+        /* Outline button */
+        .btn-outline {
+            background: transparent;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            color: white;
+            padding: 16px 32px;
+            border-radius: 50px;
+            font-weight: 500;
+            font-size: 14px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 12px;
+            text-decoration: none;
         }
 
-        .hero-subtitle {
-            font-size: clamp(18px, 2vw, 24px);
-            color: var(--text-secondary);
-            max-width: 700px;
-            margin: 32px auto 0;
-            line-height: 1.6;
+        .btn-outline:hover {
+            background: rgba(255, 255, 255, 0.05);
+            border-color: rgba(255, 255, 255, 0.3);
         }
 
-        /* Input Field */
-        .search-input-wrapper {
-            max-width: 800px;
-            margin: 64px auto 0;
-            position: relative;
+        /* Tool card */
+        .tool-card {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 16px;
+            backdrop-filter: blur(10px);
         }
 
-        .search-input {
+        /* Tab styles */
+        .tool-tab {
+            padding: 16px 24px;
+            font-size: 13px;
+            font-weight: 500;
+            color: rgba(255, 255, 255, 0.5);
+            background: transparent;
+            border: none;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            white-space: nowrap;
+        }
+
+        .tool-tab:hover {
+            color: rgba(255, 255, 255, 0.8);
+        }
+
+        .tool-tab.active {
+            color: #6366f1;
+            border-bottom: 2px solid #6366f1;
+        }
+
+        /* Input styles */
+        .tool-input {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 8px;
+            padding: 14px 16px;
+            color: white;
+            font-size: 14px;
             width: 100%;
-            padding: 24px 80px 24px 32px;
-            font-size: 18px;
-            background: var(--surface);
-            border: 1px solid var(--border);
-            border-radius: 12px;
-            color: var(--text);
             transition: all 0.2s ease;
         }
 
-        .search-input:focus {
+        .tool-input:focus {
             outline: none;
-            border-color: var(--green);
-            box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.1);
+            border-color: #6366f1;
+            background: rgba(255, 255, 255, 0.08);
         }
 
-        .search-input::placeholder {
-            color: var(--text-secondary);
+        .tool-input::placeholder {
+            color: rgba(255, 255, 255, 0.4);
         }
 
-        .search-button {
-            position: absolute;
-            right: 8px;
-            top: 50%;
-            transform: translateY(-50%);
-            width: 64px;
-            height: 64px;
-            background: var(--green);
+        /* Copy button */
+        .btn-copy {
+            background: rgba(255, 255, 255, 0.1);
             border: none;
-            border-radius: 10px;
             color: white;
+            padding: 10px 20px;
+            border-radius: 6px;
+            font-size: 13px;
+            font-weight: 500;
             cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .btn-copy:hover {
+            background: rgba(255, 255, 255, 0.15);
+        }
+
+        /* Lookup button */
+        .btn-lookup {
+            background: linear-gradient(135deg, #ec4899, #f43f5e);
+            border: none;
+            color: white;
+            padding: 14px 24px;
+            border-radius: 8px;
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-lookup:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 5px 20px rgba(236, 72, 153, 0.4);
+        }
+
+        /* Stats dot */
+        .stat-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: #10b981;
+        }
+
+        /* IP display */
+        .ip-display {
+            font-family: 'Monaco', 'Menlo', monospace;
+            font-size: 18px;
+            color: #6366f1;
+            letter-spacing: 1px;
+        }
+
+        /* Floating elements */
+        .floating-btn {
+            position: fixed;
+            bottom: 24px;
+            right: 24px;
+            width: 56px;
+            height: 56px;
+            border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
-            transition: all 0.2s ease;
-        }
-
-        .search-button:hover {
-            background: var(--green-dark);
-            transform: translateY(-50%) scale(1.05);
-        }
-
-        .search-results {
-            position: absolute;
-            top: calc(100% + 12px);
-            left: 0;
-            right: 0;
-            background: var(--surface);
-            border: 1px solid var(--border);
-            border-radius: 12px;
-            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
-            overflow: hidden;
-            z-index: 50;
-            max-height: 500px;
-            overflow-y: auto;
-        }
-
-        .search-result-item {
-            padding: 20px 24px;
-            border-bottom: 1px solid var(--border);
-            transition: all 0.15s ease;
             cursor: pointer;
-            display: flex;
-            align-items: center;
-            gap: 16px;
-        }
-
-        .search-result-item:hover {
-            background: var(--surface-light);
-        }
-
-        .search-result-item:last-child {
-            border-bottom: none;
-        }
-
-        /* Buttons */
-        .btn-primary {
-            background: var(--green);
-            color: white;
-            padding: 16px 32px;
-            border-radius: 10px;
-            font-weight: 600;
-            font-size: 16px;
-            border: none;
-            cursor: pointer;
-            transition: all 0.2s ease;
-            text-decoration: none;
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-        }
-
-        .btn-primary:hover {
-            background: var(--green-dark);
-            transform: translateY(-2px);
-            box-shadow: 0 8px 24px rgba(16, 185, 129, 0.3);
-        }
-
-        .btn-secondary {
-            background: transparent;
-            color: var(--text);
-            padding: 16px 32px;
-            border-radius: 10px;
-            font-weight: 600;
-            font-size: 16px;
-            border: 1px solid var(--border);
-            cursor: pointer;
-            transition: all 0.2s ease;
-            text-decoration: none;
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-        }
-
-        .btn-secondary:hover {
-            border-color: var(--green);
-            color: var(--green);
-        }
-
-        /* Section Headers */
-        .section-header {
-            font-size: clamp(32px, 5vw, 64px);
-            line-height: 1.1;
-            letter-spacing: -0.02em;
-            font-weight: 700;
-            text-transform: uppercase;
-            margin-bottom: 16px;
-        }
-
-        .section-subtitle {
-            font-size: 18px;
-            color: var(--text-secondary);
-            max-width: 600px;
-        }
-
-        /* Cards */
-        .card {
-            background: var(--surface);
-            border: 1px solid var(--border);
-            border-radius: 16px;
-            padding: 32px;
             transition: all 0.3s ease;
+            z-index: 50;
         }
 
-        .card:hover {
-            border-color: var(--green);
-            transform: translateY(-4px);
-            box-shadow: 0 20px 40px rgba(16, 185, 129, 0.15);
+        .floating-btn:hover {
+            transform: scale(1.1);
         }
 
-        /* Tabs */
-        .tabs {
-            display: flex;
-            gap: 8px;
-            margin-bottom: 32px;
-            border-bottom: 1px solid var(--border);
+        .chat-btn {
+            background: linear-gradient(135deg, #6366f1, #8b5cf6);
+            color: white;
         }
 
-        .tab {
-            padding: 16px 24px;
-            background: transparent;
-            border: none;
-            border-bottom: 2px solid transparent;
-            color: var(--text-secondary);
-            font-weight: 600;
-            font-size: 14px;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-            cursor: pointer;
-            transition: all 0.2s ease;
+        .theme-btn {
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            color: white;
+            bottom: 90px;
         }
-
-        .tab:hover {
-            color: var(--text);
-        }
-
-        .tab.active {
-            color: var(--green);
-            border-bottom-color: var(--green);
-        }
-
-        /* Text Colors */
-        .text-green {
-            color: var(--green);
-        }
-
-        .scrollbar-hide::-webkit-scrollbar {
-            display: none;
-        }
-
-        .scrollbar-hide {
-            -ms-overflow-style: none;
-            scrollbar-width: none;
-        }
-
-        /* Animations */
-        @keyframes fadeIn {
-            from {
-                opacity: 0;
-                transform: translateY(20px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        .fade-in {
-            animation: fadeIn 0.6s ease-out;
-        }
-  </style>
+    </style>
 </head>
 <body>
-    <!-- Navigation -->
-    <nav>
-        <div class="container max-w-7xl mx-auto px-6 py-4">
-            <div class="flex items-center justify-between">
-                <div class="flex items-center gap-3">
-                    <img src="images/logo.png" alt="DevDunia" class="h-8 w-auto">
-                    <span class="text-xl font-bold text-green">DEVDUNIA</span>
-                            </div>
-                <div class="flex items-center gap-6">
-                    <a href="home.html" class="text-sm font-medium text-gray-400 hover:text-white transition-colors">ALL TOOLS</a>
-                    <a href="https://github.com/echobash/devdunia" target="_blank" class="btn-secondary text-sm py-2 px-4">
-                        <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
-                                <path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/>
-                            </svg>
-                        STAR
-                        </a>
-                    </div>
-                        </div>
-                        </div>
-    </nav>
-
-    <!-- Hero Section -->
-    <section class="container py-32 px-6">
-        <div class="max-w-7xl mx-auto text-center">
-
-            <!-- Search Input -->
-            <div class="search-input-wrapper fade-in">
-                <div class="relative">
-                    <input 
-                        type="text" 
-                        id="heroSearchInput"
-                        placeholder="Search for any tool... (JSON formatter, Base64 encoder, password generator...)"
-                        class="search-input"
-                        autocomplete="off"
-                    />
-                    <button class="search-button" id="searchButton">
-                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
-                        </svg>
-                            </button>
-                        </div>
-                        
-                <!-- Search Results -->
-                <div id="heroSearchResults" class="search-results hidden scrollbar-hide">
-                    <div id="heroSearchResultsContent"></div>
-                    <div id="heroNoResults" class="text-center py-12 text-gray-400 hidden">
-                        <svg class="w-12 h-12 mx-auto mb-3 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
-                        </svg>
-                        <p class="text-sm">No tools found. Try a different search.</p>
-                                    </div>
-                                </div>
-                            </div>
-                            
-            <!-- Action Buttons -->
-            <div class="flex flex-col sm:flex-row gap-4 justify-center mt-12 fade-in">
-                <a href="home.html" class="btn-primary">
-                    EXPLORE ALL TOOLS
-                </a>
-                <button class="btn-secondary">
-                    REMIX
-                                            </button>
-                                        </div>
-                                    </div>
-    </section>
-
-    <!-- Everything to Ship Section -->
-    <section class="container py-32 px-6">
-        <div class="max-w-7xl mx-auto">
-            <h2 class="section-header text-green text-center mb-4">
-                EVERYTHING TO SHIP
-                <br>
-                AWESOME TOOLS
-            </h2>
-            <p class="section-subtitle text-center mx-auto mb-16">
-                All your developer tools organized and ready to use. No switching, no bookmarks, just tools.
-            </p>
-
-            <!-- Tabs -->
-            <div class="tabs">
-                <button class="tab active" data-tab="generation">GENERATION</button>
-                <button class="tab" data-tab="encoders">ENCODERS</button>
-                <button class="tab" data-tab="generators">GENERATORS</button>
-                <button class="tab" data-tab="vapt">VAPT</button>
-                <button class="tab" data-tab="dev">DEV TOOLS</button>
-                            </div>
-                            
-            <!-- Tab Content -->
-            <div id="tabContent" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-                <!-- Content will be populated by JavaScript -->
-                        </div>
-                    </div>
-    </section>
-
-    <!-- Categories Section -->
-    <section class="container py-32 px-6">
-        <div class="max-w-7xl mx-auto">
-            <h2 class="section-header text-green text-center mb-4">
-                FIRST UNIFIED
-                <br>
-                DEV TOOLS PLATFORM
-                </h2>
-            <p class="section-subtitle text-center mx-auto mb-16">
-                Change any tool, search anything, use everything. You stay in control.
-            </p>
-
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-                <a href="home.html#encoders" class="card">
-                    <div class="text-5xl mb-6">🔧</div>
-                    <h3 class="text-2xl font-bold mb-4">ENCODERS/DECODERS</h3>
-                    <p class="text-sm text-gray-400 leading-relaxed">
-                        JSON formatter, Base64 encoder/decoder, URL encoder, hash generator, JWT decoder, Caesar cipher, and more
-                    </p>
-                </a>
-
-                <a href="home.html#generators" class="card">
-                    <div class="text-5xl mb-6">⚡</div>
-                    <h3 class="text-2xl font-bold mb-4">GENERATORS</h3>
-                    <p class="text-sm text-gray-400 leading-relaxed">
-                        Password generator, UUID generator, QR code generator, Lorem ipsum generator, and more
-                    </p>
-                </a>
-
-                <a href="home.html#vapt-tools" class="card">
-                    <div class="text-5xl mb-6">🛡️</div>
-                    <h3 class="text-2xl font-bold mb-4">VAPT TOOLS</h3>
-                    <p class="text-sm text-gray-400 leading-relaxed">
-                        Clickjacking checker, HTTP header analyzer, OWASP Top 10 guide, Email header analyzer
-                    </p>
-                </a>
-
-                <a href="home.html#dev-tools" class="card">
-                    <div class="text-5xl mb-6">🛠️</div>
-                    <h3 class="text-2xl font-bold mb-4">DEV TOOLS</h3>
-                    <p class="text-sm text-gray-400 leading-relaxed">
-                        SQL formatter, Regex tester, Markdown editor, Diff checker, Docker guide, Mermaid renderer, and more
-                    </p>
-                </a>
-            </div>
+    <!-- Header -->
+    <header class="px-8 py-6">
+        <div class="flex items-center gap-3">
+            <img src="images/logo.png" alt="DevDunia" class="h-12 w-12 rounded-lg">
+            <span class="text-xl font-semibold text-blue-400">DevDunia</span>
         </div>
-    </section>
+    </header>
 
-    <!-- CTA Section -->
-    <section class="container py-32 px-6">
-        <div class="max-w-4xl mx-auto text-center">
-            <h2 class="section-header text-green mb-8">
-                YOUR PERFECT TOOLS,
-                <br>
-                READY IN SECONDS
-                </h2>
-            <p class="section-subtitle mx-auto mb-12">
-                Type a tool name, search for what you need, or browse categories. Get on-brand tools tuned to your workflow.
-            </p>
+    <!-- Main Content -->
+    <main class="container mx-auto px-8 py-12">
+        <div class="flex flex-col lg:flex-row items-start gap-16">
+            
+            <!-- Left: Hero Content -->
+            <div class="flex-1 max-w-2xl">
+                <!-- Headline -->
+                <h1 class="text-5xl lg:text-6xl font-bold leading-tight mb-8">
+                    Developer and<br>
+                    <span class="gradient-text">Pen Testing Tools</span> at<br>
+                    your fingertips
+                </h1>
 
-            <div class="flex flex-col sm:flex-row gap-4 justify-center">
-                <a href="home.html" class="btn-primary">
-                    GET STARTED
-                </a>
-                <a href="https://github.com/echobash/devdunia" target="_blank" class="btn-secondary">
-                    STAR ON GITHUB
+                <!-- Subtitle -->
+                <p class="text-lg text-gray-400 leading-relaxed mb-10 max-w-xl">
+                    Where development meets security. 50+ powerful tools for developers and VAPT professionals. From JSON beautifying to clickjacking testing, everything you need in one unified platform.
+                </p>
+
+                <!-- Action Buttons -->
+                <div class="flex flex-wrap gap-4 mb-12">
+                    <a href="home.html" class="btn-gradient">
+                        <span class="text-lg">🔧</span>
+                        Explore<br>All Tools
+                    </a>
+                    <a href="https://github.com/AliAnwar1/devdunia" target="_blank" class="btn-outline">
+                        <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+                            <path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/>
+                        </svg>
+                        Star on<br>GitHub
+                    </a>
+                    <a href="support.html" class="btn-outline">
+                        <span class="text-lg">❤️</span>
+                        Support<br>DevDunia
                     </a>
                 </div>
+
+                <!-- Stats -->
+                <div class="flex items-center gap-8 text-sm text-gray-400">
+                    <div class="flex items-center gap-2">
+                        <div class="stat-dot"></div>
+                        <span>50+ Tools</span>
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <div class="stat-dot" style="background: #6366f1;"></div>
+                        <span>100% Free</span>
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <div class="stat-dot" style="background: #f59e0b;"></div>
+                        <span>Open Source</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right: Tool Card -->
+            <div class="flex-1 w-full max-w-md">
+                <div class="tool-card">
+                    <!-- Tabs -->
+                    <div class="flex border-b border-white/10">
+                        <button class="tool-tab active" data-tool="ip">IP Address Tools</button>
+                        <button class="tool-tab" data-tool="password">Password Generator</button>
+                        <button class="tool-tab" data-tool="json">JSON Beautifier</button>
+                    </div>
+
+                    <!-- Tab Content -->
+                    <div class="p-6">
+                        <!-- IP Address Tools -->
+                        <div id="tab-ip" class="tool-content">
+                            <h3 class="text-white font-semibold mb-4">IP Address Lookup</h3>
+                            <div class="flex gap-3">
+                                <input 
+                                    type="text" 
+                                    id="ip-lookup-input"
+                                    class="tool-input flex-1" 
+                                    placeholder="Enter IP address (e.g., 8.8.8.8)"
+                                >
+                                <button class="btn-lookup" onclick="lookupIP()">
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+                                    </svg>
+                                    Lookup
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Password Generator -->
+                        <div id="tab-password" class="tool-content hidden">
+                            <h3 class="text-white font-semibold mb-4">Generate Secure Password</h3>
+                            <div class="bg-black/20 rounded-lg p-4 mb-4">
+                                <p class="ip-display text-center" id="generated-password">Click Generate</p>
+                            </div>
+                            <div class="flex gap-3 mb-4">
+                                <input type="number" id="password-length" value="16" min="8" max="64" class="tool-input w-24" placeholder="Length">
+                                <button class="btn-lookup flex-1" onclick="generatePassword()">
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path>
+                                    </svg>
+                                    Generate
+                                </button>
+                            </div>
+                            <button class="btn-copy w-full" onclick="copyPassword()">Copy Password</button>
+                        </div>
+
+                        <!-- JSON Beautifier -->
+                        <div id="tab-json" class="tool-content hidden">
+                            <h3 class="text-white font-semibold mb-4">Format JSON</h3>
+                            <textarea 
+                                id="json-input"
+                                class="tool-input mb-4 h-32 resize-none" 
+                                placeholder='{"key": "value", "nested": {"example": true}}'
+                            ></textarea>
+                            <button class="btn-lookup w-full mb-4" onclick="beautifyJSON()">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7"></path>
+                                </svg>
+                                Beautify JSON
+                            </button>
+                            <a href="json-beautifier.html" class="text-sm text-purple-400 hover:underline">Open full JSON Beautifier →</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
-    </section>
+    </main>
+
+    <!-- Floating Buttons -->
+    <button class="floating-btn chat-btn" title="Contact">
+        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"></path>
+        </svg>
+    </button>
+    <button class="floating-btn theme-btn" title="Toggle Theme">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"></path>
+        </svg>
+    </button>
 
     <script>
-        // Tools data
-        const allToolsData = [
-            { name: 'JSON Beautifier', href: 'json-beautifier.html', icon: '✨', description: 'Format and validate JSON data', keywords: 'json formatter, json beautifier, json validator', category: 'encoders' },
-            { name: 'JSON Minifier', href: 'json-minifier.html', icon: '📦', description: 'Compress JSON for production', keywords: 'json minify, json compress', category: 'encoders' },
-            { name: 'Base64 Encoder', href: 'base64-encoder.html', icon: '📤', description: 'Encode to Base64 format', keywords: 'base64 encode, base64 converter', category: 'encoders' },
-            { name: 'Base64 Decoder', href: 'base64-decoder.html', icon: '📥', description: 'Decode Base64 strings', keywords: 'base64 decode, base64 converter', category: 'encoders' },
-            { name: 'Password Generator', href: 'password-generator.html', icon: '🔑', description: 'Generate secure passwords', keywords: 'password generator, random password', category: 'generators' },
-            { name: 'JWT Decoder', href: 'jwt-decoder.html', icon: '🎫', description: 'Decode JWT tokens', keywords: 'jwt decode, jwt token, json web token', category: 'encoders' },
-            { name: 'URL Encoder', href: 'url-encoder.html', icon: '🔗', description: 'Encode URLs safely', keywords: 'url encode, url encoder', category: 'encoders' },
-            { name: 'URL Decoder', href: 'url-decoder.html', icon: '🔓', description: 'Decode URL-encoded strings', keywords: 'url decode, url decoder', category: 'encoders' },
-            { name: 'Hash Generator', href: 'hash-generator.html', icon: '🔐', description: 'Generate secure hashes', keywords: 'hash generator, md5, sha256', category: 'encoders' },
-            { name: 'SQL Formatter', href: 'sql-formatter.html', icon: '🗄️', description: 'Format SQL queries', keywords: 'sql formatter, sql beautifier', category: 'dev' },
-            { name: 'Regex Tester', href: 'regex-tester.html', icon: '🔍', description: 'Test regular expressions', keywords: 'regex tester, regex validator', category: 'dev' },
-            { name: 'Caesar Cipher', href: 'caesar-cipher.html', icon: '🔐', description: 'Encode and decode with Caesar cipher', keywords: 'caesar cipher, cipher encoder', category: 'encoders' },
-            { name: 'CSV to JSON', href: 'csv-json-converter.html', icon: '📊', description: 'Convert CSV to JSON', keywords: 'csv to json, csv converter', category: 'encoders' },
-            { name: 'YAML to JSON', href: 'yaml-json-converter.html', icon: '⚖️', description: 'Convert between YAML and JSON', keywords: 'yaml to json, yaml converter', category: 'encoders' },
-            { name: 'XML Formatter', href: 'xml-formatter.html', icon: '📄', description: 'Format and validate XML', keywords: 'xml formatter, xml beautifier', category: 'encoders' },
-            { name: 'Clickjacking Checker', href: 'clickjacking-checker.html', icon: '🔒', description: 'Test clickjacking vulnerabilities', keywords: 'clickjacking checker, security test', category: 'vapt' },
-            { name: 'HTTP Headers', href: 'http-response-header-printer.html', icon: '📋', description: 'Analyze HTTP response headers', keywords: 'http headers, header analyzer', category: 'vapt' },
-            { name: 'QR Generator', href: 'qr-generator.html', icon: '📱', description: 'Create QR codes', keywords: 'qr code generator, qr generator', category: 'generators' },
-            { name: 'UUID Generator', href: 'guid-generator.html', icon: '🆔', description: 'Generate unique identifiers', keywords: 'uuid generator, guid generator', category: 'generators' },
-            { name: 'cURL Describer', href: 'curl-describer.html', icon: '🔄', description: 'Convert cURL to code', keywords: 'curl converter, curl describer', category: 'dev' },
-            { name: 'Cron Describer', href: 'cron-describer.html', icon: '⏰', description: 'Explain cron expressions', keywords: 'cron describer, cron explainer', category: 'dev' },
-            { name: 'Markdown Editor', href: 'markdown-editor.html', icon: '📝', description: 'Live markdown editor', keywords: 'markdown editor, markdown preview', category: 'dev' },
-            { name: 'Diff Checker', href: 'diff-checker.html', icon: '🔍', description: 'Compare text differences', keywords: 'diff checker, text compare', category: 'dev' },
-            { name: 'IP Address Tools', href: 'ip-address.html', icon: '🌍', description: 'IP address utilities', keywords: 'ip address, ip lookup', category: 'dev' },
-            { name: 'Word Counter', href: 'word_counter/index.html', icon: '📝', description: 'Count words and characters', keywords: 'word counter, character counter', category: 'dev' }
-        ];
+        // Tab switching
+        const tabs = document.querySelectorAll('.tool-tab');
+        const contents = document.querySelectorAll('.tool-content');
 
-        const heroSearchInput = document.getElementById('heroSearchInput');
-        const searchButton = document.getElementById('searchButton');
-        const heroSearchResults = document.getElementById('heroSearchResults');
-        const heroSearchResultsContent = document.getElementById('heroSearchResultsContent');
-        const heroNoResults = document.getElementById('heroNoResults');
-        const tabContent = document.getElementById('tabContent');
-        const tabs = document.querySelectorAll('.tab');
-
-        // Tab functionality
         tabs.forEach(tab => {
-                tab.addEventListener('click', function() {
+            tab.addEventListener('click', () => {
                 tabs.forEach(t => t.classList.remove('active'));
-                this.classList.add('active');
-                const tabName = this.dataset.tab;
-                displayTabContent(tabName);
+                tab.classList.add('active');
+
+                const toolName = tab.dataset.tool;
+                contents.forEach(content => {
+                    content.classList.add('hidden');
+                });
+                document.getElementById(`tab-${toolName}`).classList.remove('hidden');
             });
         });
 
-        function displayTabContent(category) {
-            const categoryMap = {
-                'generation': 'encoders',
-                'encoders': 'encoders',
-                'generators': 'generators',
-                'vapt': 'vapt',
-                'dev': 'dev'
-            };
-            const targetCategory = categoryMap[category] || 'encoders';
-            const tools = allToolsData.filter(tool => tool.category === targetCategory).slice(0, 8);
-            
-            tabContent.innerHTML = tools.map(tool => `
-                <a href="${tool.href}" class="card">
-                    <div class="text-4xl mb-4">${tool.icon}</div>
-                    <h3 class="text-lg font-bold mb-2">${tool.name}</h3>
-                    <p class="text-sm text-gray-400">${tool.description}</p>
-                </a>
-            `).join('');
-        }
-
-        // Initialize with first tab
-        displayTabContent('generation');
-
-        // Search functionality
-        function performHeroSearch(searchTerm) {
-            const term = searchTerm.toLowerCase().trim();
-            if (term === '') return [];
-
-            return allToolsData.filter(tool => {
-                const nameMatch = tool.name.toLowerCase().includes(term);
-                const descMatch = tool.description.toLowerCase().includes(term);
-                const keywordMatch = tool.keywords.toLowerCase().includes(term);
-                return nameMatch || descMatch || keywordMatch;
-            }).sort((a, b) => {
-                const aTitleMatch = a.name.toLowerCase().includes(term);
-                const bTitleMatch = b.name.toLowerCase().includes(term);
-                if (aTitleMatch && !bTitleMatch) return -1;
-                if (!aTitleMatch && bTitleMatch) return 1;
-                return 0;
-            });
-        }
-
-        function highlightSearchTerm(text, term) {
-            if (!term) return text;
-            const regex = new RegExp(`(${term})`, 'gi');
-            return text.replace(regex, '<span class="text-green">$1</span>');
-        }
-
-        function displayHeroSearchResults(tools, searchTerm) {
-            if (tools.length === 0) {
-                heroSearchResultsContent.innerHTML = '';
-                heroNoResults.classList.remove('hidden');
-                heroSearchResults.classList.remove('hidden');
-                return;
+        // Lookup IP (redirect to IP tools page)
+        function lookupIP() {
+            const ip = document.getElementById('ip-lookup-input').value.trim();
+            if (ip) {
+                window.location.href = `ip-address.html?ip=${encodeURIComponent(ip)}`;
             }
-
-            heroNoResults.classList.add('hidden');
-            heroSearchResultsContent.innerHTML = tools.slice(0, 8).map(tool => {
-                const highlightedTitle = highlightSearchTerm(tool.name, searchTerm);
-                const highlightedDesc = highlightSearchTerm(tool.description, searchTerm);
-                
-                return `
-                    <a href="${tool.href}" class="search-result-item">
-                        <div class="w-12 h-12 rounded-lg flex items-center justify-center bg-gray-800 flex-shrink-0">
-                            <span class="text-2xl">${tool.icon}</span>
-                        </div>
-                        <div class="flex-1 min-w-0">
-                            <h4 class="font-semibold text-white text-base mb-1">${highlightedTitle}</h4>
-                            <p class="text-sm text-gray-400">${highlightedDesc}</p>
-                        </div>
-                        <svg class="w-5 h-5 text-gray-500 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
-                        </svg>
-                    </a>
-                `;
-            }).join('');
-
-            heroSearchResults.classList.remove('hidden');
         }
 
-        if (heroSearchInput) {
-            let heroSearchTimeout;
-            heroSearchInput.addEventListener('input', function(e) {
-                clearTimeout(heroSearchTimeout);
-                const term = e.target.value;
-                
-                heroSearchTimeout = setTimeout(() => {
-                    const results = performHeroSearch(term);
-                    displayHeroSearchResults(results, term);
-                }, 150);
-            });
-
-            heroSearchInput.addEventListener('keydown', function(e) {
-                if (e.key === 'Enter') {
-                    e.preventDefault();
-                    const term = this.value;
-                    const results = performHeroSearch(term);
-                    if (results.length > 0) {
-                        window.location.href = results[0].href;
-                    }
-                } else if (e.key === 'Escape') {
-                    heroSearchResults.classList.add('hidden');
-                    this.blur();
-                }
-            });
-        }
-
-        if (searchButton) {
-            searchButton.addEventListener('click', function() {
-                const term = heroSearchInput.value;
-                const results = performHeroSearch(term);
-                displayHeroSearchResults(results, term);
-            });
-        }
-
-        document.addEventListener('click', function(e) {
-            if (!e.target.closest('#heroSearchInput') && 
-                !e.target.closest('#heroSearchResults') && 
-                !e.target.closest('#searchButton')) {
-                if (heroSearchResults) heroSearchResults.classList.add('hidden');
+        // Password Generator
+        function generatePassword() {
+            const length = parseInt(document.getElementById('password-length').value) || 16;
+            const charset = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^&*()_+-=[]{}|;:,.<>?';
+            let password = '';
+            for (let i = 0; i < length; i++) {
+                password += charset.charAt(Math.floor(Math.random() * charset.length));
             }
-        });
+            document.getElementById('generated-password').textContent = password;
+        }
 
-        document.addEventListener('keydown', function(e) {
-            if (e.key === '/' && !e.target.matches('input, textarea')) {
-                e.preventDefault();
-                if (heroSearchInput) heroSearchInput.focus();
+        function copyPassword() {
+            const password = document.getElementById('generated-password').textContent;
+            if (password && password !== 'Click Generate') {
+                navigator.clipboard.writeText(password).then(() => {
+                    const btn = event.target;
+                    btn.textContent = 'Copied!';
+                    setTimeout(() => btn.textContent = 'Copy Password', 2000);
+                });
             }
-        });
-    </script>
-    
-    <script>
-        fetch("footer.html")
-        .then(response => response.text())
-        .then(data => {
-            document.getElementById("footer").innerHTML = data;
-        })
-        .catch(err => console.error("Failed to load footer:", err));
+        }
+
+        // JSON Beautifier
+        function beautifyJSON() {
+            const input = document.getElementById('json-input');
+            try {
+                const parsed = JSON.parse(input.value);
+                input.value = JSON.stringify(parsed, null, 2);
+            } catch (e) {
+                alert('Invalid JSON: ' + e.message);
+            }
+        }
     </script>
 
-    <div id="footer"></div>
-    
-    <script src="js/theme-toggle.js"></script>
     <script src="js/common.js"></script>
 </body>
 </html>
