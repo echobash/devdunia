@@ -6,232 +6,675 @@
     <link rel="icon" type="image/png" href="images/logo.png">
     <link rel="apple-touch-icon" href="images/logo.png">
     <title>DevDunia - Developer & Pen Testing Tools at Your Fingertips</title>
-    <meta name="description" content="Where development meets security. 50+ powerful tools for developers and VAPT professionals. From JSON beautifying to clickjacking testing, everything you need in one unified platform.">
+    <meta name="description" content="Where development meets security. 100+ powerful tools for developers and VAPT professionals. Privacy-first, client-side, 100% free. From JSON beautifying to clickjacking testing in one unified platform.">
     <meta name="theme-color" content="#0F172A">
     <link rel="canonical" href="https://devdunia.com/">
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <style>
+        :root {
+            --bg: #06090f;
+            --surface: rgba(255,255,255,0.04);
+            --surface-hover: rgba(255,255,255,0.07);
+            --border: rgba(255,255,255,0.06);
+            --border-hover: rgba(255,255,255,0.12);
+            --teal: #14b8a6;
+            --teal-dim: rgba(20, 184, 166, 0.15);
+            --teal-glow: rgba(20, 184, 166, 0.4);
+            --violet: #8b5cf6;
+            --violet-dim: rgba(139, 92, 246, 0.15);
+            --text: #e2e8f0;
+            --text-muted: rgba(226, 232, 240, 0.7);
+            --text-faint: rgba(226, 232, 240, 0.5);
+            --radius: 16px;
+            --radius-sm: 12px;
+            --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
+            --ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
         * { margin: 0; padding: 0; box-sizing: border-box; }
         html { scroll-behavior: smooth; }
         body {
-            font-family: 'Inter', system-ui, sans-serif;
-            background: linear-gradient(165deg, #0c1929 0%, #0f172a 40%, #1a1a2e 100%);
-            color: #fff;
+            font-family: 'Plus Jakarta Sans', system-ui, sans-serif;
+            background: var(--bg);
+            color: var(--text);
             min-height: 100vh;
-            display: flex;
-            flex-direction: column;
             -webkit-font-smoothing: antialiased;
         }
         body::before {
             content: '';
             position: fixed;
             inset: 0;
-            background-image: radial-gradient(rgba(255,255,255,0.05) 1px, transparent 1px);
-            background-size: 28px 28px;
+            background:
+                radial-gradient(ellipse 100% 60% at 50% -30%, rgba(20, 184, 166, 0.18), transparent 50%),
+                radial-gradient(ellipse 70% 50% at 90% 40%, rgba(139, 92, 246, 0.1), transparent 45%),
+                radial-gradient(ellipse 50% 40% at 10% 80%, rgba(20, 184, 166, 0.06), transparent 40%),
+                radial-gradient(rgba(255,255,255,0.025) 1px, transparent 1px);
+            background-size: 100% 100%, 100% 100%, 100% 100%, 28px 28px;
             pointer-events: none;
             z-index: 0;
         }
-        .page-wrap { position: relative; z-index: 1; flex: 1; display: flex; align-items: center; min-height: 100vh; }
-        .gradient-teal { background: linear-gradient(90deg, #14b8a6, #06b6d4); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
-        .gradient-purple { background: linear-gradient(90deg, #a855f7, #8b5cf6); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
-        .btn-explore {
-            background: linear-gradient(135deg, #6366f1, #8b5cf6, #a855f7);
-            color: white;
-            padding: 14px 26px;
-            border-radius: 12px;
-            font-weight: 600;
-            font-size: 15px;
-            text-decoration: none;
-            display: inline-flex;
-            align-items: center;
-            gap: 10px;
-            border: none;
-            cursor: pointer;
-            transition: transform 0.2s ease, box-shadow 0.2s ease;
-            box-shadow: 0 4px 16px rgba(99,102,241,0.35);
+        body::after {
+            content: '';
+            position: fixed;
+            inset: 0;
+            background: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.03'/%3E%3C/svg%3E");
+            pointer-events: none;
+            z-index: 0;
         }
-        .btn-explore:hover { transform: translateY(-2px); box-shadow: 0 8px 28px rgba(139,92,246,0.45); }
-        .btn-explore:active { transform: translateY(0); }
-        .btn-explore:focus-visible { outline: 2px solid rgba(139,92,246,0.8); outline-offset: 2px; }
-        .btn-secondary {
-            background: rgba(255,255,255,0.08);
-            color: #fff;
-            padding: 14px 26px;
-            border-radius: 12px;
-            font-weight: 500;
-            font-size: 15px;
-            text-decoration: none;
-            display: inline-flex;
-            align-items: center;
-            gap: 10px;
-            border: 1px solid rgba(255,255,255,0.18);
-            transition: background 0.2s ease, border-color 0.2s ease, transform 0.2s ease;
+        .gradient-teal { background: linear-gradient(135deg, #2dd4bf, #14b8a6, #06b6d4); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; background-size: 200% 200%; }
+        .gradient-purple { background: linear-gradient(135deg, #a78bfa, #8b5cf6, #7c3aed); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; background-size: 200% 200%; }
+        .section { position: relative; z-index: 1; }
+        .container-narrow { max-width: 1120px; margin: 0 auto; padding: 0 1.5rem; }
+        .container-wide { max-width: 1280px; margin: 0 auto; padding: 0 1.5rem; }
+
+        /* Reveal animation */
+        .reveal { opacity: 0; transform: translateY(24px); transition: opacity 0.7s var(--ease-out), transform 0.7s var(--ease-out); }
+        .reveal.revealed { opacity: 1; transform: translateY(0); }
+        .reveal-delay-1 { transition-delay: 0.1s; }
+        .reveal-delay-2 { transition-delay: 0.2s; }
+        .reveal-delay-3 { transition-delay: 0.3s; }
+        .reveal-delay-4 { transition-delay: 0.4s; }
+        .reveal-delay-5 { transition-delay: 0.5s; }
+        @media (prefers-reduced-motion: reduce) { .reveal { opacity: 1; transform: none; transition: none; } .reveal.revealed { transform: none; } }
+
+        /* Nav */
+        .nav-wrap {
+            position: fixed;
+            top: 0; left: 0; right: 0;
+            z-index: 50;
+            padding: 0.875rem 1.5rem;
+            transition: background 0.35s var(--ease-out), backdrop-filter 0.35s, box-shadow 0.35s, padding 0.35s;
         }
-        .btn-secondary:hover { background: rgba(255,255,255,0.12); border-color: rgba(255,255,255,0.25); transform: translateY(-1px); }
-        .btn-secondary:active { transform: translateY(0); }
-        .btn-secondary:focus-visible { outline: 2px solid rgba(255,255,255,0.5); outline-offset: 2px; }
-        .stat-dot { width: 8px; height: 8px; border-radius: 50%; background: #10b981; flex-shrink: 0; }
-        .tool-card {
-            background: rgba(255,255,255,0.05);
-            border: 1px solid rgba(255,255,255,0.08);
-            border-radius: 20px;
+        .nav-wrap.scrolled {
+            background: rgba(6, 9, 15, 0.82);
             backdrop-filter: blur(16px);
-            box-shadow: 0 24px 48px rgba(0,0,0,0.2), 0 0 0 1px rgba(255,255,255,0.03) inset;
+            -webkit-backdrop-filter: blur(16px);
+            border-bottom: 1px solid var(--border);
+            box-shadow: 0 1px 0 rgba(255,255,255,0.04);
         }
-        .tool-tabs { display: flex; gap: 4px; padding-bottom: 16px; border-bottom: 1px solid rgba(255,255,255,0.08); margin-bottom: 20px; }
-        .tool-tab {
-            padding: 10px 18px;
-            font-size: 13px;
-            font-weight: 500;
-            color: rgba(255,255,255,0.5);
-            background: transparent;
-            border: none;
-            cursor: pointer;
-            border-radius: 10px;
-            transition: color 0.2s ease, background 0.2s ease;
+        .nav-inner { max-width: 1200px; margin: 0 auto; display: flex; align-items: center; justify-content: space-between; }
+        .nav-logo {
+            display: flex; align-items: center; gap: 0.625rem;
+            text-decoration: none; color: #fff; font-weight: 700; font-size: 1.2rem;
+            letter-spacing: -0.02em;
+            transition: opacity 0.2s, transform 0.2s;
         }
-        .tool-tab:hover { color: rgba(255,255,255,0.85); background: rgba(255,255,255,0.04); }
-        .tool-tab.active { background: rgba(255,255,255,0.1); color: #fff; }
-        .tool-tab:focus-visible { outline: 2px solid rgba(99,102,241,0.5); outline-offset: 2px; }
-        .tool-panel { animation: panelIn 0.25s ease; }
-        @keyframes panelIn { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: translateY(0); } }
-        @media (prefers-reduced-motion: reduce) { .tool-panel { animation: none; } }
-        .tool-input {
-            background: rgba(255,255,255,0.06);
-            border: 1px solid rgba(255,255,255,0.1);
-            border-radius: 10px;
-            padding: 12px 16px;
-            color: #fff;
-            font-size: 14px;
-            width: 100%;
-            transition: border-color 0.2s ease, box-shadow 0.2s ease;
-        }
-        .tool-input:focus { outline: none; border-color: rgba(99,102,241,0.5); box-shadow: 0 0 0 3px rgba(99,102,241,0.15); }
-        .tool-input::placeholder { color: rgba(255,255,255,0.35); }
-        .btn-copy {
-            background: rgba(255,255,255,0.08);
-            border: 1px solid rgba(255,255,255,0.12);
-            color: #fff;
-            padding: 10px 18px;
-            border-radius: 10px;
-            font-size: 13px;
-            font-weight: 500;
-            cursor: pointer;
-            transition: background 0.2s ease, border-color 0.2s ease;
-        }
-        .btn-copy:hover { background: rgba(255,255,255,0.12); border-color: rgba(255,255,255,0.18); }
-        .btn-copy:focus-visible { outline: 2px solid rgba(99,102,241,0.5); outline-offset: 2px; }
-        .btn-generate {
-            background: linear-gradient(135deg, #6366f1, #8b5cf6);
-            color: white;
-            padding: 12px 22px;
-            border-radius: 10px;
-            font-weight: 600;
-            font-size: 14px;
-            border: none;
-            cursor: pointer;
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-            transition: transform 0.2s ease, box-shadow 0.2s ease;
-            box-shadow: 0 4px 12px rgba(99,102,241,0.3);
-        }
-        .btn-generate:hover { transform: translateY(-1px); box-shadow: 0 6px 20px rgba(99,102,241,0.4); }
-        .btn-generate:active { transform: translateY(0); }
-        .btn-generate:focus-visible { outline: 2px solid rgba(139,92,246,0.8); outline-offset: 2px; }
-        .btn-multiple {
-            background: rgba(255,255,255,0.06);
-            border: 1px solid rgba(255,255,255,0.12);
-            color: #fff;
-            padding: 12px 22px;
-            border-radius: 10px;
-            font-weight: 500;
-            font-size: 14px;
+        .nav-logo:hover { opacity: 0.9; transform: scale(1.01); }
+        .nav-logo img { width: 2rem; height: 2rem; border-radius: 10px; box-shadow: 0 2px 12px rgba(20, 184, 166, 0.2); }
+        .nav-links { display: flex; align-items: center; gap: 0.25rem; }
+        .nav-links a {
+            color: var(--text-muted);
             text-decoration: none;
+            font-size: 0.9rem;
+            font-weight: 500;
+            padding: 0.5rem 0.875rem;
+            border-radius: 10px;
+            transition: color 0.2s, background 0.2s, transform 0.2s;
+        }
+        .nav-links a:hover { color: #fff; background: var(--surface-hover); transform: translateY(-1px); }
+        .nav-links a:focus-visible { outline: 2px solid var(--teal); outline-offset: 2px; }
+
+        /* Hero */
+        .hero {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            padding: 6rem 0 5rem;
+        }
+        .hero-brand {
             display: inline-flex;
             align-items: center;
-            gap: 8px;
-            transition: background 0.2s ease, border-color 0.2s ease, transform 0.2s ease;
+            justify-content: center;
+            gap: 0.75rem;
+            margin-bottom: 2rem;
         }
-        .btn-multiple:hover { background: rgba(255,255,255,0.1); border-color: rgba(255,255,255,0.18); transform: translateY(-1px); }
-        .btn-multiple:focus-visible { outline: 2px solid rgba(255,255,255,0.4); outline-offset: 2px; }
-        .strength-bar { height: 8px; border-radius: 4px; background: rgba(255,255,255,0.1); overflow: hidden; }
-        .strength-fill { height: 100%; border-radius: 4px; background: linear-gradient(90deg, #10b981, #14b8a6); transition: width 0.3s ease; }
-        input[type="range"] { -webkit-appearance: none; appearance: none; height: 8px; border-radius: 4px; background: rgba(255,255,255,0.1); }
-        input[type="range"]::-webkit-slider-thumb { -webkit-appearance: none; width: 18px; height: 18px; border-radius: 50%; background: linear-gradient(135deg, #6366f1, #8b5cf6); cursor: pointer; box-shadow: 0 2px 8px rgba(99,102,241,0.4); transition: transform 0.15s ease; }
-        input[type="range"]::-webkit-slider-thumb:hover { transform: scale(1.1); }
-        input[type="checkbox"] { accent-color: #6366f1; width: 1rem; height: 1rem; cursor: pointer; }
-        .floating-btn {
-            position: fixed; bottom: 28px; right: 28px;
-            width: 54px; height: 54px; border-radius: 16px;
-            display: flex; align-items: center; justify-content: center;
-            background: linear-gradient(135deg, #6366f1, #8b5cf6);
-            color: white; border: 1px solid rgba(255,255,255,0.12);
-            box-shadow: 0 8px 32px rgba(0,0,0,0.25);
-            transition: transform 0.2s ease, box-shadow 0.2s ease; z-index: 50;
+        .hero-brand img {
+            width: 4rem;
+            height: 4rem;
+            border-radius: 1rem;
+            box-shadow: 0 8px 32px rgba(20, 184, 166, 0.25), 0 0 0 1px rgba(255,255,255,0.06);
+            transition: transform 0.4s var(--ease-spring), box-shadow 0.3s;
         }
-        .floating-btn:hover { transform: translateY(-3px); box-shadow: 0 12px 40px rgba(0,0,0,0.3); }
-        .floating-btn:focus-visible { outline: 2px solid rgba(255,255,255,0.5); outline-offset: 2px; }
-        .theme-btn { bottom: 96px; background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.08); }
-        .hero-text {
-            font-size: clamp(2.25rem, 5.5vw, 4rem);
-            line-height: 1.1;
-            letter-spacing: -0.03em;
+        .hero-brand:hover img { transform: scale(1.05) rotate(-2deg); box-shadow: 0 12px 40px rgba(20, 184, 166, 0.35), 0 0 0 1px rgba(255,255,255,0.08); }
+        .hero-brand span { font-size: 1.75rem; font-weight: 800; letter-spacing: -0.03em; color: #fff; }
+        .hero-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.5rem 1.125rem;
+            border-radius: 9999px;
+            background: linear-gradient(135deg, rgba(20, 184, 166, 0.15), rgba(20, 184, 166, 0.06));
+            border: 1px solid rgba(20, 184, 166, 0.3);
+            font-size: 0.8125rem;
+            font-weight: 600;
+            color: #5eead4;
+            letter-spacing: 0.02em;
+            margin-bottom: 1.75rem;
+            box-shadow: 0 0 24px rgba(20, 184, 166, 0.12);
+            transition: transform 0.3s var(--ease-out), box-shadow 0.3s, border-color 0.3s;
+        }
+        .hero-badge:hover { transform: translateY(-1px); box-shadow: 0 0 32px rgba(20, 184, 166, 0.18); border-color: rgba(20, 184, 166, 0.4); }
+        .hero-title {
+            font-size: clamp(2.75rem, 6.5vw, 4.5rem);
+            line-height: 1.05;
+            letter-spacing: -0.04em;
             font-weight: 800;
+            margin-bottom: 1.5rem;
         }
-        @media (min-width: 1024px) {
-            .hero-text { font-size: clamp(3.5rem, 4.5vw, 4.5rem); }
+        .hero-subtitle {
+            font-size: clamp(1.125rem, 2vw, 1.375rem);
+            line-height: 1.65;
+            color: var(--text-muted);
+            max-width: 44rem;
+            margin: 0 auto 2.75rem;
+            font-weight: 450;
         }
-        .hero-desc { letter-spacing: -0.01em; }
-        .hero-stats { letter-spacing: 0.02em; }
+        .hero-ctas { display: flex; flex-wrap: wrap; gap: 0.75rem; justify-content: center; }
+        .btn-primary {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 1rem 1.875rem;
+            border-radius: var(--radius-sm);
+            font-weight: 600;
+            font-size: 1rem;
+            background: linear-gradient(135deg, #14b8a6 0%, #0d9488 100%);
+            color: #051c1a;
+            text-decoration: none;
+            border: none;
+            cursor: pointer;
+            box-shadow: 0 4px 24px var(--teal-glow), 0 0 0 1px rgba(255,255,255,0.08) inset;
+            transition: transform 0.25s var(--ease-out), box-shadow 0.25s, filter 0.25s;
+        }
+        .btn-primary:hover {
+            transform: translateY(-3px) scale(1.02);
+            box-shadow: 0 12px 36px rgba(20, 184, 166, 0.5), 0 0 0 1px rgba(255,255,255,0.12) inset;
+            filter: brightness(1.08);
+        }
+        .btn-primary:active { transform: translateY(-1px) scale(1); }
+        .btn-primary:focus-visible { outline: 2px solid var(--teal); outline-offset: 3px; }
+        .btn-secondary {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 1rem 1.875rem;
+            border-radius: var(--radius-sm);
+            font-weight: 500;
+            font-size: 1rem;
+            background: var(--surface);
+            color: var(--text);
+            text-decoration: none;
+            border: 1px solid var(--border);
+            box-shadow: 0 1px 0 rgba(255,255,255,0.04) inset;
+            transition: background 0.25s, border-color 0.25s, transform 0.25s var(--ease-out), box-shadow 0.25s;
+        }
+        .btn-secondary:hover {
+            background: var(--surface-hover);
+            border-color: var(--border-hover);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 20px rgba(0,0,0,0.2), 0 1px 0 rgba(255,255,255,0.06) inset;
+        }
+        .btn-secondary:active { transform: translateY(0); }
+        .btn-secondary:focus-visible { outline: 2px solid var(--teal); outline-offset: 3px; }
+
+        /* Value pills */
+        .value-pills { display: flex; flex-wrap: wrap; justify-content: center; gap: 0.625rem; margin-top: 2.5rem; }
+        .value-pill {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.5rem 1rem;
+            border-radius: 9999px;
+            background: var(--surface);
+            border: 1px solid var(--border);
+            font-size: 0.875rem;
+            font-weight: 500;
+            color: var(--text);
+            transition: transform 0.25s var(--ease-out), background 0.25s, border-color 0.25s, box-shadow 0.25s;
+        }
+        .value-pill:hover {
+            transform: translateY(-2px);
+            background: var(--surface-hover);
+            border-color: var(--border-hover);
+            box-shadow: 0 4px 16px rgba(0,0,0,0.15);
+        }
+        .value-pill svg { flex-shrink: 0; opacity: 0.95; }
+
+        /* Cards */
+        .card {
+            background: linear-gradient(160deg, rgba(255,255,255,0.06) 0%, rgba(255,255,255,0.02) 100%);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 1.75rem;
+            box-shadow: 0 4px 24px rgba(0,0,0,0.12), 0 1px 0 rgba(255,255,255,0.04) inset;
+            transition: border-color 0.3s, background 0.3s, transform 0.35s var(--ease-out), box-shadow 0.35s;
+        }
+        .card:hover {
+            background: linear-gradient(160deg, rgba(255,255,255,0.08) 0%, rgba(255,255,255,0.04) 100%);
+            border-color: rgba(255,255,255,0.12);
+            transform: translateY(-4px);
+            box-shadow: 0 20px 48px rgba(0,0,0,0.2), 0 0 0 1px rgba(20, 184, 166, 0.1), 0 1px 0 rgba(255,255,255,0.06) inset;
+        }
+        .card-icon {
+            width: 3rem;
+            height: 3rem;
+            border-radius: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 1.25rem;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+            transition: transform 0.3s var(--ease-spring);
+        }
+        .card:hover .card-icon { transform: scale(1.08); }
+        .card-title { font-size: 1.125rem; font-weight: 700; margin-bottom: 0.5rem; letter-spacing: -0.01em; }
+        .card-desc { font-size: 0.9375rem; color: var(--text-muted); line-height: 1.55; }
+
+        /* Section headings */
+        .section-label {
+            font-size: 0.75rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.12em;
+            color: var(--teal);
+            margin-bottom: 0.875rem;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        .section-label::before { content: ''; width: 0.5rem; height: 2px; background: linear-gradient(90deg, var(--teal), transparent); border-radius: 1px; }
+        .section-title {
+            font-size: clamp(1.875rem, 3.5vw, 2.5rem);
+            font-weight: 800;
+            letter-spacing: -0.03em;
+            line-height: 1.15;
+            margin-bottom: 1rem;
+        }
+        .section-subtitle {
+            font-size: 1.0625rem;
+            color: var(--text-muted);
+            max-width: 38rem;
+            margin-bottom: 2.5rem;
+            line-height: 1.6;
+        }
+
+        /* Category grid */
+        .category-card {
+            background: linear-gradient(160deg, rgba(255,255,255,0.04) 0%, rgba(255,255,255,0.01) 100%);
+            border: 1px solid var(--border);
+            border-radius: 14px;
+            padding: 1.25rem 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            text-decoration: none;
+            color: inherit;
+            transition: border-color 0.3s, background 0.3s, transform 0.3s var(--ease-out), box-shadow 0.3s;
+        }
+        .category-card:hover {
+            background: linear-gradient(160deg, rgba(255,255,255,0.07) 0%, rgba(255,255,255,0.03) 100%);
+            border-color: rgba(20, 184, 166, 0.25);
+            transform: translateY(-3px);
+            box-shadow: 0 12px 32px rgba(0,0,0,0.15), 0 0 0 1px rgba(20, 184, 166, 0.08);
+        }
+        .category-card::after {
+            content: '';
+            width: 0.375rem;
+            height: 0.375rem;
+            border-top: 2px solid var(--text-faint);
+            border-right: 2px solid var(--text-faint);
+            transform: rotate(45deg);
+            margin-left: auto;
+            opacity: 0;
+            transition: opacity 0.25s, transform 0.25s;
+        }
+        .category-card:hover::after { opacity: 1; transform: translateX(4px) rotate(45deg); }
+        .category-card > div:first-of-type { flex: 1; min-width: 0; }
+        .category-emoji { font-size: 1.875rem; line-height: 1; filter: drop-shadow(0 2px 4px rgba(0,0,0,0.2)); }
+        .category-name { font-weight: 600; font-size: 1rem; color: #fff; }
+        .category-count { font-size: 0.8125rem; color: var(--text-faint); margin-top: 0.125rem; }
+
+        /* CTA block */
+        .cta-block {
+            background: linear-gradient(145deg, rgba(20, 184, 166, 0.12) 0%, rgba(139, 92, 246, 0.08) 50%, rgba(20, 184, 166, 0.06) 100%);
+            border: 1px solid rgba(20, 184, 166, 0.25);
+            border-radius: 24px;
+            padding: 3.5rem 2.5rem;
+            text-align: center;
+            box-shadow: 0 24px 64px rgba(0,0,0,0.2), 0 0 0 1px rgba(255,255,255,0.04) inset, 0 0 80px rgba(20, 184, 166, 0.08);
+            transition: box-shadow 0.4s, border-color 0.4s;
+        }
+        .cta-block:hover { border-color: rgba(20, 184, 166, 0.35); box-shadow: 0 28px 72px rgba(0,0,0,0.22), 0 0 0 1px rgba(255,255,255,0.05) inset, 0 0 100px rgba(20, 184, 166, 0.12); }
+        .cta-block .section-title { margin-bottom: 0.5rem; }
+        .cta-block .section-subtitle { margin: 0 auto 1.75rem; }
+
+        /* Footer */
+        .footer {
+            border-top: 1px solid var(--border);
+            padding: 4rem 1.5rem 2.5rem;
+            margin-top: 5rem;
+            background: linear-gradient(180deg, transparent 0%, rgba(0,0,0,0.2) 100%);
+        }
+        .footer-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 2.5rem; max-width: 1200px; margin: 0 auto 2.5rem; }
+        .footer-col h4 { font-size: 0.75rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; color: var(--text-faint); margin-bottom: 1.25rem; }
+        .footer-col a {
+            display: block;
+            color: var(--text-muted);
+            text-decoration: none;
+            font-size: 0.9375rem;
+            margin-bottom: 0.625rem;
+            transition: color 0.2s, transform 0.2s;
+            position: relative;
+        }
+        .footer-col a:hover { color: var(--teal); }
+        .footer-col a::after { content: ''; position: absolute; left: 0; bottom: -2px; width: 0; height: 1px; background: var(--teal); transition: width 0.25s var(--ease-out); }
+        .footer-col a:hover::after { width: 100%; }
+        .footer-bottom {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding-top: 2rem;
+            border-top: 1px solid var(--border);
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            justify-content: space-between;
+            gap: 1rem;
+            font-size: 0.875rem;
+            color: var(--text-faint);
+        }
+        .footer-legal a { color: var(--text-muted); text-decoration: none; margin-left: 1.25rem; transition: color 0.2s; }
+        .footer-legal a:hover { color: var(--teal); }
+
+        /* Floating */
+        .floating-btn {
+            position: fixed;
+            bottom: 1.5rem;
+            right: 1.5rem;
+            width: 54px;
+            height: 54px;
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, #14b8a6, #0d9488);
+            color: #051c1a;
+            border: none;
+            box-shadow: 0 8px 28px var(--teal-glow), 0 0 0 1px rgba(255,255,255,0.1) inset;
+            transition: transform 0.3s var(--ease-out), box-shadow 0.3s;
+            z-index: 40;
+        }
+        .floating-btn:hover { transform: translateY(-3px) scale(1.05); box-shadow: 0 14px 36px rgba(20, 184, 166, 0.45), 0 0 0 1px rgba(255,255,255,0.12) inset; }
+        .floating-btn:focus-visible { outline: 2px solid var(--teal); outline-offset: 3px; }
+        .theme-btn {
+            bottom: 5.25rem;
+            background: var(--surface);
+            color: var(--text);
+            border: 1px solid var(--border);
+            box-shadow: 0 4px 20px rgba(0,0,0,0.2);
+        }
+        .theme-btn:hover { background: var(--surface-hover); border-color: var(--border-hover); }
     </style>
 </head>
 <body>
-    <div class="page-wrap">
-        <div class="w-full px-4 sm:px-6 lg:px-8 py-10 lg:py-16">
-            <div class="flex flex-col items-center justify-center text-center w-full mx-auto">
-                <!-- Hero -->
-                <div class="w-full">
-                    <div class="flex items-center justify-center gap-4 mb-8">
-                        <img src="images/logo.png" alt="DevDunia" class="h-16 w-16 sm:h-20 sm:w-20 rounded-xl shrink-0">
-                        <span class="text-2xl sm:text-3xl font-bold text-white tracking-tight">DevDunia</span>
+    <!-- Nav -->
+    <nav class="nav-wrap">
+        <div class="nav-inner">
+            <a href="index.html" class="nav-logo">
+                <img src="images/logo.png" alt="DevDunia">
+                DevDunia
+            </a>
+            <div class="nav-links">
+                <a href="home.html">All Tools</a>
+                <a href="https://github.com/echobash/devdunia" target="_blank" rel="noopener noreferrer">GitHub</a>
+                <a href="CONTRIBUTING.md" target="_blank" rel="noopener noreferrer">Contribute</a>
+                <a href="support.html">Support</a>
+                <a href="contact.html">Contact</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero -->
+    <header class="section hero">
+        <div class="container-narrow text-center">
+            <div class="hero-brand reveal revealed">
+                <img src="images/logo.png" alt="DevDunia" class="shrink-0">
+                <span>DevDunia</span>
+            </div>
+            <div class="hero-badge reveal revealed reveal-delay-1">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
+                Privacy-first • Client-side • No signup
+            </div>
+            <h1 class="hero-title text-white reveal revealed reveal-delay-2">
+                Developer & <span class="gradient-teal">Pen Testing Tools</span><br>
+                <span class="gradient-purple">at your fingertips</span>
+            </h1>
+            <p class="hero-subtitle reveal revealed reveal-delay-3">
+                Where development meets security. 100+ free utilities for developers and VAPT professionals—JSON, Base64, JWT, clickjacking testing, and more. Everything runs in your browser; your data never leaves your device.
+            </p>
+            <div class="hero-ctas reveal revealed reveal-delay-4">
+                <a href="home.html" class="btn-primary">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/></svg>
+                    Explore all tools
+                </a>
+                <a href="https://github.com/echobash/devdunia" target="_blank" rel="noopener noreferrer" class="btn-secondary">
+                    <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/></svg>
+                    Star on GitHub
+                </a>
+                <a href="support.html" class="btn-secondary">
+                    <svg class="w-5 h-5 text-amber-400" fill="currentColor" viewBox="0 0 24 24"><path d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/></svg>
+                    Support DevDunia
+                </a>
+            </div>
+            <div class="value-pills reveal revealed reveal-delay-5">
+                <span class="value-pill"><svg class="w-4 h-4 text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>100+ tools</span>
+                <span class="value-pill"><svg class="w-4 h-4 text-cyan-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/></svg>Privacy-first</span>
+                <span class="value-pill"><svg class="w-4 h-4 text-violet-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>Lightning fast</span>
+                <span class="value-pill"><svg class="w-4 h-4 text-amber-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>100% free</span>
+                <span class="value-pill"><svg class="w-4 h-4 text-rose-400" fill="currentColor" viewBox="0 0 24 24"><path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/></svg>Open source</span>
+            </div>
+        </div>
+    </header>
+
+    <!-- Who it's for -->
+    <section class="section py-20 sm:py-24">
+        <div class="container-wide">
+            <p class="section-label text-center">Built for</p>
+            <h2 class="section-title text-center text-white">Developers, security pros, educators</h2>
+            <p class="section-subtitle text-center mx-auto">
+                One platform for encoding, testing, generating, and learning—whether you ship code, run VAPT, or teach.
+            </p>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <div class="card reveal">
+                    <div class="card-icon bg-emerald-500/20 text-emerald-400">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4"/></path></svg>
                     </div>
-                    <h1 class="hero-text mb-8 text-white">
-                        Developer and <span class="gradient-teal">Pen Testing Tools</span> <span class="gradient-purple">at your fingertips</span>
-                    </h1>
-                    <p class="hero-desc text-lg sm:text-xl lg:text-2xl text-white/90 leading-relaxed mb-8 w-full max-w-5xl mx-auto font-medium">
-                        Where development meets security. 100+ powerful tools for developers and VAPT professionals. From JSON beautifying to clickjacking testing, everything you need in one unified platform.
-                    </p>
-                    <div class="flex flex-wrap gap-3 mb-8 justify-center">
-                        <a href="home.html" class="btn-explore">
-                            <svg class="w-5 h-5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/></svg>
-                            Explore All Tools
-                        </a>
-                        <a href="https://github.com/AliAnwar1/devdunia" target="_blank" rel="noopener noreferrer" class="btn-secondary">
-                            <svg class="w-5 h-5 shrink-0" fill="currentColor" viewBox="0 0 24 24"><path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/></svg>
-                            Star on GitHub
-                        </a>
-                        <a href="support.html" class="btn-secondary">
-                            <svg class="w-5 h-5 shrink-0 text-red-400" fill="currentColor" viewBox="0 0 24 24"><path d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/></svg>
-                            Buy me a coffee
-                        </a>
+                    <h3 class="card-title text-white">Developers</h3>
+                    <p class="card-desc">JSON/XML formatting, Base64, JWT decode, UUIDs, regex tester, cURL converter, SQL formatter, env generator—everything for daily dev workflows.</p>
+                </div>
+                <div class="card reveal reveal-delay-1">
+                    <div class="card-icon bg-violet-500/20 text-violet-400">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/></path></svg>
                     </div>
-                    <div class="hero-stats flex flex-wrap items-center justify-center gap-6 text-base sm:text-lg text-white/85 font-medium">
-                        <div class="flex items-center gap-2"><div class="stat-dot"></div><span>50+ Tools</span></div>
-                        <div class="flex items-center gap-2"><div class="stat-dot" style="background:#6366f1;"></div><span>100% Free</span></div>
-                        <div class="flex items-center gap-2"><div class="stat-dot" style="background:#f59e0b;"></div><span>Open Source</span></div>
+                    <h3 class="card-title text-white">VAPT & security</h3>
+                    <p class="card-desc">Clickjacking checker, HTTP headers analysis, OWASP Top 10 reference, email header analyzer, hash generator—client-side so sensitive data stays local.</p>
+                </div>
+                <div class="card reveal reveal-delay-2">
+                    <div class="card-icon bg-amber-500/20 text-amber-400">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/></path></svg>
                     </div>
+                    <h3 class="card-title text-white">Educators & students</h3>
+                    <p class="card-desc">Data structures guides, network protocols (HTTP, TCP, UDP, OSI), security awareness with OWASP—safe, in-browser experimentation.</p>
                 </div>
             </div>
         </div>
-    </div>
+    </section>
 
-    <a href="contact.html" class="floating-btn" aria-label="Contact"><svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/></svg></a>
-    <button type="button" class="floating-btn theme-btn" aria-label="Toggle theme"><svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"/></svg></button>
+    <!-- Tool categories -->
+    <section class="section py-20 sm:py-24 bg-white/[0.02]">
+        <div class="container-wide">
+            <p class="section-label text-center">Tool categories</p>
+            <h2 class="section-title text-center text-white">100+ tools in 8 categories</h2>
+            <p class="section-subtitle text-center mx-auto">
+                Encoders, VAPT tools, generators, API & dev utilities, network guides, database tools, and Python toolkit.
+            </p>
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                <a href="home.html#encoders" class="category-card no-underline text-inherit reveal">
+                    <span class="category-emoji">🔧</span>
+                    <div><div class="category-name text-white">Encoders / Decoders</div><div class="category-count">JSON, Base64, Base32, URL, JWT, CSV⇄JSON, XML, Hash</div></div>
+                </a>
+                <a href="home.html#vapt" class="category-card no-underline text-inherit reveal reveal-delay-1">
+                    <span class="category-emoji">🛡️</span>
+                    <div><div class="category-name text-white">VAPT & security</div><div class="category-count">Clickjacking, HTTP headers, OWASP Top 10, Email headers</div></div>
+                </a>
+                <a href="home.html" class="category-card no-underline text-inherit reveal reveal-delay-2">
+                    <span class="category-emoji">⚡</span>
+                    <div><div class="category-name text-white">Generators</div><div class="category-count">Password, UUID, QR, GUID, Lorem Ipsum</div></div>
+                </a>
+                <a href="home.html" class="category-card no-underline text-inherit reveal reveal-delay-3">
+                    <span class="category-emoji">🛠️</span>
+                    <div><div class="category-name text-white">Dev & API tools</div><div class="category-count">cURL, Cron, Regex, SQL, Diff, Mermaid, Markdown</div></div>
+                </a>
+                <a href="home.html" class="category-card no-underline text-inherit reveal">
+                    <span class="category-emoji">🌐</span>
+                    <div><div class="category-name text-white">Network protocols</div><div class="category-count">HTTP, TCP, UDP, OSI model</div></div>
+                </a>
+                <a href="home.html" class="category-card no-underline text-inherit reveal reveal-delay-1">
+                    <span class="category-emoji">🗄️</span>
+                    <div><div class="category-name text-white">Database</div><div class="category-count">PostgreSQL, Redis</div></div>
+                </a>
+                <a href="home.html" class="category-card no-underline text-inherit reveal reveal-delay-2">
+                    <span class="category-emoji">🐍</span>
+                    <div><div class="category-name text-white">Python toolkit</div><div class="category-count">Requests, Flask, Pandas, OpenAI, Jupyter, Prophet, Plotly</div></div>
+                </a>
+                <a href="home.html" class="category-card no-underline text-inherit reveal reveal-delay-3">
+                    <span class="category-emoji">📦</span>
+                    <div><div class="category-name text-white">More</div><div class="category-count">IP tools, Docker, Data structures, Emoji picker</div></div>
+                </a>
+            </div>
+            <div class="text-center mt-8">
+                <a href="home.html" class="btn-primary">Browse all tools</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Privacy & how it works -->
+    <section class="section py-20 sm:py-24">
+        <div class="container-narrow">
+            <p class="section-label text-center">How it works</p>
+            <h2 class="section-title text-center text-white">Your data never leaves your browser</h2>
+            <p class="section-subtitle text-center mx-auto">
+                All 100+ tools run entirely client-side. No server-side processing, no uploads, no tracking. Use DevDunia online or run it locally for full offline control.
+            </p>
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-6">
+                <div class="card text-center reveal">
+                    <div class="card-icon bg-cyan-500/20 text-cyan-400 mx-auto">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/></path></svg>
+                    </div>
+                    <h3 class="card-title text-white">Zero server processing</h3>
+                    <p class="card-desc">JSON, Base64, hashes, JWT—everything runs in JavaScript in your browser. No API calls for tool logic.</p>
+                </div>
+                <div class="card text-center reveal reveal-delay-1">
+                    <div class="card-icon bg-emerald-500/20 text-emerald-400 mx-auto">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/></path></svg>
+                    </div>
+                    <h3 class="card-title text-white">Lightning fast</h3>
+                    <p class="card-desc">No network round-trips. Results appear instantly. Works great offline once loaded.</p>
+                </div>
+                <div class="card text-center reveal reveal-delay-2">
+                    <div class="card-icon bg-violet-500/20 text-violet-400 mx-auto">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 12h14M5 12a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v4a2 2 0 01-2 2M5 12a2 2 0 00-2 2v4a2 2 0 002 2h14a2 2 0 002-2v-4a2 2 0 00-2-2m-2-4h.01M17 16h.01"/></path></svg>
+                    </div>
+                    <h3 class="card-title text-white">Self-host anytime</h3>
+                    <p class="card-desc">Clone the repo and run locally (e.g. <code class="text-xs bg-white/10 px-1.5 py-0.5 rounded">python -m http.server 8000</code>) for air-gapped or private use.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Open source CTA -->
+    <section class="section py-20 sm:py-24">
+        <div class="container-narrow">
+            <div class="cta-block reveal">
+                <p class="section-label">Open source</p>
+                <h2 class="section-title text-white">Contribute to DevDunia</h2>
+                <p class="section-subtitle">
+                    DevDunia is 100% free and open source. Add a new tool, improve docs, or fix a bug—we welcome PRs and recognize contributors. No build process; just HTML, CSS, and JS.
+                </p>
+                <div class="flex flex-wrap gap-3 justify-center">
+                    <a href="https://github.com/echobash/devdunia" target="_blank" rel="noopener noreferrer" class="btn-primary">
+                        <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/></svg>
+                        View on GitHub
+                    </a>
+                    <a href="CONTRIBUTING.md" target="_blank" rel="noopener noreferrer" class="btn-secondary">
+                        Contribution guide
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer section">
+        <div class="footer-grid">
+            <div class="footer-col">
+                <h4>Product</h4>
+                <a href="home.html">All tools</a>
+                <a href="all_tools/index.html">Tool list</a>
+            </div>
+            <div class="footer-col">
+                <h4>Community</h4>
+                <a href="https://github.com/echobash/devdunia" target="_blank" rel="noopener noreferrer">GitHub</a>
+                <a href="CONTRIBUTING.md" target="_blank" rel="noopener noreferrer">Contribute</a>
+                <a href="CODE_OF_CONDUCT.md" target="_blank" rel="noopener noreferrer">Code of conduct</a>
+            </div>
+            <div class="footer-col">
+                <h4>Support</h4>
+                <a href="support.html">Support DevDunia</a>
+                <a href="contact.html">Contact</a>
+            </div>
+            <div class="footer-col">
+                <h4>Legal</h4>
+                <a href="https://github.com/echobash/devdunia/blob/main/README.md" target="_blank" rel="noopener noreferrer">README & license</a>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <span>DevDunia — Where development meets security. 100+ free, privacy-first tools.</span>
+            <div class="footer-legal">
+                <a href="https://github.com/echobash/devdunia" target="_blank" rel="noopener noreferrer">GitHub</a>
+                <a href="support.html">Support</a>
+            </div>
+        </div>
+    </footer>
+
+    <a href="contact.html" class="floating-btn" aria-label="Contact">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/></svg>
+    </a>
+    <button type="button" class="floating-btn theme-btn" aria-label="Toggle theme">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"/></svg>
+    </button>
 
     <script src="js/common.js"></script>
+    <script>
+(function () {
+    var nav = document.querySelector('.nav-wrap');
+    function onScroll() {
+        if (window.scrollY > 20) nav.classList.add('scrolled');
+        else nav.classList.remove('scrolled');
+    }
+    window.addEventListener('scroll', onScroll, { passive: true });
+    onScroll();
+
+    var reveals = document.querySelectorAll('.reveal');
+    var observer = new IntersectionObserver(function (entries) {
+        entries.forEach(function (e) {
+            if (e.isIntersecting) e.target.classList.add('revealed');
+        });
+    }, { rootMargin: '0px 0px -60px 0px', threshold: 0.1 });
+    reveals.forEach(function (el) { observer.observe(el); });
+})();
+    </script>
 </body>
 </html>
