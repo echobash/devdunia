@@ -122,57 +122,38 @@
             display: flex;
             flex-direction: column;
             justify-content: center;
-            padding: 6rem 0 5rem;
+            padding: 8rem 0 6rem;
         }
-        .hero-brand {
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            gap: 0.75rem;
-            margin-bottom: 2rem;
-        }
-        .hero-brand img {
-            width: 4rem;
-            height: 4rem;
-            border-radius: 1rem;
-            box-shadow: 0 8px 32px rgba(20, 184, 166, 0.25), 0 0 0 1px rgba(255,255,255,0.06);
-            transition: transform 0.4s var(--ease-spring), box-shadow 0.3s;
-        }
-        .hero-brand:hover img { transform: scale(1.05) rotate(-2deg); box-shadow: 0 12px 40px rgba(20, 184, 166, 0.35), 0 0 0 1px rgba(255,255,255,0.08); }
-        .hero-brand span { font-size: 1.75rem; font-weight: 800; letter-spacing: -0.03em; color: #fff; }
         .hero-badge {
             display: inline-flex;
             align-items: center;
             gap: 0.5rem;
-            padding: 0.5rem 1.125rem;
+            padding: 0.5rem 1rem;
             border-radius: 9999px;
-            background: linear-gradient(135deg, rgba(20, 184, 166, 0.15), rgba(20, 184, 166, 0.06));
-            border: 1px solid rgba(20, 184, 166, 0.3);
+            background: rgba(20, 184, 166, 0.1);
+            border: 1px solid rgba(20, 184, 166, 0.2);
             font-size: 0.8125rem;
             font-weight: 600;
             color: #5eead4;
             letter-spacing: 0.02em;
-            margin-bottom: 1.75rem;
-            box-shadow: 0 0 24px rgba(20, 184, 166, 0.12);
-            transition: transform 0.3s var(--ease-out), box-shadow 0.3s, border-color 0.3s;
+            margin-bottom: 2rem;
         }
-        .hero-badge:hover { transform: translateY(-1px); box-shadow: 0 0 32px rgba(20, 184, 166, 0.18); border-color: rgba(20, 184, 166, 0.4); }
         .hero-title {
-            font-size: clamp(2.75rem, 6.5vw, 4.5rem);
+            font-size: clamp(3rem, 7vw, 5rem);
             line-height: 1.05;
-            letter-spacing: -0.04em;
+            letter-spacing: -0.05em;
             font-weight: 800;
-            margin-bottom: 1.5rem;
+            margin-bottom: 1.75rem;
         }
         .hero-subtitle {
-            font-size: clamp(1.125rem, 2vw, 1.375rem);
-            line-height: 1.65;
+            font-size: clamp(1.25rem, 2.25vw, 1.5rem);
+            line-height: 1.6;
             color: var(--text-muted);
-            max-width: 44rem;
-            margin: 0 auto 2.75rem;
-            font-weight: 450;
+            max-width: 48rem;
+            margin: 0 auto 3rem;
+            font-weight: 400;
         }
-        .hero-ctas { display: flex; flex-wrap: wrap; gap: 0.75rem; justify-content: center; }
+        .hero-ctas { display: flex; flex-wrap: wrap; gap: 1rem; justify-content: center; margin-bottom: 4rem; }
         .btn-primary {
             display: inline-flex;
             align-items: center;
@@ -219,29 +200,45 @@
         }
         .btn-secondary:active { transform: translateY(0); }
         .btn-secondary:focus-visible { outline: 2px solid var(--teal); outline-offset: 3px; }
+        .btn-support {
+            background: linear-gradient(135deg, rgba(245, 158, 11, 0.15), rgba(245, 158, 11, 0.08));
+            border-color: rgba(245, 158, 11, 0.3);
+            color: #fbbf24;
+            box-shadow: 0 4px 16px rgba(245, 158, 11, 0.2);
+        }
+        .btn-support:hover {
+            background: linear-gradient(135deg, rgba(245, 158, 11, 0.2), rgba(245, 158, 11, 0.12));
+            border-color: rgba(245, 158, 11, 0.4);
+            color: #fcd34d;
+            box-shadow: 0 6px 24px rgba(245, 158, 11, 0.3);
+        }
 
-        /* Value pills */
-        .value-pills { display: flex; flex-wrap: wrap; justify-content: center; gap: 0.625rem; margin-top: 2.5rem; }
-        .value-pill {
-            display: inline-flex;
-            align-items: center;
-            gap: 0.5rem;
-            padding: 0.5rem 1rem;
-            border-radius: 9999px;
-            background: var(--surface);
-            border: 1px solid var(--border);
+        /* Stats bar */
+        .stats-bar {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+            gap: 2rem;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 2rem 0;
+            border-top: 1px solid var(--border);
+            border-bottom: 1px solid var(--border);
+        }
+        .stat-item {
+            text-align: center;
+        }
+        .stat-number {
+            font-size: 2rem;
+            font-weight: 800;
+            color: #fff;
+            margin-bottom: 0.25rem;
+            letter-spacing: -0.02em;
+        }
+        .stat-label {
             font-size: 0.875rem;
+            color: var(--text-muted);
             font-weight: 500;
-            color: var(--text);
-            transition: transform 0.25s var(--ease-out), background 0.25s, border-color 0.25s, box-shadow 0.25s;
         }
-        .value-pill:hover {
-            transform: translateY(-2px);
-            background: var(--surface-hover);
-            border-color: var(--border-hover);
-            box-shadow: 0 4px 16px rgba(0,0,0,0.15);
-        }
-        .value-pill svg { flex-shrink: 0; opacity: 0.95; }
 
         /* Cards */
         .card {
@@ -428,7 +425,7 @@
             </a>
             <div class="nav-links">
                 <a href="home.html">All Tools</a>
-                <a href="https://github.com/echobash/devdunia" target="_blank" rel="noopener noreferrer">GitHub</a>
+                <a href="https://github.com/AliAnwar1/devdunia" target="_blank" rel="noopener noreferrer">GitHub</a>
                 <a href="CONTRIBUTING.md" target="_blank" rel="noopener noreferrer">Contribute</a>
                 <a href="support.html">Support</a>
                 <a href="contact.html">Contact</a>
@@ -439,41 +436,48 @@
     <!-- Hero -->
     <header class="section hero">
         <div class="container-narrow text-center">
-            <div class="hero-brand reveal revealed">
-                <img src="images/logo.png" alt="DevDunia" class="shrink-0">
-                <span>DevDunia</span>
-            </div>
-            <div class="hero-badge reveal revealed reveal-delay-1">
+            <div class="hero-badge reveal revealed">
                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
                 Privacy-first • Client-side • No signup
             </div>
-            <h1 class="hero-title text-white reveal revealed reveal-delay-2">
+            <h1 class="hero-title text-white reveal revealed reveal-delay-1">
                 Developer & <span class="gradient-teal">Pen Testing Tools</span><br>
                 <span class="gradient-purple">at your fingertips</span>
             </h1>
-            <p class="hero-subtitle reveal revealed reveal-delay-3">
+            <p class="hero-subtitle reveal revealed reveal-delay-2">
                 Where development meets security. 100+ free utilities for developers and VAPT professionals—JSON, Base64, JWT, clickjacking testing, and more. Everything runs in your browser; your data never leaves your device.
             </p>
-            <div class="hero-ctas reveal revealed reveal-delay-4">
+            <div class="hero-ctas reveal revealed reveal-delay-3">
                 <a href="home.html" class="btn-primary">
                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/></svg>
                     Explore all tools
                 </a>
-                <a href="https://github.com/echobash/devdunia" target="_blank" rel="noopener noreferrer" class="btn-secondary">
+                <a href="support.html" class="btn-secondary btn-support">
+                    <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/></svg>
+                    Support DevDunia
+                </a>
+                <a href="https://github.com/AliAnwar1/devdunia" target="_blank" rel="noopener noreferrer" class="btn-secondary">
                     <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/></svg>
                     Star on GitHub
                 </a>
-                <a href="support.html" class="btn-secondary">
-                    <svg class="w-5 h-5 text-amber-400" fill="currentColor" viewBox="0 0 24 24"><path d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/></svg>
-                    Support DevDunia
-                </a>
             </div>
-            <div class="value-pills reveal revealed reveal-delay-5">
-                <span class="value-pill"><svg class="w-4 h-4 text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>100+ tools</span>
-                <span class="value-pill"><svg class="w-4 h-4 text-cyan-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/></svg>Privacy-first</span>
-                <span class="value-pill"><svg class="w-4 h-4 text-violet-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>Lightning fast</span>
-                <span class="value-pill"><svg class="w-4 h-4 text-amber-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>100% free</span>
-                <span class="value-pill"><svg class="w-4 h-4 text-rose-400" fill="currentColor" viewBox="0 0 24 24"><path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/></svg>Open source</span>
+            <div class="stats-bar reveal revealed reveal-delay-4">
+                <div class="stat-item">
+                    <div class="stat-number">100+</div>
+                    <div class="stat-label">Free Tools</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-number">100%</div>
+                    <div class="stat-label">Client-side</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-number">0</div>
+                    <div class="stat-label">Data Sent</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-number">∞</div>
+                    <div class="stat-label">Open Source</div>
+                </div>
             </div>
         </div>
     </header>
@@ -516,7 +520,7 @@
     <section class="section py-20 sm:py-24 bg-white/[0.02]">
         <div class="container-wide">
             <p class="section-label text-center">Tool categories</p>
-            <h2 class="section-title text-center text-white">100+ Developer and VAPT tools</h2>
+            <h2 class="section-title text-center text-white">100+ tools in 8 categories</h2>
             <p class="section-subtitle text-center mx-auto">
                 Encoders, VAPT tools, generators, API & dev utilities, network guides, database tools, and Python toolkit.
             </p>
@@ -604,7 +608,7 @@
                     DevDunia is 100% free and open source. Add a new tool, improve docs, or fix a bug—we welcome PRs and recognize contributors. No build process; just HTML, CSS, and JS.
                 </p>
                 <div class="flex flex-wrap gap-3 justify-center">
-                    <a href="https://github.com/echobash/devdunia" target="_blank" rel="noopener noreferrer" class="btn-primary">
+                    <a href="https://github.com/AliAnwar1/devdunia" target="_blank" rel="noopener noreferrer" class="btn-primary">
                         <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/></svg>
                         View on GitHub
                     </a>
@@ -626,7 +630,7 @@
             </div>
             <div class="footer-col">
                 <h4>Community</h4>
-                <a href="https://github.com/echobash/devdunia" target="_blank" rel="noopener noreferrer">GitHub</a>
+                <a href="https://github.com/AliAnwar1/devdunia" target="_blank" rel="noopener noreferrer">GitHub</a>
                 <a href="CONTRIBUTING.md" target="_blank" rel="noopener noreferrer">Contribute</a>
                 <a href="CODE_OF_CONDUCT.md" target="_blank" rel="noopener noreferrer">Code of conduct</a>
             </div>
@@ -637,13 +641,13 @@
             </div>
             <div class="footer-col">
                 <h4>Legal</h4>
-                <a href="https://github.com/echobash/devdunia/blob/main/README.md" target="_blank" rel="noopener noreferrer">README & license</a>
+                <a href="https://github.com/AliAnwar1/devdunia/blob/main/README.md" target="_blank" rel="noopener noreferrer">README & license</a>
             </div>
         </div>
         <div class="footer-bottom">
             <span>DevDunia — Where development meets security. 100+ free, privacy-first tools.</span>
             <div class="footer-legal">
-                <a href="https://github.com/echobash/devdunia" target="_blank" rel="noopener noreferrer">GitHub</a>
+                <a href="https://github.com/AliAnwar1/devdunia" target="_blank" rel="noopener noreferrer">GitHub</a>
                 <a href="support.html">Support</a>
             </div>
         </div>
