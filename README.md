@@ -20,7 +20,7 @@
 
 **Thank you to all contributors who help make this project better!** 🎉
 
-> **50+ essential developer tools including VAPT, encoders, formatters, and more — all free, fast, and privacy-first.**
+> **100+ essential developer tools including VAPT, encoders, formatters, and more — all free, fast, and privacy-first.**
 
 [![Try DevDunia](https://img.shields.io/badge/Try%20DevDunia-Now-brightgreen?style=for-the-badge)](https://devdunia.com)
 [![Star on GitHub](https://img.shields.io/badge/Star%20on%20GitHub-⭐-yellow?style=for-the-badge)](https://github.com/echobash/devdunia)
@@ -33,13 +33,13 @@
 
 👉 **[Try it online](https://devdunia.com)** — no installation required.
 
-Perfect for JSON formatting, Base64 encoding, hash generation, password creation, and VAPT security testing — plus 45+ other tools.
+Perfect for JSON formatting, Base64 encoding, hash generation, password creation, and VAPT security testing — plus 100+ other tools.
 
 ---
 
 ## ✨ Why DevDunia?
 
-✅ **50+ Tools** — All the essentials in one place  
+✅ **100+ Tools** — All the essentials in one place  
 🔒 **Privacy-First** — Your data never leaves your browser  
 ⚡ **Lightning Fast** — Works instantly with no server calls  
 🆓 **Completely Free** — No ads, subscriptions, or limits  
