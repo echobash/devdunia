@@ -528,11 +528,11 @@
                 <div class="t-title">devdunia.com — live playground</div>
             </div>
             <div class="t-tabs" id="t-tabs">
-                <button class="t-tab active" data-tab="json">JSON</button>
+                <button class="t-tab active" data-tab="hash">Hash</button>
+                <button class="t-tab " data-tab="jwt">JWT Decoder</button>
+                <button class="t-tab" data-tab="json">JSON</button>
                 <button class="t-tab" data-tab="b64">Base64</button>
-                <button class="t-tab" data-tab="hash">Hash</button>
                 <button class="t-tab" data-tab="uuid">UUID</button>
-                <button class="t-tab" data-tab="jwt">JWT</button>
                 <button class="t-tab" data-tab="passwd">Password</button>
                 <button class="t-tab" data-tab="url">URL</button>
                 <button class="t-tab" data-tab="regex">Regex</button>
@@ -542,8 +542,48 @@
             </div>
             <div class="t-body">
 
+                <!-- Hash -->
+                <div class="t-panel active" id="tab-hash">
+                    <div class="t-prompt-row">
+                        <span class="t-prompt">$</span>
+                        <textarea class="t-textarea" id="hash-in" rows="3" placeholder="Text to hash. e.g DevDunia is authored by Ali Anwar"></textarea>
+                    </div>
+                    <div class="t-row">
+                        <select class="t-select" id="hash-algo">
+                            <option value="md5">MD5</option>
+                            <option value="sha1">SHA-1</option>
+                            <option value="sha256" selected>SHA-256</option>
+                            <option value="sha384">SHA-384</option>
+                            <option value="sha512">SHA-512</option>
+                            <option value="all">All algorithms</option>
+                        </select>
+                        <button class="t-btn" onclick="runHash()">▶ Hash</button>
+                        <button class="t-btn-sm" onclick="clearPanel('hash-in','hash-out')">Clear</button>
+                    </div>
+                    <div class="out-wrap">
+                        <div class="t-output" id="hash-out"><span class="cmt">// hash output appears here</span></div>
+                        <button class="copy-btn-out" onclick="copyOut('hash-out')">Copy</button>
+                    </div>
+                </div>
+
+                <!-- JWT (first) -->
+                <div class="t-panel " id="tab-jwt">
+                    <div class="t-prompt-row">
+                        <span class="t-prompt">$</span>
+                        <textarea class="t-textarea" id="jwt-in" rows="4" placeholder="Paste a JWT token here (header.payload.signature)..."></textarea>
+                    </div>
+                    <div class="t-row">
+                        <button class="t-btn" onclick="runJWT()">▶ Decode</button>
+                        <button class="t-btn-sm" onclick="clearPanel('jwt-in','jwt-out')">Clear</button>
+                    </div>
+                    <div class="out-wrap">
+                        <div class="t-output" id="jwt-out"><span class="cmt">// paste a JWT above — shows all 3 parts</span></div>
+                        <button class="copy-btn-out" onclick="copyOut('jwt-out')">Copy</button>
+                    </div>
+                </div>
+
                 <!-- JSON -->
-                <div class="t-panel active" id="tab-json">
+                <div class="t-panel" id="tab-json">
                     <div class="t-prompt-row">
                         <span class="t-prompt">$</span>
                         <textarea class="t-textarea" id="json-in" rows="4" placeholder='Paste JSON here — e.g. {"name":"DevDunia","tools":100}'></textarea>
@@ -577,29 +617,6 @@
                     </div>
                 </div>
 
-                <!-- Hash -->
-                <div class="t-panel" id="tab-hash">
-                    <div class="t-prompt-row">
-                        <span class="t-prompt">$</span>
-                        <textarea class="t-textarea" id="hash-in" rows="3" placeholder="Text to hash..."></textarea>
-                    </div>
-                    <div class="t-row">
-                        <select class="t-select" id="hash-algo">
-                            <option value="md5">MD5</option>
-                            <option value="sha1">SHA-1</option>
-                            <option value="sha256" selected>SHA-256</option>
-                            <option value="sha384">SHA-384</option>
-                            <option value="sha512">SHA-512</option>
-                            <option value="all">All algorithms</option>
-                        </select>
-                        <button class="t-btn" onclick="runHash()">▶ Hash</button>
-                        <button class="t-btn-sm" onclick="clearPanel('hash-in','hash-out')">Clear</button>
-                    </div>
-                    <div class="out-wrap">
-                        <div class="t-output" id="hash-out"><span class="cmt">// hash output appears here</span></div>
-                        <button class="copy-btn-out" onclick="copyOut('hash-out')">Copy</button>
-                    </div>
-                </div>
 
                 <!-- UUID -->
                 <div class="t-panel" id="tab-uuid">
@@ -612,22 +629,6 @@
                     <div class="out-wrap">
                         <div class="t-output" id="uuid-out"><span class="cmt">// click Generate</span></div>
                         <button class="copy-btn-out" onclick="copyOut('uuid-out')">Copy</button>
-                    </div>
-                </div>
-
-                <!-- JWT -->
-                <div class="t-panel" id="tab-jwt">
-                    <div class="t-prompt-row">
-                        <span class="t-prompt">$</span>
-                        <textarea class="t-textarea" id="jwt-in" rows="4" placeholder="Paste a JWT token here (header.payload.signature)..."></textarea>
-                    </div>
-                    <div class="t-row">
-                        <button class="t-btn" onclick="runJWT()">▶ Decode</button>
-                        <button class="t-btn-sm" onclick="clearPanel('jwt-in','jwt-out')">Clear</button>
-                    </div>
-                    <div class="out-wrap">
-                        <div class="t-output" id="jwt-out"><span class="cmt">// paste a JWT above — shows all 3 parts</span></div>
-                        <button class="copy-btn-out" onclick="copyOut('jwt-out')">Copy</button>
                     </div>
                 </div>
 
@@ -660,7 +661,7 @@
                 <div class="t-panel" id="tab-url">
                     <div class="t-prompt-row">
                         <span class="t-prompt">$</span>
-                        <textarea class="t-textarea" id="url-in" rows="3" placeholder="https://example.com/search?q=hello world&lang=en"></textarea>
+                        <textarea class="t-textarea" id="url-in" rows="3" placeholder="https://echobash.com/search?q=hello world&lang=en"></textarea>
                     </div>
                     <div class="t-row">
                         <button class="t-btn" onclick="runURL('enc')">▶ Encode</button>
@@ -684,7 +685,7 @@
                     </div>
                     <div class="t-prompt-row" style="margin-bottom:0.75rem;">
                         <span class="t-prompt">$</span>
-                        <textarea class="t-textarea" id="regex-in" rows="3" placeholder="Test string goes here..." oninput="runRegex()" style="min-height:64px;"></textarea>
+                        <textarea class="t-textarea" id="regex-in" rows="3" placeholder="echobash" oninput="runRegex()" style="min-height:64px;"></textarea>
                     </div>
                     <div class="t-row">
                         <button class="t-btn" onclick="runRegex()">▶ Test</button>
@@ -714,7 +715,7 @@
                 <div class="t-panel" id="tab-wc">
                     <div class="t-prompt-row">
                         <span class="t-prompt">$</span>
-                        <textarea class="t-textarea" id="wc-in" rows="5" placeholder="Paste or type your text here — stats update live..." oninput="runWC()"></textarea>
+                        <textarea class="t-textarea" id="wc-in" rows="5" placeholder="echobash..." oninput="runWC()"></textarea>
                     </div>
                     <div class="wc-stats">
                         <div class="wc-stat"><div class="wc-num" id="wc-words">0</div><div class="wc-lbl">Words</div></div>
@@ -730,7 +731,7 @@
                 <div class="t-panel" id="tab-share">
                     <div class="t-prompt-row">
                         <span class="t-prompt">$</span>
-                        <textarea class="t-textarea" id="share-in" rows="4" placeholder="Paste your code, notes, or any text to share..."></textarea>
+                        <textarea class="t-textarea" id="share-in" rows="4" placeholder="echobash..."></textarea>
                     </div>
                     <div class="t-row share-format-btns">
                         <button class="t-btn" onclick="shareAs('plain')">▶ Copy Plain</button>
@@ -1298,11 +1299,20 @@ function escHtml(s){
 }
 
 /* ══════════════════════════════════════════
-   Auto-run JSON demo
+   Auto-run: echobash JWT demo
 ══════════════════════════════════════════ */
 (function(){
-    document.getElementById('json-in').value='{"tool":"DevDunia","version":"2.0","features":["100+ tools","privacy-first","offline"],"free":true}';
-    runJson();
+    function b64url(obj){
+        return btoa(unescape(encodeURIComponent(JSON.stringify(obj))))
+            .replace(/=/g,'').replace(/\+/g,'-').replace(/\//g,'_');
+    }
+    var token=[
+        b64url({alg:'HS256',typ:'JWT'}),
+        b64url({sub:'echobash',name:'Ali Anwar',role:'developer',platform:'devdunia',github:'echobash',tools:100,iat:1700000000,exp:9999999999}),
+        'SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c'
+    ].join('.');
+    document.getElementById('jwt-in').value=token;
+    runJWT();
 })();
 </script>
 </body>
