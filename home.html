@@ -1,2077 +1,1371 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link rel="icon" type="image/png" href="images/logo.png">
   <link rel="apple-touch-icon" href="images/logo.png">
-  <title>DevDunia - Developer & VAPT Tools Dashboard | 50+ Free Dev & Security Utilities</title>
-  <meta name="description"
-    content="Modern developer and VAPT tools dashboard with 50+ free utilities. JSON formatter, clickjacking checker, password generator, HTTP header analyzer, and more essential development and security tools.">
-  <meta name="keywords"
-    content="developer tools, VAPT tools, security tools, dev tools, JSON formatter, clickjacking checker, password generator, HTTP headers, vulnerability assessment, penetration testing, free tools, development utilities">
-
-  <!-- Fonts -->
+  <title>All Developer Tools — DevDunia | 100+ Free Dev Utilities</title>
+  <meta name="description" content="100+ developer tools in one place. Format JSON, encode Base64, hash text, decode JWT, generate UUIDs, test APIs, and more. Free, private, instant — no signup.">
+  <meta name="keywords" content="developer tools, VAPT tools, JSON formatter, base64 encoder, JWT decoder, UUID generator, password generator, regex tester, SQL formatter, free dev tools">
+  <meta name="theme-color" content="#060810">
+  <link rel="canonical" href="https://devdunia.com/home.html">
+  <meta property="og:title" content="All Developer Tools — DevDunia">
+  <meta property="og:description" content="100+ free developer tools. Encoders, generators, security, Python toolkit, network protocols and more.">
+  <meta property="og:type" content="website">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap"
-    rel="stylesheet">
-
-  <!-- Tailwind CSS -->
-  <script src="https://cdn.tailwindcss.com"></script>
-  <script>
-    tailwind.config = {
-      theme: {
-        extend: {
-          fontFamily: {
-            'sans': ['Inter', 'system-ui', 'sans-serif'],
-          },
-          colors: {
-            'glass': {
-              '50': 'rgba(255, 255, 255, 0.05)',
-              '100': 'rgba(255, 255, 255, 0.1)',
-              '200': 'rgba(255, 255, 255, 0.15)',
-            },
-            'dark': {
-              '900': '#0d1117',
-              '800': '#121826',
-              '700': '#1a1f2e',
-            }
-          },
-          animation: {
-            'float': 'float 6s ease-in-out infinite',
-            'glow': 'glow 2s ease-in-out infinite alternate',
-            'slide-up': 'slideUp 0.5s ease-out',
-            'fade-in': 'fadeIn 0.6s ease-out',
-            'scale-in': 'scaleIn 0.4s ease-out',
-          },
-          keyframes: {
-            float: {
-              '0%, 100%': { transform: 'translateY(0px)' },
-              '50%': { transform: 'translateY(-10px)' },
-            },
-            glow: {
-              '0%': { boxShadow: '0 0 20px rgba(59, 130, 246, 0.3)' },
-              '100%': { boxShadow: '0 0 30px rgba(59, 130, 246, 0.6)' },
-            },
-            slideUp: {
-              '0%': { transform: 'translateY(20px)', opacity: '0' },
-              '100%': { transform: 'translateY(0)', opacity: '1' },
-            },
-            fadeIn: {
-              '0%': { opacity: '0' },
-              '100%': { opacity: '1' },
-            },
-            scaleIn: {
-              '0%': { transform: 'scale(0.9)', opacity: '0' },
-              '100%': { transform: 'scale(1)', opacity: '1' },
-            }
-          }
-        }
-      }
-    }
-  </script>
-
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
   <style>
-    /* Custom CSS for advanced effects */
+    :root {
+      --bg:      #060810;
+      --teal:    #00e5c7;
+      --teal2:   #0d9488;
+      --violet:  #a78bfa;
+      --violet2: #7c3aed;
+      --amber:   #fbbf24;
+      --red:     #f87171;
+      --green:   #4ade80;
+      --text:    #e2e8f0;
+      --muted:   rgba(226,232,240,0.58);
+      --faint:   rgba(226,232,240,0.32);
+      --border:  rgba(255,255,255,0.08);
+      --border2: rgba(255,255,255,0.13);
+      --card:    rgba(255,255,255,0.035);
+      --card2:   rgba(255,255,255,0.07);
+      --ease:    cubic-bezier(0.22,1,0.36,1);
+      --spring:  cubic-bezier(0.34,1.56,0.64,1);
+      --mono:    'JetBrains Mono', monospace;
+      --sans:    'Inter', system-ui, sans-serif;
+    }
+    *, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
+    html { scroll-behavior: smooth; font-size: 16px; }
     body {
-      font-family: 'Inter', system-ui, -apple-system, sans-serif;
-      background: linear-gradient(135deg, #0d1117 0%, #121826 50%, #0d1117 100%);
+      font-family: var(--sans);
+      background: var(--bg);
+      color: var(--text);
       min-height: 100vh;
+      -webkit-font-smoothing: antialiased;
       overflow-x: hidden;
     }
 
-    /* Glass morphism base */
-    .glass {
-      background: rgba(255, 255, 255, 0.05);
-      backdrop-filter: blur(20px);
-      border: 1px solid rgba(255, 255, 255, 0.1);
-      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+    /* ─── Matrix canvas ─── */
+    #matrix-canvas {
+      position: fixed; inset: 0; z-index: 0;
+      pointer-events: none; opacity: 0.14;
     }
 
-    .glass-card {
-      background: rgba(255, 255, 255, 0.03);
-      backdrop-filter: blur(15px);
-      border: 1px solid rgba(255, 255, 255, 0.08);
-      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    }
-
-    .glass-card:hover {
-      background: rgba(255, 255, 255, 0.08);
-      border-color: rgba(59, 130, 246, 0.3);
-      transform: translateY(-8px) scale(1.02);
-      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4), 0 0 20px rgba(59, 130, 246, 0.2);
-    }
-
-    /* Tool card specific styling */
-    .tool-card {
-      background: linear-gradient(135deg, rgba(255, 255, 255, 0.05) 0%, rgba(255, 255, 255, 0.02) 100%);
-      backdrop-filter: blur(15px);
-      border: 1px solid rgba(255, 255, 255, 0.1);
-      transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-      position: relative;
-      overflow: hidden;
-    }
-
-    .tool-card::before {
+    /* ─── Noise ─── */
+    body::after {
       content: '';
-      position: absolute;
-      top: 0;
-      left: -100%;
-      width: 100%;
-      height: 100%;
-      background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
-      transition: left 0.6s ease;
+      position: fixed; inset: 0;
+      background: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.035'/%3E%3C/svg%3E");
+      pointer-events: none; z-index: 0;
     }
 
-    .tool-card:hover::before {
-      left: 100%;
+    /* ─── Blobs ─── */
+    .blob { position:fixed; border-radius:9999px; filter:blur(90px); pointer-events:none; z-index:0; animation:blobDrift 20s ease-in-out infinite alternate; }
+    .b1 { width:700px;height:700px;background:rgba(0,229,199,0.07);top:-250px;left:-150px;animation-duration:22s; }
+    .b2 { width:500px;height:500px;background:rgba(167,139,250,0.07);top:35%;right:-180px;animation-duration:18s;animation-delay:-6s; }
+    .b3 { width:400px;height:400px;background:rgba(244,114,182,0.05);bottom:5%;left:25%;animation-duration:15s;animation-delay:-3s; }
+    @keyframes blobDrift { 0%{transform:translate(0,0)} 100%{transform:translate(35px,25px)} }
+
+    /* ─── Grid ─── */
+    .grid-bg {
+      position: fixed; inset: 0; z-index: 0; pointer-events: none;
+      background-image:
+        linear-gradient(rgba(0,229,199,0.025) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(0,229,199,0.025) 1px, transparent 1px);
+      background-size: 56px 56px;
+      mask-image: radial-gradient(ellipse 85% 85% at 50% 50%, black 10%, transparent 100%);
     }
 
-    .tool-card:hover {
-      transform: translateY(-12px) scale(1.05);
-      border-color: rgba(59, 130, 246, 0.4);
-      box-shadow:
-        0 25px 50px rgba(0, 0, 0, 0.5),
-        0 0 30px rgba(59, 130, 246, 0.3),
-        inset 0 1px 0 rgba(255, 255, 255, 0.2);
+    /* ─── Cursor glow ─── */
+    #cursor-glow {
+      position: fixed; pointer-events: none; z-index: 9999;
+      width: 320px; height: 320px; border-radius: 50%;
+      background: radial-gradient(circle, rgba(0,229,199,0.055), transparent 70%);
+      transform: translate(-50%,-50%); display: none;
+      transition: left 0.1s, top 0.1s;
     }
+    @media(hover:hover){ #cursor-glow{display:block} }
 
-    /* Gradient text */
-    .gradient-text {
-      background: linear-gradient(135deg, #3b82f6, #8b5cf6, #10b981);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      background-clip: text;
+    /* ─── Nav ─── */
+    .nav {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+      padding: 1rem 1.5rem;
+      border-bottom: 1px solid transparent;
+      transition: background 0.35s, border-color 0.3s, backdrop-filter 0.35s;
     }
-
-    /* Search bar styling */
-    .search-bar {
-      background: rgba(255, 255, 255, 0.05);
+    .nav.scrolled {
+      background: rgba(6,8,16,0.88);
       backdrop-filter: blur(20px);
-      border: 1px solid rgba(255, 255, 255, 0.1);
-      transition: all 0.3s ease;
+      -webkit-backdrop-filter: blur(20px);
+      border-color: var(--border);
+    }
+    .nav-inner { max-width: 1220px; margin: 0 auto; display: flex; align-items: center; justify-content: space-between; gap: 1rem; }
+    .nav-logo {
+      display: flex; align-items: center; gap: 0.6rem;
+      text-decoration: none; color: #fff;
+      font-weight: 800; font-size: 1.2rem; letter-spacing: -0.03em;
+      flex-shrink: 0;
+    }
+    .nav-logo img { width: 2.1rem; height: 2.1rem; border-radius: 10px; box-shadow: 0 0 18px rgba(0,229,199,0.4); }
+    .nav-logo span { color: var(--teal); }
+    .nav-center { display: flex; align-items: center; gap: 0.5rem; }
+    #nav-tool-count {
+      display: inline-flex; align-items: center;
+      padding: 0.25rem 0.7rem; border-radius: 9999px;
+      background: rgba(0,229,199,0.1); border: 1px solid rgba(0,229,199,0.25);
+      font-family: var(--mono); font-size: 0.72rem; font-weight: 700;
+      color: var(--teal); letter-spacing: 0.05em;
+    }
+    .nav-links { display: flex; align-items: center; gap: 0.125rem; flex-wrap: wrap; }
+    .nav-links a {
+      color: var(--muted); text-decoration: none;
+      font-size: 0.925rem; font-weight: 500;
+      padding: 0.5rem 0.9rem; border-radius: 10px;
+      transition: color 0.2s, background 0.2s;
+    }
+    .nav-links a:hover { color: #fff; background: var(--card2); }
+    .nav-cta {
+      background: linear-gradient(135deg, var(--teal), var(--teal2)) !important;
+      color: #021410 !important; font-weight: 700 !important;
+      border-radius: 10px !important;
+      box-shadow: 0 0 22px rgba(0,229,199,0.3);
+    }
+    .nav-cta:hover { box-shadow: 0 0 34px rgba(0,229,199,0.48) !important; background: var(--card2) !important; color: var(--teal) !important; }
+
+    /* ─── Hero ─── */
+    .hero {
+      position: relative; z-index: 1;
+      padding: 8rem 1.5rem 3rem;
+    }
+    .hero-inner {
+      max-width: 860px; margin: 0 auto; text-align: center;
+    }
+    .hero-badge {
+      display: inline-flex; align-items: center; gap: 0.5rem;
+      padding: 0.45rem 1rem; border-radius: 9999px;
+      border: 1px solid rgba(0,229,199,0.28);
+      background: rgba(0,229,199,0.07);
+      font-size: 0.85rem; font-weight: 600; color: var(--teal);
+      letter-spacing: 0.02em; margin-bottom: 1.5rem;
+      animation: fadeDown 0.7s var(--ease) both;
+    }
+    .badge-dot {
+      width: 7px; height: 7px; border-radius: 50%; background: var(--teal);
+      animation: pulseDot 2s ease-in-out infinite;
+    }
+    @keyframes pulseDot { 0%,100%{box-shadow:0 0 0 0 rgba(0,229,199,0.5)} 50%{box-shadow:0 0 0 7px rgba(0,229,199,0)} }
+
+    .hero-title {
+      font-size: clamp(2rem, 4.5vw, 3rem);
+      font-weight: 900; letter-spacing: -0.045em; line-height: 1.08;
+      margin-bottom: 1.25rem;
+      animation: fadeUp 0.8s var(--ease) 0.1s both;
+    }
+    .grad-teal {
+      background: linear-gradient(135deg, #00e5c7 0%, #06b6d4 60%, #00e5c7 100%);
+      background-size: 200% 200%;
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+      animation: gradAnim 5s ease infinite;
+    }
+    @keyframes gradAnim { 0%,100%{background-position:0% 50%} 50%{background-position:100% 50%} }
+
+    /* ─── Search ─── */
+    .search-wrap {
+      position: relative; display: flex; align-items: center;
+      max-width: 660px; margin: 1.5rem auto 1.25rem;
+      animation: fadeUp 0.8s var(--ease) 0.2s both;
+    }
+    .search-icon {
+      position: absolute; left: 1.1rem; color: var(--faint);
+      width: 18px; height: 18px; pointer-events: none; flex-shrink: 0;
+    }
+    #search {
+      width: 100%; padding: 0.95rem 6rem 0.95rem 3rem;
+      border-radius: 14px; border: 1px solid var(--border2);
+      background: rgba(255,255,255,0.05);
+      color: #fff; font-family: var(--sans); font-size: 1rem;
+      outline: none;
+      backdrop-filter: blur(12px);
+      transition: border-color 0.25s, box-shadow 0.25s, background 0.25s;
+    }
+    #search:focus {
+      border-color: rgba(0,229,199,0.4);
+      background: rgba(255,255,255,0.07);
+      box-shadow: 0 0 0 3px rgba(0,229,199,0.1), 0 8px 32px rgba(0,0,0,0.3);
+    }
+    #search::placeholder { color: var(--faint); }
+    .search-kbd {
+      position: absolute; right: 1rem; display: flex; align-items: center; gap: 0.2rem;
+      pointer-events: none;
+    }
+    .kbd {
+      padding: 0.18rem 0.45rem; border-radius: 5px;
+      border: 1px solid var(--border2); background: rgba(255,255,255,0.05);
+      font-family: var(--mono); font-size: 0.7rem; color: var(--faint);
     }
 
-    .search-bar:focus {
-      background: rgba(255, 255, 255, 0.08);
-      border-color: rgba(59, 130, 246, 0.5);
-      box-shadow: 0 0 20px rgba(59, 130, 246, 0.3);
+    /* ─── Category pills ─── */
+    .cat-pills {
+      display: flex; flex-wrap: wrap; justify-content: center; gap: 0.5rem;
+      animation: fadeUp 0.8s var(--ease) 0.3s both;
+    }
+    .cat-pill {
+      display: inline-flex; align-items: center; gap: 0.35rem;
+      padding: 0.38rem 0.875rem; border-radius: 9999px;
+      border: 1px solid var(--border2); background: var(--card);
+      font-size: 0.82rem; color: var(--muted); text-decoration: none;
+      font-weight: 500;
+      transition: color 0.2s, border-color 0.2s, background 0.2s, transform 0.2s;
+    }
+    .cat-pill:hover {
+      color: var(--teal); border-color: rgba(0,229,199,0.3);
+      background: rgba(0,229,199,0.07); transform: translateY(-2px);
     }
 
-    /* GitHub star banner */
-    .github-banner {
-      background: linear-gradient(135deg, #3b82f6, #8b5cf6);
-      animation: float 6s ease-in-out infinite;
-      box-shadow: 0 10px 30px rgba(59, 130, 246, 0.4);
+    /* ─── Stat banner ─── */
+    .stat-banner {
+      position: relative; z-index: 1;
+      display: flex; justify-content: center; gap: 0; flex-wrap: wrap;
+      border-top: 1px solid var(--border); border-bottom: 1px solid var(--border);
+      background: rgba(255,255,255,0.02);
+      backdrop-filter: blur(8px);
+    }
+    .stat-banner-item {
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
+      padding: 1.5rem 3rem; border-right: 1px solid var(--border);
+      text-align: center;
+    }
+    .stat-banner-item:last-child { border-right: none; }
+    .stat-banner-num {
+      font-family: var(--mono); font-size: 2rem; font-weight: 900;
+      letter-spacing: -0.04em;
+      background: linear-gradient(135deg, #fff 50%, var(--teal));
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+    }
+    .stat-banner-lbl { font-size: 0.8rem; color: var(--muted); margin-top: 0.2rem; font-weight: 500; }
+
+    /* ─── Tools layout ─── */
+    .tools-main {
+      position: relative; z-index: 1;
+      max-width: 1220px; margin: 0 auto;
+      padding: 3rem 1.5rem 5rem;
     }
 
-    /* Section dividers */
-    .section-divider {
-      background: linear-gradient(90deg, transparent, rgba(59, 130, 246, 0.3), transparent);
-      height: 1px;
+    /* ─── Section headers ─── */
+    .tool-section { margin-bottom: 3.5rem; }
+    .sec-label {
+      font-size: 0.7rem; font-weight: 700; letter-spacing: 0.14em;
+      text-transform: uppercase; color: var(--teal);
+      display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.75rem;
     }
-
-    /* Tool icon containers */
-    .tool-icon {
-      background: linear-gradient(135deg, rgba(59, 130, 246, 0.2), rgba(139, 92, 246, 0.2));
-      border: 1px solid rgba(59, 130, 246, 0.3);
-      transition: all 0.3s ease;
+    .sec-label::before {
+      content:''; width:20px; height:2px;
+      background:linear-gradient(90deg,var(--teal),transparent); border-radius:1px;
     }
-
-    .tool-card:hover .tool-icon {
-      background: linear-gradient(135deg, rgba(59, 130, 246, 0.3), rgba(139, 92, 246, 0.3));
-      border-color: rgba(59, 130, 246, 0.5);
-      transform: scale(1.1);
+    .sec-title {
+      font-size: 1.5rem; font-weight: 900; letter-spacing: -0.03em;
+      color: #fff; margin-bottom: 0.4rem;
     }
+    .sec-sub { font-size: 0.9rem; color: var(--muted); margin-bottom: 1.5rem; }
 
-    /* Responsive grid */
-    .tools-grid {
+    /* ─── Tool grid ─── */
+    .tool-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-      gap: 1.5rem;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 0.875rem;
     }
 
-    @media (max-width: 768px) {
-      .tools-grid {
-        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-        gap: 1rem;
-      }
+    /* ─── Tool cards ─── */
+    .tool-card {
+      display: flex; align-items: center; gap: 1rem;
+      padding: 1.1rem 1.25rem; border-radius: 14px;
+      border: 1px solid var(--border); background: var(--card);
+      text-decoration: none; color: inherit;
+      position: relative; overflow: hidden;
+      transition: border-color 0.3s, background 0.3s, transform 0.3s var(--ease), box-shadow 0.3s;
+    }
+    .tool-card::before {
+      content: ''; position: absolute; inset: 0;
+      background: radial-gradient(circle at var(--mx,50%) var(--my,50%), rgba(0,229,199,0.08), transparent 60%);
+      opacity: 0; transition: opacity 0.3s;
+    }
+    .tool-card:hover {
+      border-color: rgba(0,229,199,0.25); background: var(--card2);
+      transform: translateY(-3px);
+      box-shadow: 0 12px 32px rgba(0,0,0,0.25), 0 0 0 1px rgba(0,229,199,0.08);
+    }
+    .tool-card:hover::before { opacity: 1; }
+    .tc-icon {
+      font-size: 1.75rem; flex-shrink: 0;
+      filter: drop-shadow(0 2px 4px rgba(0,0,0,0.3));
+      transition: transform 0.3s var(--spring);
+    }
+    .tool-card:hover .tc-icon { transform: scale(1.12) rotate(-5deg); }
+    .tc-body { flex: 1; min-width: 0; }
+    .tc-name { font-weight: 700; font-size: 0.95rem; color: #fff; margin-bottom: 0.2rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .tc-desc { font-size: 0.8rem; color: var(--faint); line-height: 1.4; }
+    .tc-arrow {
+      margin-left: auto; flex-shrink: 0;
+      width: 26px; height: 26px; border-radius: 50%;
+      border: 1px solid var(--border);
+      display: flex; align-items: center; justify-content: center;
+      color: var(--faint); font-size: 0.8rem;
+      transition: border-color 0.25s, color 0.25s, background 0.25s, transform 0.25s;
+    }
+    .tool-card:hover .tc-arrow {
+      border-color: var(--teal); color: var(--teal);
+      background: rgba(0,229,199,0.08); transform: translateX(3px);
     }
 
-    /* Smooth scrolling */
-    html {
-      scroll-behavior: smooth;
+    /* ─── No results ─── */
+    #no-results { display:none; text-align:center; color:var(--faint); padding:3rem 0; }
+    #no-results span { color: var(--muted); }
+
+    /* ─── Search result count ─── */
+    #search-count {
+      display: none; text-align: center;
+      font-family: var(--mono); font-size: 0.82rem;
+      color: var(--muted); margin-bottom: 1.5rem;
+    }
+    #search-count b { color: var(--teal); }
+
+    /* ─── Divider ─── */
+    .sec-divider {
+      border: none; border-top: 1px solid var(--border);
+      margin: 0 0 3rem;
     }
 
-    /* Custom scrollbar */
-    ::-webkit-scrollbar {
-      width: 8px;
+    /* ─── Footer ─── */
+    footer {
+      position: relative; z-index: 1;
+      border-top: 1px solid var(--border);
+      padding: 3.5rem 1.5rem 2rem;
+      background: linear-gradient(180deg, transparent, rgba(0,0,0,0.25));
     }
-
-    ::-webkit-scrollbar-track {
-      background: rgba(255, 255, 255, 0.05);
+    .footer-grid {
+      max-width: 1100px; margin: 0 auto;
+      display: grid; grid-template-columns: 2fr 1fr 1fr 1fr; gap: 2.5rem;
+      margin-bottom: 2.5rem;
     }
+    @media(max-width:700px){ .footer-grid{grid-template-columns:1fr 1fr;} .footer-brand{grid-column:1/-1;} }
+    .footer-brand-logo { display:flex; align-items:center; gap:0.5rem; font-weight:800; font-size:1.1rem; color:#fff; text-decoration:none; margin-bottom:0.875rem; }
+    .footer-brand-logo img { width:1.75rem; height:1.75rem; border-radius:8px; box-shadow:0 0 14px rgba(0,229,199,0.35); }
+    .footer-brand p { font-size:0.9rem; color:var(--faint); line-height:1.6; max-width:240px; }
+    .footer-col h4 { font-size:0.72rem; font-weight:700; letter-spacing:0.1em; text-transform:uppercase; color:var(--faint); margin-bottom:1.1rem; }
+    .footer-col a { display:block; font-size:0.9rem; color:var(--muted); text-decoration:none; margin-bottom:0.6rem; transition:color 0.2s,transform 0.2s; width:fit-content; }
+    .footer-col a:hover { color:var(--teal); transform:translateX(3px); }
+    .footer-bottom { max-width:1100px; margin:0 auto; padding-top:2rem; border-top:1px solid var(--border); display:flex; flex-wrap:wrap; align-items:center; justify-content:space-between; gap:1rem; font-size:0.85rem; color:var(--faint); }
+    .footer-bottom a { color:var(--muted); text-decoration:none; margin-left:1.25rem; transition:color 0.2s; }
+    .footer-bottom a:hover { color:var(--teal); }
 
-    ::-webkit-scrollbar-thumb {
-      background: linear-gradient(135deg, #3b82f6, #8b5cf6);
-      border-radius: 4px;
+    /* ─── Animations ─── */
+    @keyframes fadeDown { from{opacity:0;transform:translateY(-14px)} to{opacity:1;transform:none} }
+    @keyframes fadeUp   { from{opacity:0;transform:translateY(22px)}  to{opacity:1;transform:none} }
+
+    /* ─── Reveal ─── */
+    .reveal { opacity:0; transform:translateY(24px); transition:opacity 0.7s var(--ease),transform 0.7s var(--ease); }
+    .reveal.in { opacity:1; transform:none; }
+    .rd1{transition-delay:0.05s} .rd2{transition-delay:0.1s} .rd3{transition-delay:0.15s}
+    @media(prefers-reduced-motion:reduce){ .reveal,.reveal.in{opacity:1;transform:none;transition:none} }
+
+    /* ─── Scrollbar ─── */
+    ::-webkit-scrollbar{width:5px;height:5px}
+    ::-webkit-scrollbar-track{background:transparent}
+    ::-webkit-scrollbar-thumb{background:rgba(0,229,199,0.22);border-radius:3px}
+    ::-webkit-scrollbar-thumb:hover{background:rgba(0,229,199,0.38)}
+
+    /* ─── Responsive nav ─── */
+    @media(max-width:768px){
+      .nav-links a:not(.nav-cta):not([href="index.html"]){ display:none; }
+      .hero-title{ font-size: clamp(1.7rem, 6vw, 2.4rem); }
+      .stat-banner-item{ padding: 1.1rem 1.5rem; }
+      .stat-banner-num{ font-size: 1.5rem; }
     }
-
-    ::-webkit-scrollbar-thumb:hover {
-      background: linear-gradient(135deg, #2563eb, #7c3aed);
-    }
-
-    /* Hero Search Styles */
-    #heroSearchResults {
-      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
-    }
-
-    #heroSearchResults::-webkit-scrollbar {
-      width: 6px;
-    }
-
-    #heroSearchResults::-webkit-scrollbar-thumb {
-      background: rgba(59, 130, 246, 0.5);
-      border-radius: 3px;
-    }
-
-    /* Popular tools hover effect */
-    #popularTools a:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 10px 25px rgba(59, 130, 246, 0.3);
+    @media(max-width:480px){
+      .tool-grid{ grid-template-columns: 1fr; }
     }
   </style>
 </head>
+<body>
 
-<body class="text-white">
-  <!-- Navigation -->
-  <nav class="fixed top-0 w-full z-40 glass">
-    <div class="max-w-7xl mx-auto px-6 py-4">
-      <div class="flex items-center justify-between">
-        <!-- Logo -->
-        <div class="flex items-center space-x-3">
-          <a href="index.html" class="flex items-center space-x-3 hover:opacity-80 transition-opacity duration-200">
-            <img src="images/logo.png" alt="DevDunia" class="w-10 h-10 rounded-xl object-contain">
-            <div>
-              <h1 class="text-xl font-bold gradient-text">DevDunia</h1>
-              <p class="text-xs text-gray-400">Developer Tools</p>
-            </div>
-          </a>
-        </div>
+<div id="cursor-glow"></div>
+<canvas id="matrix-canvas"></canvas>
+<div class="blob b1"></div>
+<div class="blob b2"></div>
+<div class="blob b3"></div>
+<div class="grid-bg"></div>
 
-        <!-- Search Bar -->
-        <div class="flex-1 max-w-md mx-8">
-          <div class="relative">
-            <input type="text" placeholder="Search 50+ tools..."
-              class="search-bar w-full px-4 py-3 pl-12 rounded-xl text-white placeholder-gray-400 focus:outline-none"
-              id="searchInput">
-            <svg class="absolute left-4 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" fill="none"
-              stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
-            </svg>
-            <!-- Clear search button -->
-            <button id="clearSearch"
-              class="absolute right-4 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400 hover:text-white transition-colors hidden">
-              <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
-              </svg>
-            </button>
-          </div>
+<!-- ── Nav ── -->
+<nav class="nav" id="nav">
+  <div class="nav-inner">
+    <a href="index.html" class="nav-logo">
+      <img src="images/logo.png" alt="DevDunia">
+      Dev<span>Dunia</span>
+    </a>
+    <div class="nav-center">
+      <span id="nav-tool-count">0 tools</span>
+    </div>
+    <div class="nav-links">
+      <a href="home.html">All Tools</a>
+      <a href="https://github.com/echobash/devdunia" target="_blank" rel="noopener">GitHub</a>
+      <a href="CONTRIBUTING.md" target="_blank" rel="noopener">Contribute</a>
+      <a href="support.html">Support</a>
+      <a href="contact.html">Contact</a>
+      <a href="index.html" class="nav-cta">← Home</a>
+    </div>
+  </div>
+</nav>
 
-          <!-- Search Results Area -->
-          <div id="searchResults"
-            class="absolute top-full left-0 right-0 mt-2 bg-slate-800/95 backdrop-blur-md border border-slate-700/60 rounded-xl shadow-2xl z-50 hidden">
-            <div class="p-4">
-              <div id="searchResultsContent" class="space-y-2">
-                <!-- Search results will be populated here -->
-              </div>
-              <div id="noResults" class="text-center py-8 text-gray-400 hidden">
-                <svg class="w-12 h-12 mx-auto mb-3 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                    d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
-                </svg>
-                <p class="text-sm">No tools found matching your search</p>
-              </div>
-            </div>
-          </div>
-        </div>
+<!-- ── Hero ── -->
+<section class="hero">
+  <div class="hero-inner">
+    <div class="hero-badge">
+      <span class="badge-dot"></span>
+      All Developer Tools
+    </div>
+    <h1 class="hero-title">
+      <span id="hero-tool-count">100</span>+ Tools.&nbsp;<span class="grad-teal">One Platform.</span>
+    </h1>
 
-        <!-- Stats -->
-        <div class="flex items-center space-x-6 text-sm">
-          <div class="flex items-center space-x-2">
-            <div class="w-2 h-2 bg-green-400 rounded-full animate-pulse"></div>
-            <span class="text-gray-300">50+ Tools</span>
-          </div>
-          <div class="flex items-center space-x-2">
-            <div class="w-2 h-2 bg-blue-400 rounded-full"></div>
-            <span class="text-gray-300">Free Forever</span>
-          </div>
-          <a href="support.html"
-            class="flex items-center space-x-2 bg-purple-600/20 hover:bg-purple-600/30 border border-purple-500/30 hover:border-purple-500/50 px-3 py-2 rounded-lg text-purple-300 hover:text-purple-200 transition-all duration-200">
-            <div class="w-2 h-2 bg-purple-400 rounded-full"></div>
-            <span class="text-sm font-medium">Support</span>
-          </a>
-        </div>
+    <!-- Search -->
+    <div class="search-wrap">
+      <svg class="search-icon" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24" aria-hidden="true">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+      </svg>
+      <input type="text" id="search" placeholder="Search tools — jwt, hash, base64, regex, sql..." autocomplete="off" spellcheck="false">
+      <div class="search-kbd">
+        <span class="kbd">⌘</span><span class="kbd">K</span>
       </div>
     </div>
-  </nav>
 
-  <!-- Main Content -->
-  <main class="pt-24 pb-16">
-    <div class="max-w-7xl mx-auto px-6">
-      <!-- Hero Section with Giant Search -->
-      <section class="text-center mb-12 animate-fade-in">
-        <div class="mb-8">
-          <h1 class="text-4xl md:text-6xl font-bold mb-4 leading-tight">
-            <span class="gradient-text">DevDunia</span>
-          </h1>
-          <p class="text-xl md:text-2xl text-gray-300 mb-2">All your developer tools in one place</p>
-          <p class="text-lg text-gray-400">Stop switching between 50 sites. Everything you need, one tab.</p>
-        </div>
-
-
-        <!-- Quick Stats -->
-        <div class="flex flex-wrap justify-center gap-6 mt-8">
-          <div class="glass-card px-4 py-3 rounded-xl">
-            <div class="text-xl font-bold text-blue-400">50+</div>
-            <div class="text-xs text-gray-400">Dev & VAPT Tools</div>
-          </div>
-          <div class="glass-card px-4 py-3 rounded-xl">
-            <div class="text-xl font-bold text-green-400">100%</div>
-            <div class="text-xs text-gray-400">Free to Use</div>
-          </div>
-          <div class="glass-card px-4 py-3 rounded-xl">
-            <div class="text-xl font-bold text-red-400">🛡️</div>
-            <div class="text-xs text-gray-400">Security Focused</div>
-          </div>
-        </div>
-      </section>
-      <div class="flex flex-col sm:flex-row justify-center items-center sm:items-stretch gap-4 mb-16 animate-fade-in">
-        <a href="contact.html" class="inline-flex justify-center items-center w-full sm:w-auto px-10 py-5 bg-gradient-to-r from-green-500 to-teal-500 hover:from-green-600 hover:to-teal-600 text-white font-bold rounded-2xl shadow-xl text-lg transition-all duration-200 group">
-          <svg class="w-6 h-6 mr-3 text-white group-hover:text-teal-200 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 12H8m0 0l4-4m-4 4l4 4"/>
-          </svg>
-          Contact Us
-        </a>
-        <a href="https://github.com/echobash/devdunia" target="_blank"
-          class="inline-flex justify-center items-center w-full sm:w-auto px-8 py-4 bg-gradient-to-r from-blue-500 to-purple-500 hover:from-blue-600 hover:to-purple-600 text-white font-bold rounded-2xl shadow-xl text-lg transition-all duration-200 group">
-          <svg class="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-            <path fill-rule="evenodd" d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z" clip-rule="evenodd"></path>
-          </svg>
-          Star on GitHub (17+ stars 25+ forks)
-        </a>
-        <a href="https://echobash.com" target="_blank"
-          class="inline-flex justify-center items-center w-full sm:w-auto px-8 py-4 bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white font-bold rounded-2xl shadow-xl text-lg transition-all duration-200 group">
-          <svg class="w-5 h-5 mr-2 text-white group-hover:text-pink-200 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1"></path>
-          </svg>
-          Visit echobash.com
-        </a>
-      </div>
-
-      <!-- Tools Sections -->
-      <div class="space-y-16">
-        <!-- Encoders/Decoders Section -->
-        <section id="encoders" class="animate-slide-up">
-          <div class="flex items-center justify-between mb-8">
-            <div>
-              <h2 class="text-3xl font-bold mb-2 flex items-center">
-                <span
-                  class="w-8 h-8 bg-gradient-to-r from-blue-500 to-purple-500 rounded-lg flex items-center justify-center mr-3">
-                  🔧
-                </span>
-                Encoders/Decoders
-              </h2>
-              <p class="text-gray-400">Transform and convert data formats seamlessly</p>
-            </div>
-            <div class="section-divider w-32"></div>
-          </div>
-
-          <div class="tools-grid">
-            <a href="php-to-json.html" class="tool-card p-6 rounded-2xl group">
-              <div class="flex items-center space-x-4">
-                <div class="tool-icon w-12 h-12 rounded-xl flex items-center justify-center">
-                  <span class="text-xl">🔄</span>
-                </div>
-                <div>
-                  <h3 class="font-semibold text-lg">JSON to PHP</h3>
-                  <p class="text-sm text-gray-400">Convert JSON data to PHP arrays</p>
-                </div>
-              </div>
-            </a>
-
-            <a href="json-beautifier.html" class="tool-card p-6 rounded-2xl group">
-              <div class="flex items-center space-x-4">
-                <div class="tool-icon w-12 h-12 rounded-xl flex items-center justify-center">
-                  <span class="text-xl">✨</span>
-                </div>
-                <div>
-                  <h3 class="font-semibold text-lg">JSON Beautifier</h3>
-                  <p class="text-sm text-gray-400">Format and validate JSON data</p>
-                </div>
-              </div>
-            </a>
-
-            <a href="json-minifier.html" class="tool-card p-6 rounded-2xl group">
-              <div class="flex items-center space-x-4">
-                <div class="tool-icon w-12 h-12 rounded-xl flex items-center justify-center">
-                  <span class="text-xl">📦</span>
-                </div>
-                <div>
-                  <h3 class="font-semibold text-lg">JSON Minifier</h3>
-                  <p class="text-sm text-gray-400">Compress JSON for production</p>
-                </div>
-              </div>
-            </a>
-
-            <a href="string-transformer.html" class="tool-card p-6 rounded-2xl group">
-              <div class="flex items-center space-x-4">
-                <div class="tool-icon w-12 h-12 rounded-xl flex items-center justify-center">
-                  <span class="text-xl">🔄</span>
-                </div>
-                <div>
-                  <h3 class="font-semibold text-lg">String Transformer</h3>
-                  <p class="text-sm text-gray-400">Transform text between formats</p>
-                </div>
-              </div>
-            </a>
-
-            <a href="url-encoder.html" class="tool-card p-6 rounded-2xl group">
-              <div class="flex items-center space-x-4">
-                <div class="tool-icon w-12 h-12 rounded-xl flex items-center justify-center">
-                  <span class="text-xl">🔗</span>
-                </div>
-                <div>
-                  <h3 class="font-semibold text-lg">URL Encoder</h3>
-                  <p class="text-sm text-gray-400">Encode URLs safely</p>
-                </div>
-              </div>
-            </a>
-
-            <a href="url-decoder.html" class="tool-card p-6 rounded-2xl group">
-              <div class="flex items-center space-x-4">
-                <div class="tool-icon w-12 h-12 rounded-xl flex items-center justify-center">
-                  <span class="text-xl">🔓</span>
-                </div>
-                <div>
-                  <h3 class="font-semibold text-lg">URL Decoder</h3>
-                  <p class="text-sm text-gray-400">Decode URL-encoded strings</p>
-                </div>
-              </div>
-            </a>
-
-            <a href="base64-encoder.html" class="tool-card p-6 rounded-2xl group">
-              <div class="flex items-center space-x-4">
-                <div class="tool-icon w-12 h-12 rounded-xl flex items-center justify-center">
-                  <span class="text-xl">📤</span>
-                </div>
-                <div>
-                  <h3 class="font-semibold text-lg">Base64 Encoder</h3>
-                  <p class="text-sm text-gray-400">Encode to Base64 format</p>
-                </div>
-              </div>
-            </a>
-
-            <a href="base64-decoder.html" class="tool-card p-6 rounded-2xl group">
-              <div class="flex items-center space-x-4">
-                <div class="tool-icon w-12 h-12 rounded-xl flex items-center justify-center">
-                  <span class="text-xl">📥</span>
-                </div>
-                <div>
-                  <h3 class="font-semibold text-lg">Base64 Decoder</h3>
-                  <p class="text-sm text-gray-400">Decode Base64 strings</p>
-                </div>
-              </div>
-            </a>
-            <a href="base62-encoder.html" class="tool-card p-6 rounded-2xl group">
-              <div class="flex items-center space-x-4">
-                <div class="tool-icon w-12 h-12 rounded-xl flex items-center justify-center">
-                  <span class="text-xl">📤</span>
-                </div>
-                <div>
-                  <h3 class="font-semibold text-lg">Base62 Encoder</h3>
-                  <p class="text-sm text-gray-400">Encode text using Base62 alphabet</p>
-                </div>
-              </div>
-            </a>
-            <a href="base62-decoder.html" class="tool-card p-6 rounded-2xl group">
-              <div class="flex items-center space-x-4">
-                <div class="tool-icon w-12 h-12 rounded-xl flex items-center justify-center">
-                  <span class="text-xl">📥</span>
-                </div>
-                <div>
-                  <h3 class="font-semibold text-lg">Base62 Decoder</h3>
-                  <p class="text-sm text-gray-400">Decode Base62 encoded strings</p>
-                </div>
-              </div>
-            </a>
-
-            <a href="hash-generator.html" class="tool-card p-6 rounded-2xl group">
-              <div class="flex items-center space-x-4">
-                <div class="tool-icon w-12 h-12 rounded-xl flex items-center justify-center">
-                  <span class="text-xl">🔐</span>
-                </div>
-                <div>
-                  <h3 class="font-semibold text-lg">Hash Generator</h3>
-                  <p class="text-sm text-gray-400">Generate secure hashes</p>
-                </div>
-              </div>
-            </a>
-
-            <a href="caesar-cipher.html" class="tool-card p-6 rounded-2xl group">
-              <div class="flex items-center space-x-4">
-                <div class="tool-icon w-12 h-12 rounded-xl flex items-center justify-center">
-                  <span class="text-xl">🔐</span>
-                </div>
-                <div>
-                  <h3 class="font-semibold text-lg">Caesar Cipher</h3>
-                  <p class="text-sm text-gray-400">Encode and decode with Caesar cipher</p>
-                </div>
-              </div>
-            </a>
-
-            <a href="jwt-decoder.html" class="tool-card p-6 rounded-2xl group">
-              <div class="flex items-center space-x-4">
-                <div class="tool-icon w-12 h-12 rounded-xl flex items-center justify-center">
-                  <span class="text-xl">🎫</span>
-                </div>
-                <div>
-                  <h3 class="font-semibold text-lg">JWT Decoder</h3>
-                  <p class="text-sm text-gray-400">Decode JWT tokens</p>
-                </div>
-              </div>
-            </a>
-
-            <a href="csv-json-converter.html" class="tool-card p-6 rounded-2xl group">
-              <div class="flex items-center space-x-4">
-                <div class="tool-icon w-12 h-12 rounded-xl flex items-center justify-center">
-                  <span class="text-xl">📊</span>
-                </div>
-                <div>
-                  <h3 class="font-semibold text-lg">CSV to JSON</h3>
-                  <p class="text-sm text-gray-400">Convert CSV to JSON</p>
-                </div>
-              </div>
-            </a>
-
-            <a href="yaml-json-converter.html" class="tool-card p-6 rounded-2xl group">
-              <div class="flex items-center space-x-4">
-                <div class="tool-icon w-12 h-12 rounded-xl flex items-center justify-center">
-                  <span class="text-xl">⚖️</span>
-                </div>
-                <div>
-                  <h3 class="font-semibold text-lg">YAML ⇄ JSON</h3>
-                  <p class="text-sm text-gray-400">Convert between YAML and JSON</p>
-                </div>
-              </div>
-            </a>
-
-            <a href="xml-formatter.html" class="tool-card p-6 rounded-2xl group">
-              <div class="flex items-center space-x-4">
-                <div class="tool-icon w-12 h-12 rounded-xl flex items-center justify-center">
-                  <span class="text-xl">📄</span>
-                </div>
-                <div>
-                  <h3 class="font-semibold text-lg">XML Formatter</h3>
-                  <p class="text-sm text-gray-400">Format and validate XML</p>
-                </div>
-              </div>
-            </a>
-          </div>
-        </section>
-
-        <!-- VAPT Tools Section -->
-        <section id="vapt-tools" class="animate-slide-up">
-          <div class="flex items-center justify-between mb-8">
-            <div>
-              <h2 class="text-3xl font-bold mb-2 flex items-center">
-                <span
-                  class="w-8 h-8 bg-gradient-to-r from-red-500 to-orange-500 rounded-lg flex items-center justify-center mr-3">
-                  🛡️
-                </span>
-                VAPT Tools
-              </h2>
-              <p class="text-gray-400">Vulnerability Assessment and Penetration Testing tools</p>
-            </div>
-            <div class="section-divider w-32"></div>
-          </div>
-
-          <div class="tools-grid">
-            <a href="clickjacking-checker.html" class="tool-card p-6 rounded-2xl group">
-              <div class="flex items-center space-x-4">
-                <div class="tool-icon w-12 h-12 rounded-xl flex items-center justify-center">
-                  <span class="text-xl">🔒</span>
-                </div>
-                <div>
-                  <h3 class="font-semibold text-lg">Clickjacking Checker</h3>
-                  <p class="text-sm text-gray-400">Test clickjacking vulnerabilities</p>
-                </div>
-              </div>
-            </a>
-
-            <a href="http-response-header-printer.html" class="tool-card p-6 rounded-2xl group">
-              <div class="flex items-center space-x-4">
-                <div class="tool-icon w-12 h-12 rounded-xl flex items-center justify-center">
-                  <span class="text-xl">📋</span>
-                </div>
-                <div>
-                  <h3 class="font-semibold text-lg">HTTP Headers</h3>
-                  <p class="text-sm text-gray-400">Analyze HTTP response headers</p>
-                </div>
-              </div>
-            </a>
-
-            <a href="owasp-top10.html" class="tool-card p-6 rounded-2xl group">
-              <div class="flex items-center space-x-4">
-                <div class="tool-icon w-12 h-12 rounded-xl flex items-center justify-center">
-                  <span class="text-xl">🐛</span>
-                </div>
-                <div>
-                  <h3 class="font-semibold text-lg">OWASP Top 10</h3>
-                  <p class="text-sm text-gray-400">Learn about security vulnerabilities</p>
-                </div>
-              </div>
-            </a>
-
-            <a href="email-header-analyzer.html" class="tool-card p-6 rounded-2xl group">
-              <div class="flex items-center space-x-4">
-                <div class="tool-icon w-12 h-12 rounded-xl flex items-center justify-center">
-                  <span class="text-xl">📧</span>
-                </div>
-                <div>
-                  <h3 class="font-semibold text-lg">Email Header Analyzer</h3>
-                  <p class="text-sm text-gray-400">Analyze email headers for security</p>
-                </div>
-              </div>
-            </a>
-          </div>
-        </section>
-
-        <!-- Generators Section -->
-        <section id="generators" class="animate-slide-up">
-          <div class="flex items-center justify-between mb-8">
-            <div>
-              <h2 class="text-3xl font-bold mb-2 flex items-center">
-                <span
-                  class="w-8 h-8 bg-gradient-to-r from-green-500 to-blue-500 rounded-lg flex items-center justify-center mr-3">
-                  ⚡
-                </span>
-                Generators
-              </h2>
-              <p class="text-gray-400">Create passwords, UUIDs, and more</p>
-            </div>
-            <div class="section-divider w-32"></div>
-          </div>
-
-          <div class="tools-grid">
-            <a href="password-generator.html" class="tool-card p-6 rounded-2xl group">
-              <div class="flex items-center space-x-4">
-                <div class="tool-icon w-12 h-12 rounded-xl flex items-center justify-center">
-                  <span class="text-xl">🔑</span>
-                </div>
-                <div>
-                  <h3 class="font-semibold text-lg">Password Generator</h3>
-                  <p class="text-sm text-gray-400">Generate secure passwords</p>
-                </div>
-              </div>
-            </a>
-
-            <a href="guid-generator.html" class="tool-card p-6 rounded-2xl group">
-              <div class="flex items-center space-x-4">
-                <div class="tool-icon w-12 h-12 rounded-xl flex items-center justify-center">
-                  <span class="text-xl">🆔</span>
-                </div>
-                <div>
-                  <h3 class="font-semibold text-lg">UUID Generator</h3>
-                  <p class="text-sm text-gray-400">Generate unique identifiers</p>
-                </div>
-              </div>
-            </a>
-
-            <a href="qr-generator.html" class="tool-card p-6 rounded-2xl group">
-              <div class="flex items-center space-x-4">
-                <div class="tool-icon w-12 h-12 rounded-xl flex items-center justify-center">
-                  <span class="text-xl">📱</span>
-                </div>
-                <div>
-                  <h3 class="font-semibold text-lg">QR Generator</h3>
-                  <p class="text-sm text-gray-400">Create QR codes</p>
-                </div>
-              </div>
-            </a>
-
-            <a href="barcode_generator/index.html" class="tool-card p-6 rounded-2xl group">
-              <div class="flex items-center space-x-4">
-                <div class="tool-icon w-12 h-12 rounded-xl flex items-center justify-center">
-                  <span class="text-xl">📱</span>
-                </div>
-                <div>
-                  <h3 class="font-semibold text-lg">BAR Code Generator</h3>
-                  <p class="text-sm text-gray-400">Create BAR codes</p>
-                </div>
-              </div>
-            </a>
-
-            <a href="github_contributors/index.html" class="tool-card p-6 rounded-2xl group">
-              <div class="flex items-center space-x-4">
-                <div class="tool-icon w-12 h-12 rounded-xl flex items-center justify-center">
-                  <span class="text-xl">📱</span>
-                </div>
-                <div>
-                  <h3 class="font-semibold text-lg">GitHub Contributors</h3>
-                  <p class="text-sm text-gray-400">List the contributors to any public repository</p>
-                </div>
-              </div>
-            </a>
-
-            <a href="guid-generator.html" class="tool-card p-6 rounded-2xl group">
-              <div class="flex items-center space-x-4">
-                <div class="tool-icon w-12 h-12 rounded-xl flex items-center justify-center">
-                  <span class="text-xl">🎯</span>
-                </div>
-                <div>
-                  <h3 class="font-semibold text-lg">GUID Generator</h3>
-                  <p class="text-sm text-gray-400">Generate GUIDs</p>
-                </div>
-              </div>
-            </a>
-
-            <a href="lorem-ipsum-generator.html" class="tool-card p-6 rounded-2xl group">
-              <div class="flex items-center space-x-4">
-                <div class="tool-icon w-12 h-12 rounded-xl flex items-center justify-center">
-                  <span class="text-xl">📝</span>
-                </div>
-                <div>
-                  <h3 class="font-semibold text-lg">Lorem Ipsum</h3>
-                  <p class="text-sm text-gray-400">Generate placeholder text</p>
-                </div>
-              </div>
-            </a>
-          </div>
-        </section>
-
-        <!-- API & Integration Tools Section -->
-        <section id="api-tools" class="animate-slide-up">
-          <div class="flex items-center justify-between mb-8">
-            <div>
-              <h2 class="text-3xl font-bold mb-2 flex items-center">
-                <span
-                  class="w-8 h-8 bg-gradient-to-r from-purple-500 to-pink-500 rounded-lg flex items-center justify-center mr-3">
-                  🌐
-                </span>
-                API & Integration Tools
-              </h2>
-              <p class="text-gray-400">Test APIs and integrate with external services</p>
-            </div>
-            <div class="section-divider w-32"></div>
-          </div>
-
-          <div class="tools-grid">
-            <a href="curl-describer.html" class="tool-card p-6 rounded-2xl group">
-              <div class="flex items-center space-x-4">
-                <div class="tool-icon w-12 h-12 rounded-xl flex items-center justify-center">
-                  <span class="text-xl">🔄</span>
-                </div>
-                <div>
-                  <h3 class="font-semibold text-lg">cURL Describer</h3>
-                  <p class="text-sm text-gray-400">Convert cURL to code</p>
-                </div>
-              </div>
-            </a>
-
-            <a href="cron-describer.html" class="tool-card p-6 rounded-2xl group">
-              <div class="flex items-center space-x-4">
-                <div class="tool-icon w-12 h-12 rounded-xl flex items-center justify-center">
-                  <span class="text-xl">⏰</span>
-                </div>
-                <div>
-                  <h3 class="font-semibold text-lg">Cron Describer</h3>
-                  <p class="text-sm text-gray-400">Explain cron expressions</p>
-                </div>
-              </div>
-            </a>
-
-            <a href="regex-tester.html" class="tool-card p-6 rounded-2xl group">
-              <div class="flex items-center space-x-4">
-                <div class="tool-icon w-12 h-12 rounded-xl flex items-center justify-center">
-                  <span class="text-xl">🔍</span>
-                </div>
-                <div>
-                  <h3 class="font-semibold text-lg">Regex Tester</h3>
-                  <p class="text-sm text-gray-400">Test regular expressions</p>
-                </div>
-              </div>
-            </a>
-          </div>
-        </section>
-
-        <!-- Development Tools Section -->
-        <section id="dev-tools" class="animate-slide-up">
-          <div class="flex items-center justify-between mb-8">
-            <div>
-              <h2 class="text-3xl font-bold mb-2 flex items-center">
-                <span
-                  class="w-8 h-8 bg-gradient-to-r from-orange-500 to-red-500 rounded-lg flex items-center justify-center mr-3">
-                  🛠️
-                </span>
-                Development Tools
-              </h2>
-              <p class="text-gray-400">Essential tools for developers</p>
-            </div>
-            <div class="section-divider w-32"></div>
-          </div>
-
-          <div class="tools-grid">
-            <a href="sql-formatter.html" class="tool-card p-6 rounded-2xl group">
-              <div class="flex items-center space-x-4">
-                <div class="tool-icon w-12 h-12 rounded-xl flex items-center justify-center">
-                  <span class="text-xl">🗄️</span>
-                </div>
-                <div>
-                  <h3 class="font-semibold text-lg">SQL Formatter</h3>
-                  <p class="text-sm text-gray-400">Format SQL queries</p>
-                </div>
-              </div>
-            </a>
-
-            <a href="payment-tester.html" class="tool-card p-6 rounded-2xl group">
-              <div class="flex items-center space-x-4">
-                <div class="tool-icon w-12 h-12 rounded-xl flex items-center justify-center">
-                  <span class="text-xl">🧪</span>
-                </div>
-                <div>
-                  <h3 class="font-semibold text-lg">API Response Tester</h3>
-                  <p class="text-sm text-gray-400">Test API responses</p>
-                </div>
-              </div>
-            </a>
-
-            <a href="env-generator.html" class="tool-card p-6 rounded-2xl group">
-              <div class="flex items-center space-x-4">
-                <div class="tool-icon w-12 h-12 rounded-xl flex items-center justify-center">
-                  <span class="text-xl">🌍</span>
-                </div>
-                <div>
-                  <h3 class="font-semibold text-lg">Environment Generator</h3>
-                  <p class="text-sm text-gray-400">Generate .env files</p>
-                </div>
-              </div>
-            </a>
-
-            <a href="elasticsearch-tools.html" class="tool-card p-6 rounded-2xl group">
-              <div class="flex items-center space-x-4">
-                <div class="tool-icon w-12 h-12 rounded-xl flex items-center justify-center">
-                  <span class="text-xl">🔍</span>
-                </div>
-                <div>
-                  <h3 class="font-semibold text-lg">Elasticsearch Tools</h3>
-                  <p class="text-sm text-gray-400">Elasticsearch utilities</p>
-                </div>
-              </div>
-            </a>
-
-            <a href="markdown-editor.html" class="tool-card p-6 rounded-2xl group">
-              <div class="flex items-center space-x-4">
-                <div class="tool-icon w-12 h-12 rounded-xl flex items-center justify-center">
-                  <span class="text-xl">📝</span>
-                </div>
-                <div>
-                  <h3 class="font-semibold text-lg">Markdown Editor</h3>
-                  <p class="text-sm text-gray-400">Live markdown editor</p>
-                </div>
-              </div>
-            </a>
-
-            <a href="diff-checker.html" class="tool-card p-6 rounded-2xl group">
-              <div class="flex items-center space-x-4">
-                <div class="tool-icon w-12 h-12 rounded-xl flex items-center justify-center">
-                  <span class="text-xl">🔍</span>
-                </div>
-                <div>
-                  <h3 class="font-semibold text-lg">Diff Checker</h3>
-                  <p class="text-sm text-gray-400">Compare text differences</p>
-                </div>
-              </div>
-            </a>
-
-            <a href="docker-comprehensive.html" class="tool-card p-6 rounded-2xl group">
-              <div class="flex items-center space-x-4">
-                <div class="tool-icon w-12 h-12 rounded-xl flex items-center justify-center">
-                  <span class="text-xl">🐳</span>
-                </div>
-                <div>
-                  <h3 class="font-semibold text-lg">Docker Guide</h3>
-                  <p class="text-sm text-gray-400">Complete Docker reference</p>
-                </div>
-              </div>
-            </a>
-
-            <a href="mermaid-renderer.html" class="tool-card p-6 rounded-2xl group">
-              <div class="flex items-center space-x-4">
-                <div class="tool-icon w-12 h-12 rounded-xl flex items-center justify-center">
-                  <span class="text-xl">🌊</span>
-                </div>
-                <div>
-                  <h3 class="font-semibold text-lg">Mermaid Renderer</h3>
-                  <p class="text-sm text-gray-400">Create beautiful diagrams</p>
-                </div>
-              </div>
-            </a>
-
-            <a href="nfc-reader.html" class="tool-card p-6 rounded-2xl group">
-              <div class="flex items-center space-x-4">
-                <div class="tool-icon w-12 h-12 rounded-xl flex items-center justify-center">
-                  <span class="text-xl">📶</span>
-                </div>
-                <div>
-                  <h3 class="font-semibold text-lg">NFC Reader</h3>
-                  <p class="text-sm text-gray-400">Read NFC tags via Web NFC (Chrome Android)</p>
-                </div>
-              </div>
-            </a>
-
-            <a href="text-sharer.html" class="tool-card p-6 rounded-2xl group">
-              <div class="flex items-center space-x-4">
-                <div class="tool-icon w-12 h-12 rounded-xl flex items-center justify-center">
-                  <span class="text-xl">🔗</span>
-                </div>
-                <div>
-                  <h3 class="font-semibold text-lg">Text Sharer</h3>
-                  <p class="text-sm text-gray-400">Generate animated QR from your text, scan to copy</p>
-                </div>
-              </div>
-            </a>
-
-            <a href="html-viewer.html" class="tool-card p-6 rounded-2xl group">
-              <div class="flex items-center space-x-4">
-                <div class="tool-icon w-12 h-12 rounded-xl flex items-center justify-center">
-                  <span class="text-xl">👁️</span>
-                </div>
-                <div>
-                  <h3 class="font-semibold text-lg">HTML Viewer</h3>
-                  <p class="text-sm text-gray-400">Preview and render HTML code in real-time</p>
-                </div>
-              </div>
-            </a>
-          </div>
-        </section>
-
-        <!-- Network Protocols Section -->
-        <section id="network-protocols" class="animate-slide-up">
-          <div class="flex items-center justify-between mb-8">
-            <div>
-              <h2 class="text-3xl font-bold mb-2 flex items-center cursor-pointer"
-                onclick="toggleSection('network-protocols')">
-                <span
-                  class="w-8 h-8 bg-gradient-to-r from-purple-500 to-pink-500 rounded-lg flex items-center justify-center mr-3">
-                  🌐
-                </span>
-                Network Protocols
-                <svg class="w-5 h-5 ml-2 transform transition-transform duration-200" id="network-protocols-arrow">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
-                </svg>
-              </h2>
-              <p class="text-gray-400">Comprehensive networking protocols and models</p>
-              <div class="flex flex-wrap gap-2 mt-2">
-                <span class="px-2 py-1 bg-purple-500/20 text-purple-300 text-xs rounded-full">Network</span>
-                <span class="px-2 py-1 bg-blue-500/20 text-blue-300 text-xs rounded-full">Protocols</span>
-                <span class="px-2 py-1 bg-green-500/20 text-green-300 text-xs rounded-full">Communication</span>
-              </div>
-            </div>
-            <div class="section-divider w-32"></div>
-          </div>
-
-          <div id="network-protocols-content" class="tools-grid">
-            <a href="network-protocols.html" class="tool-card p-6 rounded-2xl group relative">
-              <div class="flex items-center space-x-4">
-                <div class="tool-icon w-12 h-12 rounded-xl flex items-center justify-center">
-                  <span class="text-xl">🌐</span>
-                </div>
-                <div class="flex-1">
-                  <h3 class="font-semibold text-lg">Network Protocols</h3>
-                  <p class="text-sm text-gray-400">Complete guide to networking protocols</p>
-                  <div class="flex flex-wrap gap-1 mt-2">
-                    <span class="px-2 py-1 bg-purple-500/20 text-purple-300 text-xs rounded-full">Network</span>
-                    <span class="px-2 py-1 bg-blue-500/20 text-blue-300 text-xs rounded-full">Guide</span>
-                  </div>
-                </div>
-                <button
-                  class="share-btn opacity-0 group-hover:opacity-100 transition-opacity p-2 hover:bg-slate-700 rounded-lg"
-                  onclick="shareTool('Network Protocols', 'network-protocols.html', event)">
-                  <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                      d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.367 2.684 3 3 0 00-5.367-2.684z">
-                    </path>
-                  </svg>
-                </button>
-              </div>
-            </a>
-
-            <a href="http-protocol.html" class="tool-card p-6 rounded-2xl group relative">
-              <div class="flex items-center space-x-4">
-                <div class="tool-icon w-12 h-12 rounded-xl flex items-center justify-center">
-                  <span class="text-xl">🌐</span>
-                </div>
-                <div class="flex-1">
-                  <h3 class="font-semibold text-lg">HTTP Protocol</h3>
-                  <p class="text-sm text-gray-400">Hypertext Transfer Protocol guide</p>
-                  <div class="flex flex-wrap gap-1 mt-2">
-                    <span class="px-2 py-1 bg-blue-500/20 text-blue-300 text-xs rounded-full">Web</span>
-                    <span class="px-2 py-1 bg-green-500/20 text-green-300 text-xs rounded-full">HTTP</span>
-                  </div>
-                </div>
-                <button
-                  class="share-btn opacity-0 group-hover:opacity-100 transition-opacity p-2 hover:bg-slate-700 rounded-lg"
-                  onclick="shareTool('HTTP Protocol', 'http-protocol.html', event)">
-                  <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                      d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.367 2.684 3 3 0 00-5.367-2.684z">
-                    </path>
-                  </svg>
-                </button>
-              </div>
-            </a>
-
-            <a href="tcp-protocol.html" class="tool-card p-6 rounded-2xl group relative">
-              <div class="flex items-center space-x-4">
-                <div class="tool-icon w-12 h-12 rounded-xl flex items-center justify-center">
-                  <span class="text-xl">🔗</span>
-                </div>
-                <div class="flex-1">
-                  <h3 class="font-semibold text-lg">TCP Protocol</h3>
-                  <p class="text-sm text-gray-400">Transmission Control Protocol guide</p>
-                  <div class="flex flex-wrap gap-1 mt-2">
-                    <span class="px-2 py-1 bg-green-500/20 text-green-300 text-xs rounded-full">Reliable</span>
-                    <span class="px-2 py-1 bg-blue-500/20 text-blue-300 text-xs rounded-full">TCP</span>
-                  </div>
-                </div>
-                <button
-                  class="share-btn opacity-0 group-hover:opacity-100 transition-opacity p-2 hover:bg-slate-700 rounded-lg"
-                  onclick="shareTool('TCP Protocol', 'tcp-protocol.html', event)">
-                  <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                      d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.367 2.684 3 3 0 00-5.367-2.684z">
-                    </path>
-                  </svg>
-                </button>
-              </div>
-            </a>
-
-            <a href="udp-protocol.html" class="tool-card p-6 rounded-2xl group relative">
-              <div class="flex items-center space-x-4">
-                <div class="tool-icon w-12 h-12 rounded-xl flex items-center justify-center">
-                  <span class="text-xl">⚡</span>
-                </div>
-                <div class="flex-1">
-                  <h3 class="font-semibold text-lg">UDP Protocol</h3>
-                  <p class="text-sm text-gray-400">User Datagram Protocol guide</p>
-                  <div class="flex flex-wrap gap-1 mt-2">
-                    <span class="px-2 py-1 bg-orange-500/20 text-orange-300 text-xs rounded-full">Fast</span>
-                    <span class="px-2 py-1 bg-red-500/20 text-red-300 text-xs rounded-full">UDP</span>
-                  </div>
-                </div>
-                <button
-                  class="share-btn opacity-0 group-hover:opacity-100 transition-opacity p-2 hover:bg-slate-700 rounded-lg"
-                  onclick="shareTool('UDP Protocol', 'udp-protocol.html', event)">
-                  <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                      d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.367 2.684 3 3 0 00-5.367-2.684z">
-                    </path>
-                  </svg>
-                </button>
-              </div>
-            </a>
-
-            <a href="osi-model.html" class="tool-card p-6 rounded-2xl group relative">
-              <div class="flex items-center space-x-4">
-                <div class="tool-icon w-12 h-12 rounded-xl flex items-center justify-center">
-                  <span class="text-xl">🏗️</span>
-                </div>
-                <div class="flex-1">
-                  <h3 class="font-semibold text-lg">OSI Model</h3>
-                  <p class="text-sm text-gray-400">7-layer network model guide</p>
-                  <div class="flex flex-wrap gap-1 mt-2">
-                    <span class="px-2 py-1 bg-purple-500/20 text-purple-300 text-xs rounded-full">Model</span>
-                    <span class="px-2 py-1 bg-blue-500/20 text-blue-300 text-xs rounded-full">OSI</span>
-                  </div>
-                </div>
-                <button
-                  class="share-btn opacity-0 group-hover:opacity-100 transition-opacity p-2 hover:bg-slate-700 rounded-lg"
-                  onclick="shareTool('OSI Model', 'osi-model.html', event)">
-                  <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                      d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.367 2.684 3 3 0 00-5.367-2.684z">
-                    </path>
-                  </svg>
-                </button>
-              </div>
-            </a>
-          </div>
-        </section>
-
-        <section id="api-tools" class="animate-slide-up">
-          <div class="flex items-center justify-between mb-8">
-            <div>
-              <h2 class="text-3xl font-bold mb-2 flex items-center">
-                <span
-                  class="w-8 h-8 bg-gradient-to-r from-purple-500 to-pink-500 rounded-lg flex items-center justify-center mr-3">
-                  🗄️
-                </span>
-                Text Tools
-              </h2>
-            </div>
-            <div class="section-divider w-32"></div>
-          </div>  
-
-          <div class="tools-grid">
-            <a href="word_counter/index.html" class="tool-card p-6 rounded-2xl group">
-              <div class="flex items-center space-x-4">
-                <div class="tool-icon w-12 h-12 rounded-xl flex items-center justify-center">
-                  <span class="text-xl">�</span>
-                </div>
-                <div>
-                  <h3 class="font-semibold text-lg">Word Counter</h3>
-                  <p class="text-sm text-gray-400">Quickly count words and characters</p>
-                </div>
-              </div>
-            </a>
-
-        </section>
-
-        <!-- Database Tools Section -->
-        <section id="api-tools" class="animate-slide-up">
-          <div class="flex items-center justify-between mb-8">
-            <div>
-              <h2 class="text-3xl font-bold mb-2 flex items-center">
-                <span
-                  class="w-8 h-8 bg-gradient-to-r from-purple-500 to-pink-500 rounded-lg flex items-center justify-center mr-3">
-                  🗄️
-                </span>
-                Database Tools
-              </h2>
-              <p class="text-gray-400">Database utilities and commands</p>
-            </div>
-            <div class="section-divider w-32"></div>
-          </div>
-
-          <div class="tools-grid">
-            <a href="postgresql-guide.html" class="tool-card p-6 rounded-2xl group">
-              <div class="flex items-center space-x-4">
-                <div class="tool-icon w-12 h-12 rounded-xl flex items-center justify-center">
-                  <span class="text-xl">�</span>
-                </div>
-                <div>
-                  <h3 class="font-semibold text-lg">PostgreSQL Guide</h3>
-                  <p class="text-sm text-gray-400">PostgreSQL utilities and commands</p>
-                </div>
-              </div>
-            </a>
-
-            <!-- <a href="cron-describer.html" class="tool-card p-6 rounded-2xl group">
-              <div class="flex items-center space-x-4">
-                <div class="tool-icon w-12 h-12 rounded-xl flex items-center justify-center">
-                  <span class="text-xl">⏰</span>
-                            </div>
-                <div>
-                  <h3 class="font-semibold text-lg">Cron Describer</h3>
-                  <p class="text-sm text-gray-400">Explain cron expressions</p>
-                        </div>
-              </div>
-            </a>
-            
-            <a href="regex-tester.html" class="tool-card p-6 rounded-2xl group">
-              <div class="flex items-center space-x-4">
-                <div class="tool-icon w-12 h-12 rounded-xl flex items-center justify-center">
-                  <span class="text-xl">🔍</span>
-                            </div>
-                <div>
-                  <h3 class="font-semibold text-lg">Regex Tester</h3>
-                  <p class="text-sm text-gray-400">Test regular expressions</p>
-                        </div>
-              </div>
-            </a>
-            
-            <a href="http-response-header-printer.html" class="tool-card p-6 rounded-2xl group">
-              <div class="flex items-center space-x-4">
-                <div class="tool-icon w-12 h-12 rounded-xl flex items-center justify-center">
-                  <span class="text-xl">📋</span>
-                            </div>
-                <div>
-                  <h3 class="font-semibold text-lg">HTTP Header Printer</h3>
-                  <p class="text-sm text-gray-400">View HTTP headers</p>
-                        </div>
-              </div>
-                    </a> -->
-          </div>
-        </section>
-
-        <!-- Redis Section -->
-        <section id="redis" class="animate-slide-up">
-          <div class="flex items-center justify-between mb-8">
-            <div>
-              <h2 class="text-3xl font-bold mb-2 flex items-center">
-                <span
-                  class="w-8 h-8 bg-gradient-to-r from-red-500 to-orange-500 rounded-lg flex items-center justify-center mr-3">
-                  🔴
-                </span>
-                Redis Tools
-              </h2>
-              <p class="text-gray-400">Redis database utilities and commands</p>
-            </div>
-            <div class="section-divider w-32"></div>
-          </div>
-
-          <div class="tools-grid">
-            <a href="redis-command-explorer.html" class="tool-card p-6 rounded-2xl group">
-              <div class="flex items-center space-x-4">
-                <div class="tool-icon w-12 h-12 rounded-xl flex items-center justify-center">
-                  <span class="text-xl">📚</span>
-                </div>
-                <div>
-                  <h3 class="font-semibold text-lg">Redis Command Explorer</h3>
-                  <p class="text-sm text-gray-400">Explore Redis commands</p>
-                </div>
-              </div>
-            </a>
-          </div>
-        </section>
-
-        <!-- Payments Section -->
-        <section id="payments" class="animate-slide-up">
-          <div class="flex items-center justify-between mb-8">
-            <div>
-              <h2 class="text-3xl font-bold mb-2 flex items-center">
-                <span
-                  class="w-8 h-8 bg-gradient-to-r from-green-500 to-emerald-500 rounded-lg flex items-center justify-center mr-3">
-                  💳
-                </span>
-                Payment Tools
-              </h2>
-              <p class="text-gray-400">Payment processing and testing utilities</p>
-            </div>
-            <div class="section-divider w-32"></div>
-          </div>
-
-          <div class="tools-grid">
-            <a href="payment-tester.html" class="tool-card p-6 rounded-2xl group">
-              <div class="flex items-center space-x-4">
-                <div class="tool-icon w-12 h-12 rounded-xl flex items-center justify-center">
-                  <span class="text-xl">🧪</span>
-                </div>
-                <div>
-                  <h3 class="font-semibold text-lg">Payment Tester</h3>
-                  <p class="text-sm text-gray-400">Test payment integrations</p>
-                </div>
-              </div>
-            </a>
-          </div>
-        </section>
-
-        <!-- Python Toolkit Section -->
-        <section id="python" class="animate-slide-up">
-          <div class="flex items-center justify-between mb-8">
-            <div>
-              <h2 class="text-3xl font-bold mb-2 flex items-center">
-                <span
-                  class="w-8 h-8 bg-gradient-to-r from-yellow-500 to-orange-500 rounded-lg flex items-center justify-center mr-3">
-                  🐍
-                </span>
-                Python Toolkit
-              </h2>
-              <p class="text-gray-400">Python development utilities and code generators</p>
-            </div>
-            <div class="section-divider w-32"></div>
-          </div>
-
-          <div class="tools-grid">
-            <a href="python-requests.html" class="tool-card p-6 rounded-2xl group">
-              <div class="flex items-center space-x-4">
-                <div class="tool-icon w-12 h-12 rounded-xl flex items-center justify-center">
-                  <span class="text-xl">🌐</span>
-                </div>
-                <div>
-                  <h3 class="font-semibold text-lg">Requests Library</h3>
-                  <p class="text-sm text-gray-400">HTTP library examples</p>
-                </div>
-              </div>
-            </a>
-
-            <a href="python-urllib.html" class="tool-card p-6 rounded-2xl group">
-              <div class="flex items-center space-x-4">
-                <div class="tool-icon w-12 h-12 rounded-xl flex items-center justify-center">
-                  <span class="text-xl">🔗</span>
-                </div>
-                <div>
-                  <h3 class="font-semibold text-lg">urllib</h3>
-                  <p class="text-sm text-gray-400">urllib examples</p>
-                </div>
-              </div>
-            </a>
-
-            <a href="python-flask.html" class="tool-card p-6 rounded-2xl group">
-              <div class="flex items-center space-x-4">
-                <div class="tool-icon w-12 h-12 rounded-xl flex items-center justify-center">
-                  <span class="text-xl">🌶️</span>
-                </div>
-                <div>
-                  <h3 class="font-semibold text-lg">Flask API</h3>
-                  <p class="text-sm text-gray-400">Flask API templates</p>
-                </div>
-              </div>
-            </a>
-
-            <a href="python-pandas.html" class="tool-card p-6 rounded-2xl group">
-              <div class="flex items-center space-x-4">
-                <div class="tool-icon w-12 h-12 rounded-xl flex items-center justify-center">
-                  <span class="text-xl">🐼</span>
-                </div>
-                <div>
-                  <h3 class="font-semibold text-lg">Pandas</h3>
-                  <p class="text-sm text-gray-400">Data manipulation examples</p>
-                </div>
-              </div>
-            </a>
-
-            <a href="python-openai.html" class="tool-card p-6 rounded-2xl group">
-              <div class="flex items-center space-x-4">
-                <div class="tool-icon w-12 h-12 rounded-xl flex items-center justify-center">
-                  <span class="text-xl">🤖</span>
-                </div>
-                <div>
-                  <h3 class="font-semibold text-lg">OpenAI API</h3>
-                  <p class="text-sm text-gray-400">OpenAI integration examples</p>
-                </div>
-              </div>
-            </a>
-
-            <a href="jupyter-notebooks.html" class="tool-card p-6 rounded-2xl group">
-              <div class="flex items-center space-x-4">
-                <div class="tool-icon w-12 h-12 rounded-xl flex items-center justify-center">
-                  <span class="text-xl">📓</span>
-                </div>
-                <div>
-                  <h3 class="font-semibold text-lg">Jupyter Notebooks</h3>
-                  <p class="text-sm text-gray-400">Notebook templates</p>
-                </div>
-              </div>
-            </a>
-
-            <a href="prophet.html" class="tool-card p-6 rounded-2xl group">
-              <div class="flex items-center space-x-4">
-                <div class="tool-icon w-12 h-12 rounded-xl flex items-center justify-center">
-                  <span class="text-xl">📈</span>
-                </div>
-                <div>
-                  <h3 class="font-semibold text-lg">Prophet</h3>
-                  <p class="text-sm text-gray-400">Time series forecasting</p>
-                </div>
-              </div>
-            </a>
-
-            <a href="plotly.html" class="tool-card p-6 rounded-2xl group">
-              <div class="flex items-center space-x-4">
-                <div class="tool-icon w-12 h-12 rounded-xl flex items-center justify-center">
-                  <span class="text-xl">📊</span>
-                </div>
-                <div>
-                  <h3 class="font-semibold text-lg">Plotly</h3>
-                  <p class="text-sm text-gray-400">Interactive visualizations</p>
-                </div>
-              </div>
-            </a>
-          </div>
-        </section>
-
-        <!-- Data Structures & Algorithms Section -->
-        <section id="data-structures" class="animate-slide-up">
-          <div class="flex items-center justify-between mb-8">
-            <div>
-              <h2 class="text-3xl font-bold mb-2 flex items-center">
-                <span
-                  class="w-8 h-8 bg-gradient-to-r from-indigo-500 to-purple-500 rounded-lg flex items-center justify-center mr-3">
-                  📊
-                </span>
-                Data Structures & Algorithms
-              </h2>
-              <p class="text-gray-400">Learn and practice data structures and algorithms</p>
-            </div>
-            <div class="section-divider w-32"></div>
-          </div>
-
-          <div class="tools-grid">
-            <a href="data-structures.html" class="tool-card p-6 rounded-2xl group">
-              <div class="flex items-center space-x-4">
-                <div class="tool-icon w-12 h-12 rounded-xl flex items-center justify-center">
-                  <span class="text-xl">🏗️</span>
-                </div>
-                <div>
-                  <h3 class="font-semibold text-lg">Data Structures</h3>
-                  <p class="text-sm text-gray-400">Visualize data structures</p>
-                </div>
-              </div>
-            </a>
-
-            <a href="datastructures/array-ds.html" class="tool-card p-6 rounded-2xl group">
-              <div class="flex items-center space-x-4">
-                <div class="tool-icon w-12 h-12 rounded-xl flex items-center justify-center">
-                  <span class="text-xl">📋</span>
-                </div>
-                <div>
-                  <h3 class="font-semibold text-lg">Array</h3>
-                  <p class="text-sm text-gray-400">Array operations and algorithms</p>
-                </div>
-              </div>
-            </a>
-
-            <a href="datastructures/linkedlist-ds.html" class="tool-card p-6 rounded-2xl group">
-              <div class="flex items-center space-x-4">
-                <div class="tool-icon w-12 h-12 rounded-xl flex items-center justify-center">
-                  <span class="text-xl">🔗</span>
-                </div>
-                <div>
-                  <h3 class="font-semibold text-lg">Linked List</h3>
-                  <p class="text-sm text-gray-400">Linked list implementations</p>
-                </div>
-              </div>
-            </a>
-
-            <a href="datastructures/stack-ds.html" class="tool-card p-6 rounded-2xl group">
-              <div class="flex items-center space-x-4">
-                <div class="tool-icon w-12 h-12 rounded-xl flex items-center justify-center">
-                  <span class="text-xl">📚</span>
-                </div>
-                <div>
-                  <h3 class="font-semibold text-lg">Stack</h3>
-                  <p class="text-sm text-gray-400">Stack data structure</p>
-                </div>
-              </div>
-            </a>
-
-            <a href="datastructures/queue-ds.html" class="tool-card p-6 rounded-2xl group">
-              <div class="flex items-center space-x-4">
-                <div class="tool-icon w-12 h-12 rounded-xl flex items-center justify-center">
-                  <span class="text-xl">🚶</span>
-                </div>
-                <div>
-                  <h3 class="font-semibold text-lg">Queue</h3>
-                  <p class="text-sm text-gray-400">Queue data structure</p>
-                </div>
-              </div>
-            </a>
-
-          </div>
-        </section>
-
-        <!-- Information & Reference Section -->
-        <section id="information" class="animate-slide-up">
-          <div class="flex items-center justify-between mb-8">
-            <div>
-              <h2 class="text-3xl font-bold mb-2 flex items-center">
-                <span
-                  class="w-8 h-8 bg-gradient-to-r from-teal-500 to-cyan-500 rounded-lg flex items-center justify-center mr-3">
-                  📚
-                </span>
-                Information & Reference
-              </h2>
-              <p class="text-gray-400">Reference materials and information tools</p>
-            </div>
-            <div class="section-divider w-32"></div>
-          </div>
-
-          <div class="tools-grid">
-            <a href="ip-address.html" class="tool-card p-6 rounded-2xl group">
-              <div class="flex items-center space-x-4">
-                <div class="tool-icon w-12 h-12 rounded-xl flex items-center justify-center">
-                  <span class="text-xl">🌍</span>
-                </div>
-                <div>
-                  <h3 class="font-semibold text-lg">IP Address Tools</h3>
-                  <p class="text-sm text-gray-400">IP address utilities</p>
-                </div>
-              </div>
-            </a>
-
-        <a href="timezone_convertor/index.html" class="tool-card p-6 rounded-2xl group">
-            <div class="flex items-center space-x-4">
-                <div class="tool-icon w-12 h-12 rounded-xl flex items-center justify-center">
-                    <span class="text-xl">🌍</span>
-                </div>
-                <div>
-                    <h3 class="font-semibold text-lg">Timezone Converter</h3>
-                    <p class="text-sm text-gray-400">Convert between timezones with epoch</p>
-                </div>
-            </div>
-        </a>
-        
-
-            <a href="emoji_picker/index.html" class="tool-card p-6 rounded-2xl group">
-              <div class="flex items-center space-x-4">
-                <div class="tool-icon w-12 h-12 rounded-xl flex items-center justify-center">
-                  <span class="text-xl">😀</span>
-                </div>
-                <div>
-                  <h3 class="font-semibold text-lg">Emoji Picker</h3>
-                  <p class="text-sm text-gray-400">Search and copy emojis easily</p>
-                </div>
-              </div>
-            </a>
-            <a href="epoch_convertor/index.html" class="tool-card p-6 rounded-2xl group">
-              <div class="flex items-center space-x-4">
-                <div class="tool-icon w-12 h-12 rounded-xl flex items-center justify-center">
-                  <span class="text-xl">⏰</span>
-                </div>
-                <div>
-                  <h3 class="font-semibold text-lg">Epoch Converter</h3>
-                  <p class="text-sm text-gray-400">Unix time ⇄ human readable</p>
-                </div>
-              </div>
-            </a>
-            <a href="leetcode-commit-message.html" class="tool-card p-6 rounded-2xl group">
-              <div class="flex items-center space-x-4">
-                <div class="tool-icon w-12 h-12 rounded-xl flex items-center justify-center">
-                  <span class="text-xl">📝</span>
-                </div>
-                <div>
-                  <h3 class="font-semibold text-lg">LeetCode Commit Generator</h3>
-                  <p class="text-sm text-gray-400">Generate filenames and commits</p>
-                </div>
-              </div>
-            </a>
-            <a href="all_tools/index.html" class="tool-card p-6 rounded-2xl group">
-              <div class="flex items-center space-x-4">
-                <div class="tool-icon w-12 h-12 rounded-xl flex items-center justify-center">
-                  <span class="text-xl">📋</span>
-                </div>
-                <div>
-                  <h3 class="font-semibold text-lg">All available tools</h3>
-                  <p class="text-sm text-gray-400">Browse the full tools directory</p>
-                </div>
-              </div>
-            </a>
-            <a href="blank-page.html" class="tool-card p-6 rounded-2xl group">
-              <div class="flex items-center space-x-4">
-                <div class="tool-icon w-12 h-12 rounded-xl flex items-center justify-center">
-                  <span class="text-xl">📄</span>
-                </div>
-                <div>
-                  <h3 class="font-semibold text-lg">Blank page</h3>
-                  <p class="text-sm text-gray-400">Starter page for new tools</p>
-                </div>
-              </div>
-            </a>
-          </div>
-        </section>
-      </div>
+    <!-- Category jump pills -->
+    <div class="cat-pills">
+      <a href="#encoders" class="cat-pill">🔧 Encoders</a>
+      <a href="#vapt" class="cat-pill">🛡️ Security</a>
+      <a href="#generators" class="cat-pill">⚡ Generators</a>
+      <a href="#api-tools" class="cat-pill">🔌 Dev Tools</a>
+      <a href="#network" class="cat-pill">🌐 Network</a>
+      <a href="#text" class="cat-pill">📝 Text</a>
+      <a href="#database" class="cat-pill">🐘 Database</a>
+      <a href="#redis" class="cat-pill">📦 Redis</a>
+      <a href="#python" class="cat-pill">🐍 Python</a>
+      <a href="#data-structures" class="cat-pill">🏗️ Data Structures</a>
+      <a href="#info" class="cat-pill">ℹ️ Info</a>
     </div>
-  </main>
+  </div>
+</section>
 
-  <!-- Footer -->
-  <footer class="mt-20 border-t border-white/10 bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900">
-    <div class="max-w-7xl mx-auto px-6 py-12">
-      <!-- Main Footer Content -->
-      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-10 mb-10">
-        
-        <!-- About Section -->
-        <div class="space-y-4">
-          <div class="flex items-center gap-3 mb-4">
-            <img src="images/logo.png" alt="DevDunia logo" class="h-10 w-10 rounded-xl object-contain">
-            <span class="text-2xl font-bold bg-gradient-to-r from-blue-400 via-purple-500 to-teal-400 bg-clip-text text-transparent">DevDunia</span>
-          </div>
-          <p class="text-gray-400 text-sm leading-relaxed">
-            Your all-in-one platform for developer and VAPT tools. 50+ free utilities to boost your productivity.
-          </p>
-          <!-- Social Icons -->
-          <div class="flex items-center gap-4 text-2xl text-gray-400">
-            <a href="https://github.com/echobash" target="_blank" class="hover:text-white transition-colors" aria-label="GitHub">
-              <i class="fab fa-github"></i>
-            </a>
-            <a href="https://www.linkedin.com/in/echobash" target="_blank" class="hover:text-[#0A66C2] transition-colors" aria-label="LinkedIn">
-              <i class="fab fa-linkedin"></i>
-            </a>
-            <a href="https://x.com/alianwar_rocker" target="_blank" class="hover:text-white transition-colors" aria-label="X (Twitter)">
-              <i class="fab fa-x-twitter"></i>
-            </a>
-          </div>
+<!-- ── Stat banner ── -->
+<div class="stat-banner reveal">
+  <div class="stat-banner-item">
+    <div class="stat-banner-num" id="stat-tool-count">0</div>
+    <div class="stat-banner-lbl">Tools available</div>
+  </div>
+  <div class="stat-banner-item">
+    <div class="stat-banner-num">100%</div>
+    <div class="stat-banner-lbl">Free forever</div>
+  </div>
+  <div class="stat-banner-item">
+    <div class="stat-banner-num">0</div>
+    <div class="stat-banner-lbl">Servers / Trackers</div>
+  </div>
+  <div class="stat-banner-item">
+    <div class="stat-banner-num">0s</div>
+    <div class="stat-banner-lbl">Setup required</div>
+  </div>
+</div>
+
+<!-- ── Search result count + no-results ── -->
+<div id="search-count" style="position:relative;z-index:1;padding-top:1.5rem;"><b id="sc-n">0</b> results for "<span id="sc-q"></span>"</div>
+<div id="no-results" style="position:relative;z-index:1;text-align:center;color:var(--faint);padding:3rem 1.5rem;">
+  No tools match "<span id="no-q" style="color:var(--muted);"></span>" — try a different keyword.
+</div>
+
+<!-- ══════════════════════════════════════════════════════
+     TOOL SECTIONS
+══════════════════════════════════════════════════════ -->
+<main class="tools-main">
+
+  <!-- ── Encoders / Decoders ── -->
+  <section class="tool-section reveal" id="encoders">
+    <div class="sec-label">Encoders / Decoders</div>
+    <h2 class="sec-title">Transform &amp; Convert Data</h2>
+    <p class="sec-sub">JSON, Base64, URL, CSV, YAML, XML and more — encode, decode, format and convert instantly.</p>
+    <div class="tool-grid">
+      <a href="php-to-json.html" class="tool-card" data-keywords="json php converter transform">
+        <span class="tc-icon">🔄</span>
+        <div class="tc-body">
+          <div class="tc-name">JSON to PHP</div>
+          <div class="tc-desc">Convert JSON data to PHP array syntax</div>
         </div>
-
-        <!-- Quick Links -->
-        <div class="space-y-4">
-          <h3 class="text-lg font-bold text-white mb-4">Quick Links</h3>
-          <ul class="space-y-2">
-            <li>
-              <a href="home.html" class="text-gray-400 hover:text-purple-400 transition-colors text-sm flex items-center gap-2">
-                <i class="fas fa-chevron-right text-xs"></i> All Tools
-              </a>
-            </li>
-            <li>
-              <a href="index.html" class="text-gray-400 hover:text-purple-400 transition-colors text-sm flex items-center gap-2">
-                <i class="fas fa-chevron-right text-xs"></i> Home
-              </a>
-            </li>
-            <li>
-              <a href="contact.html" class="text-gray-400 hover:text-purple-400 transition-colors text-sm flex items-center gap-2">
-                <i class="fas fa-chevron-right text-xs"></i> Contact Us
-              </a>
-            </li>
-            <li>
-              <a href="support.html" class="text-gray-400 hover:text-purple-400 transition-colors text-sm flex items-center gap-2">
-                <i class="fas fa-chevron-right text-xs"></i> Support DevDunia
-              </a>
-            </li>
-          </ul>
+        <div class="tc-arrow">→</div>
+      </a>
+      <a href="json-beautifier.html" class="tool-card" data-keywords="json beautifier formatter pretty print">
+        <span class="tc-icon">✨</span>
+        <div class="tc-body">
+          <div class="tc-name">JSON Beautifier</div>
+          <div class="tc-desc">Format and pretty-print JSON with syntax highlighting</div>
         </div>
-
-        <!-- Popular Tools -->
-        <div class="space-y-4">
-          <h3 class="text-lg font-bold text-white mb-4">Popular Tools</h3>
-          <ul class="space-y-2">
-            <li>
-              <a href="json-beautifier.html" class="text-gray-400 hover:text-purple-400 transition-colors text-sm flex items-center gap-2">
-                <i class="fas fa-chevron-right text-xs"></i> JSON Beautifier
-              </a>
-            </li>
-            <li>
-              <a href="password-generator.html" class="text-gray-400 hover:text-purple-400 transition-colors text-sm flex items-center gap-2">
-                <i class="fas fa-chevron-right text-xs"></i> Password Generator
-              </a>
-            </li>
-            <li>
-              <a href="base64-encoder.html" class="text-gray-400 hover:text-purple-400 transition-colors text-sm flex items-center gap-2">
-                <i class="fas fa-chevron-right text-xs"></i> Base64 Encoder
-              </a>
-            </li>
-            <li>
-              <a href="jwt-decoder.html" class="text-gray-400 hover:text-purple-400 transition-colors text-sm flex items-center gap-2">
-                <i class="fas fa-chevron-right text-xs"></i> JWT Decoder
-              </a>
-            </li>
-            <li>
-              <a href="regex-tester.html" class="text-gray-400 hover:text-purple-400 transition-colors text-sm flex items-center gap-2">
-                <i class="fas fa-chevron-right text-xs"></i> Regex Tester
-              </a>
-            </li>
-          </ul>
+        <div class="tc-arrow">→</div>
+      </a>
+      <a href="json-minifier.html" class="tool-card" data-keywords="json minifier compress uglify">
+        <span class="tc-icon">📦</span>
+        <div class="tc-body">
+          <div class="tc-name">JSON Minifier</div>
+          <div class="tc-desc">Compress JSON by removing whitespace and comments</div>
         </div>
-
-        <!-- Community & Support -->
-        <div class="space-y-4">
-          <h3 class="text-lg font-bold text-white mb-4">Community</h3>
-          <ul class="space-y-2">
-            <li>
-              <a href="https://github.com/echobash/devdunia" target="_blank" class="text-gray-400 hover:text-purple-400 transition-colors text-sm flex items-center gap-2">
-                <i class="fab fa-github text-xs"></i> GitHub Repository
-              </a>
-            </li>
-            <li>
-              <a href="https://github.com/echobash/devdunia/issues" target="_blank" class="text-gray-400 hover:text-purple-400 transition-colors text-sm flex items-center gap-2">
-                <i class="fas fa-bug text-xs"></i> Report Issues
-              </a>
-            </li>
-            <li>
-              <a href="https://github.com/echobash/devdunia/issues/new?labels=feature" target="_blank" class="text-gray-400 hover:text-purple-400 transition-colors text-sm flex items-center gap-2">
-                <i class="fas fa-lightbulb text-xs"></i> Request Features
-              </a>
-            </li>
-            <li>
-              <a href="CONTRIBUTING.md" class="text-gray-400 hover:text-purple-400 transition-colors text-sm flex items-center gap-2">
-                <i class="fas fa-code-branch text-xs"></i> Contribute
-              </a>
-            </li>
-          </ul>
-          <!-- Star Button -->
-          <a
-            href="https://github.com/echobash/devdunia"
-            target="_blank"
-            class="inline-flex items-center gap-2 bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 text-white px-4 py-2 rounded-xl text-sm font-semibold transition-all duration-200 shadow-lg mt-4"
-          >
-            <i class="fab fa-github text-lg"></i> ⭐ Star on GitHub
-          </a>
+        <div class="tc-arrow">→</div>
+      </a>
+      <a href="string-transformer.html" class="tool-card" data-keywords="string transform case upper lower camel snake">
+        <span class="tc-icon">🔄</span>
+        <div class="tc-body">
+          <div class="tc-name">String Transformer</div>
+          <div class="tc-desc">Transform strings: camelCase, snake_case, UPPER, lower and more</div>
         </div>
-
-      </div>
-
-      <!-- Divider -->
-      <div class="border-t border-white/10 mb-4"></div>
-
-      <!-- Bottom Footer -->
-      <div class="flex flex-col md:flex-row justify-between items-center gap-3 py-2">
-        <div class="text-center md:text-left">
-          <p class="text-gray-400 text-sm">
-            &copy; 2024-2025 DevDunia. All rights reserved.
-          </p>
-          <p class="text-gray-500 text-xs mt-0.5">
-            Made with <span class="text-red-400">❤</span> by <a href="https://echobash.com" target="_blank" class="text-purple-400 hover:text-purple-300 font-semibold transition-colors">echobash.com</a> for the developer community
-          </p>
+        <div class="tc-arrow">→</div>
+      </a>
+      <a href="url-encoder.html" class="tool-card" data-keywords="url encode percent encoding urlencode">
+        <span class="tc-icon">🔗</span>
+        <div class="tc-body">
+          <div class="tc-name">URL Encoder</div>
+          <div class="tc-desc">Percent-encode URLs and query parameters safely</div>
         </div>
-        
-        <div class="flex flex-wrap justify-center gap-4 text-xs text-gray-400">
-          <a href="CODE_OF_CONDUCT.md" class="hover:text-purple-400 transition-colors">Code of Conduct</a>
-          <span class="text-gray-600">|</span>
-          <a href="https://github.com/echobash/devdunia/blob/main/LICENSE" target="_blank" class="hover:text-purple-400 transition-colors">License</a>
-          <span class="text-gray-600">|</span>
-          <a href="https://github.com/echobash/devdunia" target="_blank" class="hover:text-purple-400 transition-colors">Open Source</a>
+        <div class="tc-arrow">→</div>
+      </a>
+      <a href="url-decoder.html" class="tool-card" data-keywords="url decode percent urldecode">
+        <span class="tc-icon">🔓</span>
+        <div class="tc-body">
+          <div class="tc-name">URL Decoder</div>
+          <div class="tc-desc">Decode percent-encoded URLs back to readable form</div>
         </div>
-      </div>
-
+        <div class="tc-arrow">→</div>
+      </a>
+      <a href="base64-encoder.html" class="tool-card" data-keywords="base64 encode btoa binary text">
+        <span class="tc-icon">📤</span>
+        <div class="tc-body">
+          <div class="tc-name">Base64 Encoder</div>
+          <div class="tc-desc">Encode text or binary data to Base64 format</div>
+        </div>
+        <div class="tc-arrow">→</div>
+      </a>
+      <a href="base64-decoder.html" class="tool-card" data-keywords="base64 decode atob binary text">
+        <span class="tc-icon">📥</span>
+        <div class="tc-body">
+          <div class="tc-name">Base64 Decoder</div>
+          <div class="tc-desc">Decode Base64 strings back to plain text or binary</div>
+        </div>
+        <div class="tc-arrow">→</div>
+      </a>
+      <a href="base62-encoder.html" class="tool-card" data-keywords="base62 encode alphanumeric short url">
+        <span class="tc-icon">📤</span>
+        <div class="tc-body">
+          <div class="tc-name">Base62 Encoder</div>
+          <div class="tc-desc">Encode numbers to compact Base62 alphanumeric strings</div>
+        </div>
+        <div class="tc-arrow">→</div>
+      </a>
+      <a href="base62-decoder.html" class="tool-card" data-keywords="base62 decode alphanumeric">
+        <span class="tc-icon">📥</span>
+        <div class="tc-body">
+          <div class="tc-name">Base62 Decoder</div>
+          <div class="tc-desc">Decode Base62 strings back to their numeric value</div>
+        </div>
+        <div class="tc-arrow">→</div>
+      </a>
+      <a href="hash-generator.html" class="tool-card" data-keywords="hash md5 sha1 sha256 sha512 checksum">
+        <span class="tc-icon">🔐</span>
+        <div class="tc-body">
+          <div class="tc-name">Hash Generator</div>
+          <div class="tc-desc">Generate MD5, SHA-1, SHA-256, SHA-512 hashes</div>
+        </div>
+        <div class="tc-arrow">→</div>
+      </a>
+      <a href="caesar-cipher.html" class="tool-card" data-keywords="caesar cipher encrypt decrypt rot13 shift">
+        <span class="tc-icon">🔐</span>
+        <div class="tc-body">
+          <div class="tc-name">Caesar Cipher</div>
+          <div class="tc-desc">Encrypt and decrypt text with the classic Caesar shift cipher</div>
+        </div>
+        <div class="tc-arrow">→</div>
+      </a>
+      <a href="jwt-decoder.html" class="tool-card" data-keywords="jwt json web token decode header payload">
+        <span class="tc-icon">🎫</span>
+        <div class="tc-body">
+          <div class="tc-name">JWT Decoder</div>
+          <div class="tc-desc">Decode and inspect JWT tokens — header, payload, claims</div>
+        </div>
+        <div class="tc-arrow">→</div>
+      </a>
+      <a href="csv-json-converter.html" class="tool-card" data-keywords="csv json convert spreadsheet data">
+        <span class="tc-icon">📊</span>
+        <div class="tc-body">
+          <div class="tc-name">CSV to JSON</div>
+          <div class="tc-desc">Convert CSV spreadsheet data to JSON format</div>
+        </div>
+        <div class="tc-arrow">→</div>
+      </a>
+      <a href="yaml-json-converter.html" class="tool-card" data-keywords="yaml json convert interchange devops">
+        <span class="tc-icon">⚖️</span>
+        <div class="tc-body">
+          <div class="tc-name">YAML ⇄ JSON</div>
+          <div class="tc-desc">Bidirectional conversion between YAML and JSON</div>
+        </div>
+        <div class="tc-arrow">→</div>
+      </a>
+      <a href="xml-formatter.html" class="tool-card" data-keywords="xml formatter pretty print indent parse">
+        <span class="tc-icon">📄</span>
+        <div class="tc-body">
+          <div class="tc-name">XML Formatter</div>
+          <div class="tc-desc">Format and indent XML documents for readability</div>
+        </div>
+        <div class="tc-arrow">→</div>
+      </a>
     </div>
-  </footer>
-  <!-- Font Awesome for footer icons -->
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
+  </section>
 
-  <!-- JavaScript for interactions -->
-  <script>
-    // Enhanced Search functionality
-    const searchInput = document.getElementById('searchInput');
-    const clearSearchBtn = document.getElementById('clearSearch');
-    const searchResults = document.getElementById('searchResults');
-    const searchResultsContent = document.getElementById('searchResultsContent');
-    const noResults = document.getElementById('noResults');
-    const toolCards = document.querySelectorAll('.tool-card');
+  <hr class="sec-divider">
 
-    // Create tools data array for search
-    const toolsData = Array.from(toolCards).map(card => ({
-      element: card,
-      title: card.querySelector('h3').textContent,
-      description: card.querySelector('p').textContent,
-      href: card.getAttribute('href'),
-      icon: card.querySelector('.tool-icon span').textContent
-    }));
+  <!-- ── Security / VAPT ── -->
+  <section class="tool-section reveal" id="vapt">
+    <div class="sec-label">Security / VAPT</div>
+    <h2 class="sec-title">Security &amp; Vulnerability Testing</h2>
+    <p class="sec-sub">Clickjacking detection, HTTP header analysis, OWASP checks and email forensics.</p>
+    <div class="tool-grid">
+      <a href="clickjacking-checker.html" class="tool-card" data-keywords="clickjacking x-frame-options security test">
+        <span class="tc-icon">🔒</span>
+        <div class="tc-body">
+          <div class="tc-name">Clickjacking Checker</div>
+          <div class="tc-desc">Test if a site is vulnerable to clickjacking attacks</div>
+        </div>
+        <div class="tc-arrow">→</div>
+      </a>
+      <a href="http-response-header-printer.html" class="tool-card" data-keywords="http headers response security headers check">
+        <span class="tc-icon">📋</span>
+        <div class="tc-body">
+          <div class="tc-name">HTTP Headers</div>
+          <div class="tc-desc">Inspect HTTP response headers for security misconfigurations</div>
+        </div>
+        <div class="tc-arrow">→</div>
+      </a>
+      <a href="owasp-top10.html" class="tool-card" data-keywords="owasp top 10 vulnerabilities security checklist">
+        <span class="tc-icon">🐛</span>
+        <div class="tc-body">
+          <div class="tc-name">OWASP Top 10</div>
+          <div class="tc-desc">Interactive reference for OWASP Top 10 web vulnerabilities</div>
+        </div>
+        <div class="tc-arrow">→</div>
+      </a>
+      <a href="email-header-analyzer.html" class="tool-card" data-keywords="email header analyzer forensics phishing spam">
+        <span class="tc-icon">📧</span>
+        <div class="tc-body">
+          <div class="tc-name">Email Header Analyzer</div>
+          <div class="tc-desc">Parse and analyze email headers for forensics and phishing detection</div>
+        </div>
+        <div class="tc-arrow">→</div>
+      </a>
+    </div>
+  </section>
 
-    // Search function
-    function performSearch(searchTerm) {
-      const term = searchTerm.toLowerCase().trim();
+  <hr class="sec-divider">
 
-      if (term === '') {
-        // Show all tools
-        toolCards.forEach(card => {
-          card.style.display = 'block';
-          card.style.animation = 'scaleIn 0.3s ease-out';
-        });
-        searchResults.classList.add('hidden');
-        clearSearchBtn.classList.add('hidden');
-        return;
-      }
+  <!-- ── Generators ── -->
+  <section class="tool-section reveal" id="generators">
+    <div class="sec-label">Generators</div>
+    <h2 class="sec-title">Generate What You Need</h2>
+    <p class="sec-sub">Passwords, UUIDs, QR codes, barcodes, contributors and placeholder text.</p>
+    <div class="tool-grid">
+      <a href="password-generator.html" class="tool-card" data-keywords="password generator secure random strong">
+        <span class="tc-icon">🔑</span>
+        <div class="tc-body">
+          <div class="tc-name">Password Generator</div>
+          <div class="tc-desc">Generate strong, secure random passwords with custom rules</div>
+        </div>
+        <div class="tc-arrow">→</div>
+      </a>
+      <a href="guid-generator.html" class="tool-card" data-keywords="uuid v4 generator unique id random">
+        <span class="tc-icon">🆔</span>
+        <div class="tc-body">
+          <div class="tc-name">UUID Generator</div>
+          <div class="tc-desc">Generate RFC 4122 v4 UUIDs in bulk instantly</div>
+        </div>
+        <div class="tc-arrow">→</div>
+      </a>
+      <a href="qr-generator.html" class="tool-card" data-keywords="qr code generator barcode scan url">
+        <span class="tc-icon">📱</span>
+        <div class="tc-body">
+          <div class="tc-name">QR Generator</div>
+          <div class="tc-desc">Generate QR codes from any URL, text or data</div>
+        </div>
+        <div class="tc-arrow">→</div>
+      </a>
+      <a href="barcode_generator/index.html" class="tool-card" data-keywords="barcode generator code128 ean isbn">
+        <span class="tc-icon">📱</span>
+        <div class="tc-body">
+          <div class="tc-name">Barcode Generator</div>
+          <div class="tc-desc">Generate 1D barcodes in Code128, EAN, ISBN and other formats</div>
+        </div>
+        <div class="tc-arrow">→</div>
+      </a>
+      <a href="github_contributors/index.html" class="tool-card" data-keywords="github contributors open source project team">
+        <span class="tc-icon">📱</span>
+        <div class="tc-body">
+          <div class="tc-name">GitHub Contributors</div>
+          <div class="tc-desc">Visualize and list contributors for any GitHub repository</div>
+        </div>
+        <div class="tc-arrow">→</div>
+      </a>
+      <a href="guid-generator.html" class="tool-card" data-keywords="guid generator globally unique identifier">
+        <span class="tc-icon">🎯</span>
+        <div class="tc-body">
+          <div class="tc-name">GUID Generator</div>
+          <div class="tc-desc">Generate Globally Unique Identifiers (GUIDs) on demand</div>
+        </div>
+        <div class="tc-arrow">→</div>
+      </a>
+      <a href="lorem-ipsum-generator.html" class="tool-card" data-keywords="lorem ipsum placeholder text dummy content">
+        <span class="tc-icon">📝</span>
+        <div class="tc-body">
+          <div class="tc-name">Lorem Ipsum</div>
+          <div class="tc-desc">Generate dummy placeholder text for layouts and mockups</div>
+        </div>
+        <div class="tc-arrow">→</div>
+      </a>
+    </div>
+  </section>
 
-      // Filter tools - only search in tool names (titles)
-      const matchingTools = toolsData.filter(tool =>
-        tool.title.toLowerCase().includes(term)
-      );
+  <hr class="sec-divider">
 
-      // Hide all tool cards
-      toolCards.forEach(card => {
-        card.style.display = 'none';
-      });
+  <!-- ── API & Dev Tools ── -->
+  <section class="tool-section reveal" id="api-tools">
+    <div class="sec-label">API &amp; Dev Tools</div>
+    <h2 class="sec-title">Developer Productivity Tools</h2>
+    <p class="sec-sub">cURL, cron, regex, SQL, markdown, diff, Docker, Mermaid and more for everyday dev work.</p>
+    <div class="tool-grid">
+      <a href="curl-describer.html" class="tool-card" data-keywords="curl http request describe explain parse">
+        <span class="tc-icon">🔄</span>
+        <div class="tc-body">
+          <div class="tc-name">cURL Describer</div>
+          <div class="tc-desc">Paste a cURL command and get a plain-English explanation</div>
+        </div>
+        <div class="tc-arrow">→</div>
+      </a>
+      <a href="cron-describer.html" class="tool-card" data-keywords="cron expression describe schedule explain parser">
+        <span class="tc-icon">⏰</span>
+        <div class="tc-body">
+          <div class="tc-name">Cron Describer</div>
+          <div class="tc-desc">Translate cron expressions into human-readable schedules</div>
+        </div>
+        <div class="tc-arrow">→</div>
+      </a>
+      <a href="regex-tester.html" class="tool-card" data-keywords="regex regular expression tester match test">
+        <span class="tc-icon">🔍</span>
+        <div class="tc-body">
+          <div class="tc-name">Regex Tester</div>
+          <div class="tc-desc">Test and debug regular expressions with live match highlighting</div>
+        </div>
+        <div class="tc-arrow">→</div>
+      </a>
+      <a href="sql-formatter.html" class="tool-card" data-keywords="sql formatter beautifier query pretty print">
+        <span class="tc-icon">🗄️</span>
+        <div class="tc-body">
+          <div class="tc-name">SQL Formatter</div>
+          <div class="tc-desc">Format and beautify SQL queries for readability</div>
+        </div>
+        <div class="tc-arrow">→</div>
+      </a>
+      <a href="payment-tester.html" class="tool-card" data-keywords="api response tester payment mock http">
+        <span class="tc-icon">🧪</span>
+        <div class="tc-body">
+          <div class="tc-name">API Response Tester</div>
+          <div class="tc-desc">Test and inspect API responses and payment webhooks</div>
+        </div>
+        <div class="tc-arrow">→</div>
+      </a>
+      <a href="env-generator.html" class="tool-card" data-keywords="env environment variable generator dotenv config">
+        <span class="tc-icon">🌍</span>
+        <div class="tc-body">
+          <div class="tc-name">Environment Generator</div>
+          <div class="tc-desc">Generate .env file templates for various project types</div>
+        </div>
+        <div class="tc-arrow">→</div>
+      </a>
+      <a href="elasticsearch-tools.html" class="tool-card" data-keywords="elasticsearch query dsl search index tools">
+        <span class="tc-icon">🔍</span>
+        <div class="tc-body">
+          <div class="tc-name">Elasticsearch Tools</div>
+          <div class="tc-desc">Build and test Elasticsearch queries and DSL expressions</div>
+        </div>
+        <div class="tc-arrow">→</div>
+      </a>
+      <a href="markdown-editor.html" class="tool-card" data-keywords="markdown editor preview render live md">
+        <span class="tc-icon">📝</span>
+        <div class="tc-body">
+          <div class="tc-name">Markdown Editor</div>
+          <div class="tc-desc">Write Markdown with live preview side by side</div>
+        </div>
+        <div class="tc-arrow">→</div>
+      </a>
+      <a href="diff-checker.html" class="tool-card" data-keywords="diff checker compare text file changes">
+        <span class="tc-icon">🔍</span>
+        <div class="tc-body">
+          <div class="tc-name">Diff Checker</div>
+          <div class="tc-desc">Compare two texts and highlight differences line by line</div>
+        </div>
+        <div class="tc-arrow">→</div>
+      </a>
+      <a href="docker-comprehensive.html" class="tool-card" data-keywords="docker guide reference commands containers">
+        <span class="tc-icon">🐳</span>
+        <div class="tc-body">
+          <div class="tc-name">Docker Guide</div>
+          <div class="tc-desc">Comprehensive Docker commands reference and cheat sheet</div>
+        </div>
+        <div class="tc-arrow">→</div>
+      </a>
+      <a href="mermaid-renderer.html" class="tool-card" data-keywords="mermaid diagram flowchart sequence render">
+        <span class="tc-icon">🌊</span>
+        <div class="tc-body">
+          <div class="tc-name">Mermaid Renderer</div>
+          <div class="tc-desc">Render Mermaid diagrams: flowcharts, sequence, ERD and more</div>
+        </div>
+        <div class="tc-arrow">→</div>
+      </a>
+      <a href="nfc-reader.html" class="tool-card" data-keywords="nfc reader tag scan web nfc browser">
+        <span class="tc-icon">📶</span>
+        <div class="tc-body">
+          <div class="tc-name">NFC Reader</div>
+          <div class="tc-desc">Read NFC tags directly in the browser via Web NFC API</div>
+        </div>
+        <div class="tc-arrow">→</div>
+      </a>
+      <a href="text-sharer.html" class="tool-card" data-keywords="text sharer share snippet link copy paste">
+        <span class="tc-icon">🔗</span>
+        <div class="tc-body">
+          <div class="tc-name">Text Sharer</div>
+          <div class="tc-desc">Share text snippets via a shareable link instantly</div>
+        </div>
+        <div class="tc-arrow">→</div>
+      </a>
+      <a href="html-viewer.html" class="tool-card" data-keywords="html viewer preview render live browser">
+        <span class="tc-icon">👁️</span>
+        <div class="tc-body">
+          <div class="tc-name">HTML Viewer</div>
+          <div class="tc-desc">Paste HTML and preview it rendered live in the browser</div>
+        </div>
+        <div class="tc-arrow">→</div>
+      </a>
+    </div>
+  </section>
 
-      // Show matching tool cards
-      matchingTools.forEach(tool => {
-        tool.element.style.display = 'block';
-        tool.element.style.animation = 'scaleIn 0.3s ease-out';
-      });
+  <hr class="sec-divider">
 
-      // Show search results dropdown
-      if (matchingTools.length > 0) {
-        displaySearchResults(matchingTools, term);
-        noResults.classList.add('hidden');
-      } else {
-        showNoResults();
-      }
+  <!-- ── Network Protocols ── -->
+  <section class="tool-section reveal" id="network">
+    <div class="sec-label">Network Protocols</div>
+    <h2 class="sec-title">Network Protocol References</h2>
+    <p class="sec-sub">Deep-dive references for HTTP, TCP, UDP, OSI model and networking fundamentals.</p>
+    <div class="tool-grid">
+      <a href="network-protocols.html" class="tool-card" data-keywords="network protocols reference overview guide">
+        <span class="tc-icon">🌐</span>
+        <div class="tc-body">
+          <div class="tc-name">Network Protocols</div>
+          <div class="tc-desc">Overview of common network protocols and their use cases</div>
+        </div>
+        <div class="tc-arrow">→</div>
+      </a>
+      <a href="http-protocol.html" class="tool-card" data-keywords="http protocol reference methods status codes headers">
+        <span class="tc-icon">🌐</span>
+        <div class="tc-body">
+          <div class="tc-name">HTTP Protocol</div>
+          <div class="tc-desc">Complete HTTP protocol reference — methods, status codes, headers</div>
+        </div>
+        <div class="tc-arrow">→</div>
+      </a>
+      <a href="tcp-protocol.html" class="tool-card" data-keywords="tcp protocol handshake connection reliable transport">
+        <span class="tc-icon">🔗</span>
+        <div class="tc-body">
+          <div class="tc-name">TCP Protocol</div>
+          <div class="tc-desc">TCP protocol internals — handshake, flow control, reliability</div>
+        </div>
+        <div class="tc-arrow">→</div>
+      </a>
+      <a href="udp-protocol.html" class="tool-card" data-keywords="udp protocol datagram fast lightweight streaming">
+        <span class="tc-icon">⚡</span>
+        <div class="tc-body">
+          <div class="tc-name">UDP Protocol</div>
+          <div class="tc-desc">UDP protocol — connectionless, fast, datagram-based communication</div>
+        </div>
+        <div class="tc-arrow">→</div>
+      </a>
+      <a href="osi-model.html" class="tool-card" data-keywords="osi model layers network physical data link">
+        <span class="tc-icon">🏗️</span>
+        <div class="tc-body">
+          <div class="tc-name">OSI Model</div>
+          <div class="tc-desc">Interactive OSI 7-layer model reference with examples</div>
+        </div>
+        <div class="tc-arrow">→</div>
+      </a>
+    </div>
+  </section>
 
-      searchResults.classList.remove('hidden');
-      clearSearchBtn.classList.remove('hidden');
+  <hr class="sec-divider">
+
+  <!-- ── Text Tools ── -->
+  <section class="tool-section reveal" id="text">
+    <div class="sec-label">Text Tools</div>
+    <h2 class="sec-title">Text Analysis &amp; Processing</h2>
+    <p class="sec-sub">Count words, characters, sentences and reading time instantly.</p>
+    <div class="tool-grid">
+      <a href="word_counter/index.html" class="tool-card" data-keywords="word counter character count sentences reading time">
+        <span class="tc-icon">📝</span>
+        <div class="tc-body">
+          <div class="tc-name">Word Counter</div>
+          <div class="tc-desc">Count words, characters, sentences and estimated reading time</div>
+        </div>
+        <div class="tc-arrow">→</div>
+      </a>
+    </div>
+  </section>
+
+  <hr class="sec-divider">
+
+  <!-- ── Database ── -->
+  <section class="tool-section reveal" id="database">
+    <div class="sec-label">Database</div>
+    <h2 class="sec-title">Database References</h2>
+    <p class="sec-sub">Comprehensive guides and command references for popular databases.</p>
+    <div class="tool-grid">
+      <a href="postgresql-guide.html" class="tool-card" data-keywords="postgresql postgres guide reference sql database">
+        <span class="tc-icon">🐘</span>
+        <div class="tc-body">
+          <div class="tc-name">PostgreSQL Guide</div>
+          <div class="tc-desc">Complete PostgreSQL reference — queries, functions, administration</div>
+        </div>
+        <div class="tc-arrow">→</div>
+      </a>
+    </div>
+  </section>
+
+  <hr class="sec-divider">
+
+  <!-- ── Redis ── -->
+  <section class="tool-section reveal" id="redis">
+    <div class="sec-label">Redis</div>
+    <h2 class="sec-title">Redis Command Explorer</h2>
+    <p class="sec-sub">Browse and search Redis commands by category with examples.</p>
+    <div class="tool-grid">
+      <a href="redis-command-explorer.html" class="tool-card" data-keywords="redis commands explorer cache key value memory">
+        <span class="tc-icon">📚</span>
+        <div class="tc-body">
+          <div class="tc-name">Redis Commands</div>
+          <div class="tc-desc">Interactive Redis command reference with syntax and examples</div>
+        </div>
+        <div class="tc-arrow">→</div>
+      </a>
+    </div>
+  </section>
+
+  <hr class="sec-divider">
+
+  <!-- ── Python Toolkit ── -->
+  <section class="tool-section reveal" id="python">
+    <div class="sec-label">Python Toolkit</div>
+    <h2 class="sec-title">Python Library References</h2>
+    <p class="sec-sub">Interactive code references for popular Python libraries — requests, Flask, Pandas, OpenAI and more.</p>
+    <div class="tool-grid">
+      <a href="python-requests.html" class="tool-card" data-keywords="python requests library http get post api">
+        <span class="tc-icon">🌐</span>
+        <div class="tc-body">
+          <div class="tc-name">Requests Library</div>
+          <div class="tc-desc">Python requests — HTTP GET, POST, headers, authentication</div>
+        </div>
+        <div class="tc-arrow">→</div>
+      </a>
+      <a href="python-urllib.html" class="tool-card" data-keywords="python urllib http standard library url">
+        <span class="tc-icon">🔗</span>
+        <div class="tc-body">
+          <div class="tc-name">urllib</div>
+          <div class="tc-desc">Python's built-in urllib for URL handling and HTTP requests</div>
+        </div>
+        <div class="tc-arrow">→</div>
+      </a>
+      <a href="python-flask.html" class="tool-card" data-keywords="flask python web framework api routes micro">
+        <span class="tc-icon">🌶️</span>
+        <div class="tc-body">
+          <div class="tc-name">Flask API</div>
+          <div class="tc-desc">Flask web framework reference — routes, blueprints, REST APIs</div>
+        </div>
+        <div class="tc-arrow">→</div>
+      </a>
+      <a href="python-pandas.html" class="tool-card" data-keywords="pandas python data analysis dataframe csv">
+        <span class="tc-icon">🐼</span>
+        <div class="tc-body">
+          <div class="tc-name">Pandas</div>
+          <div class="tc-desc">Pandas DataFrames — data manipulation, analysis, and I/O</div>
+        </div>
+        <div class="tc-arrow">→</div>
+      </a>
+      <a href="python-openai.html" class="tool-card" data-keywords="openai api python gpt chat completions ai">
+        <span class="tc-icon">🤖</span>
+        <div class="tc-body">
+          <div class="tc-name">OpenAI API</div>
+          <div class="tc-desc">Python OpenAI SDK — chat completions, embeddings, assistants</div>
+        </div>
+        <div class="tc-arrow">→</div>
+      </a>
+      <a href="jupyter-notebooks.html" class="tool-card" data-keywords="jupyter notebook python data science ipynb">
+        <span class="tc-icon">📓</span>
+        <div class="tc-body">
+          <div class="tc-name">Jupyter Notebooks</div>
+          <div class="tc-desc">Jupyter tips, shortcuts and best practices for data science</div>
+        </div>
+        <div class="tc-arrow">→</div>
+      </a>
+      <a href="prophet.html" class="tool-card" data-keywords="prophet facebook time series forecast python">
+        <span class="tc-icon">📈</span>
+        <div class="tc-body">
+          <div class="tc-name">Prophet</div>
+          <div class="tc-desc">Facebook Prophet library for time-series forecasting in Python</div>
+        </div>
+        <div class="tc-arrow">→</div>
+      </a>
+      <a href="plotly.html" class="tool-card" data-keywords="plotly python charts visualization graphs interactive">
+        <span class="tc-icon">📊</span>
+        <div class="tc-body">
+          <div class="tc-name">Plotly</div>
+          <div class="tc-desc">Create interactive charts and visualizations with Plotly</div>
+        </div>
+        <div class="tc-arrow">→</div>
+      </a>
+    </div>
+  </section>
+
+  <hr class="sec-divider">
+
+  <!-- ── Data Structures ── -->
+  <section class="tool-section reveal" id="data-structures">
+    <div class="sec-label">Data Structures</div>
+    <h2 class="sec-title">Data Structure Visualizers</h2>
+    <p class="sec-sub">Interactive guides and visual explanations of fundamental data structures.</p>
+    <div class="tool-grid">
+      <a href="data-structures.html" class="tool-card" data-keywords="data structures overview algorithms cs fundamentals">
+        <span class="tc-icon">🏗️</span>
+        <div class="tc-body">
+          <div class="tc-name">Data Structures</div>
+          <div class="tc-desc">Overview of fundamental data structures and their trade-offs</div>
+        </div>
+        <div class="tc-arrow">→</div>
+      </a>
+      <a href="datastructures/array-ds.html" class="tool-card" data-keywords="array data structure index access iterate">
+        <span class="tc-icon">📋</span>
+        <div class="tc-body">
+          <div class="tc-name">Array</div>
+          <div class="tc-desc">Array data structure — indexing, operations, time complexity</div>
+        </div>
+        <div class="tc-arrow">→</div>
+      </a>
+      <a href="datastructures/linkedlist-ds.html" class="tool-card" data-keywords="linked list node pointer singly doubly">
+        <span class="tc-icon">🔗</span>
+        <div class="tc-body">
+          <div class="tc-name">Linked List</div>
+          <div class="tc-desc">Singly and doubly linked lists — traversal, insertion, deletion</div>
+        </div>
+        <div class="tc-arrow">→</div>
+      </a>
+      <a href="datastructures/stack-ds.html" class="tool-card" data-keywords="stack lifo push pop data structure">
+        <span class="tc-icon">📚</span>
+        <div class="tc-body">
+          <div class="tc-name">Stack</div>
+          <div class="tc-desc">Stack (LIFO) — push, pop, peek with visual examples</div>
+        </div>
+        <div class="tc-arrow">→</div>
+      </a>
+      <a href="datastructures/queue-ds.html" class="tool-card" data-keywords="queue fifo enqueue dequeue data structure">
+        <span class="tc-icon">🚶</span>
+        <div class="tc-body">
+          <div class="tc-name">Queue</div>
+          <div class="tc-desc">Queue (FIFO) — enqueue, dequeue, circular queue variants</div>
+        </div>
+        <div class="tc-arrow">→</div>
+      </a>
+    </div>
+  </section>
+
+  <hr class="sec-divider">
+
+  <!-- ── Information & Reference ── -->
+  <section class="tool-section reveal" id="info">
+    <div class="sec-label">Information &amp; Reference</div>
+    <h2 class="sec-title">Utilities &amp; Reference Tools</h2>
+    <p class="sec-sub">IP lookup, timezone conversion, emoji picker, epoch converter, LeetCode helpers and more.</p>
+    <div class="tool-grid">
+      <a href="ip-address.html" class="tool-card" data-keywords="ip address lookup geolocation subnet network">
+        <span class="tc-icon">🌍</span>
+        <div class="tc-body">
+          <div class="tc-name">IP Address Tools</div>
+          <div class="tc-desc">Look up your IP address, geolocation and subnet information</div>
+        </div>
+        <div class="tc-arrow">→</div>
+      </a>
+      <a href="timezone_convertor/index.html" class="tool-card" data-keywords="timezone converter time zone world clock utc">
+        <span class="tc-icon">🌍</span>
+        <div class="tc-body">
+          <div class="tc-name">Timezone Converter</div>
+          <div class="tc-desc">Convert times between any two time zones in the world</div>
+        </div>
+        <div class="tc-arrow">→</div>
+      </a>
+      <a href="emoji_picker/index.html" class="tool-card" data-keywords="emoji picker search copy unicode symbol">
+        <span class="tc-icon">😀</span>
+        <div class="tc-body">
+          <div class="tc-name">Emoji Picker</div>
+          <div class="tc-desc">Search and copy any emoji — all categories, one click</div>
+        </div>
+        <div class="tc-arrow">→</div>
+      </a>
+      <a href="epoch_convertor/index.html" class="tool-card" data-keywords="epoch unix timestamp converter date time">
+        <span class="tc-icon">⏰</span>
+        <div class="tc-body">
+          <div class="tc-name">Epoch Converter</div>
+          <div class="tc-desc">Convert Unix timestamps to human-readable dates and back</div>
+        </div>
+        <div class="tc-arrow">→</div>
+      </a>
+      <a href="leetcode-commit-message.html" class="tool-card" data-keywords="leetcode commit message git generator coding">
+        <span class="tc-icon">📝</span>
+        <div class="tc-body">
+          <div class="tc-name">LeetCode Commit Generator</div>
+          <div class="tc-desc">Generate standardized git commit messages for LeetCode solutions</div>
+        </div>
+        <div class="tc-arrow">→</div>
+      </a>
+      <a href="all_tools/index.html" class="tool-card" data-keywords="all tools list index directory available">
+        <span class="tc-icon">📋</span>
+        <div class="tc-body">
+          <div class="tc-name">All Available Tools</div>
+          <div class="tc-desc">Complete alphabetical index of every DevDunia tool</div>
+        </div>
+        <div class="tc-arrow">→</div>
+      </a>
+      <a href="blank-page.html" class="tool-card" data-keywords="blank page empty scratch pad clean">
+        <span class="tc-icon">📄</span>
+        <div class="tc-body">
+          <div class="tc-name">Blank Page</div>
+          <div class="tc-desc">A clean blank page — use as a scratch pad or distraction-free canvas</div>
+        </div>
+        <div class="tc-arrow">→</div>
+      </a>
+    </div>
+  </section>
+
+</main>
+
+<!-- ── Footer ── -->
+<footer>
+  <div class="footer-grid">
+    <div class="footer-brand">
+      <a href="index.html" class="footer-brand-logo">
+        <img src="images/logo.png" alt="DevDunia"> DevDunia
+      </a>
+      <p>100+ developer tools in one place. Free, private, instant. No accounts. No tracking. Ever.</p>
+    </div>
+    <div class="footer-col">
+      <h4>Product</h4>
+      <a href="home.html">All Tools</a>
+      <a href="all_tools/index.html">Tool List</a>
+      <a href="index.html">Home</a>
+    </div>
+    <div class="footer-col">
+      <h4>Community</h4>
+      <a href="https://github.com/echobash/devdunia" target="_blank" rel="noopener">GitHub</a>
+      <a href="https://www.linkedin.com/in/echobash" target="_blank" rel="noopener">LinkedIn</a>
+      <a href="https://x.com/alianwar_rocker" target="_blank" rel="noopener">X / Twitter</a>
+      <a href="CONTRIBUTING.md" target="_blank" rel="noopener">Contribute</a>
+    </div>
+    <div class="footer-col">
+      <h4>Support</h4>
+      <a href="support.html">Support DevDunia</a>
+      <a href="contact.html">Contact</a>
+      <a href="https://github.com/echobash/devdunia/blob/main/README.md" target="_blank" rel="noopener">README &amp; License</a>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <span>Made with ❤️ by <a href="https://echobash.com" target="_blank" rel="noopener" style="color:var(--teal);">echobash.com</a> — free, private, open source.</span>
+    <div>
+      <a href="https://github.com/echobash/devdunia" target="_blank" rel="noopener">GitHub</a>
+      <a href="support.html">Support</a>
+      <a href="contact.html">Contact</a>
+    </div>
+  </div>
+</footer>
+
+<script>
+/* ══════════════════════════════════════════
+   Matrix rain
+══════════════════════════════════════════ */
+(function(){
+  var c=document.getElementById('matrix-canvas'),ctx=c.getContext('2d'),cols,drops;
+  var chars='01アイウエオカキクケコサシスセソ{}[]<>/\\|abcdefABCDEF0123456789';
+  function resize(){c.width=window.innerWidth;c.height=window.innerHeight;cols=Math.floor(c.width/18);drops=Array(cols).fill(1);}
+  resize(); window.addEventListener('resize',resize);
+  setInterval(function(){
+    ctx.fillStyle='rgba(6,8,16,0.05)';ctx.fillRect(0,0,c.width,c.height);
+    ctx.font='13px JetBrains Mono,monospace';
+    for(var i=0;i<drops.length;i++){
+      ctx.fillStyle='#00e5c7';ctx.globalAlpha=Math.random()*0.45+0.1;
+      ctx.fillText(chars[Math.floor(Math.random()*chars.length)],i*18,drops[i]*18);
+      if(drops[i]*18>c.height&&Math.random()>0.975)drops[i]=0;
+      drops[i]++;
     }
+    ctx.globalAlpha=1;
+  },55);
+})();
 
-    // Display search results in dropdown
-    function displaySearchResults(tools, searchTerm) {
-      searchResultsContent.innerHTML = '';
+/* ══════════════════════════════════════════
+   Nav scroll
+══════════════════════════════════════════ */
+(function(){
+  var nav=document.getElementById('nav');
+  function s(){nav.classList.toggle('scrolled',window.scrollY>30);}
+  window.addEventListener('scroll',s,{passive:true});s();
+})();
 
-      tools.forEach(tool => {
-        const resultItem = document.createElement('a');
-        resultItem.href = tool.href;
-        resultItem.className = 'flex items-center space-x-3 p-3 rounded-lg hover:bg-slate-700/50 transition-colors duration-200 group';
+/* ══════════════════════════════════════════
+   Cursor glow
+══════════════════════════════════════════ */
+(function(){
+  var g=document.getElementById('cursor-glow');
+  document.addEventListener('mousemove',function(e){g.style.left=e.clientX+'px';g.style.top=e.clientY+'px';});
+})();
 
-        const highlightedTitle = highlightSearchTerm(tool.title, searchTerm);
-        const highlightedDescription = tool.description; // No highlighting in description
+/* ══════════════════════════════════════════
+   Reveal on scroll
+══════════════════════════════════════════ */
+(function(){
+  var io=new IntersectionObserver(function(es){
+    es.forEach(function(e){if(e.isIntersecting)e.target.classList.add('in');});
+  },{rootMargin:'0px 0px -50px 0px',threshold:0.05});
+  document.querySelectorAll('.reveal').forEach(function(el){io.observe(el);});
+})();
 
-        resultItem.innerHTML = `
-                    <div class="tool-icon w-10 h-10 rounded-lg flex items-center justify-center bg-slate-700/50 group-hover:bg-slate-600/50 transition-colors">
-                        <span class="text-lg">${tool.icon}</span>
-                    </div>
-                    <div class="flex-1 min-w-0">
-                        <h4 class="font-medium text-white text-sm">${highlightedTitle}</h4>
-                        <p class="text-xs text-gray-400 truncate">${highlightedDescription}</p>
-                    </div>
-                `;
+/* ══════════════════════════════════════════
+   Live tool count
+══════════════════════════════════════════ */
+(function(){
+  var count = document.querySelectorAll('.tool-card').length;
+  var navBadge = document.getElementById('nav-tool-count');
+  var heroNum = document.getElementById('hero-tool-count');
+  var statNum = document.getElementById('stat-tool-count');
+  if(navBadge) navBadge.textContent = count + ' tools';
+  if(heroNum) heroNum.textContent = count;
+  if(statNum) statNum.textContent = count;
+})();
 
-        searchResultsContent.appendChild(resultItem);
-      });
+/* ══════════════════════════════════════════
+   Mouse-tracking glow on tool cards
+══════════════════════════════════════════ */
+document.querySelectorAll('.tool-card').forEach(function(card){
+  card.addEventListener('mousemove',function(e){
+    var r=card.getBoundingClientRect();
+    var x=((e.clientX-r.left)/r.width*100).toFixed(1)+'%';
+    var y=((e.clientY-r.top)/r.height*100).toFixed(1)+'%';
+    card.style.setProperty('--mx',x);
+    card.style.setProperty('--my',y);
+  });
+});
+
+/* ══════════════════════════════════════════
+   Search
+══════════════════════════════════════════ */
+(function(){
+  var searchEl = document.getElementById('search');
+  var noResults = document.getElementById('no-results');
+  var noQ = document.getElementById('no-q');
+  var searchCount = document.getElementById('search-count');
+  var scN = document.getElementById('sc-n');
+  var scQ = document.getElementById('sc-q');
+  var allCards = document.querySelectorAll('.tool-card');
+  var allSections = document.querySelectorAll('.tool-section');
+  var allDividers = document.querySelectorAll('.sec-divider');
+
+  function doSearch(){
+    var q = searchEl.value.trim().toLowerCase();
+    if(!q){
+      allCards.forEach(function(c){c.style.display='';});
+      allSections.forEach(function(s){s.style.display='';});
+      allDividers.forEach(function(d){d.style.display='';});
+      noResults.style.display='none';
+      searchCount.style.display='none';
+      return;
     }
-
-    // Highlight search terms in text
-    function highlightSearchTerm(text, term) {
-      if (!term) return text;
-      const regex = new RegExp(`(${term})`, 'gi');
-      return text.replace(regex, '<span class="bg-blue-500/20 text-blue-300 px-1 rounded">$1</span>');
-    }
-
-    // Show no results message
-    function showNoResults() {
-      searchResultsContent.innerHTML = '';
-      noResults.classList.remove('hidden');
-    }
-
-    // Clear search
-    function clearSearch() {
-      searchInput.value = '';
-      searchResults.classList.add('hidden');
-      clearSearchBtn.classList.add('hidden');
-      noResults.classList.add('hidden');
-
-      // Show all tools
-      toolCards.forEach(card => {
-        card.style.display = 'block';
-        card.style.animation = 'scaleIn 0.3s ease-out';
-      });
-    }
-
-    // Event listeners
-    searchInput.addEventListener('input', function (e) {
-      performSearch(e.target.value);
-    });
-
-    clearSearchBtn.addEventListener('click', clearSearch);
-
-    // Hide search results when clicking outside
-    document.addEventListener('click', function (e) {
-      if (!e.target.closest('#searchInput') && !e.target.closest('#searchResults') && !e.target.closest('#clearSearch')) {
-        searchResults.classList.add('hidden');
-      }
-    });
-
-    // Keyboard navigation for search results
-    searchInput.addEventListener('keydown', function (e) {
-      if (e.key === 'Escape') {
-        clearSearch();
-        searchInput.blur();
-      }
-    });
-
-    // ========== HERO SEARCH FUNCTIONALITY ==========
-    const heroSearchInput = document.getElementById('heroSearchInput');
-    const heroClearSearch = document.getElementById('heroClearSearch');
-    const heroSearchResults = document.getElementById('heroSearchResults');
-    const heroSearchResultsContent = document.getElementById('heroSearchResultsContent');
-    const heroNoResults = document.getElementById('heroNoResults');
-    const popularToolsContainer = document.getElementById('popularTools');
-
-    // Popular tools (most used/common tools)
-    const popularTools = [
-      { name: 'JSON Beautifier', href: 'json-beautifier.html', icon: '✨', description: 'Format and validate JSON' },
-      { name: 'Base64 Encoder', href: 'base64-encoder.html', icon: '📤', description: 'Encode to Base64' },
-      { name: 'Password Generator', href: 'password-generator.html', icon: '🔑', description: 'Generate secure passwords' },
-      { name: 'JWT Decoder', href: 'jwt-decoder.html', icon: '🎫', description: 'Decode JWT tokens' },
-      { name: 'URL Encoder', href: 'url-encoder.html', icon: '🔗', description: 'Encode URLs safely' },
-      { name: 'Hash Generator', href: 'hash-generator.html', icon: '🔐', description: 'Generate secure hashes' },
-      { name: 'Regex Tester', href: 'regex-tester.html', icon: '🔍', description: 'Test regular expressions' },
-      { name: 'SQL Formatter', href: 'sql-formatter.html', icon: '🗄️', description: 'Format SQL queries' }
-    ];
-
-    // Display popular tools
-    function displayPopularTools() {
-      popularToolsContainer.innerHTML = popularTools.map(tool => `
-        <a href="${tool.href}" class="glass-card px-4 py-2 rounded-xl hover:scale-105 transition-all duration-200 flex items-center space-x-2 group">
-          <span class="text-xl">${tool.icon}</span>
-          <span class="text-sm font-medium text-gray-300 group-hover:text-white">${tool.name}</span>
-        </a>
-      `).join('');
-    }
-
-    // Enhanced search that searches both title and description
-    function performHeroSearch(searchTerm) {
-      const term = searchTerm.toLowerCase().trim();
-
-      if (term === '') {
-        heroSearchResults.classList.add('hidden');
-        heroClearSearch.classList.add('hidden');
-        return [];
-      }
-
-      heroClearSearch.classList.remove('hidden');
-
-      // Search in both title and description
-      const matchingTools = toolsData.filter(tool => {
-        const titleMatch = tool.title.toLowerCase().includes(term);
-        const descMatch = tool.description.toLowerCase().includes(term);
-        return titleMatch || descMatch;
-      }).sort((a, b) => {
-        // Prioritize title matches
-        const aTitleMatch = a.title.toLowerCase().includes(term);
-        const bTitleMatch = b.title.toLowerCase().includes(term);
-        if (aTitleMatch && !bTitleMatch) return -1;
-        if (!aTitleMatch && bTitleMatch) return 1;
-        return 0;
-      });
-
-      return matchingTools;
-    }
-
-    // Display hero search results
-    function displayHeroSearchResults(tools, searchTerm) {
-      if (tools.length === 0) {
-        heroSearchResultsContent.innerHTML = '';
-        heroNoResults.classList.remove('hidden');
-        heroSearchResults.classList.remove('hidden');
-        return;
-      }
-
-      heroNoResults.classList.add('hidden');
-      heroSearchResultsContent.innerHTML = tools.slice(0, 8).map(tool => {
-        const highlightedTitle = highlightSearchTerm(tool.title, searchTerm);
-        const highlightedDesc = highlightSearchTerm(tool.description, searchTerm);
-        
-        return `
-          <a href="${tool.href}" class="flex items-center space-x-4 p-4 rounded-xl hover:bg-slate-700/50 transition-all duration-200 group border border-transparent hover:border-blue-500/30">
-            <div class="tool-icon w-12 h-12 rounded-xl flex items-center justify-center bg-slate-700/50 group-hover:bg-blue-500/20 transition-colors flex-shrink-0">
-              <span class="text-2xl">${tool.icon}</span>
-            </div>
-            <div class="flex-1 min-w-0">
-              <h4 class="font-semibold text-white text-base mb-1">${highlightedTitle}</h4>
-              <p class="text-sm text-gray-400">${highlightedDesc}</p>
-            </div>
-            <svg class="w-5 h-5 text-gray-400 group-hover:text-blue-400 transition-colors flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
-            </svg>
-          </a>
-        `;
-      }).join('');
-
-      heroSearchResults.classList.remove('hidden');
-    }
-
-    // Hero search event listeners
-    let heroSearchTimeout;
-    heroSearchInput.addEventListener('input', function(e) {
-      clearTimeout(heroSearchTimeout);
-      const term = e.target.value;
-      
-      heroSearchTimeout = setTimeout(() => {
-        const results = performHeroSearch(term);
-        displayHeroSearchResults(results, term);
-      }, 150); // Debounce for better performance
-    });
-
-    heroSearchInput.addEventListener('focus', function() {
-      const term = this.value;
-      if (term) {
-        const results = performHeroSearch(term);
-        displayHeroSearchResults(results, term);
-      }
-    });
-
-    heroClearSearch.addEventListener('click', function() {
-      heroSearchInput.value = '';
-      heroSearchResults.classList.add('hidden');
-      heroClearSearch.classList.add('hidden');
-      heroSearchInput.focus();
-    });
-
-    // Keyboard shortcuts for hero search
-    heroSearchInput.addEventListener('keydown', function(e) {
-      if (e.key === 'Escape') {
-        heroSearchResults.classList.add('hidden');
-        this.blur();
-      } else if (e.key === 'Enter' && heroSearchResultsContent.children.length > 0) {
-        // Navigate to first result on Enter
-        const firstResult = heroSearchResultsContent.querySelector('a');
-        if (firstResult) {
-          window.location.href = firstResult.href;
+    var matched = 0;
+    allSections.forEach(function(sec){
+      var cards = sec.querySelectorAll('.tool-card');
+      var secVisible = false;
+      cards.forEach(function(card){
+        var name = (card.querySelector('.tc-name')||{}).textContent||'';
+        var desc = (card.querySelector('.tc-desc')||{}).textContent||'';
+        var kw = card.getAttribute('data-keywords')||'';
+        var haystack = (name+' '+desc+' '+kw).toLowerCase();
+        if(haystack.indexOf(q)!==-1){
+          card.style.display='';
+          secVisible=true;
+          matched++;
+        } else {
+          card.style.display='none';
         }
-      }
+      });
+      sec.style.display = secVisible ? '' : 'none';
     });
+    allDividers.forEach(function(d){d.style.display='none';});
+    if(matched===0){
+      noResults.style.display='block';
+      noQ.textContent=q;
+      searchCount.style.display='none';
+    } else {
+      noResults.style.display='none';
+      searchCount.style.display='block';
+      scN.textContent=matched;
+      scQ.textContent=q;
+    }
+  }
 
-    // Hide search results when clicking outside
-    document.addEventListener('click', function(e) {
-      if (!e.target.closest('#heroSearchInput') && 
-          !e.target.closest('#heroSearchResults') && 
-          !e.target.closest('#heroClearSearch')) {
-        heroSearchResults.classList.add('hidden');
-      }
-    });
+  searchEl.addEventListener('input',doSearch);
 
-    // Initialize popular tools on page load
-    displayPopularTools();
+  /* Keyboard shortcuts: ⌘K / Ctrl+K and / to focus search */
+  document.addEventListener('keydown',function(e){
+    if((e.metaKey||e.ctrlKey)&&e.key==='k'){
+      e.preventDefault();
+      searchEl.focus();searchEl.select();
+    }
+    if(e.key==='/'&&document.activeElement!==searchEl&&document.activeElement.tagName!=='INPUT'&&document.activeElement.tagName!=='TEXTAREA'){
+      e.preventDefault();
+      searchEl.focus();searchEl.select();
+    }
+    if(e.key==='Escape'&&document.activeElement===searchEl){
+      searchEl.value='';doSearch();searchEl.blur();
+    }
+  });
 
-    // Focus hero search on '/' key (like Google)
-    document.addEventListener('keydown', function(e) {
-      if (e.key === '/' && !e.target.matches('input, textarea')) {
+  /* Smooth scroll for category pills (override default jump with offset for fixed nav) */
+  document.querySelectorAll('.cat-pill').forEach(function(pill){
+    pill.addEventListener('click',function(e){
+      var href=pill.getAttribute('href');
+      if(href&&href.startsWith('#')){
         e.preventDefault();
-        heroSearchInput.focus();
+        var target=document.querySelector(href);
+        if(target){
+          var offset=80;
+          var top=target.getBoundingClientRect().top+window.scrollY-offset;
+          window.scrollTo({top:top,behavior:'smooth'});
+        }
       }
     });
-
-    // Smooth scroll for navigation
-    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-      anchor.addEventListener('click', function (e) {
-        e.preventDefault();
-        const target = document.querySelector(this.getAttribute('href'));
-        if (target) {
-          target.scrollIntoView({
-            behavior: 'smooth',
-            block: 'start'
-          });
-        }
-      });
-    });
-
-    // Intersection Observer for animations
-    const observerOptions = {
-      threshold: 0.1,
-      rootMargin: '0px 0px -50px 0px'
-    };
-
-    const observer = new IntersectionObserver((entries) => {
-      entries.forEach(entry => {
-        if (entry.isIntersecting) {
-          entry.target.style.opacity = '1';
-          entry.target.style.transform = 'translateY(0)';
-        }
-      });
-    }, observerOptions);
-
-    // Observe all sections for scroll animations
-    document.querySelectorAll('section').forEach(section => {
-      section.style.opacity = '0';
-      section.style.transform = 'translateY(20px)';
-      section.style.transition = 'opacity 0.6s ease-out, transform 0.6s ease-out';
-      observer.observe(section);
-    });
-
-    // Add hover effects to tool cards
-    toolCards.forEach(card => {
-      card.addEventListener('mouseenter', function () {
-        this.style.transform = 'translateY(-12px) scale(1.05)';
-      });
-
-      card.addEventListener('mouseleave', function () {
-        this.style.transform = 'translateY(0) scale(1)';
-      });
-    });
-
-    // GitHub banner animation
-    const githubBanner = document.querySelector('.github-banner');
-    if (githubBanner) {
-      githubBanner.addEventListener('mouseenter', function () {
-        this.style.transform = 'scale(1.05)';
-      });
-
-      githubBanner.addEventListener('mouseleave', function () {
-        this.style.transform = 'scale(1)';
-      });
-    }
-  </script>
-  <script src="js/common.js"></script>
+  });
+})();
+</script>
 </body>
-
 </html>

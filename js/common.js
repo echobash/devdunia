@@ -1,5 +1,80 @@
 // Common JavaScript utilities for DevDunia tools
 
+// ─── DevDunia Theme Injection ───
+// Runs synchronously in <head> so styles apply before first paint
+(function() {
+    if (document.getElementById('dd-theme')) return;
+
+    // Google Fonts (Inter + JetBrains Mono)
+    if (!document.getElementById('dd-fonts')) {
+        var pc1 = document.createElement('link'); pc1.rel = 'preconnect'; pc1.href = 'https://fonts.googleapis.com';
+        var pc2 = document.createElement('link'); pc2.rel = 'preconnect'; pc2.href = 'https://fonts.gstatic.com'; pc2.crossOrigin = '';
+        var fl  = document.createElement('link');
+        fl.id = 'dd-fonts'; fl.rel = 'stylesheet';
+        fl.href = 'https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&family=Inter:wght@400;500;600;700;800;900&display=swap';
+        document.head.appendChild(pc1); document.head.appendChild(pc2); document.head.appendChild(fl);
+    }
+
+    // Resolve path to css/tool-theme.css (handles root and sub-directory pages)
+    var scriptSrc = (document.currentScript && document.currentScript.src) || '';
+    var base = scriptSrc ? scriptSrc.replace(/js\/common\.js.*$/, '') : '/';
+    var link = document.createElement('link');
+    link.id = 'dd-theme'; link.rel = 'stylesheet';
+    link.href = base + 'css/tool-theme.css';
+    document.head.appendChild(link);
+})();
+
+// Inject animated background elements (blobs, grid, matrix, cursor glow)
+// Called from DOMContentLoaded so document.body is available
+function _ddInjectBg() {
+    // Skip pages that already have their own background elements (index.html, home.html)
+    if (document.getElementById('dd-bg-injected') || document.getElementById('matrix-canvas')) return;
+
+    var marker = document.createElement('span');
+    marker.id = 'dd-bg-injected'; marker.style.display = 'none';
+    document.body.insertBefore(marker, document.body.firstChild);
+
+    // Blobs
+    [
+        { id: 'dd-b1', cls: 'dd-blob', css: 'top:-250px;left:-150px;width:700px;height:700px;background:rgba(0,229,199,0.07);animation-duration:22s' },
+        { id: 'dd-b2', cls: 'dd-blob', css: 'top:35%;right:-180px;width:500px;height:500px;background:rgba(167,139,250,0.07);animation-duration:18s;animation-delay:-6s' },
+        { id: 'dd-b3', cls: 'dd-blob', css: 'bottom:5%;left:25%;width:400px;height:400px;background:rgba(244,114,182,0.05);animation-duration:15s;animation-delay:-3s' }
+    ].forEach(function(b) {
+        var el = document.createElement('div'); el.id = b.id; el.className = b.cls; el.style.cssText = b.css;
+        document.body.appendChild(el);
+    });
+
+    // Grid
+    var grid = document.createElement('div'); grid.id = 'dd-grid-bg';
+    document.body.appendChild(grid);
+
+    // Matrix canvas
+    var canvas = document.createElement('canvas'); canvas.id = 'dd-matrix-canvas';
+    document.body.appendChild(canvas);
+    var ctx = canvas.getContext('2d'), cols, drops;
+    var chars = '01アイウエオカキクケコ{}[]<>/|abcdef0123456789';
+    function _resize() { canvas.width = window.innerWidth; canvas.height = window.innerHeight; cols = Math.floor(canvas.width / 18); drops = new Array(cols).fill(1); }
+    _resize(); window.addEventListener('resize', _resize);
+    setInterval(function() {
+        ctx.fillStyle = 'rgba(6,8,16,0.05)'; ctx.fillRect(0, 0, canvas.width, canvas.height);
+        ctx.font = '13px JetBrains Mono,monospace';
+        for (var i = 0; i < drops.length; i++) {
+            ctx.fillStyle = '#00e5c7'; ctx.globalAlpha = Math.random() * 0.35 + 0.08;
+            ctx.fillText(chars[Math.floor(Math.random() * chars.length)], i * 18, drops[i] * 18);
+            if (drops[i] * 18 > canvas.height && Math.random() > 0.975) drops[i] = 0;
+            drops[i]++;
+        }
+        ctx.globalAlpha = 1;
+    }, 55);
+
+    // Cursor glow
+    var glow = document.createElement('div'); glow.id = 'dd-cursor-glow';
+    document.body.appendChild(glow);
+    document.addEventListener('mousemove', function(e) {
+        glow.style.left = e.clientX + 'px'; glow.style.top = e.clientY + 'px';
+    });
+}
+
 // Utility functions
 const DevDuniaUtils = {
     // Copy text to clipboard
@@ -401,6 +476,7 @@ html.light .bg-slate-900\\/95 { background-color: #ffffff !important; }
 
 // Common event listeners setup
 document.addEventListener('DOMContentLoaded', function() {
+    _ddInjectBg();
     ThemeManager.init();
     
     // Auto-resize all textareas
@@ -458,7 +534,8 @@ document.addEventListener('DOMContentLoaded', function() {
     btn.id = 'back-to-top-btn';
     btn.type = 'button';
     btn.setAttribute('aria-label', 'Back to top');
-    btn.className = 'fixed bottom-6 right-6 z-50 hidden p-3 rounded-full bg-white/80 dark:bg-slate-900 text-slate-700 dark:text-white shadow-lg border border-slate-200 dark:border-slate-700 hover:bg-blue-100 dark:hover:bg-slate-700 transition-all duration-300';
+    btn.className = 'fixed bottom-6 right-6 z-50 hidden p-3 rounded-full transition-all duration-300';
+    btn.style.cssText = 'background:rgba(0,229,199,0.1);border:1px solid rgba(0,229,199,0.25);color:#00e5c7;box-shadow:0 0 18px rgba(0,229,199,0.15)';
     btn.innerHTML = `<svg class="w-6 h-6 mx-auto" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M5 10l7-7m0 0l7 7m-7-7v18"/></svg>`;
     document.body.appendChild(btn);
 
