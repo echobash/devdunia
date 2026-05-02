@@ -34,11 +34,11 @@ function _ddInjectBg() {
     marker.id = 'dd-bg-injected'; marker.style.display = 'none';
     document.body.insertBefore(marker, document.body.firstChild);
 
-    // Blobs
+    // Blobs — phosphor green glow
     [
-        { id: 'dd-b1', cls: 'dd-blob', css: 'top:-250px;left:-150px;width:700px;height:700px;background:rgba(0,229,199,0.07);animation-duration:22s' },
-        { id: 'dd-b2', cls: 'dd-blob', css: 'top:35%;right:-180px;width:500px;height:500px;background:rgba(167,139,250,0.07);animation-duration:18s;animation-delay:-6s' },
-        { id: 'dd-b3', cls: 'dd-blob', css: 'bottom:5%;left:25%;width:400px;height:400px;background:rgba(244,114,182,0.05);animation-duration:15s;animation-delay:-3s' }
+        { id: 'dd-b1', cls: 'dd-blob', css: 'top:-250px;left:-150px;width:700px;height:700px;background:rgba(0,255,65,0.05);animation-duration:22s' },
+        { id: 'dd-b2', cls: 'dd-blob', css: 'top:35%;right:-180px;width:400px;height:400px;background:rgba(0,255,65,0.03);animation-duration:18s;animation-delay:-6s' },
+        { id: 'dd-b3', cls: 'dd-blob', css: 'bottom:5%;left:25%;width:300px;height:300px;background:rgba(0,80,20,0.07);animation-duration:15s;animation-delay:-3s' }
     ].forEach(function(b) {
         var el = document.createElement('div'); el.id = b.id; el.className = b.cls; el.style.cssText = b.css;
         document.body.appendChild(el);
@@ -48,24 +48,39 @@ function _ddInjectBg() {
     var grid = document.createElement('div'); grid.id = 'dd-grid-bg';
     document.body.appendChild(grid);
 
-    // Matrix canvas
+    // Matrix canvas — Mr. Robot green
     var canvas = document.createElement('canvas'); canvas.id = 'dd-matrix-canvas';
     document.body.appendChild(canvas);
-    var ctx = canvas.getContext('2d'), cols, drops;
-    var chars = '01アイウエオカキクケコ{}[]<>/|abcdef0123456789';
-    function _resize() { canvas.width = window.innerWidth; canvas.height = window.innerHeight; cols = Math.floor(canvas.width / 18); drops = new Array(cols).fill(1); }
+    var ctx = canvas.getContext('2d'), cols, drops, bright;
+    var chars = '01アイウエオカキクケコサシスセソ{}[]<>/\\|!@#$%^&*abcdefABCDEF0123456789ｦｧｨｩｪｫｬｭｮｯ';
+    function _resize() {
+        canvas.width = window.innerWidth; canvas.height = window.innerHeight;
+        cols = Math.floor(canvas.width / 16);
+        drops = new Array(cols).fill(1);
+        bright = new Array(cols).fill(false);
+    }
     _resize(); window.addEventListener('resize', _resize);
     setInterval(function() {
-        ctx.fillStyle = 'rgba(6,8,16,0.05)'; ctx.fillRect(0, 0, canvas.width, canvas.height);
-        ctx.font = '13px JetBrains Mono,monospace';
+        ctx.fillStyle = 'rgba(8,8,8,0.06)'; ctx.fillRect(0, 0, canvas.width, canvas.height);
         for (var i = 0; i < drops.length; i++) {
-            ctx.fillStyle = '#00e5c7'; ctx.globalAlpha = Math.random() * 0.35 + 0.08;
-            ctx.fillText(chars[Math.floor(Math.random() * chars.length)], i * 18, drops[i] * 18);
-            if (drops[i] * 18 > canvas.height && Math.random() > 0.975) drops[i] = 0;
+            // Leading character is bright white-green, rest are normal green
+            bright[i] = (Math.random() > 0.98);
+            ctx.font = (bright[i] ? 'bold ' : '') + '14px JetBrains Mono,monospace';
+            if (bright[i]) {
+                ctx.fillStyle = '#ccffcc'; ctx.globalAlpha = 0.9;
+            } else {
+                ctx.fillStyle = '#00ff41'; ctx.globalAlpha = Math.random() * 0.5 + 0.15;
+            }
+            ctx.fillText(chars[Math.floor(Math.random() * chars.length)], i * 16, drops[i] * 16);
+            if (drops[i] * 16 > canvas.height && Math.random() > 0.97) drops[i] = 0;
             drops[i]++;
         }
         ctx.globalAlpha = 1;
-    }, 55);
+    }, 50);
+
+    // CRT vignette
+    var vig = document.createElement('div'); vig.id = 'dd-vignette';
+    document.body.appendChild(vig);
 
     // Cursor glow
     var glow = document.createElement('div'); glow.id = 'dd-cursor-glow';
@@ -105,16 +120,17 @@ const DevDuniaUtils = {
         const originalClasses = button.className;
         
         if (success) {
-            button.innerHTML = '<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg><span>Copied!</span>';
-            button.classList.add('bg-green-600');
+            button.innerHTML = '<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg><span>[COPIED]</span>';
+            button.style.cssText = 'background:rgba(0,255,65,0.15)!important;border-color:#00ff41!important;color:#00ff41!important;box-shadow:0 0 15px rgba(0,255,65,0.3)!important';
         } else {
-            button.innerHTML = '<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg><span>Failed!</span>';
-            button.classList.add('bg-red-600');
+            button.innerHTML = '<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg><span>[FAILED]</span>';
+            button.style.cssText = 'background:rgba(255,0,64,0.15)!important;border-color:#ff0040!important;color:#ff0040!important';
         }
         
         setTimeout(() => {
             button.innerHTML = originalText;
             button.className = originalClasses;
+            button.style.cssText = '';
         }, 2000);
     },
 
