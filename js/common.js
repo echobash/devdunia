@@ -5,13 +5,13 @@
 (function() {
     if (document.getElementById('dd-theme')) return;
 
-    // Google Fonts (Inter + JetBrains Mono)
+    // Google Fonts (Ubuntu Mono)
     if (!document.getElementById('dd-fonts')) {
         var pc1 = document.createElement('link'); pc1.rel = 'preconnect'; pc1.href = 'https://fonts.googleapis.com';
         var pc2 = document.createElement('link'); pc2.rel = 'preconnect'; pc2.href = 'https://fonts.gstatic.com'; pc2.crossOrigin = '';
         var fl  = document.createElement('link');
         fl.id = 'dd-fonts'; fl.rel = 'stylesheet';
-        fl.href = 'https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&family=Inter:wght@400;500;600;700;800;900&display=swap';
+        fl.href = 'https://fonts.googleapis.com/css2?family=Ubuntu+Mono:wght@400;700&display=swap';
         document.head.appendChild(pc1); document.head.appendChild(pc2); document.head.appendChild(fl);
     }
 
@@ -34,11 +34,11 @@ function _ddInjectBg() {
     marker.id = 'dd-bg-injected'; marker.style.display = 'none';
     document.body.insertBefore(marker, document.body.firstChild);
 
-    // Blobs — phosphor green glow
+    // Blobs — Ubuntu aubergine + lime green glow
     [
-        { id: 'dd-b1', cls: 'dd-blob', css: 'top:-250px;left:-150px;width:700px;height:700px;background:rgba(0,255,65,0.05);animation-duration:22s' },
-        { id: 'dd-b2', cls: 'dd-blob', css: 'top:35%;right:-180px;width:400px;height:400px;background:rgba(0,255,65,0.03);animation-duration:18s;animation-delay:-6s' },
-        { id: 'dd-b3', cls: 'dd-blob', css: 'bottom:5%;left:25%;width:300px;height:300px;background:rgba(0,80,20,0.07);animation-duration:15s;animation-delay:-3s' }
+        { id: 'dd-b1', cls: 'dd-blob', css: 'top:-250px;left:-150px;width:700px;height:700px;background:rgba(138,226,52,0.045);animation-duration:24s' },
+        { id: 'dd-b2', cls: 'dd-blob', css: 'top:35%;right:-180px;width:400px;height:400px;background:rgba(90,30,80,0.12);animation-duration:19s;animation-delay:-7s' },
+        { id: 'dd-b3', cls: 'dd-blob', css: 'bottom:5%;left:25%;width:300px;height:300px;background:rgba(138,226,52,0.03);animation-duration:16s;animation-delay:-4s' }
     ].forEach(function(b) {
         var el = document.createElement('div'); el.id = b.id; el.className = b.cls; el.style.cssText = b.css;
         document.body.appendChild(el);
@@ -48,7 +48,7 @@ function _ddInjectBg() {
     var grid = document.createElement('div'); grid.id = 'dd-grid-bg';
     document.body.appendChild(grid);
 
-    // Matrix canvas — Mr. Robot green
+    // Matrix canvas — Ubuntu lime green
     var canvas = document.createElement('canvas'); canvas.id = 'dd-matrix-canvas';
     document.body.appendChild(canvas);
     var ctx = canvas.getContext('2d'), cols, drops, bright;
@@ -61,22 +61,21 @@ function _ddInjectBg() {
     }
     _resize(); window.addEventListener('resize', _resize);
     setInterval(function() {
-        ctx.fillStyle = 'rgba(8,8,8,0.06)'; ctx.fillRect(0, 0, canvas.width, canvas.height);
+        ctx.fillStyle = 'rgba(26,10,24,0.08)'; ctx.fillRect(0, 0, canvas.width, canvas.height);
         for (var i = 0; i < drops.length; i++) {
-            // Leading character is bright white-green, rest are normal green
             bright[i] = (Math.random() > 0.98);
-            ctx.font = (bright[i] ? 'bold ' : '') + '14px JetBrains Mono,monospace';
+            ctx.font = (bright[i] ? 'bold ' : '') + '14px Ubuntu Mono,monospace';
             if (bright[i]) {
-                ctx.fillStyle = '#ccffcc'; ctx.globalAlpha = 0.9;
+                ctx.fillStyle = '#d4f89a'; ctx.globalAlpha = 0.9;
             } else {
-                ctx.fillStyle = '#00ff41'; ctx.globalAlpha = Math.random() * 0.5 + 0.15;
+                ctx.fillStyle = '#8AE234'; ctx.globalAlpha = Math.random() * 0.45 + 0.12;
             }
             ctx.fillText(chars[Math.floor(Math.random() * chars.length)], i * 16, drops[i] * 16);
             if (drops[i] * 16 > canvas.height && Math.random() > 0.97) drops[i] = 0;
             drops[i]++;
         }
         ctx.globalAlpha = 1;
-    }, 50);
+    }, 60);
 
     // CRT vignette
     var vig = document.createElement('div'); vig.id = 'dd-vignette';

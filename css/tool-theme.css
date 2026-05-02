@@ -1,27 +1,29 @@
 /* ═══════════════════════════════════════════════════
-   DevDunia — Mr. Robot / Terminal Theme
-   Phosphor green, scanlines, glitch — fsociety approved
+   DevDunia — Ubuntu Terminal Theme
+   Ubuntu aubergine bg, ANSI lime green accents
+   Reference: Ubuntu GNOME Terminal default profile
 ════════════════════════════════════════════════════ */
 
-@import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:ital,wght@0,400;0,500;0,700;1,400&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Ubuntu+Mono:wght@400;700&display=swap');
 
+/* ─── Design tokens ─── */
 :root {
-    --dd-bg:      #080808;
-    --dd-bg2:     #0a0f0a;
-    --dd-green:   #00ff41;
-    --dd-green2:  #00b32c;
-    --dd-green3:  #004d14;
-    --dd-red:     #ff0040;
-    --dd-amber:   #ffb800;
-    --dd-violet:  #bf5fff;
-    --dd-text:    #b8ffb8;
-    --dd-muted:   rgba(0,255,65,0.52);
-    --dd-faint:   rgba(0,255,65,0.28);
-    --dd-border:  rgba(0,255,65,0.15);
-    --dd-border2: rgba(0,255,65,0.28);
-    --dd-card:    rgba(0,10,2,0.88);
-    --dd-card2:   rgba(0,255,65,0.05);
-    --dd-glow:    rgba(0,255,65,0.18);
+    --dd-bg:      #1A0A18;
+    --dd-bg2:     #13081A;
+    --dd-green:   #8AE234;
+    --dd-green2:  #4E9A06;
+    --dd-green3:  #2D5A00;
+    --dd-red:     #EF2929;
+    --dd-amber:   #FCE94F;
+    --dd-violet:  #AD7FA8;
+    --dd-text:    #EEEEEC;
+    --dd-muted:   rgba(238,238,236,0.6);
+    --dd-faint:   rgba(238,238,236,0.32);
+    --dd-border:  rgba(138,226,52,0.16);
+    --dd-border2: rgba(138,226,52,0.30);
+    --dd-card:    rgba(0,0,0,0.35);
+    --dd-card2:   rgba(138,226,52,0.05);
+    --dd-glow:    rgba(138,226,52,0.14);
 }
 
 /* ─── Base ─── */
@@ -29,113 +31,166 @@
 
 body {
     background: var(--dd-bg) !important;
-    font-family: 'JetBrains Mono', 'Courier New', monospace !important;
+    font-family: 'Ubuntu Mono', 'JetBrains Mono', 'Courier New', monospace !important;
     color: var(--dd-text) !important;
     -webkit-font-smoothing: antialiased;
 }
 
-/* ─── Scanlines overlay ─── */
-body::after {
-    content: '';
-    position: fixed; inset: 0; z-index: 9997; pointer-events: none;
-    background: repeating-linear-gradient(
-        0deg,
-        transparent 0px, transparent 2px,
-        rgba(0,0,0,0.13) 2px, rgba(0,0,0,0.13) 4px
-    );
-}
+/* No scanlines, no noise — clean terminal */
+body::after  { content: none !important; background: none !important; }
+body::before { content: none !important; background: none !important; }
 
-/* ─── Noise ─── */
-body::before {
-    content: '';
-    position: fixed; inset: 0; z-index: 0; pointer-events: none;
-    background: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E");
-}
-
-/* ─── Animated background elements ─── */
+/* ─── Matrix canvas ─── */
 #dd-matrix-canvas {
     position: fixed; inset: 0; z-index: 0;
-    pointer-events: none; opacity: 0.18;
+    pointer-events: none; opacity: 0.10;
 }
+
+/* ─── Grid ─── */
 #dd-grid-bg {
     position: fixed; inset: 0; z-index: 0; pointer-events: none;
     background-image:
-        linear-gradient(rgba(0,255,65,0.03) 1px, transparent 1px),
-        linear-gradient(90deg, rgba(0,255,65,0.03) 1px, transparent 1px);
+        linear-gradient(rgba(138,226,52,0.022) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(138,226,52,0.022) 1px, transparent 1px);
     background-size: 56px 56px;
     mask-image: radial-gradient(ellipse 90% 90% at 50% 50%, black 10%, transparent 100%);
     -webkit-mask-image: radial-gradient(ellipse 90% 90% at 50% 50%, black 10%, transparent 100%);
 }
+
+/* ─── Blobs: aubergine tones ─── */
 .dd-blob {
     position: fixed; border-radius: 9999px;
     filter: blur(120px); pointer-events: none; z-index: 0;
-    animation: ddBlobDrift 20s ease-in-out infinite alternate;
+    animation: ddBlobDrift 22s ease-in-out infinite alternate;
 }
-#dd-b1 { width:700px;height:700px;background:rgba(0,255,65,0.05);top:-250px;left:-150px;animation-duration:22s; }
-#dd-b2 { width:400px;height:400px;background:rgba(0,255,65,0.03);top:35%;right:-180px;animation-duration:18s;animation-delay:-6s; }
-#dd-b3 { width:300px;height:300px;background:rgba(0,80,20,0.08);bottom:5%;left:25%;animation-duration:15s;animation-delay:-3s; }
-@keyframes ddBlobDrift { 0%{transform:translate(0,0)} 100%{transform:translate(35px,25px)} }
+#dd-b1 { width:700px;height:700px;background:rgba(138,226,52,0.045);top:-250px;left:-150px;animation-duration:24s; }
+#dd-b2 { width:400px;height:400px;background:rgba(90,30,80,0.12);top:35%;right:-180px;animation-duration:19s;animation-delay:-7s; }
+#dd-b3 { width:300px;height:300px;background:rgba(138,226,52,0.03);bottom:5%;left:25%;animation-duration:16s;animation-delay:-4s; }
+@keyframes ddBlobDrift { 0%{transform:translate(0,0)} 100%{transform:translate(30px,20px)} }
 
+/* ─── Cursor glow ─── */
 #dd-cursor-glow {
     position: fixed; pointer-events: none; z-index: 9999;
     width: 250px; height: 250px; border-radius: 50%;
-    background: radial-gradient(circle, rgba(0,255,65,0.06), transparent 70%);
+    background: radial-gradient(circle, rgba(138,226,52,0.05), transparent 70%);
     transform: translate(-50%,-50%); display: none;
 }
 @media(hover:hover) { #dd-cursor-glow { display: block; } }
 
+/* ─── CRT vignette: aubergine edges ─── */
+#dd-vignette {
+    position: fixed; inset: 0; z-index: 9996; pointer-events: none;
+    background: radial-gradient(ellipse at center, transparent 52%, rgba(10,3,12,0.78) 100%);
+}
+
 /* ─── Remove old bg divs ─── */
 .fixed.inset-0.-z-10 { display: none !important; }
 
-/* ─── Glitch on headings ─── */
+/* ─── Headings: Ubuntu green, no glitch ─── */
 h1, h2.text-3xl, .text-3xl.font-bold, .text-4xl.font-bold {
-    font-family: 'JetBrains Mono', monospace !important;
+    font-family: 'Ubuntu Mono', monospace !important;
     color: var(--dd-green) !important;
-    text-shadow: 0 0 12px rgba(0,255,65,0.6), 0 0 30px rgba(0,255,65,0.2) !important;
+    text-shadow: 0 0 18px rgba(138,226,52,0.30) !important;
     -webkit-text-fill-color: var(--dd-green) !important;
-    animation: mrGlitch 9s ease-in-out infinite !important;
-    letter-spacing: -0.02em;
+    animation: none !important;
+    letter-spacing: -0.01em;
 }
-/* Override any bg-clip gradient on h1 */
 h1.text-transparent, .text-transparent.bg-clip-text {
     -webkit-text-fill-color: var(--dd-green) !important;
     background: none !important;
 }
 
-@keyframes mrGlitch {
-    0%,87%,100% { transform:none; filter:none; }
-    88%          { transform:translate(-3px,0) skew(-1deg); filter:brightness(1.4) hue-rotate(15deg); }
-    89%          { transform:translate(3px,0);  clip-path:inset(30% 0 40% 0); }
-    90%          { transform:none; clip-path:none; }
-    93%          { transform:translate(2px,-1px); filter:brightness(1.2); }
-    94%          { transform:none; filter:none; }
+/* ─── Blinking cursor on h1 ─── */
+h1::after {
+    content: '_';
+    color: var(--dd-green);
+    animation: blink 1.1s step-end infinite;
+    margin-left: 2px;
+    font-weight: 400;
+    -webkit-text-fill-color: var(--dd-green);
 }
+@keyframes blink { 0%,100%{opacity:1} 50%{opacity:0} }
 
-/* ─── Page header paragraph (subtitle) ─── */
+/* ─── Subtitle / description ─── */
 .text-lg.text-gray-400, p.text-gray-400 {
     color: var(--dd-muted) !important;
-    font-family: 'JetBrains Mono', monospace !important;
+    font-family: 'Ubuntu Mono', monospace !important;
 }
-.text-lg.text-gray-400::before { content: '> '; color: var(--dd-green); opacity: 0.6; }
+.text-lg.text-gray-400::before { content: ''; }
 
-/* ─── Cards & Panels — terminal windows ─── */
+/* ─── Cards & Panels ─── */
 .bg-slate-800\/70 {
     background: var(--dd-card) !important;
     border: 1px solid var(--dd-border2) !important;
-    border-radius: 3px !important;
-    box-shadow: 0 0 40px rgba(0,255,65,0.04), inset 0 0 40px rgba(0,0,0,0.4) !important;
+    border-radius: 6px !important;
+    box-shadow: 0 0 30px rgba(138,226,52,0.03), inset 0 0 40px rgba(0,0,0,0.3) !important;
 }
-.bg-slate-700\/30 { background: rgba(0,8,2,0.75) !important; border-color: var(--dd-border) !important; }
-.bg-slate-700\/50 { background: rgba(0,6,1,0.85) !important; }
-.bg-slate-800\/95 { background: rgba(6,10,6,0.97) !important; border-color: var(--dd-border) !important; }
-.bg-slate-800     { background: rgba(0,8,2,0.9) !important; }
-.bg-slate-900     { background: rgba(4,8,4,0.98) !important; }
+.bg-slate-700\/30 { background: rgba(10,4,12,0.75) !important; border-color: var(--dd-border) !important; }
+.bg-slate-700\/50 { background: rgba(8,3,10,0.85) !important; }
+.bg-slate-800\/95 { background: rgba(15,6,18,0.97) !important; border-color: var(--dd-border) !important; }
+.bg-slate-800     { background: rgba(12,4,14,0.92) !important; }
+.bg-slate-900     { background: rgba(8,2,10,0.98) !important; }
 .border-slate-700\/60 { border-color: var(--dd-border) !important; }
 .border-slate-700     { border-color: var(--dd-border) !important; }
-.border-slate-600\/50 { border-color: rgba(0,255,65,0.1) !important; }
+.border-slate-600\/50 { border-color: rgba(138,226,52,0.10) !important; }
 .border-slate-600     { border-color: var(--dd-border2) !important; }
 
-/* ─── Inputs & Textareas — phosphor terminal ─── */
+/* ─── Terminal window chrome ─── */
+/* Main panels (rounded-2xl) get full title bar with traffic lights */
+.bg-slate-800.rounded-2xl,
+.bg-slate-800\/70.rounded-2xl,
+.bg-slate-800\/95.rounded-2xl,
+.bg-slate-900.rounded-2xl {
+    border-top: 32px solid #1C1C1C !important;
+    border-radius: 10px !important;
+    position: relative;
+    overflow: visible !important;
+}
+
+/* macOS traffic light circles via inline SVG */
+.bg-slate-800.rounded-2xl::before,
+.bg-slate-800\/70.rounded-2xl::before,
+.bg-slate-800\/95.rounded-2xl::before,
+.bg-slate-900.rounded-2xl::before {
+    content: '';
+    position: absolute;
+    top: -24px;
+    left: 0.9rem;
+    width: 54px;
+    height: 14px;
+    background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='54' height='14'%3E%3Ccircle cx='7' cy='7' r='5.5' fill='%23FF5F57'/%3E%3Ccircle cx='23' cy='7' r='5.5' fill='%23FEBC2E'/%3E%3Ccircle cx='39' cy='7' r='5.5' fill='%2328C840'/%3E%3C/svg%3E") no-repeat center;
+    pointer-events: none;
+    z-index: 10;
+}
+
+/* Center title text */
+.bg-slate-800.rounded-2xl::after,
+.bg-slate-800\/70.rounded-2xl::after,
+.bg-slate-800\/95.rounded-2xl::after,
+.bg-slate-900.rounded-2xl::after {
+    content: 'devdunia.com — terminal';
+    position: absolute;
+    top: -23px;
+    left: 0;
+    right: 0;
+    text-align: center;
+    font-size: 0.62rem;
+    color: rgba(238,238,236,0.42);
+    font-family: 'Ubuntu Mono', monospace;
+    pointer-events: none;
+    white-space: nowrap;
+    letter-spacing: 0.02em;
+    line-height: 1;
+}
+
+/* Secondary panels (rounded-xl) — subtle top border only, no chrome */
+.bg-slate-800.rounded-xl,
+.bg-slate-900.rounded-xl {
+    border-top: 2px solid rgba(138,226,52,0.18) !important;
+    border-radius: 8px !important;
+}
+
+/* ─── Inputs & Textareas ─── */
 textarea,
 input[type="text"],
 input[type="number"],
@@ -143,73 +198,73 @@ input[type="email"],
 input[type="password"],
 input[type="url"],
 select {
-    background: rgba(0,5,1,0.92) !important;
-    border-color: var(--dd-border2) !important;
-    color: var(--dd-green) !important;
-    font-family: 'JetBrains Mono', monospace !important;
-    border-radius: 3px !important;
+    background: rgba(0,0,0,0.55) !important;
+    border: 1px solid rgba(138,226,52,0.45) !important;
+    color: var(--dd-text) !important;
+    font-family: 'Ubuntu Mono', monospace !important;
+    border-radius: 6px !important;
     caret-color: var(--dd-green) !important;
 }
 textarea:focus, input:focus, select:focus {
-    border-color: var(--dd-green) !important;
-    box-shadow: 0 0 0 2px rgba(0,255,65,0.12), 0 0 20px rgba(0,255,65,0.08) !important;
+    border-color: var(--dd-green2) !important;
+    box-shadow: 0 0 0 2px rgba(138,226,52,0.14), 0 0 14px rgba(138,226,52,0.08) !important;
     outline: none !important;
 }
 textarea::placeholder, input::placeholder {
     color: var(--dd-faint) !important;
-    font-style: italic;
 }
 .focus\:ring-blue-500:focus, .focus\:ring-2:focus {
-    --tw-ring-color: rgba(0,255,65,0.3) !important;
-    box-shadow: 0 0 0 2px rgba(0,255,65,0.12) !important;
+    --tw-ring-color: rgba(138,226,52,0.25) !important;
+    box-shadow: 0 0 0 2px rgba(138,226,52,0.14) !important;
 }
-.focus\:border-transparent:focus { border-color: var(--dd-green) !important; }
+.focus\:border-transparent:focus { border-color: var(--dd-green2) !important; }
 
-/* ─── Buttons — terminal execute style ─── */
+/* ─── Buttons ─── */
+/* Primary — filled lime green, dark text (matches terminal screenshot) */
 .bg-blue-600 {
-    background: transparent !important;
+    background: var(--dd-green) !important;
     border: 1px solid var(--dd-green) !important;
-    color: var(--dd-green) !important;
-    font-family: 'JetBrains Mono', monospace !important;
+    color: #0d0d0d !important;
+    font-family: 'Ubuntu Mono', monospace !important;
     font-weight: 700 !important;
     text-transform: uppercase !important;
-    letter-spacing: 0.08em !important;
-    border-radius: 3px !important;
-    box-shadow: 0 0 12px rgba(0,255,65,0.15), inset 0 0 12px rgba(0,255,65,0.04) !important;
+    letter-spacing: 0.06em !important;
+    border-radius: 6px !important;
+    box-shadow: 0 0 18px rgba(138,226,52,0.22) !important;
     transition: all 0.15s ease !important;
+    text-shadow: none !important;
 }
 .bg-blue-600:hover, .hover\:bg-blue-700:hover {
-    background: rgba(0,255,65,0.1) !important;
-    box-shadow: 0 0 24px rgba(0,255,65,0.35), inset 0 0 18px rgba(0,255,65,0.08) !important;
-    text-shadow: 0 0 8px rgba(0,255,65,0.8) !important;
+    background: #b8f96b !important;
+    border-color: #b8f96b !important;
+    color: #0d0d0d !important;
+    box-shadow: 0 0 28px rgba(138,226,52,0.40) !important;
     transform: none !important;
 }
 
-/* Secondary buttons */
 .bg-slate-600 {
     background: transparent !important;
     border: 1px solid var(--dd-border2) !important;
     color: var(--dd-muted) !important;
-    font-family: 'JetBrains Mono', monospace !important;
-    border-radius: 3px !important;
+    font-family: 'Ubuntu Mono', monospace !important;
+    border-radius: 4px !important;
 }
 .hover\:bg-slate-700:hover {
-    background: rgba(0,255,65,0.05) !important;
-    border-color: var(--dd-green) !important;
+    background: rgba(138,226,52,0.06) !important;
+    border-color: var(--dd-green2) !important;
     color: var(--dd-green) !important;
 }
 
-/* Copy button */
 button.copy-btn {
     background: transparent !important;
     border: 1px solid var(--dd-border2) !important;
     color: var(--dd-muted) !important;
-    font-family: 'JetBrains Mono', monospace !important;
-    border-radius: 3px !important;
+    font-family: 'Ubuntu Mono', monospace !important;
+    border-radius: 4px !important;
 }
 button.copy-btn:hover {
-    background: rgba(0,255,65,0.08) !important;
-    border-color: var(--dd-green) !important;
+    background: rgba(138,226,52,0.08) !important;
+    border-color: var(--dd-green2) !important;
     color: var(--dd-green) !important;
 }
 
@@ -224,11 +279,19 @@ button.copy-btn:hover {
 .text-green-400 { color: var(--dd-green) !important; }
 .text-red-300, .text-red-400 { color: var(--dd-red) !important; }
 
-/* Labels above inputs */
-label, .block.text-sm.font-medium { color: var(--dd-muted) !important; font-family: 'JetBrains Mono', monospace !important; }
-label::before { content: '$ '; opacity: 0.5; }
+/* ─── Labels: Ubuntu PS1 green prompt ─── */
+label, .block.text-sm.font-medium {
+    color: var(--dd-muted) !important;
+    font-family: 'Ubuntu Mono', monospace !important;
+}
+label::before {
+    content: '$ ';
+    color: var(--dd-green);
+    opacity: 0.85;
+    font-weight: 700;
+}
 
-/* Heading gradient override → solid green */
+/* ─── Gradient overrides ─── */
 .bg-gradient-to-r.from-blue-400,
 .bg-gradient-to-r.from-teal-400,
 .from-blue-400, .to-cyan-500 {
@@ -237,14 +300,14 @@ label::before { content: '$ '; opacity: 0.5; }
 }
 .hover\:text-purple-400:hover, .hover\:text-teal-400:hover { color: var(--dd-green) !important; }
 
-/* ─── Error/Status ─── */
-.bg-red-900\/50  { background: rgba(255,0,64,0.08) !important; }
-.border-red-600\/50 { border-color: rgba(255,0,64,0.3) !important; }
-.text-red-300    { color: #ff4060 !important; }
+/* ─── Error / Status ─── */
+.bg-red-900\/50  { background: rgba(239,41,41,0.08) !important; }
+.border-red-600\/50 { border-color: rgba(239,41,41,0.3) !important; }
+.text-red-300    { color: #ef6060 !important; }
 
-/* ─── Sidebar — terminal fs ─── */
+/* ─── Sidebar ─── */
 #sidebar {
-    background: rgba(4,8,4,0.98) !important;
+    background: var(--dd-bg2) !important;
     border-right: 1px solid var(--dd-border) !important;
     backdrop-filter: blur(10px) !important;
 }
@@ -252,38 +315,37 @@ label::before { content: '$ '; opacity: 0.5; }
 #sidebar .text-blue-400,
 #sidebar .group-hover\:text-teal-300,
 #sidebar .group-hover\:text-teal-400 { color: var(--dd-green) !important; }
-#sidebar a:hover span { color: var(--dd-green) !important; text-shadow: 0 0 8px rgba(0,255,65,0.5); }
+#sidebar a:hover span { color: var(--dd-green) !important; text-shadow: 0 0 6px rgba(138,226,52,0.4); }
 #sidebar .hover\:bg-slate-800\/50:hover,
-#sidebar .sidebar-link:hover { background: rgba(0,255,65,0.06) !important; }
+#sidebar .sidebar-link:hover { background: rgba(138,226,52,0.06) !important; }
 #sidebar h3.uppercase { color: var(--dd-muted) !important; font-size: 0.7rem !important; letter-spacing: 0.15em !important; }
 #sidebar .from-teal-500.to-teal-400,
 #sidebar .from-teal-600\/20 {
-    background: linear-gradient(135deg, rgba(0,255,65,0.15), rgba(0,179,44,0.1)) !important;
-    border-color: rgba(0,255,65,0.25) !important;
+    background: linear-gradient(135deg, rgba(138,226,52,0.14), rgba(78,154,6,0.10)) !important;
+    border-color: rgba(138,226,52,0.22) !important;
 }
 #sidebar .from-teal-500 { background: linear-gradient(135deg, var(--dd-green), var(--dd-green2)) !important; }
 
-/* Sidebar icon gradient pills → green */
-#sidebar [class*="from-green-500"],
+#sidebar [class*="from-green-5"],
 #sidebar [class*="from-teal-5"],
 #sidebar [class*="from-blue-5"] { background: linear-gradient(135deg, var(--dd-green), var(--dd-green2)) !important; }
 #sidebar [class*="from-purple-5"],
-#sidebar [class*="from-indigo-5"] { background: linear-gradient(135deg, var(--dd-violet), #7700cc) !important; }
+#sidebar [class*="from-indigo-5"] { background: linear-gradient(135deg, #ad7fa8, #7a5c78) !important; }
 #sidebar [class*="from-red-5"],
-#sidebar [class*="from-orange-5"] { background: linear-gradient(135deg, var(--dd-red), #ff4400) !important; }
-#sidebar [class*="from-yellow-5"] { background: linear-gradient(135deg, var(--dd-amber), #cc7700) !important; }
+#sidebar [class*="from-orange-5"] { background: linear-gradient(135deg, var(--dd-red), #cc2200) !important; }
+#sidebar [class*="from-yellow-5"] { background: linear-gradient(135deg, var(--dd-amber), #c4a000) !important; }
 
 .dd-active-link {
-    background: rgba(0,255,65,0.08) !important;
+    background: rgba(138,226,52,0.08) !important;
     border-left: 2px solid var(--dd-green) !important;
     color: var(--dd-green) !important;
 }
-.sidebar-item.active { background: rgba(0,255,65,0.08) !important; color: var(--dd-green) !important; }
-.sidebar-item:hover  { background: rgba(0,255,65,0.05) !important; }
+.sidebar-item.active { background: rgba(138,226,52,0.08) !important; color: var(--dd-green) !important; }
+.sidebar-item:hover  { background: rgba(138,226,52,0.05) !important; }
 
 /* ─── Footer ─── */
 footer {
-    background: rgba(4,8,4,0.98) !important;
+    background: rgba(10,3,12,0.98) !important;
     border-top: 1px solid var(--dd-border) !important;
 }
 footer .bg-gradient-to-br { background-image: none !important; }
@@ -294,55 +356,31 @@ footer .hover\:text-teal-400:hover { color: var(--dd-green) !important; }
 footer .text-teal-400 { color: var(--dd-green) !important; }
 footer .text-teal-300 { color: var(--dd-text) !important; }
 
-/* ─── Back to top button ─── */
+/* ─── Back to top ─── */
 #back-to-top-btn {
     background: transparent !important;
     border: 1px solid var(--dd-border2) !important;
     color: var(--dd-green) !important;
-    box-shadow: 0 0 12px rgba(0,255,65,0.15) !important;
+    box-shadow: 0 0 10px rgba(138,226,52,0.12) !important;
 }
-#back-to-top-btn:hover { background: rgba(0,255,65,0.1) !important; }
+#back-to-top-btn:hover { background: rgba(138,226,52,0.08) !important; }
 
 /* ─── Content z-index ─── */
 .main-content { position: relative; z-index: 1; }
 .relative.z-10, .container { position: relative; z-index: 1; }
 
-/* ─── Scrollbar — green terminal ─── */
+/* ─── Scrollbar ─── */
 ::-webkit-scrollbar       { width: 4px; height: 4px; }
-::-webkit-scrollbar-track { background: rgba(0,255,65,0.03); }
-::-webkit-scrollbar-thumb { background: rgba(0,255,65,0.25); border-radius: 0; }
-::-webkit-scrollbar-thumb:hover { background: rgba(0,255,65,0.5); }
+::-webkit-scrollbar-track { background: #13081A; }
+::-webkit-scrollbar-thumb { background: rgba(138,226,52,0.28); border-radius: 2px; }
+::-webkit-scrollbar-thumb:hover { background: rgba(138,226,52,0.52); }
 
 /* ─── Mobile sidebar toggle ─── */
 #mobile-sidebar-toggle {
-    background: rgba(4,8,4,0.95) !important;
+    background: var(--dd-bg2) !important;
     border-color: var(--dd-border2) !important;
     color: var(--dd-green) !important;
 }
 
 /* ─── Selection ─── */
-::selection { background: rgba(0,255,65,0.25); color: #fff; }
-
-/* ─── CRT vignette ─── */
-#dd-vignette {
-    position: fixed; inset: 0; z-index: 9996; pointer-events: none;
-    background: radial-gradient(ellipse at center, transparent 60%, rgba(0,0,0,0.55) 100%);
-}
-
-/* ─── Blinking cursor on h1 ─── */
-h1::after {
-    content: '_';
-    color: var(--dd-green);
-    animation: blink 1.1s step-end infinite;
-    margin-left: 3px;
-    font-weight: 400;
-}
-@keyframes blink { 0%,100%{opacity:1} 50%{opacity:0} }
-
-/* ─── Terminal prompt on sidebar dashboard link ─── */
-#sidebar .sidebar-link span.text-white.font-medium::before {
-    content: '~/  ';
-    color: var(--dd-green);
-    opacity: 0.7;
-    font-size: 0.8em;
-}
+::selection { background: rgba(138,226,52,0.22); color: #fff; }
