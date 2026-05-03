@@ -1,28 +1,150 @@
 // Common JavaScript utilities for DevDunia tools
 
-// ─── DevDunia Theme Injection ───
-// Runs synchronously in <head> so styles apply before first paint
+// ─── Module-level theme state ───
+var _ddBase = '/';
+var _ddVisualTheme = 'ubuntu';
+var _ddMatrixColors = {
+    ubuntu:      { bg: 'rgba(26,10,24,0.08)', main: '#8AE234', bright: '#d4f89a', font: 'Ubuntu Mono',    ms: 60 },
+    'mr-robot':  { bg: 'rgba(8,8,8,0.06)',    main: '#00ff41', bright: '#ccffcc', font: 'JetBrains Mono', ms: 50 }
+};
+
+// CSS variable maps — used to instantly restyle home.html (uses var(--teal) etc.)
+function _ddGetVars(theme) {
+    return theme === 'mr-robot'
+        ? { '--teal': '#00ff41', '--teal2': '#00b32c', '--green': '#00ff41', '--bg': '#080808', '--text': '#b8ffb8',
+            '--border': 'rgba(0,255,65,0.12)', '--border2': 'rgba(0,255,65,0.2)',
+            '--card': 'rgba(0,10,2,0.7)', '--card2': 'rgba(0,255,65,0.05)' }
+        : { '--teal': '#8AE234',  '--teal2': '#4E9A06',  '--green': '#8AE234', '--bg': '#1A0A18', '--text': '#EEEEEC',
+            '--border': 'rgba(255,255,255,0.08)', '--border2': 'rgba(255,255,255,0.13)',
+            '--card': 'rgba(255,255,255,0.035)', '--card2': 'rgba(255,255,255,0.07)' };
+}
+
+function _ddApplyVars(theme) {
+    var vars = _ddGetVars(theme), r = document.documentElement;
+    for (var k in vars) r.style.setProperty(k, vars[k]);
+}
+
+// ─── Theme Injection IIFE (sync, runs in <head>) ───
 (function() {
     if (document.getElementById('dd-theme')) return;
 
-    // Google Fonts (Ubuntu Mono)
+    var scriptSrc = (document.currentScript && document.currentScript.src) || '';
+    _ddBase = scriptSrc ? scriptSrc.replace(/js\/common\.js.*$/, '') : '/';
+
+    // Both fonts preloaded so switching themes never causes FOUT
     if (!document.getElementById('dd-fonts')) {
         var pc1 = document.createElement('link'); pc1.rel = 'preconnect'; pc1.href = 'https://fonts.googleapis.com';
         var pc2 = document.createElement('link'); pc2.rel = 'preconnect'; pc2.href = 'https://fonts.gstatic.com'; pc2.crossOrigin = '';
         var fl  = document.createElement('link');
         fl.id = 'dd-fonts'; fl.rel = 'stylesheet';
-        fl.href = 'https://fonts.googleapis.com/css2?family=Ubuntu+Mono:wght@400;700&display=swap';
+        fl.href = 'https://fonts.googleapis.com/css2?family=Ubuntu+Mono:wght@400;700&family=JetBrains+Mono:wght@400;500;700&display=swap';
         document.head.appendChild(pc1); document.head.appendChild(pc2); document.head.appendChild(fl);
     }
 
-    // Resolve path to css/tool-theme.css (handles root and sub-directory pages)
-    var scriptSrc = (document.currentScript && document.currentScript.src) || '';
-    var base = scriptSrc ? scriptSrc.replace(/js\/common\.js.*$/, '') : '/';
+    // Base Ubuntu theme
     var link = document.createElement('link');
     link.id = 'dd-theme'; link.rel = 'stylesheet';
-    link.href = base + 'css/tool-theme.css';
+    link.href = _ddBase + 'css/tool-theme.css';
     document.head.appendChild(link);
+
+    // Read saved preference (safe try/catch for private browsing)
+    try { _ddVisualTheme = localStorage.getItem('dd-visual-theme') || 'ubuntu'; } catch(e) {}
+    if (_ddVisualTheme !== 'mr-robot') _ddVisualTheme = 'ubuntu';
+
+    // If Mr. Robot, load override CSS immediately (before first paint)
+    if (_ddVisualTheme === 'mr-robot') {
+        var mrLink = document.createElement('link');
+        mrLink.id = 'dd-mr-robot-css'; mrLink.rel = 'stylesheet';
+        mrLink.href = _ddBase + 'css/mr-robot-theme.css';
+        document.head.appendChild(mrLink);
+    }
+
+    // Apply CSS variables now (handles home.html var(--teal) before DOMContentLoaded)
+    _ddApplyVars(_ddVisualTheme);
 })();
+
+// ─── Visual theme toggle (called by the switch UI) ───
+function ddVisualToggle() {
+    var next = _ddVisualTheme === 'ubuntu' ? 'mr-robot' : 'ubuntu';
+    try { localStorage.setItem('dd-visual-theme', next); } catch(e) {}
+    _ddVisualTheme = next;
+    _ddApplyVars(next);
+
+    var mrLink = document.getElementById('dd-mr-robot-css');
+    if (next === 'mr-robot') {
+        if (!mrLink) {
+            mrLink = document.createElement('link');
+            mrLink.id = 'dd-mr-robot-css'; mrLink.rel = 'stylesheet';
+            mrLink.href = _ddBase + 'css/mr-robot-theme.css';
+            document.head.appendChild(mrLink);
+        }
+        document.body.classList.add('dd-mr-robot');
+        document.body.classList.remove('dd-ubuntu');
+    } else {
+        if (mrLink) mrLink.remove();
+        document.body.classList.add('dd-ubuntu');
+        document.body.classList.remove('dd-mr-robot');
+    }
+
+    // Update blobs on pages that use home.html-style classes
+    var blobMap = { b1:'rgba(0,255,65,0.05)', b2:'rgba(0,255,65,0.03)', b3:'rgba(0,80,20,0.07)' };
+    var ubMap   = { b1:'rgba(138,226,52,0.045)', b2:'rgba(90,30,80,0.12)', b3:'rgba(138,226,52,0.03)' };
+    var map = next === 'mr-robot' ? blobMap : ubMap;
+    ['b1','b2','b3'].forEach(function(id) {
+        var el = document.getElementById(id) || document.getElementById('dd-' + id);
+        if (el) el.style.background = map[id];
+    });
+
+    _ddUpdateToggleUI(next);
+}
+
+function _ddUpdateToggleUI(theme) {
+    var track   = document.getElementById('dd-vt-track');
+    var ubLabel = document.getElementById('dd-vt-ub');
+    var mrLabel = document.getElementById('dd-vt-mr');
+    if (!track) return;
+    if (theme === 'mr-robot') {
+        track.setAttribute('data-mr', '1');
+        if (ubLabel) { ubLabel.style.opacity = '0.38'; }
+        if (mrLabel) { mrLabel.style.opacity = '1';    }
+    } else {
+        track.removeAttribute('data-mr');
+        if (ubLabel) { ubLabel.style.opacity = '1';    }
+        if (mrLabel) { mrLabel.style.opacity = '0.38'; }
+    }
+}
+
+function _ddInjectToggle() {
+    if (document.getElementById('dd-visual-toggle')) return;
+    var sw = document.createElement('div');
+    sw.id = 'dd-visual-toggle';
+    sw.title = 'Switch between Ubuntu and Mr. Robot theme';
+    sw.innerHTML =
+        '<style>' +
+        '#dd-visual-toggle{position:fixed;bottom:5.5rem;right:1.5rem;z-index:99998;' +
+        'display:flex;align-items:center;gap:0.45rem;cursor:pointer;' +
+        'background:rgba(8,4,12,0.88);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);' +
+        'border:1px solid rgba(138,226,52,0.22);border-radius:100px;' +
+        'padding:0.38rem 0.7rem;font-family:"Ubuntu Mono","JetBrains Mono",monospace;font-size:0.65rem;' +
+        'user-select:none;transition:border-color 0.2s,box-shadow 0.2s;}' +
+        '#dd-visual-toggle:hover{border-color:rgba(138,226,52,0.45);box-shadow:0 0 14px rgba(138,226,52,0.15);}' +
+        '#dd-vt-ub{color:#8AE234;font-weight:700;letter-spacing:0.05em;transition:opacity 0.2s;}' +
+        '#dd-vt-mr{color:#00ff41;font-weight:700;letter-spacing:0.05em;transition:opacity 0.2s;}' +
+        '#dd-vt-track{width:36px;height:18px;border:1px solid rgba(138,226,52,0.35);' +
+        'border-radius:100px;position:relative;background:rgba(138,226,52,0.1);' +
+        'transition:border-color 0.3s,background 0.3s;}' +
+        '#dd-vt-track[data-mr]{border-color:rgba(0,255,65,0.45);background:rgba(0,255,65,0.1);}' +
+        '#dd-vt-thumb{position:absolute;top:2px;left:2px;width:12px;height:12px;' +
+        'border-radius:50%;background:#8AE234;transition:transform 0.3s,background 0.3s;}' +
+        '#dd-vt-track[data-mr] #dd-vt-thumb{transform:translateX(18px);background:#00ff41;}' +
+        '</style>' +
+        '<span id="dd-vt-ub">UB</span>' +
+        '<div id="dd-vt-track"><div id="dd-vt-thumb"></div></div>' +
+        '<span id="dd-vt-mr">MR</span>';
+    sw.addEventListener('click', function() { ddVisualToggle(); });
+    document.body.appendChild(sw);
+    _ddUpdateToggleUI(_ddVisualTheme);
+}
 
 // Inject animated background elements (blobs, grid, matrix, cursor glow)
 // Called from DOMContentLoaded so document.body is available
@@ -60,22 +182,24 @@ function _ddInjectBg() {
         bright = new Array(cols).fill(false);
     }
     _resize(); window.addEventListener('resize', _resize);
-    setInterval(function() {
-        ctx.fillStyle = 'rgba(26,10,24,0.08)'; ctx.fillRect(0, 0, canvas.width, canvas.height);
+    var _matrixTimer = null;
+    function _matrixTick() {
+        var tc = _ddMatrixColors[_ddVisualTheme] || _ddMatrixColors.ubuntu;
+        ctx.fillStyle = tc.bg; ctx.fillRect(0, 0, canvas.width, canvas.height);
         for (var i = 0; i < drops.length; i++) {
             bright[i] = (Math.random() > 0.98);
-            ctx.font = (bright[i] ? 'bold ' : '') + '14px Ubuntu Mono,monospace';
-            if (bright[i]) {
-                ctx.fillStyle = '#d4f89a'; ctx.globalAlpha = 0.9;
-            } else {
-                ctx.fillStyle = '#8AE234'; ctx.globalAlpha = Math.random() * 0.45 + 0.12;
-            }
+            ctx.font = (bright[i] ? 'bold ' : '') + '14px ' + tc.font + ',monospace';
+            ctx.fillStyle = bright[i] ? tc.bright : tc.main;
+            ctx.globalAlpha = bright[i] ? 0.9 : Math.random() * 0.45 + 0.12;
             ctx.fillText(chars[Math.floor(Math.random() * chars.length)], i * 16, drops[i] * 16);
             if (drops[i] * 16 > canvas.height && Math.random() > 0.97) drops[i] = 0;
             drops[i]++;
         }
         ctx.globalAlpha = 1;
-    }, 60);
+        var ms = (_ddMatrixColors[_ddVisualTheme] || _ddMatrixColors.ubuntu).ms;
+        _matrixTimer = setTimeout(_matrixTick, ms);
+    }
+    _matrixTick();
 
     // CRT vignette
     var vig = document.createElement('div'); vig.id = 'dd-vignette';
@@ -492,6 +616,7 @@ html.light .bg-slate-900\\/95 { background-color: #ffffff !important; }
 // Common event listeners setup
 document.addEventListener('DOMContentLoaded', function() {
     _ddInjectBg();
+    _ddInjectToggle();
     ThemeManager.init();
     
     // Auto-resize all textareas

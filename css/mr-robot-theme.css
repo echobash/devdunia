@@ -1,0 +1,272 @@
+/* ══════════════════════════════════════════════════════
+   Mr. Robot / fsociety Theme
+   Loaded on top of tool-theme.css when user picks MR mode.
+   Overrides Ubuntu theme back to phosphor green + glitch.
+   ══════════════════════════════════════════════════════ */
+
+/* ── Tokens ── */
+:root {
+    --dd-bg:      #080808;
+    --dd-bg2:     #0a0f0a;
+    --dd-green:   #00ff41;
+    --dd-green2:  #00b32c;
+    --dd-text:    #b8ffb8;
+    --dd-muted:   rgba(0,255,65,0.52);
+    --dd-faint:   rgba(0,255,65,0.28);
+    --dd-border:  rgba(0,255,65,0.15);
+    --dd-border2: rgba(0,255,65,0.28);
+    --dd-card:    rgba(0,10,2,0.88);
+}
+
+/* ── Body ── */
+body {
+    background: #080808 !important;
+    font-family: 'JetBrains Mono', 'Courier New', monospace !important;
+    color: #b8ffb8 !important;
+}
+
+/* ── Scanlines ── */
+body::after {
+    content: '' !important;
+    position: fixed !important; inset: 0 !important; z-index: 9997 !important;
+    pointer-events: none !important;
+    background: repeating-linear-gradient(
+        0deg,
+        transparent 0px, transparent 2px,
+        rgba(0,0,0,0.13) 2px, rgba(0,0,0,0.13) 4px
+    ) !important;
+}
+
+/* ── Background elements ── */
+#dd-vignette {
+    background: radial-gradient(ellipse at center, transparent 60%, rgba(0,0,0,0.6) 100%) !important;
+}
+#dd-cursor-glow {
+    background: radial-gradient(circle, rgba(0,255,65,0.06), transparent 70%) !important;
+}
+#dd-matrix-canvas { opacity: 0.18 !important; }
+#dd-b1 { background: rgba(0,255,65,0.05) !important; }
+#dd-b2 { background: rgba(0,255,65,0.03) !important; }
+#dd-b3 { background: rgba(0,80,20,0.07) !important; }
+#dd-grid-bg {
+    background-image:
+        linear-gradient(rgba(0,255,65,0.03) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(0,255,65,0.03) 1px, transparent 1px) !important;
+}
+
+/* ── Headings: glitch ── */
+h1, h2.text-3xl, .text-3xl.font-bold, .text-4xl.font-bold {
+    font-family: 'JetBrains Mono', monospace !important;
+    color: #00ff41 !important;
+    text-shadow: 0 0 12px rgba(0,255,65,0.6), 0 0 30px rgba(0,255,65,0.2) !important;
+    -webkit-text-fill-color: #00ff41 !important;
+    animation: mrGlitch 9s ease-in-out infinite !important;
+}
+h1.text-transparent, .text-transparent.bg-clip-text {
+    -webkit-text-fill-color: #00ff41 !important;
+}
+h1::after { color: #00ff41 !important; -webkit-text-fill-color: #00ff41 !important; }
+
+@keyframes mrGlitch {
+    0%,87%,100% { transform:none; filter:none; }
+    88%          { transform:translate(-3px,0) skew(-1deg); filter:brightness(1.4) hue-rotate(15deg); }
+    89%          { transform:translate(3px,0); clip-path:inset(30% 0 40% 0); }
+    90%          { transform:none; clip-path:none; }
+    93%          { transform:translate(2px,-1px); filter:brightness(1.2); }
+    94%          { transform:none; filter:none; }
+}
+
+/* ── Text colors ── */
+.text-blue-400, .text-cyan-400, .text-teal-400 { color: #00ff41 !important; }
+.text-gray-400  { color: rgba(0,255,65,0.52) !important; }
+.text-gray-300  { color: #b8ffb8 !important; }
+.text-gray-500  { color: rgba(0,255,65,0.28) !important; }
+.text-gray-200  { color: #b8ffb8 !important; }
+.text-green-400 { color: #00ff41 !important; }
+
+/* ── Labels ── */
+label, .block.text-sm.font-medium {
+    color: rgba(0,255,65,0.52) !important;
+    font-family: 'JetBrains Mono', monospace !important;
+}
+label::before {
+    content: '$ ' !important;
+    color: #00ff41 !important;
+    opacity: 0.6 !important;
+    font-weight: 400 !important;
+}
+
+/* ── Cards ── */
+.bg-slate-800\/70 {
+    background: rgba(0,10,2,0.88) !important;
+    border-color: rgba(0,255,65,0.28) !important;
+}
+.bg-slate-800\/95 { background: rgba(6,10,6,0.97) !important; border-color: rgba(0,255,65,0.15) !important; }
+.bg-slate-800     { background: rgba(0,8,2,0.9) !important; }
+.bg-slate-900     { background: rgba(4,8,4,0.98) !important; }
+.border-slate-700\/60, .border-slate-700 { border-color: rgba(0,255,65,0.15) !important; }
+.border-slate-600, .border-slate-600\/50 { border-color: rgba(0,255,65,0.28) !important; }
+
+/* Title bar text → green tint */
+.bg-slate-800.rounded-2xl::after,
+.bg-slate-800\/70.rounded-2xl::after,
+.bg-slate-900.rounded-2xl::after { color: rgba(0,255,65,0.3) !important; }
+
+/* ── Inputs ── */
+textarea, input[type="text"], input[type="number"],
+input[type="email"], input[type="password"], input[type="url"], select {
+    background: rgba(0,5,1,0.92) !important;
+    border: 1px solid rgba(0,255,65,0.28) !important;
+    color: #00ff41 !important;
+    font-family: 'JetBrains Mono', monospace !important;
+    caret-color: #00ff41 !important;
+}
+textarea:focus, input:focus, select:focus {
+    border-color: #00ff41 !important;
+    box-shadow: 0 0 0 2px rgba(0,255,65,0.12), 0 0 20px rgba(0,255,65,0.08) !important;
+}
+textarea::placeholder, input::placeholder { color: rgba(0,255,65,0.28) !important; }
+
+/* ── Primary button: outlined ── */
+.bg-blue-600 {
+    background: transparent !important;
+    border: 1px solid #00ff41 !important;
+    color: #00ff41 !important;
+    font-family: 'JetBrains Mono', monospace !important;
+    box-shadow: 0 0 12px rgba(0,255,65,0.15), inset 0 0 12px rgba(0,255,65,0.04) !important;
+    text-shadow: none !important;
+}
+.bg-blue-600:hover, .hover\:bg-blue-700:hover {
+    background: rgba(0,255,65,0.1) !important;
+    border-color: #00ff41 !important;
+    color: #00ff41 !important;
+    box-shadow: 0 0 24px rgba(0,255,65,0.35) !important;
+    text-shadow: 0 0 8px rgba(0,255,65,0.8) !important;
+}
+
+/* ── Secondary button ── */
+.bg-slate-600 {
+    background: transparent !important;
+    border: 1px solid rgba(0,255,65,0.28) !important;
+    color: rgba(0,255,65,0.52) !important;
+    font-family: 'JetBrains Mono', monospace !important;
+}
+.hover\:bg-slate-700:hover {
+    background: rgba(0,255,65,0.05) !important;
+    border-color: #00ff41 !important;
+    color: #00ff41 !important;
+}
+button.copy-btn { border-color: rgba(0,255,65,0.28) !important; color: rgba(0,255,65,0.52) !important; }
+button.copy-btn:hover { background: rgba(0,255,65,0.08) !important; border-color: #00ff41 !important; color: #00ff41 !important; }
+
+/* ── Sidebar ── */
+#sidebar {
+    background: rgba(4,8,4,0.98) !important;
+    border-color: rgba(0,255,65,0.15) !important;
+}
+#sidebar .text-teal-400,
+#sidebar .group-hover\:text-teal-300,
+#sidebar .group-hover\:text-teal-400 { color: #00ff41 !important; }
+#sidebar a:hover span { color: #00ff41 !important; text-shadow: 0 0 8px rgba(0,255,65,0.5); }
+#sidebar .sidebar-link:hover { background: rgba(0,255,65,0.06) !important; }
+#sidebar h3.uppercase { color: rgba(0,255,65,0.52) !important; }
+#sidebar .from-teal-600\/20 {
+    background: linear-gradient(135deg, rgba(0,255,65,0.15), rgba(0,179,44,0.1)) !important;
+    border-color: rgba(0,255,65,0.25) !important;
+}
+.dd-active-link {
+    background: rgba(0,255,65,0.08) !important;
+    border-left-color: #00ff41 !important;
+    color: #00ff41 !important;
+}
+
+/* ── Footer ── */
+footer { background: rgba(4,8,4,0.98) !important; border-top-color: rgba(0,255,65,0.15) !important; }
+footer .text-teal-400 { color: #00ff41 !important; }
+footer .hover\:text-teal-400:hover { color: #00ff41 !important; }
+
+/* ── Scrollbar ── */
+::-webkit-scrollbar-track { background: rgba(0,255,65,0.03) !important; }
+::-webkit-scrollbar-thumb { background: rgba(0,255,65,0.25) !important; border-radius: 0 !important; }
+::-webkit-scrollbar-thumb:hover { background: rgba(0,255,65,0.5) !important; }
+
+/* ── Selection ── */
+::selection { background: rgba(0,255,65,0.25) !important; }
+
+/* ─────────────────────────────────────────────
+   home.html specific overrides (uses --teal var)
+   CSS variables are overridden via JS, but some
+   hardcoded rgba values need direct override.
+   ───────────────────────────────────────────── */
+
+/* Nav */
+.nav.scrolled { background: rgba(4,8,4,0.92) !important; }
+.nav-logo span { color: #00ff41 !important; }
+#nav-tool-count {
+    background: rgba(0,255,65,0.1) !important;
+    border-color: rgba(0,255,65,0.25) !important;
+    color: #00ff41 !important;
+}
+.nav-cta {
+    background: transparent !important;
+    border: 1px solid #00ff41 !important;
+    color: #00ff41 !important;
+    box-shadow: 0 0 12px rgba(0,255,65,0.15) !important;
+}
+.nav-cta:hover { background: rgba(0,255,65,0.08) !important; }
+.nav-logo img { box-shadow: 0 0 18px rgba(0,255,65,0.35) !important; }
+
+/* Hero */
+.hero-badge {
+    border-color: rgba(0,255,65,0.28) !important;
+    background: rgba(0,255,65,0.07) !important;
+    color: #00ff41 !important;
+}
+.badge-dot { background: #00ff41 !important; }
+.grad-teal {
+    background: linear-gradient(135deg, #00ff41 0%, #00b32c 60%, #00ff41 100%) !important;
+    -webkit-background-clip: text !important; background-clip: text !important;
+}
+
+/* Search */
+#search:focus {
+    border-color: rgba(0,255,65,0.4) !important;
+    box-shadow: 0 0 0 3px rgba(0,255,65,0.1), 0 8px 32px rgba(0,0,0,0.3) !important;
+}
+
+/* Category pills */
+.cat-pill:hover {
+    color: #00ff41 !important;
+    border-color: rgba(0,255,65,0.3) !important;
+    background: rgba(0,255,65,0.07) !important;
+}
+
+/* Stat banner */
+.stat-banner-num {
+    background: linear-gradient(135deg, #b8ffb8 50%, #00ff41) !important;
+    -webkit-background-clip: text !important; background-clip: text !important;
+}
+
+/* Section labels */
+.sec-label { color: #00ff41 !important; }
+.sec-label::before { background: linear-gradient(90deg, #00ff41, transparent) !important; }
+
+/* Tool cards */
+.tool-card {
+    border-color: rgba(0,255,65,0.1) !important;
+    background: rgba(0,10,2,0.7) !important;
+}
+.tool-card:hover {
+    border-color: rgba(0,255,65,0.3) !important;
+    background: rgba(0,255,65,0.04) !important;
+    box-shadow: 0 12px 32px rgba(0,0,0,0.3), 0 0 0 1px rgba(0,255,65,0.08) !important;
+}
+.tool-card:hover::before {
+    background: radial-gradient(circle at var(--mx,50%) var(--my,50%), rgba(0,255,65,0.08), transparent 60%) !important;
+}
+.tool-card:hover .tc-arrow {
+    border-color: #00ff41 !important;
+    color: #00ff41 !important;
+    background: rgba(0,255,65,0.08) !important;
+}
+#search-count b { color: #00ff41 !important; }
