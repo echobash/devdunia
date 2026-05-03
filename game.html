@@ -1,0 +1,497 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>GeoQuiz – Click the Country</title>
+
+<!-- Leaflet CSS -->
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet" />
+
+<style>
+  :root {
+    --accent:  #f0c040;
+    --correct: #22e07a;
+    --wrong:   #ff4060;
+    --bg:      #0e1a2b;
+    --panel:   #0a1422;
+    --border:  #1c3450;
+    --text:    #dde8f0;
+    --muted:   #4a6a88;
+  }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body {
+    font-family: 'DM Mono', monospace;
+    background: var(--bg);
+    color: var(--text);
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+  }
+
+  /* ── Top bar ── */
+  #topbar {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 0 24px; height: 56px;
+    background: var(--panel); border-bottom: 1px solid var(--border);
+    flex-shrink: 0; z-index: 1000; position: relative;
+  }
+  .logo { font-family:'Syne',sans-serif; font-weight:800; font-size:1.15rem; color:var(--accent); }
+  .stats { display:flex; gap:28px; }
+  .stat  { text-align:center; }
+  .stat-val { font-family:'Syne',sans-serif; font-weight:700; font-size:1.2rem; color:var(--accent); display:block; line-height:1; }
+  .stat-lbl { font-size:0.5rem; text-transform:uppercase; letter-spacing:0.12em; color:var(--muted); }
+
+  /* ── Challenge strip ── */
+  #challenge {
+    display:flex; align-items:center; justify-content:center; gap:14px;
+    height:58px; background:#07111e; border-bottom:1px solid var(--border);
+    flex-shrink:0;
+  }
+  .find-label { font-size:0.6rem; text-transform:uppercase; letter-spacing:0.2em; color:var(--muted); }
+  #targetName {
+    font-family:'Syne',sans-serif; font-weight:800; font-size:1.75rem; color:var(--accent);
+    animation: pulse-glow 2.4s ease-in-out infinite;
+  }
+  @keyframes pulse-glow {
+    0%,100% { text-shadow: 0 0 6px rgba(240,192,64,0.2); }
+    50%      { text-shadow: 0 0 22px rgba(240,192,64,0.75); }
+  }
+  .continent-tag {
+    font-size:0.58rem; text-transform:uppercase; letter-spacing:0.1em;
+    color:var(--accent); background:rgba(240,192,64,0.1);
+    border:1px solid rgba(240,192,64,0.25); padding:3px 10px; border-radius:20px;
+  }
+
+  /* ── Progress ── */
+  #prog-wrap { height:3px; background:#07111e; flex-shrink:0; }
+  #prog-fill { height:100%; background:linear-gradient(90deg,var(--accent),#ff9500); width:0%; transition:width 0.5s ease; }
+
+  /* ── Map ── */
+  #map { flex:1; }
+  .leaflet-container { cursor: crosshair !important; }
+  .leaflet-control-attribution { font-size:9px !important; opacity:0.45; }
+  .leaflet-control-zoom a {
+    background:var(--panel) !important; color:var(--text) !important;
+    border-color:var(--border) !important;
+  }
+  .leaflet-tooltip {
+    background:rgba(10,20,34,0.93) !important; border:1px solid var(--border) !important;
+    color:var(--text) !important; font-family:'DM Mono',monospace !important;
+    font-size:0.78rem !important; border-radius:6px !important;
+    padding:4px 10px !important; box-shadow:0 4px 16px rgba(0,0,0,0.5) !important;
+  }
+  .leaflet-tooltip::before { border-top-color: var(--border) !important; }
+
+  /* ── Overlay / Popup ── */
+  #overlay {
+    position:fixed; inset:0; background:rgba(4,10,20,0.6);
+    backdrop-filter:blur(6px); display:none;
+    align-items:center; justify-content:center; z-index:3000;
+  }
+  #overlay.show { display:flex; }
+  .popup {
+    background:var(--panel); border:1px solid var(--border); border-radius:18px;
+    padding:36px 48px; text-align:center; max-width:380px; width:90%;
+    box-shadow:0 24px 80px rgba(0,0,0,0.8);
+    animation:pop-in 0.32s cubic-bezier(0.34,1.56,0.64,1);
+  }
+  @keyframes pop-in { from{transform:scale(0.72);opacity:0} to{transform:scale(1);opacity:1} }
+  .p-emoji { font-size:3rem; margin-bottom:10px; }
+  .p-title { font-family:'Syne',sans-serif; font-size:1.8rem; font-weight:800; margin-bottom:8px; }
+  .p-title.ok   { color:var(--correct); }
+  .p-title.fail { color:var(--wrong); }
+  .p-pts {
+    display:none; background:rgba(240,192,64,0.12); border:1px solid rgba(240,192,64,0.3);
+    color:var(--accent); font-family:'Syne',sans-serif; font-weight:700; font-size:1rem;
+    padding:4px 16px; border-radius:20px; margin-bottom:16px;
+  }
+  .p-desc { color:var(--muted); font-size:0.78rem; line-height:1.75; margin-bottom:22px; white-space:pre-line; }
+  .next-btn {
+    display:block; width:100%; background:var(--accent); color:#000; border:none;
+    padding:13px; font-family:'Syne',sans-serif; font-weight:700; font-size:1rem;
+    border-radius:10px; cursor:pointer; letter-spacing:0.04em;
+    transition:transform 0.15s, background 0.15s;
+  }
+  .next-btn:hover { transform:scale(1.03); background:#ffd740; }
+
+  /* ── Game Over ── */
+  #gameOver {
+    position:fixed; inset:0; background:rgba(4,10,20,0.97);
+    display:none; flex-direction:column; align-items:center;
+    justify-content:center; z-index:4000; text-align:center; padding:40px;
+  }
+  #gameOver.show { display:flex; }
+  .go-title  { font-family:'Syne',sans-serif; font-size:2.2rem; font-weight:800; color:var(--accent); margin-bottom:4px; }
+  .go-sub    { color:var(--muted); font-size:0.8rem; margin-bottom:28px; }
+  .go-score  { font-family:'Syne',sans-serif; font-size:5.5rem; font-weight:800; color:var(--correct); line-height:1; margin-bottom:4px; }
+  .go-lbl    { font-size:0.6rem; text-transform:uppercase; letter-spacing:0.18em; color:var(--muted); margin-bottom:10px; }
+  .go-detail { font-size:0.78rem; color:#3a5570; margin-bottom:36px; }
+  .restart-btn {
+    background:transparent; border:2px solid var(--accent); color:var(--accent);
+    padding:14px 48px; font-family:'Syne',sans-serif; font-weight:700; font-size:1.05rem;
+    border-radius:10px; cursor:pointer; letter-spacing:0.06em; transition:all 0.2s;
+  }
+  .restart-btn:hover { background:var(--accent); color:#000; }
+
+  /* ── Loading screen ── */
+  #loading {
+    position:fixed; inset:0; background:var(--bg);
+    display:flex; flex-direction:column; align-items:center; justify-content:center;
+    z-index:5000; gap:18px;
+  }
+  .spinner {
+    width:42px; height:42px; border:3px solid var(--border);
+    border-top-color:var(--accent); border-radius:50%;
+    animation:spin 0.8s linear infinite;
+  }
+  @keyframes spin { to { transform:rotate(360deg); } }
+  .load-text { font-size:0.72rem; color:var(--muted); letter-spacing:0.12em; }
+</style>
+</head>
+<body>
+
+<!-- Loading screen shown until map + GeoJSON ready -->
+<div id="loading">
+  <div style="font-family:'Syne',sans-serif;font-size:1.6rem;font-weight:800;color:var(--accent)">🌍 GeoQuiz</div>
+  <div class="spinner"></div>
+  <div class="load-text">Loading world map…</div>
+</div>
+
+<div id="topbar">
+  <div class="logo">🌍 GeoQuiz</div>
+  <div class="stats">
+    <div class="stat"><span class="stat-val" id="scoreVal">0</span><span class="stat-lbl">Score</span></div>
+    <div class="stat"><span class="stat-val" id="streakVal">0</span><span class="stat-lbl">Streak 🔥</span></div>
+    <div class="stat"><span class="stat-val" id="roundVal">1 / 15</span><span class="stat-lbl">Round</span></div>
+  </div>
+</div>
+
+<div id="challenge">
+  <span class="find-label">Find →</span>
+  <span id="targetName">…</span>
+  <span class="continent-tag" id="continentTag"></span>
+</div>
+
+<div id="prog-wrap"><div id="prog-fill"></div></div>
+<div id="map"></div>
+
+<div id="overlay">
+  <div class="popup">
+    <div class="p-emoji" id="pEmoji"></div>
+    <div class="p-title" id="pTitle"></div>
+    <div class="p-pts"   id="pPts"></div>
+    <div class="p-desc"  id="pDesc"></div>
+    <button class="next-btn" id="nextBtn">Next Country →</button>
+  </div>
+</div>
+
+<div id="gameOver">
+  <div class="go-title">Quiz Complete! 🌍</div>
+  <div class="go-sub">Here's how you did</div>
+  <div class="go-score" id="goScore">0</div>
+  <div class="go-lbl">Total Points</div>
+  <div class="go-detail" id="goDetail"></div>
+  <button class="restart-btn" onclick="restart()">Play Again</button>
+</div>
+
+<!-- Leaflet JS loaded LAST, then game init runs via onload callback -->
+<script>
+  // Load Leaflet dynamically and only start the game once it's fully ready
+  (function () {
+    const script = document.createElement('script');
+    script.src = 'https://unpkg.com/leaflet@1.9.4/dist/leaflet.js';
+    script.onload = initGame;
+    script.onerror = function () {
+      document.getElementById('loading').innerHTML =
+        '<div style="color:#ff4060;font-family:Syne,sans-serif;font-size:1rem;text-align:center;padding:40px">⚠️ Failed to load Leaflet.<br><small style="color:#4a6a88">Check your internet connection and reload.</small></div>';
+    };
+    document.head.appendChild(script);
+  })();
+
+  function initGame() {
+    // ── Styles ──────────────────────────────────────────────────────────
+    const S = {
+      def:     { fillColor:'#3a7d55', fillOpacity:0.5,  color:'#1c4030', weight:0.8 },
+      hover:   { fillColor:'#5ab87a', fillOpacity:0.72, color:'#1c4030', weight:1.5 },
+      correct: { fillColor:'#22e07a', fillOpacity:0.9,  color:'#0a5028', weight:2   },
+      wrong:   { fillColor:'#ff4060', fillOpacity:0.85, color:'#7a0020', weight:2   },
+      answer:  { fillColor:'#f0c040', fillOpacity:0.85, color:'#806010', weight:2   },
+    };
+
+    // ── Map setup ────────────────────────────────────────────────────────
+    const map = L.map('map', {
+      center: [20, 10], zoom: 2, minZoom: 1, maxZoom: 6,
+      zoomControl: true, worldCopyJump: false,
+    });
+
+    L.tileLayer('https://{s}.basemaps.cartocdn.com/light_nolabels/{z}/{x}/{y}{r}.png', {
+      attribution: '© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> © <a href="https://carto.com/">CARTO</a>',
+      subdomains: 'abcd', maxZoom: 19,
+    }).addTo(map);
+
+    // ── Quiz countries ───────────────────────────────────────────────────
+    // `name` must match the NAME field in Natural Earth GeoJSON exactly.
+    // `show` is the friendly display name when different.
+    const QUIZ = [
+      {name:'Russia',continent:'Europe / Asia'},
+      {name:'Canada',continent:'North America'},
+      {name:'United States of America',show:'United States',continent:'North America'},
+      {name:'China',continent:'Asia'},
+      {name:'Brazil',continent:'South America'},
+      {name:'Australia',continent:'Oceania'},
+      {name:'India',continent:'Asia'},
+      {name:'Argentina',continent:'South America'},
+      {name:'Kazakhstan',continent:'Asia'},
+      {name:'Algeria',continent:'Africa'},
+      {name:'Dem. Rep. Congo',show:'DR Congo',continent:'Africa'},
+      {name:'Saudi Arabia',continent:'Asia'},
+      {name:'Mexico',continent:'North America'},
+      {name:'Indonesia',continent:'Asia'},
+      {name:'Sudan',continent:'Africa'},
+      {name:'Libya',continent:'Africa'},
+      {name:'Iran',continent:'Asia'},
+      {name:'Mongolia',continent:'Asia'},
+      {name:'Peru',continent:'South America'},
+      {name:'Niger',continent:'Africa'},
+      {name:'Angola',continent:'Africa'},
+      {name:'Mali',continent:'Africa'},
+      {name:'South Africa',continent:'Africa'},
+      {name:'Colombia',continent:'South America'},
+      {name:'Ethiopia',continent:'Africa'},
+      {name:'Bolivia',continent:'South America'},
+      {name:'Mauritania',continent:'Africa'},
+      {name:'Egypt',continent:'Africa'},
+      {name:'Tanzania',continent:'Africa'},
+      {name:'Nigeria',continent:'Africa'},
+      {name:'Venezuela',continent:'South America'},
+      {name:'Pakistan',continent:'Asia'},
+      {name:'Turkey',continent:'Asia / Europe'},
+      {name:'France',continent:'Europe'},
+      {name:'Germany',continent:'Europe'},
+      {name:'Spain',continent:'Europe'},
+      {name:'Sweden',continent:'Europe'},
+      {name:'Japan',continent:'Asia'},
+      {name:'Chile',continent:'South America'},
+      {name:'Zambia',continent:'Africa'},
+      {name:'Morocco',continent:'Africa'},
+      {name:'Kenya',continent:'Africa'},
+      {name:'Ukraine',continent:'Europe'},
+      {name:'Myanmar',continent:'Asia'},
+      {name:'Afghanistan',continent:'Asia'},
+      {name:'Somalia',continent:'Africa'},
+      {name:'Madagascar',continent:'Africa'},
+      {name:'Zimbabwe',continent:'Africa'},
+      {name:'Vietnam',continent:'Asia'},
+      {name:'Norway',continent:'Europe'},
+      {name:'Finland',continent:'Europe'},
+      {name:'Poland',continent:'Europe'},
+      {name:'Iraq',continent:'Asia'},
+      {name:'Thailand',continent:'Asia'},
+      {name:'Philippines',continent:'Asia'},
+      {name:'Malaysia',continent:'Asia'},
+      {name:'Mozambique',continent:'Africa'},
+      {name:'Namibia',continent:'Africa'},
+      {name:'Ghana',continent:'Africa'},
+      {name:'Ecuador',continent:'South America'},
+      {name:'Uruguay',continent:'South America'},
+      {name:'Syria',continent:'Asia'},
+      {name:'South Korea',continent:'Asia'},
+      {name:'Sri Lanka',continent:'Asia'},
+      {name:'Nepal',continent:'Asia'},
+      {name:'United Kingdom',continent:'Europe'},
+      {name:'Italy',continent:'Europe'},
+      {name:'Romania',continent:'Europe'},
+      {name:'Iceland',continent:'Europe'},
+      {name:'New Zealand',continent:'Oceania'},
+      {name:'Cambodia',continent:'Asia'},
+      {name:'Laos',continent:'Asia'},
+      {name:'Uganda',continent:'Africa'},
+      {name:'Botswana',continent:'Africa'},
+      {name:'Cuba',continent:'North America'},
+      {name:'Greenland',continent:'North America'},
+      {name:'Paraguay',continent:'South America'},
+      {name:'Oman',continent:'Asia'},
+      {name:'Yemen',continent:'Asia'},
+      {name:'Uzbekistan',continent:'Asia'},
+      {name:'S. Sudan',show:'South Sudan',continent:'Africa'},
+      {name:'Chad',continent:'Africa'},
+      {name:'Cameroon',continent:'Africa'},
+      {name:'Senegal',continent:'Africa'},
+      {name:'Papua New Guinea',continent:'Oceania'},
+      {name:'Mozambique',continent:'Africa'},
+      {name:'Guatemala',continent:'North America'},
+      {name:'Zimbabwe',continent:'Africa'},
+    ];
+
+    // ── State ────────────────────────────────────────────────────────────
+    const TOTAL = 15;
+    let score=0, streak=0, round=1, correctCount=0, wrongCount=0;
+    let current=null, used=new Set(), answered=false;
+    let geoLayer=null, layerIndex={};
+
+    // ── Load GeoJSON ─────────────────────────────────────────────────────
+    const GEOJSON_URL =
+      'https://raw.githubusercontent.com/nvkelso/natural-earth-vector/master/geojson/ne_110m_admin_0_countries.geojson';
+
+    fetch(GEOJSON_URL)
+      .then(r => { if (!r.ok) throw new Error(r.status); return r.json(); })
+      .then(buildMap)
+      .catch(err => {
+        document.getElementById('loading').innerHTML =
+          `<div style="color:#ff4060;font-family:Syne,sans-serif;font-size:1rem;text-align:center;padding:40px">
+            ⚠️ Could not load GeoJSON (${err.message}).<br>
+            <small style="color:#4a6a88">Check your connection and reload.</small>
+          </div>`;
+      });
+
+    // ── Build map from GeoJSON ────────────────────────────────────────────
+    function buildMap(data) {
+      geoLayer = L.geoJSON(data, {
+        style: () => ({ ...S.def }),
+        onEachFeature: (feature, layer) => {
+          // Natural Earth uses NAME and ADMIN; try both
+          const p = feature.properties;
+          const name = p.NAME || p.ADMIN || p.name || '';
+          layer._geoName = name;
+          layerIndex[name] = layer;
+
+          layer.on('mouseover', function (e) {
+            if (answered || this._locked) return;
+            this.setStyle(S.hover);
+            this.openTooltip();
+          });
+          layer.on('mousemove', function (e) {
+            if (!answered && !this._locked) this.openTooltip(e.latlng);
+          });
+          layer.on('mouseout', function () {
+            if (this._locked) return;
+            this.setStyle(S.def);
+          });
+          layer.on('click', function () { onCountryClick(this); });
+
+          layer.bindTooltip(name, {
+            permanent: false, direction: 'top', sticky: true, opacity: 1,
+          });
+        },
+      }).addTo(map);
+
+      document.getElementById('loading').style.display = 'none';
+      nextRound();
+    }
+
+    // ── Click handler ─────────────────────────────────────────────────────
+    function onCountryClick(layer) {
+      if (answered) return;
+      answered = true;
+      layer._locked = true;
+
+      const isCorrect = (layer._geoName === current.name);
+
+      if (isCorrect) {
+        layer.setStyle(S.correct);
+        streak++;
+        const pts = 10 + Math.max(0, (streak - 1) * 3);
+        score += pts;
+        correctCount++;
+        document.getElementById('scoreVal').textContent  = score;
+        document.getElementById('streakVal').textContent = streak;
+        showPopup(true, pts, layer._geoName);
+      } else {
+        layer.setStyle(S.wrong);
+        streak = 0;
+        wrongCount++;
+        document.getElementById('streakVal').textContent = 0;
+        const cl = layerIndex[current.name];
+        if (cl) { cl._locked = true; cl.setStyle(S.answer); }
+        showPopup(false, 0, layer._geoName);
+      }
+    }
+
+    // ── Popup ─────────────────────────────────────────────────────────────
+    function showPopup(ok, pts, clickedName) {
+      const OK_E   = ['🎉','🌟','✅','🔥','👏'];
+      const FAIL_E = ['❌','😬','💡','🗺️'];
+      document.getElementById('pEmoji').textContent = ok
+        ? OK_E[Math.floor(Math.random() * OK_E.length)]
+        : FAIL_E[Math.floor(Math.random() * FAIL_E.length)];
+
+      const title = document.getElementById('pTitle');
+      const pPts  = document.getElementById('pPts');
+      const desc  = document.getElementById('pDesc');
+      const display = current.show || current.name;
+
+      if (ok) {
+        title.textContent  = 'Correct!';
+        title.className    = 'p-title ok';
+        pPts.style.display = 'inline-block';
+        pPts.textContent   = `+${pts} pts${streak > 1 ? ' · ' + streak + '× streak!' : ''}`;
+        desc.textContent   = `${display} — ${current.continent}`;
+      } else {
+        title.textContent  = 'Not quite!';
+        title.className    = 'p-title fail';
+        pPts.style.display = 'none';
+        desc.textContent   = `You clicked "${clickedName}".\nThe correct country (${display}) is highlighted in gold.`;
+      }
+      document.getElementById('overlay').classList.add('show');
+    }
+
+    document.getElementById('nextBtn').addEventListener('click', () => {
+      document.getElementById('overlay').classList.remove('show');
+      round++;
+      if (round > TOTAL) showGameOver();
+      else nextRound();
+    });
+
+    // ── Next round ────────────────────────────────────────────────────────
+    function nextRound() {
+      if (geoLayer) {
+        geoLayer.eachLayer(l => {
+          l._locked = false;
+          l.setStyle(S.def);
+        });
+      }
+      answered = false;
+
+      // Only pick countries that actually exist in the loaded GeoJSON
+      let pool = QUIZ.filter(c => !used.has(c.name) && layerIndex[c.name]);
+      if (!pool.length) {
+        used.clear();
+        pool = QUIZ.filter(c => layerIndex[c.name]);
+      }
+      if (!pool.length) { showGameOver(); return; }
+
+      current = pool[Math.floor(Math.random() * pool.length)];
+      used.add(current.name);
+
+      const display = current.show || current.name;
+      document.getElementById('targetName').textContent   = display;
+      document.getElementById('continentTag').textContent = current.continent;
+      document.getElementById('roundVal').textContent     = `${round} / ${TOTAL}`;
+      document.getElementById('prog-fill').style.width    = ((round - 1) / TOTAL * 100) + '%';
+    }
+
+    // ── Game over ─────────────────────────────────────────────────────────
+    function showGameOver() {
+      document.getElementById('prog-fill').style.width = '100%';
+      document.getElementById('goScore').textContent   = score;
+      document.getElementById('goDetail').textContent  =
+        `${correctCount} correct · ${wrongCount} wrong · ${TOTAL} rounds`;
+      document.getElementById('gameOver').classList.add('show');
+    }
+
+    window.restart = function () {
+      score=0; streak=0; round=1; correctCount=0; wrongCount=0;
+      used.clear();
+      document.getElementById('scoreVal').textContent  = 0;
+      document.getElementById('streakVal').textContent = 0;
+      document.getElementById('gameOver').classList.remove('show');
+      nextRound();
+    };
+  } // end initGame
+</script>
+
+</body>
+</html>
