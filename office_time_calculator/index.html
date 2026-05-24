@@ -495,6 +495,74 @@
     .toast-arr { font-size: 0.8rem; color: var(--text3); }
     .toast-link:hover .toast-arr { color: var(--text2); }
 
+    /* ── Reviews ── */
+    .reviews-section {
+      margin-top: 20px;
+      border-top: 1px solid var(--border);
+      padding-top: 4px;
+    }
+    .reviews-toggle {
+      width: 100%; background: none; border: none; cursor: pointer;
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 10px 0; gap: 8px;
+    }
+    .reviews-title {
+      font-size: 0.7rem; font-weight: 700; letter-spacing: 0.1em;
+      text-transform: uppercase; color: var(--text3);
+    }
+    .reviews-toggle-right {
+      display: flex; align-items: center; gap: 7px;
+    }
+    .reviews-count {
+      font-size: 0.65rem; font-weight: 700;
+      background: var(--bg3); border: 1px solid var(--border2);
+      color: var(--text3); border-radius: 20px; padding: 1px 7px;
+    }
+    .reviews-chevron {
+      font-size: 0.85rem; color: var(--text3);
+      display: inline-block;
+      transition: transform 0.3s cubic-bezier(0.4,0,0.2,1);
+    }
+    .reviews-chevron.open { transform: rotate(180deg); }
+    .reviews-list {
+      display: flex; flex-direction: column; gap: 8px;
+      overflow: hidden;
+      max-height: 0;
+      opacity: 0;
+      transition: max-height 0.4s cubic-bezier(0.4,0,0.2,1), opacity 0.3s ease, margin-top 0.3s ease;
+      margin-top: 0;
+    }
+    .reviews-list.open {
+      max-height: 800px;
+      opacity: 1;
+      margin-top: 8px;
+    }
+    .review-card {
+      background: var(--bg3);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 10px 13px;
+      display: flex; align-items: flex-start; gap: 10px;
+      transition: border-color 0.2s;
+    }
+    .review-card:hover { border-color: var(--border2); }
+    .review-avatar {
+      width: 28px; height: 28px; border-radius: 8px;
+      background: linear-gradient(135deg, var(--teal), var(--purple));
+      display: flex; align-items: center; justify-content: center;
+      font-size: 0.65rem; font-weight: 800; color: #fff;
+      flex-shrink: 0; opacity: 0.85;
+    }
+    .review-body { flex: 1; }
+    .review-text {
+      font-size: 0.8rem; color: var(--text2); line-height: 1.45;
+    }
+    .review-meta {
+      font-size: 0.62rem; color: var(--text3);
+      margin-top: 3px; display: flex; align-items: center; gap: 6px;
+    }
+    .review-stars { color: var(--amber); letter-spacing: 1px; font-size: 0.6rem; }
+
     @media (max-width: 520px) {
       .card { padding: 20px 16px 20px; border-radius: 22px; }
       .ring-section { grid-template-columns: 1fr; }
@@ -653,6 +721,60 @@
       </div>
       <span class="fl-arr">→</span>
     </a>
+  </div>
+
+  <!-- Reviews (collapsible) -->
+  <div class="reviews-section">
+    <button class="reviews-toggle" id="reviewsToggle" aria-expanded="false">
+      <span class="reviews-title">Reviews</span>
+      <span class="reviews-toggle-right">
+        <span class="reviews-count">5</span>
+        <span class="reviews-chevron" id="reviewsChevron">▾</span>
+      </span>
+    </button>
+    <div class="reviews-list" id="reviewsList">
+
+      <div class="review-card">
+        <div class="review-avatar">AN</div>
+        <div class="review-body">
+          <div class="review-text">Pehle wala design sahi tha. Weekend pr fix kro 😐</div>
+          <div class="review-meta"><span class="review-stars">★★★☆☆</span><span>Anonymous</span></div>
+        </div>
+      </div>
+
+      <div class="review-card">
+        <div class="review-avatar">RK</div>
+        <div class="review-body">
+          <div class="review-text">Achha hai, konse tech stack pr hai?</div>
+          <div class="review-meta"><span class="review-stars">★★★★☆</span><span>Anonymous</span></div>
+        </div>
+      </div>
+
+      <div class="review-card">
+        <div class="review-avatar">SK</div>
+        <div class="review-body">
+          <div class="review-text">Badhiya hai, bookmark kr leta hu 🔖</div>
+          <div class="review-meta"><span class="review-stars">★★★★★</span><span>Anonymous</span></div>
+        </div>
+      </div>
+
+      <div class="review-card">
+        <div class="review-avatar">VT</div>
+        <div class="review-body">
+          <div class="review-text">Isme esa hona chaiye ki localstorage me rkhle ki aaj din me jo check in time daala woh evening tk rhan chaiye</div>
+          <div class="review-meta"><span class="review-stars">★★★★☆</span><span>Anonymous</span></div>
+        </div>
+      </div>
+
+      <div class="review-card">
+        <div class="review-avatar">MJ</div>
+        <div class="review-body">
+          <div class="review-text">Nice one bro, isme buy me a coffee wala add krdo ☕</div>
+          <div class="review-meta"><span class="review-stars">★★★★★</span><span>Anonymous</span></div>
+        </div>
+      </div>
+
+    </div>
   </div>
 
 </div>
@@ -941,7 +1063,7 @@ document.addEventListener('keydown', e => {
   try { const r = JSON.parse(localStorage.getItem(KEY)||'null'); if(r) state = {...state,...r}; } catch(_){}
   if (state.day !== today) state = { day: today, count: 0, last: 0 };
   const now = Date.now();
-  if (state.count < MAX && (!state.last || now - state.last >= GAP)) {
+  if (state.count < MAX && (!state.last || now - stated.last >= GAP)) {
     setTimeout(() => {
       toast.classList.add('show');
       state.count++; state.last = Date.now();
@@ -950,6 +1072,15 @@ document.addEventListener('keydown', e => {
   }
   document.getElementById('toastX').addEventListener('click', () => toast.classList.remove('show'));
 })();
+
+/* ── Reviews toggle ── */
+document.getElementById('reviewsToggle').addEventListener('click', function() {
+  const list = document.getElementById('reviewsList');
+  const chevron = document.getElementById('reviewsChevron');
+  const open = list.classList.toggle('open');
+  chevron.classList.toggle('open', open);
+  this.setAttribute('aria-expanded', open);
+});
 
 /* ── Init ── */
 window.addEventListener('load', () => {
