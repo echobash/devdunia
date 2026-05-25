@@ -294,82 +294,6 @@
     .status-done     { background: rgba(52,211,153,0.14);   color: var(--green); border: 1px solid rgba(52,211,153,0.3); }
     .status-overtime { background: rgba(245,158,11,0.14);   color: var(--amber); border: 1px solid rgba(245,158,11,0.3); }
 
-    /* ── Timeline ── */
-    .timeline-section {
-      background: var(--bg3);
-      border: 1px solid var(--border);
-      border-radius: 16px;
-      padding: 14px 16px;
-      margin-bottom: 16px;
-    }
-    .tl-head {
-      display: flex; align-items: center; justify-content: space-between;
-      margin-bottom: 10px;
-    }
-    .tl-title { font-size: 0.75rem; font-weight: 700; color: var(--text2); letter-spacing: 0.02em; }
-    .tl-time-left {
-      font-size: 0.82rem; font-weight: 700;
-      font-family: 'JetBrains Mono', monospace;
-      color: var(--teal);
-      background: rgba(0,229,199,0.1); border: 1px solid rgba(0,229,199,0.2);
-      border-radius: 8px; padding: 3px 9px;
-      min-width: 100px; text-align: center;
-      transition: all 0.3s;
-    }
-
-    .tl-bar-wrap {
-      position: relative; height: 10px;
-      background: rgba(255,255,255,0.06);
-      border-radius: 999px; overflow: visible;
-      margin-bottom: 8px;
-    }
-    .tl-fill {
-      height: 100%; border-radius: 999px;
-      background: linear-gradient(90deg, var(--teal), var(--purple));
-      width: 0%; transition: width 0.8s cubic-bezier(0.4,0,0.2,1);
-      position: relative;
-    }
-    .tl-fill::after {
-      content: '';
-      position: absolute; inset: 0; border-radius: inherit;
-      background: linear-gradient(90deg, transparent 0%, rgba(255,255,255,0.3) 50%, transparent 100%);
-      animation: shimmer 2s infinite;
-    }
-    @keyframes shimmer {
-      0%   { transform: translateX(-100%); }
-      100% { transform: translateX(100%); }
-    }
-    .tl-thumb {
-      position: absolute; top: 50%; transform: translate(-50%,-50%);
-      width: 18px; height: 18px; border-radius: 50%;
-      background: #fff;
-      border: 3px solid var(--teal);
-      box-shadow: 0 2px 10px rgba(0,229,199,0.5);
-      left: 0%; transition: left 0.8s cubic-bezier(0.4,0,0.2,1);
-      z-index: 2;
-    }
-
-    .tl-labels {
-      display: flex; justify-content: space-between;
-      font-size: 0.72rem; color: var(--text3); font-family: 'JetBrains Mono', monospace;
-    }
-    .tl-labels strong { color: var(--text2); }
-
-    /* milestone markers */
-    .tl-markers { position: relative; height: 0; }
-    .tl-marker {
-      position: absolute; top: -17px;
-      display: flex; flex-direction: column; align-items: center;
-      transform: translateX(-50%);
-      pointer-events: none;
-    }
-    .tl-marker-dot {
-      width: 6px; height: 6px; border-radius: 50%;
-      background: rgba(255,255,255,0.2);
-      border: 1px solid rgba(255,255,255,0.35);
-      margin-bottom: 4px;
-    }
-
     /* ── Insight line ── */
     .insight {
       text-align: center; font-size: 0.78rem; color: var(--text3);
@@ -502,8 +426,9 @@
       padding-top: 4px;
     }
     .reviews-toggle {
-      width: 100%; background: none; border: none; cursor: pointer;
-      display: flex; align-items: center; justify-content: space-between;
+      width: 100% !important; background: none !important; border: none !important;
+      cursor: pointer; color: inherit;
+      display: flex !important; align-items: center; justify-content: space-between;
       padding: 10px 0; gap: 8px;
     }
     .reviews-title {
@@ -523,18 +448,9 @@
       display: inline-block;
       transition: transform 0.3s cubic-bezier(0.4,0,0.2,1);
     }
-    .reviews-chevron.open { transform: rotate(180deg); }
+    .reviews-chevron { transition: transform 0.3s ease; }
     .reviews-list {
-      display: flex; flex-direction: column; gap: 8px;
-      overflow: hidden;
-      max-height: 0;
-      opacity: 0;
-      transition: max-height 0.4s cubic-bezier(0.4,0,0.2,1), opacity 0.3s ease, margin-top 0.3s ease;
-      margin-top: 0;
-    }
-    .reviews-list.open {
-      max-height: 800px;
-      opacity: 1;
+      flex-direction: column; gap: 8px;
       margin-top: 8px;
     }
     .review-card {
@@ -686,23 +602,6 @@
   <!-- Insight -->
   <div class="insight" id="insightText">Set login time or pick a preset above ↑</div>
 
-  <!-- Timeline -->
-  <div class="timeline-section">
-    <div class="tl-head">
-      <div class="tl-title">Work Day Timeline</div>
-      <div class="tl-time-left" id="tlTimeLeft">--h --m --s</div>
-    </div>
-    <div class="tl-bar-wrap">
-      <div class="tl-fill" id="tlFill"></div>
-      <div class="tl-thumb" id="tlThumb"></div>
-    </div>
-    <div class="tl-labels">
-      <strong id="tlLoginLbl">--:--</strong>
-      <span>4h 15m</span>
-      <strong id="tlLogoutLbl">--:--</strong>
-    </div>
-  </div>
-
   <!-- Footer links -->
   <div class="footer">
     <a href="https://devdunia.com" target="_blank" class="footer-link fl-devdunia">
@@ -725,14 +624,14 @@
 
   <!-- Reviews (collapsible) -->
   <div class="reviews-section">
-    <button class="reviews-toggle" id="reviewsToggle" aria-expanded="false">
+    <button class="reviews-toggle" id="reviewsToggle" aria-expanded="false" onclick="toggleReviews(this)">
       <span class="reviews-title">Reviews</span>
       <span class="reviews-toggle-right">
         <span class="reviews-count">5</span>
         <span class="reviews-chevron" id="reviewsChevron">▾</span>
       </span>
     </button>
-    <div class="reviews-list" id="reviewsList">
+    <div class="reviews-list" id="reviewsList" style="display:none">
 
       <div class="review-card">
         <div class="review-avatar">AN</div>
@@ -828,11 +727,6 @@ const ringFillOver = document.getElementById('ringFillOver');
 const ringPct    = document.getElementById('ringPct');
 const ringStatus = document.getElementById('ringStatus');
 const insightText= document.getElementById('insightText');
-const tlFill     = document.getElementById('tlFill');
-const tlThumb    = document.getElementById('tlThumb');
-const tlTimeLeft = document.getElementById('tlTimeLeft');
-const tlLoginLbl = document.getElementById('tlLoginLbl');
-const tlLogoutLbl= document.getElementById('tlLogoutLbl');
 const liveClock  = document.getElementById('liveClock');
 
 const CIRCUMFERENCE = 2 * Math.PI * 65; // ≈ 408.41
@@ -928,9 +822,6 @@ function calculate() {
 
   loginVal.textContent  = fmt(loginDate);
   logoutVal.textContent = fmt(logoutDate);
-  tlLoginLbl.textContent  = fmt(loginDate);
-  tlLogoutLbl.textContent = fmt(logoutDate);
-
   update();
   save();
 }
@@ -945,13 +836,10 @@ function update() {
     /* Not started */
     workedVal.textContent = '0h 0m';
     leftVal.textContent   = '8h 30m';
-    tlTimeLeft.textContent = '8h 30m 00s';
     ringPct.textContent = '0%';
     setRing(0, false);
     setStatus('Ready', 'status-ready');
-    insightText.innerHTML = 'Set your login time to see your timeline.';
-    tlFill.style.width = '0%';
-    tlThumb.style.left = '0%';
+    insightText.innerHTML = 'Set your login time above to get started.';
 
   } else {
     const elapsed = now - loginDate;
@@ -963,18 +851,14 @@ function update() {
     if (isOver) {
       const overtimeMs = now - logoutDate;
       leftVal.textContent   = '+' + fmtHM(overtimeMs);
-      tlTimeLeft.textContent = '+' + fmtDuration(overtimeMs);
       ringPct.textContent = '100%';
       setRing(100, true);
       setStatus('Done ✓', 'status-done');
       insightText.innerHTML = `Overtime: <b>+${fmtHM(overtimeMs)}</b> past your target. Great job! 🎉`;
-      tlFill.style.width  = '100%';
-      tlThumb.style.left  = '100%';
       ringPct.style.color = '#f59e0b';
     } else {
       const remaining = logoutDate - now;
       leftVal.textContent   = fmtHM(remaining);
-      tlTimeLeft.textContent = fmtDuration(remaining);
       ringPct.textContent = Math.round(pct) + '%';
       setRing(pct, false);
       setStatus(Math.round(pct) + '%', 'status-working');
@@ -992,8 +876,6 @@ function update() {
         insightText.innerHTML = `Final stretch! Checkout at <b>${fmt(logoutDate)}</b> 🏁`;
       }
 
-      tlFill.style.width  = pct + '%';
-      tlThumb.style.left  = pct + '%';
     }
   }
 }
@@ -1074,13 +956,16 @@ document.addEventListener('keydown', e => {
 })();
 
 /* ── Reviews toggle ── */
-document.getElementById('reviewsToggle').addEventListener('click', function() {
-  const list = document.getElementById('reviewsList');
-  const chevron = document.getElementById('reviewsChevron');
-  const open = list.classList.toggle('open');
-  chevron.classList.toggle('open', open);
-  this.setAttribute('aria-expanded', open);
-});
+function toggleReviews(btn) {
+  var list = document.getElementById('reviewsList');
+  var chevron = document.getElementById('reviewsChevron');
+  var opening = list.style.display === 'none' || list.style.display === '';
+  list.style.cssText = opening
+    ? 'display:flex !important; flex-direction:column; gap:8px; margin-top:8px;'
+    : 'display:none !important;';
+  chevron.style.transform = opening ? 'rotate(180deg)' : 'rotate(0deg)';
+  btn.setAttribute('aria-expanded', opening);
+}
 
 /* ── Init ── */
 window.addEventListener('load', () => {
