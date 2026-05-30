@@ -42,119 +42,60 @@
   </script>
 
   <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link href="https://fonts.googleapis.com/css2?family=Ubuntu:wght@400;500;700&family=Ubuntu+Mono:wght@400;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;600;700&display=swap" rel="stylesheet">
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
     :root {
-      --bg:      #1a0f1e;
-      --bg2:     #2c2c2c;
-      --bg3:     #383838;
-      --bg4:     #424242;
-      --border:  rgba(255,255,255,0.08);
-      --border2: rgba(255,255,255,0.15);
-      --text:    #f2f0ef;
-      --text2:   rgba(242,240,239,0.72);
-      --text3:   rgba(242,240,239,0.42);
-      --teal:    #e95420;
-      --teal2:   #f26b3a;
-      --purple:  #ad65a5;
+      --bg:      #060b18;
+      --bg2:     #0d1526;
+      --bg3:     #111c32;
+      --bg4:     #16243e;
+      --border:  rgba(255,255,255,0.07);
+      --border2: rgba(255,255,255,0.12);
+      --text:    #f0f4ff;
+      --text2:   rgba(180,195,235,0.75);
+      --text3:   rgba(120,145,195,0.55);
+      --teal:    #00e5c7;
+      --teal2:   #00c4ab;
+      --purple:  #8b5cf6;
       --amber:   #f59e0b;
-      --green:   #77d465;
+      --green:   #34d399;
       --red:     #f87171;
-      --ub-title: #3d3d3d;
     }
 
     html { font-size: 16px; scroll-behavior: smooth; }
 
     body {
-      font-family: 'Ubuntu', system-ui, sans-serif;
+      font-family: 'Inter', system-ui, sans-serif;
       background: var(--bg);
       color: var(--text);
       min-height: 100vh;
       display: flex;
-      flex-direction: column;
       align-items: center;
       justify-content: center;
-      padding: 28px 16px 100px;
+      padding: 24px 16px;
       -webkit-font-smoothing: antialiased;
       overflow-x: hidden;
     }
 
-    /* ── macOS Sonoma-style wallpaper ── */
+    /* ── Background particles ── */
     .bg-glow {
       position: fixed; inset: 0; pointer-events: none; z-index: 0;
       background:
-        radial-gradient(ellipse 80% 60% at 0% 0%,    rgba(120,60,180,0.55) 0%, transparent 55%),
-        radial-gradient(ellipse 60% 60% at 100% 0%,  rgba(233,84,32,0.45) 0%, transparent 50%),
-        radial-gradient(ellipse 70% 50% at 50% 100%, rgba(180,80,40,0.35) 0%, transparent 55%),
-        radial-gradient(ellipse 50% 40% at 20% 80%,  rgba(80,40,140,0.4)  0%, transparent 50%),
-        linear-gradient(160deg, #1a0a2e 0%, #2d1a0e 40%, #1a0a2e 100%);
+        radial-gradient(ellipse 60% 40% at 15% 10%, rgba(0,229,199,0.06) 0%, transparent 60%),
+        radial-gradient(ellipse 50% 40% at 85% 80%, rgba(139,92,246,0.07) 0%, transparent 60%),
+        radial-gradient(ellipse 40% 50% at 50% 50%, rgba(0,229,199,0.03) 0%, transparent 70%);
     }
-    .grid-bg { display: none; }
-
-    /* ── macOS menu bar ── */
-    .mac-menubar {
-      position: fixed; top: 0; left: 0; right: 0; z-index: 999;
-      height: 28px;
-      background: rgba(18,10,28,0.82);
-      backdrop-filter: blur(30px) saturate(160%);
-      -webkit-backdrop-filter: blur(30px) saturate(160%);
-      border-bottom: 1px solid rgba(255,255,255,0.08);
-      display: flex; align-items: center; justify-content: space-between;
-      padding: 0 14px;
-      user-select: none;
-    }
-    .mb-left  { display: flex; align-items: center; gap: 18px; }
-    .mb-right { display: flex; align-items: center; gap: 12px; font-size: 0.72rem; color: rgba(255,255,255,0.88); }
-    .mb-apple { font-size: 1.05rem; cursor: default; }
-    .mb-appname { font-size: 0.8rem; font-weight: 700; color: #fff; cursor: default; }
-    .mb-item {
-      font-size: 0.78rem; color: rgba(255,255,255,0.86); cursor: default;
-      padding: 2px 4px; border-radius: 4px;
-      transition: background 0.1s;
-    }
-    .mb-item:hover { background: rgba(255,255,255,0.15); color: #fff; }
-    .mb-sep { width: 1px; height: 14px; background: rgba(255,255,255,0.15); }
-    .mb-time { font-family: 'Ubuntu Mono', monospace; font-weight: 700; font-size: 0.75rem; }
-    .mb-icon { font-size: 0.82rem; cursor: default; opacity: 0.88; }
-
-    /* ── macOS Dock ── */
-    .mac-dock {
-      position: fixed; bottom: 10px; left: 50%; transform: translateX(-50%);
-      z-index: 999;
-      display: flex; align-items: flex-end; gap: 6px;
-      padding: 8px 14px 6px;
-      background: rgba(255,255,255,0.14);
-      backdrop-filter: blur(40px) saturate(200%);
-      -webkit-backdrop-filter: blur(40px) saturate(200%);
-      border: 1px solid rgba(255,255,255,0.22);
-      border-radius: 20px;
-      box-shadow: 0 8px 32px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.2);
-    }
-    .dock-icon {
-      width: 52px; height: 52px; border-radius: 14px;
-      display: flex; align-items: center; justify-content: center;
-      font-size: 30px; cursor: pointer;
-      transition: transform 0.15s cubic-bezier(0.34,1.56,0.64,1);
-      position: relative; flex-shrink: 0;
-      filter: drop-shadow(0 2px 6px rgba(0,0,0,0.4));
-    }
-    .dock-icon:hover           { transform: scale(1.38) translateY(-10px); }
-    .dock-icon:hover + .dock-icon,
-    .dock-icon.prev-hover      { transform: scale(1.18) translateY(-5px); }
-    .dock-icon.active::after {
-      content: '';
-      position: absolute; bottom: -6px; left: 50%; transform: translateX(-50%);
-      width: 5px; height: 5px; border-radius: 50%;
-      background: rgba(255,255,255,0.8);
-    }
-    .dock-sep {
-      width: 1px; height: 44px; align-self: center;
-      background: rgba(255,255,255,0.25); margin: 0 2px;
+    .grid-bg {
+      position: fixed; inset: 0; pointer-events: none; z-index: 0;
+      background-image:
+        linear-gradient(rgba(0,229,199,0.018) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(0,229,199,0.018) 1px, transparent 1px);
+      background-size: 48px 48px;
+      mask-image: radial-gradient(ellipse 80% 80% at 50% 50%, black, transparent);
     }
 
-<<<<<<< Updated upstream
     .sr-only {
       position: absolute; width: 1px; height: 1px;
       padding: 0; margin: -1px; overflow: hidden;
@@ -162,156 +103,143 @@
     }
 
     /* ── Main container ── */
-=======
-    /* ── macOS Window ── */
->>>>>>> Stashed changes
     .card {
       position: relative; z-index: 1;
       width: 100%; max-width: 520px;
-      background: rgba(28,28,32,0.92);
-      border: 1px solid rgba(255,255,255,0.12);
-      border-radius: 14px;
-      padding: 0 0 20px;
+      background: rgba(13,21,38,0.85);
+      backdrop-filter: blur(24px);
+      border: 1px solid var(--border2);
+      border-radius: 28px;
+      padding: 28px 28px 24px;
       box-shadow:
-        0 0 0 0.5px rgba(0,0,0,0.8),
-        0 40px 80px rgba(0,0,0,0.75),
-        0 12px 28px rgba(0,0,0,0.5),
-        inset 0 1px 0 rgba(255,255,255,0.08);
-      animation: fadeIn 0.45s cubic-bezier(0.34,1.1,0.64,1) both;
-      overflow: hidden;
-      backdrop-filter: blur(20px);
+        0 0 0 1px rgba(0,229,199,0.04),
+        0 24px 64px rgba(0,0,0,0.55),
+        0 4px 16px rgba(0,0,0,0.3);
+      animation: fadeIn 0.6s ease both;
     }
 
     @keyframes fadeIn {
-      from { opacity: 0; transform: scale(0.95) translateY(16px); }
+      from { opacity: 0; transform: translateY(24px); }
       to   { opacity: 1; transform: none; }
     }
 
-    /* ── macOS title bar ── */
+    /* top glow line */
+    .card::before {
+      content: '';
+      position: absolute; top: 0; left: 10%; right: 10%; height: 1px;
+      background: linear-gradient(90deg, transparent, rgba(0,229,199,0.5), transparent);
+      border-radius: 999px;
+    }
+
+    /* ── Header ── */
     .hdr {
-      display: flex; align-items: center;
-      background: rgba(44,44,48,0.95);
-      border-bottom: 1px solid rgba(0,0,0,0.5);
-      padding: 11px 14px;
-      margin-bottom: 18px;
-      cursor: default;
-      user-select: none;
+      display: flex; align-items: center; justify-content: space-between;
+      margin-bottom: 20px;
     }
-
-    /* traffic light controls */
-    .win-controls {
-      display: flex; align-items: center; gap: 8px;
-      margin-right: 10px; flex-shrink: 0;
-    }
-    .wc {
-      width: 12px; height: 12px; border-radius: 50%;
-      display: inline-block; cursor: pointer;
-      transition: filter 0.12s;
-    }
-    .wc:hover { filter: brightness(1.2); }
-    .wc-close  { background: #ff5f57; box-shadow: inset 0 0 0 0.5px rgba(0,0,0,0.25); }
-    .wc-min    { background: #febc2e; box-shadow: inset 0 0 0 0.5px rgba(0,0,0,0.25); }
-    .wc-max    { background: #28c840; box-shadow: inset 0 0 0 0.5px rgba(0,0,0,0.25); }
-
     .logo {
-      display: flex; align-items: center; gap: 7px; flex: 1; justify-content: center;
+      display: flex; align-items: center; gap: 10px;
     }
     .logo-icon {
-      width: 18px; height: 18px; border-radius: 4px;
-      background: linear-gradient(135deg, var(--teal), var(--purple));
+      width: 38px; height: 38px; border-radius: 12px;
+      background: linear-gradient(135deg, rgba(0,229,199,0.2), rgba(139,92,246,0.2));
+      border: 1px solid rgba(0,229,199,0.25);
       display: flex; align-items: center; justify-content: center;
-      font-size: 10px;
+      font-size: 18px;
     }
-    .logo-text { font-size: 0.8rem; font-weight: 600; color: var(--text2); }
-    .logo-sub  { display: none; }
+    .logo-text {
+      font-size: 1.45rem; font-weight: 800; letter-spacing: -0.04em;
+      background: linear-gradient(135deg, #fff 30%, var(--teal));
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+    }
+    .logo-sub { font-size: 0.72rem; color: var(--text3); margin-top: 1px; letter-spacing: 0.02em; }
 
     .live-clock {
-      font-family: 'Ubuntu Mono', monospace;
-      font-size: 0.75rem; font-weight: 700;
-      color: var(--text3); letter-spacing: 0.04em;
-      flex-shrink: 0;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.88rem; font-weight: 600;
+      color: var(--teal);
+      background: rgba(0,229,199,0.08);
+      border: 1px solid rgba(0,229,199,0.18);
+      border-radius: 10px;
+      padding: 6px 12px;
+      letter-spacing: 0.04em;
     }
-
-    /* card body padding */
-    .card > *:not(.hdr) { padding-left: 20px; padding-right: 20px; }
 
     /* ── Presets ── */
     .presets {
-      display: flex; gap: 6px; flex-wrap: wrap;
-      margin-bottom: 16px;
+      display: flex; gap: 7px; flex-wrap: wrap;
+      margin-bottom: 20px;
     }
     .preset {
-      flex: 1; min-width: 60px;
-      padding: 8px 4px; border-radius: 6px;
-      font-size: 0.85rem; font-weight: 500;
-      font-family: 'Ubuntu Mono', monospace;
+      flex: 1; min-width: 64px;
+      padding: 9px 4px; border-radius: 12px;
+      font-size: 0.88rem; font-weight: 600;
+      font-family: 'JetBrains Mono', monospace;
       background: var(--bg3); color: var(--text2);
       border: 1px solid var(--border);
       cursor: pointer;
-      transition: all 0.15s ease;
+      transition: all 0.2s ease;
       text-align: center;
     }
     .preset:hover {
-      background: rgba(233,84,32,0.15);
-      border-color: rgba(233,84,32,0.4);
+      background: rgba(0,229,199,0.1);
+      border-color: rgba(0,229,199,0.35);
       color: var(--teal);
+      transform: translateY(-2px);
     }
     .preset.active {
-      background: rgba(233,84,32,0.2);
-      border-color: rgba(233,84,32,0.6);
+      background: linear-gradient(135deg, rgba(0,229,199,0.2), rgba(0,196,171,0.15));
+      border-color: rgba(0,229,199,0.5);
       color: var(--teal);
-      box-shadow: 0 2px 10px rgba(233,84,32,0.25);
+      box-shadow: 0 4px 14px rgba(0,229,199,0.2);
     }
 
     /* ── Input card ── */
     .input-card {
       background: var(--bg3);
-      border: 1px solid rgba(233,84,32,0.25);
-      border-radius: 8px;
-      padding: 16px 18px;
-      margin-bottom: 16px;
+      border: 1px solid var(--border2);
+      border-radius: 18px;
+      padding: 18px 20px;
+      margin-bottom: 20px;
       position: relative;
     }
     .input-card::before {
       content: 'SET LOGIN TIME';
-      position: absolute; top: -8px; left: 14px;
-      font-size: 0.62rem; font-weight: 700; letter-spacing: 1.5px;
+      position: absolute; top: -9px; left: 20px;
+      font-size: 0.65rem; font-weight: 700; letter-spacing: 1.5px;
       color: var(--teal);
-      background: var(--bg3); padding: 0 6px;
-      font-family: 'Ubuntu', sans-serif;
+      background: var(--bg3); padding: 0 8px;
     }
     .inputs-row {
-      display: flex; align-items: flex-end; gap: 10px; justify-content: center;
+      display: flex; align-items: flex-end; gap: 12px; justify-content: center;
     }
-    .input-group { display: flex; flex-direction: column; align-items: center; gap: 5px; }
+    .input-group { display: flex; flex-direction: column; align-items: center; gap: 6px; }
     .input-lbl {
-      font-size: 0.62rem; font-weight: 500; text-transform: uppercase;
-      letter-spacing: 0.8px; color: var(--text3);
-      font-family: 'Ubuntu', sans-serif;
+      font-size: 0.65rem; font-weight: 700; text-transform: uppercase;
+      letter-spacing: 1px; color: var(--text3);
     }
     .time-input, .period-sel {
-      width: 72px; height: 50px;
+      width: 76px; height: 54px;
       background: var(--bg2); border: 1.5px solid var(--border2);
-      border-radius: 6px; color: var(--text);
-      font-size: 1.45rem; font-weight: 700; font-family: 'Ubuntu Mono', monospace;
+      border-radius: 14px; color: var(--text);
+      font-size: 1.5rem; font-weight: 700; font-family: 'JetBrains Mono', monospace;
       text-align: center; outline: none;
-      transition: all 0.15s ease;
+      transition: all 0.2s ease;
     }
     .time-input:hover, .period-sel:hover {
-      border-color: rgba(255,255,255,0.22);
+      border-color: rgba(255,255,255,0.2);
       background: var(--bg4);
     }
     .time-input:focus, .period-sel:focus {
       border-color: var(--teal);
-      background: rgba(233,84,32,0.07);
-      box-shadow: 0 0 0 3px rgba(233,84,32,0.18);
+      background: rgba(0,229,199,0.07);
+      box-shadow: 0 0 0 3px rgba(0,229,199,0.12);
     }
     .input-sep {
-      font-size: 1.7rem; font-weight: 700; color: var(--text3);
+      font-size: 1.8rem; font-weight: 700; color: var(--text3);
       padding-bottom: 4px; user-select: none;
     }
     .period-sel {
-      font-size: 1.05rem; cursor: pointer;
+      font-size: 1.1rem; cursor: pointer;
       appearance: none;
       background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='10' viewBox='0 0 10 10'%3E%3Cpath fill='rgba(255,255,255,0.35)' d='M5 7L1 3h8z'/%3E%3C/svg%3E");
       background-repeat: no-repeat;
@@ -322,7 +250,7 @@
     /* ── Ring + stats ── */
     .ring-section {
       display: grid; grid-template-columns: 1fr 160px; gap: 16px;
-      margin-bottom: 14px; align-items: center;
+      margin-bottom: 16px; align-items: center;
     }
 
     /* left: stats */
@@ -347,10 +275,10 @@
       display: flex; flex-direction: column; gap: 4px;
       border: 1px solid var(--border);
     }
-    .stat-worked { background: rgba(233,84,32,0.1); border-color: rgba(233,84,32,0.22); }
-    .stat-left   { background: rgba(173,101,165,0.1); border-color: rgba(173,101,165,0.22); }
-    .sc-lbl { font-size: 0.62rem; color: var(--text3); font-weight: 500; text-transform: uppercase; letter-spacing: 0.5px; }
-    .sc-val { font-size: 0.92rem; font-weight: 700; font-family: 'Ubuntu Mono', monospace; letter-spacing: -0.01em; }
+    .stat-worked { background: linear-gradient(135deg, rgba(0,229,199,0.1), rgba(0,196,171,0.05)); border-color: rgba(0,229,199,0.2); }
+    .stat-left   { background: linear-gradient(135deg, rgba(139,92,246,0.1), rgba(139,92,246,0.05)); border-color: rgba(139,92,246,0.2); }
+    .sc-lbl { font-size: 0.65rem; color: var(--text3); font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; }
+    .sc-val { font-size: 0.95rem; font-weight: 700; font-family: 'JetBrains Mono', monospace; letter-spacing: -0.01em; }
     .stat-worked .sc-val { color: var(--teal); }
     .stat-left   .sc-val { color: var(--purple); }
 
@@ -404,9 +332,9 @@
       border-radius: 999px;
       letter-spacing: 0.05em;
     }
-    .status-ready    { background: rgba(255,255,255,0.07);  color: var(--text3); border: 1px solid var(--border); }
-    .status-working  { background: rgba(233,84,32,0.15);    color: var(--teal);  border: 1px solid rgba(233,84,32,0.3); }
-    .status-done     { background: rgba(119,212,101,0.14);  color: var(--green); border: 1px solid rgba(119,212,101,0.3); }
+    .status-ready    { background: rgba(255,255,255,0.07); color: var(--text3); border: 1px solid var(--border); }
+    .status-working  { background: rgba(0,229,199,0.12);   color: var(--teal);  border: 1px solid rgba(0,229,199,0.25); }
+    .status-done     { background: rgba(52,211,153,0.14);   color: var(--green); border: 1px solid rgba(52,211,153,0.3); }
     .status-overtime { background: rgba(245,158,11,0.14);   color: var(--amber); border: 1px solid rgba(245,158,11,0.3); }
 
     /* ── Insight line ── */
@@ -430,10 +358,10 @@
       transition: all 0.2s ease;
     }
     .footer-link:hover { transform: translateY(-2px); }
-    .fl-devdunia { border-color: rgba(233,84,32,0.2); }
-    .fl-devdunia:hover { background: rgba(233,84,32,0.08); border-color: rgba(233,84,32,0.4); box-shadow: 0 4px 14px rgba(233,84,32,0.15); }
-    .fl-echo { border-color: rgba(173,101,165,0.2); }
-    .fl-echo:hover { background: rgba(173,101,165,0.08); border-color: rgba(173,101,165,0.4); box-shadow: 0 4px 14px rgba(173,101,165,0.15); }
+    .fl-devdunia { border-color: rgba(0,229,199,0.18); }
+    .fl-devdunia:hover { background: rgba(0,229,199,0.07); border-color: rgba(0,229,199,0.35); box-shadow: 0 4px 16px rgba(0,229,199,0.12); }
+    .fl-echo { border-color: rgba(139,92,246,0.18); }
+    .fl-echo:hover { background: rgba(139,92,246,0.07); border-color: rgba(139,92,246,0.35); box-shadow: 0 4px 16px rgba(139,92,246,0.12); }
     .fl-icon { font-size: 1.2rem; }
     .fl-text { flex: 1; }
     .fl-name { font-size: 0.82rem; font-weight: 700; color: var(--text); }
@@ -472,7 +400,7 @@
     .particle {
       position: absolute; border-radius: 50%;
       background: var(--teal); opacity: 0;
-      animation: float 10s ease-in-out infinite;
+      animation: float 8s ease-in-out infinite;
     }
     @keyframes float {
       0%   { opacity: 0; transform: translateY(100vh) scale(0); }
@@ -608,26 +536,6 @@
 </head>
 <body>
 
-<!-- macOS menu bar -->
-<div class="mac-menubar">
-  <div class="mb-left">
-    <span class="mb-apple">🍎</span>
-    <span class="mb-appname">Chalo</span>
-    <div class="mb-sep"></div>
-    <span class="mb-item">File</span>
-    <span class="mb-item">Edit</span>
-    <span class="mb-item">View</span>
-    <span class="mb-item">Window</span>
-    <span class="mb-item">Help</span>
-  </div>
-  <div class="mb-right">
-    <span class="mb-icon">📶</span>
-    <span class="mb-icon">🔋</span>
-    <span class="mb-time" id="macTime">--:--</span>
-    <span class="mb-icon">🔔</span>
-  </div>
-</div>
-
 <div class="bg-glow"></div>
 <div class="grid-bg"></div>
 
@@ -636,22 +544,16 @@
 
 <div class="card">
 
-<<<<<<< Updated upstream
   <h1 class="sr-only">Chalo — Free Office Time Calculator: Track Work Hours, Login & Logout Time</h1>
 
   <!-- Header -->
-=======
-  <!-- Ubuntu title bar -->
->>>>>>> Stashed changes
   <div class="hdr">
-    <div class="win-controls">
-      <span class="wc wc-close"></span>
-      <span class="wc wc-min"></span>
-      <span class="wc wc-max"></span>
-    </div>
     <div class="logo">
       <div class="logo-icon">🏢</div>
-      <div class="logo-text">Chalo — Office Time Calculator</div>
+      <div>
+        <div class="logo-text">Chalo</div>
+        <div class="logo-sub">Office Time Calculator</div>
+      </div>
     </div>
     <div class="live-clock" id="liveClock">--:--:--</div>
   </div>
@@ -722,8 +624,8 @@
       <svg class="ring-svg" viewBox="0 0 158 158">
         <defs>
           <linearGradient id="ringGrad" x1="0%" y1="0%" x2="100%" y2="0%">
-            <stop offset="0%"   stop-color="#e95420"/>
-            <stop offset="100%" stop-color="#ad65a5"/>
+            <stop offset="0%"   stop-color="#00e5c7"/>
+            <stop offset="100%" stop-color="#8b5cf6"/>
           </linearGradient>
           <linearGradient id="ringGradOver" x1="0%" y1="0%" x2="100%" y2="0%">
             <stop offset="0%"   stop-color="#f59e0b"/>
@@ -822,22 +724,6 @@
 
 </div>
 
-<!-- macOS Dock -->
-<div class="mac-dock">
-  <div class="dock-icon active" title="Chalo">🏢</div>
-  <div class="dock-icon" title="Finder">📁</div>
-  <div class="dock-icon" title="Safari">🌐</div>
-  <div class="dock-icon" title="Terminal">💻</div>
-  <div class="dock-icon" title="Mail">📧</div>
-  <div class="dock-icon" title="Calendar">📅</div>
-  <div class="dock-sep"></div>
-  <div class="dock-icon" title="Music">🎵</div>
-  <div class="dock-icon" title="Photos">🖼️</div>
-  <div class="dock-sep"></div>
-  <div class="dock-icon" title="Settings">⚙️</div>
-  <div class="dock-icon" title="Trash">🗑️</div>
-</div>
-
 <!-- Keyboard hint -->
 <div class="kbd-hint">
   <span class="kbd">↑↓</span> adjust &nbsp;
@@ -895,18 +781,12 @@ let loginDate = null, logoutDate = null;
 let focusedInput = null;
 
 /* ── Live clock ── */
-const macTimeEl = document.getElementById('macTime');
-const days = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
-const months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
 function tickClock() {
   const now = new Date();
   const hh = String(now.getHours()).padStart(2,'0');
   const mm = String(now.getMinutes()).padStart(2,'0');
   const ss = String(now.getSeconds()).padStart(2,'0');
   liveClock.textContent = `${hh}:${mm}:${ss}`;
-  if (macTimeEl) {
-    macTimeEl.textContent = `${days[now.getDay()]} ${months[now.getMonth()]} ${now.getDate()}  ${hh}:${mm}`;
-  }
 }
 setInterval(tickClock, 1000);
 tickClock();
