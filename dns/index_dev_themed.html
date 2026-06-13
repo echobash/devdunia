@@ -1,0 +1,855 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>The DNS Museum</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,600;0,800;1,600&family=Space+Grotesk:wght@400;500;600;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet"/>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{
+  font-family:'Space Grotesk',sans-serif;
+  background:#070907;
+  color:#f0f0ee;
+  -webkit-font-smoothing:antialiased;
+  overflow-x:hidden;
+}
+:root{
+  --acc:#a8ff3e;
+  --acc-dim:rgba(168,255,62,.1);
+  --acc-bdr:rgba(168,255,62,.22);
+  --gold:#c9a96a;
+  --gold-dim:rgba(201,169,106,.12);
+  --bg:#070907;
+  --wall:#0b0e0b;
+  --case:#101510;
+  --case2:#161c16;
+  --glass:rgba(255,255,255,.02);
+  --b:#1c241c;
+  --b2:#2a342a;
+  --t0:#f0f0ee;
+  --t1:#8fa085;
+  --t2:#4d5a47;
+  --t3:#2b332b;
+  --mono:'Space Mono',monospace;
+  --serif:'Playfair Display',serif;
+}
+
+/* ════════ MUSEUM ATMOSPHERE ════════ */
+/* gallery floor gradient */
+body::before{
+  content:'';position:fixed;inset:0;z-index:0;pointer-events:none;
+  background:
+    radial-gradient(ellipse 100% 40% at 50% 0%, rgba(168,255,62,.04), transparent 60%),
+    radial-gradient(ellipse 80% 30% at 50% 100%, rgba(201,169,106,.03), transparent 60%);
+}
+/* dust particles */
+@keyframes drift{
+  0%{transform:translateY(0) translateX(0);opacity:0}
+  10%{opacity:.4}90%{opacity:.4}
+  100%{transform:translateY(-100vh) translateX(30px);opacity:0}
+}
+.dust{position:fixed;width:2px;height:2px;background:var(--acc);border-radius:50%;
+  pointer-events:none;z-index:1;opacity:0;animation:drift linear infinite}
+
+main,nav,section{position:relative;z-index:2}
+
+/* ════════ NAV — museum ticket bar ════════ */
+.nav{
+  position:sticky;top:0;z-index:100;
+  background:rgba(7,9,7,.92);
+  backdrop-filter:blur(20px);
+  border-bottom:1px solid var(--b);
+  height:64px;display:flex;align-items:center;justify-content:center;gap:20px;
+}
+.nav-est{font-family:var(--mono);font-size:10px;color:var(--t2);letter-spacing:.2em;text-transform:uppercase}
+.nav-logo{
+  font-family:var(--serif);font-size:22px;font-weight:800;
+  letter-spacing:.02em;color:var(--t0);
+}
+.nav-logo em{color:var(--acc);font-style:italic}
+
+/* ════════ HERO — museum entrance ════════ */
+.hero{
+  min-height:92vh;display:flex;flex-direction:column;
+  align-items:center;justify-content:center;text-align:center;
+  padding:60px 24px 80px;position:relative;
+  perspective:1200px;
+}
+/* spotlight cone */
+.hero::before{
+  content:'';position:absolute;top:0;left:50%;transform:translateX(-50%);
+  width:900px;height:600px;
+  background:radial-gradient(ellipse 50% 100% at 50% 0%, rgba(168,255,62,.07), transparent 70%);
+  pointer-events:none;
+}
+.hero-plaque{
+  font-family:var(--mono);font-size:11px;font-weight:700;
+  letter-spacing:.3em;text-transform:uppercase;color:var(--gold);
+  border:1px solid rgba(201,169,106,.3);border-radius:3px;
+  padding:8px 20px;margin-bottom:44px;
+  background:var(--gold-dim);
+}
+.hero-title{
+  transform-style:preserve-3d;
+  margin-bottom:20px;
+  transition:transform .15s ease-out;
+}
+.hero-title .museum-of{
+  display:block;font-family:var(--serif);font-style:italic;font-weight:600;
+  font-size:clamp(22px,3vw,34px);color:var(--t1);
+  letter-spacing:.04em;margin-bottom:8px;
+  transform:translateZ(20px);
+}
+.hero-title .big{
+  display:block;font-family:'Space Grotesk',sans-serif;
+  font-size:clamp(72px,14vw,170px);font-weight:700;
+  line-height:.85;letter-spacing:-.05em;color:var(--acc);
+  transform:translateZ(60px);
+  text-shadow:
+    0 1px 0 rgba(120,190,30,.6),
+    0 2px 0 rgba(100,160,25,.5),
+    0 3px 0 rgba(80,130,20,.4),
+    0 4px 0 rgba(60,100,15,.3),
+    0 6px 0 rgba(40,70,10,.2),
+    0 12px 24px rgba(0,0,0,.6),
+    0 24px 60px rgba(168,255,62,.15);
+}
+.hero-sub{
+  font-size:15px;color:var(--t1);line-height:1.8;max-width:440px;
+  margin:28px 0 48px;
+}
+.hero-sub em{color:var(--gold);font-style:normal;font-family:var(--mono);font-size:13px}
+
+/* ticket-style search */
+.ticket{
+  width:100%;max-width:560px;
+  transform-style:preserve-3d;
+  transition:transform .2s ease-out;
+}
+.ticket-label{
+  font-family:var(--mono);font-size:10px;letter-spacing:.25em;
+  text-transform:uppercase;color:var(--t2);margin-bottom:10px;
+}
+.sbar{
+  display:flex;align-items:center;
+  background:var(--case);border:1px solid var(--b2);
+  border-radius:12px;overflow:hidden;
+  box-shadow:0 20px 60px rgba(0,0,0,.5), inset 0 1px 0 rgba(255,255,255,.04);
+  transition:border-color .2s, box-shadow .2s;
+}
+.sbar:focus-within{
+  border-color:var(--acc-bdr);
+  box-shadow:0 0 0 3px var(--acc-dim),0 20px 60px rgba(0,0,0,.5);
+}
+.spre{font-family:var(--mono);font-size:12px;color:var(--t2);padding:0 4px 0 20px;white-space:nowrap}
+.sinp{
+  flex:1;border:none;outline:none;
+  font-family:var(--mono);font-size:16px;font-weight:700;
+  padding:18px 12px;background:transparent;color:var(--t0);min-width:0;
+}
+.sinp::placeholder{color:var(--t2);font-weight:400}
+.sgo{
+  flex-shrink:0;background:var(--acc);color:#000;
+  padding:0 28px;height:100%;align-self:stretch;
+  display:flex;align-items:center;gap:8px;
+  font-family:var(--mono);font-size:12px;font-weight:700;
+  letter-spacing:.1em;text-transform:uppercase;cursor:pointer;border:none;
+  transition:background .15s;
+}
+.sgo:hover{background:#bfff55}
+.hints{display:flex;align-items:center;justify-content:center;gap:8px;margin-top:18px;font-size:12px;color:var(--t2);flex-wrap:wrap}
+.chip{
+  background:transparent;border:1px solid var(--b2);border-radius:6px;
+  padding:5px 14px;font-family:var(--mono);font-size:12px;color:var(--t1);
+  cursor:pointer;transition:all .15s;
+}
+.chip:hover{color:var(--acc);border-color:var(--acc-bdr);background:var(--acc-dim)}
+
+/* scroll hint */
+.scroll-hint{
+  position:absolute;bottom:32px;font-family:var(--mono);
+  font-size:10px;letter-spacing:.3em;text-transform:uppercase;color:var(--t3);
+  animation:bob 2s ease-in-out infinite;
+}
+@keyframes bob{0%,100%{transform:translateY(0)}50%{transform:translateY(8px)}}
+
+/* ════════ MUSEUM TOUR (results) ════════ */
+.museum{display:none;padding:0 24px 120px;max-width:1080px;margin:0 auto}
+
+/* exhibit ribbon — domain header */
+.ribbon{
+  display:flex;align-items:center;gap:20px;flex-wrap:wrap;
+  padding:48px 0 36px;
+}
+.ribbon-icon{
+  width:64px;height:64px;flex-shrink:0;border-radius:14px;
+  background:linear-gradient(145deg,var(--acc),#7fd428);
+  color:#000;display:flex;align-items:center;justify-content:center;
+  font-family:var(--mono);font-size:26px;font-weight:700;
+  box-shadow:0 12px 32px rgba(168,255,62,.25), inset 0 1px 0 rgba(255,255,255,.3);
+  transform:rotate(-4deg);
+}
+.ribbon-name{
+  font-family:var(--mono);font-size:clamp(28px,4vw,48px);font-weight:700;
+  color:var(--t0);letter-spacing:-.03em;
+}
+.ribbon-sub{
+  font-family:var(--serif);font-style:italic;font-size:15px;color:var(--gold);
+  margin-top:4px;
+}
+.ribbon-pills{display:flex;gap:8px;flex-wrap:wrap;margin-left:auto}
+.dpill{
+  font-family:var(--mono);font-size:12px;font-weight:700;
+  padding:6px 14px;border-radius:6px;border:1px solid;white-space:nowrap;
+}
+.dp-a{background:var(--acc-dim);border-color:var(--acc-bdr);color:var(--acc)}
+.dp-g{background:var(--case);border-color:var(--b2);color:var(--t1)}
+.newbtn{
+  border:1px solid var(--b2);border-radius:8px;padding:9px 18px;
+  font-family:var(--mono);font-size:11px;font-weight:700;letter-spacing:.08em;
+  text-transform:uppercase;color:var(--t1);cursor:pointer;background:transparent;
+  transition:all .15s;flex-shrink:0;
+}
+.newbtn:hover{color:var(--t0);border-color:var(--t2)}
+
+/* ── gallery section ── */
+.gallery{margin-bottom:90px;perspective:1400px}
+.gallery-head{
+  text-align:center;margin-bottom:48px;
+}
+.gallery-no{
+  font-family:var(--mono);font-size:11px;font-weight:700;
+  letter-spacing:.3em;text-transform:uppercase;color:var(--gold);
+  margin-bottom:12px;
+}
+.gallery-title{
+  font-family:var(--serif);font-size:clamp(30px,4.5vw,46px);font-weight:800;
+  color:var(--t0);letter-spacing:.01em;margin-bottom:10px;
+}
+.gallery-title em{color:var(--acc);font-style:italic}
+.gallery-sub{font-size:15px;color:var(--t1)}
+.gallery-rule{
+  width:64px;height:1px;background:var(--gold);opacity:.5;
+  margin:20px auto 0;position:relative;
+}
+.gallery-rule::before,.gallery-rule::after{
+  content:'';position:absolute;top:-2px;width:5px;height:5px;
+  background:var(--gold);transform:rotate(45deg);
+}
+.gallery-rule::before{left:-10px}
+.gallery-rule::after{right:-10px}
+
+/* ── 3D exhibit cards ── */
+.exhibits{display:grid;grid-template-columns:repeat(2,1fr);gap:20px}
+.ex{
+  position:relative;transform-style:preserve-3d;
+  background:linear-gradient(165deg,var(--case2),var(--case));
+  border:1px solid var(--b);border-radius:16px;
+  padding:28px 28px 24px;
+  transition:transform .15s ease-out, border-color .2s, box-shadow .2s;
+  box-shadow:0 20px 50px rgba(0,0,0,.4), inset 0 1px 0 rgba(255,255,255,.03);
+  will-change:transform;
+}
+.ex:hover{border-color:var(--b2);box-shadow:0 30px 70px rgba(0,0,0,.55), 0 0 40px rgba(168,255,62,.05), inset 0 1px 0 rgba(255,255,255,.05)}
+/* glass reflection sweep */
+.ex::before{
+  content:'';position:absolute;inset:0;border-radius:16px;
+  background:linear-gradient(105deg,transparent 40%,rgba(255,255,255,.04) 45%,rgba(255,255,255,.07) 50%,rgba(255,255,255,.04) 55%,transparent 60%);
+  background-size:300% 100%;background-position:100% 0;
+  transition:background-position .8s ease;pointer-events:none;
+}
+.ex:hover::before{background-position:0 0}
+/* spotlight above */
+.ex::after{
+  content:'';position:absolute;top:-40px;left:50%;transform:translateX(-50%);
+  width:70%;height:60px;
+  background:radial-gradient(ellipse 50% 100% at 50% 100%, rgba(168,255,62,.06), transparent 70%);
+  opacity:0;transition:opacity .3s;pointer-events:none;
+}
+.ex:hover::after{opacity:1}
+.ex-inner{transform:translateZ(24px)}
+.ex-top{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;margin-bottom:10px}
+.ex-name{font-family:var(--mono);font-size:30px;font-weight:700;line-height:1;letter-spacing:-.02em}
+.ex-tag{
+  font-family:var(--mono);font-size:10px;font-weight:700;letter-spacing:.1em;
+  padding:5px 12px;border-radius:5px;border:1px solid;white-space:nowrap;text-transform:uppercase;
+}
+.tg{background:var(--case);color:var(--t2);border-color:var(--b2)}
+.tl{background:var(--acc-dim);color:var(--acc);border-color:var(--acc-bdr)}
+.ta{background:rgba(255,180,60,.08);color:#f0a832;border-color:rgba(255,180,60,.22)}
+.tk{background:rgba(110,220,90,.08);color:#6edc5a;border-color:rgba(110,220,90,.2)}
+.cl{color:var(--acc)}.ca{color:#f0a832}.ck2{color:#6edc5a}.cd{color:var(--t2)}
+.ex-suf{font-family:var(--mono);font-size:14px;color:var(--t2);word-break:break-all}
+.ex-plaque{
+  margin-top:16px;padding-top:14px;border-top:1px solid var(--b);
+  font-family:var(--serif);font-style:italic;font-size:14px;color:var(--t1);
+  line-height:1.6;
+}
+
+/* ── display cases (records) ── */
+.filters{display:flex;justify-content:center;gap:8px;flex-wrap:wrap;margin-bottom:36px}
+.fb{
+  background:transparent;border:1px solid var(--b2);border-radius:8px;
+  padding:8px 20px;font-family:var(--mono);font-size:12px;font-weight:700;
+  letter-spacing:.08em;text-transform:uppercase;color:var(--t2);cursor:pointer;
+  transition:all .15s;
+}
+.fb:hover{color:var(--t0)}
+.fb.on{background:var(--acc);color:#000;border-color:var(--acc);box-shadow:0 8px 24px rgba(168,255,62,.2)}
+
+.cases{display:grid;grid-template-columns:1fr;gap:18px}
+.case-item{
+  transform-style:preserve-3d;
+  background:linear-gradient(170deg,var(--case2),var(--case));
+  border:1px solid var(--b);border-radius:16px;overflow:hidden;
+  box-shadow:0 16px 44px rgba(0,0,0,.4), inset 0 1px 0 rgba(255,255,255,.03);
+  transition:transform .15s ease-out, border-color .2s, box-shadow .25s;
+  will-change:transform;
+}
+.case-item:hover{border-color:var(--b2);box-shadow:0 28px 64px rgba(0,0,0,.5), 0 0 50px rgba(168,255,62,.04)}
+.case-head{
+  display:flex;align-items:center;gap:18px;
+  padding:24px 28px;cursor:pointer;
+  transition:background .15s;
+}
+.case-head:hover{background:rgba(255,255,255,.015)}
+.case-type{
+  font-family:var(--mono);font-size:32px;font-weight:700;color:var(--t0);
+  min-width:96px;letter-spacing:-.02em;line-height:1;
+  text-shadow:0 6px 20px rgba(0,0,0,.5);
+}
+.case-item.open .case-type{color:var(--acc);text-shadow:0 0 30px rgba(168,255,62,.3)}
+.case-short{font-size:17px;color:var(--t1);flex:1;line-height:1.4}
+.case-arr{
+  font-family:var(--mono);font-size:18px;color:var(--t2);flex-shrink:0;
+  transition:transform .25s,color .15s;width:24px;text-align:center;
+}
+.case-item.open .case-arr{transform:rotate(45deg);color:var(--acc)}
+.case-body{max-height:0;overflow:hidden;transition:max-height .35s cubic-bezier(.4,0,.2,1)}
+.case-item.open .case-body{max-height:900px}
+.case-inner{padding:0 28px 30px}
+.case-why{font-size:16px;line-height:1.85;color:var(--t1);margin-bottom:22px}
+.case-why strong{color:var(--t0);font-weight:700}
+.code{
+  font-family:var(--mono);font-size:13.5px;
+  background:var(--bg);border:1px solid var(--b);
+  border-radius:10px;padding:22px 26px;line-height:2.2;
+  overflow-x:auto;white-space:pre;color:var(--t1);
+  box-shadow:inset 0 2px 12px rgba(0,0,0,.4);
+}
+.ck{color:#7eb8f5}.cv{color:#6edc5a}.ct{color:#f0a832}.cm{color:var(--t3)}
+
+/* ── plaque wall (name field) ── */
+.plaques{display:grid;grid-template-columns:repeat(2,1fr);gap:18px;margin-bottom:24px}
+.plq{
+  transform-style:preserve-3d;
+  background:linear-gradient(160deg,var(--case2),var(--case));
+  border:1px solid var(--b);border-radius:14px;padding:26px 28px;
+  box-shadow:0 14px 40px rgba(0,0,0,.4);
+  transition:transform .15s ease-out, border-color .2s;
+  will-change:transform;
+}
+.plq:hover{border-color:var(--b2)}
+.plq-h{display:flex;align-items:center;gap:14px;margin-bottom:12px;transform:translateZ(16px)}
+.plq-sym{
+  font-family:var(--mono);font-size:26px;font-weight:700;
+  width:52px;height:52px;border-radius:10px;flex-shrink:0;
+  display:flex;align-items:center;justify-content:center;
+  background:var(--bg);border:1px solid var(--b2);
+  box-shadow:inset 0 2px 8px rgba(0,0,0,.5);
+}
+.plq-title{font-family:var(--serif);font-size:19px;font-weight:800;color:var(--t0)}
+.plq-desc{font-size:15px;color:var(--t1);line-height:1.8;margin-bottom:16px}
+.plq-eg{
+  font-family:var(--mono);font-size:13px;background:var(--bg);
+  border:1px solid var(--b);border-radius:8px;padding:14px 16px;
+  color:var(--t1);line-height:2;white-space:pre;overflow-x:auto;
+  box-shadow:inset 0 2px 10px rgba(0,0,0,.4);
+}
+/* name table — museum ledger */
+.ledger-wrap{overflow-x:auto;border:1px solid var(--b);border-radius:14px;margin-bottom:28px;
+  box-shadow:0 16px 44px rgba(0,0,0,.35)}
+.ledger{width:100%;border-collapse:collapse;min-width:560px;background:var(--case)}
+.ledger th{
+  background:var(--case2);padding:16px 20px;text-align:left;
+  font-family:var(--mono);font-size:11px;font-weight:700;letter-spacing:.12em;
+  text-transform:uppercase;color:var(--gold);border-bottom:1px solid var(--b);
+}
+.ledger td{padding:16px 20px;border-bottom:1px solid var(--b);vertical-align:middle}
+.ledger tr:last-child td{border-bottom:none}
+.ledger tr:hover td{background:rgba(255,255,255,.015)}
+.lk{font-family:var(--mono);font-size:17px;font-weight:700}
+.lv{font-family:var(--mono);font-size:14px;color:var(--t1)}
+.ldep{
+  display:inline-block;background:var(--bg);border:1px solid var(--b2);
+  border-radius:5px;font-family:var(--mono);font-size:11px;
+  padding:3px 10px;color:var(--t2);font-weight:700;
+}
+.lnote{font-size:14px;color:var(--t1)}
+
+/* ── tour stops (resolution) ── */
+.tour{position:relative;padding-left:36px}
+.tour::before{
+  content:'';position:absolute;left:23px;top:30px;bottom:30px;width:2px;
+  background:linear-gradient(180deg,var(--acc) 0%,var(--gold) 100%);opacity:.3;
+}
+.stop{
+  position:relative;transform-style:preserve-3d;
+  background:linear-gradient(165deg,var(--case2),var(--case));
+  border:1px solid var(--b);border-radius:14px;
+  padding:26px 28px;margin-bottom:18px;
+  box-shadow:0 14px 40px rgba(0,0,0,.35);
+  transition:transform .15s ease-out,border-color .2s;
+  will-change:transform;
+}
+.stop:hover{border-color:var(--b2)}
+.stop-n{
+  position:absolute;left:-36px;top:26px;
+  width:48px;height:48px;border-radius:12px;
+  display:flex;align-items:center;justify-content:center;
+  font-family:var(--mono);font-size:15px;font-weight:700;
+  background:linear-gradient(145deg,var(--acc),#7fd428);color:#000;
+  box-shadow:0 10px 26px rgba(168,255,62,.25);
+  transform:translateZ(30px);
+}
+.stop.final .stop-n{
+  background:linear-gradient(145deg,var(--gold),#9a7c45);
+  box-shadow:0 10px 26px rgba(201,169,106,.3);
+}
+.stop-content{padding-left:28px;transform:translateZ(12px)}
+.stop-title{font-size:19px;font-weight:700;color:var(--t0);margin-bottom:8px;letter-spacing:-.02em}
+.stop-desc{font-size:15px;color:var(--t1);line-height:1.8}
+.stop-tag{
+  display:inline-block;margin-top:14px;
+  font-family:var(--mono);font-size:11px;background:var(--bg);
+  border:1px solid var(--b);border-radius:6px;padding:5px 12px;color:var(--t2);
+}
+
+/* exit plaque */
+.exit-plaque{
+  text-align:center;margin-top:80px;padding-top:48px;border-top:1px solid var(--b);
+}
+.exit-plaque .serif{font-family:var(--serif);font-style:italic;font-size:18px;color:var(--t1);margin-bottom:8px}
+.exit-plaque .mono{font-family:var(--mono);font-size:11px;letter-spacing:.25em;text-transform:uppercase;color:var(--t3)}
+
+/* reveal animation */
+.reveal{opacity:0;transform:translateY(40px) rotateX(8deg);transition:opacity .7s ease,transform .7s cubic-bezier(.2,.6,.2,1)}
+.reveal.in{opacity:1;transform:translateY(0) rotateX(0)}
+
+@media(max-width:760px){
+  .exhibits{grid-template-columns:1fr}
+  .plaques{grid-template-columns:1fr}
+  .case-type{font-size:24px;min-width:72px}
+  .case-short{font-size:14px}
+  .ribbon-pills{width:100%}
+  .tour{padding-left:28px}
+  .stop-n{left:-28px;width:40px;height:40px;font-size:13px}
+  .stop-content{padding-left:20px}
+}
+</style>
+</head>
+<body>
+
+<nav class="nav">
+  <span class="nav-est">EST. 1983</span>
+  <div class="nav-logo">The <em>DNS</em> Museum</div>
+  <span class="nav-est">HALL OF RECORDS</span>
+</nav>
+
+<section class="hero" id="hero">
+  <div class="hero-plaque">★ Permanent Exhibition ★</div>
+  <div class="hero-title" id="hero-title">
+    <span class="museum-of">The Museum of</span>
+    <span class="big">DNS</span>
+  </div>
+  <p class="hero-sub">
+    Step inside the architecture of the internet's naming system.<br/>
+    <em>// admission free · self-guided tour · est. 1983</em>
+  </p>
+  <div class="ticket" id="ticket">
+    <div class="ticket-label">— Admit One · Enter Any Domain —</div>
+    <div class="sbar" id="sbar">
+      <span class="spre">dns://</span>
+      <input class="sinp" id="inp" type="text" placeholder="echobash.com"
+        autocomplete="off" spellcheck="false" autocapitalize="none"/>
+      <button class="sgo" id="gobtn">Begin Tour →</button>
+    </div>
+    <div class="hints">
+      Try:
+      <button class="chip" onclick="run('stripe.com')">stripe.com</button>
+      <button class="chip" onclick="run('github.com')">github.com</button>
+      <button class="chip" onclick="run('vercel.com')">vercel.com</button>
+    </div>
+  </div>
+  <div class="scroll-hint">▼ The Tour Awaits ▼</div>
+</section>
+
+<main class="museum" id="museum">
+
+  <!-- ribbon -->
+  <div class="ribbon">
+    <div class="ribbon-icon" id="ricon">◆</div>
+    <div>
+      <div class="ribbon-name" id="rname"></div>
+      <div class="ribbon-sub" id="rsub"></div>
+    </div>
+    <div class="ribbon-pills" id="rpills"></div>
+    <button class="newbtn" onclick="reset()">← New Tour</button>
+  </div>
+
+  <!-- GALLERY 01 -->
+  <section class="gallery">
+    <div class="gallery-head reveal">
+      <div class="gallery-no">Gallery No. 01</div>
+      <h2 class="gallery-title">The <em>Hierarchy</em> Hall</h2>
+      <p class="gallery-sub">Where your domain lives in the global tree — read right to left</p>
+      <div class="gallery-rule"></div>
+    </div>
+    <div class="exhibits" id="exhibits"></div>
+  </section>
+
+  <!-- GALLERY 02 -->
+  <section class="gallery">
+    <div class="gallery-head reveal">
+      <div class="gallery-no">Gallery No. 02</div>
+      <h2 class="gallery-title">The <em>Record</em> Archive</h2>
+      <p class="gallery-sub">Nine artifacts — click a display case to open it</p>
+      <div class="gallery-rule"></div>
+    </div>
+    <div class="filters" id="filters"></div>
+    <div class="cases" id="cases"></div>
+  </section>
+
+  <!-- GALLERY 03 -->
+  <section class="gallery">
+    <div class="gallery-head reveal">
+      <div class="gallery-no">Gallery No. 03</div>
+      <h2 class="gallery-title">Hall of <em>Names</em></h2>
+      <p class="gallery-sub">What the name field accepts — engraved for posterity</p>
+      <div class="gallery-rule"></div>
+    </div>
+    <div class="ledger-wrap reveal">
+      <table class="ledger">
+        <thead><tr><th>You type</th><th>DNS sees</th><th>Depth</th><th>Use case</th></tr></thead>
+        <tbody id="ledgerbody"></tbody>
+      </table>
+    </div>
+    <div class="plaques" id="plaques"></div>
+  </section>
+
+  <!-- GALLERY 04 -->
+  <section class="gallery">
+    <div class="gallery-head reveal">
+      <div class="gallery-no">Gallery No. 04</div>
+      <h2 class="gallery-title">The <em>Resolution</em> Tour</h2>
+      <p class="gallery-sub">Follow the guided path — how a browser finds the answer</p>
+      <div class="gallery-rule"></div>
+    </div>
+    <div class="tour" id="tour"></div>
+  </section>
+
+  <div class="exit-plaque reveal">
+    <div class="serif">"Every great journey begins with a single lookup."</div>
+    <div class="mono">— You have reached the end of the tour —</div>
+  </div>
+
+</main>
+
+<script>
+/* ── helpers ── */
+function fIP(s){var h=5381;for(var i=0;i<s.length;i++)h=(h*33^s.charCodeAt(i))>>>0;return (34+(h&63))+'.'+(((h>>6)&127)+20)+'.'+(((h>>13)&127)+10)+'.'+(((h>>20)&127)+5)}
+function fIP6(s){var h=0;for(var i=0;i<s.length;i++)h=(h*17+s.charCodeAt(i))>>>0;return '2606:4700::'+((h&0xffff).toString(16))+':'+(((h>>16)&0xffff).toString(16))}
+function clean(r){return r.trim().toLowerCase().replace(/^https?:\/\//,'').replace(/\/.*/,'').replace(/^www\./,'')}
+function esc(s){return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')}
+
+var Z=null, RECS=[], CAT='all';
+
+/* ── dust particles ── */
+(function(){
+  for(var i=0;i<14;i++){
+    var d=document.createElement('div');
+    d.className='dust';
+    d.style.left=(Math.random()*100)+'vw';
+    d.style.bottom='-10px';
+    d.style.animationDuration=(14+Math.random()*20)+'s';
+    d.style.animationDelay=(Math.random()*16)+'s';
+    document.body.appendChild(d);
+  }
+})();
+
+/* ── 3D tilt engine — applies to .ex, .case-item, .plq, .stop, hero title ── */
+function attachTilt(el, maxDeg){
+  el.addEventListener('mousemove', function(e){
+    var r=el.getBoundingClientRect();
+    var px=(e.clientX-r.left)/r.width - .5;
+    var py=(e.clientY-r.top)/r.height - .5;
+    el.style.transform='perspective(900px) rotateY('+(px*maxDeg)+'deg) rotateX('+(-py*maxDeg)+'deg) translateZ(0)';
+  });
+  el.addEventListener('mouseleave', function(){
+    el.style.transform='perspective(900px) rotateY(0) rotateX(0)';
+  });
+}
+function attachAllTilts(){
+  document.querySelectorAll('.ex').forEach(function(el){attachTilt(el,7)});
+  document.querySelectorAll('.case-item').forEach(function(el){attachTilt(el,3)});
+  document.querySelectorAll('.plq').forEach(function(el){attachTilt(el,6)});
+  document.querySelectorAll('.stop').forEach(function(el){attachTilt(el,4)});
+}
+
+/* hero title parallax */
+(function(){
+  var t=document.getElementById('hero-title');
+  var hero=document.getElementById('hero');
+  hero.addEventListener('mousemove',function(e){
+    var px=(e.clientX/window.innerWidth - .5);
+    var py=(e.clientY/window.innerHeight - .5);
+    t.style.transform='perspective(900px) rotateY('+(px*8)+'deg) rotateX('+(-py*8)+'deg)';
+  });
+  hero.addEventListener('mouseleave',function(){
+    t.style.transform='perspective(900px) rotateY(0) rotateX(0)';
+  });
+})();
+
+/* scroll reveal */
+var observer=new IntersectionObserver(function(entries){
+  entries.forEach(function(en){
+    if(en.isIntersecting){en.target.classList.add('in');observer.unobserve(en.target)}
+  });
+},{threshold:.12});
+function observeReveals(){
+  document.querySelectorAll('.reveal').forEach(function(el){observer.observe(el)});
+}
+observeReveals();
+
+/* ── events ── */
+document.getElementById('inp').addEventListener('keydown',function(e){if(e.key==='Enter')go()});
+document.getElementById('gobtn').addEventListener('click',go);
+
+function go(){
+  var raw=document.getElementById('inp').value.trim();
+  if(!raw)return;
+  var d=clean(raw);
+  if(d.indexOf('.')<0){
+    var b=document.getElementById('sbar');
+    b.style.borderColor='#e06c75';
+    setTimeout(function(){b.style.borderColor=''},1800);
+    return;
+  }
+  explore(d);
+}
+window.run=function(d){document.getElementById('inp').value=d;explore(d)};
+window.reset=function(){
+  document.getElementById('museum').style.display='none';
+  document.getElementById('hero').style.display='flex';
+  document.getElementById('inp').value='';
+  window.scrollTo({top:0,behavior:'smooth'});
+};
+
+/* ── explore ── */
+function explore(domain){
+  var segs=domain.split('.');
+  var tld=segs[segs.length-1];
+  var sld=segs[segs.length-2];
+  Z={domain:domain,segs:segs,tld:tld,sld:sld,
+     mainIP:fIP(domain),apiIP:fIP(domain+'_api'),ip6:fIP6(domain)};
+  CAT='all';
+
+  document.getElementById('hero').style.display='none';
+  document.getElementById('museum').style.display='block';
+
+  renderRibbon();
+  renderExhibits();
+  RECS=buildRecs();
+  renderFilters();
+  renderCases();
+  renderLedger();
+  renderPlaques();
+  renderTour();
+
+  /* re-arm reveals + tilts */
+  document.querySelectorAll('.reveal').forEach(function(el){el.classList.remove('in');observer.observe(el)});
+  setTimeout(attachAllTilts,80);
+
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+/* ── ribbon ── */
+function renderRibbon(){
+  document.getElementById('rname').textContent=Z.domain;
+  document.getElementById('rsub').textContent='Exhibit No. '+(1000+Math.floor(Math.random()*9000))+' · .'+Z.tld+' wing · simulated zone';
+  document.getElementById('rpills').innerHTML=
+    '<span class="dpill dp-a">A '+Z.mainIP+'</span>'+
+    '<span class="dpill dp-g">TTL 3600</span>'+
+    '<span class="dpill dp-a">IPv6</span>';
+}
+
+/* ── exhibits (hierarchy) ── */
+function renderExhibits(){
+  var d=Z.domain;
+  var rows=[
+    {name:'.',  tag:'root',      tc:'tg', nc:'cd', suf:'the invisible root', plq:'Every domain on Earth ends here. Thirteen server clusters answer for it.'},
+    {name:Z.tld,tag:'TLD',       tc:'tg', nc:'cd', suf:'top-level domain',  plq:'Run by the registry. Knows every .'+Z.tld+' domain that exists.'},
+    {name:Z.sld,tag:'domain',    tc:'tg', nc:'',   suf:Z.sld+'.'+Z.tld,     plq:'Your registered name. Rented annually from a registrar.'},
+    {name:'@',  tag:'apex',      tc:'tl', nc:'cl', suf:d+'.',               plq:'The zone root itself. Home of the homepage, MX, and SPF.'},
+    {name:'www',tag:'subdomain', tc:'ta', nc:'ca', suf:'www.'+d+'.',        plq:'The classic web prefix. Browsers try it by habit.'},
+    {name:'api',tag:'subdomain', tc:'ta', nc:'ca', suf:'api.'+d+'.',        plq:'Where the backend lives. One label deep, fully independent.'},
+    {name:'*',  tag:'wildcard',  tc:'tg', nc:'cd', suf:'*.'+d+'.',          plq:'Catches any name not otherwise defined. One label only.'},
+    {name:'staging.api',tag:'sub-sub',tc:'tg',nc:'cd',suf:'staging.api.'+d+'.', plq:'Labels chain without limit. Depth is free in DNS.'},
+  ];
+  document.getElementById('exhibits').innerHTML=rows.map(function(r){
+    return '<div class="ex reveal"><div class="ex-inner">'+
+      '<div class="ex-top">'+
+        '<span class="ex-name '+r.nc+'">'+r.name+'</span>'+
+        '<span class="ex-tag '+r.tc+'">'+r.tag+'</span>'+
+      '</div>'+
+      '<div class="ex-suf">'+r.suf+'</div>'+
+      '<div class="ex-plaque">'+r.plq+'</div>'+
+    '</div></div>';
+  }).join('');
+}
+
+/* ── records ── */
+function buildRecs(){
+  var d=Z.domain, ip=Z.mainIP, a2=Z.apiIP, i6=Z.ip6;
+  var rev=ip.split('.').reverse().join('.');
+  return [
+    {t:'A', cat:'address', short:'Maps a name to an IPv4 address',
+     why:'The most fundamental DNS record. Maps <strong>'+d+'</strong> to a server IPv4 address. Every browser resolving your domain ends with this number and opens a TCP connection to it.',
+     code:'<span class="ck">Name</span>    <span class="ct">Type</span>  <span class="cv">Content</span>            <span class="cm">TTL</span>\n<span class="ck">@</span>       <span class="ct">A</span>     <span class="cv">'+ip+'</span>    <span class="cm">3600</span>\n<span class="ck">www</span>     <span class="ct">A</span>     <span class="cv">'+ip+'</span>    <span class="cm">3600</span>\n<span class="ck">api</span>     <span class="ct">A</span>     <span class="cv">'+a2+'</span>     <span class="cm">3600</span>\n<span class="cm">; Multiple A records = round-robin load balancing</span>'},
+    {t:'AAAA', cat:'address', short:'Maps a name to an IPv6 address',
+     why:'Like A but for 128-bit IPv6. Browsers race IPv4 and IPv6 simultaneously — Happy Eyeballs — using whichever responds first. IPv4 ran out in 2011.',
+     code:'<span class="ck">Name</span>    <span class="ct">Type</span>    <span class="cv">Content</span>                  <span class="cm">TTL</span>\n<span class="ck">@</span>       <span class="ct">AAAA</span>    <span class="cv">'+i6+'</span>   <span class="cm">3600</span>\n<span class="ck">www</span>     <span class="ct">AAAA</span>    <span class="cv">'+i6+'</span>   <span class="cm">3600</span>\n<span class="cm">; Add alongside A — never instead of it</span>'},
+    {t:'CNAME', cat:'routing', short:'Alias — one name points to another name',
+     why:'Makes one hostname an alias of another. When the IP changes, update one A record and all CNAMEs follow. Cannot exist at the zone apex (@).',
+     code:'<span class="ck">Name</span>    <span class="ct">Type</span>     <span class="cv">Content</span>         <span class="cm">TTL</span>\n<span class="ck">www</span>     <span class="ct">CNAME</span>    <span class="cv">'+d+'.</span>    <span class="cm">3600</span>\n<span class="ck">blog</span>    <span class="ct">CNAME</span>    <span class="cv">'+d+'.</span>    <span class="cm">3600</span>\n<span class="cm">; chain: blog → '+d+' → A → '+ip+'</span>'},
+    {t:'MX', cat:'email', short:'Routes inbound email to mail servers',
+     why:'Tells other mail servers where to deliver email sent to @'+d+'. Without MX, all inbound email bounces. Lower priority number = tried first.',
+     code:'<span class="ck">Name</span>  <span class="ct">Type</span>  <span class="cm">Priority</span>  <span class="cv">Mail server</span>         <span class="cm">TTL</span>\n<span class="ck">@</span>     <span class="ct">MX</span>    <span class="cm">10</span>        <span class="cv">mail.'+d+'.</span>     <span class="cm">3600</span>\n<span class="ck">@</span>     <span class="ct">MX</span>    <span class="cm">20</span>        <span class="cv">backup.'+d+'.</span>   <span class="cm">3600</span>\n<span class="cm">; MX always points to a hostname, never an IP</span>'},
+    {t:'TXT', cat:'security', short:'Freeform text — verification and email auth',
+     why:'Text attached to any DNS name. Used by Google and GitHub to prove domain ownership. SPF declares which servers may send email. DKIM signs outgoing mail. DMARC sets failure policy.',
+     code:'<span class="ck">Name</span>  <span class="ct">Type</span>  <span class="cv">Content</span>                              <span class="cm">TTL</span>\n<span class="ck">@</span>     <span class="ct">TXT</span>   <span class="cv">"v=spf1 include:sendgrid.net ~all"</span>   <span class="cm">3600</span>\n<span class="ck">@</span>     <span class="ct">TXT</span>   <span class="cv">"google-site-verification=xK9..."</span>    <span class="cm">3600</span>\n<span class="cm">; one name can hold multiple TXT records</span>'},
+    {t:'SOA', cat:'zone', short:'Zone identity — always auto-managed',
+     why:'Start of Authority — one per zone, auto-created by your DNS provider. Names the primary nameserver, sets zone sync timing, and carries a serial that increments on every change.',
+     code:'<span class="ck">'+d+'.</span>  <span class="ct">SOA</span>\n  <span class="cv">ns1.'+d+'.</span>         <span class="cm">; primary NS</span>\n  <span class="cv">admin.'+d+'.</span>       <span class="cm">; admin email</span>\n  <span class="cv">2026061201</span>        <span class="cm">; serial</span>\n  <span class="cv">3600 900 604800 300</span>  <span class="cm">; refresh retry expire min</span>'},
+    {t:'NS', cat:'zone', short:'Delegates zone authority to nameservers',
+     why:'Tells the internet which servers are authoritative for <strong>'+d+'</strong>. Set at your domain registrar — not in your DNS panel. Changes take up to 48 hours to propagate.',
+     code:'<span class="ck">'+d+'.</span>  <span class="ct">NS</span>  <span class="cv">ns1.cloudflare.com.</span>\n<span class="ck">'+d+'.</span>  <span class="ct">NS</span>  <span class="cv">ns2.cloudflare.com.</span>\n<span class="cm">; set at your registrar, not your DNS panel\n; always keep 2 or more NS records</span>'},
+    {t:'CAA', cat:'security', short:'Restricts which CAs can issue TLS certs',
+     why:'Locks down which certificate authorities may issue SSL/TLS certs for <strong>'+d+'</strong>. Without CAA, any of 150+ trusted CAs could sign a cert for your domain.',
+     code:'<span class="ck">Name</span>  <span class="ct">Type</span>  <span class="cv">Content</span>                    <span class="cm">TTL</span>\n<span class="ck">@</span>     <span class="ct">CAA</span>   <span class="cv">0 issue "letsencrypt.org"</span>  <span class="cm">3600</span>\n<span class="ck">@</span>     <span class="ct">CAA</span>   <span class="cv">0 issuewild ";"</span>            <span class="cm">3600</span>\n<span class="cm">; issuewild ";" blocks all wildcard certs</span>'},
+    {t:'PTR', cat:'reverse', short:'Maps an IP address back to a hostname',
+     why:'Reverse DNS — maps an IP back to <strong>'+d+'</strong>. Lives in the in-addr.arpa zone managed by your hosting provider. Missing PTR is a leading cause of email going to spam.',
+     code:'<span class="cm">; Managed by your host, not you</span>\n<span class="ck">'+rev+'.in-addr.arpa.</span>\n    <span class="ct">PTR</span>  <span class="cv">'+d+'.</span>\n<span class="cm">; Contact your host support to set this up</span>'},
+  ];
+}
+
+function renderFilters(){
+  var cats=['all','address','routing','email','security','zone','reverse'];
+  document.getElementById('filters').innerHTML=cats.map(function(c){
+    return '<button class="fb'+(c===CAT?' on':'')+'" onclick="setFilter(\''+c+'\')">'+c+'</button>';
+  }).join('');
+}
+window.setFilter=function(c){
+  CAT=c;
+  document.querySelectorAll('.fb').forEach(function(b){b.classList.toggle('on',b.textContent===c)});
+  renderCases();
+  setTimeout(attachAllTilts,50);
+};
+
+function renderCases(){
+  var list=CAT==='all'?RECS:RECS.filter(function(r){return r.cat===CAT});
+  document.getElementById('cases').innerHTML=list.map(function(r,i){
+    return '<div class="case-item open reveal in" id="ci'+i+'">'+
+      '<div class="case-head" onclick="toggleCase('+i+')">'+
+        '<span class="case-type">'+r.t+'</span>'+
+        '<span class="case-short">'+r.short+'</span>'+
+        '<span class="case-arr">+</span>'+
+      '</div>'+
+      '<div class="case-body"><div class="case-inner">'+
+        '<p class="case-why">'+r.why+'</p>'+
+        '<div class="code">'+r.code+'</div>'+
+      '</div></div>'+
+    '</div>';
+  }).join('');
+}
+window.toggleCase=function(i){
+  document.getElementById('ci'+i).classList.toggle('open');
+};
+
+/* ── ledger + plaques ── */
+function renderLedger(){
+  var d=Z.domain;
+  var rows=[
+    {k:'@',kc:'cl',v:d+'.',dep:'apex',use:'Zone root — homepage, MX, SPF'},
+    {k:'www',kc:'ca',v:'www.'+d+'.',dep:'1 label',use:'Main website'},
+    {k:'api',kc:'ca',v:'api.'+d+'.',dep:'1 label',use:'Backend API'},
+    {k:'staging.api',kc:'ca',v:'staging.api.'+d+'.',dep:'2 labels',use:'Environment subdomain'},
+    {k:'*',kc:'cd',v:'*.'+d+'.',dep:'wildcard',use:'Catches any unmatched label'},
+  ];
+  document.getElementById('ledgerbody').innerHTML=rows.map(function(r){
+    return '<tr><td><span class="lk '+r.kc+'">'+r.k+'</span></td>'+
+      '<td><span class="lv">'+r.v+'</span></td>'+
+      '<td><span class="ldep">'+r.dep+'</span></td>'+
+      '<td><span class="lnote">'+r.use+'</span></td></tr>';
+  }).join('');
+}
+
+function renderPlaques(){
+  var d=Z.domain;
+  var cards=[
+    {sym:'@',sc:'cl',title:'The Zone Apex',
+     desc:'@ means the domain itself — '+d+'. Root of your zone. Cannot hold a CNAME; use A or AAAA at the apex.',
+     eg:'@  →  '+d+'.\nCNAME at @: not allowed\n(use ALIAS/ANAME instead)'},
+    {sym:'*',sc:'cd',title:'The Wildcard',
+     desc:'Matches any single label not already defined. Does NOT match multiple labels deep.',
+     eg:'*.'+d+'.\n→ catches: anything.'+d+'\n→ misses:  a.b.'+d},
+    {sym:'⦿',sc:'ck2',title:'Time To Live',
+     desc:'How long resolvers cache the record, in seconds. Tune to how often the record changes.',
+     eg:'60    → 1 min  (deploys)\n3600  → 1 hr   (standard)\n86400 → 1 day  (stable)'},
+    {sym:'.',sc:'cd',title:'The Trailing Dot',
+     desc:'Every FQDN ends with a dot — the invisible root. Add it to CNAME, MX, NS targets to be unambiguous.',
+     eg:d+'     ← relative\n'+d+'.    ← FQDN (absolute)'},
+  ];
+  document.getElementById('plaques').innerHTML=cards.map(function(c){
+    return '<div class="plq reveal">'+
+      '<div class="plq-h"><span class="plq-sym '+c.sc+'">'+c.sym+'</span><span class="plq-title">'+c.title+'</span></div>'+
+      '<div class="plq-desc">'+c.desc+'</div>'+
+      '<div class="plq-eg">'+esc(c.eg)+'</div>'+
+    '</div>';
+  }).join('');
+}
+
+/* ── tour ── */
+function renderTour(){
+  var d=Z.domain, ip=Z.mainIP, tld=Z.tld;
+  var steps=[
+    {n:'1',final:false,title:'Browser checks local cache',
+     desc:'Before any network request, the browser checks for a cached answer. If the TTL has not expired, it is used instantly — zero queries fired.',tag:'your device'},
+    {n:'2',final:false,title:'Recursive resolver',
+     desc:'Cache miss. The OS forwards the query to a recursive resolver — your ISP, Cloudflare 1.1.1.1, or Google 8.8.8.8 — which does the legwork.',tag:'ISP / 1.1.1.1 / 8.8.8.8'},
+    {n:'3',final:false,title:'Root name servers (.)',
+     desc:'The resolver asks a root cluster. Reply: I do not know '+d+', but here are the .'+tld+' TLD servers.',tag:'13 clusters worldwide'},
+    {n:'4',final:false,title:'.'+tld+' TLD servers',
+     desc:'The .'+tld+' registry returns your NS records pointing at your DNS provider nameservers.',tag:'registry'},
+    {n:'5',final:false,title:'Authoritative nameserver',
+     desc:'Your DNS provider nameserver holds the actual zone records and returns the definitive answer for '+d+'.',tag:d+' NS'},
+    {n:'★',final:true,title:'Answer returned: '+ip,
+     desc:'The resolver hands '+ip+' to the browser. Both cache it for the TTL. A TCP connection opens and the page loads.',tag:ip},
+  ];
+  document.getElementById('tour').innerHTML=steps.map(function(s){
+    return '<div class="stop reveal'+(s.final?' final':'')+'">'+
+      '<div class="stop-n">'+s.n+'</div>'+
+      '<div class="stop-content">'+
+        '<div class="stop-title">'+s.title+'</div>'+
+        '<div class="stop-desc">'+s.desc+'</div>'+
+        '<span class="stop-tag">'+s.tag+'</span>'+
+      '</div>'+
+    '</div>';
+  }).join('');
+}
+</script>
+</body>
+</html>
