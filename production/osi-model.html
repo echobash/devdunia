@@ -1,0 +1,707 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>OSI Model Guide — DevDunia Comics</title>
+<meta name="description" content="OSI model reference guide. Learn all 7 layers of the OSI networking model with real-world examples and diagrams.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://devdunia.com/production/osi-model.html">
+<meta property="og:title" content="OSI Model Guide — DevDunia Comics">
+<meta property="og:description" content="OSI model reference guide. Learn all 7 layers of the OSI networking model with real-world examples and diagrams.">
+<meta property="og:image" content="https://devdunia.com/images/logo.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Bangers&family=Comic+Neue:wght@400;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --ink: #1a1410;
+  --paper: #fdf3e3;
+  --paper2: #fbe9cc;
+  --red: #e63946;
+  --blue: #1d6fb8;
+  --yellow: #ffd23f;
+  --green: #3fa34d;
+  --pink: #ff6b9d;
+  --purple: #8a4fff;
+  --orange: #ff8c42;
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: 'Comic Neue', cursive;
+  font-weight: 400;
+  color: var(--ink);
+  background-color: var(--paper);
+  background-image: radial-gradient(var(--ink) 0.5px, transparent 0.6px);
+  background-size: 14px 14px;
+  background-attachment: fixed;
+  min-height: 100vh;
+}
+
+.paper-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(253,243,227,.78);
+  pointer-events: none;
+  z-index: 0;
+}
+
+.page-wrap {
+  position: relative;
+  z-index: 1;
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 0 16px 60px;
+}
+
+/* MASTHEAD */
+.masthead {
+  background: var(--purple);
+  border: 4px solid var(--ink);
+  border-radius: 6px;
+  box-shadow: 7px 7px 0 var(--ink);
+  margin: 18px 0 28px;
+  padding: 10px 20px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.masthead-logo { display: flex; align-items: center; gap: 10px; }
+.masthead-logo img { height: 36px; width: auto; }
+.masthead-logo-text {
+  font-family: 'Bangers', cursive;
+  font-size: 1.9rem;
+  letter-spacing: 2px;
+  color: #fff;
+  text-shadow: 3px 3px 0 var(--ink);
+  line-height: 1;
+}
+.masthead-logo-text span { color: var(--yellow); }
+.masthead-right { display: flex; align-items: center; gap: 8px; }
+.issue-tag {
+  font-family: 'Bangers', cursive;
+  font-size: .95rem;
+  background: var(--yellow);
+  color: var(--ink);
+  padding: 3px 10px;
+  border-radius: 4px;
+  border: 2px solid var(--ink);
+  letter-spacing: 1px;
+}
+.back-link {
+  font-family: 'Bangers', cursive;
+  font-size: .95rem;
+  color: #fff;
+  text-decoration: none;
+  background: var(--ink);
+  padding: 3px 10px;
+  border-radius: 4px;
+  letter-spacing: 1px;
+  transition: opacity .15s;
+}
+.back-link:hover { opacity: .75; }
+
+/* HERO */
+.hero {
+  display: flex;
+  align-items: flex-start;
+  gap: 20px;
+  background: var(--paper2);
+  border: 4px solid var(--ink);
+  border-radius: 6px;
+  box-shadow: 7px 7px 0 var(--ink);
+  padding: 20px 24px;
+  margin-bottom: 28px;
+  transform: rotate(-0.4deg);
+}
+.hero-icon { font-size: 3rem; line-height: 1; flex-shrink: 0; filter: drop-shadow(3px 3px 0 var(--ink)); }
+.hero-text h1 {
+  font-family: 'Bangers', cursive;
+  font-size: 2.8rem;
+  letter-spacing: 2px;
+  color: var(--purple);
+  -webkit-text-stroke: 1px var(--ink);
+  text-shadow: 4px 4px 0 var(--ink);
+  line-height: 1;
+  text-transform: uppercase;
+}
+.hero-text p { font-size: .95rem; margin-top: 6px; line-height: 1.5; max-width: 500px; }
+.hero-badges { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 10px; }
+.badge {
+  font-family: 'Space Mono', monospace;
+  font-size: .65rem;
+  font-weight: 700;
+  padding: 3px 8px;
+  border: 2px solid var(--ink);
+  border-radius: 4px;
+  box-shadow: 2px 2px 0 var(--ink);
+}
+.badge-blue   { background: var(--blue);   color: #fff; }
+.badge-green  { background: var(--green);  color: #fff; }
+.badge-yellow { background: var(--yellow); color: var(--ink); }
+.badge-purple { background: var(--purple); color: #fff; }
+.badge-orange { background: var(--orange); color: #fff; }
+
+/* PANEL */
+.panel {
+  background: var(--paper);
+  border: 4px solid var(--ink);
+  border-radius: 6px;
+  box-shadow: 7px 7px 0 var(--ink);
+  overflow: hidden;
+  margin-bottom: 22px;
+}
+
+.panel-header {
+  background: var(--ink);
+  color: var(--yellow);
+  font-family: 'Bangers', cursive;
+  font-size: 1.2rem;
+  letter-spacing: 2px;
+  padding: 8px 16px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+.panel-header .panel-tag {
+  font-family: 'Space Mono', monospace;
+  font-size: .65rem;
+  font-weight: 700;
+  background: var(--yellow);
+  color: var(--ink);
+  padding: 2px 7px;
+  border-radius: 3px;
+}
+.panel-body { padding: 18px 20px; }
+
+/* OSI LAYERS STACK */
+.osi-stack { display: flex; flex-direction: column; gap: 6px; margin: 14px 0; }
+
+.osi-layer {
+  display: flex;
+  align-items: stretch;
+  border: 3px solid var(--ink);
+  border-radius: 6px;
+  box-shadow: 4px 4px 0 var(--ink);
+  overflow: hidden;
+  cursor: pointer;
+  transition: transform .1s, box-shadow .1s;
+}
+.osi-layer:hover { transform: translate(-2px,-2px); box-shadow: 6px 6px 0 var(--ink); }
+
+.layer-num {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 50px;
+  flex-shrink: 0;
+  font-family: 'Bangers', cursive;
+  font-size: 1.5rem;
+  color: #fff;
+  text-shadow: 2px 2px 0 rgba(0,0,0,.3);
+}
+
+.layer-content { flex: 1; padding: 10px 14px; background: var(--paper2); }
+
+.layer-name {
+  font-family: 'Bangers', cursive;
+  font-size: 1rem;
+  letter-spacing: 1px;
+}
+
+.layer-sub { font-size: .75rem; color: #555; margin-top: 2px; }
+
+.layer-protocols {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  margin-top: 6px;
+}
+
+.proto-chip {
+  font-family: 'Space Mono', monospace;
+  font-size: .6rem;
+  font-weight: 700;
+  padding: 2px 6px;
+  border: 2px solid var(--ink);
+  border-radius: 3px;
+  background: #fff;
+}
+
+/* LAYER DETAIL */
+.layer-detail {
+  background: var(--paper2);
+  border: 3px solid var(--ink);
+  border-radius: 6px;
+  padding: 14px 16px;
+  margin: 10px 0;
+  display: none;
+}
+.layer-detail.active { display: block; }
+
+.detail-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+  margin-top: 10px;
+}
+
+.detail-col h4 {
+  font-family: 'Bangers', cursive;
+  font-size: .95rem;
+  letter-spacing: 1px;
+  margin-bottom: 6px;
+}
+.detail-col ul { padding-left: 16px; }
+.detail-col li { font-size: .82rem; line-height: 1.7; }
+
+/* TABLE */
+.comic-table {
+  width: 100%;
+  border-collapse: collapse;
+  border: 3px solid var(--ink);
+  overflow: hidden;
+  margin: 10px 0;
+}
+.comic-table th {
+  background: var(--ink);
+  color: var(--yellow);
+  font-family: 'Bangers', cursive;
+  font-size: .9rem;
+  letter-spacing: 1px;
+  padding: 8px 12px;
+  text-align: left;
+}
+.comic-table td {
+  padding: 8px 12px;
+  font-size: .82rem;
+  border-top: 2px solid var(--ink);
+}
+.comic-table tr:nth-child(even) td { background: var(--paper2); }
+.comic-table tr:nth-child(odd) td { background: var(--paper); }
+
+/* INFO GRID */
+.info-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 14px;
+  margin: 12px 0;
+}
+.info-card {
+  background: var(--paper2);
+  border: 3px solid var(--ink);
+  border-radius: 6px;
+  box-shadow: 3px 3px 0 var(--ink);
+  padding: 12px 14px;
+}
+.info-card h3 {
+  font-family: 'Bangers', cursive;
+  font-size: 1rem;
+  letter-spacing: 1px;
+  margin-bottom: 6px;
+}
+.info-card p { font-size: .82rem; line-height: 1.5; }
+
+/* MOBILE */
+@media (max-width: 760px) {
+  .info-grid { grid-template-columns: 1fr; }
+  .detail-grid { grid-template-columns: 1fr; }
+  .hero { flex-direction: column; gap: 10px; }
+  .hero-text h1 { font-size: 2rem; }
+  .layer-num { width: 36px; font-size: 1.2rem; }
+}
+</style>
+</head>
+<body>
+<div class="paper-overlay"></div>
+<div class="page-wrap">
+
+  <!-- MASTHEAD -->
+  <div class="masthead">
+    <div class="masthead-logo">
+      <img src="../images/logo.png" alt="DevDunia">
+      <span class="masthead-logo-text">DEV<span>DUNIA</span> COMICS</span>
+    </div>
+    <div class="masthead-right">
+      <span class="issue-tag">OSI MODEL</span>
+      <a href="../index.html" class="back-link">&#9664; ALL TOOLS</a>
+    </div>
+  </div>
+
+  <!-- HERO -->
+  <div class="hero">
+    <div class="hero-icon">&#x1F310;</div>
+    <div class="hero-text">
+      <h1>OSI Model Guide</h1>
+      <p>Open Systems Interconnection — the 7-layer networking model explained. Click any layer to see full details, protocols, and real-world examples!</p>
+      <div class="hero-badges">
+        <span class="badge badge-purple">7 LAYERS</span>
+        <span class="badge badge-blue">PROTOCOLS</span>
+        <span class="badge badge-green">INTERACTIVE</span>
+        <span class="badge badge-orange">NETWORKING</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- INTRO -->
+  <div class="panel">
+    <div class="panel-header">&#x2139; WHAT IS THE OSI MODEL? <span class="panel-tag">INTRO</span></div>
+    <div class="panel-body">
+      <p style="font-size:.9rem;line-height:1.7;margin-bottom:14px;">The OSI (Open Systems Interconnection) model is a conceptual framework that standardizes network communication into seven distinct layers. Each layer has specific functions and communicates with adjacent layers to enable reliable data transmission.</p>
+      <div class="info-grid">
+        <div class="info-card">
+          <h3 style="color:var(--purple);">Layered Architecture</h3>
+          <p>Each layer has specific responsibilities and communicates with adjacent layers.</p>
+        </div>
+        <div class="info-card">
+          <h3 style="color:var(--blue);">Standardization</h3>
+          <p>Provides a common framework for understanding network communication.</p>
+        </div>
+        <div class="info-card">
+          <h3 style="color:var(--green);">Modularity</h3>
+          <p>Allows independent development and modification of each layer.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- OSI LAYERS INTERACTIVE -->
+  <div class="panel">
+    <div class="panel-header">&#x1F4CA; 7-LAYER MODEL — CLICK ANY LAYER! <span class="panel-tag">INTERACTIVE</span></div>
+    <div class="panel-body">
+      <p style="font-size:.78rem;color:#777;margin-bottom:12px;font-style:italic;">&#x2191; Highest layer (closest to user) &nbsp;&nbsp; &#x2193; Lowest layer (closest to hardware)</p>
+
+      <div class="osi-stack">
+
+        <!-- Layer 7 -->
+        <div class="osi-layer" onclick="toggleLayer(7)">
+          <div class="layer-num" style="background:#1d6fb8;">7</div>
+          <div class="layer-content">
+            <div class="layer-name">&#x1F310; Application Layer</div>
+            <div class="layer-sub">User interface and network services</div>
+            <div class="layer-protocols">
+              <span class="proto-chip" style="background:#dbeafe;border-color:#1d6fb8;">HTTP</span>
+              <span class="proto-chip" style="background:#dbeafe;border-color:#1d6fb8;">HTTPS</span>
+              <span class="proto-chip" style="background:#dbeafe;border-color:#1d6fb8;">FTP</span>
+              <span class="proto-chip" style="background:#dbeafe;border-color:#1d6fb8;">SMTP</span>
+              <span class="proto-chip" style="background:#dbeafe;border-color:#1d6fb8;">DNS</span>
+              <span class="proto-chip" style="background:#dbeafe;border-color:#1d6fb8;">SSH</span>
+            </div>
+          </div>
+        </div>
+        <div class="layer-detail" id="detail-7">
+          <div class="detail-grid">
+            <div class="detail-col">
+              <h4 style="color:var(--blue);">Functions</h4>
+              <ul>
+                <li>User interface to network services</li>
+                <li>File transfer, email, web browsing</li>
+                <li>Network transparency</li>
+                <li>Resource sharing</li>
+              </ul>
+            </div>
+            <div class="detail-col">
+              <h4 style="color:var(--blue);">Protocols &amp; Examples</h4>
+              <ul>
+                <li>HTTP, HTTPS</li>
+                <li>FTP, SMTP, POP3</li>
+                <li>DNS, DHCP</li>
+                <li>Telnet, SSH</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+
+        <!-- Layer 6 -->
+        <div class="osi-layer" onclick="toggleLayer(6)">
+          <div class="layer-num" style="background:#8a4fff;">6</div>
+          <div class="layer-content">
+            <div class="layer-name">&#x1F510; Presentation Layer</div>
+            <div class="layer-sub">Data translation, encryption, compression</div>
+            <div class="layer-protocols">
+              <span class="proto-chip" style="background:#ede9fe;border-color:#8a4fff;">SSL/TLS</span>
+              <span class="proto-chip" style="background:#ede9fe;border-color:#8a4fff;">JPEG</span>
+              <span class="proto-chip" style="background:#ede9fe;border-color:#8a4fff;">ASCII</span>
+              <span class="proto-chip" style="background:#ede9fe;border-color:#8a4fff;">Unicode</span>
+              <span class="proto-chip" style="background:#ede9fe;border-color:#8a4fff;">MPEG</span>
+            </div>
+          </div>
+        </div>
+        <div class="layer-detail" id="detail-6">
+          <div class="detail-grid">
+            <div class="detail-col">
+              <h4 style="color:var(--purple);">Functions</h4>
+              <ul>
+                <li>Data translation</li>
+                <li>Encryption/decryption</li>
+                <li>Data compression</li>
+                <li>Character encoding</li>
+              </ul>
+            </div>
+            <div class="detail-col">
+              <h4 style="color:var(--purple);">Protocols &amp; Examples</h4>
+              <ul>
+                <li>SSL/TLS</li>
+                <li>JPEG, GIF, PNG</li>
+                <li>ASCII, Unicode</li>
+                <li>MPEG, AVI</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+
+        <!-- Layer 5 -->
+        <div class="osi-layer" onclick="toggleLayer(5)">
+          <div class="layer-num" style="background:#0891b2;">5</div>
+          <div class="layer-content">
+            <div class="layer-name">&#x1F91D; Session Layer</div>
+            <div class="layer-sub">Session management and dialog control</div>
+            <div class="layer-protocols">
+              <span class="proto-chip" style="background:#cffafe;border-color:#0891b2;">NetBIOS</span>
+              <span class="proto-chip" style="background:#cffafe;border-color:#0891b2;">RPC</span>
+              <span class="proto-chip" style="background:#cffafe;border-color:#0891b2;">SQL</span>
+              <span class="proto-chip" style="background:#cffafe;border-color:#0891b2;">PPTP</span>
+            </div>
+          </div>
+        </div>
+        <div class="layer-detail" id="detail-5">
+          <div class="detail-grid">
+            <div class="detail-col">
+              <h4 style="color:#0891b2;">Functions</h4>
+              <ul>
+                <li>Session establishment</li>
+                <li>Session maintenance</li>
+                <li>Session termination</li>
+                <li>Dialog control</li>
+              </ul>
+            </div>
+            <div class="detail-col">
+              <h4 style="color:#0891b2;">Protocols &amp; Examples</h4>
+              <ul>
+                <li>NetBIOS</li>
+                <li>RPC (Remote Procedure Call)</li>
+                <li>SQL</li>
+                <li>PPTP</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+
+        <!-- Layer 4 -->
+        <div class="osi-layer" onclick="toggleLayer(4)">
+          <div class="layer-num" style="background:#3fa34d;">4</div>
+          <div class="layer-content">
+            <div class="layer-name">&#x1F69A; Transport Layer</div>
+            <div class="layer-sub">End-to-end communication and reliability</div>
+            <div class="layer-protocols">
+              <span class="proto-chip" style="background:#dcfce7;border-color:#3fa34d;">TCP</span>
+              <span class="proto-chip" style="background:#dcfce7;border-color:#3fa34d;">UDP</span>
+              <span class="proto-chip" style="background:#dcfce7;border-color:#3fa34d;">SCTP</span>
+              <span class="proto-chip" style="background:#dcfce7;border-color:#3fa34d;">DCCP</span>
+            </div>
+          </div>
+        </div>
+        <div class="layer-detail" id="detail-4">
+          <div class="detail-grid">
+            <div class="detail-col">
+              <h4 style="color:var(--green);">Functions</h4>
+              <ul>
+                <li>End-to-end communication</li>
+                <li>Error detection and recovery</li>
+                <li>Flow control</li>
+                <li>Segmentation and reassembly</li>
+              </ul>
+            </div>
+            <div class="detail-col">
+              <h4 style="color:var(--green);">Protocols &amp; Examples</h4>
+              <ul>
+                <li>TCP (Transmission Control Protocol)</li>
+                <li>UDP (User Datagram Protocol)</li>
+                <li>SCTP</li>
+                <li>DCCP</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+
+        <!-- Layer 3 -->
+        <div class="osi-layer" onclick="toggleLayer(3)">
+          <div class="layer-num" style="background:#d97706;">3</div>
+          <div class="layer-content">
+            <div class="layer-name">&#x1F5FA; Network Layer</div>
+            <div class="layer-sub">Routing and logical addressing</div>
+            <div class="layer-protocols">
+              <span class="proto-chip" style="background:#fef3c7;border-color:#d97706;">IP</span>
+              <span class="proto-chip" style="background:#fef3c7;border-color:#d97706;">ICMP</span>
+              <span class="proto-chip" style="background:#fef3c7;border-color:#d97706;">ARP</span>
+              <span class="proto-chip" style="background:#fef3c7;border-color:#d97706;">OSPF</span>
+              <span class="proto-chip" style="background:#fef3c7;border-color:#d97706;">BGP</span>
+            </div>
+          </div>
+        </div>
+        <div class="layer-detail" id="detail-3">
+          <div class="detail-grid">
+            <div class="detail-col">
+              <h4 style="color:#d97706;">Functions</h4>
+              <ul>
+                <li>Logical addressing</li>
+                <li>Routing</li>
+                <li>Path determination</li>
+                <li>Packet forwarding</li>
+              </ul>
+            </div>
+            <div class="detail-col">
+              <h4 style="color:#d97706;">Protocols &amp; Examples</h4>
+              <ul>
+                <li>IP (Internet Protocol)</li>
+                <li>ICMP, ARP</li>
+                <li>OSPF, BGP</li>
+                <li>RIP</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+
+        <!-- Layer 2 -->
+        <div class="osi-layer" onclick="toggleLayer(2)">
+          <div class="layer-num" style="background:#e63946;">2</div>
+          <div class="layer-content">
+            <div class="layer-name">&#x1F517; Data Link Layer</div>
+            <div class="layer-sub">Physical addressing and error detection</div>
+            <div class="layer-protocols">
+              <span class="proto-chip" style="background:#fee2e2;border-color:#e63946;">Ethernet</span>
+              <span class="proto-chip" style="background:#fee2e2;border-color:#e63946;">WiFi</span>
+              <span class="proto-chip" style="background:#fee2e2;border-color:#e63946;">PPP</span>
+              <span class="proto-chip" style="background:#fee2e2;border-color:#e63946;">HDLC</span>
+            </div>
+          </div>
+        </div>
+        <div class="layer-detail" id="detail-2">
+          <div class="detail-grid">
+            <div class="detail-col">
+              <h4 style="color:var(--red);">Functions</h4>
+              <ul>
+                <li>Physical addressing (MAC)</li>
+                <li>Error detection and correction</li>
+                <li>Frame synchronization</li>
+                <li>Flow control</li>
+              </ul>
+            </div>
+            <div class="detail-col">
+              <h4 style="color:var(--red);">Protocols &amp; Examples</h4>
+              <ul>
+                <li>Ethernet</li>
+                <li>WiFi (802.11)</li>
+                <li>PPP, HDLC</li>
+                <li>Frame Relay</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+
+        <!-- Layer 1 -->
+        <div class="osi-layer" onclick="toggleLayer(1)">
+          <div class="layer-num" style="background:#6b7280;">1</div>
+          <div class="layer-content">
+            <div class="layer-name">&#x26A1; Physical Layer</div>
+            <div class="layer-sub">Physical transmission of data bits</div>
+            <div class="layer-protocols">
+              <span class="proto-chip" style="background:#f3f4f6;border-color:#6b7280;">Cables</span>
+              <span class="proto-chip" style="background:#f3f4f6;border-color:#6b7280;">Fiber</span>
+              <span class="proto-chip" style="background:#f3f4f6;border-color:#6b7280;">Wireless</span>
+              <span class="proto-chip" style="background:#f3f4f6;border-color:#6b7280;">Bluetooth</span>
+            </div>
+          </div>
+        </div>
+        <div class="layer-detail" id="detail-1">
+          <div class="detail-grid">
+            <div class="detail-col">
+              <h4 style="color:#555;">Functions</h4>
+              <ul>
+                <li>Physical transmission</li>
+                <li>Signal encoding</li>
+                <li>Bit synchronization</li>
+                <li>Physical topology</li>
+              </ul>
+            </div>
+            <div class="detail-col">
+              <h4 style="color:#555;">Protocols &amp; Examples</h4>
+              <ul>
+                <li>Ethernet cables</li>
+                <li>Fiber optic</li>
+                <li>Wireless (WiFi)</li>
+                <li>Bluetooth</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- DATA ENCAPSULATION -->
+  <div class="panel">
+    <div class="panel-header">&#x1F4E6; DATA ENCAPSULATION PROCESS <span class="panel-tag">HOW IT WORKS</span></div>
+    <div class="panel-body">
+      <p style="font-size:.9rem;line-height:1.7;margin-bottom:14px;">As data travels down from Application to Physical layer, each layer adds its own header (and sometimes trailer) — this is called <strong>encapsulation</strong>. On the receiving side, each layer strips its header — this is <strong>decapsulation</strong>.</p>
+      <div style="display:flex;flex-direction:column;gap:6px;">
+        <div style="background:#dbeafe;border:2px solid #1d6fb8;border-radius:4px;padding:8px 12px;font-family:'Space Mono',monospace;font-size:.75rem;">&#x2192; Application Data (HTTP Request)</div>
+        <div style="background:#ede9fe;border:2px solid #8a4fff;border-radius:4px;padding:8px 12px;font-family:'Space Mono',monospace;font-size:.75rem;">&#x2192; + Presentation Header (SSL/TLS encryption)</div>
+        <div style="background:#cffafe;border:2px solid #0891b2;border-radius:4px;padding:8px 12px;font-family:'Space Mono',monospace;font-size:.75rem;">&#x2192; + Session Header (NetBIOS)</div>
+        <div style="background:#dcfce7;border:2px solid #3fa34d;border-radius:4px;padding:8px 12px;font-family:'Space Mono',monospace;font-size:.75rem;">&#x2192; + Transport Header (TCP: ports, seq nums)</div>
+        <div style="background:#fef3c7;border:2px solid #d97706;border-radius:4px;padding:8px 12px;font-family:'Space Mono',monospace;font-size:.75rem;">&#x2192; + Network Header (IP: source &amp; dest addresses)</div>
+        <div style="background:#fee2e2;border:2px solid #e63946;border-radius:4px;padding:8px 12px;font-family:'Space Mono',monospace;font-size:.75rem;">&#x2192; + Data Link Header (Ethernet: MAC addresses)</div>
+        <div style="background:#f3f4f6;border:2px solid #6b7280;border-radius:4px;padding:8px 12px;font-family:'Space Mono',monospace;font-size:.75rem;">&#x2192; Transmitted as Physical Bits (electrical/optical signals)</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- OSI vs TCP/IP TABLE -->
+  <div class="panel">
+    <div class="panel-header">&#x1F4CB; OSI vs TCP/IP MODEL <span class="panel-tag">COMPARISON</span></div>
+    <div class="panel-body">
+      <table class="comic-table">
+        <thead>
+          <tr>
+            <th>OSI Layer</th>
+            <th>TCP/IP Layer</th>
+            <th>Protocols</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td style="color:#1d6fb8;font-weight:700;">Application (7)</td><td>Application</td><td>HTTP, FTP, SMTP, DNS</td></tr>
+          <tr><td style="color:#8a4fff;font-weight:700;">Presentation (6)</td><td>Application</td><td>SSL/TLS, JPEG, MPEG</td></tr>
+          <tr><td style="color:#0891b2;font-weight:700;">Session (5)</td><td>Application</td><td>NetBIOS, RPC</td></tr>
+          <tr><td style="color:#3fa34d;font-weight:700;">Transport (4)</td><td>Transport</td><td>TCP, UDP</td></tr>
+          <tr><td style="color:#d97706;font-weight:700;">Network (3)</td><td>Internet</td><td>IP, ICMP, ARP</td></tr>
+          <tr><td style="color:#e63946;font-weight:700;">Data Link (2)</td><td>Network Access</td><td>Ethernet, WiFi</td></tr>
+          <tr><td style="font-weight:700;">Physical (1)</td><td>Network Access</td><td>Cables, Wireless</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+</div><!-- /page-wrap -->
+
+<script>
+(function() {
+  function toggleLayer(n) {
+    var detail = document.getElementById('detail-' + n);
+    if(!detail) return;
+    var isActive = detail.classList.contains('active');
+    // Close all
+    var all = document.querySelectorAll('.layer-detail');
+    for(var i=0;i<all.length;i++) all[i].classList.remove('active');
+    // Toggle
+    if(!isActive) detail.classList.add('active');
+  }
+  window.toggleLayer = toggleLayer;
+})();
+</script>
+</body>
+</html>

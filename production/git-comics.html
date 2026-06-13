@@ -1,0 +1,1134 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Git Comics — DevDunia</title>
+<meta name="description" content="Learn Git version control the comic-book way! Branches, commits, merges and more explained through panels, characters and epic adventures.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Bangers&family=Comic+Neue:wght@400;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --ink: #1a1410;
+  --paper: #fdf3e3;
+  --paper2: #fbe9cc;
+  --red: #e63946;
+  --blue: #1d6fb8;
+  --yellow: #ffd23f;
+  --green: #3fa34d;
+  --pink: #ff6b9d;
+  --purple: #8a4fff;
+  --orange: #ff8c42;
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: 'Comic Neue', cursive;
+  font-weight: 400;
+  color: var(--ink);
+  background-color: var(--paper);
+  background-image: radial-gradient(var(--ink) 0.5px, transparent 0.6px);
+  background-size: 14px 14px;
+  background-attachment: fixed;
+  min-height: 100vh;
+}
+
+.paper-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(253,243,227,.78);
+  pointer-events: none;
+  z-index: 0;
+}
+
+.page-wrap {
+  position: relative;
+  z-index: 1;
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 0 16px 60px;
+}
+
+/* ── MASTHEAD ── */
+.masthead {
+  background: var(--yellow);
+  border: 4px solid var(--ink);
+  border-radius: 6px;
+  box-shadow: 7px 7px 0 var(--ink);
+  margin: 18px 0 28px;
+  padding: 12px 20px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.masthead-logo {
+  font-family: 'Bangers', cursive;
+  font-size: 2.6rem;
+  letter-spacing: 2px;
+  color: var(--ink);
+  -webkit-text-stroke: 1px var(--ink);
+  text-shadow: 4px 4px 0 var(--red);
+  line-height: 1;
+}
+
+.masthead-logo span { color: var(--red); }
+
+.masthead-meta {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.issue-tag {
+  font-family: 'Bangers', cursive;
+  font-size: 1rem;
+  background: var(--ink);
+  color: var(--yellow);
+  padding: 3px 10px;
+  border-radius: 4px;
+  letter-spacing: 1px;
+}
+
+.date-tag {
+  font-family: 'Space Mono', monospace;
+  font-size: .75rem;
+  background: var(--red);
+  color: #fff;
+  padding: 3px 8px;
+  border: 2px solid var(--ink);
+  border-radius: 4px;
+}
+
+.price-corner {
+  font-family: 'Bangers', cursive;
+  font-size: 1.1rem;
+  background: var(--ink);
+  color: var(--yellow);
+  padding: 4px 12px;
+  border-radius: 4px;
+  letter-spacing: 1px;
+}
+
+/* ── HERO BANNER ── */
+.hero-banner {
+  background: var(--blue);
+  border: 4px solid var(--ink);
+  border-radius: 6px;
+  box-shadow: 7px 7px 0 var(--ink);
+  padding: 20px 24px;
+  margin-bottom: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.hero-domain {
+  font-family: 'Bangers', cursive;
+  font-size: 2.2rem;
+  color: #fff;
+  letter-spacing: 2px;
+  text-shadow: 3px 3px 0 var(--ink);
+}
+
+.hero-domain .mono-accent {
+  font-family: 'Space Mono', monospace;
+  font-size: 1.1rem;
+  font-weight: 700;
+  display: block;
+  color: var(--yellow);
+  text-shadow: 2px 2px 0 var(--ink);
+  letter-spacing: 0;
+  margin-top: 2px;
+}
+
+.hero-badges {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.badge {
+  font-family: 'Space Mono', monospace;
+  font-size: .72rem;
+  font-weight: 700;
+  padding: 4px 10px;
+  border: 2px solid var(--ink);
+  border-radius: 4px;
+  box-shadow: 3px 3px 0 var(--ink);
+  white-space: nowrap;
+}
+
+.badge-green  { background: var(--green);  color: #fff; }
+.badge-orange { background: var(--orange); color: #fff; }
+.badge-red    { background: var(--red);    color: #fff; }
+.badge-yellow { background: var(--yellow); color: var(--ink); }
+.badge-purple { background: var(--purple); color: #fff; }
+
+.hero-cta {
+  font-family: 'Bangers', cursive;
+  font-size: 1.3rem;
+  background: var(--yellow);
+  color: var(--ink);
+  border: 3px solid var(--ink);
+  border-radius: 6px;
+  box-shadow: 5px 5px 0 var(--ink);
+  padding: 8px 20px;
+  cursor: pointer;
+  letter-spacing: 1px;
+  text-decoration: none;
+  display: inline-block;
+  transition: transform .1s, box-shadow .1s;
+}
+.hero-cta:active { transform: translate(2px,2px); box-shadow: 3px 3px 0 var(--ink); }
+
+/* ── CHAPTER HEADINGS ── */
+.chapter-heading {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin: 40px 0 8px;
+}
+
+.chapter-num {
+  font-family: 'Bangers', cursive;
+  font-size: 2.2rem;
+  background: var(--ink);
+  color: var(--yellow);
+  width: 52px;
+  height: 52px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  border: 3px solid var(--ink);
+  box-shadow: 4px 4px 0 var(--ink);
+}
+
+.chapter-title {
+  font-family: 'Bangers', cursive;
+  font-size: 2.4rem;
+  letter-spacing: 2px;
+  color: var(--ink);
+  -webkit-text-stroke: 1px var(--ink);
+  text-transform: uppercase;
+  line-height: 1;
+}
+
+.chapter-title .accent { color: var(--red); }
+
+.chapter-sub {
+  font-family: 'Comic Neue', cursive;
+  font-size: .85rem;
+  color: var(--ink);
+  opacity: .7;
+  margin-bottom: 18px;
+  font-style: italic;
+}
+
+/* ── PANEL GRID ── */
+.panel-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 18px;
+  margin-bottom: 12px;
+}
+
+.panel-grid-2 {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 18px;
+  margin-bottom: 12px;
+}
+
+/* ── CHARACTER PANEL ── */
+.char-panel {
+  background: var(--paper);
+  border: 4px solid var(--ink);
+  border-radius: 6px;
+  box-shadow: 7px 7px 0 var(--ink);
+  overflow: hidden;
+  transition: transform .15s, box-shadow .15s;
+}
+
+.char-panel:nth-child(odd)  { transform: rotate(-0.5deg); }
+.char-panel:nth-child(even) { transform: rotate(0.5deg); }
+.char-panel:hover           { transform: rotate(0deg) translate(-2px,-4px); box-shadow: 10px 10px 0 var(--ink); }
+
+.char-top {
+  padding: 10px 12px 8px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.char-icon {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  border: 3px solid var(--ink);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: 'Bangers', cursive;
+  font-size: 1.4rem;
+  color: #fff;
+  flex-shrink: 0;
+  box-shadow: 3px 3px 0 var(--ink);
+}
+
+.char-label {
+  font-family: 'Space Mono', monospace;
+  font-size: .65rem;
+  font-weight: 700;
+  background: var(--ink);
+  color: var(--yellow);
+  padding: 2px 7px;
+  border-radius: 3px;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+}
+
+.char-name {
+  font-family: 'Bangers', cursive;
+  font-size: 1.7rem;
+  letter-spacing: 1px;
+  padding: 0 12px 2px;
+  line-height: 1;
+}
+
+.char-code {
+  font-family: 'Space Mono', monospace;
+  font-size: .7rem;
+  color: #888;
+  padding: 0 12px 6px;
+}
+
+.char-body {
+  border-top: 3px solid var(--ink);
+  padding: 10px 12px;
+  font-size: .88rem;
+  line-height: 1.45;
+}
+
+/* ── SPEECH BUBBLE ── */
+.bubble-row {
+  position: relative;
+  background: #fff;
+  border: 3px solid var(--ink);
+  border-radius: 14px;
+  padding: 10px 14px;
+  margin: 10px 12px 16px;
+  font-size: .82rem;
+  font-family: 'Comic Neue', cursive;
+  font-style: italic;
+  line-height: 1.4;
+}
+
+.bubble-row::before {
+  content: '';
+  position: absolute;
+  bottom: -16px;
+  left: 22px;
+  border-width: 16px 10px 0;
+  border-style: solid;
+  border-color: var(--ink) transparent transparent;
+}
+
+.bubble-row::after {
+  content: '';
+  position: absolute;
+  bottom: -12px;
+  left: 24px;
+  border-width: 12px 8px 0;
+  border-style: solid;
+  border-color: #fff transparent transparent;
+}
+
+.flip-hint {
+  font-family: 'Comic Neue', cursive;
+  font-size: .75rem;
+  font-weight: 700;
+  color: var(--red);
+  padding: 6px 12px 10px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  text-transform: uppercase;
+  letter-spacing: .5px;
+}
+
+/* ── COMMAND CARDS (flip) ── */
+.cmd-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 18px;
+  margin-bottom: 12px;
+}
+
+.cmd-card {
+  perspective: 900px;
+  min-height: 210px;
+  cursor: pointer;
+}
+
+.cmd-inner {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  min-height: 210px;
+  transform-style: preserve-3d;
+  transition: transform .45s cubic-bezier(.4,0,.2,1);
+}
+
+.cmd-card.flipped .cmd-inner { transform: rotateY(180deg); }
+
+.cmd-front, .cmd-back {
+  position: absolute;
+  inset: 0;
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+  border: 4px solid var(--ink);
+  border-radius: 6px;
+  box-shadow: 6px 6px 0 var(--ink);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+.cmd-back { transform: rotateY(180deg); background: var(--paper2); }
+
+.cmd-stripe {
+  height: 38px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 12px;
+  border-bottom: 3px solid var(--ink);
+}
+
+.cmd-stripe-label {
+  font-family: 'Bangers', cursive;
+  font-size: 1.5rem;
+  color: #fff;
+  letter-spacing: 1px;
+  text-shadow: 2px 2px 0 rgba(0,0,0,.35);
+}
+
+.cmd-type-tag {
+  font-family: 'Space Mono', monospace;
+  font-size: .6rem;
+  font-weight: 700;
+  background: rgba(0,0,0,.25);
+  color: #fff;
+  padding: 2px 6px;
+  border-radius: 3px;
+  letter-spacing: 1px;
+}
+
+.cmd-desc {
+  padding: 10px 12px;
+  font-size: .88rem;
+  line-height: 1.45;
+  flex: 1;
+}
+
+.cmd-preview {
+  background: var(--ink);
+  color: var(--yellow);
+  font-family: 'Space Mono', monospace;
+  font-size: .72rem;
+  padding: 8px 12px;
+  border-top: 3px solid var(--ink);
+  word-break: break-all;
+  line-height: 1.5;
+}
+
+.cmd-hint {
+  font-family: 'Comic Neue', cursive;
+  font-size: .73rem;
+  font-weight: 700;
+  color: var(--red);
+  padding: 6px 12px 8px;
+  text-transform: uppercase;
+  letter-spacing: .5px;
+}
+
+.cmd-back .cmd-stripe { background: var(--ink); }
+
+.cmd-back-body {
+  padding: 10px 12px;
+  font-size: .84rem;
+  line-height: 1.5;
+  flex: 1;
+}
+
+.cmd-back-body strong { font-weight: 700; color: var(--blue); }
+
+.cmd-back code {
+  font-family: 'Space Mono', monospace;
+  font-size: .75rem;
+  background: var(--ink);
+  color: var(--yellow);
+  padding: 2px 6px;
+  border-radius: 3px;
+  display: inline-block;
+  margin: 2px 0;
+}
+
+/* ── JOURNEY STEPS ── */
+.journey {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  margin: 0 0 16px;
+}
+
+.journey-step {
+  display: flex;
+  align-items: flex-start;
+  gap: 16px;
+  padding: 0 0 0 0;
+  position: relative;
+}
+
+.journey-step:not(:last-child)::after {
+  content: '';
+  position: absolute;
+  left: 22px;
+  top: 48px;
+  bottom: 0;
+  width: 4px;
+  background: var(--ink);
+}
+
+.step-num {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  border: 4px solid var(--ink);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: 'Bangers', cursive;
+  font-size: 1.4rem;
+  color: #fff;
+  flex-shrink: 0;
+  box-shadow: 4px 4px 0 var(--ink);
+  z-index: 1;
+  position: relative;
+}
+
+.step-card {
+  flex: 1;
+  background: var(--paper);
+  border: 4px solid var(--ink);
+  border-radius: 6px;
+  box-shadow: 7px 7px 0 var(--ink);
+  margin-bottom: 22px;
+  overflow: hidden;
+}
+
+.step-card:nth-child(odd)  { transform: rotate(-0.4deg); }
+.step-card:nth-child(even) { transform: rotate(0.4deg); }
+.step-card:hover { transform: rotate(0deg) translate(-2px,-3px); box-shadow: 10px 10px 0 var(--ink); transition: all .15s; }
+
+.step-header {
+  padding: 10px 14px 6px;
+  font-family: 'Bangers', cursive;
+  font-size: 1.5rem;
+  letter-spacing: 1px;
+}
+
+.step-body {
+  padding: 4px 14px 10px;
+  font-size: .9rem;
+  line-height: 1.5;
+}
+
+.step-cmd {
+  display: inline-block;
+  font-family: 'Space Mono', monospace;
+  font-size: .75rem;
+  font-weight: 700;
+  background: var(--ink);
+  color: var(--yellow);
+  padding: 3px 10px;
+  border-radius: 4px;
+  border: 2px solid var(--ink);
+  box-shadow: 2px 2px 0 var(--ink);
+  margin-top: 6px;
+}
+
+/* ── STARBURST ── */
+.starburst {
+  font-family: 'Bangers', cursive;
+  font-size: 1.4rem;
+  letter-spacing: 2px;
+  transform: rotate(-10deg);
+  display: inline-block;
+  color: var(--ink);
+  text-shadow: 3px 3px 0 var(--red);
+  user-select: none;
+}
+
+.starburst-wrap {
+  text-align: center;
+  margin: 8px 0 20px;
+}
+
+/* ── THE END ── */
+.the-end {
+  text-align: center;
+  padding: 40px 0 20px;
+}
+
+.the-end-text {
+  font-family: 'Bangers', cursive;
+  font-size: 5rem;
+  color: var(--red);
+  -webkit-text-stroke: 3px var(--ink);
+  text-shadow: 8px 8px 0 var(--ink);
+  letter-spacing: 4px;
+  line-height: 1;
+  text-transform: uppercase;
+}
+
+.the-end-sub {
+  font-family: 'Comic Neue', cursive;
+  font-size: .95rem;
+  font-style: italic;
+  color: var(--ink);
+  opacity: .7;
+  margin-top: 8px;
+}
+
+/* ── DIVIDER ── */
+.divider {
+  border: none;
+  border-top: 4px solid var(--ink);
+  margin: 8px 0 0;
+}
+
+/* color helpers */
+.bg-red    { background: var(--red); }
+.bg-blue   { background: var(--blue); }
+.bg-yellow { background: var(--yellow); }
+.bg-green  { background: var(--green); }
+.bg-pink   { background: var(--pink); }
+.bg-purple { background: var(--purple); }
+.bg-orange { background: var(--orange); }
+.bg-ink    { background: var(--ink); }
+
+/* ── RESPONSIVE ── */
+@media (max-width: 760px) {
+  .panel-grid, .cmd-grid { grid-template-columns: 1fr 1fr; }
+  .panel-grid-2          { grid-template-columns: 1fr; }
+  .masthead-logo         { font-size: 1.9rem; }
+  .chapter-title         { font-size: 1.8rem; }
+  .the-end-text          { font-size: 3.2rem; }
+  .hero-banner           { flex-direction: column; }
+  .starburst             { display: none; }
+}
+
+@media (max-width: 480px) {
+  .panel-grid, .cmd-grid { grid-template-columns: 1fr; }
+  .chapter-title         { font-size: 1.5rem; }
+}
+</style>
+</head>
+<body>
+<div class="paper-overlay"></div>
+<div class="page-wrap">
+
+  <!-- MASTHEAD -->
+  <div class="masthead">
+    <div class="masthead-logo">GIT <span>COMICS</span></div>
+    <div class="masthead-meta">
+      <span class="issue-tag">ISSUE #01</span>
+      <span class="date-tag">JUNE 2025</span>
+    </div>
+    <div class="price-corner">25¢</div>
+  </div>
+
+  <!-- HERO BANNER -->
+  <div class="hero-banner">
+    <div>
+      <div class="hero-domain">git init adventure
+        <span class="mono-accent">$ git log --oneline --graph</span>
+      </div>
+    </div>
+    <div class="hero-badges">
+      <span class="badge badge-green">DISTRIBUTED</span>
+      <span class="badge badge-orange">OPEN SOURCE</span>
+      <span class="badge badge-red">LINUS 2005</span>
+      <span class="badge badge-yellow">v2.x</span>
+      <span class="badge badge-purple">SNAPSHOTS</span>
+    </div>
+    <a href="#chapter1" class="hero-cta">READ THE STORY!</a>
+  </div>
+
+  <!-- ══ CHAPTER 1 ══ -->
+  <div id="chapter1">
+    <div class="chapter-heading">
+      <div class="chapter-num">1</div>
+      <div>
+        <div class="chapter-title">THE <span class="accent">FOUR REALMS</span></div>
+      </div>
+    </div>
+    <p class="chapter-sub">Where your code actually lives — read left to right!</p>
+    <hr class="divider">
+
+    <div class="panel-grid" style="margin-top:18px;">
+
+      <!-- Working Directory -->
+      <div class="char-panel">
+        <div class="char-top">
+          <div class="char-icon bg-orange">&#x1F4C2;</div>
+          <span class="char-label">REALM 1</span>
+        </div>
+        <div class="char-name" style="color:var(--orange);">Working Dir</div>
+        <div class="char-code">your local filesystem</div>
+        <div class="char-body">The wild, untamed frontier. Every file you can see, edit, and break lives here. Nothing is safe until you snapshot it!</div>
+        <div class="bubble-row">"I'm where the magic HAPPENS! Also where you accidentally delete things..."</div>
+      </div>
+
+      <!-- Staging Area -->
+      <div class="char-panel">
+        <div class="char-top">
+          <div class="char-icon bg-yellow" style="color:var(--ink);">&#x1F9F3;</div>
+          <span class="char-label">REALM 2</span>
+        </div>
+        <div class="char-name" style="color:var(--ink);">Staging Area</div>
+        <div class="char-code">.git/index</div>
+        <div class="char-body">The green room. You carefully choose which changes get into the next commit. Director's cut only — nothing sneaks through!</div>
+        <div class="bubble-row">"I'm the bouncer. Not everything from working dir gets past me!"</div>
+      </div>
+
+      <!-- Local Repo -->
+      <div class="char-panel">
+        <div class="char-top">
+          <div class="char-icon bg-blue">&#x1F4BE;</div>
+          <span class="char-label">REALM 3</span>
+        </div>
+        <div class="char-name" style="color:var(--blue);">Local Repo</div>
+        <div class="char-code">.git/objects/</div>
+        <div class="char-body">Your personal time machine. Every commit is a permanent snapshot. The full history of your project lives right here on your disk.</div>
+        <div class="bubble-row">"I remember EVERYTHING. Every commit, every branch, every mistake."</div>
+      </div>
+
+      <!-- Remote Repo -->
+      <div class="char-panel">
+        <div class="char-top">
+          <div class="char-icon bg-purple">&#x2601;&#xFE0F;</div>
+          <span class="char-label">REALM 4</span>
+        </div>
+        <div class="char-name" style="color:var(--purple);">Remote Repo</div>
+        <div class="char-code">origin / github.com</div>
+        <div class="char-body">The shared universe! GitHub, GitLab, Bitbucket — where teams sync up, open PRs, and the whole world can see your masterwork.</div>
+        <div class="bubble-row">"I'm the cloud fortress. Push to me when you want teammates to see your work!"</div>
+      </div>
+
+      <!-- Stash -->
+      <div class="char-panel">
+        <div class="char-top">
+          <div class="char-icon bg-green">&#x1F9F3;</div>
+          <span class="char-label">BONUS REALM</span>
+        </div>
+        <div class="char-name" style="color:var(--green);">The Stash</div>
+        <div class="char-code">refs/stash</div>
+        <div class="char-body">The junk drawer! Unfinished work you're not ready to commit goes here. Run away, save state, come back later. It's the panic button.</div>
+        <div class="bubble-row">"Boss asked for a hotfix mid-feature? STASH IT! I'll hold your mess."</div>
+      </div>
+
+      <!-- Reflog -->
+      <div class="char-panel">
+        <div class="char-top">
+          <div class="char-icon bg-pink">&#x1F50D;</div>
+          <span class="char-label">SECRET REALM</span>
+        </div>
+        <div class="char-name" style="color:var(--pink);">The Reflog</div>
+        <div class="char-code">.git/logs/HEAD</div>
+        <div class="char-body">Git's secret diary. Every movement of HEAD is logged here. Accidentally deleted a branch? Forced a reset? Reflog is your undo button.</div>
+        <div class="bubble-row">"They think I'm invisible. But I see ALL. git reflog will save your life someday."</div>
+      </div>
+
+    </div>
+  </div>
+
+  <div class="starburst-wrap">
+    <span class="starburst">COMMIT EARLY, COMMIT OFTEN!</span>
+    &nbsp;&nbsp;&nbsp;
+    <span class="starburst" style="transform:rotate(8deg);text-shadow:3px 3px 0 var(--blue);">NEVER FORCE-PUSH MAIN!</span>
+  </div>
+
+  <!-- ══ CHAPTER 2 ══ -->
+  <div id="chapter2">
+    <div class="chapter-heading">
+      <div class="chapter-num">2</div>
+      <div>
+        <div class="chapter-title">THE <span class="accent">CAST</span> OF COMMANDS</div>
+      </div>
+    </div>
+    <p class="chapter-sub">Nine legendary powers — click a card to flip it!</p>
+    <hr class="divider">
+
+    <div class="cmd-grid" style="margin-top:18px;">
+
+      <!-- git commit -->
+      <div class="cmd-card" onclick="this.classList.toggle('flipped')">
+        <div class="cmd-inner">
+          <div class="cmd-front">
+            <div class="cmd-stripe bg-blue">
+              <span class="cmd-stripe-label">COMMIT</span>
+              <span class="cmd-type-tag">SNAPSHOT</span>
+            </div>
+            <div class="cmd-desc">The Chronicler — takes a permanent, immutable snapshot of everything in staging. Each commit is a node in your timeline, forever.</div>
+            <div class="cmd-preview">$ git commit -m "your message"</div>
+            <div class="cmd-hint">&#9658; FLIP TO READ!</div>
+          </div>
+          <div class="cmd-back">
+            <div class="cmd-stripe"><span class="cmd-stripe-label" style="color:var(--yellow)">COMMIT — PRO TIPS</span></div>
+            <div class="cmd-back-body">
+              <strong>Write meaningful messages!</strong> Future-you (and teammates) will thank you.<br><br>
+              <code>git commit --amend</code> fixes the last commit message.<br>
+              <code>git commit -a -m "msg"</code> stages tracked files automatically.<br><br>
+              Each commit stores: tree snapshot, author, timestamp, parent hash.
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- git branch -->
+      <div class="cmd-card" onclick="this.classList.toggle('flipped')">
+        <div class="cmd-inner">
+          <div class="cmd-front">
+            <div class="cmd-stripe bg-green">
+              <span class="cmd-stripe-label">BRANCH</span>
+              <span class="cmd-type-tag">POINTER</span>
+            </div>
+            <div class="cmd-desc">The Reality Splitter — a branch is just a lightweight pointer to a commit. Create universes for free, merge them back when done!</div>
+            <div class="cmd-preview">$ git branch feature/login</div>
+            <div class="cmd-hint">&#9658; FLIP TO READ!</div>
+          </div>
+          <div class="cmd-back">
+            <div class="cmd-stripe"><span class="cmd-stripe-label" style="color:var(--yellow)">BRANCH — PRO TIPS</span></div>
+            <div class="cmd-back-body">
+              <strong>Branches are free!</strong> They're just 41-byte files pointing to a commit hash.<br><br>
+              <code>git branch -d name</code> deletes a merged branch.<br>
+              <code>git branch -D name</code> force-deletes (careful!).<br>
+              <code>git branch -a</code> shows all including remotes.
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- git merge -->
+      <div class="cmd-card" onclick="this.classList.toggle('flipped')">
+        <div class="cmd-inner">
+          <div class="cmd-front">
+            <div class="cmd-stripe bg-red">
+              <span class="cmd-stripe-label">MERGE</span>
+              <span class="cmd-type-tag">COMBINE</span>
+            </div>
+            <div class="cmd-desc">The Reunifier — brings diverged branches together, weaving timelines into one. Creates a merge commit with two parents. History preserved!</div>
+            <div class="cmd-preview">$ git merge feature/login</div>
+            <div class="cmd-hint">&#9658; FLIP TO READ!</div>
+          </div>
+          <div class="cmd-back">
+            <div class="cmd-stripe"><span class="cmd-stripe-label" style="color:var(--yellow)">MERGE — PRO TIPS</span></div>
+            <div class="cmd-back-body">
+              <strong>Fast-forward merge</strong> happens when there's no divergence — no merge commit needed!<br><br>
+              <code>git merge --no-ff</code> forces a merge commit even when fast-forward is possible.<br>
+              <code>git merge --abort</code> bails out during a conflict.
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- git rebase -->
+      <div class="cmd-card" onclick="this.classList.toggle('flipped')">
+        <div class="cmd-inner">
+          <div class="cmd-front">
+            <div class="cmd-stripe bg-orange">
+              <span class="cmd-stripe-label">REBASE</span>
+              <span class="cmd-type-tag">REWRITE</span>
+            </div>
+            <div class="cmd-desc">The Time Traveler — replays your commits onto a new base. Creates a CLEAN linear history. But beware: rewrites history, never on shared branches!</div>
+            <div class="cmd-preview">$ git rebase main</div>
+            <div class="cmd-hint">&#9658; FLIP TO READ!</div>
+          </div>
+          <div class="cmd-back">
+            <div class="cmd-stripe"><span class="cmd-stripe-label" style="color:var(--yellow)">REBASE — PRO TIPS</span></div>
+            <div class="cmd-back-body">
+              <strong>Golden rule:</strong> Never rebase public history!<br><br>
+              <code>git rebase -i HEAD~3</code> interactive rebase — squash, reword, drop commits.<br>
+              <code>git rebase --abort</code> cancels mid-rebase.<br>
+              <code>git rebase --continue</code> after resolving conflicts.
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- git cherry-pick -->
+      <div class="cmd-card" onclick="this.classList.toggle('flipped')">
+        <div class="cmd-inner">
+          <div class="cmd-front">
+            <div class="cmd-stripe bg-pink">
+              <span class="cmd-stripe-label">CHERRY-PICK</span>
+              <span class="cmd-type-tag">PLUCK</span>
+            </div>
+            <div class="cmd-desc">The Surgeon — applies one specific commit from any branch onto your current one. No need for a full merge, just grab the commit you want!</div>
+            <div class="cmd-preview">$ git cherry-pick a1b2c3d</div>
+            <div class="cmd-hint">&#9658; FLIP TO READ!</div>
+          </div>
+          <div class="cmd-back">
+            <div class="cmd-stripe"><span class="cmd-stripe-label" style="color:var(--yellow)">CHERRY-PICK — PRO TIPS</span></div>
+            <div class="cmd-back-body">
+              <strong>Use case:</strong> hotfix was committed to wrong branch? Cherry-pick it to the right one!<br><br>
+              <code>git cherry-pick A..B</code> picks a range of commits.<br>
+              Creates a NEW commit with a different hash but same changes.
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- git reset -->
+      <div class="cmd-card" onclick="this.classList.toggle('flipped')">
+        <div class="cmd-inner">
+          <div class="cmd-front">
+            <div class="cmd-stripe bg-purple">
+              <span class="cmd-stripe-label">RESET</span>
+              <span class="cmd-type-tag">UNDO</span>
+            </div>
+            <div class="cmd-desc">The Eraser — moves HEAD backward in time. Three modes: soft (keep changes staged), mixed (unstage), hard (nuke everything). Powerful. Dangerous.</div>
+            <div class="cmd-preview">$ git reset --soft HEAD~1</div>
+            <div class="cmd-hint">&#9658; FLIP TO READ!</div>
+          </div>
+          <div class="cmd-back">
+            <div class="cmd-stripe"><span class="cmd-stripe-label" style="color:var(--yellow)">RESET — PRO TIPS</span></div>
+            <div class="cmd-back-body">
+              <strong>--soft:</strong> move HEAD, keep index + working tree unchanged.<br>
+              <strong>--mixed:</strong> move HEAD + unstage, keep working tree (DEFAULT).<br>
+              <strong>--hard:</strong> move HEAD + destroy all uncommitted changes.<br><br>
+              <code>git reset --hard</code> is irreversible (unless you use reflog!).
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- git stash -->
+      <div class="cmd-card" onclick="this.classList.toggle('flipped')">
+        <div class="cmd-inner">
+          <div class="cmd-front">
+            <div class="cmd-stripe bg-yellow" style="border-color:var(--ink);">
+              <span class="cmd-stripe-label" style="color:var(--ink);">STASH</span>
+              <span class="cmd-type-tag" style="background:rgba(0,0,0,.15);color:var(--ink);">SHELVE</span>
+            </div>
+            <div class="cmd-desc">The Pause Button — saves your messy work-in-progress without a commit so you can switch branches with a clean slate. Resume later!</div>
+            <div class="cmd-preview">$ git stash push -m "wip login"</div>
+            <div class="cmd-hint">&#9658; FLIP TO READ!</div>
+          </div>
+          <div class="cmd-back">
+            <div class="cmd-stripe"><span class="cmd-stripe-label" style="color:var(--yellow)">STASH — PRO TIPS</span></div>
+            <div class="cmd-back-body">
+              <code>git stash list</code> — see all stashed states.<br>
+              <code>git stash pop</code> — apply newest stash + delete it.<br>
+              <code>git stash apply stash@{2}</code> — apply specific stash, keep it.<br>
+              <code>git stash branch new-branch</code> — turn a stash into a branch!
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- git log -->
+      <div class="cmd-card" onclick="this.classList.toggle('flipped')">
+        <div class="cmd-inner">
+          <div class="cmd-front">
+            <div class="cmd-stripe bg-ink">
+              <span class="cmd-stripe-label" style="color:var(--yellow);">LOG</span>
+              <span class="cmd-type-tag">HISTORY</span>
+            </div>
+            <div class="cmd-desc">The Historian — shows the commit timeline. Pair with flags to get graphs, one-liners, file diffs, or range comparisons. The most powerful viewer!</div>
+            <div class="cmd-preview">$ git log --oneline --graph --all</div>
+            <div class="cmd-hint">&#9658; FLIP TO READ!</div>
+          </div>
+          <div class="cmd-back">
+            <div class="cmd-stripe"><span class="cmd-stripe-label" style="color:var(--yellow)">LOG — PRO TIPS</span></div>
+            <div class="cmd-back-body">
+              <code>git log -p</code> show full diffs per commit.<br>
+              <code>git log --author="Ali"</code> filter by author.<br>
+              <code>git log --since="2 weeks ago"</code> filter by date.<br>
+              <code>git log main..feature</code> commits in feature not in main.<br>
+              <code>git log --follow path/to/file</code> follow file renames.
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- git bisect -->
+      <div class="cmd-card" onclick="this.classList.toggle('flipped')">
+        <div class="cmd-inner">
+          <div class="cmd-front">
+            <div class="cmd-stripe bg-red">
+              <span class="cmd-stripe-label">BISECT</span>
+              <span class="cmd-type-tag">DEBUG</span>
+            </div>
+            <div class="cmd-desc">The Detective — binary-searches your commit history to find exactly which commit introduced a bug. Cuts the search space in half every step!</div>
+            <div class="cmd-preview">$ git bisect start</div>
+            <div class="cmd-hint">&#9658; FLIP TO READ!</div>
+          </div>
+          <div class="cmd-back">
+            <div class="cmd-stripe"><span class="cmd-stripe-label" style="color:var(--yellow)">BISECT — PRO TIPS</span></div>
+            <div class="cmd-back-body">
+              <strong>Flow:</strong><br>
+              <code>git bisect start</code><br>
+              <code>git bisect bad</code> (current is broken)<br>
+              <code>git bisect good v1.2.3</code> (this was fine)<br>
+              Git checks out midpoints, you mark good/bad.<br>
+              <code>git bisect reset</code> when done. O(log n) bug hunting!
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <div class="starburst-wrap">
+    <span class="starburst" style="transform:rotate(-7deg);text-shadow:3px 3px 0 var(--green);">MERGE CONFLICTS? STAY CALM!</span>
+    &nbsp;&nbsp;&nbsp;
+    <span class="starburst" style="transform:rotate(12deg);text-shadow:3px 3px 0 var(--purple);">GIT BISECT SAVES HOURS!</span>
+  </div>
+
+  <!-- ══ CHAPTER 3 ══ -->
+  <div id="chapter3">
+    <div class="chapter-heading">
+      <div class="chapter-num">3</div>
+      <div>
+        <div class="chapter-title">THE <span class="accent">GREAT JOURNEY</span></div>
+      </div>
+    </div>
+    <p class="chapter-sub">Follow a feature from idea to merged PR — the complete adventure!</p>
+    <hr class="divider">
+
+    <div class="journey" style="margin-top:22px;">
+
+      <div class="journey-step">
+        <div class="step-num bg-blue">1</div>
+        <div class="step-card">
+          <div class="step-header">"THE CALL TO ADVENTURE!"</div>
+          <div class="step-body">A new feature is born! Clone or pull the latest main, then spin up a fresh branch. Never work directly on main — that's how legends die.</div>
+          <div style="padding:0 14px 12px;">
+            <span class="step-cmd">$ git pull origin main</span>&nbsp;
+            <span class="step-cmd">$ git checkout -b feature/add-login</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="journey-step">
+        <div class="step-num bg-green">2</div>
+        <div class="step-card">
+          <div class="step-header">"THE FORGE OF CREATION!"</div>
+          <div class="step-body">Write code. Break things. Fix them. Check what changed at any point with git status and git diff. Stay aware of your working directory at all times.</div>
+          <div style="padding:0 14px 12px;">
+            <span class="step-cmd">$ git status</span>&nbsp;
+            <span class="step-cmd">$ git diff</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="journey-step">
+        <div class="step-num bg-yellow" style="color:var(--ink);">3</div>
+        <div class="step-card">
+          <div class="step-header">"STAGE YOUR CHAMPIONS!"</div>
+          <div class="step-body">Add only the changes that belong together in one logical commit. Use interactive staging to be surgical — don't just "git add ." blindly!</div>
+          <div style="padding:0 14px 12px;">
+            <span class="step-cmd">$ git add src/login.js</span>&nbsp;
+            <span class="step-cmd">$ git add -p</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="journey-step">
+        <div class="step-num bg-red">4</div>
+        <div class="step-card">
+          <div class="step-header">"CAPTURE THE MOMENT!"</div>
+          <div class="step-body">Commit with a clear, present-tense message. Describe WHY, not just WHAT. Your future teammates will either thank you or curse you here.</div>
+          <div style="padding:0 14px 12px;">
+            <span class="step-cmd">$ git commit -m "add JWT-based login endpoint"</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="journey-step">
+        <div class="step-num bg-orange">5</div>
+        <div class="step-card">
+          <div class="step-header">"STAY CURRENT, HERO!"</div>
+          <div class="step-body">Main has moved while you worked. Rebase your feature branch onto the latest main to keep a clean linear history before opening your PR.</div>
+          <div style="padding:0 14px 12px;">
+            <span class="step-cmd">$ git fetch origin</span>&nbsp;
+            <span class="step-cmd">$ git rebase origin/main</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="journey-step">
+        <div class="step-num bg-purple">6</div>
+        <div class="step-card">
+          <div class="step-header">"PUSH TO THE CLOUD FORTRESS!"</div>
+          <div class="step-body">Send your branch up to the remote so teammates can review it. First push requires -u to set the upstream tracking reference. Subsequent pushes are simple.</div>
+          <div style="padding:0 14px 12px;">
+            <span class="step-cmd">$ git push -u origin feature/add-login</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="journey-step">
+        <div class="step-num bg-pink">7</div>
+        <div class="step-card">
+          <div class="step-header">"THE COUNCIL REVIEWS!"</div>
+          <div class="step-body">Open a Pull Request. Reviewers comment, CI runs tests, linters scold you. Address feedback with new commits. A great PR description is half the battle.</div>
+          <div style="padding:0 14px 12px;">
+            <span class="step-cmd">$ gh pr create --title "Add login" --body "..."</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="journey-step">
+        <div class="step-num" style="background:var(--green);color:#fff;">★</div>
+        <div class="step-card">
+          <div class="step-header" style="color:var(--green);">"MERGED! GLORY AT LAST!"</div>
+          <div class="step-body">The PR is approved and merged to main. Delete the remote branch, pull main locally, and delete the local branch. The feature is alive in production. You are victorious!</div>
+          <div style="padding:0 14px 12px;">
+            <span class="step-cmd" style="background:var(--green);">$ git checkout main &amp;&amp; git pull</span>&nbsp;
+            <span class="step-cmd" style="background:var(--green);">$ git branch -d feature/add-login</span>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- THE END -->
+  <div class="the-end">
+    <div class="the-end-text">THE END!</div>
+    <div class="the-end-sub">...until the next feature branch is born. Then our hero codes again!</div>
+  </div>
+
+</div><!-- /page-wrap -->
+
+<script>
+// No setup needed — card flipping is handled by inline onclick + CSS transform
+// This block intentionally minimal — all interactivity is CSS-driven
+</script>
+</body>
+</html>

@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Base32 Decoder — DevDunia Comics</title>
+<meta name="description" content="Decode Base32 encoded data back to original text. Free online Base32 decoder for developers.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://devdunia.com/base32-decoder.html">
+<meta property="og:title" content="Base32 Decoder — DevDunia Comics">
+<meta property="og:description" content="Decode Base32 encoded data back to original text. Free online Base32 decoder.">
+<meta property="og:image" content="https://devdunia.com/images/logo.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Bangers&family=Comic+Neue:wght@400;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+:root{--ink:#1a1410;--paper:#fdf3e3;--paper2:#fbe9cc;--red:#e63946;--blue:#1d6fb8;--yellow:#ffd23f;--green:#3fa34d;--pink:#ff6b9d;--purple:#8a4fff;--orange:#ff8c42;}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'Comic Neue',cursive;font-weight:400;color:var(--ink);background-color:var(--paper);background-image:radial-gradient(var(--ink) 0.5px,transparent 0.6px);background-size:14px 14px;background-attachment:fixed;min-height:100vh;}
+.paper-overlay{position:fixed;inset:0;background:rgba(253,243,227,.78);pointer-events:none;z-index:0;}
+.page-wrap{position:relative;z-index:1;max-width:820px;margin:0 auto;padding:0 16px 60px;}
+.masthead{background:var(--blue);border:4px solid var(--ink);border-radius:6px;box-shadow:7px 7px 0 var(--ink);margin:18px 0 28px;padding:10px 20px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;}
+.masthead-logo{font-family:'Bangers',cursive;font-size:1.9rem;letter-spacing:2px;color:#fff;text-shadow:3px 3px 0 var(--ink);line-height:1;}
+.masthead-logo span{color:var(--yellow);}
+.masthead-right{display:flex;align-items:center;gap:8px;}
+.issue-tag{font-family:'Bangers',cursive;font-size:.95rem;background:var(--yellow);color:var(--ink);padding:3px 10px;border-radius:4px;border:2px solid var(--ink);letter-spacing:1px;}
+.back-link{font-family:'Bangers',cursive;font-size:.95rem;color:#fff;text-decoration:none;background:var(--ink);padding:3px 10px;border-radius:4px;letter-spacing:1px;transition:opacity .15s;}
+.back-link:hover{opacity:.75;}
+.hero{display:flex;align-items:flex-start;gap:20px;background:var(--paper2);border:4px solid var(--ink);border-radius:6px;box-shadow:7px 7px 0 var(--ink);padding:20px 24px;margin-bottom:28px;transform:rotate(-0.4deg);}
+.hero-icon{font-size:3rem;line-height:1;flex-shrink:0;filter:drop-shadow(3px 3px 0 var(--ink));}
+.hero-text h1{font-family:'Bangers',cursive;font-size:2.8rem;letter-spacing:2px;color:var(--orange);-webkit-text-stroke:1px var(--ink);text-shadow:4px 4px 0 var(--ink);line-height:1;text-transform:uppercase;}
+.hero-text p{font-size:.95rem;margin-top:6px;line-height:1.5;max-width:480px;}
+.hero-badges{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px;}
+.badge{font-family:'Space Mono',monospace;font-size:.65rem;font-weight:700;padding:3px 8px;border:2px solid var(--ink);border-radius:4px;box-shadow:2px 2px 0 var(--ink);}
+.badge-blue{background:var(--blue);color:#fff;}.badge-green{background:var(--green);color:#fff;}.badge-yellow{background:var(--yellow);color:var(--ink);}.badge-red{background:var(--red);color:#fff;}
+.panel{background:var(--paper);border:4px solid var(--ink);border-radius:6px;box-shadow:7px 7px 0 var(--ink);overflow:hidden;margin-bottom:22px;}
+.panel-header{background:var(--ink);color:var(--yellow);font-family:'Bangers',cursive;font-size:1.2rem;letter-spacing:2px;padding:8px 16px;display:flex;align-items:center;justify-content:space-between;gap:10px;}
+.panel-header .panel-tag{font-family:'Space Mono',monospace;font-size:.65rem;font-weight:700;background:var(--yellow);color:var(--ink);padding:2px 7px;border-radius:3px;}
+.panel-body{padding:18px 20px;}
+.comic-textarea{width:100%;background:#fff;border:3px solid var(--ink);border-radius:6px;padding:12px 14px;font-family:'Space Mono',monospace;font-size:.82rem;color:var(--ink);line-height:1.6;resize:vertical;min-height:130px;box-shadow:inset 3px 3px 0 rgba(0,0,0,.06);outline:none;transition:border-color .15s;}
+.comic-textarea:focus{border-color:var(--blue);}
+.comic-textarea::placeholder{color:#aaa;font-style:italic;}
+.comic-textarea[readonly]{background:var(--paper2);cursor:default;}
+.btn-row{display:flex;flex-wrap:wrap;gap:10px;margin-top:14px;}
+.btn{font-family:'Bangers',cursive;font-size:1.1rem;letter-spacing:1px;border:3px solid var(--ink);border-radius:6px;padding:8px 20px;cursor:pointer;box-shadow:4px 4px 0 var(--ink);transition:transform .1s,box-shadow .1s;text-transform:uppercase;}
+.btn:active{transform:translate(2px,2px);box-shadow:2px 2px 0 var(--ink);}
+.btn-primary{background:var(--orange);color:#fff;}.btn-danger{background:var(--red);color:#fff;}
+.error-bubble{display:none;position:relative;background:#fff0f0;border:3px solid var(--red);border-radius:14px;padding:10px 14px;margin-top:12px;font-size:.9rem;font-weight:700;color:var(--red);}
+.error-bubble::before{content:'';position:absolute;top:-16px;left:22px;border-width:0 10px 16px;border-style:solid;border-color:transparent transparent var(--red);}
+.error-bubble::after{content:'';position:absolute;top:-11px;left:24px;border-width:0 8px 12px;border-style:solid;border-color:transparent transparent #fff0f0;}
+.error-bubble.show{display:block;}
+.output-wrap{position:relative;}
+.copy-btn{position:absolute;top:8px;right:8px;font-family:'Bangers',cursive;font-size:.95rem;letter-spacing:1px;background:var(--ink);color:var(--yellow);border:2px solid var(--ink);border-radius:4px;padding:3px 10px;cursor:pointer;box-shadow:2px 2px 0 rgba(0,0,0,.4);transition:transform .1s,box-shadow .1s;}
+.copy-btn:active{transform:translate(1px,1px);box-shadow:1px 1px 0 rgba(0,0,0,.4);}
+.stats-row{display:flex;flex-wrap:wrap;gap:10px;margin-top:14px;}
+.stat-chip{font-family:'Space Mono',monospace;font-size:.72rem;font-weight:700;padding:4px 10px;border:2px solid var(--ink);border-radius:4px;box-shadow:2px 2px 0 var(--ink);display:flex;align-items:center;gap:5px;}
+.stat-chip .stat-label{opacity:.65;font-weight:400;}
+.chip-blue{background:var(--blue);color:#fff;}.chip-green{background:var(--green);color:#fff;}.chip-purple{background:var(--purple);color:#fff;}.chip-yellow{background:var(--yellow);color:var(--ink);}
+.examples-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+.example-card{background:var(--paper2);border:3px solid var(--ink);border-radius:6px;box-shadow:4px 4px 0 var(--ink);padding:10px 12px;cursor:pointer;transition:transform .1s,box-shadow .1s;}
+.example-card:hover{transform:translate(-2px,-2px);box-shadow:6px 6px 0 var(--ink);}
+.example-card:active{transform:translate(1px,1px);box-shadow:2px 2px 0 var(--ink);}
+.example-title{font-family:'Bangers',cursive;font-size:1rem;letter-spacing:1px;margin-bottom:4px;}
+.example-val{font-family:'Space Mono',monospace;font-size:.68rem;color:var(--blue);word-break:break-all;margin-bottom:2px;}
+.example-arrow{font-size:.75rem;color:var(--ink);opacity:.55;}
+@media(max-width:600px){
+  .examples-grid{grid-template-columns:1fr;}
+  .hero{flex-direction:column;gap:10px;}
+  .hero-text h1{font-size:2rem;}
+}
+</style>
+</head>
+<body>
+<div class="paper-overlay"></div>
+<div class="page-wrap">
+
+  <div class="masthead">
+    <div class="masthead-logo">DEV<span>DUNIA</span> COMICS</div>
+    <div class="masthead-right">
+      <span class="issue-tag">BASE32</span>
+      <a href="../index.html" class="back-link">&#9664; ALL TOOLS</a>
+    </div>
+  </div>
+
+  <div class="hero">
+    <div class="hero-icon">&#x1F513;</div>
+    <div class="hero-text">
+      <h1>Base32 Decoder</h1>
+      <p>Paste any Base32-encoded string and decode it back to the original text. Supports standard RFC 4648 Base32 with proper padding validation. All in your browser!</p>
+      <div class="hero-badges">
+        <span class="badge badge-blue">RFC 4648</span>
+        <span class="badge badge-green">VALIDATED</span>
+        <span class="badge badge-yellow">FREE</span>
+        <span class="badge badge-red">INSTANT</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="panel">
+    <div class="panel-header">
+      &#x1F4E5; PASTE BASE32 DATA HERE
+      <span class="panel-tag">INPUT</span>
+    </div>
+    <div class="panel-body">
+      <textarea id="base32-input" class="comic-textarea" rows="6" placeholder="Paste Base32 encoded data here... e.g. JBSWY3DPEBLW64TMMQQQ===="></textarea>
+      <div class="btn-row">
+        <button id="decode-btn" class="btn btn-primary">&#x26A1; Decode Base32!</button>
+        <button id="clear-btn" class="btn btn-danger">&#x1F5D1; Clear</button>
+      </div>
+      <div id="error-bubble" class="error-bubble">
+        &#x1F4A5; <span id="error-msg">Invalid Base32 data!</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="panel" id="output-panel" style="display:none;">
+    <div class="panel-header">
+      &#x1F4E4; DECODED OUTPUT
+      <span class="panel-tag">OUTPUT</span>
+    </div>
+    <div class="panel-body">
+      <div class="output-wrap">
+        <textarea id="base32-output" class="comic-textarea" rows="7" readonly></textarea>
+        <button id="copy-btn" class="copy-btn">&#x1F4CB; COPY</button>
+      </div>
+      <div class="stats-row">
+        <div class="stat-chip chip-blue"><span class="stat-label">B32 SIZE</span><span id="stat-b32">—</span></div>
+        <div class="stat-chip chip-green"><span class="stat-label">DECODED</span><span id="stat-decoded">—</span></div>
+        <div class="stat-chip chip-purple"><span class="stat-label">COMPRESSION</span><span id="stat-compression">—</span></div>
+        <div class="stat-chip chip-yellow"><span class="stat-label">PADDING</span><span id="stat-padding">—</span></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="panel">
+    <div class="panel-header">
+      &#x1F4DA; TRY AN EXAMPLE — CLICK TO LOAD!
+      <span class="panel-tag">EXAMPLES</span>
+    </div>
+    <div class="panel-body">
+      <div class="examples-grid">
+        <div class="example-card" data-encoded="JBSWY3DPEBLW64TMMQQQ====">
+          <div class="example-title" style="color:var(--blue);">Simple Text</div>
+          <div class="example-val">JBSWY3DPEBLW64TMMQQQ====</div>
+          <div class="example-arrow">&#x2193; "Hello World"</div>
+        </div>
+        <div class="example-card" data-encoded="ORSXG5A=">
+          <div class="example-title" style="color:var(--green);">Short String</div>
+          <div class="example-val">ORSXG5A=</div>
+          <div class="example-arrow">&#x2193; "test"</div>
+        </div>
+        <div class="example-card" data-encoded="JBSWY3DPEBTHE33NEBCWG2DPMJQXG2BB=">
+          <div class="example-title" style="color:var(--purple);">Longer Text</div>
+          <div class="example-val">JBSWY3DPEBTHE33NEBCWG2DPMJQXG2BB=</div>
+          <div class="example-arrow">&#x2193; "Hello from DevDunia"</div>
+        </div>
+        <div class="example-card" data-encoded="NB2HI4DTHIXS65DFON2GK3TFN5XHIYLUMU======">
+          <div class="example-title" style="color:var(--red);">URL</div>
+          <div class="example-val">NB2HI4DTHIXS65DFON2GK3TFN5XHIYLUMU======</div>
+          <div class="example-arrow">&#x2193; "https://devdunia.com"</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+<script>
+(function(){
+  var inputEl  = document.getElementById('base32-input');
+  var outputEl = document.getElementById('base32-output');
+  var decBtn   = document.getElementById('decode-btn');
+  var clearBtn = document.getElementById('clear-btn');
+  var copyBtn  = document.getElementById('copy-btn');
+  var outPanel = document.getElementById('output-panel');
+  var errBubble= document.getElementById('error-bubble');
+  var errMsg   = document.getElementById('error-msg');
+  var statB32  = document.getElementById('stat-b32');
+  var statDec  = document.getElementById('stat-decoded');
+  var statComp = document.getElementById('stat-compression');
+  var statPad  = document.getElementById('stat-padding');
+
+  var ALPHA = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ234567';
+
+  function showErr(msg){errMsg.textContent=msg;errBubble.classList.add('show');}
+  function hideErr(){errBubble.classList.remove('show');}
+  function formatBytes(n){if(n===0)return'0 B';if(n<1024)return n+' B';return(n/1024).toFixed(1)+' KB';}
+
+  function isValidBase32(str){
+    return /^[A-Z2-7]+=*$/.test(str) && [0,1,3,4,6].indexOf((str.match(/=+$/)||[''])[0].length)!==-1;
+  }
+
+  function decodeFromBase32(input) {
+    var clean = input.replace(/=+$/,'');
+    var binary = '';
+    for (var i=0;i<clean.length;i++){
+      var idx = ALPHA.indexOf(clean[i]);
+      if(idx===-1) throw new Error('Invalid character: '+clean[i]);
+      binary += idx.toString(2).padStart(5,'0');
+    }
+    binary = binary.substring(0, Math.floor(binary.length/8)*8);
+    var bytes = [];
+    for (var j=0;j<binary.length;j+=8) bytes.push(parseInt(binary.substr(j,8),2));
+    return new TextDecoder().decode(new Uint8Array(bytes));
+  }
+
+  function decode() {
+    var raw = inputEl.value.trim();
+    if (!raw) {showErr('Please paste some Base32 data first!');return;}
+    var clean = raw.replace(/\s/g,'').toUpperCase();
+    if (!isValidBase32(clean)){
+      showErr('Invalid Base32! Only A-Z, 2-7 and = padding are allowed.');
+      outPanel.style.display='none'; return;
+    }
+    try {
+      var decoded = decodeFromBase32(clean);
+      outputEl.value = decoded;
+      outPanel.style.display = 'block';
+      hideErr();
+      var b32b = new Blob([clean]).size;
+      var decb = new Blob([decoded]).size;
+      var comp = b32b>0 ? (((b32b-decb)/b32b)*100).toFixed(1) : '0';
+      var padMatch = clean.match(/=+$/);
+      statB32.textContent  = formatBytes(b32b);
+      statDec.textContent  = formatBytes(decb);
+      statComp.textContent = comp + '%';
+      statPad.textContent  = (padMatch?padMatch[0].length:0) + ' chars';
+    } catch(e) {showErr('Decode failed: '+e.message);outPanel.style.display='none';}
+  }
+
+  decBtn.addEventListener('click', decode);
+  clearBtn.addEventListener('click',function(){
+    inputEl.value=''; outputEl.value='';
+    outPanel.style.display='none'; hideErr();
+  });
+  copyBtn.addEventListener('click',function(){
+    outputEl.select();
+    try{document.execCommand('copy');}catch(e){}
+    if(navigator.clipboard) navigator.clipboard.writeText(outputEl.value).catch(function(){});
+    var orig=copyBtn.textContent;
+    copyBtn.textContent='✔ COPIED!'; copyBtn.style.background='var(--green)';
+    setTimeout(function(){copyBtn.textContent=orig;copyBtn.style.background='var(--ink)';},1800);
+  });
+  inputEl.addEventListener('keydown',function(e){if((e.ctrlKey||e.metaKey)&&e.key==='Enter')decode();});
+
+  var cards = document.querySelectorAll('.example-card');
+  for (var i=0;i<cards.length;i++){
+    cards[i].addEventListener('click',function(){
+      inputEl.value=this.dataset.encoded;
+      decode();
+    });
+  }
+
+  inputEl.value = 'JBSWY3DPEBLW64TMMQQQ====';
+})();
+</script>
+</body>
+</html>

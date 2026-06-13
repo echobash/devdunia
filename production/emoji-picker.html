@@ -1,0 +1,440 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Emoji Picker — DevDunia Comics</title>
+<meta name="description" content="Browse and copy 200+ emojis instantly. Click any emoji to copy it to your clipboard.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://devdunia.com/emoji-picker.html">
+<meta property="og:title" content="Emoji Picker — DevDunia Comics">
+<meta property="og:description" content="Browse and copy 200+ emojis instantly. Click any emoji to copy it.">
+<meta property="og:image" content="https://devdunia.com/images/logo.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Bangers&family=Comic+Neue:wght@400;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+:root{--ink:#1a1410;--paper:#fdf3e3;--paper2:#fbe9cc;--red:#e63946;--blue:#1d6fb8;--yellow:#ffd23f;--green:#3fa34d;--pink:#ff6b9d;--purple:#8a4fff;--orange:#ff8c42;}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'Comic Neue',cursive;font-weight:400;color:var(--ink);background-color:var(--paper);background-image:radial-gradient(var(--ink) 0.5px,transparent 0.6px);background-size:14px 14px;background-attachment:fixed;min-height:100vh;}
+.paper-overlay{position:fixed;inset:0;background:rgba(253,243,227,.78);pointer-events:none;z-index:0;}
+.page-wrap{position:relative;z-index:1;max-width:900px;margin:0 auto;padding:0 16px 60px;}
+.masthead{background:var(--blue);border:4px solid var(--ink);border-radius:6px;box-shadow:7px 7px 0 var(--ink);margin:18px 0 28px;padding:10px 20px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;}
+.masthead-logo{font-family:'Bangers',cursive;font-size:1.9rem;letter-spacing:2px;color:#fff;text-shadow:3px 3px 0 var(--ink);line-height:1;}
+.masthead-logo span{color:var(--yellow);}
+.masthead-right{display:flex;align-items:center;gap:8px;}
+.issue-tag{font-family:'Bangers',cursive;font-size:.95rem;background:var(--yellow);color:var(--ink);padding:3px 10px;border-radius:4px;border:2px solid var(--ink);letter-spacing:1px;}
+.back-link{font-family:'Bangers',cursive;font-size:.95rem;color:#fff;text-decoration:none;background:var(--ink);padding:3px 10px;border-radius:4px;letter-spacing:1px;transition:opacity .15s;}
+.back-link:hover{opacity:.75;}
+.hero{display:flex;align-items:flex-start;gap:20px;background:var(--paper2);border:4px solid var(--ink);border-radius:6px;box-shadow:7px 7px 0 var(--ink);padding:20px 24px;margin-bottom:28px;transform:rotate(-0.4deg);}
+.hero-icon{font-size:3rem;line-height:1;flex-shrink:0;filter:drop-shadow(3px 3px 0 var(--ink));}
+.hero-text h1{font-family:'Bangers',cursive;font-size:2.8rem;letter-spacing:2px;color:var(--blue);-webkit-text-stroke:1px var(--ink);text-shadow:4px 4px 0 var(--ink);line-height:1;text-transform:uppercase;}
+.hero-text p{font-size:.95rem;margin-top:6px;line-height:1.5;max-width:480px;}
+.hero-badges{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px;}
+.badge{font-family:'Space Mono',monospace;font-size:.65rem;font-weight:700;padding:3px 8px;border:2px solid var(--ink);border-radius:4px;box-shadow:2px 2px 0 var(--ink);}
+.badge-blue{background:var(--blue);color:#fff;}.badge-green{background:var(--green);color:#fff;}.badge-yellow{background:var(--yellow);color:var(--ink);}.badge-red{background:var(--red);color:#fff;}
+.panel{background:var(--paper);border:4px solid var(--ink);border-radius:6px;box-shadow:7px 7px 0 var(--ink);overflow:hidden;margin-bottom:22px;}
+.panel-header{background:var(--ink);color:var(--yellow);font-family:'Bangers',cursive;font-size:1.2rem;letter-spacing:2px;padding:8px 16px;display:flex;align-items:center;justify-content:space-between;gap:10px;}
+.panel-header .panel-tag{font-family:'Space Mono',monospace;font-size:.65rem;font-weight:700;background:var(--yellow);color:var(--ink);padding:2px 7px;border-radius:3px;}
+.panel-body{padding:18px 20px;}
+.search-bar{width:100%;background:#fff;border:3px solid var(--ink);border-radius:6px;padding:10px 14px;font-family:'Comic Neue',cursive;font-size:1rem;color:var(--ink);outline:none;box-shadow:3px 3px 0 var(--ink);transition:border-color .15s;}
+.search-bar:focus{border-color:var(--blue);}
+.search-bar::placeholder{color:#aaa;font-style:italic;}
+.emoji-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(70px,1fr));gap:8px;margin-top:14px;}
+.emoji-card{background:var(--paper2);border:3px solid var(--ink);border-radius:6px;box-shadow:3px 3px 0 var(--ink);padding:8px 4px;text-align:center;cursor:pointer;transition:transform .1s,box-shadow .1s;}
+.emoji-card:hover{transform:translate(-2px,-2px);box-shadow:5px 5px 0 var(--ink);}
+.emoji-card:active{transform:translate(1px,1px);box-shadow:1px 1px 0 var(--ink);}
+.emoji-char{font-size:1.8rem;line-height:1;display:block;}
+.emoji-code{font-family:'Space Mono',monospace;font-size:.5rem;color:var(--blue);margin-top:3px;word-break:break-all;opacity:.8;}
+.cat-tabs{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:14px;}
+.cat-tab{font-family:'Bangers',cursive;font-size:.88rem;letter-spacing:1px;background:var(--paper2);border:2px solid var(--ink);border-radius:4px;padding:4px 10px;cursor:pointer;box-shadow:2px 2px 0 var(--ink);transition:transform .1s;text-transform:uppercase;}
+.cat-tab:active{transform:translate(1px,1px);box-shadow:1px 1px 0 var(--ink);}
+.cat-tab.active{background:var(--blue);color:#fff;}
+.count-label{font-family:'Space Mono',monospace;font-size:.72rem;font-weight:700;color:var(--ink);opacity:.6;margin-bottom:8px;}
+
+/* Toast notification */
+.toast-notify{position:fixed;bottom:24px;right:24px;background:var(--ink);color:var(--yellow);font-family:'Bangers',cursive;font-size:1.1rem;letter-spacing:1px;padding:10px 20px;border-radius:6px;border:3px solid var(--yellow);box-shadow:4px 4px 0 var(--yellow);opacity:0;transform:translateY(20px);transition:opacity .3s,transform .3s;pointer-events:none;z-index:9999;}
+.toast-notify.show{opacity:1;transform:translateY(0);}
+@media(max-width:600px){
+  .emoji-grid{grid-template-columns:repeat(auto-fill,minmax(60px,1fr));}
+  .hero{flex-direction:column;gap:10px;}
+  .hero-text h1{font-size:2rem;}
+}
+</style>
+</head>
+<body>
+<div class="paper-overlay"></div>
+<div class="page-wrap">
+
+  <div class="masthead">
+    <div class="masthead-logo">DEV<span>DUNIA</span> COMICS</div>
+    <div class="masthead-right">
+      <span class="issue-tag">EMOJI</span>
+      <a href="../index.html" class="back-link">&#9664; ALL TOOLS</a>
+    </div>
+  </div>
+
+  <div class="hero">
+    <div class="hero-icon">&#x1F60E;</div>
+    <div class="hero-text">
+      <h1>Emoji Picker</h1>
+      <p>Browse 200+ emojis organized by category. Click any emoji to instantly copy it to your clipboard. Search by name or filter by category!</p>
+      <div class="hero-badges">
+        <span class="badge badge-blue">200+ EMOJIS</span>
+        <span class="badge badge-green">1-CLICK COPY</span>
+        <span class="badge badge-yellow">SEARCHABLE</span>
+        <span class="badge badge-red">UNICODE</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="panel">
+    <div class="panel-header">
+      &#x1F50D; SEARCH &amp; FILTER
+      <span class="panel-tag">FILTER</span>
+    </div>
+    <div class="panel-body">
+      <input type="text" id="emojiSearch" class="search-bar" placeholder="Search emojis by name... e.g. 'happy', 'cat', 'food'">
+      <div class="cat-tabs" style="margin-top:12px;">
+        <button class="cat-tab active" data-cat="all">All</button>
+        <button class="cat-tab" data-cat="smileys">Smileys</button>
+        <button class="cat-tab" data-cat="animals">Animals</button>
+        <button class="cat-tab" data-cat="food">Food</button>
+        <button class="cat-tab" data-cat="hands">Hands</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="panel">
+    <div class="panel-header">
+      &#x1F3A8; EMOJI GALLERY — CLICK TO COPY!
+      <span class="panel-tag">GALLERY</span>
+    </div>
+    <div class="panel-body">
+      <div class="count-label" id="countLabel">Showing all emojis</div>
+      <div class="emoji-grid" id="emojiGrid"></div>
+    </div>
+  </div>
+
+</div>
+<div class="toast-notify" id="toastNotify">&#x2714; Copied!</div>
+
+<script>
+(function(){
+  var emojiData = [
+    {e:'😀',u:'U+1F600',n:'grinning face',c:'smileys'},
+    {e:'😃',u:'U+1F603',n:'big eyes face',c:'smileys'},
+    {e:'😄',u:'U+1F604',n:'smiling eyes face',c:'smileys'},
+    {e:'😁',u:'U+1F601',n:'beaming face',c:'smileys'},
+    {e:'😆',u:'U+1F606',n:'squinting face',c:'smileys'},
+    {e:'😅',u:'U+1F605',n:'face with sweat',c:'smileys'},
+    {e:'🤣',u:'U+1F923',n:'rolling laughing',c:'smileys'},
+    {e:'😂',u:'U+1F602',n:'tears of joy',c:'smileys'},
+    {e:'🙂',u:'U+1F642',n:'slightly smiling face',c:'smileys'},
+    {e:'🙃',u:'U+1F643',n:'upside-down face',c:'smileys'},
+    {e:'😉',u:'U+1F609',n:'winking face',c:'smileys'},
+    {e:'😊',u:'U+1F60A',n:'smiling face',c:'smileys'},
+    {e:'😇',u:'U+1F607',n:'smiling halo face',c:'smileys'},
+    {e:'🥰',u:'U+1F970',n:'smiling with hearts',c:'smileys'},
+    {e:'😍',u:'U+1F60D',n:'heart eyes face',c:'smileys'},
+    {e:'🤩',u:'U+1F929',n:'star struck face',c:'smileys'},
+    {e:'😘',u:'U+1F618',n:'blowing kiss face',c:'smileys'},
+    {e:'😗',u:'U+1F617',n:'kissing face',c:'smileys'},
+    {e:'😚',u:'U+1F61A',n:'kissing closed eyes',c:'smileys'},
+    {e:'😙',u:'U+1F619',n:'kissing smiling eyes',c:'smileys'},
+    {e:'🥲',u:'U+1F972',n:'smiling with tear',c:'smileys'},
+    {e:'😋',u:'U+1F60B',n:'savoring food face',c:'smileys'},
+    {e:'😛',u:'U+1F61B',n:'face with tongue',c:'smileys'},
+    {e:'😜',u:'U+1F61C',n:'winking tongue face',c:'smileys'},
+    {e:'🤪',u:'U+1F92A',n:'zany face',c:'smileys'},
+    {e:'😝',u:'U+1F61D',n:'squinting tongue face',c:'smileys'},
+    {e:'🤑',u:'U+1F911',n:'money mouth face',c:'smileys'},
+    {e:'🤗',u:'U+1F917',n:'hugging face',c:'smileys'},
+    {e:'🤭',u:'U+1F92D',n:'hand over mouth',c:'smileys'},
+    {e:'🤫',u:'U+1F92B',n:'shushing face',c:'smileys'},
+    {e:'🤔',u:'U+1F914',n:'thinking face',c:'smileys'},
+    {e:'🤐',u:'U+1F910',n:'zipper mouth face',c:'smileys'},
+    {e:'🤨',u:'U+1F928',n:'raised eyebrow face',c:'smileys'},
+    {e:'😐',u:'U+1F610',n:'neutral face',c:'smileys'},
+    {e:'😑',u:'U+1F611',n:'expressionless face',c:'smileys'},
+    {e:'😶',u:'U+1F636',n:'face without mouth',c:'smileys'},
+    {e:'😏',u:'U+1F60F',n:'smirking face',c:'smileys'},
+    {e:'😒',u:'U+1F612',n:'unamused face',c:'smileys'},
+    {e:'🙄',u:'U+1F644',n:'rolling eyes face',c:'smileys'},
+    {e:'😬',u:'U+1F62C',n:'grimacing face',c:'smileys'},
+    {e:'🤥',u:'U+1F925',n:'lying face',c:'smileys'},
+    {e:'😔',u:'U+1F614',n:'pensive face',c:'smileys'},
+    {e:'😪',u:'U+1F62A',n:'sleepy face',c:'smileys'},
+    {e:'🤤',u:'U+1F924',n:'drooling face',c:'smileys'},
+    {e:'😴',u:'U+1F634',n:'sleeping face',c:'smileys'},
+    {e:'😷',u:'U+1F637',n:'medical mask face',c:'smileys'},
+    {e:'🤒',u:'U+1F912',n:'thermometer face',c:'smileys'},
+    {e:'🤕',u:'U+1F915',n:'head bandage face',c:'smileys'},
+    {e:'🤢',u:'U+1F922',n:'nauseated face',c:'smileys'},
+    {e:'🤮',u:'U+1F92E',n:'vomiting face',c:'smileys'},
+    {e:'🤧',u:'U+1F927',n:'sneezing face',c:'smileys'},
+    {e:'🥵',u:'U+1F975',n:'hot face',c:'smileys'},
+    {e:'🥶',u:'U+1F976',n:'cold face',c:'smileys'},
+    {e:'🥴',u:'U+1F974',n:'woozy face',c:'smileys'},
+    {e:'😵',u:'U+1F635',n:'dizzy face',c:'smileys'},
+    {e:'🤯',u:'U+1F92F',n:'exploding head',c:'smileys'},
+    {e:'🤠',u:'U+1F920',n:'cowboy hat face',c:'smileys'},
+    {e:'🥳',u:'U+1F973',n:'partying face',c:'smileys'},
+    {e:'😎',u:'U+1F60E',n:'sunglasses face',c:'smileys'},
+    {e:'🤓',u:'U+1F913',n:'nerd face',c:'smileys'},
+    {e:'🧐',u:'U+1F9D0',n:'monocle face',c:'smileys'},
+    {e:'😕',u:'U+1F615',n:'confused face',c:'smileys'},
+    {e:'😟',u:'U+1F61F',n:'worried face',c:'smileys'},
+    {e:'🙁',u:'U+1F641',n:'slightly frowning face',c:'smileys'},
+    {e:'😮',u:'U+1F62E',n:'open mouth face',c:'smileys'},
+    {e:'😯',u:'U+1F62F',n:'hushed face',c:'smileys'},
+    {e:'😲',u:'U+1F632',n:'astonished face',c:'smileys'},
+    {e:'😳',u:'U+1F633',n:'flushed face',c:'smileys'},
+    {e:'🥺',u:'U+1F97A',n:'pleading face',c:'smileys'},
+    {e:'😦',u:'U+1F626',n:'frowning open mouth',c:'smileys'},
+    {e:'😧',u:'U+1F627',n:'anguished face',c:'smileys'},
+    {e:'😨',u:'U+1F628',n:'fearful face',c:'smileys'},
+    {e:'😰',u:'U+1F630',n:'anxious sweat face',c:'smileys'},
+    {e:'😥',u:'U+1F625',n:'sad relieved face',c:'smileys'},
+    {e:'😢',u:'U+1F622',n:'crying face',c:'smileys'},
+    {e:'😭',u:'U+1F62D',n:'loudly crying face',c:'smileys'},
+    {e:'😱',u:'U+1F631',n:'screaming fear face',c:'smileys'},
+    {e:'😖',u:'U+1F616',n:'confounded face',c:'smileys'},
+    {e:'😣',u:'U+1F623',n:'persevering face',c:'smileys'},
+    {e:'😞',u:'U+1F61E',n:'disappointed face',c:'smileys'},
+    {e:'😓',u:'U+1F613',n:'downcast sweat face',c:'smileys'},
+    {e:'😩',u:'U+1F629',n:'weary face',c:'smileys'},
+    {e:'😫',u:'U+1F62B',n:'tired face',c:'smileys'},
+    {e:'🥱',u:'U+1F971',n:'yawning face',c:'smileys'},
+    {e:'😤',u:'U+1F624',n:'steam nose face',c:'smileys'},
+    {e:'😡',u:'U+1F621',n:'pouting face',c:'smileys'},
+    {e:'😠',u:'U+1F620',n:'angry face',c:'smileys'},
+    {e:'🤬',u:'U+1F92C',n:'symbols on mouth',c:'smileys'},
+    {e:'😈',u:'U+1F608',n:'devil smiling',c:'smileys'},
+    {e:'👿',u:'U+1F47F',n:'angry devil',c:'smileys'},
+    {e:'💀',u:'U+1F480',n:'skull',c:'smileys'},
+    {e:'💩',u:'U+1F4A9',n:'pile of poo',c:'smileys'},
+    {e:'🤡',u:'U+1F921',n:'clown face',c:'smileys'},
+    {e:'👹',u:'U+1F479',n:'ogre',c:'smileys'},
+    {e:'👺',u:'U+1F47A',n:'goblin',c:'smileys'},
+    {e:'👻',u:'U+1F47B',n:'ghost',c:'smileys'},
+    {e:'👽',u:'U+1F47D',n:'alien',c:'smileys'},
+    {e:'👾',u:'U+1F47E',n:'alien monster',c:'smileys'},
+    {e:'🤖',u:'U+1F916',n:'robot',c:'smileys'},
+    // Animals
+    {e:'🐶',u:'U+1F436',n:'dog face',c:'animals'},
+    {e:'🐱',u:'U+1F431',n:'cat face',c:'animals'},
+    {e:'🐭',u:'U+1F42D',n:'mouse face',c:'animals'},
+    {e:'🐹',u:'U+1F439',n:'hamster',c:'animals'},
+    {e:'🐰',u:'U+1F430',n:'rabbit face',c:'animals'},
+    {e:'🦊',u:'U+1F98A',n:'fox',c:'animals'},
+    {e:'🐻',u:'U+1F43B',n:'bear',c:'animals'},
+    {e:'🐼',u:'U+1F43C',n:'panda',c:'animals'},
+    {e:'🐨',u:'U+1F428',n:'koala',c:'animals'},
+    {e:'🐯',u:'U+1F42F',n:'tiger face',c:'animals'},
+    {e:'🦁',u:'U+1F981',n:'lion',c:'animals'},
+    {e:'🐮',u:'U+1F42E',n:'cow face',c:'animals'},
+    {e:'🐷',u:'U+1F437',n:'pig face',c:'animals'},
+    {e:'🐸',u:'U+1F438',n:'frog',c:'animals'},
+    {e:'🐵',u:'U+1F435',n:'monkey face',c:'animals'},
+    {e:'🙈',u:'U+1F648',n:'see no evil monkey',c:'animals'},
+    {e:'🙉',u:'U+1F649',n:'hear no evil monkey',c:'animals'},
+    {e:'🙊',u:'U+1F64A',n:'speak no evil monkey',c:'animals'},
+    {e:'🐔',u:'U+1F414',n:'chicken',c:'animals'},
+    {e:'🐧',u:'U+1F427',n:'penguin',c:'animals'},
+    {e:'🐦',u:'U+1F426',n:'bird',c:'animals'},
+    {e:'🦆',u:'U+1F986',n:'duck',c:'animals'},
+    {e:'🦅',u:'U+1F985',n:'eagle',c:'animals'},
+    {e:'🦉',u:'U+1F989',n:'owl',c:'animals'},
+    {e:'🦇',u:'U+1F987',n:'bat',c:'animals'},
+    {e:'🐺',u:'U+1F43A',n:'wolf',c:'animals'},
+    {e:'🐴',u:'U+1F434',n:'horse face',c:'animals'},
+    {e:'🦄',u:'U+1F984',n:'unicorn',c:'animals'},
+    {e:'🐝',u:'U+1F41D',n:'honeybee',c:'animals'},
+    {e:'🦋',u:'U+1F98B',n:'butterfly',c:'animals'},
+    {e:'🐌',u:'U+1F40C',n:'snail',c:'animals'},
+    {e:'🐞',u:'U+1F41E',n:'lady beetle',c:'animals'},
+    {e:'🐜',u:'U+1F41C',n:'ant',c:'animals'},
+    {e:'🐢',u:'U+1F422',n:'turtle',c:'animals'},
+    {e:'🐍',u:'U+1F40D',n:'snake',c:'animals'},
+    {e:'🦎',u:'U+1F98E',n:'lizard',c:'animals'},
+    {e:'🦖',u:'U+1F996',n:'T-Rex',c:'animals'},
+    {e:'🦕',u:'U+1F995',n:'sauropod',c:'animals'},
+    {e:'🐙',u:'U+1F419',n:'octopus',c:'animals'},
+    {e:'🦑',u:'U+1F991',n:'squid',c:'animals'},
+    {e:'🦐',u:'U+1F990',n:'shrimp',c:'animals'},
+    {e:'🦀',u:'U+1F980',n:'crab',c:'animals'},
+    {e:'🐡',u:'U+1F421',n:'blowfish',c:'animals'},
+    {e:'🐠',u:'U+1F420',n:'tropical fish',c:'animals'},
+    {e:'🐟',u:'U+1F41F',n:'fish',c:'animals'},
+    {e:'🐬',u:'U+1F42C',n:'dolphin',c:'animals'},
+    {e:'🐳',u:'U+1F433',n:'spouting whale',c:'animals'},
+    {e:'🦈',u:'U+1F988',n:'shark',c:'animals'},
+    {e:'🐊',u:'U+1F40A',n:'crocodile',c:'animals'},
+    {e:'🦓',u:'U+1F993',n:'zebra',c:'animals'},
+    {e:'🐘',u:'U+1F418',n:'elephant',c:'animals'},
+    {e:'🦛',u:'U+1F99B',n:'hippopotamus',c:'animals'},
+    {e:'🦏',u:'U+1F98F',n:'rhinoceros',c:'animals'},
+    {e:'🐪',u:'U+1F42A',n:'camel',c:'animals'},
+    {e:'🦒',u:'U+1F992',n:'giraffe',c:'animals'},
+    {e:'🦘',u:'U+1F998',n:'kangaroo',c:'animals'},
+    {e:'🐲',u:'U+1F432',n:'dragon face',c:'animals'},
+    {e:'🐉',u:'U+1F409',n:'dragon',c:'animals'},
+    // Food
+    {e:'🍎',u:'U+1F34E',n:'red apple',c:'food'},
+    {e:'🍊',u:'U+1F34A',n:'tangerine',c:'food'},
+    {e:'🍋',u:'U+1F34B',n:'lemon',c:'food'},
+    {e:'🍌',u:'U+1F34C',n:'banana',c:'food'},
+    {e:'🍉',u:'U+1F349',n:'watermelon',c:'food'},
+    {e:'🍇',u:'U+1F347',n:'grapes',c:'food'},
+    {e:'🍓',u:'U+1F353',n:'strawberry',c:'food'},
+    {e:'🍒',u:'U+1F352',n:'cherries',c:'food'},
+    {e:'🍑',u:'U+1F351',n:'peach',c:'food'},
+    {e:'🥭',u:'U+1F96D',n:'mango',c:'food'},
+    {e:'🍍',u:'U+1F34D',n:'pineapple',c:'food'},
+    {e:'🥥',u:'U+1F965',n:'coconut',c:'food'},
+    {e:'🥝',u:'U+1F95D',n:'kiwi fruit',c:'food'},
+    {e:'🍅',u:'U+1F345',n:'tomato',c:'food'},
+    {e:'🍆',u:'U+1F346',n:'eggplant',c:'food'},
+    {e:'🥑',u:'U+1F951',n:'avocado',c:'food'},
+    {e:'🥦',u:'U+1F966',n:'broccoli',c:'food'},
+    {e:'🥕',u:'U+1F955',n:'carrot',c:'food'},
+    {e:'🌽',u:'U+1F33D',n:'ear of corn',c:'food'},
+    {e:'🌶️',u:'U+1F336',n:'hot pepper',c:'food'},
+    {e:'🧄',u:'U+1F9C4',n:'garlic',c:'food'},
+    {e:'🧅',u:'U+1F9C5',n:'onion',c:'food'},
+    {e:'🥔',u:'U+1F954',n:'potato',c:'food'},
+    {e:'🥐',u:'U+1F950',n:'croissant',c:'food'},
+    {e:'🍞',u:'U+1F35E',n:'bread',c:'food'},
+    {e:'🧀',u:'U+1F9C0',n:'cheese wedge',c:'food'},
+    {e:'🥚',u:'U+1F95A',n:'egg',c:'food'},
+    {e:'🍳',u:'U+1F373',n:'cooking',c:'food'},
+    {e:'🥞',u:'U+1F95E',n:'pancakes',c:'food'},
+    {e:'🥓',u:'U+1F953',n:'bacon',c:'food'},
+    {e:'🍗',u:'U+1F357',n:'poultry leg',c:'food'},
+    {e:'🍖',u:'U+1F356',n:'meat on bone',c:'food'},
+    {e:'🌭',u:'U+1F32D',n:'hot dog',c:'food'},
+    {e:'🍔',u:'U+1F354',n:'hamburger',c:'food'},
+    {e:'🍟',u:'U+1F35F',n:'french fries',c:'food'},
+    {e:'🍕',u:'U+1F355',n:'pizza',c:'food'},
+    {e:'🥪',u:'U+1F96A',n:'sandwich',c:'food'},
+    {e:'🌮',u:'U+1F32E',n:'taco',c:'food'},
+    {e:'🍜',u:'U+1F35C',n:'steaming bowl',c:'food'},
+    {e:'🍣',u:'U+1F363',n:'sushi',c:'food'},
+    {e:'🍦',u:'U+1F366',n:'soft ice cream',c:'food'},
+    {e:'🍩',u:'U+1F369',n:'doughnut',c:'food'},
+    {e:'🍪',u:'U+1F36A',n:'cookie',c:'food'},
+    {e:'🎂',u:'U+1F382',n:'birthday cake',c:'food'},
+    {e:'🍫',u:'U+1F36B',n:'chocolate bar',c:'food'},
+    {e:'☕',u:'U+2615',n:'hot beverage',c:'food'},
+    {e:'🍵',u:'U+1F375',n:'teacup',c:'food'},
+    {e:'🧃',u:'U+1F9C3',n:'beverage box',c:'food'},
+    {e:'🥤',u:'U+1F964',n:'cup with straw',c:'food'},
+    {e:'🍺',u:'U+1F37A',n:'beer mug',c:'food'},
+    {e:'🍷',u:'U+1F377',n:'wine glass',c:'food'},
+    // Hands
+    {e:'👋',u:'U+1F44B',n:'waving hand',c:'hands'},
+    {e:'🤚',u:'U+1F91A',n:'raised back of hand',c:'hands'},
+    {e:'✋',u:'U+270B',n:'raised hand',c:'hands'},
+    {e:'🖖',u:'U+1F596',n:'vulcan salute',c:'hands'},
+    {e:'👌',u:'U+1F44C',n:'OK hand',c:'hands'},
+    {e:'🤏',u:'U+1F90F',n:'pinching hand',c:'hands'},
+    {e:'✌️',u:'U+270C',n:'victory hand',c:'hands'},
+    {e:'🤞',u:'U+1F91E',n:'crossed fingers',c:'hands'},
+    {e:'🤟',u:'U+1F91F',n:'love you gesture',c:'hands'},
+    {e:'🤘',u:'U+1F918',n:'sign of the horns',c:'hands'},
+    {e:'🤙',u:'U+1F919',n:'call me hand',c:'hands'},
+    {e:'👈',u:'U+1F448',n:'pointing left',c:'hands'},
+    {e:'👉',u:'U+1F449',n:'pointing right',c:'hands'},
+    {e:'👆',u:'U+1F446',n:'pointing up',c:'hands'},
+    {e:'👇',u:'U+1F447',n:'pointing down',c:'hands'},
+    {e:'☝️',u:'U+261D',n:'index pointing up',c:'hands'},
+    {e:'👍',u:'U+1F44D',n:'thumbs up',c:'hands'},
+    {e:'👎',u:'U+1F44E',n:'thumbs down',c:'hands'},
+    {e:'✊',u:'U+270A',n:'raised fist',c:'hands'},
+    {e:'👊',u:'U+1F44A',n:'oncoming fist',c:'hands'},
+    {e:'🤛',u:'U+1F91B',n:'left facing fist',c:'hands'},
+    {e:'🤜',u:'U+1F91C',n:'right facing fist',c:'hands'},
+    {e:'👏',u:'U+1F44F',n:'clapping hands',c:'hands'},
+    {e:'🙌',u:'U+1F64C',n:'raising hands',c:'hands'},
+    {e:'👐',u:'U+1F450',n:'open hands',c:'hands'},
+    {e:'🤝',u:'U+1F91D',n:'handshake',c:'hands'},
+    {e:'🙏',u:'U+1F64F',n:'folded hands',c:'hands'},
+    {e:'✍️',u:'U+270D',n:'writing hand',c:'hands'},
+    {e:'💅',u:'U+1F485',n:'nail polish',c:'hands'},
+    {e:'💪',u:'U+1F4AA',n:'flexed biceps',c:'hands'},
+    {e:'👀',u:'U+1F440',n:'eyes',c:'hands'},
+    {e:'👅',u:'U+1F445',n:'tongue',c:'hands'},
+    {e:'👄',u:'U+1F444',n:'mouth',c:'hands'},
+    {e:'🧠',u:'U+1F9E0',n:'brain',c:'hands'},
+    {e:'👂',u:'U+1F442',n:'ear',c:'hands'},
+    {e:'👃',u:'U+1F443',n:'nose',c:'hands'}
+  ];
+
+  var grid       = document.getElementById('emojiGrid');
+  var search     = document.getElementById('emojiSearch');
+  var countLabel = document.getElementById('countLabel');
+  var toast      = document.getElementById('toastNotify');
+  var catTabs    = document.querySelectorAll('.cat-tab');
+  var toastTimer;
+  var activeCat  = 'all';
+
+  function showToast(emoji) {
+    clearTimeout(toastTimer);
+    toast.textContent = '✔ Copied '+emoji;
+    toast.classList.add('show');
+    toastTimer = setTimeout(function(){toast.classList.remove('show');}, 1800);
+  }
+
+  function copyEmoji(emoji) {
+    if (navigator.clipboard) {
+      navigator.clipboard.writeText(emoji).then(function(){showToast(emoji);}).catch(function(){fallbackCopy(emoji);});
+    } else { fallbackCopy(emoji); }
+  }
+
+  function fallbackCopy(text) {
+    var t = document.createElement('textarea');
+    t.value = text; document.body.appendChild(t); t.select();
+    try{document.execCommand('copy');}catch(e){}
+    document.body.removeChild(t);
+    showToast(text);
+  }
+
+  function render(list) {
+    grid.innerHTML = '';
+    list.forEach(function(em){
+      var card = document.createElement('div');
+      card.className = 'emoji-card';
+      card.title = em.n + ' — click to copy';
+      card.innerHTML = '<span class="emoji-char">'+em.e+'</span><div class="emoji-code">'+em.u+'</div>';
+      card.addEventListener('click', function(){copyEmoji(em.e);});
+      grid.appendChild(card);
+    });
+    countLabel.textContent = 'Showing '+list.length+' emoji'+(list.length!==1?'s':'');
+  }
+
+  function filter() {
+    var term = search.value.toLowerCase().trim();
+    var list = emojiData.filter(function(em){
+      var matchCat = activeCat==='all' || em.c===activeCat;
+      var matchTerm = !term || em.n.toLowerCase().includes(term) || em.e.includes(term);
+      return matchCat && matchTerm;
+    });
+    render(list);
+  }
+
+  search.addEventListener('input', filter);
+
+  catTabs.forEach(function(tab){
+    tab.addEventListener('click', function(){
+      catTabs.forEach(function(t){t.classList.remove('active');});
+      tab.classList.add('active');
+      activeCat = tab.dataset.cat;
+      filter();
+    });
+  });
+
+  filter();
+})();
+</script>
+</body>
+</html>

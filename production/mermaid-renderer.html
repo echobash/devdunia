@@ -1,0 +1,578 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Mermaid Renderer — DevDunia Comics</title>
+<meta name="description" content="Free Mermaid diagram renderer. Write Mermaid syntax and preview flowcharts, sequence diagrams, and Gantt charts live.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://devdunia.com/mermaid-renderer.html">
+<meta property="og:title" content="Mermaid Renderer — DevDunia Comics">
+<meta property="og:description" content="Free Mermaid diagram renderer. Write Mermaid syntax and preview flowcharts and diagrams live.">
+<meta property="og:image" content="https://devdunia.com/images/logo.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Bangers&family=Comic+Neue:wght@400;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<!-- mermaid CDN (same as original) -->
+<script src="https://cdn.jsdelivr.net/npm/mermaid@10.6.1/dist/mermaid.min.js"></script>
+<style>
+:root {
+  --ink: #1a1410;
+  --paper: #fdf3e3;
+  --paper2: #fbe9cc;
+  --red: #e63946;
+  --blue: #1d6fb8;
+  --yellow: #ffd23f;
+  --green: #3fa34d;
+  --pink: #ff6b9d;
+  --purple: #8a4fff;
+  --orange: #ff8c42;
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: 'Comic Neue', cursive;
+  font-weight: 400;
+  color: var(--ink);
+  background-color: var(--paper);
+  background-image: radial-gradient(var(--ink) 0.5px, transparent 0.6px);
+  background-size: 14px 14px;
+  background-attachment: fixed;
+  min-height: 100vh;
+}
+
+.paper-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(253,243,227,.78);
+  pointer-events: none;
+  z-index: 0;
+}
+
+.page-wrap {
+  position: relative;
+  z-index: 1;
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 0 16px 60px;
+}
+
+/* ── MASTHEAD ── */
+.masthead {
+  background: var(--blue);
+  border: 4px solid var(--ink);
+  border-radius: 6px;
+  box-shadow: 7px 7px 0 var(--ink);
+  margin: 18px 0 28px;
+  padding: 10px 20px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.masthead-logo {
+  font-family: 'Bangers', cursive;
+  font-size: 1.9rem;
+  letter-spacing: 2px;
+  color: #fff;
+  text-shadow: 3px 3px 0 var(--ink);
+  line-height: 1;
+}
+.masthead-logo span { color: var(--yellow); }
+.masthead-right { display: flex; align-items: center; gap: 8px; }
+.issue-tag {
+  font-family: 'Bangers', cursive;
+  font-size: .95rem;
+  background: var(--yellow);
+  color: var(--ink);
+  padding: 3px 10px;
+  border-radius: 4px;
+  border: 2px solid var(--ink);
+  letter-spacing: 1px;
+}
+.back-link {
+  font-family: 'Bangers', cursive;
+  font-size: .95rem;
+  color: #fff;
+  text-decoration: none;
+  background: var(--ink);
+  padding: 3px 10px;
+  border-radius: 4px;
+  letter-spacing: 1px;
+  transition: opacity .15s;
+}
+.back-link:hover { opacity: .75; }
+
+/* ── HERO ── */
+.hero {
+  display: flex;
+  align-items: flex-start;
+  gap: 20px;
+  background: var(--paper2);
+  border: 4px solid var(--ink);
+  border-radius: 6px;
+  box-shadow: 7px 7px 0 var(--ink);
+  padding: 20px 24px;
+  margin-bottom: 28px;
+  transform: rotate(-0.4deg);
+}
+.hero-icon { font-size: 3rem; line-height: 1; flex-shrink: 0; filter: drop-shadow(3px 3px 0 var(--ink)); }
+.hero-text h1 {
+  font-family: 'Bangers', cursive;
+  font-size: 2.8rem;
+  letter-spacing: 2px;
+  color: var(--green);
+  -webkit-text-stroke: 1px var(--ink);
+  text-shadow: 4px 4px 0 var(--ink);
+  line-height: 1;
+  text-transform: uppercase;
+}
+.hero-text p { font-size: .95rem; margin-top: 6px; line-height: 1.5; max-width: 480px; }
+.hero-badges { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 10px; }
+.badge {
+  font-family: 'Space Mono', monospace;
+  font-size: .65rem;
+  font-weight: 700;
+  padding: 3px 8px;
+  border: 2px solid var(--ink);
+  border-radius: 4px;
+  box-shadow: 2px 2px 0 var(--ink);
+}
+.badge-blue   { background: var(--blue);   color: #fff; }
+.badge-green  { background: var(--green);  color: #fff; }
+.badge-yellow { background: var(--yellow); color: var(--ink); }
+.badge-orange { background: var(--orange); color: #fff; }
+
+/* ── PANEL ── */
+.panel {
+  background: var(--paper);
+  border: 4px solid var(--ink);
+  border-radius: 6px;
+  box-shadow: 7px 7px 0 var(--ink);
+  overflow: hidden;
+  margin-bottom: 22px;
+}
+.panel-header {
+  background: var(--ink);
+  color: var(--yellow);
+  font-family: 'Bangers', cursive;
+  font-size: 1.2rem;
+  letter-spacing: 2px;
+  padding: 8px 16px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+.panel-header .panel-tag {
+  font-family: 'Space Mono', monospace;
+  font-size: .65rem;
+  font-weight: 700;
+  background: var(--yellow);
+  color: var(--ink);
+  padding: 2px 7px;
+  border-radius: 3px;
+}
+.panel-body { padding: 18px 20px; }
+
+/* ── TEXTAREA ── */
+.comic-textarea {
+  width: 100%;
+  background: #fff;
+  border: 3px solid var(--ink);
+  border-radius: 6px;
+  padding: 12px 14px;
+  font-family: 'Space Mono', monospace;
+  font-size: .82rem;
+  color: var(--ink);
+  line-height: 1.6;
+  resize: vertical;
+  min-height: 320px;
+  box-shadow: inset 3px 3px 0 rgba(0,0,0,.06);
+  outline: none;
+  transition: border-color .15s;
+}
+.comic-textarea:focus { border-color: var(--green); }
+.comic-textarea::placeholder { color: #aaa; font-style: italic; }
+
+/* ── BUTTONS ── */
+.btn-row { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 14px; }
+.btn {
+  font-family: 'Bangers', cursive;
+  font-size: 1.1rem;
+  letter-spacing: 1px;
+  border: 3px solid var(--ink);
+  border-radius: 6px;
+  padding: 8px 20px;
+  cursor: pointer;
+  box-shadow: 4px 4px 0 var(--ink);
+  transition: transform .1s, box-shadow .1s;
+  text-transform: uppercase;
+}
+.btn:active { transform: translate(2px,2px); box-shadow: 2px 2px 0 var(--ink); }
+.btn-primary { background: var(--blue);   color: #fff; }
+.btn-success { background: var(--green);  color: #fff; }
+.btn-danger  { background: var(--red);    color: #fff; }
+.btn-neutral { background: var(--paper2); color: var(--ink); }
+.btn-orange  { background: var(--orange); color: #fff; }
+
+/* ── SECTION LABEL ── */
+.section-label {
+  font-family: 'Bangers', cursive;
+  font-size: .95rem;
+  letter-spacing: 1px;
+  color: var(--ink);
+  margin-bottom: 6px;
+  text-transform: uppercase;
+}
+
+/* ── ERROR BUBBLE ── */
+.error-bubble {
+  display: none;
+  position: relative;
+  background: #fff0f0;
+  border: 3px solid var(--red);
+  border-radius: 14px;
+  padding: 10px 14px;
+  margin-top: 12px;
+  font-size: .9rem;
+  font-weight: 700;
+  color: var(--red);
+}
+.error-bubble::before {
+  content: '';
+  position: absolute;
+  top: -16px; left: 22px;
+  border-width: 0 10px 16px;
+  border-style: solid;
+  border-color: transparent transparent var(--red);
+}
+.error-bubble::after {
+  content: '';
+  position: absolute;
+  top: -11px; left: 24px;
+  border-width: 0 8px 12px;
+  border-style: solid;
+  border-color: transparent transparent #fff0f0;
+}
+.error-bubble.show { display: block; }
+
+/* ── SPLIT PANELS ── */
+.split-panels { display: grid; grid-template-columns: 1fr 1fr; gap: 22px; }
+
+/* ── DIAGRAM AREA ── */
+.diagram-wrap {
+  background: #fff;
+  border: 3px solid var(--ink);
+  border-radius: 6px;
+  min-height: 320px;
+  box-shadow: inset 3px 3px 0 rgba(0,0,0,.06);
+  overflow: auto;
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  padding: 20px;
+}
+
+.diagram-wrap svg {
+  max-width: 100% !important;
+  height: auto !important;
+  width: auto !important;
+  display: block;
+  margin: 0 auto;
+}
+
+/* ── EXAMPLES GRID ── */
+.examples-grid { display: flex; flex-wrap: wrap; gap: 8px; }
+.example-btn {
+  font-family: 'Bangers', cursive;
+  font-size: .95rem;
+  letter-spacing: 1px;
+  background: var(--paper2);
+  color: var(--ink);
+  border: 3px solid var(--ink);
+  border-radius: 6px;
+  padding: 5px 14px;
+  cursor: pointer;
+  box-shadow: 3px 3px 0 var(--ink);
+  transition: transform .1s, box-shadow .1s;
+  text-transform: uppercase;
+}
+.example-btn:hover { transform: translate(-1px,-1px); box-shadow: 4px 4px 0 var(--ink); }
+.example-btn:active { transform: translate(1px,1px); box-shadow: 1px 1px 0 var(--ink); }
+
+/* ── MOBILE ── */
+@media (max-width: 760px) {
+  .split-panels { grid-template-columns: 1fr; }
+  .hero { flex-direction: column; gap: 10px; }
+  .hero-text h1 { font-size: 2rem; }
+}
+</style>
+</head>
+<body>
+<div class="paper-overlay"></div>
+<div class="page-wrap">
+
+  <!-- MASTHEAD -->
+  <div class="masthead">
+    <div class="masthead-logo">DEV<span>DUNIA</span> COMICS</div>
+    <div class="masthead-right">
+      <span class="issue-tag">MERMAID</span>
+      <a href="../index.html" class="back-link">&#9664; ALL TOOLS</a>
+    </div>
+  </div>
+
+  <!-- HERO -->
+  <div class="hero">
+    <div class="hero-icon">&#x1F9DC;</div>
+    <div class="hero-text">
+      <h1>Mermaid Renderer</h1>
+      <p>Write Mermaid diagram syntax and watch flowcharts, sequence diagrams, class diagrams, mind maps, and more render live in your browser!</p>
+      <div class="hero-badges">
+        <span class="badge badge-green">LIVE RENDER</span>
+        <span class="badge badge-blue">9 DIAGRAM TYPES</span>
+        <span class="badge badge-orange">SVG EXPORT</span>
+        <span class="badge badge-yellow">FREE</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- CONTROLS -->
+  <div class="panel">
+    <div class="panel-header">
+      &#x2699;&#xFE0F; CONTROLS
+      <span class="panel-tag">TOOLBAR</span>
+    </div>
+    <div class="panel-body">
+      <div class="btn-row">
+        <button id="render-btn" class="btn btn-success">&#x1F3A8; Render Diagram</button>
+        <button id="clear-btn" class="btn btn-danger">&#x1F5D1; Clear All</button>
+        <button id="download-btn" class="btn btn-primary">&#x1F4E5; Download SVG</button>
+        <button id="copy-btn" class="btn btn-neutral">&#x1F4CB; Copy Code</button>
+        <button id="theme-toggle" class="btn btn-neutral">&#x1F319; Theme: Dark</button>
+      </div>
+      <div id="error-bubble" class="error-bubble">
+        &#x1F4A5; <span id="error-msg">Rendering error</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- EXAMPLES -->
+  <div class="panel">
+    <div class="panel-header">
+      &#x1F4DA; EXAMPLE DIAGRAMS — CLICK TO LOAD!
+      <span class="panel-tag">EXAMPLES</span>
+    </div>
+    <div class="panel-body">
+      <div class="examples-grid">
+        <button class="example-btn" onclick="loadExample('architecture')">Architecture</button>
+        <button class="example-btn" onclick="loadExample('flowchart')">Flowchart</button>
+        <button class="example-btn" onclick="loadExample('class')">Class Diagram</button>
+        <button class="example-btn" onclick="loadExample('timeline')">Timeline</button>
+        <button class="example-btn" onclick="loadExample('state')">State Diagram</button>
+        <button class="example-btn" onclick="loadExample('sequence')">Sequence</button>
+        <button class="example-btn" onclick="loadExample('gantt')">Gantt Chart</button>
+        <button class="example-btn" onclick="loadExample('mindmap')">Mind Map</button>
+        <button class="example-btn" onclick="loadExample('gitgraph')">Git Graph</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- EDITOR + DIAGRAM SPLIT -->
+  <div class="split-panels">
+
+    <!-- CODE INPUT -->
+    <div class="panel" style="margin-bottom:0;">
+      <div class="panel-header">
+        &#x270F;&#xFE0F; MERMAID CODE
+        <span class="panel-tag">INPUT</span>
+      </div>
+      <div class="panel-body">
+        <textarea
+          id="mermaid-code"
+          class="comic-textarea"
+          placeholder="Enter your Mermaid diagram code here..."
+        >graph TD
+    A[Start] --> B{Decision}
+    B -->|Yes| C[Action 1]
+    B -->|No| D[Action 2]
+    C --> E[End]
+    D --> E</textarea>
+      </div>
+    </div>
+
+    <!-- DIAGRAM OUTPUT -->
+    <div class="panel" style="margin-bottom:0;">
+      <div class="panel-header">
+        &#x1F4CA; RENDERED DIAGRAM
+        <span class="panel-tag">OUTPUT</span>
+      </div>
+      <div class="panel-body">
+        <div id="diagram-wrap" class="diagram-wrap">
+          <div id="loading" style="display:none;color:#aaa;font-style:italic;font-family:'Comic Neue',cursive;text-align:center;padding:40px;">Rendering diagram...</div>
+          <div id="diagram"></div>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- /split-panels -->
+
+</div><!-- /page-wrap -->
+
+<!-- Hidden file input -->
+<input type="file" id="file-input" accept=".txt,.md,.mmd" style="display:none;">
+
+<script>
+(function() {
+  var mermaidCode = document.getElementById('mermaid-code');
+  var renderBtn   = document.getElementById('render-btn');
+  var clearBtn    = document.getElementById('clear-btn');
+  var downloadBtn = document.getElementById('download-btn');
+  var copyBtn     = document.getElementById('copy-btn');
+  var themeToggle = document.getElementById('theme-toggle');
+  var diagramEl   = document.getElementById('diagram');
+  var loadingEl   = document.getElementById('loading');
+  var errBubble   = document.getElementById('error-bubble');
+  var errMsg      = document.getElementById('error-msg');
+
+  var currentTheme = 'dark';
+
+  function showError(msg) {
+    errMsg.textContent = msg;
+    errBubble.classList.add('show');
+  }
+  function hideError() { errBubble.classList.remove('show'); }
+
+  // Initialize Mermaid (same config as original)
+  function initializeMermaid() {
+    mermaid.initialize({
+      startOnLoad: false,
+      theme: currentTheme,
+      themeVariables: currentTheme === 'dark' ? {
+        primaryColor: '#3b82f6',
+        primaryTextColor: '#f8fafc',
+        primaryBorderColor: '#334155',
+        lineColor: '#64748b',
+        secondaryColor: '#1e293b',
+        tertiaryColor: '#0f172a',
+        background: '#0f172a',
+        mainBkg: '#1e293b',
+        secondBkg: '#334155'
+      } : {
+        primaryColor: '#1d6fb8',
+        primaryTextColor: '#1a1410',
+        primaryBorderColor: '#1a1410',
+        lineColor: '#1a1410',
+        secondaryColor: '#fbe9cc',
+        tertiaryColor: '#fdf3e3',
+        background: '#fdf3e3',
+        mainBkg: '#fbe9cc',
+        secondBkg: '#ffd23f'
+      },
+      flowchart: { useMaxWidth: false, htmlLabels: true },
+      sequence: { useMaxWidth: true, htmlLabels: true },
+      gantt: { useMaxWidth: true },
+      timeline: { useMaxWidth: true },
+      class: { useMaxWidth: true },
+      state: { useMaxWidth: false, padding: 20 },
+      mindmap: { useMaxWidth: true },
+      gitgraph: { useMaxWidth: true }
+    });
+  }
+
+  initializeMermaid();
+
+  async function renderDiagram() {
+    var code = mermaidCode.value.trim();
+    if (!code) { showError('Please enter some Mermaid code'); return; }
+    loadingEl.style.display = 'block';
+    hideError();
+    diagramEl.innerHTML = '';
+    try {
+      var result = await mermaid.render('mermaid-diagram-' + Date.now(), code);
+      diagramEl.innerHTML = result.svg;
+      var svgEl = diagramEl.querySelector('svg');
+      if (svgEl && code.includes('stateDiagram')) {
+        svgEl.style.maxWidth = 'none';
+        svgEl.style.width = 'auto';
+        svgEl.style.height = 'auto';
+      }
+      loadingEl.style.display = 'none';
+    } catch(err) {
+      loadingEl.style.display = 'none';
+      showError('Rendering error: ' + (err.message || err));
+    }
+  }
+
+  themeToggle.addEventListener('click', function() {
+    currentTheme = currentTheme === 'dark' ? 'light' : 'dark';
+    themeToggle.textContent = currentTheme === 'dark' ? '🌙 Theme: Dark' : '☀️ Theme: Light';
+    initializeMermaid();
+    renderDiagram();
+  });
+
+  function clearAll() {
+    mermaidCode.value = '';
+    diagramEl.innerHTML = '';
+    hideError();
+  }
+
+  function copyToClipboard() {
+    try { navigator.clipboard.writeText(mermaidCode.value).catch(function(){}); } catch(e) {}
+    var orig = copyBtn.textContent;
+    copyBtn.textContent = '✔ Copied!';
+    setTimeout(function() { copyBtn.textContent = orig; }, 2000);
+  }
+
+  function downloadSVG() {
+    var svg = diagramEl.querySelector('svg');
+    if (!svg) { showError('No diagram to download. Please render a diagram first.'); return; }
+    var svgData = new XMLSerializer().serializeToString(svg);
+    var svgBlob = new Blob([svgData], { type: 'image/svg+xml;charset=utf-8' });
+    var svgUrl = URL.createObjectURL(svgBlob);
+    var link = document.createElement('a');
+    link.href = svgUrl;
+    link.download = 'mermaid-diagram.svg';
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    URL.revokeObjectURL(svgUrl);
+  }
+
+  renderBtn.addEventListener('click', renderDiagram);
+  clearBtn.addEventListener('click', clearAll);
+  copyBtn.addEventListener('click', copyToClipboard);
+  downloadBtn.addEventListener('click', downloadSVG);
+
+  // Debounced auto-render
+  var renderTimeout;
+  mermaidCode.addEventListener('input', function() {
+    clearTimeout(renderTimeout);
+    renderTimeout = setTimeout(renderDiagram, 1000);
+  });
+
+  // Example diagrams (same as original)
+  var examples = {
+    flowchart: 'graph TD\n    A[Start] --> B{Is it working?}\n    B -->|Yes| C[Great!]\n    B -->|No| D[Debug]\n    D --> E[Fix the issue]\n    E --> B\n    C --> F[End]',
+    sequence: 'sequenceDiagram\n    participant U as User\n    participant F as Frontend\n    participant B as Backend\n    participant D as Database\n    \n    U->>F: Login request\n    F->>B: Validate credentials\n    B->>D: Check user data\n    D-->>B: User found\n    B-->>F: Success response\n    F-->>U: Login successful',
+    gantt: 'gantt\n    title Project Timeline\n    dateFormat YYYY-MM-DD\n    section Phase 1\n    Planning           :done, plan, 2024-01-01, 2024-01-07\n    section Phase 2\n    Development        :active, dev, 2024-01-08, 2024-01-21\n    Testing           :test, 2024-01-22, 2024-01-28\n    section Phase 3\n    Deployment        :deploy, 2024-01-29, 2024-02-04',
+    class: 'classDiagram\n    class User {\n        +String name\n        +String email\n        +login()\n        +logout()\n    }\n    class Admin {\n        +String role\n        +manageUsers()\n    }\n    class Post {\n        +String title\n        +String content\n        +create()\n        +update()\n    }\n    User <|-- Admin\n    User --> Post',
+    state: 'stateDiagram-v2\n    [*] --> Idle\n    Idle --> Processing : start\n    Processing --> Success : complete\n    Processing --> Error : fail\n    Success --> [*]\n    Error --> Processing : retry\n    Error --> [*] : give up',
+    timeline: 'timeline\n    title History of Social Media Platform\n    2002 : LinkedIn\n    2004 : Facebook\n         : Google\n    2005 : YouTube\n    2006 : Twitter',
+    mindmap: 'mindmap\n  root((Web Development))\n    Frontend\n      HTML\n      CSS\n        Flexbox\n        Grid\n      JavaScript\n        ES6+\n        Frameworks\n    Backend\n      Node.js\n      Python\n      Database\n        SQL\n        NoSQL\n    DevOps\n      Git\n      Docker\n      CI/CD',
+    gitgraph: 'gitGraph\n    commit id: "Initial"\n    branch develop\n    checkout develop\n    commit id: "Feature A"\n    commit id: "Feature B"\n    checkout main\n    merge develop\n    commit id: "Release v1.0"',
+    architecture: 'graph TB\n    subgraph "Client Layer"\n        A[Web Browser]\n        B[Mobile App]\n    end\n    subgraph "Application Layer"\n        E[API Gateway]\n        F[Auth Service]\n        G[User Service]\n    end\n    subgraph "Database Layer"\n        I[(PostgreSQL)]\n        J[(Redis Cache)]\n    end\n    A --> E\n    B --> E\n    E --> F\n    E --> G\n    F --> I\n    G --> I\n    F --> J'
+  };
+
+  window.loadExample = function(type) {
+    mermaidCode.value = examples[type] || '';
+    renderDiagram();
+  };
+
+  // Initial render
+  renderDiagram();
+})();
+</script>
+</body>
+</html>

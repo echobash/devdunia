@@ -1,0 +1,476 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>IP Address Tools — DevDunia Comics</title>
+<meta name="description" content="Check your IP address and lookup information about any IP. Free online IP address tools for developers.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://devdunia.com/production/ip-address.html">
+<meta property="og:title" content="IP Address Tools — DevDunia Comics">
+<meta property="og:description" content="Check your IP address and lookup information about any IP. Free online IP address tools for developers.">
+<meta property="og:image" content="https://devdunia.com/images/logo.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Bangers&family=Comic+Neue:wght@400;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --ink: #1a1410;
+  --paper: #fdf3e3;
+  --paper2: #fbe9cc;
+  --red: #e63946;
+  --blue: #1d6fb8;
+  --yellow: #ffd23f;
+  --green: #3fa34d;
+  --pink: #ff6b9d;
+  --purple: #8a4fff;
+  --orange: #ff8c42;
+}
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  font-family: 'Comic Neue', cursive;
+  font-weight: 400;
+  color: var(--ink);
+  background-color: var(--paper);
+  background-image: radial-gradient(var(--ink) 0.5px, transparent 0.6px);
+  background-size: 14px 14px;
+  background-attachment: fixed;
+  min-height: 100vh;
+}
+.paper-overlay {
+  position: fixed; inset: 0;
+  background: rgba(253,243,227,.78);
+  pointer-events: none; z-index: 0;
+}
+.page-wrap {
+  position: relative; z-index: 1;
+  max-width: 820px; margin: 0 auto;
+  padding: 0 16px 60px;
+}
+.masthead {
+  background: var(--red);
+  border: 4px solid var(--ink); border-radius: 6px;
+  box-shadow: 7px 7px 0 var(--ink);
+  margin: 18px 0 28px; padding: 10px 20px;
+  display: flex; align-items: center;
+  justify-content: space-between; flex-wrap: wrap; gap: 8px;
+}
+.masthead-logo {
+  font-family: 'Bangers', cursive; font-size: 1.9rem;
+  letter-spacing: 2px; color: #fff;
+  text-shadow: 3px 3px 0 var(--ink); line-height: 1;
+}
+.masthead-logo span { color: var(--yellow); }
+.masthead-right { display: flex; align-items: center; gap: 8px; }
+.issue-tag {
+  font-family: 'Bangers', cursive; font-size: .95rem;
+  background: var(--yellow); color: var(--ink);
+  padding: 3px 10px; border-radius: 4px;
+  border: 2px solid var(--ink); letter-spacing: 1px;
+}
+.back-link {
+  font-family: 'Bangers', cursive; font-size: .95rem;
+  color: #fff; text-decoration: none;
+  background: var(--ink); padding: 3px 10px;
+  border-radius: 4px; letter-spacing: 1px; transition: opacity .15s;
+}
+.back-link:hover { opacity: .75; }
+.hero {
+  display: flex; align-items: flex-start; gap: 20px;
+  background: var(--paper2);
+  border: 4px solid var(--ink); border-radius: 6px;
+  box-shadow: 7px 7px 0 var(--ink);
+  padding: 20px 24px; margin-bottom: 28px;
+  transform: rotate(-0.4deg);
+}
+.hero-icon { font-size: 3rem; line-height: 1; flex-shrink: 0; filter: drop-shadow(3px 3px 0 var(--ink)); }
+.hero-text h1 {
+  font-family: 'Bangers', cursive; font-size: 2.8rem;
+  letter-spacing: 2px; color: var(--red);
+  -webkit-text-stroke: 1px var(--ink);
+  text-shadow: 4px 4px 0 var(--ink);
+  line-height: 1; text-transform: uppercase;
+}
+.hero-text p { font-size: .95rem; margin-top: 6px; line-height: 1.5; max-width: 460px; }
+.hero-badges { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 10px; }
+.badge {
+  font-family: 'Space Mono', monospace; font-size: .65rem; font-weight: 700;
+  padding: 3px 8px; border: 2px solid var(--ink);
+  border-radius: 4px; box-shadow: 2px 2px 0 var(--ink);
+}
+.badge-red    { background: var(--red);    color: #fff; }
+.badge-blue   { background: var(--blue);   color: #fff; }
+.badge-green  { background: var(--green);  color: #fff; }
+.badge-yellow { background: var(--yellow); color: var(--ink); }
+.panel {
+  background: var(--paper);
+  border: 4px solid var(--ink); border-radius: 6px;
+  box-shadow: 7px 7px 0 var(--ink);
+  overflow: hidden; margin-bottom: 22px;
+}
+.panel-header {
+  background: var(--ink); color: var(--yellow);
+  font-family: 'Bangers', cursive; font-size: 1.2rem;
+  letter-spacing: 2px; padding: 8px 16px;
+  display: flex; align-items: center; justify-content: space-between; gap: 10px;
+}
+.panel-header .panel-tag {
+  font-family: 'Space Mono', monospace; font-size: .65rem; font-weight: 700;
+  background: var(--yellow); color: var(--ink);
+  padding: 2px 7px; border-radius: 3px;
+}
+.panel-body { padding: 18px 20px; }
+.section-label {
+  font-family: 'Bangers', cursive; font-size: .95rem;
+  letter-spacing: 1px; color: var(--ink);
+  margin-bottom: 6px; text-transform: uppercase;
+}
+/* My IP display */
+.my-ip-box {
+  background: var(--paper2);
+  border: 3px solid var(--ink); border-radius: 6px;
+  box-shadow: 4px 4px 0 var(--ink); padding: 16px 20px;
+  display: flex; align-items: center; justify-content: space-between; gap: 12px;
+  margin-bottom: 18px;
+}
+.my-ip-label { font-size: .85rem; color: var(--ink); opacity: .7; margin-bottom: 4px; font-weight: 700; }
+#my-ip {
+  font-family: 'Space Mono', monospace; font-size: 1.3rem;
+  font-weight: 700; color: var(--blue);
+}
+/* Input row */
+.input-row {
+  display: flex; gap: 10px; margin-bottom: 14px;
+}
+.comic-input {
+  flex: 1;
+  background: #fff; border: 3px solid var(--ink);
+  border-radius: 6px; padding: 10px 14px;
+  font-family: 'Space Mono', monospace; font-size: .85rem;
+  color: var(--ink); box-shadow: 3px 3px 0 var(--ink);
+  outline: none;
+}
+.comic-input:focus { border-color: var(--blue); }
+.comic-input::placeholder { color: #aaa; font-style: italic; }
+/* Buttons */
+.btn {
+  font-family: 'Bangers', cursive; font-size: 1.1rem;
+  letter-spacing: 1px; border: 3px solid var(--ink);
+  border-radius: 6px; padding: 8px 20px;
+  cursor: pointer; box-shadow: 4px 4px 0 var(--ink);
+  transition: transform .1s, box-shadow .1s;
+  text-transform: uppercase;
+}
+.btn:active { transform: translate(2px,2px); box-shadow: 2px 2px 0 var(--ink); }
+.btn-primary { background: var(--red);   color: #fff; }
+.btn-blue    { background: var(--blue);  color: #fff; }
+.btn-green   { background: var(--green); color: #fff; }
+.btn-neutral { background: var(--paper2); color: var(--ink); }
+/* Error bubble */
+.error-bubble {
+  display: none; position: relative;
+  background: #fff0f0; border: 3px solid var(--red);
+  border-radius: 14px; padding: 10px 14px;
+  margin-top: 12px; font-size: .9rem; font-weight: 700; color: var(--red);
+}
+.error-bubble.show { display: block; }
+/* IP Info grid */
+.ip-info-grid {
+  display: none;
+  grid-template-columns: 1fr 1fr; gap: 12px;
+  margin-top: 16px;
+}
+.ip-info-grid.show { display: grid; }
+.info-chip {
+  background: var(--paper2);
+  border: 3px solid var(--ink); border-radius: 6px;
+  box-shadow: 3px 3px 0 var(--ink); padding: 10px 14px;
+}
+.info-chip h4 {
+  font-family: 'Bangers', cursive; font-size: .9rem;
+  letter-spacing: 1px; margin-bottom: 4px;
+}
+.info-chip p {
+  font-family: 'Space Mono', monospace; font-size: .78rem;
+}
+/* Tools grid */
+.tools-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-top: 4px; }
+.tool-card {
+  background: var(--paper2);
+  border: 3px solid var(--ink); border-radius: 6px;
+  box-shadow: 4px 4px 0 var(--ink); padding: 14px 16px;
+}
+.tool-card h4 {
+  font-family: 'Bangers', cursive; font-size: 1rem;
+  letter-spacing: 1px; margin-bottom: 8px;
+}
+.tool-row { display: flex; gap: 8px; align-items: center; }
+.tool-input {
+  flex: 1;
+  background: #fff; border: 2px solid var(--ink);
+  border-radius: 4px; padding: 6px 10px;
+  font-family: 'Space Mono', monospace; font-size: .75rem;
+  color: var(--ink); outline: none;
+}
+.tool-result {
+  display: none;
+  font-family: 'Space Mono', monospace; font-size: .78rem;
+  margin-top: 8px; padding: 6px 10px;
+  background: var(--ink); color: var(--yellow);
+  border-radius: 4px; word-break: break-all;
+}
+.tool-result.show { display: block; }
+@media (max-width: 760px) {
+  .ip-info-grid { grid-template-columns: 1fr; }
+  .tools-grid { grid-template-columns: 1fr; }
+  .hero { flex-direction: column; gap: 10px; }
+  .hero-text h1 { font-size: 2rem; }
+  .input-row { flex-direction: column; }
+}
+</style>
+</head>
+<body>
+<div class="paper-overlay"></div>
+<div class="page-wrap">
+
+  <!-- MASTHEAD -->
+  <div class="masthead">
+    <div class="masthead-logo">DEV<span>DUNIA</span> COMICS</div>
+    <div class="masthead-right">
+      <span class="issue-tag">IP TOOLS</span>
+      <a href="../index.html" class="back-link">&#9664; ALL TOOLS</a>
+    </div>
+  </div>
+
+  <!-- HERO -->
+  <div class="hero">
+    <div class="hero-icon">&#x1F310;</div>
+    <div class="hero-text">
+      <h1>IP Address Tools</h1>
+      <p>Check your public IP address, lookup geolocation info on any IP, and convert between IP and binary formats — all in your browser!</p>
+      <div class="hero-badges">
+        <span class="badge badge-red">GEO LOOKUP</span>
+        <span class="badge badge-blue">IP TO BINARY</span>
+        <span class="badge badge-green">CLIENT-SIDE</span>
+        <span class="badge badge-yellow">FREE</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- MY IP -->
+  <div class="panel">
+    <div class="panel-header">
+      &#x1F4E1; YOUR PUBLIC IP ADDRESS
+      <span class="panel-tag">MY IP</span>
+    </div>
+    <div class="panel-body">
+      <div class="my-ip-box">
+        <div>
+          <div class="my-ip-label">Public IP</div>
+          <div id="my-ip">Loading...</div>
+        </div>
+        <button id="copy-my-ip" class="btn btn-neutral">&#x1F4CB; COPY</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- IP LOOKUP -->
+  <div class="panel">
+    <div class="panel-header">
+      &#x1F50D; IP ADDRESS LOOKUP
+      <span class="panel-tag">LOOKUP</span>
+    </div>
+    <div class="panel-body">
+      <div class="section-label">Enter an IP to look up</div>
+      <div class="input-row">
+        <input type="text" id="ip-input" class="comic-input" placeholder="e.g. 8.8.8.8">
+        <button id="lookup-btn" class="btn btn-primary">&#x1F50D; LOOKUP</button>
+      </div>
+
+      <div id="error-bubble" class="error-bubble">
+        &#x1F4A5; <span id="error-message">Invalid IP address!</span>
+      </div>
+
+      <div id="ip-info" class="ip-info-grid">
+        <div class="info-chip">
+          <h4 style="color:var(--blue);">IP Address</h4>
+          <p id="ip-address">—</p>
+        </div>
+        <div class="info-chip">
+          <h4 style="color:var(--green);">Country</h4>
+          <p id="country">—</p>
+        </div>
+        <div class="info-chip">
+          <h4 style="color:var(--purple);">Region</h4>
+          <p id="region">—</p>
+        </div>
+        <div class="info-chip">
+          <h4 style="color:var(--orange);">City</h4>
+          <p id="city">—</p>
+        </div>
+        <div class="info-chip">
+          <h4 style="color:var(--blue);">ISP</h4>
+          <p id="isp">—</p>
+        </div>
+        <div class="info-chip">
+          <h4 style="color:var(--yellow);">Organization</h4>
+          <p id="org">—</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- IP TOOLS -->
+  <div class="panel">
+    <div class="panel-header">
+      &#x1F527; IP CONVERSION TOOLS
+      <span class="panel-tag">TOOLS</span>
+    </div>
+    <div class="panel-body">
+      <div class="tools-grid">
+        <div class="tool-card">
+          <h4 style="color:var(--blue);">IP to Binary</h4>
+          <div class="tool-row">
+            <input type="text" id="ip-to-binary-input" class="tool-input" placeholder="192.168.1.1">
+            <button id="ip-to-binary-btn" class="btn btn-blue" style="padding:6px 12px;font-size:.9rem;">GO</button>
+          </div>
+          <div id="ip-to-binary-result" class="tool-result"></div>
+        </div>
+        <div class="tool-card">
+          <h4 style="color:var(--green);">Binary to IP</h4>
+          <div class="tool-row">
+            <input type="text" id="binary-to-ip-input" class="tool-input" placeholder="11000000.10101000.00000001.00000001">
+            <button id="binary-to-ip-btn" class="btn btn-green" style="padding:6px 12px;font-size:.9rem;">GO</button>
+          </div>
+          <div id="binary-to-ip-result" class="tool-result"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div><!-- /page-wrap -->
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  var myIpEl       = document.getElementById('my-ip');
+  var copyMyIpBtn  = document.getElementById('copy-my-ip');
+  var ipInput      = document.getElementById('ip-input');
+  var lookupBtn    = document.getElementById('lookup-btn');
+  var errBubble    = document.getElementById('error-bubble');
+  var errMsg       = document.getElementById('error-message');
+  var ipInfo       = document.getElementById('ip-info');
+
+  var ipToBinaryInput  = document.getElementById('ip-to-binary-input');
+  var ipToBinaryBtn    = document.getElementById('ip-to-binary-btn');
+  var ipToBinaryResult = document.getElementById('ip-to-binary-result');
+  var binaryToIpInput  = document.getElementById('binary-to-ip-input');
+  var binaryToIpBtn    = document.getElementById('binary-to-ip-btn');
+  var binaryToIpResult = document.getElementById('binary-to-ip-result');
+
+  // Get user's public IP
+  async function getMyIP() {
+    try {
+      var response = await fetch('https://api.ipify.org?format=json');
+      var data = await response.json();
+      myIpEl.textContent = data.ip;
+    } catch(e) {
+      myIpEl.textContent = 'Unable to fetch IP';
+    }
+  }
+
+  copyMyIpBtn.addEventListener('click', function() {
+    var ip = myIpEl.textContent;
+    if (ip && ip !== 'Loading...' && ip !== 'Unable to fetch IP') {
+      navigator.clipboard.writeText(ip).then(function() {
+        copyMyIpBtn.textContent = '✔ COPIED!';
+        copyMyIpBtn.style.background = 'var(--green)';
+        copyMyIpBtn.style.color = '#fff';
+        setTimeout(function() {
+          copyMyIpBtn.textContent = '📋 COPY';
+          copyMyIpBtn.style.background = '';
+          copyMyIpBtn.style.color = '';
+        }, 2000);
+      });
+    }
+  });
+
+  function showError(msg) {
+    errMsg.textContent = msg;
+    errBubble.classList.add('show');
+    ipInfo.classList.remove('show');
+  }
+  function hideError() { errBubble.classList.remove('show'); }
+
+  function displayIPInfo(data) {
+    document.getElementById('ip-address').textContent = data.ip || 'N/A';
+    document.getElementById('country').textContent    = data.country_name || 'N/A';
+    document.getElementById('region').textContent     = data.region || 'N/A';
+    document.getElementById('city').textContent       = data.city || 'N/A';
+    document.getElementById('isp').textContent        = data.org || 'N/A';
+    document.getElementById('org').textContent        = data.org || 'N/A';
+    ipInfo.classList.add('show');
+  }
+
+  function isValidIP(ip) {
+    var re = /^(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$/;
+    return re.test(ip);
+  }
+  function ipToBinary(ip) {
+    return ip.split('.').map(function(o) {
+      return parseInt(o).toString(2).padStart(8,'0');
+    }).join('.');
+  }
+  function binaryToIP(binary) {
+    var octets = binary.split('.');
+    if (octets.length !== 4) throw new Error('Invalid binary format');
+    return octets.map(function(o) {
+      if (o.length !== 8 || !/^[01]+$/.test(o)) throw new Error('Invalid binary format');
+      return parseInt(o, 2);
+    }).join('.');
+  }
+
+  lookupBtn.addEventListener('click', async function() {
+    var ip = ipInput.value.trim();
+    if (!ip) { showError('Please enter an IP address'); return; }
+    if (!isValidIP(ip)) { showError('Please enter a valid IPv4 address'); return; }
+    try {
+      var response = await fetch('https://ipapi.co/' + ip + '/json/');
+      var data = await response.json();
+      if (data.error) { showError(data.reason || 'Unable to lookup IP information'); return; }
+      displayIPInfo(data);
+      hideError();
+    } catch(e) {
+      showError('Unable to lookup IP information');
+    }
+  });
+
+  ipInput.addEventListener('keydown', function(e) {
+    if (e.key === 'Enter') lookupBtn.click();
+  });
+
+  ipToBinaryBtn.addEventListener('click', function() {
+    var ip = ipToBinaryInput.value.trim();
+    if (!ip) return;
+    if (!isValidIP(ip)) {
+      ipToBinaryResult.textContent = 'Invalid IP address';
+    } else {
+      ipToBinaryResult.textContent = ipToBinary(ip);
+    }
+    ipToBinaryResult.classList.add('show');
+  });
+
+  binaryToIpBtn.addEventListener('click', function() {
+    var binary = binaryToIpInput.value.trim();
+    if (!binary) return;
+    try {
+      binaryToIpResult.textContent = binaryToIP(binary);
+    } catch(e) {
+      binaryToIpResult.textContent = 'Invalid binary format';
+    }
+    binaryToIpResult.classList.add('show');
+  });
+
+  getMyIP();
+});
+</script>
+</body>
+</html>

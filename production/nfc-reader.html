@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>NFC Reader — DevDunia Comics</title>
+<meta name="description" content="Read NFC tags using the Web NFC API (Chrome on Android, HTTPS).">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://devdunia.com/production/nfc-reader.html">
+<meta property="og:title" content="NFC Reader — DevDunia Comics">
+<meta property="og:image" content="https://devdunia.com/images/logo.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Bangers&family=Comic+Neue:wght@400;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+:root{--ink:#1a1410;--paper:#fdf3e3;--paper2:#fbe9cc;--red:#e63946;--blue:#1d6fb8;--yellow:#ffd23f;--green:#3fa34d;--pink:#ff6b9d;--purple:#8a4fff;--orange:#ff8c42;}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'Comic Neue',cursive;font-weight:400;color:var(--ink);background-color:var(--paper);background-image:radial-gradient(var(--ink) 0.5px,transparent 0.6px);background-size:14px 14px;background-attachment:fixed;min-height:100vh;}
+.paper-overlay{position:fixed;inset:0;background:rgba(253,243,227,.78);pointer-events:none;z-index:0;}
+.page-wrap{position:relative;z-index:1;max-width:820px;margin:0 auto;padding:0 16px 60px;}
+.masthead{background:var(--purple);border:4px solid var(--ink);border-radius:6px;box-shadow:7px 7px 0 var(--ink);margin:18px 0 28px;padding:10px 20px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;}
+.masthead-logo{font-family:'Bangers',cursive;font-size:1.9rem;letter-spacing:2px;color:#fff;text-shadow:3px 3px 0 var(--ink);line-height:1;}
+.masthead-logo span{color:var(--yellow);}
+.masthead-right{display:flex;align-items:center;gap:8px;}
+.issue-tag{font-family:'Bangers',cursive;font-size:.95rem;background:var(--yellow);color:var(--ink);padding:3px 10px;border-radius:4px;border:2px solid var(--ink);letter-spacing:1px;}
+.back-link{font-family:'Bangers',cursive;font-size:.95rem;color:#fff;text-decoration:none;background:var(--ink);padding:3px 10px;border-radius:4px;letter-spacing:1px;transition:opacity .15s;}
+.back-link:hover{opacity:.75;}
+.hero{display:flex;align-items:flex-start;gap:20px;background:var(--paper2);border:4px solid var(--ink);border-radius:6px;box-shadow:7px 7px 0 var(--ink);padding:20px 24px;margin-bottom:28px;transform:rotate(-0.4deg);}
+.hero-icon{font-size:3rem;line-height:1;flex-shrink:0;filter:drop-shadow(3px 3px 0 var(--ink));}
+.hero-text h1{font-family:'Bangers',cursive;font-size:2.8rem;letter-spacing:2px;color:var(--purple);-webkit-text-stroke:1px var(--ink);text-shadow:4px 4px 0 var(--ink);line-height:1;text-transform:uppercase;}
+.hero-text p{font-size:.95rem;margin-top:6px;line-height:1.5;max-width:480px;}
+.hero-badges{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px;}
+.badge{font-family:'Space Mono',monospace;font-size:.65rem;font-weight:700;padding:3px 8px;border:2px solid var(--ink);border-radius:4px;box-shadow:2px 2px 0 var(--ink);}
+.badge-blue{background:var(--blue);color:#fff;}.badge-green{background:var(--green);color:#fff;}.badge-yellow{background:var(--yellow);color:var(--ink);}.badge-red{background:var(--red);color:#fff;}.badge-purple{background:var(--purple);color:#fff;}
+.panel{background:var(--paper);border:4px solid var(--ink);border-radius:6px;box-shadow:7px 7px 0 var(--ink);overflow:hidden;margin-bottom:22px;}
+.panel-header{background:var(--ink);color:var(--yellow);font-family:'Bangers',cursive;font-size:1.2rem;letter-spacing:2px;padding:8px 16px;display:flex;align-items:center;justify-content:space-between;gap:10px;}
+.panel-header .panel-tag{font-family:'Space Mono',monospace;font-size:.65rem;font-weight:700;background:var(--yellow);color:var(--ink);padding:2px 7px;border-radius:3px;}
+.panel-body{padding:18px 20px;}
+.btn-row{display:flex;flex-wrap:wrap;gap:10px;margin-bottom:14px;}
+.btn{font-family:'Bangers',cursive;font-size:1.1rem;letter-spacing:1px;border:3px solid var(--ink);border-radius:6px;padding:8px 20px;cursor:pointer;box-shadow:4px 4px 0 var(--ink);transition:transform .1s,box-shadow .1s;text-transform:uppercase;}
+.btn:active{transform:translate(2px,2px);box-shadow:2px 2px 0 var(--ink);}
+.btn:disabled{opacity:.5;cursor:not-allowed;}
+.btn-primary{background:var(--purple);color:#fff;}
+.btn-neutral{background:var(--paper2);color:var(--ink);}
+.btn-danger{background:var(--red);color:#fff;}
+.status-bar{background:var(--paper2);border:3px solid var(--ink);border-radius:6px;padding:12px 16px;display:flex;align-items:center;gap:10px;margin-bottom:14px;}
+.status-dot{width:14px;height:14px;border-radius:50%;border:2px solid var(--ink);flex-shrink:0;transition:background .3s;}
+.status-dot.idle{background:var(--red);}
+.status-dot.active{background:var(--green);animation:pulse 1s ease-in-out infinite;}
+@keyframes pulse{0%,100%{opacity:1;}50%{opacity:.5;}}
+.status-text{font-family:'Bangers',cursive;font-size:1rem;letter-spacing:1px;}
+.support-msg{font-family:'Space Mono',monospace;font-size:.78rem;margin-bottom:14px;padding:8px 12px;border-radius:6px;border:2px solid var(--ink);}
+.support-ok{background:#e8f5e9;color:var(--green);}
+.support-no{background:#fdecea;color:var(--red);}
+.tag-card{background:var(--paper2);border:3px solid var(--ink);border-radius:6px;box-shadow:4px 4px 0 var(--ink);padding:14px;margin-bottom:10px;}
+.tag-meta{font-family:'Space Mono',monospace;font-size:.72rem;color:var(--ink);opacity:.7;margin-bottom:8px;}
+.tag-record{font-family:'Space Mono',monospace;font-size:.8rem;color:var(--ink);line-height:1.5;word-break:break-all;}
+.tag-record a{color:var(--blue);text-decoration:none;}
+.tag-record a:hover{text-decoration:underline;}
+.tag-record pre{background:var(--ink);color:var(--yellow);padding:8px;border-radius:4px;overflow-x:auto;font-size:.7rem;white-space:pre-wrap;}
+.tag-record-err{color:var(--red);}
+.how-steps{display:flex;flex-direction:column;gap:10px;}
+.how-step{display:flex;align-items:flex-start;gap:12px;}
+.step-dot{width:28px;height:28px;border-radius:50%;border:3px solid var(--ink);display:flex;align-items:center;justify-content:center;font-family:'Bangers',cursive;font-size:1rem;color:#fff;flex-shrink:0;box-shadow:2px 2px 0 var(--ink);}
+.how-step p{font-size:.88rem;line-height:1.5;padding-top:2px;}
+.empty-state{text-align:center;padding:28px;font-family:'Bangers',cursive;font-size:1.2rem;letter-spacing:2px;color:var(--ink);opacity:.4;}
+@media(max-width:600px){.hero{flex-direction:column;gap:10px;}.hero-text h1{font-size:2rem;}}
+</style>
+</head>
+<body>
+<div class="paper-overlay"></div>
+<div class="page-wrap">
+
+  <div class="masthead">
+    <div class="masthead-logo">DEV<span>DUNIA</span> COMICS</div>
+    <div class="masthead-right">
+      <span class="issue-tag">NFC READER</span>
+      <a href="../index.html" class="back-link">&#9664; ALL TOOLS</a>
+    </div>
+  </div>
+
+  <div class="hero">
+    <div class="hero-icon">&#x1F4F6;</div>
+    <div class="hero-text">
+      <h1>NFC Reader</h1>
+      <p>Read NFC tags directly from your browser using the Web NFC API. Works on Chrome for Android over HTTPS or localhost. Tap a tag and see its data instantly!</p>
+      <div class="hero-badges">
+        <span class="badge badge-purple">WEB NFC API</span>
+        <span class="badge badge-green">CHROME ANDROID</span>
+        <span class="badge badge-yellow">HTTPS REQUIRED</span>
+        <span class="badge badge-blue">CLIENT-SIDE</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="panel">
+    <div class="panel-header">
+      &#x1F4F6; NFC SCANNER CONTROLS
+      <span class="panel-tag">CONTROLS</span>
+    </div>
+    <div class="panel-body">
+      <div id="support" class="support-msg"></div>
+
+      <div class="status-bar">
+        <div class="status-dot idle" id="dot"></div>
+        <span class="status-text" id="status">Idle — Press Start Scan</span>
+      </div>
+
+      <div class="btn-row">
+        <button id="startBtn" class="btn btn-primary">&#x25B6; Start Scan</button>
+        <button id="stopBtn" class="btn btn-neutral" disabled>&#x23F9; Stop Scan</button>
+        <button id="clearBtn" class="btn btn-danger">&#x1F5D1; Clear</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="panel">
+    <div class="panel-header">
+      &#x1F4CB; TAG DATA
+      <span class="panel-tag">OUTPUT</span>
+    </div>
+    <div class="panel-body">
+      <div id="output">
+        <div class="empty-state">NO TAGS SCANNED YET</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="panel">
+    <div class="panel-header">
+      &#x2139; HOW IT WORKS
+      <span class="panel-tag">INFO</span>
+    </div>
+    <div class="panel-body">
+      <div class="how-steps">
+        <div class="how-step">
+          <div class="step-dot" style="background:var(--purple);">1</div>
+          <p>Requires <strong>Chrome on Android</strong> and a secure context (HTTPS or localhost). Desktop browsers do not support Web NFC.</p>
+        </div>
+        <div class="how-step">
+          <div class="step-dot" style="background:var(--blue);">2</div>
+          <p>Press <strong>Start Scan</strong> and bring an NFC tag close to the back of your device. Your browser will ask for permission.</p>
+        </div>
+        <div class="how-step">
+          <div class="step-dot" style="background:var(--green);">3</div>
+          <p>Supported record types are auto-parsed: <strong>text</strong>, <strong>URL</strong>, <strong>JSON MIME</strong>, and raw byte payloads shown in hex.</p>
+        </div>
+        <div class="how-step">
+          <div class="step-dot" style="background:var(--orange);">4</div>
+          <p>All data is processed <strong>100% locally</strong> in your browser. Nothing is sent to any server.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+(function(){
+  var support = document.getElementById('support');
+  var startBtn = document.getElementById('startBtn');
+  var stopBtn = document.getElementById('stopBtn');
+  var clearBtn = document.getElementById('clearBtn');
+  var statusEl = document.getElementById('status');
+  var dotEl = document.getElementById('dot');
+  var output = document.getElementById('output');
+
+  var nfcReader = null;
+  var abortController = null;
+
+  var isSupported = 'NDEFReader' in window;
+  if (isSupported) {
+    support.className = 'support-msg support-ok';
+    support.innerHTML = '&#x2714; Web NFC is supported on this device!';
+  } else {
+    support.className = 'support-msg support-no';
+    support.innerHTML = '&#x2716; Web NFC not supported. Try Chrome on Android over HTTPS.';
+  }
+
+  function setActive(active) {
+    if (active) {
+      statusEl.textContent = 'Scanning... Tap an NFC tag now!';
+      dotEl.classList.remove('idle');
+      dotEl.classList.add('active');
+    } else {
+      statusEl.textContent = 'Idle — Press Start Scan';
+      dotEl.classList.remove('active');
+      dotEl.classList.add('idle');
+    }
+  }
+
+  function clearEmpty() {
+    var empty = output.querySelector('.empty-state');
+    if (empty) empty.remove();
+  }
+
+  function addLog(html) {
+    clearEmpty();
+    var card = document.createElement('div');
+    card.className = 'tag-card';
+    card.innerHTML = html;
+    output.prepend(card);
+  }
+
+  function escapeHtml(str) {
+    return str.replace(/[&<>"']/g, function(s) {
+      return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;','\'':'&#39;'}[s];
+    });
+  }
+
+  function parseRecord(record) {
+    try {
+      if (record.recordType === 'text') {
+        return '<div class="tag-record">&#x1F4DD; Text: <strong>' + escapeHtml(record.data) + '</strong></div>';
+      }
+      if (record.recordType === 'url') {
+        var url = typeof record.data === 'string' ? record.data : '';
+        return '<div class="tag-record">&#x1F517; URL: <a href="' + escapeHtml(url) + '" target="_blank" rel="noopener noreferrer">' + escapeHtml(url) + '</a></div>';
+      }
+      if (record.mediaType) {
+        var textDecoder = new TextDecoder();
+        var asText = textDecoder.decode(record.data);
+        var pretty = asText;
+        if (record.mediaType.includes('json')) {
+          try { pretty = JSON.stringify(JSON.parse(asText), null, 2); } catch(e) {}
+          return '<div class="tag-record">&#x1F9E0; MIME (' + escapeHtml(record.mediaType) + '):<pre>' + escapeHtml(pretty) + '</pre></div>';
+        }
+        return '<div class="tag-record">&#x1F4C4; MIME (' + escapeHtml(record.mediaType) + '):<pre>' + escapeHtml(pretty) + '</pre></div>';
+      }
+      var bytes = new Uint8Array(record.data.buffer || record.data);
+      var hex = Array.from(bytes).map(function(b){ return b.toString(16).padStart(2,'0'); }).join(' ');
+      return '<div class="tag-record">&#x1F9EE; Raw payload:<pre>' + hex + '</pre></div>';
+    } catch(err) {
+      return '<div class="tag-record tag-record-err">&#x1F4A5; Error parsing record: ' + escapeHtml(String(err)) + '</div>';
+    }
+  }
+
+  async function startScan() {
+    if (!isSupported) { return; }
+    try {
+      nfcReader = new NDEFReader();
+      abortController = new AbortController();
+      await nfcReader.scan({ signal: abortController.signal });
+      setActive(true);
+
+      nfcReader.onreadingerror = function() {
+        addLog('<div class="tag-record tag-record-err">&#x26A0; Reading error. Keep the tag close and try again.</div>');
+      };
+
+      nfcReader.onreading = function(event) {
+        var serialNumber = event.serialNumber;
+        var message = event.message;
+        var time = new Date().toLocaleTimeString();
+        var html = '<div class="tag-meta">&#x23F0; ' + escapeHtml(time) + ' &bull; Serial: ' + escapeHtml(serialNumber || 'N/A') + '</div>';
+        for (var i = 0; i < message.records.length; i++) {
+          html += parseRecord(message.records[i]);
+        }
+        addLog(html);
+      };
+
+      startBtn.disabled = true;
+      stopBtn.disabled = false;
+    } catch(err) {
+      addLog('<div class="tag-record tag-record-err">&#x1F4A5; ' + escapeHtml(err.name || 'Error') + ': ' + escapeHtml(err.message || String(err)) + '</div>');
+      setActive(false);
+    }
+  }
+
+  function stopScan() {
+    if (abortController) { abortController.abort(); }
+    setActive(false);
+    startBtn.disabled = false;
+    stopBtn.disabled = true;
+  }
+
+  function clearLogs() {
+    output.innerHTML = '<div class="empty-state">NO TAGS SCANNED YET</div>';
+  }
+
+  startBtn.addEventListener('click', startScan);
+  stopBtn.addEventListener('click', stopScan);
+  clearBtn.addEventListener('click', clearLogs);
+})();
+</script>
+</body>
+</html>

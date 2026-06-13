@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GUID Generator — DevDunia Comics</title>
+<meta name="description" content="Generate globally unique identifiers (GUIDs/UUIDs) for applications. Free online GUID generator tool for developers.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://devdunia.com/production/guid-generator.html">
+<meta property="og:title" content="GUID Generator — DevDunia Comics">
+<meta property="og:description" content="Generate globally unique identifiers (GUIDs/UUIDs) for applications.">
+<meta property="og:image" content="https://devdunia.com/images/logo.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Bangers&family=Comic+Neue:wght@400;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --ink: #1a1410;
+  --paper: #fdf3e3;
+  --paper2: #fbe9cc;
+  --red: #e63946;
+  --blue: #1d6fb8;
+  --yellow: #ffd23f;
+  --green: #3fa34d;
+  --pink: #ff6b9d;
+  --purple: #8a4fff;
+  --orange: #ff8c42;
+}
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  font-family: 'Comic Neue', cursive;
+  font-weight: 400; color: var(--ink);
+  background-color: var(--paper);
+  background-image: radial-gradient(var(--ink) 0.5px, transparent 0.6px);
+  background-size: 14px 14px; background-attachment: fixed;
+  min-height: 100vh;
+}
+.paper-overlay { position: fixed; inset: 0; background: rgba(253,243,227,.78); pointer-events: none; z-index: 0; }
+.page-wrap { position: relative; z-index: 1; max-width: 860px; margin: 0 auto; padding: 0 16px 60px; }
+/* MASTHEAD */
+.masthead {
+  background: var(--blue); border: 4px solid var(--ink); border-radius: 6px;
+  box-shadow: 7px 7px 0 var(--ink); margin: 18px 0 28px;
+  padding: 10px 20px; display: flex; align-items: center;
+  justify-content: space-between; flex-wrap: wrap; gap: 8px;
+}
+.masthead-logo { font-family: 'Bangers', cursive; font-size: 1.9rem; letter-spacing: 2px; color: #fff; text-shadow: 3px 3px 0 var(--ink); line-height: 1; }
+.masthead-logo span { color: var(--yellow); }
+.masthead-right { display: flex; align-items: center; gap: 8px; }
+.issue-tag { font-family: 'Bangers', cursive; font-size: .95rem; background: var(--yellow); color: var(--ink); padding: 3px 10px; border-radius: 4px; border: 2px solid var(--ink); letter-spacing: 1px; }
+.back-link { font-family: 'Bangers', cursive; font-size: .95rem; color: #fff; text-decoration: none; background: var(--ink); padding: 3px 10px; border-radius: 4px; letter-spacing: 1px; transition: opacity .15s; }
+.back-link:hover { opacity: .75; }
+/* HERO */
+.hero {
+  display: flex; align-items: flex-start; gap: 20px;
+  background: var(--paper2); border: 4px solid var(--ink); border-radius: 6px;
+  box-shadow: 7px 7px 0 var(--ink); padding: 20px 24px;
+  margin-bottom: 28px; transform: rotate(-0.4deg);
+}
+.hero-icon { font-size: 3rem; line-height: 1; flex-shrink: 0; filter: drop-shadow(3px 3px 0 var(--ink)); }
+.hero-text h1 { font-family: 'Bangers', cursive; font-size: 2.8rem; letter-spacing: 2px; color: var(--blue); -webkit-text-stroke: 1px var(--ink); text-shadow: 4px 4px 0 var(--ink); line-height: 1; text-transform: uppercase; }
+.hero-text p { font-size: .95rem; margin-top: 6px; line-height: 1.5; max-width: 480px; }
+.hero-badges { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 10px; }
+.badge { font-family: 'Space Mono', monospace; font-size: .65rem; font-weight: 700; padding: 3px 8px; border: 2px solid var(--ink); border-radius: 4px; box-shadow: 2px 2px 0 var(--ink); }
+.badge-blue   { background: var(--blue);   color: #fff; }
+.badge-green  { background: var(--green);  color: #fff; }
+.badge-yellow { background: var(--yellow); color: var(--ink); }
+.badge-red    { background: var(--red);    color: #fff; }
+/* PANEL */
+.panel { background: var(--paper); border: 4px solid var(--ink); border-radius: 6px; box-shadow: 7px 7px 0 var(--ink); overflow: hidden; margin-bottom: 22px; }
+.panel-header { background: var(--ink); color: var(--yellow); font-family: 'Bangers', cursive; font-size: 1.2rem; letter-spacing: 2px; padding: 8px 16px; display: flex; align-items: center; justify-content: space-between; gap: 10px; }
+.panel-header .panel-tag { font-family: 'Space Mono', monospace; font-size: .65rem; font-weight: 700; background: var(--yellow); color: var(--ink); padding: 2px 7px; border-radius: 3px; }
+.panel-body { padding: 18px 20px; }
+/* GUID DISPLAY */
+.guid-display-wrap { position: relative; margin-bottom: 14px; }
+.guid-display {
+  width: 100%; background: var(--ink);
+  border: 3px solid var(--ink); border-radius: 6px;
+  padding: 14px 16px; padding-right: 110px;
+  font-family: 'Space Mono', monospace;
+  font-size: .95rem; color: var(--yellow);
+  letter-spacing: 1px; line-height: 1.4;
+  box-shadow: 4px 4px 0 rgba(0,0,0,.3);
+  word-break: break-all;
+}
+.guid-copy-btn {
+  position: absolute; top: 50%; right: 10px;
+  transform: translateY(-50%);
+  font-family: 'Bangers', cursive; font-size: .95rem;
+  letter-spacing: 1px; background: var(--yellow);
+  color: var(--ink); border: 2px solid var(--ink);
+  border-radius: 4px; padding: 4px 12px;
+  cursor: pointer; box-shadow: 2px 2px 0 rgba(0,0,0,.4);
+  transition: transform .1s;
+}
+.guid-copy-btn:active { transform: translateY(-50%) translate(1px,1px); }
+/* RADIO FORMAT */
+.format-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 14px; }
+.format-label {
+  display: flex; align-items: center; gap: 10px;
+  cursor: pointer; font-size: .9rem;
+  background: var(--paper2); border: 2px solid var(--ink);
+  border-radius: 6px; padding: 8px 12px;
+  box-shadow: 2px 2px 0 var(--ink);
+  transition: background .1s;
+}
+.format-label:hover { background: var(--yellow); }
+.format-label input[type="radio"] { accent-color: var(--blue); width: 16px; height: 16px; cursor: pointer; }
+/* BUTTONS */
+.btn-row { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 14px; }
+.btn { font-family: 'Bangers', cursive; font-size: 1.1rem; letter-spacing: 1px; border: 3px solid var(--ink); border-radius: 6px; padding: 8px 20px; cursor: pointer; box-shadow: 4px 4px 0 var(--ink); transition: transform .1s, box-shadow .1s; text-transform: uppercase; }
+.btn:active { transform: translate(2px,2px); box-shadow: 2px 2px 0 var(--ink); }
+.btn-primary { background: var(--blue);   color: #fff; }
+.btn-success { background: var(--green);  color: #fff; }
+/* MULTIPLE GUIDS */
+.multi-guid-list { display: flex; flex-direction: column; gap: 8px; margin-top: 14px; }
+.multi-guid-item {
+  background: var(--ink); border: 3px solid var(--ink); border-radius: 6px;
+  padding: 10px 14px; font-family: 'Space Mono', monospace;
+  font-size: .82rem; color: var(--yellow);
+  box-shadow: 3px 3px 0 rgba(0,0,0,.3); letter-spacing: 1px;
+  word-break: break-all;
+}
+/* INFO GRID */
+.info-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+.info-card { background: var(--paper2); border: 3px solid var(--ink); border-radius: 6px; padding: 12px 14px; box-shadow: 3px 3px 0 var(--ink); }
+.info-card-title { font-family: 'Bangers', cursive; font-size: 1rem; letter-spacing: 1px; color: var(--blue); margin-bottom: 4px; }
+.info-card p { font-size: .85rem; line-height: 1.5; }
+.section-label { font-family: 'Bangers', cursive; font-size: .95rem; letter-spacing: 1px; color: var(--ink); margin-bottom: 8px; text-transform: uppercase; }
+@media (max-width: 760px) {
+  .format-grid { grid-template-columns: 1fr; }
+  .info-grid { grid-template-columns: 1fr; }
+  .hero { flex-direction: column; gap: 10px; }
+  .hero-text h1 { font-size: 2rem; }
+}
+</style>
+</head>
+<body>
+<div class="paper-overlay"></div>
+<div class="page-wrap">
+
+  <!-- MASTHEAD -->
+  <div class="masthead">
+    <div class="masthead-logo">DEV<span>DUNIA</span> COMICS</div>
+    <div class="masthead-right">
+      <span class="issue-tag">GUID/UUID</span>
+      <a href="../index.html" class="back-link">&#9664; ALL TOOLS</a>
+    </div>
+  </div>
+
+  <!-- HERO -->
+  <div class="hero">
+    <div class="hero-icon">&#x1F194;</div>
+    <div class="hero-text">
+      <h1>GUID Generator</h1>
+      <p>Generate globally unique identifiers (GUIDs/UUIDs v4) for your apps, databases and APIs. Cryptographically random, guaranteed unique across all space and time!</p>
+      <div class="hero-badges">
+        <span class="badge badge-blue">UUID v4</span>
+        <span class="badge badge-green">CRYPTO-RANDOM</span>
+        <span class="badge badge-yellow">FREE</span>
+        <span class="badge badge-red">INSTANT</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- GENERATOR PANEL -->
+  <div class="panel">
+    <div class="panel-header">
+      &#x1F3B2; ROLL YOUR UNIQUE ID
+      <span class="panel-tag">GENERATOR</span>
+    </div>
+    <div class="panel-body">
+
+      <div class="section-label">Generated GUID</div>
+      <div class="guid-display-wrap">
+        <div class="guid-display" id="guid-output">Click Generate to create a GUID</div>
+        <button class="guid-copy-btn" id="copy-btn">&#x1F4CB; COPY</button>
+      </div>
+
+      <div class="section-label">GUID Format</div>
+      <div class="format-grid">
+        <label class="format-label">
+          <input type="radio" name="format" value="standard" checked>
+          Standard (with hyphens)
+        </label>
+        <label class="format-label">
+          <input type="radio" name="format" value="no-hyphens">
+          No hyphens
+        </label>
+        <label class="format-label">
+          <input type="radio" name="format" value="uppercase">
+          Uppercase
+        </label>
+        <label class="format-label">
+          <input type="radio" name="format" value="braces">
+          With braces { }
+        </label>
+      </div>
+
+      <div class="btn-row">
+        <button id="generate-btn" class="btn btn-primary">&#x1F3B2; Generate GUID</button>
+        <button id="generate-multiple-btn" class="btn btn-success">&#x1F4CB; Generate Multiple</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- MULTIPLE GUIDS PANEL -->
+  <div class="panel" id="multiple-panel" style="display:none;">
+    <div class="panel-header">
+      &#x1F4CB; MULTIPLE GUIDs
+      <span class="panel-tag">BATCH</span>
+    </div>
+    <div class="panel-body">
+      <div class="multi-guid-list">
+        <div class="multi-guid-item" id="guid1"></div>
+        <div class="multi-guid-item" id="guid2"></div>
+        <div class="multi-guid-item" id="guid3"></div>
+        <div class="multi-guid-item" id="guid4"></div>
+        <div class="multi-guid-item" id="guid5"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ABOUT PANEL -->
+  <div class="panel">
+    <div class="panel-header">
+      &#x1F9E0; ABOUT GUIDs
+      <span class="panel-tag">EXPLAINER</span>
+    </div>
+    <div class="panel-body">
+      <div class="info-grid">
+        <div class="info-card">
+          <div class="info-card-title">What is a GUID?</div>
+          <p>A Globally Unique Identifier (GUID) is a 128-bit identifier that is guaranteed to be unique across all space and time.</p>
+        </div>
+        <div class="info-card">
+          <div class="info-card-title">Common Uses</div>
+          <p>Database primary keys, API identifiers, file names, session tokens, registry entries, and more.</p>
+        </div>
+        <div class="info-card">
+          <div class="info-card-title">Format</div>
+          <p>8-4-4-4-12 hexadecimal digits<br><code style="font-family:'Space Mono',monospace;font-size:.75rem;background:var(--ink);color:var(--yellow);padding:2px 5px;border-radius:3px;">550e8400-e29b-41d4-a716-446655440000</code></p>
+        </div>
+        <div class="info-card">
+          <div class="info-card-title">Uniqueness</div>
+          <p>UUID v4 uses <strong>crypto.getRandomValues()</strong> — practically guaranteed unique across all systems and time periods.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div><!-- /page-wrap -->
+
+<script>
+(function() {
+  var guidOutput    = document.getElementById('guid-output');
+  var copyBtn       = document.getElementById('copy-btn');
+  var generateBtn   = document.getElementById('generate-btn');
+  var genMultiBtn   = document.getElementById('generate-multiple-btn');
+  var multiPanel    = document.getElementById('multiple-panel');
+
+  generateBtn.addEventListener('click', function() {
+    var guid = generateGUID();
+    guidOutput.textContent = guid;
+    multiPanel.style.display = 'none';
+  });
+
+  genMultiBtn.addEventListener('click', function() {
+    multiPanel.style.display = 'block';
+    document.getElementById('guid1').textContent = generateGUID();
+    document.getElementById('guid2').textContent = generateGUID();
+    document.getElementById('guid3').textContent = generateGUID();
+    document.getElementById('guid4').textContent = generateGUID();
+    document.getElementById('guid5').textContent = generateGUID();
+  });
+
+  copyBtn.addEventListener('click', function() {
+    var text = guidOutput.textContent;
+    if (text === 'Click Generate to create a GUID') return;
+    if (navigator.clipboard) navigator.clipboard.writeText(text).catch(function(){});
+    var orig = copyBtn.textContent;
+    copyBtn.textContent = '&#x2714; COPIED!';
+    copyBtn.style.background = 'var(--green)';
+    copyBtn.style.color = '#fff';
+    setTimeout(function() {
+      copyBtn.textContent = orig;
+      copyBtn.style.background = '';
+      copyBtn.style.color = '';
+    }, 1800);
+  });
+
+  function generateGUID() {
+    var array = new Uint8Array(16);
+    crypto.getRandomValues(array);
+    array[6] = (array[6] & 0x0f) | 0x40;
+    array[8] = (array[8] & 0x3f) | 0x80;
+    var hex = Array.from(array, function(b) { return b.toString(16).padStart(2, '0'); }).join('');
+    var format = document.querySelector('input[name="format"]:checked').value;
+    switch (format) {
+      case 'standard':
+        return hex.slice(0,8)+'-'+hex.slice(8,12)+'-'+hex.slice(12,16)+'-'+hex.slice(16,20)+'-'+hex.slice(20,32);
+      case 'no-hyphens':
+        return hex;
+      case 'uppercase':
+        return (hex.slice(0,8)+'-'+hex.slice(8,12)+'-'+hex.slice(12,16)+'-'+hex.slice(16,20)+'-'+hex.slice(20,32)).toUpperCase();
+      case 'braces':
+        return '{'+hex.slice(0,8)+'-'+hex.slice(8,12)+'-'+hex.slice(12,16)+'-'+hex.slice(16,20)+'-'+hex.slice(20,32)+'}';
+      default:
+        return hex.slice(0,8)+'-'+hex.slice(8,12)+'-'+hex.slice(12,16)+'-'+hex.slice(16,20)+'-'+hex.slice(20,32);
+    }
+  }
+
+  // Auto-generate on load
+  generateBtn.click();
+})();
+</script>
+</body>
+</html>

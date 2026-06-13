@@ -1,0 +1,462 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>HTTP Response Header Printer — DevDunia Comics</title>
+<meta name="description" content="Test HTTP endpoints and view response headers, status codes, and timing. Free online HTTP header printer tool.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://devdunia.com/production/http-response-header-printer.html">
+<meta property="og:title" content="HTTP Response Header Printer — DevDunia Comics">
+<meta property="og:description" content="Test HTTP endpoints and view response headers, status codes, and timing.">
+<meta property="og:image" content="https://devdunia.com/images/logo.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Bangers&family=Comic+Neue:wght@400;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --ink: #1a1410;
+  --paper: #fdf3e3;
+  --paper2: #fbe9cc;
+  --red: #e63946;
+  --blue: #1d6fb8;
+  --yellow: #ffd23f;
+  --green: #3fa34d;
+  --pink: #ff6b9d;
+  --purple: #8a4fff;
+  --orange: #ff8c42;
+}
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: 'Comic Neue', cursive; font-weight: 400; color: var(--ink); background-color: var(--paper); background-image: radial-gradient(var(--ink) 0.5px, transparent 0.6px); background-size: 14px 14px; background-attachment: fixed; min-height: 100vh; }
+.paper-overlay { position: fixed; inset: 0; background: rgba(253,243,227,.78); pointer-events: none; z-index: 0; }
+.page-wrap { position: relative; z-index: 1; max-width: 860px; margin: 0 auto; padding: 0 16px 60px; }
+
+/* MASTHEAD */
+.masthead { background: var(--green); border: 4px solid var(--ink); border-radius: 6px; box-shadow: 7px 7px 0 var(--ink); margin: 18px 0 28px; padding: 10px 20px; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 8px; }
+.masthead-logo { font-family: 'Bangers', cursive; font-size: 1.9rem; letter-spacing: 2px; color: #fff; text-shadow: 3px 3px 0 var(--ink); line-height: 1; }
+.masthead-logo span { color: var(--yellow); }
+.masthead-right { display: flex; align-items: center; gap: 8px; }
+.issue-tag { font-family: 'Bangers', cursive; font-size: .95rem; background: var(--yellow); color: var(--ink); padding: 3px 10px; border-radius: 4px; border: 2px solid var(--ink); letter-spacing: 1px; }
+.back-link { font-family: 'Bangers', cursive; font-size: .95rem; color: #fff; text-decoration: none; background: var(--ink); padding: 3px 10px; border-radius: 4px; letter-spacing: 1px; transition: opacity .15s; }
+.back-link:hover { opacity: .75; }
+
+/* HERO */
+.hero { display: flex; align-items: flex-start; gap: 20px; background: var(--paper2); border: 4px solid var(--ink); border-radius: 6px; box-shadow: 7px 7px 0 var(--ink); padding: 20px 24px; margin-bottom: 28px; transform: rotate(-0.4deg); }
+.hero-icon { font-size: 3rem; line-height: 1; flex-shrink: 0; filter: drop-shadow(3px 3px 0 var(--ink)); }
+.hero-text h1 { font-family: 'Bangers', cursive; font-size: 2.4rem; letter-spacing: 2px; color: var(--green); -webkit-text-stroke: 1px var(--ink); text-shadow: 4px 4px 0 var(--ink); line-height: 1; text-transform: uppercase; }
+.hero-text p { font-size: .95rem; margin-top: 6px; line-height: 1.5; max-width: 480px; }
+.hero-badges { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 10px; }
+.badge { font-family: 'Space Mono', monospace; font-size: .65rem; font-weight: 700; padding: 3px 8px; border: 2px solid var(--ink); border-radius: 4px; box-shadow: 2px 2px 0 var(--ink); }
+.badge-blue   { background: var(--blue);   color: #fff; }
+.badge-green  { background: var(--green);  color: #fff; }
+.badge-orange { background: var(--orange); color: #fff; }
+.badge-yellow { background: var(--yellow); color: var(--ink); }
+
+/* PANEL */
+.panel { background: var(--paper); border: 4px solid var(--ink); border-radius: 6px; box-shadow: 7px 7px 0 var(--ink); overflow: hidden; margin-bottom: 22px; }
+.panel-header { background: var(--ink); color: var(--yellow); font-family: 'Bangers', cursive; font-size: 1.2rem; letter-spacing: 2px; padding: 8px 16px; display: flex; align-items: center; justify-content: space-between; gap: 10px; }
+.panel-header .panel-tag { font-family: 'Space Mono', monospace; font-size: .65rem; font-weight: 700; background: var(--yellow); color: var(--ink); padding: 2px 7px; border-radius: 3px; }
+.panel-body { padding: 18px 20px; }
+
+/* SECTION LABEL */
+.section-label { font-family: 'Bangers', cursive; font-size: .95rem; letter-spacing: 1px; color: var(--ink); margin-bottom: 6px; text-transform: uppercase; }
+
+/* INPUTS */
+.comic-input { width: 100%; background: #fff; border: 3px solid var(--ink); border-radius: 6px; padding: 10px 14px; font-family: 'Space Mono', monospace; font-size: .82rem; color: var(--ink); outline: none; box-shadow: inset 3px 3px 0 rgba(0,0,0,.06); transition: border-color .15s; }
+.comic-input:focus { border-color: var(--green); }
+.comic-input::placeholder { color: #aaa; font-style: italic; }
+
+.comic-select { width: 100%; background: var(--paper2); border: 3px solid var(--ink); border-radius: 6px; padding: 10px 14px; font-family: 'Space Mono', monospace; font-size: .82rem; color: var(--ink); outline: none; box-shadow: 3px 3px 0 var(--ink); cursor: pointer; }
+
+.comic-textarea { width: 100%; background: #fff; border: 3px solid var(--ink); border-radius: 6px; padding: 12px 14px; font-family: 'Space Mono', monospace; font-size: .82rem; color: var(--ink); line-height: 1.6; resize: vertical; min-height: 100px; box-shadow: inset 3px 3px 0 rgba(0,0,0,.06); outline: none; }
+.comic-textarea:focus { border-color: var(--green); }
+.comic-textarea::placeholder { color: #aaa; font-style: italic; }
+
+/* FORM GRID */
+.form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-bottom: 14px; }
+
+/* BUTTONS */
+.btn-row { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 14px; justify-content: center; }
+.btn { font-family: 'Bangers', cursive; font-size: 1.1rem; letter-spacing: 1px; border: 3px solid var(--ink); border-radius: 6px; padding: 8px 20px; cursor: pointer; box-shadow: 4px 4px 0 var(--ink); transition: transform .1s, box-shadow .1s; text-transform: uppercase; }
+.btn:active { transform: translate(2px,2px); box-shadow: 2px 2px 0 var(--ink); }
+.btn-success { background: var(--green);  color: #fff; }
+.btn-neutral { background: var(--paper2); color: var(--ink); }
+
+/* NOTICE BUBBLE */
+.notice-bubble {
+  background: #fffbe6; border: 3px solid var(--yellow); border-radius: 10px;
+  padding: 10px 14px; margin-bottom: 14px; font-size: .85rem;
+  display: flex; gap: 8px; align-items: flex-start;
+}
+.notice-bubble .notice-icon { font-size: 1.1rem; flex-shrink: 0; }
+
+/* HEADERS ROW */
+.header-row { display: flex; gap: 8px; align-items: center; margin-bottom: 8px; }
+.header-input { flex: 1; background: #fff; border: 3px solid var(--ink); border-radius: 6px; padding: 8px 10px; font-family: 'Space Mono', monospace; font-size: .78rem; color: var(--ink); outline: none; box-shadow: inset 2px 2px 0 rgba(0,0,0,.06); }
+.header-sep { font-family: 'Bangers', cursive; font-size: 1.1rem; color: var(--ink); }
+.header-remove { font-family: 'Bangers', cursive; font-size: .9rem; background: var(--red); color: #fff; border: 2px solid var(--ink); border-radius: 4px; padding: 5px 10px; cursor: pointer; box-shadow: 2px 2px 0 var(--ink); }
+.add-header-btn { font-family: 'Bangers', cursive; font-size: .9rem; background: var(--green); color: #fff; border: 2px solid var(--ink); border-radius: 4px; padding: 5px 12px; cursor: pointer; box-shadow: 2px 2px 0 var(--ink); letter-spacing: 1px; }
+
+/* ERROR BUBBLE */
+.error-bubble { display: none; position: relative; background: #fff0f0; border: 3px solid var(--red); border-radius: 14px; padding: 10px 14px; margin-top: 12px; font-size: .9rem; font-weight: 700; color: var(--red); }
+.error-bubble::before { content: ''; position: absolute; top: -16px; left: 22px; border-width: 0 10px 16px; border-style: solid; border-color: transparent transparent var(--red); }
+.error-bubble::after  { content: ''; position: absolute; top: -11px; left: 24px; border-width: 0 8px 12px; border-style: solid; border-color: transparent transparent #fff0f0; }
+.error-bubble.show { display: block; }
+
+/* STATS */
+.stats-row { display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 16px; }
+.stat-chip { font-family: 'Space Mono', monospace; font-size: .72rem; font-weight: 700; padding: 6px 12px; border: 2px solid var(--ink); border-radius: 4px; box-shadow: 2px 2px 0 var(--ink); display: flex; align-items: center; gap: 5px; }
+.stat-chip .stat-label { opacity: .65; font-weight: 400; }
+.chip-blue   { background: var(--blue);   color: #fff; }
+.chip-green  { background: var(--green);  color: #fff; }
+.chip-yellow { background: var(--yellow); color: var(--ink); }
+
+/* CODE OUTPUT */
+.code-output {
+  background: var(--ink); color: var(--paper); font-family: 'Space Mono', monospace;
+  font-size: .75rem; border-radius: 6px; padding: 14px 16px;
+  white-space: pre-wrap; line-height: 1.7; max-height: 350px;
+  overflow-y: auto; border: 3px solid var(--ink);
+  box-shadow: 3px 3px 0 rgba(0,0,0,.3);
+}
+
+/* COPY BTN */
+.copy-btn { font-family: 'Bangers', cursive; font-size: .9rem; letter-spacing: 1px; background: var(--ink); color: var(--yellow); border: 2px solid var(--ink); border-radius: 4px; padding: 3px 10px; cursor: pointer; box-shadow: 2px 2px 0 rgba(0,0,0,.4); transition: transform .1s; }
+.copy-btn:active { transform: translate(1px,1px); }
+
+/* EXAMPLES GRID */
+.examples-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.example-card { background: var(--paper2); border: 3px solid var(--ink); border-radius: 6px; box-shadow: 4px 4px 0 var(--ink); padding: 10px 12px; cursor: pointer; transition: transform .1s, box-shadow .1s; }
+.example-card:hover { transform: translate(-2px,-2px); box-shadow: 6px 6px 0 var(--ink); }
+.example-card:active { transform: translate(1px,1px); box-shadow: 2px 2px 0 var(--ink); }
+.example-title { font-family: 'Bangers', cursive; font-size: .95rem; letter-spacing: 1px; margin-bottom: 2px; }
+.example-desc { font-size: .78rem; color: var(--ink); opacity: .7; }
+
+/* DIVIDER */
+.divider { border: none; border-top: 3px solid var(--ink); margin: 16px 0; }
+
+@media (max-width: 760px) {
+  .hero { flex-direction: column; gap: 10px; }
+  .hero-text h1 { font-size: 1.8rem; }
+  .form-grid { grid-template-columns: 1fr; }
+  .examples-grid { grid-template-columns: 1fr; }
+}
+</style>
+</head>
+<body>
+<div class="paper-overlay"></div>
+<div class="page-wrap">
+
+  <!-- MASTHEAD -->
+  <div class="masthead">
+    <div class="masthead-logo">DEV<span>DUNIA</span> COMICS</div>
+    <div class="masthead-right">
+      <span class="issue-tag">HTTP</span>
+      <a href="../index.html" class="back-link">&#9664; ALL TOOLS</a>
+    </div>
+  </div>
+
+  <!-- HERO -->
+  <div class="hero">
+    <div class="hero-icon">&#x1F4E1;</div>
+    <div class="hero-text">
+      <h1>HTTP Header Printer</h1>
+      <p>Fire off HTTP requests and inspect every response header, status code, and timing detail — like an X-ray for APIs and web servers!</p>
+      <div class="hero-badges">
+        <span class="badge badge-green">GET/POST</span>
+        <span class="badge badge-blue">CORS PROXY</span>
+        <span class="badge badge-orange">TIMING</span>
+        <span class="badge badge-yellow">FREE</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- REQUEST PANEL -->
+  <div class="panel">
+    <div class="panel-header">
+      &#x2699; REQUEST CONFIGURATION
+      <span class="panel-tag">INPUT</span>
+    </div>
+    <div class="panel-body">
+
+      <div class="notice-bubble">
+        <span class="notice-icon">&#x26A0;&#xFE0F;</span>
+        <div>
+          <strong>CORS Notice:</strong> For external domains, we use a CORS proxy (GET only). For POST/PUT/PATCH to external domains, use a browser extension or server-side solution.
+        </div>
+      </div>
+
+      <div class="form-grid">
+        <div>
+          <div class="section-label">URL</div>
+          <input type="url" id="url-input" class="comic-input" placeholder="https://api.example.com/endpoint">
+        </div>
+        <div>
+          <div class="section-label">HTTP Method</div>
+          <select id="method-select" class="comic-select">
+            <option value="GET">GET</option>
+            <option value="POST">POST</option>
+            <option value="PUT">PUT</option>
+            <option value="PATCH">PATCH</option>
+            <option value="DELETE">DELETE</option>
+            <option value="HEAD">HEAD</option>
+            <option value="OPTIONS">OPTIONS</option>
+          </select>
+        </div>
+      </div>
+
+      <div style="margin-bottom:14px;">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;">
+          <div class="section-label" style="margin-bottom:0;">Custom Headers</div>
+          <button id="add-header-btn" class="add-header-btn">+ Add Header</button>
+        </div>
+        <div id="headers-container"></div>
+      </div>
+
+      <div id="request-body-section" style="display:none;margin-bottom:14px;">
+        <div class="section-label">Request Body</div>
+        <textarea id="request-body" class="comic-textarea" rows="4" placeholder='{"key": "value"}'></textarea>
+      </div>
+
+      <div class="btn-row">
+        <button id="send-request-btn" class="btn btn-success">&#x1F680; Send Request!</button>
+      </div>
+
+      <div id="error-bubble" class="error-bubble">
+        &#x1F4A5; <span id="error-msg">Something went wrong!</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- RESPONSE PANEL -->
+  <div class="panel" id="response-panel" style="display:none;">
+    <div class="panel-header">
+      &#x1F4E4; RESPONSE
+      <span class="panel-tag">OUTPUT</span>
+    </div>
+    <div class="panel-body">
+
+      <div class="stats-row">
+        <div class="stat-chip chip-blue">
+          <span class="stat-label">STATUS</span>
+          <span id="status-code">—</span>
+        </div>
+        <div class="stat-chip chip-green">
+          <span class="stat-label">TIME</span>
+          <span id="response-time">—</span>
+        </div>
+        <div class="stat-chip chip-yellow">
+          <span class="stat-label">CONTENT-LENGTH</span>
+          <span id="content-length">—</span>
+        </div>
+      </div>
+
+      <div class="section-label">Response Headers</div>
+      <pre id="headers-output" class="code-output" style="margin-bottom:14px;"></pre>
+
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px;">
+        <div class="section-label" style="margin-bottom:0;">Response Body</div>
+        <button id="copy-response-btn" class="copy-btn">&#x1F4CB; COPY ALL</button>
+      </div>
+      <pre id="body-output" class="code-output"></pre>
+
+    </div>
+  </div>
+
+  <!-- EXAMPLES PANEL -->
+  <div class="panel">
+    <div class="panel-header">
+      &#x1F4DA; EXAMPLE URLS — CLICK TO LOAD
+      <span class="panel-tag">EXAMPLES</span>
+    </div>
+    <div class="panel-body">
+      <div class="examples-grid">
+        <div class="example-card" data-url="https://httpbin.org/headers">
+          <div class="example-title" style="color:var(--green);">httpbin.org/headers</div>
+          <div class="example-desc">Returns request headers as JSON</div>
+        </div>
+        <div class="example-card" data-url="https://httpbin.org/json">
+          <div class="example-title" style="color:var(--blue);">httpbin.org/json</div>
+          <div class="example-desc">Returns a sample JSON response</div>
+        </div>
+        <div class="example-card" data-url="https://httpbin.org/status/404">
+          <div class="example-title" style="color:var(--red);">httpbin.org/status/404</div>
+          <div class="example-desc">Returns 404 Not Found status</div>
+        </div>
+        <div class="example-card" data-url="https://api.github.com/users/octocat">
+          <div class="example-title" style="color:var(--purple);">GitHub API: octocat</div>
+          <div class="example-desc">GitHub public API example</div>
+        </div>
+        <div class="example-card" data-url="https://httpbin.org/delay/2">
+          <div class="example-title" style="color:var(--orange);">httpbin.org/delay/2</div>
+          <div class="example-desc">2-second delayed response</div>
+        </div>
+        <div class="example-card" data-url="https://httpbin.org/status/200">
+          <div class="example-title" style="color:var(--green);">httpbin.org/status/200</div>
+          <div class="example-desc">Returns 200 OK status</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div><!-- /page-wrap -->
+
+<script>
+(function() {
+  var urlInput          = document.getElementById('url-input');
+  var methodSelect      = document.getElementById('method-select');
+  var reqBodySection    = document.getElementById('request-body-section');
+  var requestBody       = document.getElementById('request-body');
+  var addHeaderBtn      = document.getElementById('add-header-btn');
+  var headersContainer  = document.getElementById('headers-container');
+  var sendRequestBtn    = document.getElementById('send-request-btn');
+  var responsePanel     = document.getElementById('response-panel');
+  var statusCode        = document.getElementById('status-code');
+  var responseTime      = document.getElementById('response-time');
+  var contentLength     = document.getElementById('content-length');
+  var headersOutput     = document.getElementById('headers-output');
+  var bodyOutput        = document.getElementById('body-output');
+  var copyResponseBtn   = document.getElementById('copy-response-btn');
+  var errBubble         = document.getElementById('error-bubble');
+  var errMsg            = document.getElementById('error-msg');
+
+  function showError(msg) { errMsg.textContent = msg; errBubble.classList.add('show'); }
+  function hideError()    { errBubble.classList.remove('show'); }
+
+  methodSelect.addEventListener('change', function() {
+    var m = this.value;
+    if (m === 'POST' || m === 'PUT' || m === 'PATCH') {
+      reqBodySection.style.display = 'block';
+    } else {
+      reqBodySection.style.display = 'none';
+    }
+  });
+
+  addHeaderBtn.addEventListener('click', function() { addHeaderRow(); });
+
+  function addHeaderRow() {
+    var row = document.createElement('div');
+    row.className = 'header-row';
+    row.innerHTML =
+      '<input type="text" placeholder="Header Name" class="header-input hdr-name">' +
+      '<span class="header-sep">:</span>' +
+      '<input type="text" placeholder="Header Value" class="header-input hdr-val">' +
+      '<button type="button" class="header-remove">&#x2715;</button>';
+    row.querySelector('.header-remove').addEventListener('click', function() { row.remove(); });
+    headersContainer.appendChild(row);
+  }
+
+  // Example URL cards
+  var exampleCards = document.querySelectorAll('.example-card');
+  for (var i = 0; i < exampleCards.length; i++) {
+    exampleCards[i].addEventListener('click', function() {
+      urlInput.value = this.getAttribute('data-url');
+    });
+  }
+
+  sendRequestBtn.addEventListener('click', function() { sendRequest(); });
+
+  async function sendRequest() {
+    var url = urlInput.value.trim();
+    if (!url) { showError('Please enter a URL!'); return; }
+    hideError();
+
+    sendRequestBtn.disabled = true;
+    sendRequestBtn.textContent = '⏳ Sending...';
+    responsePanel.style.display = 'none';
+
+    try {
+      var startTime = Date.now();
+
+      // Collect custom headers
+      var headers = { 'Content-Type': 'application/json' };
+      var nameInputs = headersContainer.querySelectorAll('.hdr-name');
+      var valInputs  = headersContainer.querySelectorAll('.hdr-val');
+      for (var i = 0; i < nameInputs.length; i++) {
+        var n = nameInputs[i].value.trim();
+        var v = valInputs[i].value.trim();
+        if (n && v) headers[n] = v;
+      }
+
+      var options = { method: methodSelect.value, headers: headers };
+      if (['POST','PUT','PATCH'].indexOf(methodSelect.value) !== -1 && requestBody.value.trim()) {
+        options.body = requestBody.value.trim();
+      }
+
+      var response;
+      try {
+        response = await fetch(url, options);
+      } catch (corsError) {
+        if (methodSelect.value !== 'GET') {
+          showError('CORS proxy only supports GET. Use a browser extension for other methods.');
+          return;
+        }
+        var proxyUrl = 'https://api.allorigins.win/get?url=' + encodeURIComponent(url);
+        var proxyResponse = await fetch(proxyUrl);
+        var proxyData = await proxyResponse.json();
+        response = {
+          status: proxyResponse.status,
+          statusText: proxyResponse.statusText,
+          headers: new Headers({ 'content-type': 'text/plain', 'x-proxied': 'true' }),
+          text: function() { return Promise.resolve(proxyData.contents || ''); }
+        };
+      }
+
+      var endTime = Date.now();
+      var elapsed = endTime - startTime;
+
+      var bodyText = '';
+      try { bodyText = await response.text(); } catch(e) { bodyText = 'Unable to read response body'; }
+
+      displayResponse(response, elapsed, bodyText);
+
+    } catch (err) {
+      showError('Request failed: ' + err.message);
+    } finally {
+      sendRequestBtn.disabled = false;
+      sendRequestBtn.textContent = '🚀 Send Request!';
+    }
+  }
+
+  function displayResponse(response, elapsed, body) {
+    // Status code with color
+    var sc = response.status;
+    statusCode.textContent = sc;
+    statusCode.style.color = sc >= 200 && sc < 300 ? 'var(--green)' :
+                             sc >= 300 && sc < 400 ? 'var(--yellow)' :
+                             sc >= 400             ? 'var(--red)' : 'var(--ink)';
+
+    responseTime.textContent = elapsed + 'ms';
+
+    var cl = response.headers.get('content-length');
+    contentLength.textContent = cl ? cl + ' bytes' : 'Unknown';
+
+    var headersText = '';
+    response.headers.forEach(function(value, key) { headersText += key + ': ' + value + '\n'; });
+    headersOutput.textContent = headersText;
+
+    var maxLen = 2000;
+    bodyOutput.textContent = body.length > maxLen ? body.substring(0, maxLen) + '\n\n... (truncated)' : body;
+
+    responsePanel.style.display = 'block';
+  }
+
+  copyResponseBtn.addEventListener('click', function() {
+    var text = 'Status: ' + statusCode.textContent + '\n' +
+               'Time: ' + responseTime.textContent + '\n' +
+               'Content-Length: ' + contentLength.textContent + '\n\n' +
+               'Headers:\n' + headersOutput.textContent + '\nBody:\n' + bodyOutput.textContent;
+
+    if (navigator.clipboard) navigator.clipboard.writeText(text).catch(function(){});
+    var orig = copyResponseBtn.textContent;
+    copyResponseBtn.textContent = '✔ COPIED!';
+    copyResponseBtn.style.background = 'var(--green)';
+    setTimeout(function() { copyResponseBtn.textContent = orig; copyResponseBtn.style.background = 'var(--ink)'; }, 1800);
+  });
+
+  // Preload
+  urlInput.value = 'https://httpbin.org/headers';
+  addHeaderRow();
+})();
+</script>
+</body>
+</html>

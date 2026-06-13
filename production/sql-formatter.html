@@ -1,0 +1,638 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SQL Formatter — DevDunia Comics</title>
+<meta name="description" content="Format and beautify SQL queries. Free online SQL formatter supporting multiple dialects for developers.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://devdunia.com/sql-formatter.html">
+<meta property="og:title" content="SQL Formatter — DevDunia Comics">
+<meta property="og:description" content="Format and beautify SQL queries. Free online SQL formatter supporting multiple dialects.">
+<meta property="og:image" content="https://devdunia.com/images/logo.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Bangers&family=Comic+Neue:wght@400;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "WebApplication",
+  "name": "SQL Formatter & Beautifier",
+  "url": "https://devdunia.com/sql-formatter.html",
+  "description": "Free SQL formatter. Beautify and format messy SQL queries into clean, readable, indented code.",
+  "applicationCategory": "DeveloperApplication",
+  "operatingSystem": "Any",
+  "browserRequirements": "Requires JavaScript",
+  "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" },
+  "creator": { "@type": "Organization", "name": "DevDunia", "url": "https://devdunia.com" }
+}
+</script>
+
+<style>
+:root {
+  --ink: #1a1410;
+  --paper: #fdf3e3;
+  --paper2: #fbe9cc;
+  --red: #e63946;
+  --blue: #1d6fb8;
+  --yellow: #ffd23f;
+  --green: #3fa34d;
+  --pink: #ff6b9d;
+  --purple: #8a4fff;
+  --orange: #ff8c42;
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: 'Comic Neue', cursive;
+  font-weight: 400;
+  color: var(--ink);
+  background-color: var(--paper);
+  background-image: radial-gradient(var(--ink) 0.5px, transparent 0.6px);
+  background-size: 14px 14px;
+  background-attachment: fixed;
+  min-height: 100vh;
+}
+
+.paper-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(253,243,227,.78);
+  pointer-events: none;
+  z-index: 0;
+}
+
+.page-wrap {
+  position: relative;
+  z-index: 1;
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 0 16px 60px;
+}
+
+/* ── MASTHEAD ── */
+.masthead {
+  background: var(--blue);
+  border: 4px solid var(--ink);
+  border-radius: 6px;
+  box-shadow: 7px 7px 0 var(--ink);
+  margin: 18px 0 28px;
+  padding: 10px 20px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.masthead-logo {
+  font-family: 'Bangers', cursive;
+  font-size: 1.9rem;
+  letter-spacing: 2px;
+  color: #fff;
+  text-shadow: 3px 3px 0 var(--ink);
+  line-height: 1;
+}
+.masthead-logo span { color: var(--yellow); }
+.masthead-right { display: flex; align-items: center; gap: 8px; }
+.issue-tag {
+  font-family: 'Bangers', cursive;
+  font-size: .95rem;
+  background: var(--yellow);
+  color: var(--ink);
+  padding: 3px 10px;
+  border-radius: 4px;
+  border: 2px solid var(--ink);
+  letter-spacing: 1px;
+}
+.back-link {
+  font-family: 'Bangers', cursive;
+  font-size: .95rem;
+  color: #fff;
+  text-decoration: none;
+  background: var(--ink);
+  padding: 3px 10px;
+  border-radius: 4px;
+  letter-spacing: 1px;
+  transition: opacity .15s;
+}
+.back-link:hover { opacity: .75; }
+
+/* ── HERO ── */
+.hero {
+  display: flex;
+  align-items: flex-start;
+  gap: 20px;
+  background: var(--paper2);
+  border: 4px solid var(--ink);
+  border-radius: 6px;
+  box-shadow: 7px 7px 0 var(--ink);
+  padding: 20px 24px;
+  margin-bottom: 28px;
+  transform: rotate(-0.4deg);
+}
+.hero-icon { font-size: 3rem; line-height: 1; flex-shrink: 0; filter: drop-shadow(3px 3px 0 var(--ink)); }
+.hero-text h1 {
+  font-family: 'Bangers', cursive;
+  font-size: 2.8rem;
+  letter-spacing: 2px;
+  color: var(--orange);
+  -webkit-text-stroke: 1px var(--ink);
+  text-shadow: 4px 4px 0 var(--ink);
+  line-height: 1;
+  text-transform: uppercase;
+}
+.hero-text p { font-size: .95rem; margin-top: 6px; line-height: 1.5; max-width: 480px; }
+.hero-badges { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 10px; }
+.badge {
+  font-family: 'Space Mono', monospace;
+  font-size: .65rem;
+  font-weight: 700;
+  padding: 3px 8px;
+  border: 2px solid var(--ink);
+  border-radius: 4px;
+  box-shadow: 2px 2px 0 var(--ink);
+}
+.badge-blue   { background: var(--blue);   color: #fff; }
+.badge-green  { background: var(--green);  color: #fff; }
+.badge-yellow { background: var(--yellow); color: var(--ink); }
+.badge-orange { background: var(--orange); color: #fff; }
+
+/* ── PANEL ── */
+.panel {
+  background: var(--paper);
+  border: 4px solid var(--ink);
+  border-radius: 6px;
+  box-shadow: 7px 7px 0 var(--ink);
+  overflow: hidden;
+  margin-bottom: 22px;
+}
+.panel-header {
+  background: var(--ink);
+  color: var(--yellow);
+  font-family: 'Bangers', cursive;
+  font-size: 1.2rem;
+  letter-spacing: 2px;
+  padding: 8px 16px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+.panel-header .panel-tag {
+  font-family: 'Space Mono', monospace;
+  font-size: .65rem;
+  font-weight: 700;
+  background: var(--yellow);
+  color: var(--ink);
+  padding: 2px 7px;
+  border-radius: 3px;
+}
+.panel-body { padding: 18px 20px; }
+
+/* ── TEXTAREA ── */
+.comic-textarea {
+  width: 100%;
+  background: #fff;
+  border: 3px solid var(--ink);
+  border-radius: 6px;
+  padding: 12px 14px;
+  font-family: 'Space Mono', monospace;
+  font-size: .82rem;
+  color: var(--ink);
+  line-height: 1.6;
+  resize: vertical;
+  min-height: 160px;
+  box-shadow: inset 3px 3px 0 rgba(0,0,0,.06);
+  outline: none;
+  transition: border-color .15s;
+}
+.comic-textarea:focus { border-color: var(--orange); }
+.comic-textarea::placeholder { color: #aaa; font-style: italic; }
+.comic-textarea[readonly] { background: var(--paper2); cursor: default; }
+
+/* ── SELECT ── */
+.comic-select {
+  background: #fff;
+  border: 3px solid var(--ink);
+  border-radius: 6px;
+  padding: 7px 12px;
+  font-family: 'Space Mono', monospace;
+  font-size: .82rem;
+  color: var(--ink);
+  box-shadow: 3px 3px 0 var(--ink);
+  outline: none;
+  cursor: pointer;
+  transition: border-color .15s;
+}
+.comic-select:focus { border-color: var(--orange); }
+
+/* ── OPTIONS ROW ── */
+.options-row {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 14px;
+  margin-bottom: 18px;
+}
+.option-group label {
+  display: block;
+  font-family: 'Bangers', cursive;
+  font-size: .9rem;
+  letter-spacing: 1px;
+  margin-bottom: 5px;
+  text-transform: uppercase;
+}
+
+/* ── BUTTONS ── */
+.btn-row { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 14px; }
+.btn {
+  font-family: 'Bangers', cursive;
+  font-size: 1.1rem;
+  letter-spacing: 1px;
+  border: 3px solid var(--ink);
+  border-radius: 6px;
+  padding: 8px 20px;
+  cursor: pointer;
+  box-shadow: 4px 4px 0 var(--ink);
+  transition: transform .1s, box-shadow .1s;
+  text-transform: uppercase;
+}
+.btn:active { transform: translate(2px,2px); box-shadow: 2px 2px 0 var(--ink); }
+.btn-primary { background: var(--blue);   color: #fff; }
+.btn-success { background: var(--green);  color: #fff; }
+.btn-danger  { background: var(--red);    color: #fff; }
+.btn-neutral { background: var(--paper2); color: var(--ink); }
+.btn-orange  { background: var(--orange); color: #fff; }
+
+/* ── SECTION LABEL ── */
+.section-label {
+  font-family: 'Bangers', cursive;
+  font-size: .95rem;
+  letter-spacing: 1px;
+  color: var(--ink);
+  margin-bottom: 6px;
+  text-transform: uppercase;
+}
+
+/* ── OUTPUT COPY WRAP ── */
+.output-wrap { position: relative; }
+.copy-btn {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  font-family: 'Bangers', cursive;
+  font-size: .95rem;
+  letter-spacing: 1px;
+  background: var(--ink);
+  color: var(--yellow);
+  border: 2px solid var(--ink);
+  border-radius: 4px;
+  padding: 3px 10px;
+  cursor: pointer;
+  box-shadow: 2px 2px 0 rgba(0,0,0,.4);
+  transition: transform .1s, box-shadow .1s;
+}
+.copy-btn:active { transform: translate(1px,1px); box-shadow: 1px 1px 0 rgba(0,0,0,.4); }
+
+/* ── TEMPLATES GRID ── */
+.templates-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+.template-btn {
+  font-family: 'Bangers', cursive;
+  font-size: 1rem;
+  letter-spacing: 1px;
+  background: var(--paper2);
+  color: var(--ink);
+  border: 3px solid var(--ink);
+  border-radius: 6px;
+  padding: 8px 14px;
+  cursor: pointer;
+  box-shadow: 3px 3px 0 var(--ink);
+  transition: transform .1s, box-shadow .1s;
+  text-align: left;
+  text-transform: uppercase;
+}
+.template-btn:hover { transform: translate(-1px,-1px); box-shadow: 4px 4px 0 var(--ink); }
+.template-btn:active { transform: translate(1px,1px); box-shadow: 1px 1px 0 var(--ink); }
+
+/* ── FEATURES LIST ── */
+.features-list {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.features-list li {
+  font-size: .88rem;
+  line-height: 1.5;
+  padding-left: 20px;
+  position: relative;
+}
+.features-list li::before {
+  content: '▸';
+  position: absolute;
+  left: 0;
+  color: var(--orange);
+  font-weight: 700;
+}
+
+/* ── DIVIDER ── */
+.divider { border: none; border-top: 3px solid var(--ink); margin: 16px 0; }
+
+/* ── MOBILE ── */
+@media (max-width: 600px) {
+  .options-row { grid-template-columns: 1fr; }
+  .templates-grid { grid-template-columns: 1fr; }
+  .hero { flex-direction: column; gap: 10px; }
+  .hero-text h1 { font-size: 2rem; }
+}
+</style>
+</head>
+<body>
+<div class="paper-overlay"></div>
+<div class="page-wrap">
+
+  <!-- MASTHEAD -->
+  <div class="masthead">
+    <div class="masthead-logo">DEV<span>DUNIA</span> COMICS</div>
+    <div class="masthead-right">
+      <span class="issue-tag">SQL FORMAT</span>
+      <a href="../index.html" class="back-link">&#9664; ALL TOOLS</a>
+    </div>
+  </div>
+
+  <!-- HERO -->
+  <div class="hero">
+    <div class="hero-icon">&#x1F5C4;&#xFE0F;</div>
+    <div class="hero-text">
+      <h1>SQL Formatter</h1>
+      <p>Paste messy SQL and get it back clean, indented, and readable. Supports MySQL, PostgreSQL, SQL Server, Oracle, SQLite — and minification too!</p>
+      <div class="hero-badges">
+        <span class="badge badge-orange">6 DIALECTS</span>
+        <span class="badge badge-blue">MINIFY</span>
+        <span class="badge badge-green">TEMPLATES</span>
+        <span class="badge badge-yellow">FREE</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- OPTIONS + INPUT PANEL -->
+  <div class="panel">
+    <div class="panel-header">
+      &#x1F4E5; SQL INPUT & OPTIONS
+      <span class="panel-tag">INPUT</span>
+    </div>
+    <div class="panel-body">
+
+      <!-- Options -->
+      <div class="options-row">
+        <div class="option-group">
+          <label for="sql-dialect">SQL Dialect</label>
+          <select id="sql-dialect" class="comic-select" style="width:100%;">
+            <option value="standard">Standard SQL</option>
+            <option value="mysql">MySQL</option>
+            <option value="postgresql">PostgreSQL</option>
+            <option value="sqlserver">SQL Server</option>
+            <option value="oracle">Oracle</option>
+            <option value="sqlite">SQLite</option>
+          </select>
+        </div>
+        <div class="option-group">
+          <label for="indent-size">Indent Size</label>
+          <select id="indent-size" class="comic-select" style="width:100%;">
+            <option value="2">2 Spaces</option>
+            <option value="4" selected>4 Spaces</option>
+            <option value="8">8 Spaces</option>
+            <option value="tab">Tab</option>
+          </select>
+        </div>
+        <div class="option-group">
+          <label for="case-style">Case Style</label>
+          <select id="case-style" class="comic-select" style="width:100%;">
+            <option value="upper">UPPERCASE</option>
+            <option value="lower" selected>lowercase</option>
+            <option value="preserve">Preserve Original</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="section-label">SQL Query</div>
+      <textarea
+        id="sql-input"
+        class="comic-textarea"
+        rows="10"
+        placeholder="Enter your SQL query here..."
+      ></textarea>
+
+      <div class="btn-row">
+        <button id="format-btn" class="btn btn-primary">&#x1F4C4; Format SQL</button>
+        <button id="minify-btn" class="btn btn-success">&#x26A1; Minify SQL</button>
+        <button id="clear-btn" class="btn btn-danger">&#x1F5D1; Clear All</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- OUTPUT PANEL -->
+  <div class="panel" id="output-section" style="display:none;">
+    <div class="panel-header">
+      &#x1F4E4; FORMATTED SQL
+      <span class="panel-tag">OUTPUT</span>
+    </div>
+    <div class="panel-body">
+      <div class="output-wrap">
+        <textarea id="sql-output" class="comic-textarea" rows="12" readonly></textarea>
+        <button id="copy-output-btn" class="copy-btn">&#x1F4CB; COPY</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- TEMPLATES PANEL -->
+  <div class="panel">
+    <div class="panel-header">
+      &#x1F4DA; SQL TEMPLATES — CLICK TO LOAD!
+      <span class="panel-tag">TEMPLATES</span>
+    </div>
+    <div class="panel-body">
+      <div class="templates-grid">
+        <button class="template-btn" data-template="select">&#x1F50D; SELECT Query</button>
+        <button class="template-btn" data-template="insert">&#x2795; INSERT Statement</button>
+        <button class="template-btn" data-template="update">&#x270F;&#xFE0F; UPDATE Statement</button>
+        <button class="template-btn" data-template="delete">&#x1F5D1; DELETE Statement</button>
+        <button class="template-btn" data-template="join">&#x1F517; JOIN Query</button>
+        <button class="template-btn" data-template="subquery">&#x1F9EE; Subquery</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- FEATURES PANEL -->
+  <div class="panel">
+    <div class="panel-header">
+      &#x2728; FEATURES
+      <span class="panel-tag">INFO</span>
+    </div>
+    <div class="panel-body">
+      <ul class="features-list">
+        <li><strong>Multiple Dialects:</strong> Support for MySQL, PostgreSQL, SQL Server, Oracle, SQLite</li>
+        <li><strong>Customizable Formatting:</strong> Indent size (2/4/8 spaces or tab) and case style</li>
+        <li><strong>SQL Minification:</strong> Remove unnecessary whitespace for production</li>
+        <li><strong>Template Library:</strong> Common SQL patterns and queries ready to use</li>
+        <li><strong>Client-Side:</strong> No server — your SQL never leaves your browser</li>
+      </ul>
+    </div>
+  </div>
+
+</div><!-- /page-wrap -->
+
+<script>
+(function() {
+  var sqlInput    = document.getElementById('sql-input');
+  var sqlOutput   = document.getElementById('sql-output');
+  var formatBtn   = document.getElementById('format-btn');
+  var minifyBtn   = document.getElementById('minify-btn');
+  var clearBtn    = document.getElementById('clear-btn');
+  var copyOutBtn  = document.getElementById('copy-output-btn');
+  var outputSection = document.getElementById('output-section');
+  var templateBtns  = document.querySelectorAll('.template-btn');
+
+  function showOutput() { outputSection.style.display = 'block'; }
+
+  function formatCase(sql, style) {
+    var keywords = [
+      'SELECT','FROM','WHERE','INSERT','INTO','VALUES','UPDATE','SET',
+      'DELETE','JOIN','INNER','LEFT','RIGHT','OUTER','ON','AS','AND',
+      'OR','NOT','IN','EXISTS','BETWEEN','LIKE','IS','NULL','ORDER',
+      'BY','GROUP','HAVING','LIMIT','OFFSET','UNION','ALL','DISTINCT',
+      'COUNT','SUM','AVG','MIN','MAX','CASE','WHEN','THEN','ELSE',
+      'END','IF','CREATE','TABLE','ALTER','DROP','INDEX',
+      'PRIMARY','KEY','FOREIGN','REFERENCES','CONSTRAINT','UNIQUE',
+      'DEFAULT','AUTO_INCREMENT','VARCHAR','INT','BIGINT',
+      'DECIMAL','FLOAT','DOUBLE','DATE','DATETIME','TIMESTAMP',
+      'TEXT','BLOB','BOOLEAN','CHAR','TINYINT','SMALLINT','MEDIUMINT'
+    ];
+    var result = sql;
+    keywords.forEach(function(keyword) {
+      var regex = new RegExp('\\b' + keyword + '\\b', 'gi');
+      if (style === 'upper') {
+        result = result.replace(regex, keyword.toUpperCase());
+      } else if (style === 'lower') {
+        result = result.replace(regex, keyword.toLowerCase());
+      }
+    });
+    return result;
+  }
+
+  function addLineBreaks(sql, indentSize) {
+    var indent = indentSize === 'tab' ? '\t' : ' '.repeat(parseInt(indentSize));
+    return sql
+      .replace(/\bSELECT\b/gi, '\nSELECT')
+      .replace(/\bFROM\b/gi, '\nFROM')
+      .replace(/\bWHERE\b/gi, '\nWHERE')
+      .replace(/\bINNER JOIN\b/gi, '\nINNER JOIN')
+      .replace(/\bLEFT JOIN\b/gi, '\nLEFT JOIN')
+      .replace(/\bRIGHT JOIN\b/gi, '\nRIGHT JOIN')
+      .replace(/\bOUTER JOIN\b/gi, '\nOUTER JOIN')
+      .replace(/\bJOIN\b/gi, '\nJOIN')
+      .replace(/\bON\b/gi, '\n  ON')
+      .replace(/\bAND\b/gi, '\n  AND')
+      .replace(/\bOR\b/gi, '\n  OR')
+      .replace(/\bORDER BY\b/gi, '\nORDER BY')
+      .replace(/\bGROUP BY\b/gi, '\nGROUP BY')
+      .replace(/\bHAVING\b/gi, '\nHAVING')
+      .replace(/\bUNION\b/gi, '\nUNION')
+      .replace(/\bINSERT INTO\b/gi, '\nINSERT INTO')
+      .replace(/\bVALUES\b/gi, '\nVALUES')
+      .replace(/\bUPDATE\b/gi, '\nUPDATE')
+      .replace(/\bSET\b/gi, '\nSET')
+      .replace(/\bDELETE FROM\b/gi, '\nDELETE FROM')
+      .replace(/\n\s*\n/g, '\n')
+      .trim();
+  }
+
+  function formatSQL(sql) {
+    var dialect    = document.getElementById('sql-dialect').value;
+    var indentSize = document.getElementById('indent-size').value;
+    var caseStyle  = document.getElementById('case-style').value;
+    var formatted  = sql.replace(/\s+/g, ' ').trim();
+    if (caseStyle !== 'preserve') {
+      formatted = formatCase(formatted, caseStyle);
+    }
+    formatted = addLineBreaks(formatted, indentSize);
+    return formatted;
+  }
+
+  function minifySQL(sql) {
+    return sql
+      .replace(/\s+/g, ' ')
+      .replace(/\s*,\s*/g, ',')
+      .replace(/\s*\(\s*/g, '(')
+      .replace(/\s*\)\s*/g, ')')
+      .replace(/\s*;\s*/g, ';')
+      .trim();
+  }
+
+  formatBtn.addEventListener('click', function() {
+    var sql = sqlInput.value.trim();
+    if (!sql) { alert('Please enter a SQL query to format'); return; }
+    try {
+      sqlOutput.value = formatSQL(sql);
+      showOutput();
+    } catch(e) { alert('Error formatting SQL: ' + e.message); }
+  });
+
+  minifyBtn.addEventListener('click', function() {
+    var sql = sqlInput.value.trim();
+    if (!sql) { alert('Please enter a SQL query to minify'); return; }
+    try {
+      sqlOutput.value = minifySQL(sql);
+      showOutput();
+    } catch(e) { alert('Error minifying SQL: ' + e.message); }
+  });
+
+  clearBtn.addEventListener('click', function() {
+    sqlInput.value = '';
+    sqlOutput.value = '';
+    outputSection.style.display = 'none';
+  });
+
+  copyOutBtn.addEventListener('click', function() {
+    try {
+      sqlOutput.select();
+      document.execCommand('copy');
+      navigator.clipboard.writeText(sqlOutput.value).catch(function(){});
+    } catch(e) {}
+    var orig = copyOutBtn.textContent;
+    copyOutBtn.textContent = '✔ COPIED!';
+    copyOutBtn.style.background = 'var(--green)';
+    setTimeout(function() {
+      copyOutBtn.textContent = orig;
+      copyOutBtn.style.background = 'var(--ink)';
+    }, 1800);
+  });
+
+  var templates = {
+    select: 'SELECT column1, column2, column3\nFROM table_name\nWHERE condition = \'value\'\nORDER BY column1 ASC;',
+    insert: 'INSERT INTO table_name (column1, column2, column3)\nVALUES (\'value1\', \'value2\', \'value3\');',
+    update: 'UPDATE table_name\nSET column1 = \'new_value1\',\n    column2 = \'new_value2\'\nWHERE condition = \'value\';',
+    delete: 'DELETE FROM table_name\nWHERE condition = \'value\';',
+    join:   'SELECT t1.column1, t2.column2\nFROM table1 t1\nINNER JOIN table2 t2 ON t1.id = t2.table1_id\nWHERE t1.condition = \'value\';',
+    subquery: 'SELECT column1, column2\nFROM table_name\nWHERE column1 IN (\n    SELECT column1\n    FROM another_table\n    WHERE condition = \'value\'\n);'
+  };
+
+  templateBtns.forEach(function(btn) {
+    btn.addEventListener('click', function() {
+      var tpl = this.dataset.template;
+      sqlInput.value = templates[tpl] || '';
+    });
+  });
+
+  // Preload example (same as original)
+  window.addEventListener('load', function() {
+    sqlInput.value = 'select u.id,u.name,u.email,p.title,p.content from users u inner join posts p on u.id=p.user_id where u.active=1 and p.published=1 order by p.created_at desc limit 10;';
+  });
+})();
+</script>
+</body>
+</html>

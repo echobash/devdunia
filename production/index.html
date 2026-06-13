@@ -1,0 +1,1689 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="icon" type="image/png" href="../images/logo.png">
+<link rel="apple-touch-icon" href="../images/logo.png">
+<title>DevDunia — Developer Tools at Your Fingertips</title>
+<meta name="description" content="100+ free developer tools. Encode, decode, format, generate, test — all in your browser. No signup, no server, instant.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://devdunia.com/">
+<meta property="og:title" content="DevDunia — Developer Tools at Your Fingertips">
+<meta property="og:description" content="100+ free developer tools. Encode, decode, format, generate, test — all in your browser.">
+<meta property="og:image" content="https://devdunia.com/images/logo.png">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Bangers&family=Comic+Neue:wght@400;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --ink: #1a1410;
+  --paper: #fdf3e3;
+  --paper2: #fbe9cc;
+  --red: #e63946;
+  --blue: #1d6fb8;
+  --yellow: #ffd23f;
+  --green: #3fa34d;
+  --pink: #ff6b9d;
+  --purple: #8a4fff;
+  --orange: #ff8c42;
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+html { scroll-behavior: smooth; }
+
+body {
+  font-family: 'Comic Neue', cursive;
+  font-weight: 400;
+  color: var(--ink);
+  background-color: var(--paper);
+  background-image: radial-gradient(var(--ink) 0.5px, transparent 0.6px);
+  background-size: 14px 14px;
+  background-attachment: fixed;
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+.paper-overlay {
+  position: fixed; inset: 0;
+  background: rgba(253,243,227,.78);
+  pointer-events: none; z-index: 0;
+}
+
+.page-wrap {
+  position: relative; z-index: 1;
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 0 16px 0;
+}
+
+/* ══════════════════════════════
+   COVER MASTHEAD
+══════════════════════════════ */
+.cover-masthead {
+  background: var(--yellow);
+  border: 4px solid var(--ink);
+  border-radius: 0 0 6px 6px;
+  box-shadow: 0 7px 0 var(--ink);
+  padding: 8px 24px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 0;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+
+.cover-logo-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.cover-logo-img {
+  width: 36px;
+  height: 36px;
+  border: 3px solid var(--ink);
+  border-radius: 8px;
+  box-shadow: 3px 3px 0 var(--ink);
+  object-fit: contain;
+  background: #fff;
+}
+
+.cover-title {
+  font-family: 'Bangers', cursive;
+  font-size: 2rem;
+  letter-spacing: 3px;
+  color: var(--ink);
+  text-shadow: 3px 3px 0 var(--red);
+  line-height: 1;
+}
+
+.cover-title span { color: var(--red); }
+
+.cover-meta {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.tag {
+  font-family: 'Space Mono', monospace;
+  font-size: .7rem;
+  font-weight: 700;
+  padding: 3px 8px;
+  border: 2px solid var(--ink);
+  border-radius: 4px;
+  box-shadow: 2px 2px 0 var(--ink);
+  white-space: nowrap;
+}
+.tag-ink   { background: var(--ink);    color: var(--yellow); }
+.tag-red   { background: var(--red);    color: #fff; }
+.tag-white { background: #fff;          color: var(--ink); }
+
+.cover-nav {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+.nav-link {
+  font-family: 'Bangers', cursive;
+  font-size: 1rem;
+  letter-spacing: 1px;
+  color: var(--ink);
+  text-decoration: none;
+  padding: 3px 10px;
+  border: 2px solid var(--ink);
+  border-radius: 4px;
+  background: transparent;
+  box-shadow: 2px 2px 0 var(--ink);
+  transition: background .1s, color .1s;
+}
+.nav-link:hover { background: var(--ink); color: var(--yellow); }
+.nav-link.active { background: var(--ink); color: var(--yellow); }
+
+/* ══════════════════════════════
+   HERO SPLASH
+══════════════════════════════ */
+.hero-splash {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 24px;
+  align-items: start;
+  margin: 24px 0 32px;
+}
+
+.hero-main {
+  background: var(--blue);
+  border: 4px solid var(--ink);
+  border-radius: 6px;
+  box-shadow: 8px 8px 0 var(--ink);
+  padding: 28px 28px 24px;
+  transform: rotate(-0.4deg);
+  position: relative;
+  overflow: hidden;
+}
+
+.hero-main::before {
+  content: '';
+  position: absolute;
+  top: -20px; right: -20px;
+  width: 120px; height: 120px;
+  background: rgba(255,255,255,.06);
+  border-radius: 50%;
+}
+
+.hero-logo-row {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin-bottom: 16px;
+}
+
+.hero-logo-img {
+  width: 60px;
+  height: 60px;
+  border: 4px solid #fff;
+  border-radius: 12px;
+  box-shadow: 4px 4px 0 var(--ink);
+  background: #fff;
+  object-fit: contain;
+  flex-shrink: 0;
+}
+
+.hero-site-name {
+  font-family: 'Bangers', cursive;
+  font-size: 3rem;
+  letter-spacing: 3px;
+  color: #fff;
+  text-shadow: 4px 4px 0 var(--ink);
+  line-height: .95;
+}
+
+.hero-site-name .tld {
+  color: var(--yellow);
+  font-size: 2rem;
+}
+
+.hero-tagline {
+  font-family: 'Comic Neue', cursive;
+  font-size: 1rem;
+  color: rgba(255,255,255,.9);
+  line-height: 1.5;
+  margin-bottom: 18px;
+  font-style: italic;
+}
+
+.hero-stat-row {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin-bottom: 20px;
+}
+
+.hero-stat {
+  font-family: 'Bangers', cursive;
+  font-size: 1.1rem;
+  letter-spacing: 1px;
+  background: rgba(255,255,255,.15);
+  color: #fff;
+  border: 2px solid rgba(255,255,255,.4);
+  border-radius: 6px;
+  padding: 4px 12px;
+  box-shadow: 2px 2px 0 rgba(0,0,0,.2);
+}
+
+.hero-stat .num {
+  color: var(--yellow);
+  font-size: 1.4rem;
+}
+
+.hero-cta-row {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.btn {
+  font-family: 'Bangers', cursive;
+  font-size: 1.1rem;
+  letter-spacing: 1px;
+  border: 3px solid var(--ink);
+  border-radius: 6px;
+  padding: 8px 20px;
+  cursor: pointer;
+  box-shadow: 4px 4px 0 var(--ink);
+  transition: transform .1s, box-shadow .1s;
+  text-decoration: none;
+  display: inline-block;
+}
+.btn:active { transform: translate(2px,2px); box-shadow: 2px 2px 0 var(--ink); }
+.btn-yellow  { background: var(--yellow); color: var(--ink); }
+.btn-white   { background: #fff; color: var(--ink); }
+.btn-ink     { background: var(--ink); color: var(--yellow); }
+
+/* AUTHOR CARD */
+.author-card {
+  background: var(--paper2);
+  border: 4px solid var(--ink);
+  border-radius: 6px;
+  box-shadow: 8px 8px 0 var(--ink);
+  overflow: hidden;
+  transform: rotate(0.5deg);
+}
+
+.author-stripe {
+  background: var(--ink);
+  color: var(--yellow);
+  font-family: 'Bangers', cursive;
+  font-size: 1rem;
+  letter-spacing: 2px;
+  padding: 7px 16px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.author-body { padding: 20px; }
+
+.author-avatar {
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  border: 4px solid var(--ink);
+  box-shadow: 4px 4px 0 var(--ink);
+  background: var(--blue);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: 'Bangers', cursive;
+  font-size: 1.8rem;
+  color: #fff;
+  margin-bottom: 12px;
+  flex-shrink: 0;
+}
+
+.author-name {
+  font-family: 'Bangers', cursive;
+  font-size: 1.9rem;
+  letter-spacing: 1px;
+  color: var(--ink);
+  -webkit-text-stroke: 1px var(--ink);
+  text-shadow: 3px 3px 0 var(--blue);
+  line-height: 1;
+}
+
+.author-handle {
+  font-family: 'Space Mono', monospace;
+  font-size: .78rem;
+  color: var(--blue);
+  font-weight: 700;
+  margin: 4px 0 12px;
+}
+
+.author-bio {
+  font-size: .9rem;
+  line-height: 1.5;
+  margin-bottom: 14px;
+}
+
+.author-links {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.author-link {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-family: 'Space Mono', monospace;
+  font-size: .75rem;
+  font-weight: 700;
+  text-decoration: none;
+  color: #fff;
+  padding: 6px 12px;
+  border: 2px solid var(--ink);
+  border-radius: 6px;
+  box-shadow: 3px 3px 0 var(--ink);
+  transition: transform .1s, box-shadow .1s;
+}
+.author-link:active { transform: translate(1px,1px); box-shadow: 2px 2px 0 var(--ink); }
+.author-link.lnk-web    { background: var(--orange); }
+.author-link.lnk-github { background: var(--ink); color: var(--yellow); }
+.author-link.lnk-li     { background: var(--blue); }
+
+.author-link svg {
+  width: 16px; height: 16px; fill: currentColor; flex-shrink: 0;
+}
+
+/* ══════════════════════════════
+   SEARCH
+══════════════════════════════ */
+.search-panel {
+  background: var(--paper);
+  border: 4px solid var(--ink);
+  border-radius: 6px;
+  box-shadow: 7px 7px 0 var(--ink);
+  padding: 16px 20px;
+  margin-bottom: 28px;
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.search-label {
+  font-family: 'Bangers', cursive;
+  font-size: 1.3rem;
+  letter-spacing: 1px;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.search-input {
+  flex: 1;
+  min-width: 200px;
+  background: #fff;
+  border: 3px solid var(--ink);
+  border-radius: 6px;
+  padding: 8px 14px;
+  font-family: 'Space Mono', monospace;
+  font-size: .88rem;
+  color: var(--ink);
+  outline: none;
+  box-shadow: 3px 3px 0 var(--ink);
+  transition: border-color .15s;
+}
+.search-input:focus { border-color: var(--blue); }
+.search-input::placeholder { color: #aaa; font-style: italic; }
+
+.search-count {
+  font-family: 'Space Mono', monospace;
+  font-size: .75rem;
+  font-weight: 700;
+  background: var(--yellow);
+  color: var(--ink);
+  padding: 4px 10px;
+  border: 2px solid var(--ink);
+  border-radius: 4px;
+  box-shadow: 2px 2px 0 var(--ink);
+  white-space: nowrap;
+}
+
+/* ══════════════════════════════
+   CATEGORY PILLS
+══════════════════════════════ */
+.cat-pills {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 28px;
+}
+
+.cat-pill {
+  font-family: 'Bangers', cursive;
+  font-size: 1rem;
+  letter-spacing: 1px;
+  padding: 5px 14px;
+  border: 3px solid var(--ink);
+  border-radius: 6px;
+  box-shadow: 3px 3px 0 var(--ink);
+  text-decoration: none;
+  color: #fff;
+  transition: transform .1s, box-shadow .1s;
+}
+.cat-pill:hover  { transform: translate(-1px,-2px); box-shadow: 4px 5px 0 var(--ink); }
+.cat-pill:active { transform: translate(1px,1px); box-shadow: 2px 2px 0 var(--ink); }
+
+/* ══════════════════════════════
+   CHAPTER SECTIONS
+══════════════════════════════ */
+.chapter-section {
+  margin-bottom: 40px;
+}
+
+.chapter-section.hidden { display: none; }
+
+.chapter-heading {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin-bottom: 10px;
+}
+
+.chapter-num {
+  font-family: 'Bangers', cursive;
+  font-size: 2rem;
+  background: var(--ink);
+  color: var(--yellow);
+  width: 48px; height: 48px;
+  border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0;
+  border: 3px solid var(--ink);
+  box-shadow: 4px 4px 0 var(--ink);
+}
+
+.chapter-title {
+  font-family: 'Bangers', cursive;
+  font-size: 2rem;
+  letter-spacing: 2px;
+  color: var(--ink);
+  text-transform: uppercase;
+  line-height: 1;
+}
+
+.chapter-title .accent { color: var(--red); }
+
+.chapter-sub {
+  font-size: .85rem;
+  font-style: italic;
+  opacity: .65;
+  margin-bottom: 14px;
+  margin-left: 62px;
+}
+
+.section-divider {
+  border: none;
+  border-top: 4px solid var(--ink);
+  margin-bottom: 18px;
+}
+
+/* ══════════════════════════════
+   TOOL GRID + CARDS
+══════════════════════════════ */
+.tool-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 14px;
+}
+
+.tool-card {
+  background: var(--paper);
+  border: 4px solid var(--ink);
+  border-radius: 6px;
+  box-shadow: 6px 6px 0 var(--ink);
+  text-decoration: none;
+  color: var(--ink);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  transition: transform .15s, box-shadow .15s;
+}
+.tool-card:nth-child(odd)  { transform: rotate(-0.5deg); }
+.tool-card:nth-child(even) { transform: rotate(0.5deg); }
+.tool-card:hover { transform: rotate(0deg) translate(-2px,-4px); box-shadow: 9px 9px 0 var(--ink); }
+
+.tool-card.filtered-out { display: none; }
+
+.tc-stripe {
+  height: 8px;
+  flex-shrink: 0;
+}
+
+.tc-body {
+  padding: 10px 12px;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.tc-icon {
+  font-size: 1.6rem;
+  line-height: 1;
+  margin-bottom: 4px;
+}
+
+.tc-name {
+  font-family: 'Bangers', cursive;
+  font-size: 1.1rem;
+  letter-spacing: .5px;
+  line-height: 1.1;
+}
+
+.tc-desc {
+  font-size: .78rem;
+  color: var(--ink);
+  opacity: .7;
+  line-height: 1.4;
+  flex: 1;
+}
+
+.tc-arrow {
+  padding: 4px 12px 8px;
+  font-family: 'Bangers', cursive;
+  font-size: 1rem;
+  color: var(--ink);
+  opacity: .5;
+  align-self: flex-end;
+}
+
+/* ══════════════════════════════
+   STARBURST ACCENTS
+══════════════════════════════ */
+.starburst-row {
+  display: flex;
+  justify-content: center;
+  gap: 32px;
+  flex-wrap: wrap;
+  margin: 10px 0 32px;
+}
+
+.starburst {
+  font-family: 'Bangers', cursive;
+  font-size: 1.3rem;
+  letter-spacing: 2px;
+  display: inline-block;
+  user-select: none;
+}
+
+/* ══════════════════════════════
+   FOOTER
+══════════════════════════════ */
+.site-footer {
+  background: var(--ink);
+  border-top: 4px solid var(--ink);
+  margin-top: 48px;
+  padding: 32px 24px 24px;
+  position: relative;
+  z-index: 1;
+}
+
+.footer-inner {
+  max-width: 1100px;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: 2fr 1fr 1fr;
+  gap: 32px;
+  margin-bottom: 28px;
+}
+
+.footer-brand-name {
+  font-family: 'Bangers', cursive;
+  font-size: 2.2rem;
+  letter-spacing: 3px;
+  color: var(--yellow);
+  text-shadow: 3px 3px 0 var(--red);
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 10px;
+}
+
+.footer-logo-img {
+  width: 40px; height: 40px;
+  border: 3px solid var(--yellow);
+  border-radius: 8px;
+  background: #fff;
+  object-fit: contain;
+}
+
+.footer-bio {
+  font-size: .88rem;
+  color: rgba(255,255,255,.7);
+  line-height: 1.6;
+  margin-bottom: 16px;
+  max-width: 360px;
+}
+
+.footer-author-links {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+}
+
+.footer-author-link {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-family: 'Space Mono', monospace;
+  font-size: .75rem;
+  font-weight: 700;
+  text-decoration: none;
+  color: #fff;
+  padding: 5px 12px;
+  border: 2px solid rgba(255,255,255,.2);
+  border-radius: 5px;
+  transition: border-color .15s, background .15s;
+  max-width: 260px;
+}
+.footer-author-link:hover { border-color: var(--yellow); background: rgba(255,211,63,.08); }
+
+.footer-author-link svg { width: 14px; height: 14px; fill: currentColor; flex-shrink: 0; }
+
+.footer-col-title {
+  font-family: 'Bangers', cursive;
+  font-size: 1.1rem;
+  letter-spacing: 2px;
+  color: var(--yellow);
+  margin-bottom: 10px;
+}
+
+.footer-links {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.footer-links a {
+  font-family: 'Comic Neue', cursive;
+  font-size: .88rem;
+  color: rgba(255,255,255,.65);
+  text-decoration: none;
+  transition: color .15s;
+}
+.footer-links a:hover { color: var(--yellow); }
+
+.footer-bottom {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding-top: 20px;
+  border-top: 2px solid rgba(255,255,255,.12);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.footer-copy {
+  font-family: 'Comic Neue', cursive;
+  font-size: .85rem;
+  color: rgba(255,255,255,.45);
+}
+
+.footer-copy a { color: var(--yellow); text-decoration: none; }
+
+.footer-end {
+  font-family: 'Bangers', cursive;
+  font-size: 1.2rem;
+  letter-spacing: 2px;
+  color: var(--red);
+  text-shadow: 2px 2px 0 var(--yellow);
+}
+
+/* ══════════════════════════════
+   NO-RESULTS
+══════════════════════════════ */
+.no-results {
+  display: none;
+  text-align: center;
+  padding: 40px 0;
+  font-family: 'Bangers', cursive;
+  font-size: 2rem;
+  letter-spacing: 2px;
+  color: var(--red);
+  text-shadow: 3px 3px 0 var(--ink);
+}
+.no-results.show { display: block; }
+
+/* ══════════════════════════════
+   RESPONSIVE
+══════════════════════════════ */
+@media (max-width: 900px) {
+  .tool-grid { grid-template-columns: repeat(3, 1fr); }
+  .hero-splash { grid-template-columns: 1fr; }
+  .footer-inner { grid-template-columns: 1fr 1fr; }
+}
+
+@media (max-width: 620px) {
+  .tool-grid { grid-template-columns: repeat(2, 1fr); }
+  .cover-nav  { display: none; }
+  .starburst  { display: none; }
+  .footer-inner { grid-template-columns: 1fr; }
+  .hero-site-name { font-size: 2.2rem; }
+}
+
+@media (max-width: 400px) {
+  .tool-grid { grid-template-columns: 1fr; }
+}
+</style>
+</head>
+<body>
+<div class="paper-overlay"></div>
+
+<!-- ════════════════ STICKY MASTHEAD ════════════════ -->
+<div class="cover-masthead">
+  <div class="cover-logo-row">
+    <img src="../images/logo.png" alt="DevDunia logo" class="cover-logo-img">
+    <div class="cover-title">DEV<span>DUNIA</span></div>
+  </div>
+  <div class="cover-meta">
+    <span class="tag tag-ink">ISSUE #2025</span>
+    <span class="tag tag-red">100+ TOOLS</span>
+    <span class="tag tag-white">FREE</span>
+  </div>
+  <nav class="cover-nav">
+    <a href="#encoders"   class="nav-link">Encoders</a>
+    <a href="#security"   class="nav-link">Security</a>
+    <a href="#generators" class="nav-link">Generators</a>
+    <a href="#devtools"   class="nav-link">Dev Tools</a>
+    <a href="#network"    class="nav-link">Network</a>
+    <a href="#python"     class="nav-link">Python</a>
+  </nav>
+</div>
+
+<div class="page-wrap">
+
+  <!-- ════════════════ HERO ════════════════ -->
+  <div class="hero-splash">
+
+    <!-- SITE HERO PANEL -->
+    <div class="hero-main">
+      <div class="hero-logo-row">
+        <img src="../images/logo.png" alt="DevDunia" class="hero-logo-img">
+        <div>
+          <div class="hero-site-name">DEVDUNIA<span class="tld">.COM</span></div>
+          <div style="font-family:'Space Mono',monospace;font-size:.72rem;color:rgba(255,255,255,.75);letter-spacing:1px;">DEVELOPER TOOLS UNIVERSE</div>
+        </div>
+      </div>
+
+      <p class="hero-tagline">Every tool a dev needs — encode, decode, format, generate, inspect — right here, right now. No login. No server. 100% browser.</p>
+
+      <div class="hero-stat-row">
+        <div class="hero-stat"><span class="num">100+</span> TOOLS</div>
+        <div class="hero-stat"><span class="num">0</span> SIGNUPS</div>
+        <div class="hero-stat"><span class="num">∞</span> FREE</div>
+      </div>
+
+      <div class="hero-cta-row">
+        <a href="#encoders" class="btn btn-yellow">&#x26A1; START EXPLORING</a>
+        <a href="https://github.com/echobash/devdunia" target="_blank" rel="noopener" class="btn btn-white">&#x2605; STAR ON GITHUB</a>
+      </div>
+    </div>
+
+    <!-- AUTHOR CARD -->
+    <div class="author-card">
+      <div class="author-stripe">
+        &#x1F464; BUILT BY
+        <span style="font-size:.7rem;font-family:'Space Mono',monospace;letter-spacing:1px;color:rgba(255,211,63,.7);">CREATOR</span>
+      </div>
+      <div class="author-body">
+        <div style="display:flex;align-items:center;gap:14px;margin-bottom:12px;">
+          <div class="author-avatar">A</div>
+          <div>
+            <div class="author-name">Ali Anwar</div>
+            <div class="author-handle">@echobash</div>
+          </div>
+        </div>
+
+        <p class="author-bio">Software engineer, open-source enthusiast. I built DevDunia so developers can stop Googling for tools and get back to shipping things that matter.</p>
+
+        <div class="author-links">
+          <a href="https://echobash.com" target="_blank" rel="noopener" class="author-link lnk-web">
+            <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 17.93c-3.95-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93zm6.9-2.54c-.26-.81-1-1.39-1.9-1.39h-1v-3c0-.55-.45-1-1-1H8v-2h2c.55 0 1-.45 1-1V7h2c1.1 0 2-.9 2-2v-.41c2.93 1.19 5 4.06 5 7.41 0 2.08-.8 3.97-2.1 5.39z"/></svg>
+            echobash.com
+          </a>
+          <a href="https://github.com/echobash" target="_blank" rel="noopener" class="author-link lnk-github">
+            <svg viewBox="0 0 24 24"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"/></svg>
+            github.com/echobash
+          </a>
+          <a href="https://linkedin.com/in/echobash" target="_blank" rel="noopener" class="author-link lnk-li">
+            <svg viewBox="0 0 24 24"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 01-2.063-2.065 2.064 2.064 0 112.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg>
+            linkedin.com/in/echobash
+          </a>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- /hero-splash -->
+
+  <!-- ════════════════ SEARCH ════════════════ -->
+  <div class="search-panel">
+    <span class="search-label">&#x1F50D; SEARCH TOOLS:</span>
+    <input type="text" id="search-input" class="search-input" placeholder="Type to filter... e.g. base64, jwt, qr, regex">
+    <span class="search-count" id="search-count">69 tools</span>
+  </div>
+
+  <!-- CATEGORY PILLS -->
+  <div class="cat-pills">
+    <a href="#encoders"   class="cat-pill" style="background:var(--blue);">&#x1F527; Encoders</a>
+    <a href="#security"   class="cat-pill" style="background:var(--red);">&#x1F6E1;&#xFE0F; Security</a>
+    <a href="#generators" class="cat-pill" style="background:var(--green);">&#x26A1; Generators</a>
+    <a href="#devtools"   class="cat-pill" style="background:var(--orange);">&#x1F6E0;&#xFE0F; Dev Tools</a>
+    <a href="#network"    class="cat-pill" style="background:var(--purple);">&#x1F310; Network</a>
+    <a href="#text"       class="cat-pill" style="background:var(--pink);">&#x1F4DD; Text</a>
+    <a href="#database"   class="cat-pill" style="background:var(--yellow);color:var(--ink);">&#x1F5C4;&#xFE0F; Database</a>
+    <a href="#python"     class="cat-pill" style="background:var(--ink);">&#x1F40D; Python</a>
+  </div>
+
+  <!-- ════════════════ NO RESULTS ════════════════ -->
+  <div class="no-results" id="no-results">&#x1F4A5; NO TOOLS MATCH — TRY ANOTHER KEYWORD!</div>
+
+  <!-- ══════════════════════════════════════════════
+       CHAPTER 1 — ENCODERS / DECODERS
+  ══════════════════════════════════════════════ -->
+  <section class="chapter-section" id="encoders" data-chapter>
+    <div class="chapter-heading">
+      <div class="chapter-num">1</div>
+      <div class="chapter-title">ENCODERS &amp; <span class="accent">DECODERS</span></div>
+    </div>
+    <p class="chapter-sub">Transform &amp; convert data — Base64, URL, JSON, JWT, YAML and more.</p>
+    <hr class="section-divider">
+    <div class="tool-grid">
+
+      <a href="../base64-encoder.html" class="tool-card" data-keywords="base64 encoder encode btoa binary text">
+        <div class="tc-stripe" style="background:var(--blue)"></div>
+        <div class="tc-body">
+          <div class="tc-icon">&#x1F4E4;</div>
+          <div class="tc-name">Base64 Encoder</div>
+          <div class="tc-desc">Encode text or binary data to Base64 format</div>
+        </div>
+        <div class="tc-arrow">&#x2192;</div>
+      </a>
+
+      <a href="../base64-decoder.html" class="tool-card" data-keywords="base64 decoder decode atob binary text">
+        <div class="tc-stripe" style="background:var(--blue)"></div>
+        <div class="tc-body">
+          <div class="tc-icon">&#x1F4E5;</div>
+          <div class="tc-name">Base64 Decoder</div>
+          <div class="tc-desc">Decode Base64 strings back to plain text</div>
+        </div>
+        <div class="tc-arrow">&#x2192;</div>
+      </a>
+
+      <a href="../base62-encoder.html" class="tool-card" data-keywords="base62 encoder encode alphanumeric short url">
+        <div class="tc-stripe" style="background:var(--purple)"></div>
+        <div class="tc-body">
+          <div class="tc-icon">&#x1F4E4;</div>
+          <div class="tc-name">Base62 Encoder</div>
+          <div class="tc-desc">Encode numbers to compact Base62 alphanumeric strings</div>
+        </div>
+        <div class="tc-arrow">&#x2192;</div>
+      </a>
+
+      <a href="../base62-decoder.html" class="tool-card" data-keywords="base62 decoder decode alphanumeric">
+        <div class="tc-stripe" style="background:var(--purple)"></div>
+        <div class="tc-body">
+          <div class="tc-icon">&#x1F4E5;</div>
+          <div class="tc-name">Base62 Decoder</div>
+          <div class="tc-desc">Decode Base62 strings back to their numeric value</div>
+        </div>
+        <div class="tc-arrow">&#x2192;</div>
+      </a>
+
+      <a href="../url-encoder.html" class="tool-card" data-keywords="url encoder encode percent encoding urlencode">
+        <div class="tc-stripe" style="background:var(--orange)"></div>
+        <div class="tc-body">
+          <div class="tc-icon">&#x1F517;</div>
+          <div class="tc-name">URL Encoder</div>
+          <div class="tc-desc">Percent-encode URLs and query parameters safely</div>
+        </div>
+        <div class="tc-arrow">&#x2192;</div>
+      </a>
+
+      <a href="../url-decoder.html" class="tool-card" data-keywords="url decoder decode percent urldecode">
+        <div class="tc-stripe" style="background:var(--orange)"></div>
+        <div class="tc-body">
+          <div class="tc-icon">&#x1F513;</div>
+          <div class="tc-name">URL Decoder</div>
+          <div class="tc-desc">Decode percent-encoded URLs back to readable form</div>
+        </div>
+        <div class="tc-arrow">&#x2192;</div>
+      </a>
+
+      <a href="../jwt-decoder.html" class="tool-card" data-keywords="jwt json web token decode header payload claims">
+        <div class="tc-stripe" style="background:var(--red)"></div>
+        <div class="tc-body">
+          <div class="tc-icon">&#x1F3AB;</div>
+          <div class="tc-name">JWT Decoder</div>
+          <div class="tc-desc">Decode and inspect JWT tokens — header, payload, claims</div>
+        </div>
+        <div class="tc-arrow">&#x2192;</div>
+      </a>
+
+      <a href="../hash-generator.html" class="tool-card" data-keywords="hash generator md5 sha1 sha256 sha512 checksum">
+        <div class="tc-stripe" style="background:var(--red)"></div>
+        <div class="tc-body">
+          <div class="tc-icon">&#x1F510;</div>
+          <div class="tc-name">Hash Generator</div>
+          <div class="tc-desc">Generate MD5, SHA-1, SHA-256, SHA-512 hashes instantly</div>
+        </div>
+        <div class="tc-arrow">&#x2192;</div>
+      </a>
+
+      <a href="../caesar-cipher.html" class="tool-card" data-keywords="caesar cipher encrypt decrypt rot13 shift">
+        <div class="tc-stripe" style="background:var(--pink)"></div>
+        <div class="tc-body">
+          <div class="tc-icon">&#x1F511;</div>
+          <div class="tc-name">Caesar Cipher</div>
+          <div class="tc-desc">Encrypt and decrypt with the classic Caesar shift cipher</div>
+        </div>
+        <div class="tc-arrow">&#x2192;</div>
+      </a>
+
+      <a href="../json-beautifier.html" class="tool-card" data-keywords="json beautifier formatter pretty print format">
+        <div class="tc-stripe" style="background:var(--green)"></div>
+        <div class="tc-body">
+          <div class="tc-icon">&#x2728;</div>
+          <div class="tc-name">JSON Beautifier</div>
+          <div class="tc-desc">Format and pretty-print JSON with syntax highlighting</div>
+        </div>
+        <div class="tc-arrow">&#x2192;</div>
+      </a>
+
+      <a href="../json-minifier.html" class="tool-card" data-keywords="json minifier compress uglify minify">
+        <div class="tc-stripe" style="background:var(--green)"></div>
+        <div class="tc-body">
+          <div class="tc-icon">&#x1F4E6;</div>
+          <div class="tc-name">JSON Minifier</div>
+          <div class="tc-desc">Compress JSON by removing all whitespace and comments</div>
+        </div>
+        <div class="tc-arrow">&#x2192;</div>
+      </a>
+
+      <a href="../csv-json-converter.html" class="tool-card" data-keywords="csv json converter convert spreadsheet data table">
+        <div class="tc-stripe" style="background:var(--yellow)"></div>
+        <div class="tc-body">
+          <div class="tc-icon">&#x1F4CA;</div>
+          <div class="tc-name">CSV to JSON</div>
+          <div class="tc-desc">Convert CSV spreadsheet data to JSON format instantly</div>
+        </div>
+        <div class="tc-arrow">&#x2192;</div>
+      </a>
+
+      <a href="../yaml-json-converter.html" class="tool-card" data-keywords="yaml json converter convert interchange devops config">
+        <div class="tc-stripe" style="background:var(--blue)"></div>
+        <div class="tc-body">
+          <div class="tc-icon">&#x2696;&#xFE0F;</div>
+          <div class="tc-name">YAML ⇄ JSON</div>
+          <div class="tc-desc">Bidirectional conversion between YAML and JSON</div>
+        </div>
+        <div class="tc-arrow">&#x2192;</div>
+      </a>
+
+      <a href="../xml-formatter.html" class="tool-card" data-keywords="xml formatter pretty print indent parse format">
+        <div class="tc-stripe" style="background:var(--orange)"></div>
+        <div class="tc-body">
+          <div class="tc-icon">&#x1F4C4;</div>
+          <div class="tc-name">XML Formatter</div>
+          <div class="tc-desc">Format and indent XML documents for readability</div>
+        </div>
+        <div class="tc-arrow">&#x2192;</div>
+      </a>
+
+      <a href="../php-to-json.html" class="tool-card" data-keywords="json php converter transform array">
+        <div class="tc-stripe" style="background:var(--purple)"></div>
+        <div class="tc-body">
+          <div class="tc-icon">&#x1F504;</div>
+          <div class="tc-name">JSON to PHP</div>
+          <div class="tc-desc">Convert JSON data to PHP array syntax instantly</div>
+        </div>
+        <div class="tc-arrow">&#x2192;</div>
+      </a>
+
+      <a href="../string-transformer.html" class="tool-card" data-keywords="string transformer transform case upper lower camelcase snake">
+        <div class="tc-stripe" style="background:var(--pink)"></div>
+        <div class="tc-body">
+          <div class="tc-icon">&#x1F4AC;</div>
+          <div class="tc-name">String Transformer</div>
+          <div class="tc-desc">camelCase, snake_case, UPPER, lower and more</div>
+        </div>
+        <div class="tc-arrow">&#x2192;</div>
+      </a>
+
+    </div>
+  </section>
+
+  <div class="starburst-row">
+    <span class="starburst" style="transform:rotate(-9deg);color:var(--red);text-shadow:3px 3px 0 var(--ink);">NO SIGNUP NEEDED!</span>
+    <span class="starburst" style="transform:rotate(7deg);color:var(--blue);text-shadow:3px 3px 0 var(--ink);">100% CLIENT-SIDE!</span>
+    <span class="starburst" style="transform:rotate(-5deg);color:var(--green);text-shadow:3px 3px 0 var(--ink);">OPEN SOURCE!</span>
+  </div>
+
+  <!-- ══════════════════════════════════════════════
+       CHAPTER 2 — SECURITY
+  ══════════════════════════════════════════════ -->
+  <section class="chapter-section" id="security" data-chapter>
+    <div class="chapter-heading">
+      <div class="chapter-num" style="background:var(--red);">2</div>
+      <div class="chapter-title">SECURITY &amp; <span class="accent">VAPT</span></div>
+    </div>
+    <p class="chapter-sub">Clickjacking detection, HTTP header analysis, OWASP checks and email forensics.</p>
+    <hr class="section-divider">
+    <div class="tool-grid">
+
+      <a href="../clickjacking-checker.html" class="tool-card" data-keywords="clickjacking checker x-frame-options security test vulnerability">
+        <div class="tc-stripe" style="background:var(--red)"></div>
+        <div class="tc-body">
+          <div class="tc-icon">&#x1F512;</div>
+          <div class="tc-name">Clickjacking Checker</div>
+          <div class="tc-desc">Test if a site is vulnerable to clickjacking attacks</div>
+        </div>
+        <div class="tc-arrow">&#x2192;</div>
+      </a>
+
+      <a href="../http-response-header-printer.html" class="tool-card" data-keywords="http headers response security check inspect misconfiguration">
+        <div class="tc-stripe" style="background:var(--orange)"></div>
+        <div class="tc-body">
+          <div class="tc-icon">&#x1F4CB;</div>
+          <div class="tc-name">HTTP Headers</div>
+          <div class="tc-desc">Inspect HTTP response headers for security misconfigs</div>
+        </div>
+        <div class="tc-arrow">&#x2192;</div>
+      </a>
+
+      <a href="../owasp-top10.html" class="tool-card" data-keywords="owasp top 10 vulnerabilities security checklist injection xss">
+        <div class="tc-stripe" style="background:var(--red)"></div>
+        <div class="tc-body">
+          <div class="tc-icon">&#x1F41B;</div>
+          <div class="tc-name">OWASP Top 10</div>
+          <div class="tc-desc">Interactive reference for OWASP Top 10 web vulnerabilities</div>
+        </div>
+        <div class="tc-arrow">&#x2192;</div>
+      </a>
+
+      <a href="../email-header-analyzer.html" class="tool-card" data-keywords="email header analyzer forensics phishing spam spf dkim">
+        <div class="tc-stripe" style="background:var(--purple)"></div>
+        <div class="tc-body">
+          <div class="tc-icon">&#x1F4E7;</div>
+          <div class="tc-name">Email Header Analyzer</div>
+          <div class="tc-desc">Parse email headers for forensics and phishing detection</div>
+        </div>
+        <div class="tc-arrow">&#x2192;</div>
+      </a>
+
+    </div>
+  </section>
+
+  <!-- ══════════════════════════════════════════════
+       CHAPTER 3 — GENERATORS
+  ══════════════════════════════════════════════ -->
+  <section class="chapter-section" id="generators" data-chapter>
+    <div class="chapter-heading">
+      <div class="chapter-num" style="background:var(--green);">3</div>
+      <div class="chapter-title">GENERATORS</div>
+    </div>
+    <p class="chapter-sub">Passwords, UUIDs, QR codes, barcodes and placeholder text — generate what you need.</p>
+    <hr class="section-divider">
+    <div class="tool-grid">
+
+      <a href="../password-generator.html" class="tool-card" data-keywords="password generator secure random strong entropy">
+        <div class="tc-stripe" style="background:var(--green)"></div>
+        <div class="tc-body">
+          <div class="tc-icon">&#x1F511;</div>
+          <div class="tc-name">Password Generator</div>
+          <div class="tc-desc">Generate strong random passwords with custom rules</div>
+        </div>
+        <div class="tc-arrow">&#x2192;</div>
+      </a>
+
+      <a href="../guid-generator.html" class="tool-card" data-keywords="uuid guid generator unique id random v4 rfc4122">
+        <div class="tc-stripe" style="background:var(--blue)"></div>
+        <div class="tc-body">
+          <div class="tc-icon">&#x1F194;</div>
+          <div class="tc-name">UUID / GUID Generator</div>
+          <div class="tc-desc">Generate RFC 4122 v4 UUIDs and GUIDs in bulk</div>
+        </div>
+        <div class="tc-arrow">&#x2192;</div>
+      </a>
+
+      <a href="../qr-generator.html" class="tool-card" data-keywords="qr code generator barcode scan url text wifi email">
+        <div class="tc-stripe" style="background:var(--ink)"></div>
+        <div class="tc-body">
+          <div class="tc-icon">&#x1F4F1;</div>
+          <div class="tc-name">QR Generator</div>
+          <div class="tc-desc">Generate QR codes from any URL, text or WiFi data</div>
+        </div>
+        <div class="tc-arrow">&#x2192;</div>
+      </a>
+
+      <a href="../barcode_generator/index.html" class="tool-card" data-keywords="barcode generator code128 ean isbn 1d">
+        <div class="tc-stripe" style="background:var(--ink)"></div>
+        <div class="tc-body">
+          <div class="tc-icon">&#x1F4F2;</div>
+          <div class="tc-name">Barcode Generator</div>
+          <div class="tc-desc">Generate 1D barcodes — Code128, EAN, ISBN and more</div>
+        </div>
+        <div class="tc-arrow">&#x2192;</div>
+      </a>
+
+      <a href="../lorem-ipsum-generator.html" class="tool-card" data-keywords="lorem ipsum placeholder text dummy content mockup layout">
+        <div class="tc-stripe" style="background:var(--orange)"></div>
+        <div class="tc-body">
+          <div class="tc-icon">&#x1F4DD;</div>
+          <div class="tc-name">Lorem Ipsum</div>
+          <div class="tc-desc">Generate dummy placeholder text for layouts and mockups</div>
+        </div>
+        <div class="tc-arrow">&#x2192;</div>
+      </a>
+
+      <a href="../github_contributors/index.html" class="tool-card" data-keywords="github contributors open source project team visualize">
+        <div class="tc-stripe" style="background:var(--purple)"></div>
+        <div class="tc-body">
+          <div class="tc-icon">&#x1F465;</div>
+          <div class="tc-name">GitHub Contributors</div>
+          <div class="tc-desc">Visualize contributors for any GitHub repository</div>
+        </div>
+        <div class="tc-arrow">&#x2192;</div>
+      </a>
+
+      <a href="../env-generator.html" class="tool-card" data-keywords="env generator environment variable dotenv config template">
+        <div class="tc-stripe" style="background:var(--green)"></div>
+        <div class="tc-body">
+          <div class="tc-icon">&#x1F30D;</div>
+          <div class="tc-name">Env Generator</div>
+          <div class="tc-desc">Generate .env file templates for various project types</div>
+        </div>
+        <div class="tc-arrow">&#x2192;</div>
+      </a>
+
+    </div>
+  </section>
+
+  <div class="starburst-row">
+    <span class="starburst" style="transform:rotate(-8deg);color:var(--orange);text-shadow:3px 3px 0 var(--ink);">ZAP! INSTANT RESULTS!</span>
+    <span class="starburst" style="transform:rotate(6deg);color:var(--purple);text-shadow:3px 3px 0 var(--ink);">POW! NO ADS!</span>
+  </div>
+
+  <!-- ══════════════════════════════════════════════
+       CHAPTER 4 — DEV TOOLS
+  ══════════════════════════════════════════════ -->
+  <section class="chapter-section" id="devtools" data-chapter>
+    <div class="chapter-heading">
+      <div class="chapter-num" style="background:var(--orange);">4</div>
+      <div class="chapter-title">API &amp; <span class="accent">DEV TOOLS</span></div>
+    </div>
+    <p class="chapter-sub">cURL, cron, regex, SQL, markdown, diff, Docker, Mermaid and everyday dev utilities.</p>
+    <hr class="section-divider">
+    <div class="tool-grid">
+
+      <a href="../curl-describer.html" class="tool-card" data-keywords="curl describer http request describe explain parse command">
+        <div class="tc-stripe" style="background:var(--orange)"></div>
+        <div class="tc-body">
+          <div class="tc-icon">&#x1F504;</div>
+          <div class="tc-name">cURL Describer</div>
+          <div class="tc-desc">Paste a cURL command and get a plain-English explanation</div>
+        </div>
+        <div class="tc-arrow">&#x2192;</div>
+      </a>
+
+      <a href="../cron-describer.html" class="tool-card" data-keywords="cron describer expression schedule explain parser human readable">
+        <div class="tc-stripe" style="background:var(--blue)"></div>
+        <div class="tc-body">
+          <div class="tc-icon">&#x23F0;</div>
+          <div class="tc-name">Cron Describer</div>
+          <div class="tc-desc">Translate cron expressions into human-readable schedules</div>
+        </div>
+        <div class="tc-arrow">&#x2192;</div>
+      </a>
+
+      <a href="../regex-tester.html" class="tool-card" data-keywords="regex tester regular expression match test debug live">
+        <div class="tc-stripe" style="background:var(--red)"></div>
+        <div class="tc-body">
+          <div class="tc-icon">&#x1F50D;</div>
+          <div class="tc-name">Regex Tester</div>
+          <div class="tc-desc">Test and debug regular expressions with live highlighting</div>
+        </div>
+        <div class="tc-arrow">&#x2192;</div>
+      </a>
+
+      <a href="../sql-formatter.html" class="tool-card" data-keywords="sql formatter beautifier query pretty print format">
+        <div class="tc-stripe" style="background:var(--green)"></div>
+        <div class="tc-body">
+          <div class="tc-icon">&#x1F5C4;&#xFE0F;</div>
+          <div class="tc-name">SQL Formatter</div>
+          <div class="tc-desc">Format and beautify SQL queries for readability</div>
+        </div>
+        <div class="tc-arrow">&#x2192;</div>
+      </a>
+
+      <a href="../markdown-editor.html" class="tool-card" data-keywords="markdown editor preview render live md write">
+        <div class="tc-stripe" style="background:var(--purple)"></div>
+        <div class="tc-body">
+          <div class="tc-icon">&#x1F4DD;</div>
+          <div class="tc-name">Markdown Editor</div>
+          <div class="tc-desc">Write Markdown with live preview side by side</div>
+        </div>
+        <div class="tc-arrow">&#x2192;</div>
+      </a>
+
+      <a href="../diff-checker.html" class="tool-card" data-keywords="diff checker compare text file changes line">
+        <div class="tc-stripe" style="background:var(--orange)"></div>
+        <div class="tc-body">
+          <div class="tc-icon">&#x1F50D;</div>
+          <div class="tc-name">Diff Checker</div>
+          <div class="tc-desc">Compare two texts and highlight differences line by line</div>
+        </div>
+        <div class="tc-arrow">&#x2192;</div>
+      </a>
+
+      <a href="../mermaid-renderer.html" class="tool-card" data-keywords="mermaid diagram flowchart sequence erd render">
+        <div class="tc-stripe" style="background:var(--blue)"></div>
+        <div class="tc-body">
+          <div class="tc-icon">&#x1F30A;</div>
+          <div class="tc-name">Mermaid Renderer</div>
+          <div class="tc-desc">Render Mermaid diagrams — flowcharts, sequence, ERD</div>
+        </div>
+        <div class="tc-arrow">&#x2192;</div>
+      </a>
+
+      <a href="../docker-comprehensive.html" class="tool-card" data-keywords="docker guide reference commands containers cheat sheet">
+        <div class="tc-stripe" style="background:var(--blue)"></div>
+        <div class="tc-body">
+          <div class="tc-icon">&#x1F433;</div>
+          <div class="tc-name">Docker Guide</div>
+          <div class="tc-desc">Comprehensive Docker commands reference and cheat sheet</div>
+        </div>
+        <div class="tc-arrow">&#x2192;</div>
+      </a>
+
+      <a href="../html-viewer.html" class="tool-card" data-keywords="html viewer preview render live browser sandbox">
+        <div class="tc-stripe" style="background:var(--orange)"></div>
+        <div class="tc-body">
+          <div class="tc-icon">&#x1F441;&#xFE0F;</div>
+          <div class="tc-name">HTML Viewer</div>
+          <div class="tc-desc">Paste HTML and preview it rendered live in the browser</div>
+        </div>
+        <div class="tc-arrow">&#x2192;</div>
+      </a>
+
+      <a href="../payment-tester.html" class="tool-card" data-keywords="api response tester payment mock http webhook test">
+        <div class="tc-stripe" style="background:var(--green)"></div>
+        <div class="tc-body">
+          <div class="tc-icon">&#x1F9EA;</div>
+          <div class="tc-name">API Response Tester</div>
+          <div class="tc-desc">Test and inspect API responses and payment webhooks</div>
+        </div>
+        <div class="tc-arrow">&#x2192;</div>
+      </a>
+
+      <a href="../nfc-reader.html" class="tool-card" data-keywords="nfc reader tag scan web nfc browser">
+        <div class="tc-stripe" style="background:var(--pink)"></div>
+        <div class="tc-body">
+          <div class="tc-icon">&#x1F4F6;</div>
+          <div class="tc-name">NFC Reader</div>
+          <div class="tc-desc">Read NFC tags directly in the browser via Web NFC API</div>
+        </div>
+        <div class="tc-arrow">&#x2192;</div>
+      </a>
+
+      <a href="../text-sharer.html" class="tool-card" data-keywords="text sharer share snippet link copy paste share url">
+        <div class="tc-stripe" style="background:var(--purple)"></div>
+        <div class="tc-body">
+          <div class="tc-icon">&#x1F517;</div>
+          <div class="tc-name">Text Sharer</div>
+          <div class="tc-desc">Share text snippets via a shareable link instantly</div>
+        </div>
+        <div class="tc-arrow">&#x2192;</div>
+      </a>
+
+      <a href="../elasticsearch-tools.html" class="tool-card" data-keywords="elasticsearch query dsl search index tools builder">
+        <div class="tc-stripe" style="background:var(--yellow)"></div>
+        <div class="tc-body">
+          <div class="tc-icon">&#x1F50D;</div>
+          <div class="tc-name">Elasticsearch Tools</div>
+          <div class="tc-desc">Build and test Elasticsearch DSL queries</div>
+        </div>
+        <div class="tc-arrow">&#x2192;</div>
+      </a>
+
+      <a href="../bash-zero-to-hero.html" class="tool-card" data-keywords="bash shell script zero hero guide reference commands linux">
+        <div class="tc-stripe" style="background:var(--ink)"></div>
+        <div class="tc-body">
+          <div class="tc-icon">&#x1F4BB;</div>
+          <div class="tc-name">Bash Zero to Hero</div>
+          <div class="tc-desc">Complete Bash scripting reference from beginner to pro</div>
+        </div>
+        <div class="tc-arrow">&#x2192;</div>
+      </a>
+
+    </div>
+  </section>
+
+  <!-- ══════════════════════════════════════════════
+       CHAPTER 5 — NETWORK PROTOCOLS
+  ══════════════════════════════════════════════ -->
+  <section class="chapter-section" id="network" data-chapter>
+    <div class="chapter-heading">
+      <div class="chapter-num" style="background:var(--purple);">5</div>
+      <div class="chapter-title">NETWORK <span class="accent">PROTOCOLS</span></div>
+    </div>
+    <p class="chapter-sub">Deep-dive references for HTTP, TCP, UDP, OSI model and networking fundamentals.</p>
+    <hr class="section-divider">
+    <div class="tool-grid">
+
+      <a href="../network-protocols.html" class="tool-card" data-keywords="network protocols reference overview guide fundamentals">
+        <div class="tc-stripe" style="background:var(--purple)"></div>
+        <div class="tc-body">
+          <div class="tc-icon">&#x1F310;</div>
+          <div class="tc-name">Network Protocols</div>
+          <div class="tc-desc">Overview of common network protocols and use cases</div>
+        </div>
+        <div class="tc-arrow">&#x2192;</div>
+      </a>
+
+      <a href="../http-protocol.html" class="tool-card" data-keywords="http protocol reference methods status codes headers 1.1 2">
+        <div class="tc-stripe" style="background:var(--blue)"></div>
+        <div class="tc-body">
+          <div class="tc-icon">&#x1F30D;</div>
+          <div class="tc-name">HTTP Protocol</div>
+          <div class="tc-desc">Complete HTTP reference — methods, status codes, headers</div>
+        </div>
+        <div class="tc-arrow">&#x2192;</div>
+      </a>
+
+      <a href="../tcp-protocol.html" class="tool-card" data-keywords="tcp protocol handshake connection reliable transport flow control">
+        <div class="tc-stripe" style="background:var(--green)"></div>
+        <div class="tc-body">
+          <div class="tc-icon">&#x1F517;</div>
+          <div class="tc-name">TCP Protocol</div>
+          <div class="tc-desc">TCP internals — handshake, flow control, reliability</div>
+        </div>
+        <div class="tc-arrow">&#x2192;</div>
+      </a>
+
+      <a href="../udp-protocol.html" class="tool-card" data-keywords="udp protocol datagram fast lightweight streaming connectionless">
+        <div class="tc-stripe" style="background:var(--orange)"></div>
+        <div class="tc-body">
+          <div class="tc-icon">&#x26A1;</div>
+          <div class="tc-name">UDP Protocol</div>
+          <div class="tc-desc">UDP — connectionless, fast, datagram-based communication</div>
+        </div>
+        <div class="tc-arrow">&#x2192;</div>
+      </a>
+
+      <a href="../osi-model.html" class="tool-card" data-keywords="osi model layers network physical data link transport session">
+        <div class="tc-stripe" style="background:var(--red)"></div>
+        <div class="tc-body">
+          <div class="tc-icon">&#x1F3D7;&#xFE0F;</div>
+          <div class="tc-name">OSI Model</div>
+          <div class="tc-desc">Interactive OSI 7-layer model reference with examples</div>
+        </div>
+        <div class="tc-arrow">&#x2192;</div>
+      </a>
+
+      <a href="../dns/" class="tool-card" data-keywords="dns museum domain name system records comics educational">
+        <div class="tc-stripe" style="background:var(--yellow)"></div>
+        <div class="tc-body">
+          <div class="tc-icon">&#x1F3DB;&#xFE0F;</div>
+          <div class="tc-name">DNS Museum</div>
+          <div class="tc-desc">DNS concepts explained in a comic-book interactive format</div>
+        </div>
+        <div class="tc-arrow">&#x2192;</div>
+      </a>
+
+    </div>
+  </section>
+
+  <!-- ══════════════════════════════════════════════
+       CHAPTER 6 — TEXT TOOLS
+  ══════════════════════════════════════════════ -->
+  <section class="chapter-section" id="text" data-chapter>
+    <div class="chapter-heading">
+      <div class="chapter-num" style="background:var(--pink);">6</div>
+      <div class="chapter-title">TEXT <span class="accent">TOOLS</span></div>
+    </div>
+    <p class="chapter-sub">Count words, characters, sentences and reading time instantly.</p>
+    <hr class="section-divider">
+    <div class="tool-grid">
+
+      <a href="../word_counter/index.html" class="tool-card" data-keywords="word counter character count sentences reading time text analyze">
+        <div class="tc-stripe" style="background:var(--pink)"></div>
+        <div class="tc-body">
+          <div class="tc-icon">&#x1F4DD;</div>
+          <div class="tc-name">Word Counter</div>
+          <div class="tc-desc">Count words, characters, sentences and reading time</div>
+        </div>
+        <div class="tc-arrow">&#x2192;</div>
+      </a>
+
+      <a href="../html-entities.html" class="tool-card" data-keywords="html entities encode decode escape unescape special characters">
+        <div class="tc-stripe" style="background:var(--orange)"></div>
+        <div class="tc-body">
+          <div class="tc-icon">&#x1F5A5;&#xFE0F;</div>
+          <div class="tc-name">HTML Entities</div>
+          <div class="tc-desc">Encode/decode HTML special characters and entities</div>
+        </div>
+        <div class="tc-arrow">&#x2192;</div>
+      </a>
+
+      <a href="../ascii-converter.html" class="tool-card" data-keywords="ascii converter text binary decimal hex character code">
+        <div class="tc-stripe" style="background:var(--blue)"></div>
+        <div class="tc-body">
+          <div class="tc-icon">&#x1F522;</div>
+          <div class="tc-name">ASCII Converter</div>
+          <div class="tc-desc">Convert between text, ASCII codes, binary and hex</div>
+        </div>
+        <div class="tc-arrow">&#x2192;</div>
+      </a>
+
+    </div>
+  </section>
+
+  <!-- ══════════════════════════════════════════════
+       CHAPTER 7 — DATABASE
+  ══════════════════════════════════════════════ -->
+  <section class="chapter-section" id="database" data-chapter>
+    <div class="chapter-heading">
+      <div class="chapter-num" style="background:var(--yellow);color:var(--ink);">7</div>
+      <div class="chapter-title">DATABASE <span class="accent">REFERENCES</span></div>
+    </div>
+    <p class="chapter-sub">Comprehensive guides and command references for popular databases.</p>
+    <hr class="section-divider">
+    <div class="tool-grid">
+
+      <a href="../postgresql-guide.html" class="tool-card" data-keywords="postgresql postgres guide reference sql database queries functions">
+        <div class="tc-stripe" style="background:var(--blue)"></div>
+        <div class="tc-body">
+          <div class="tc-icon">&#x1F418;</div>
+          <div class="tc-name">PostgreSQL Guide</div>
+          <div class="tc-desc">Complete PostgreSQL reference — queries, functions, admin</div>
+        </div>
+        <div class="tc-arrow">&#x2192;</div>
+      </a>
+
+      <a href="../redis-command-explorer.html" class="tool-card" data-keywords="redis commands explorer cache key value memory database">
+        <div class="tc-stripe" style="background:var(--red)"></div>
+        <div class="tc-body">
+          <div class="tc-icon">&#x1F4DA;</div>
+          <div class="tc-name">Redis Commands</div>
+          <div class="tc-desc">Interactive Redis command reference with syntax and examples</div>
+        </div>
+        <div class="tc-arrow">&#x2192;</div>
+      </a>
+
+    </div>
+  </section>
+
+  <!-- ══════════════════════════════════════════════
+       CHAPTER 8 — PYTHON TOOLKIT
+  ══════════════════════════════════════════════ -->
+  <section class="chapter-section" id="python" data-chapter>
+    <div class="chapter-heading">
+      <div class="chapter-num" style="background:var(--ink);">8</div>
+      <div class="chapter-title">PYTHON <span class="accent">TOOLKIT</span></div>
+    </div>
+    <p class="chapter-sub">Interactive code references for popular Python libraries — requests, Flask, Pandas, OpenAI and more.</p>
+    <hr class="section-divider">
+    <div class="tool-grid">
+
+      <a href="../python-requests.html" class="tool-card" data-keywords="python requests library http get post api headers auth">
+        <div class="tc-stripe" style="background:var(--blue)"></div>
+        <div class="tc-body">
+          <div class="tc-icon">&#x1F310;</div>
+          <div class="tc-name">Requests Library</div>
+          <div class="tc-desc">Python requests — HTTP GET, POST, headers, authentication</div>
+        </div>
+        <div class="tc-arrow">&#x2192;</div>
+      </a>
+
+      <a href="../python-flask.html" class="tool-card" data-keywords="flask python web framework api routes micro blueprint">
+        <div class="tc-stripe" style="background:var(--red)"></div>
+        <div class="tc-body">
+          <div class="tc-icon">&#x1F336;&#xFE0F;</div>
+          <div class="tc-name">Flask Guide</div>
+          <div class="tc-desc">Flask web framework — routes, templates, API patterns</div>
+        </div>
+        <div class="tc-arrow">&#x2192;</div>
+      </a>
+
+      <a href="../python-pandas.html" class="tool-card" data-keywords="pandas python dataframe data analysis csv read filter">
+        <div class="tc-stripe" style="background:var(--purple)"></div>
+        <div class="tc-body">
+          <div class="tc-icon">&#x1F43C;</div>
+          <div class="tc-name">Pandas Guide</div>
+          <div class="tc-desc">Pandas DataFrames — read, filter, group, transform data</div>
+        </div>
+        <div class="tc-arrow">&#x2192;</div>
+      </a>
+
+      <a href="../python-openai.html" class="tool-card" data-keywords="python openai gpt api llm chat completions prompt">
+        <div class="tc-stripe" style="background:var(--green)"></div>
+        <div class="tc-body">
+          <div class="tc-icon">&#x1F916;</div>
+          <div class="tc-name">OpenAI Library</div>
+          <div class="tc-desc">Python OpenAI SDK — chat completions, prompts, API patterns</div>
+        </div>
+        <div class="tc-arrow">&#x2192;</div>
+      </a>
+
+      <a href="../python-urllib.html" class="tool-card" data-keywords="urllib python standard library url http request built-in">
+        <div class="tc-stripe" style="background:var(--orange)"></div>
+        <div class="tc-body">
+          <div class="tc-icon">&#x1F517;</div>
+          <div class="tc-name">urllib</div>
+          <div class="tc-desc">Python's built-in urllib for URL handling and HTTP requests</div>
+        </div>
+        <div class="tc-arrow">&#x2192;</div>
+      </a>
+
+    </div>
+  </section>
+
+  <div class="starburst-row">
+    <span class="starburst" style="transform:rotate(-10deg);color:var(--red);text-shadow:3px 3px 0 var(--ink);font-size:2rem;">THE END!</span>
+    <span class="starburst" style="transform:rotate(5deg);color:var(--ink);text-shadow:2px 2px 0 var(--yellow);">...UNTIL THE NEXT TOOL IS BORN!</span>
+  </div>
+
+</div><!-- /page-wrap -->
+
+<!-- ════════════════ FOOTER ════════════════ -->
+<footer class="site-footer">
+  <div class="footer-inner">
+
+    <div>
+      <div class="footer-brand-name">
+        <img src="../images/logo.png" alt="DevDunia" class="footer-logo-img">
+        DEVDUNIA
+      </div>
+      <p class="footer-bio">100+ free developer tools in your browser. No login, no tracking, no fluff. Built by Ali Anwar (echobash) and open to contributions from the community.</p>
+
+      <div class="footer-author-links">
+        <a href="https://echobash.com" target="_blank" rel="noopener" class="footer-author-link">
+          <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 17.93c-3.95-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93zm6.9-2.54c-.26-.81-1-1.39-1.9-1.39h-1v-3c0-.55-.45-1-1-1H8v-2h2c.55 0 1-.45 1-1V7h2c1.1 0 2-.9 2-2v-.41c2.93 1.19 5 4.06 5 7.41 0 2.08-.8 3.97-2.1 5.39z"/></svg>
+          Ali Anwar — echobash.com
+        </a>
+        <a href="https://github.com/echobash" target="_blank" rel="noopener" class="footer-author-link">
+          <svg viewBox="0 0 24 24"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"/></svg>
+          github.com/echobash
+        </a>
+        <a href="https://linkedin.com/in/echobash" target="_blank" rel="noopener" class="footer-author-link">
+          <svg viewBox="0 0 24 24"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 01-2.063-2.065 2.064 2.064 0 112.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg>
+          linkedin.com/in/echobash
+        </a>
+      </div>
+    </div>
+
+    <div>
+      <div class="footer-col-title">TOOLS</div>
+      <div class="footer-links">
+        <a href="#encoders">Encoders / Decoders</a>
+        <a href="#security">Security / VAPT</a>
+        <a href="#generators">Generators</a>
+        <a href="#devtools">API &amp; Dev Tools</a>
+        <a href="#network">Network Protocols</a>
+        <a href="#text">Text Tools</a>
+        <a href="#database">Database</a>
+        <a href="#python">Python Toolkit</a>
+      </div>
+    </div>
+
+    <div>
+      <div class="footer-col-title">PROJECT</div>
+      <div class="footer-links">
+        <a href="https://github.com/echobash/devdunia" target="_blank" rel="noopener">GitHub Repo</a>
+        <a href="https://github.com/echobash/devdunia/blob/main/CONTRIBUTING.md" target="_blank" rel="noopener">Contribute</a>
+        <a href="https://github.com/echobash/devdunia/blob/main/CODE_OF_CONDUCT.md" target="_blank" rel="noopener">Code of Conduct</a>
+        <a href="../support.html">Support DevDunia</a>
+        <a href="../contact.html">Contact</a>
+        <a href="../privacy/">Privacy Policy</a>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="footer-bottom" style="max-width:1100px;margin:0 auto;padding-top:20px;border-top:2px solid rgba(255,255,255,.12);display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;">
+    <span class="footer-copy">Made with &#x2665; by <a href="https://echobash.com" target="_blank" rel="noopener">Ali Anwar</a> &mdash; Free, private, open source.</span>
+    <span class="footer-end">THE END! ...FOR NOW</span>
+  </div>
+</footer>
+
+<script>
+(function() {
+  var searchInput  = document.getElementById('search-input');
+  var searchCount  = document.getElementById('search-count');
+  var noResults    = document.getElementById('no-results');
+  var allCards     = document.querySelectorAll('.tool-card');
+  var allSections  = document.querySelectorAll('.chapter-section[data-chapter]');
+
+  var totalCards = allCards.length;
+  searchCount.textContent = totalCards + ' tools';
+
+  searchInput.addEventListener('input', function() {
+    var q = this.value.trim().toLowerCase();
+
+    if (!q) {
+      for (var i = 0; i < allCards.length; i++) {
+        allCards[i].classList.remove('filtered-out');
+      }
+      for (var j = 0; j < allSections.length; j++) {
+        allSections[j].classList.remove('hidden');
+      }
+      searchCount.textContent = totalCards + ' tools';
+      noResults.classList.remove('show');
+      return;
+    }
+
+    var visible = 0;
+
+    for (var i = 0; i < allCards.length; i++) {
+      var card = allCards[i];
+      var kw   = (card.dataset.keywords || '').toLowerCase();
+      var name = (card.querySelector('.tc-name') ? card.querySelector('.tc-name').textContent : '').toLowerCase();
+      var desc = (card.querySelector('.tc-desc') ? card.querySelector('.tc-desc').textContent : '').toLowerCase();
+      var match = kw.indexOf(q) !== -1 || name.indexOf(q) !== -1 || desc.indexOf(q) !== -1;
+      if (match) {
+        card.classList.remove('filtered-out');
+        visible++;
+      } else {
+        card.classList.add('filtered-out');
+      }
+    }
+
+    for (var j = 0; j < allSections.length; j++) {
+      var sec   = allSections[j];
+      var cards = sec.querySelectorAll('.tool-card');
+      var hasVisible = false;
+      for (var k = 0; k < cards.length; k++) {
+        if (!cards[k].classList.contains('filtered-out')) { hasVisible = true; break; }
+      }
+      sec.classList.toggle('hidden', !hasVisible);
+    }
+
+    searchCount.textContent = visible + ' tool' + (visible !== 1 ? 's' : '');
+    noResults.classList.toggle('show', visible === 0);
+  });
+})();
+</script>
+</body>
+</html>

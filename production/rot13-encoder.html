@@ -1,0 +1,464 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ROT13 Encoder/Decoder — DevDunia Comics</title>
+<meta name="description" content="Encode and decode text using ROT13 cipher. Free online ROT13 encoder/decoder for developers.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://devdunia.com/production/rot13-encoder.html">
+<meta property="og:title" content="ROT13 Encoder/Decoder — DevDunia Comics">
+<meta property="og:description" content="Encode and decode text using ROT13 cipher. Free online ROT13 encoder/decoder.">
+<meta property="og:image" content="https://devdunia.com/images/logo.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Bangers&family=Comic+Neue:wght@400;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --ink: #1a1410;
+  --paper: #fdf3e3;
+  --paper2: #fbe9cc;
+  --red: #e63946;
+  --blue: #1d6fb8;
+  --yellow: #ffd23f;
+  --green: #3fa34d;
+  --pink: #ff6b9d;
+  --purple: #8a4fff;
+  --orange: #ff8c42;
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: 'Comic Neue', cursive;
+  font-weight: 400;
+  color: var(--ink);
+  background-color: var(--paper);
+  background-image: radial-gradient(var(--ink) 0.5px, transparent 0.6px);
+  background-size: 14px 14px;
+  background-attachment: fixed;
+  min-height: 100vh;
+}
+
+.paper-overlay {
+  position: fixed; inset: 0;
+  background: rgba(253,243,227,.78);
+  pointer-events: none; z-index: 0;
+}
+
+.page-wrap {
+  position: relative; z-index: 1;
+  max-width: 820px; margin: 0 auto;
+  padding: 0 16px 60px;
+}
+
+.masthead {
+  background: var(--red);
+  border: 4px solid var(--ink);
+  border-radius: 6px;
+  box-shadow: 7px 7px 0 var(--ink);
+  margin: 18px 0 28px;
+  padding: 10px 20px;
+  display: flex; align-items: center; justify-content: space-between;
+  flex-wrap: wrap; gap: 8px;
+}
+
+.masthead-logo {
+  font-family: 'Bangers', cursive;
+  font-size: 1.9rem; letter-spacing: 2px;
+  color: #fff; text-shadow: 3px 3px 0 var(--ink); line-height: 1;
+}
+.masthead-logo span { color: var(--yellow); }
+.masthead-right { display: flex; align-items: center; gap: 8px; }
+
+.issue-tag {
+  font-family: 'Bangers', cursive; font-size: .95rem;
+  background: var(--yellow); color: var(--ink);
+  padding: 3px 10px; border-radius: 4px; border: 2px solid var(--ink); letter-spacing: 1px;
+}
+
+.back-link {
+  font-family: 'Bangers', cursive; font-size: .95rem;
+  color: #fff; text-decoration: none; background: var(--ink);
+  padding: 3px 10px; border-radius: 4px; letter-spacing: 1px; transition: opacity .15s;
+}
+.back-link:hover { opacity: .75; }
+
+.hero {
+  display: flex; align-items: flex-start; gap: 20px;
+  background: var(--paper2); border: 4px solid var(--ink); border-radius: 6px;
+  box-shadow: 7px 7px 0 var(--ink); padding: 20px 24px; margin-bottom: 28px;
+  transform: rotate(-0.4deg);
+}
+
+.hero-icon { font-size: 3rem; line-height: 1; flex-shrink: 0; filter: drop-shadow(3px 3px 0 var(--ink)); }
+
+.hero-text h1 {
+  font-family: 'Bangers', cursive; font-size: 2.8rem; letter-spacing: 2px;
+  color: var(--red); -webkit-text-stroke: 1px var(--ink);
+  text-shadow: 4px 4px 0 var(--ink); line-height: 1; text-transform: uppercase;
+}
+
+.hero-text p { font-size: .95rem; margin-top: 6px; line-height: 1.5; max-width: 480px; }
+.hero-badges { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 10px; }
+
+.badge {
+  font-family: 'Space Mono', monospace; font-size: .65rem; font-weight: 700;
+  padding: 3px 8px; border: 2px solid var(--ink); border-radius: 4px; box-shadow: 2px 2px 0 var(--ink);
+}
+.badge-blue   { background: var(--blue);   color: #fff; }
+.badge-green  { background: var(--green);  color: #fff; }
+.badge-yellow { background: var(--yellow); color: var(--ink); }
+.badge-red    { background: var(--red);    color: #fff; }
+
+.panel {
+  background: var(--paper); border: 4px solid var(--ink); border-radius: 6px;
+  box-shadow: 7px 7px 0 var(--ink); overflow: hidden; margin-bottom: 22px;
+}
+
+.panel-header {
+  background: var(--ink); color: var(--yellow); font-family: 'Bangers', cursive;
+  font-size: 1.2rem; letter-spacing: 2px; padding: 8px 16px;
+  display: flex; align-items: center; justify-content: space-between; gap: 10px;
+}
+
+.panel-header .panel-tag {
+  font-family: 'Space Mono', monospace; font-size: .65rem; font-weight: 700;
+  background: var(--yellow); color: var(--ink); padding: 2px 7px; border-radius: 3px;
+}
+
+.panel-body { padding: 18px 20px; }
+
+.comic-textarea {
+  width: 100%; background: #fff; border: 3px solid var(--ink); border-radius: 6px;
+  padding: 12px 14px; font-family: 'Space Mono', monospace; font-size: .82rem;
+  color: var(--ink); line-height: 1.6; resize: vertical; min-height: 130px;
+  box-shadow: inset 3px 3px 0 rgba(0,0,0,.06); outline: none; transition: border-color .15s;
+}
+.comic-textarea:focus { border-color: var(--red); }
+.comic-textarea::placeholder { color: #aaa; font-style: italic; }
+.comic-textarea[readonly] { background: var(--paper2); cursor: default; }
+
+.btn-row { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 14px; }
+
+.btn {
+  font-family: 'Bangers', cursive; font-size: 1.1rem; letter-spacing: 1px;
+  border: 3px solid var(--ink); border-radius: 6px; padding: 8px 20px;
+  cursor: pointer; box-shadow: 4px 4px 0 var(--ink);
+  transition: transform .1s, box-shadow .1s; text-transform: uppercase;
+}
+.btn:active { transform: translate(2px,2px); box-shadow: 2px 2px 0 var(--ink); }
+.btn-primary { background: var(--red);    color: #fff; }
+.btn-success { background: var(--green);  color: #fff; }
+.btn-danger  { background: var(--paper2); color: var(--ink); }
+
+.error-bubble {
+  display: none; position: relative; background: #fff0f0;
+  border: 3px solid var(--red); border-radius: 14px;
+  padding: 10px 14px; margin-top: 12px; font-size: .9rem; font-weight: 700; color: var(--red);
+}
+.error-bubble::before {
+  content: ''; position: absolute; top: -16px; left: 22px;
+  border-width: 0 10px 16px; border-style: solid; border-color: transparent transparent var(--red);
+}
+.error-bubble::after {
+  content: ''; position: absolute; top: -11px; left: 24px;
+  border-width: 0 8px 12px; border-style: solid; border-color: transparent transparent #fff0f0;
+}
+.error-bubble.show { display: block; }
+
+.output-wrap { position: relative; }
+.copy-btn {
+  position: absolute; top: 8px; right: 8px;
+  font-family: 'Bangers', cursive; font-size: .95rem; letter-spacing: 1px;
+  background: var(--ink); color: var(--yellow); border: 2px solid var(--ink);
+  border-radius: 4px; padding: 3px 10px; cursor: pointer;
+  box-shadow: 2px 2px 0 rgba(0,0,0,.4); transition: transform .1s, box-shadow .1s;
+}
+.copy-btn:active { transform: translate(1px,1px); box-shadow: 1px 1px 0 rgba(0,0,0,.4); }
+
+.section-label {
+  font-family: 'Bangers', cursive; font-size: .95rem; letter-spacing: 1px;
+  color: var(--ink); margin-bottom: 6px; text-transform: uppercase;
+}
+
+/* ROT13 alphabet display */
+.alphabet-strip {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  margin-top: 12px;
+}
+.alpha-pair {
+  font-family: 'Space Mono', monospace;
+  font-size: .7rem;
+  background: var(--paper2);
+  border: 2px solid var(--ink);
+  border-radius: 4px;
+  padding: 3px 5px;
+  text-align: center;
+  min-width: 42px;
+  box-shadow: 2px 2px 0 var(--ink);
+}
+.alpha-pair .from { color: var(--red); font-weight: 700; }
+.alpha-pair .arr  { color: var(--ink); opacity: .5; }
+.alpha-pair .to   { color: var(--blue); font-weight: 700; }
+
+.examples-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.example-card {
+  background: var(--paper2); border: 3px solid var(--ink); border-radius: 6px;
+  box-shadow: 4px 4px 0 var(--ink); padding: 10px 12px; cursor: pointer;
+  transition: transform .1s, box-shadow .1s;
+}
+.example-card:hover { transform: translate(-2px,-2px); box-shadow: 6px 6px 0 var(--ink); }
+.example-card:active { transform: translate(1px,1px); box-shadow: 2px 2px 0 var(--ink); }
+.example-title { font-family: 'Bangers', cursive; font-size: 1rem; letter-spacing: 1px; margin-bottom: 4px; }
+.example-plain { font-family: 'Space Mono', monospace; font-size: .68rem; color: var(--red); word-break: break-all; margin-bottom: 2px; }
+.example-arrow { font-size: .75rem; color: var(--ink); opacity: .55; }
+
+.how-steps { display: flex; flex-direction: column; gap: 10px; }
+.how-step { display: flex; align-items: flex-start; gap: 12px; }
+.step-dot {
+  width: 28px; height: 28px; border-radius: 50%; border: 3px solid var(--ink);
+  display: flex; align-items: center; justify-content: center;
+  font-family: 'Bangers', cursive; font-size: 1rem; color: #fff;
+  flex-shrink: 0; box-shadow: 2px 2px 0 var(--ink);
+}
+.how-step p { font-size: .88rem; line-height: 1.5; padding-top: 2px; }
+.how-step code {
+  font-family: 'Space Mono', monospace; font-size: .75rem;
+  background: var(--ink); color: var(--yellow); padding: 1px 5px; border-radius: 3px;
+}
+
+@media (max-width: 760px) {
+  .examples-grid { grid-template-columns: 1fr; }
+  .hero { flex-direction: column; gap: 10px; }
+  .hero-text h1 { font-size: 2rem; }
+}
+</style>
+</head>
+<body>
+<div class="paper-overlay"></div>
+<div class="page-wrap">
+
+  <!-- MASTHEAD -->
+  <div class="masthead">
+    <div class="masthead-logo">DEV<span>DUNIA</span> COMICS</div>
+    <div class="masthead-right">
+      <span class="issue-tag">ROT13</span>
+      <a href="../index.html" class="back-link">&#9664; ALL TOOLS</a>
+    </div>
+  </div>
+
+  <!-- HERO -->
+  <div class="hero">
+    <div class="hero-icon">&#x1F504;</div>
+    <div class="hero-text">
+      <h1>ROT13 Encoder</h1>
+      <p>Encode and decode text using the classic ROT13 substitution cipher. Since ROT13 is its own inverse — encoding and decoding are the same operation!</p>
+      <div class="hero-badges">
+        <span class="badge badge-red">SELF-INVERSE</span>
+        <span class="badge badge-blue">LETTERS ONLY</span>
+        <span class="badge badge-yellow">FREE</span>
+        <span class="badge badge-green">INSTANT</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- INPUT PANEL -->
+  <div class="panel">
+    <div class="panel-header">
+      &#x270F; ENTER YOUR TEXT
+      <span class="panel-tag">INPUT</span>
+    </div>
+    <div class="panel-body">
+      <div class="section-label">Text to ROT13 Transform</div>
+      <textarea id="input-text" class="comic-textarea" rows="6"
+        placeholder="Enter text to encode or decode with ROT13..."></textarea>
+
+      <div class="btn-row">
+        <button id="encode-btn" class="btn btn-primary">&#x1F512; Encode ROT13</button>
+        <button id="decode-btn" class="btn btn-success">&#x1F513; Decode ROT13</button>
+        <button id="clear-btn" class="btn btn-danger">&#x1F5D1; Clear</button>
+      </div>
+
+      <div id="error-bubble" class="error-bubble">
+        &#x1F4A5; <span id="error-msg">Please enter some text first!</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- OUTPUT PANEL -->
+  <div class="panel" id="output-panel" style="display:none;">
+    <div class="panel-header">
+      &#x1F4E4; ROT13 RESULT
+      <span class="panel-tag">OUTPUT</span>
+    </div>
+    <div class="panel-body">
+      <div class="section-label">Transformed Text</div>
+      <div class="output-wrap">
+        <textarea id="output-text" class="comic-textarea" rows="6" readonly></textarea>
+        <button id="copy-btn" class="copy-btn">&#x1F4CB; COPY</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- EXAMPLES PANEL -->
+  <div class="panel">
+    <div class="panel-header">
+      &#x1F4DA; TRY AN EXAMPLE — CLICK TO LOAD!
+      <span class="panel-tag">EXAMPLES</span>
+    </div>
+    <div class="panel-body">
+      <div class="examples-grid">
+        <div class="example-card" data-text="Hello World">
+          <div class="example-title" style="color:var(--red);">Plain Text</div>
+          <div class="example-plain">Hello World</div>
+          <div class="example-arrow">&#x2193; Uryyb Jbeyq</div>
+        </div>
+        <div class="example-card" data-text="Uryyb Jbeyq">
+          <div class="example-title" style="color:var(--blue);">ROT13 Text</div>
+          <div class="example-plain">Uryyb Jbeyq</div>
+          <div class="example-arrow">&#x2193; Hello World</div>
+        </div>
+        <div class="example-card" data-text="The Quick Brown Fox Jumps Over The Lazy Dog">
+          <div class="example-title" style="color:var(--green);">Pangram</div>
+          <div class="example-plain">The Quick Brown Fox...</div>
+          <div class="example-arrow">&#x2193; Gur Dhvpx Oebja Sbk...</div>
+        </div>
+        <div class="example-card" data-text="ROT13 is a simple letter substitution cipher">
+          <div class="example-title" style="color:var(--purple);">Description</div>
+          <div class="example-plain">ROT13 is a simple...</div>
+          <div class="example-arrow">&#x2193; EBG13 vf n fvzcyr...</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ALPHABET PANEL -->
+  <div class="panel">
+    <div class="panel-header">
+      &#x1F524; ROT13 ALPHABET MAP
+      <span class="panel-tag">REFERENCE</span>
+    </div>
+    <div class="panel-body">
+      <p style="font-size:.88rem;margin-bottom:10px;">Each letter maps to the one 13 positions ahead. Since the alphabet has 26 letters, applying ROT13 twice returns the original!</p>
+      <div class="alphabet-strip" id="alpha-strip"></div>
+    </div>
+  </div>
+
+  <!-- HOW IT WORKS -->
+  <div class="panel">
+    <div class="panel-header">
+      &#x1F9E0; HOW ROT13 WORKS
+      <span class="panel-tag">EXPLAINER</span>
+    </div>
+    <div class="panel-body">
+      <div class="how-steps">
+        <div class="how-step">
+          <div class="step-dot" style="background:var(--red);">1</div>
+          <p>ROT13 stands for <strong>"rotate by 13 places"</strong> — each letter in the alphabet is replaced by the letter 13 positions ahead.</p>
+        </div>
+        <div class="how-step">
+          <div class="step-dot" style="background:var(--blue);">2</div>
+          <p><strong>Only letters A-Z and a-z are affected.</strong> Numbers, spaces, punctuation, and symbols pass through unchanged.</p>
+        </div>
+        <div class="how-step">
+          <div class="step-dot" style="background:var(--green);">3</div>
+          <p>Because the English alphabet has 26 letters, <strong>applying ROT13 twice</strong> gives back the original text — encode = decode!</p>
+        </div>
+        <div class="how-step">
+          <div class="step-dot" style="background:var(--orange);">4</div>
+          <p>ROT13 is commonly used for <strong>hiding spoilers</strong> and puzzle answers online. It provides no real security — it's just obfuscation.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div><!-- /page-wrap -->
+
+<script>
+(function() {
+  var inputEl   = document.getElementById('input-text');
+  var outputEl  = document.getElementById('output-text');
+  var encodeBtn = document.getElementById('encode-btn');
+  var decodeBtn = document.getElementById('decode-btn');
+  var clearBtn  = document.getElementById('clear-btn');
+  var copyBtn   = document.getElementById('copy-btn');
+  var outPanel  = document.getElementById('output-panel');
+  var errBubble = document.getElementById('error-bubble');
+  var errMsg    = document.getElementById('error-msg');
+  var alphaStrip = document.getElementById('alpha-strip');
+
+  function showError(msg) { errMsg.textContent = msg; errBubble.classList.add('show'); }
+  function hideError()    { errBubble.classList.remove('show'); }
+
+  function rot13(str) {
+    return str.replace(/[a-zA-Z]/g, function(char) {
+      var charCode = char.charCodeAt(0);
+      var offset   = charCode <= 90 ? 65 : 97;
+      return String.fromCharCode(((charCode - offset + 13) % 26) + offset);
+    });
+  }
+
+  function doTransform() {
+    var input = inputEl.value.trim();
+    if (!input) { showError('Please enter some text first!'); return; }
+    try {
+      var result = rot13(input);
+      outputEl.value = result;
+      outPanel.style.display = 'block';
+      hideError();
+    } catch(e) { showError('Transform failed: ' + e.message); }
+  }
+
+  encodeBtn.addEventListener('click', doTransform);
+  decodeBtn.addEventListener('click', doTransform);
+
+  clearBtn.addEventListener('click', function() {
+    inputEl.value = '';
+    outputEl.value = '';
+    outPanel.style.display = 'none';
+    hideError();
+  });
+
+  copyBtn.addEventListener('click', function() {
+    outputEl.select();
+    try { document.execCommand('copy'); } catch(e) {}
+    if (navigator.clipboard) navigator.clipboard.writeText(outputEl.value).catch(function(){});
+    var orig = copyBtn.textContent;
+    copyBtn.textContent = '✔ COPIED!';
+    copyBtn.style.background = 'var(--green)';
+    setTimeout(function() {
+      copyBtn.textContent = orig;
+      copyBtn.style.background = 'var(--ink)';
+    }, 1800);
+  });
+
+  var cards = document.querySelectorAll('.example-card');
+  for (var i = 0; i < cards.length; i++) {
+    cards[i].addEventListener('click', function() {
+      inputEl.value = this.dataset.text;
+      doTransform();
+    });
+  }
+
+  inputEl.addEventListener('keydown', function(e) {
+    if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') { doTransform(); }
+  });
+
+  // Build alphabet strip
+  var alphabet = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+  var html = '';
+  for (var i = 0; i < 26; i++) {
+    var from = alphabet[i];
+    var to   = alphabet[(i + 13) % 26];
+    html += '<div class="alpha-pair"><span class="from">' + from + '</span><span class="arr">→</span><span class="to">' + to + '</span></div>';
+  }
+  alphaStrip.innerHTML = html;
+
+  // Preload
+  inputEl.value = 'Hello World! This is a ROT13 example.';
+})();
+</script>
+</body>
+</html>

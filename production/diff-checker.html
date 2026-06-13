@@ -1,0 +1,792 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Diff Checker — DevDunia Comics</title>
+<meta name="description" content="Compare and find differences between two text files or code snippets. Free online diff checker tool for developers.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://devdunia.com/production/diff-checker.html">
+<meta property="og:title" content="Diff Checker — DevDunia Comics">
+<meta property="og:description" content="Compare two text blocks side-by-side and highlight every added, removed, or changed line.">
+<meta property="og:image" content="https://devdunia.com/images/logo.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Bangers&family=Comic+Neue:wght@400;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --ink: #1a1410;
+  --paper: #fdf3e3;
+  --paper2: #fbe9cc;
+  --red: #e63946;
+  --blue: #1d6fb8;
+  --yellow: #ffd23f;
+  --green: #3fa34d;
+  --pink: #ff6b9d;
+  --purple: #8a4fff;
+  --orange: #ff8c42;
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: 'Comic Neue', cursive;
+  font-weight: 400;
+  color: var(--ink);
+  background-color: var(--paper);
+  background-image: radial-gradient(var(--ink) 0.5px, transparent 0.6px);
+  background-size: 14px 14px;
+  background-attachment: fixed;
+  min-height: 100vh;
+}
+
+.paper-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(253,243,227,.78);
+  pointer-events: none;
+  z-index: 0;
+}
+
+.page-wrap {
+  position: relative;
+  z-index: 1;
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 0 16px 60px;
+}
+
+/* MASTHEAD */
+.masthead {
+  background: var(--green);
+  border: 4px solid var(--ink);
+  border-radius: 6px;
+  box-shadow: 7px 7px 0 var(--ink);
+  margin: 18px 0 28px;
+  padding: 10px 20px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.masthead-logo {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.masthead-logo img {
+  height: 36px;
+  width: auto;
+  border: 2px solid var(--yellow);
+  border-radius: 4px;
+}
+.masthead-title {
+  font-family: 'Bangers', cursive;
+  font-size: 1.9rem;
+  letter-spacing: 2px;
+  color: #fff;
+  text-shadow: 3px 3px 0 var(--ink);
+  line-height: 1;
+}
+.masthead-title span { color: var(--yellow); }
+.masthead-right { display: flex; align-items: center; gap: 8px; }
+.issue-tag {
+  font-family: 'Bangers', cursive;
+  font-size: .95rem;
+  background: var(--yellow);
+  color: var(--ink);
+  padding: 3px 10px;
+  border-radius: 4px;
+  border: 2px solid var(--ink);
+  letter-spacing: 1px;
+}
+.back-link {
+  font-family: 'Bangers', cursive;
+  font-size: .95rem;
+  color: #fff;
+  text-decoration: none;
+  background: var(--ink);
+  padding: 3px 10px;
+  border-radius: 4px;
+  letter-spacing: 1px;
+  transition: opacity .15s;
+}
+.back-link:hover { opacity: .75; }
+
+/* HERO */
+.hero {
+  display: flex;
+  align-items: flex-start;
+  gap: 20px;
+  background: var(--paper2);
+  border: 4px solid var(--ink);
+  border-radius: 6px;
+  box-shadow: 7px 7px 0 var(--ink);
+  padding: 20px 24px;
+  margin-bottom: 28px;
+  transform: rotate(-0.4deg);
+}
+.hero-icon {
+  font-size: 3rem;
+  line-height: 1;
+  flex-shrink: 0;
+  filter: drop-shadow(3px 3px 0 var(--ink));
+}
+.hero-text h1 {
+  font-family: 'Bangers', cursive;
+  font-size: 2.8rem;
+  letter-spacing: 2px;
+  color: var(--green);
+  -webkit-text-stroke: 1px var(--ink);
+  text-shadow: 4px 4px 0 var(--ink);
+  line-height: 1;
+  text-transform: uppercase;
+}
+.hero-text p { font-size: .95rem; margin-top: 6px; line-height: 1.5; max-width: 480px; }
+.hero-badges { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 10px; }
+.badge {
+  font-family: 'Space Mono', monospace;
+  font-size: .65rem;
+  font-weight: 700;
+  padding: 3px 8px;
+  border: 2px solid var(--ink);
+  border-radius: 4px;
+  box-shadow: 2px 2px 0 var(--ink);
+}
+.badge-green  { background: var(--green);  color: #fff; }
+.badge-red    { background: var(--red);    color: #fff; }
+.badge-yellow { background: var(--yellow); color: var(--ink); }
+.badge-blue   { background: var(--blue);   color: #fff; }
+
+/* PANEL */
+.panel {
+  background: var(--paper);
+  border: 4px solid var(--ink);
+  border-radius: 6px;
+  box-shadow: 7px 7px 0 var(--ink);
+  overflow: hidden;
+  margin-bottom: 22px;
+}
+.panel-header {
+  background: var(--ink);
+  color: var(--yellow);
+  font-family: 'Bangers', cursive;
+  font-size: 1.2rem;
+  letter-spacing: 2px;
+  padding: 8px 16px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+.panel-header .panel-tag {
+  font-family: 'Space Mono', monospace;
+  font-size: .65rem;
+  font-weight: 700;
+  background: var(--yellow);
+  color: var(--ink);
+  padding: 2px 7px;
+  border-radius: 3px;
+}
+.panel-body { padding: 18px 20px; }
+
+/* INPUT GRID */
+.input-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  margin-bottom: 16px;
+}
+
+.input-col-label {
+  font-family: 'Bangers', cursive;
+  font-size: 1rem;
+  letter-spacing: 1px;
+  margin-bottom: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.comic-textarea {
+  width: 100%;
+  background: #fff;
+  border: 3px solid var(--ink);
+  border-radius: 6px;
+  padding: 10px 12px;
+  font-family: 'Space Mono', monospace;
+  font-size: .78rem;
+  color: var(--ink);
+  line-height: 1.6;
+  resize: vertical;
+  min-height: 220px;
+  box-shadow: 3px 3px 0 var(--ink);
+  outline: none;
+  transition: border-color .15s;
+}
+.comic-textarea:focus { border-color: var(--green); }
+.comic-textarea::placeholder { color: #aaa; font-style: italic; }
+
+/* BUTTONS */
+.btn-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-bottom: 14px;
+}
+.btn {
+  font-family: 'Bangers', cursive;
+  font-size: 1.1rem;
+  letter-spacing: 1px;
+  border: 3px solid var(--ink);
+  border-radius: 6px;
+  padding: 8px 20px;
+  cursor: pointer;
+  box-shadow: 4px 4px 0 var(--ink);
+  transition: transform .1s, box-shadow .1s;
+  text-transform: uppercase;
+}
+.btn:active { transform: translate(2px,2px); box-shadow: 2px 2px 0 var(--ink); }
+.btn-primary { background: var(--green);  color: #fff; }
+.btn-danger  { background: var(--red);    color: #fff; }
+.btn-neutral { background: var(--paper2); color: var(--ink); }
+
+.mini-btn {
+  font-family: 'Bangers', cursive;
+  font-size: .85rem;
+  letter-spacing: 1px;
+  border: 2px solid var(--ink);
+  border-radius: 4px;
+  padding: 3px 8px;
+  cursor: pointer;
+  box-shadow: 2px 2px 0 var(--ink);
+  background: var(--paper2);
+  transition: transform .1s;
+}
+.mini-btn:active { transform: translate(1px,1px); }
+
+/* LEGEND */
+.legend-row {
+  display: flex;
+  gap: 14px;
+  align-items: center;
+  flex-wrap: wrap;
+  margin-bottom: 12px;
+}
+.legend-item {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-size: .78rem;
+  font-weight: 700;
+}
+.legend-dot {
+  width: 14px;
+  height: 14px;
+  border-radius: 3px;
+  border: 2px solid var(--ink);
+}
+
+/* DIFF GRID */
+.diff-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0;
+  border: 3px solid var(--ink);
+  border-radius: 6px;
+  overflow: hidden;
+  box-shadow: 4px 4px 0 var(--ink);
+}
+
+.diff-col {
+  border-right: 3px solid var(--ink);
+  overflow: auto;
+  max-height: 500px;
+}
+.diff-col:last-child { border-right: none; }
+
+.diff-col-header {
+  background: var(--ink);
+  color: var(--yellow);
+  font-family: 'Bangers', cursive;
+  font-size: 1rem;
+  letter-spacing: 2px;
+  padding: 6px 12px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  position: sticky;
+  top: 0;
+  z-index: 2;
+}
+.diff-col-header .line-count {
+  font-family: 'Space Mono', monospace;
+  font-size: .65rem;
+  font-weight: 700;
+  color: var(--yellow);
+  opacity: .7;
+}
+
+.diff-content { font-family: 'Space Mono', monospace; font-size: .75rem; }
+
+.diff-line {
+  display: flex;
+  border-bottom: 1px solid rgba(26,20,16,.1);
+  line-height: 1.5;
+}
+.diff-line:hover { background: rgba(26,20,16,.05); }
+
+.diff-linenum {
+  background: var(--paper2);
+  border-right: 2px solid var(--ink);
+  color: var(--ink);
+  opacity: .5;
+  padding: 2px 8px;
+  text-align: right;
+  min-width: 42px;
+  user-select: none;
+  font-size: .7rem;
+  flex-shrink: 0;
+}
+
+.diff-linecontent {
+  padding: 2px 8px;
+  flex: 1;
+  white-space: pre-wrap;
+  word-break: break-all;
+}
+
+.diff-equal   { background: transparent; }
+.diff-added   { background: rgba(63,163,77,.18); border-left: 3px solid var(--green); }
+.diff-removed { background: rgba(230,57,70,.18); border-left: 3px solid var(--red); }
+.diff-empty   { background: rgba(26,20,16,.04); }
+
+.diff-added .diff-linecontent   { color: var(--green); }
+.diff-removed .diff-linecontent { color: var(--red); }
+.diff-empty .diff-linenum, .diff-empty .diff-linecontent { opacity: .3; }
+
+/* STATS ROW */
+.stats-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 14px;
+}
+.stat-chip {
+  font-family: 'Space Mono', monospace;
+  font-size: .72rem;
+  font-weight: 700;
+  padding: 4px 10px;
+  border: 2px solid var(--ink);
+  border-radius: 4px;
+  box-shadow: 2px 2px 0 var(--ink);
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+.stat-chip .stat-label { opacity: .65; font-weight: 400; }
+.chip-green  { background: var(--green);  color: #fff; }
+.chip-red    { background: var(--red);    color: #fff; }
+.chip-yellow { background: var(--yellow); color: var(--ink); }
+.chip-blue   { background: var(--blue);   color: #fff; }
+
+/* MOBILE */
+@media (max-width: 760px) {
+  .hero { flex-direction: column; gap: 10px; }
+  .hero-text h1 { font-size: 2rem; }
+  .input-grid { grid-template-columns: 1fr; }
+  .diff-grid { grid-template-columns: 1fr; }
+}
+</style>
+</head>
+<body>
+<div class="paper-overlay"></div>
+<div class="page-wrap">
+
+  <!-- MASTHEAD -->
+  <div class="masthead">
+    <div class="masthead-logo">
+      <img src="../images/logo.png" alt="DevDunia">
+      <div class="masthead-title">DEV<span>DUNIA</span> COMICS</div>
+    </div>
+    <div class="masthead-right">
+      <span class="issue-tag">DIFF</span>
+      <a href="../index.html" class="back-link">&#9664; ALL TOOLS</a>
+    </div>
+  </div>
+
+  <!-- HERO -->
+  <div class="hero">
+    <div class="hero-icon">&#x1F50D;</div>
+    <div class="hero-text">
+      <h1>Diff Checker</h1>
+      <p>Paste two blocks of text and find every difference instantly. Uses LCS algorithm for accurate side-by-side comparison with added, removed, and modified lines!</p>
+      <div class="hero-badges">
+        <span class="badge badge-green">ADDED</span>
+        <span class="badge badge-red">REMOVED</span>
+        <span class="badge badge-yellow">MODIFIED</span>
+        <span class="badge badge-blue">LCS ALGORITHM</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- INPUT PANEL -->
+  <div class="panel" id="input-panel">
+    <div class="panel-header">
+      &#x1F4CB; PASTE YOUR TEXTS
+      <span class="panel-tag">INPUT</span>
+    </div>
+    <div class="panel-body">
+      <div class="input-grid">
+        <div>
+          <div class="input-col-label">
+            <span style="color:var(--red);">&#x25A0; Original Text</span>
+            <div>
+              <button id="load-file-left" class="mini-btn">&#x1F4C2; Load File</button>
+              <button id="copy-left" class="mini-btn" style="margin-left:4px;">&#x1F4CB; Copy</button>
+            </div>
+          </div>
+          <textarea id="left-text" class="comic-textarea" rows="12"
+            placeholder="Paste your original text here...">class Solution:
+    def removeAnagrams(self, words: List[str]) -> List[str]:
+        result = [words[0]]
+        n = len(words)
+        for i in range(1,n):
+            if sorted(words[i]) != sorted(words[i-1]):
+                result.append(words[i])
+        return result</textarea>
+        </div>
+        <div>
+          <div class="input-col-label">
+            <span style="color:var(--green);">&#x25A0; Modified Text</span>
+            <div>
+              <button id="load-file-right" class="mini-btn">&#x1F4C2; Load File</button>
+              <button id="copy-right" class="mini-btn" style="margin-left:4px;">&#x1F4CB; Copy</button>
+            </div>
+          </div>
+          <textarea id="right-text" class="comic-textarea" rows="12"
+            placeholder="Paste your modified text here...">class Solution:
+    def removeAnagrams(self, words: List[str]) -> List[str]:
+        result = [words[0]]
+        n = len(worhds)
+        for i in range(1,n):
+            hi
+            if sorted(words[i]) != sorted(words[i-1]):
+                result.append(words[i])
+        return result</textarea>
+        </div>
+      </div>
+
+      <div class="btn-row">
+        <button id="compare-btn" class="btn btn-primary">&#x26A1; Compare!</button>
+        <button id="clear-all-btn" class="btn btn-danger">&#x1F5D1; Clear All</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- DIFF RESULTS PANEL -->
+  <div class="panel" id="diff-panel" style="display:none;">
+    <div class="panel-header">
+      &#x1F4CA; DIFFERENCES
+      <span class="panel-tag">RESULT</span>
+    </div>
+    <div class="panel-body">
+      <div class="legend-row">
+        <div class="legend-item">
+          <div class="legend-dot" style="background:var(--green);"></div> Added
+        </div>
+        <div class="legend-item">
+          <div class="legend-dot" style="background:var(--red);"></div> Removed
+        </div>
+        <div class="legend-item">
+          <div class="legend-dot" style="background:var(--yellow);"></div> Modified
+        </div>
+        <div style="margin-left:auto;">
+          <button id="copy-diff-btn" class="mini-btn">&#x1F4CB; Copy Diff</button>
+          <button id="new-compare-btn" class="mini-btn btn-primary" style="margin-left:4px;background:var(--green);color:#fff;border-color:var(--ink);">&#x2B; New Comparison</button>
+        </div>
+      </div>
+
+      <div class="diff-grid">
+        <div class="diff-col">
+          <div class="diff-col-header">
+            &#x25A0; ORIGINAL
+            <span class="line-count" id="left-line-count">0 lines</span>
+          </div>
+          <div class="diff-content" id="left-diff-content"></div>
+        </div>
+        <div class="diff-col">
+          <div class="diff-col-header">
+            &#x25A0; MODIFIED
+            <span class="line-count" id="right-line-count">0 lines</span>
+          </div>
+          <div class="diff-content" id="right-diff-content"></div>
+        </div>
+      </div>
+
+      <div class="stats-row">
+        <div class="stat-chip chip-green">
+          <span class="stat-label">ADDED</span>
+          <span id="added-count">0</span>
+        </div>
+        <div class="stat-chip chip-red">
+          <span class="stat-label">REMOVED</span>
+          <span id="removed-count">0</span>
+        </div>
+        <div class="stat-chip chip-yellow">
+          <span class="stat-label">MODIFIED</span>
+          <span id="modified-count">0</span>
+        </div>
+        <div class="stat-chip chip-blue">
+          <span class="stat-label">SIMILARITY</span>
+          <span id="similarity">100%</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div><!-- /page-wrap -->
+
+<!-- Hidden file inputs -->
+<input type="file" id="file-input-left" accept=".txt,.js,.html,.css,.json,.xml,.md,.py,.java,.cpp,.c,.php,.rb,.go,.rs,.ts" style="display:none;">
+<input type="file" id="file-input-right" accept=".txt,.js,.html,.css,.json,.xml,.md,.py,.java,.cpp,.c,.php,.rb,.go,.rs,.ts" style="display:none;">
+
+<script>
+(function() {
+  var leftText   = document.getElementById('left-text');
+  var rightText  = document.getElementById('right-text');
+  var compareBtn = document.getElementById('compare-btn');
+  var clearAllBtn = document.getElementById('clear-all-btn');
+  var newCompareBtn = document.getElementById('new-compare-btn');
+  var diffPanel  = document.getElementById('diff-panel');
+  var inputPanel = document.getElementById('input-panel');
+  var copyLeftBtn  = document.getElementById('copy-left');
+  var copyRightBtn = document.getElementById('copy-right');
+  var copyDiffBtn  = document.getElementById('copy-diff-btn');
+  var loadFileLeftBtn  = document.getElementById('load-file-left');
+  var loadFileRightBtn = document.getElementById('load-file-right');
+  var fileInputLeft  = document.getElementById('file-input-left');
+  var fileInputRight = document.getElementById('file-input-right');
+
+  // File loading
+  loadFileLeftBtn.addEventListener('click', function() { fileInputLeft.click(); });
+  loadFileRightBtn.addEventListener('click', function() { fileInputRight.click(); });
+
+  fileInputLeft.addEventListener('change', function(e) {
+    var file = e.target.files[0];
+    if (file) {
+      var reader = new FileReader();
+      reader.onload = function(ev) { leftText.value = ev.target.result; };
+      reader.readAsText(file);
+    }
+  });
+  fileInputRight.addEventListener('change', function(e) {
+    var file = e.target.files[0];
+    if (file) {
+      var reader = new FileReader();
+      reader.onload = function(ev) { rightText.value = ev.target.result; };
+      reader.readAsText(file);
+    }
+  });
+
+  function copyText(text, btn) {
+    if (navigator.clipboard) {
+      navigator.clipboard.writeText(text);
+    } else {
+      var ta = document.createElement('textarea');
+      ta.value = text;
+      document.body.appendChild(ta);
+      ta.select();
+      document.execCommand('copy');
+      document.body.removeChild(ta);
+    }
+    var orig = btn.textContent;
+    btn.textContent = '✔ Copied!';
+    btn.style.background = 'var(--green)';
+    btn.style.color = '#fff';
+    setTimeout(function() {
+      btn.textContent = orig;
+      btn.style.background = '';
+      btn.style.color = '';
+    }, 1800);
+  }
+
+  copyLeftBtn.addEventListener('click', function() { copyText(leftText.value, copyLeftBtn); });
+  copyRightBtn.addEventListener('click', function() { copyText(rightText.value, copyRightBtn); });
+  copyDiffBtn.addEventListener('click', function() {
+    var lc = document.getElementById('left-diff-content').textContent;
+    var rc = document.getElementById('right-diff-content').textContent;
+    copyText('=== ORIGINAL ===\n' + lc + '\n\n=== MODIFIED ===\n' + rc, copyDiffBtn);
+  });
+
+  // LCS
+  function findLCS(arr1, arr2) {
+    var m = arr1.length, n = arr2.length;
+    var dp = [];
+    for (var i = 0; i <= m; i++) {
+      dp[i] = [];
+      for (var j = 0; j <= n; j++) dp[i][j] = 0;
+    }
+    for (var i = 1; i <= m; i++) {
+      for (var j = 1; j <= n; j++) {
+        if (arr1[i-1] === arr2[j-1]) dp[i][j] = dp[i-1][j-1] + 1;
+        else dp[i][j] = Math.max(dp[i-1][j], dp[i][j-1]);
+      }
+    }
+    var lcs = [];
+    var i = m, j = n;
+    while (i > 0 && j > 0) {
+      if (arr1[i-1] === arr2[j-1]) {
+        lcs.unshift(arr1[i-1]); i--; j--;
+      } else if (dp[i-1][j] > dp[i][j-1]) {
+        i--;
+      } else {
+        j--;
+      }
+    }
+    return lcs;
+  }
+
+  function generateDiff(left, right) {
+    var leftLines = left.split('\n');
+    var rightLines = right.split('\n');
+    var lcs = findLCS(leftLines, rightLines);
+    var diff = [];
+    var i = 0, j = 0, lcsIdx = 0;
+    while (i < leftLines.length || j < rightLines.length) {
+      if (lcsIdx < lcs.length && i < leftLines.length && j < rightLines.length &&
+          leftLines[i] === lcs[lcsIdx] && rightLines[j] === lcs[lcsIdx]) {
+        diff.push({ type:'equal', leftLine:leftLines[i], rightLine:rightLines[j], leftNum:i+1, rightNum:j+1 });
+        i++; j++; lcsIdx++;
+      } else if (i >= leftLines.length) {
+        diff.push({ type:'added', leftLine:null, rightLine:rightLines[j], leftNum:null, rightNum:j+1 });
+        j++;
+      } else if (j >= rightLines.length) {
+        diff.push({ type:'removed', leftLine:leftLines[i], rightLine:null, leftNum:i+1, rightNum:null });
+        i++;
+      } else if (leftLines[i] === rightLines[j]) {
+        diff.push({ type:'equal', leftLine:leftLines[i], rightLine:rightLines[j], leftNum:i+1, rightNum:j+1 });
+        i++; j++;
+      } else {
+        var found = false;
+        var maxLA = Math.min(20, Math.max(leftLines.length, rightLines.length));
+        for (var la = 1; la <= maxLA; la++) {
+          if (i+la < leftLines.length && leftLines[i+la] === rightLines[j]) {
+            for (var k = 0; k < la; k++) {
+              diff.push({ type:'removed', leftLine:leftLines[i+k], rightLine:null, leftNum:i+k+1, rightNum:null });
+            }
+            i += la; found = true; break;
+          }
+          if (j+la < rightLines.length && leftLines[i] === rightLines[j+la]) {
+            for (var k = 0; k < la; k++) {
+              diff.push({ type:'added', leftLine:null, rightLine:rightLines[j+k], leftNum:null, rightNum:j+k+1 });
+            }
+            j += la; found = true; break;
+          }
+        }
+        if (!found) {
+          diff.push({ type:'modified', leftLine:leftLines[i], rightLine:rightLines[j], leftNum:i+1, rightNum:j+1 });
+          i++; j++;
+        }
+      }
+    }
+    return diff;
+  }
+
+  function escHtml(s) {
+    return String(s || '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+  }
+
+  function createDiffLine(content, lineNum, type) {
+    var div = document.createElement('div');
+    var cls = 'diff-line ';
+    if (type === 'equal') cls += 'diff-equal';
+    else if (type === 'removed') cls += 'diff-removed';
+    else if (type === 'added') cls += 'diff-added';
+    else cls += 'diff-empty';
+    div.className = cls;
+
+    var numDiv = document.createElement('div');
+    numDiv.className = 'diff-linenum';
+    numDiv.textContent = lineNum || '';
+
+    var contentDiv = document.createElement('div');
+    contentDiv.className = 'diff-linecontent';
+    contentDiv.innerHTML = escHtml(content !== null ? content : ' ');
+
+    div.appendChild(numDiv);
+    div.appendChild(contentDiv);
+    return div;
+  }
+
+  function displayDiff(diff) {
+    var lcd = document.getElementById('left-diff-content');
+    var rcd = document.getElementById('right-diff-content');
+    lcd.innerHTML = '';
+    rcd.innerHTML = '';
+    var leftCount = 0, rightCount = 0, removals = 0, additions = 0;
+    diff.forEach(function(item) {
+      if (item.type === 'equal') {
+        lcd.appendChild(createDiffLine(item.leftLine, item.leftNum, 'equal'));
+        rcd.appendChild(createDiffLine(item.rightLine, item.rightNum, 'equal'));
+        leftCount++; rightCount++;
+      } else if (item.type === 'removed') {
+        lcd.appendChild(createDiffLine(item.leftLine, item.leftNum, 'removed'));
+        rcd.appendChild(createDiffLine('', '', 'empty'));
+        leftCount++; rightCount++; removals++;
+      } else if (item.type === 'added') {
+        lcd.appendChild(createDiffLine('', '', 'empty'));
+        rcd.appendChild(createDiffLine(item.rightLine, item.rightNum, 'added'));
+        leftCount++; rightCount++; additions++;
+      } else if (item.type === 'modified') {
+        lcd.appendChild(createDiffLine(item.leftLine, item.leftNum, 'removed'));
+        rcd.appendChild(createDiffLine(item.rightLine, item.rightNum, 'added'));
+        leftCount++; rightCount++; removals++; additions++;
+      }
+    });
+    document.getElementById('left-line-count').textContent = leftCount + ' lines';
+    document.getElementById('right-line-count').textContent = rightCount + ' lines';
+    var total = diff.length;
+    var equal = total - removals - additions + Math.min(removals, additions);
+    var sim = total > 0 ? Math.round((equal / total) * 100) : 100;
+    document.getElementById('added-count').textContent = additions;
+    document.getElementById('removed-count').textContent = removals;
+    document.getElementById('modified-count').textContent = Math.min(removals, additions);
+    document.getElementById('similarity').textContent = sim + '%';
+  }
+
+  compareBtn.addEventListener('click', function() {
+    var left = leftText.value;
+    var right = rightText.value;
+    if (!left && !right) { alert('Please enter text in at least one panel to compare.'); return; }
+    var diff = generateDiff(left, right);
+    displayDiff(diff);
+    diffPanel.style.display = '';
+    window.scrollTo({ top: diffPanel.offsetTop - 30, behavior: 'smooth' });
+  });
+
+  clearAllBtn.addEventListener('click', function() {
+    leftText.value = '';
+    rightText.value = '';
+    diffPanel.style.display = 'none';
+    document.getElementById('left-diff-content').innerHTML = '';
+    document.getElementById('right-diff-content').innerHTML = '';
+  });
+
+  newCompareBtn.addEventListener('click', function() {
+    diffPanel.style.display = 'none';
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  });
+
+  // Keyboard shortcut
+  document.addEventListener('keydown', function(e) {
+    if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') {
+      e.preventDefault();
+      compareBtn.click();
+    }
+  });
+})();
+</script>
+</body>
+</html>

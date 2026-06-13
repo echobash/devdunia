@@ -1,0 +1,328 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Epoch Converter — DevDunia Comics</title>
+<meta name="description" content="Convert between Unix epoch timestamps and human-readable dates. Free online epoch converter with timezone support.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://devdunia.com/epoch-converter.html">
+<meta property="og:title" content="Epoch Converter — DevDunia Comics">
+<meta property="og:description" content="Convert between Unix epoch timestamps and human-readable dates. Free online epoch converter.">
+<meta property="og:image" content="https://devdunia.com/images/logo.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Bangers&family=Comic+Neue:wght@400;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+:root{--ink:#1a1410;--paper:#fdf3e3;--paper2:#fbe9cc;--red:#e63946;--blue:#1d6fb8;--yellow:#ffd23f;--green:#3fa34d;--pink:#ff6b9d;--purple:#8a4fff;--orange:#ff8c42;}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'Comic Neue',cursive;font-weight:400;color:var(--ink);background-color:var(--paper);background-image:radial-gradient(var(--ink) 0.5px,transparent 0.6px);background-size:14px 14px;background-attachment:fixed;min-height:100vh;}
+.paper-overlay{position:fixed;inset:0;background:rgba(253,243,227,.78);pointer-events:none;z-index:0;}
+.page-wrap{position:relative;z-index:1;max-width:820px;margin:0 auto;padding:0 16px 60px;}
+.masthead{background:var(--blue);border:4px solid var(--ink);border-radius:6px;box-shadow:7px 7px 0 var(--ink);margin:18px 0 28px;padding:10px 20px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;}
+.masthead-logo{font-family:'Bangers',cursive;font-size:1.9rem;letter-spacing:2px;color:#fff;text-shadow:3px 3px 0 var(--ink);line-height:1;}
+.masthead-logo span{color:var(--yellow);}
+.masthead-right{display:flex;align-items:center;gap:8px;}
+.issue-tag{font-family:'Bangers',cursive;font-size:.95rem;background:var(--yellow);color:var(--ink);padding:3px 10px;border-radius:4px;border:2px solid var(--ink);letter-spacing:1px;}
+.back-link{font-family:'Bangers',cursive;font-size:.95rem;color:#fff;text-decoration:none;background:var(--ink);padding:3px 10px;border-radius:4px;letter-spacing:1px;transition:opacity .15s;}
+.back-link:hover{opacity:.75;}
+.hero{display:flex;align-items:flex-start;gap:20px;background:var(--paper2);border:4px solid var(--ink);border-radius:6px;box-shadow:7px 7px 0 var(--ink);padding:20px 24px;margin-bottom:28px;transform:rotate(-0.4deg);}
+.hero-icon{font-size:3rem;line-height:1;flex-shrink:0;filter:drop-shadow(3px 3px 0 var(--ink));}
+.hero-text h1{font-family:'Bangers',cursive;font-size:2.8rem;letter-spacing:2px;color:var(--blue);-webkit-text-stroke:1px var(--ink);text-shadow:4px 4px 0 var(--ink);line-height:1;text-transform:uppercase;}
+.hero-text p{font-size:.95rem;margin-top:6px;line-height:1.5;max-width:480px;}
+.hero-badges{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px;}
+.badge{font-family:'Space Mono',monospace;font-size:.65rem;font-weight:700;padding:3px 8px;border:2px solid var(--ink);border-radius:4px;box-shadow:2px 2px 0 var(--ink);}
+.badge-blue{background:var(--blue);color:#fff;}.badge-green{background:var(--green);color:#fff;}.badge-yellow{background:var(--yellow);color:var(--ink);}.badge-red{background:var(--red);color:#fff;}
+.panel{background:var(--paper);border:4px solid var(--ink);border-radius:6px;box-shadow:7px 7px 0 var(--ink);overflow:hidden;margin-bottom:22px;}
+.panel-header{background:var(--ink);color:var(--yellow);font-family:'Bangers',cursive;font-size:1.2rem;letter-spacing:2px;padding:8px 16px;display:flex;align-items:center;justify-content:space-between;gap:10px;}
+.panel-header .panel-tag{font-family:'Space Mono',monospace;font-size:.65rem;font-weight:700;background:var(--yellow);color:var(--ink);padding:2px 7px;border-radius:3px;}
+.panel-body{padding:18px 20px;}
+.comic-input{width:100%;background:#fff;border:3px solid var(--ink);border-radius:6px;padding:10px 14px;font-family:'Space Mono',monospace;font-size:.9rem;color:var(--ink);outline:none;box-shadow:3px 3px 0 var(--ink);transition:border-color .15s;}
+.comic-input:focus{border-color:var(--blue);}
+.comic-textarea{width:100%;background:var(--paper2);border:3px solid var(--ink);border-radius:6px;padding:12px 14px;font-family:'Space Mono',monospace;font-size:.82rem;color:var(--ink);line-height:1.6;resize:none;min-height:80px;box-shadow:inset 3px 3px 0 rgba(0,0,0,.06);outline:none;cursor:default;}
+.comic-select{width:100%;background:#fff;border:3px solid var(--ink);border-radius:6px;padding:10px 14px;font-family:'Space Mono',monospace;font-size:.82rem;color:var(--ink);outline:none;box-shadow:3px 3px 0 var(--ink);cursor:pointer;}
+.section-label{font-family:'Bangers',cursive;font-size:.95rem;letter-spacing:1px;color:var(--ink);margin-bottom:6px;text-transform:uppercase;}
+.btn-row{display:flex;flex-wrap:wrap;gap:10px;margin-top:14px;}
+.btn{font-family:'Bangers',cursive;font-size:1.1rem;letter-spacing:1px;border:3px solid var(--ink);border-radius:6px;padding:8px 20px;cursor:pointer;box-shadow:4px 4px 0 var(--ink);transition:transform .1s,box-shadow .1s;text-transform:uppercase;}
+.btn:active{transform:translate(2px,2px);box-shadow:2px 2px 0 var(--ink);}
+.btn-primary{background:var(--blue);color:#fff;}.btn-success{background:var(--green);color:#fff;}.btn-danger{background:var(--red);color:#fff;}.btn-neutral{background:var(--paper2);color:var(--ink);}.btn-purple{background:var(--purple);color:#fff;}
+.error-bubble{display:none;position:relative;background:#fff0f0;border:3px solid var(--red);border-radius:14px;padding:10px 14px;margin-top:12px;font-size:.9rem;font-weight:700;color:var(--red);}
+.error-bubble::before{content:'';position:absolute;top:-16px;left:22px;border-width:0 10px 16px;border-style:solid;border-color:transparent transparent var(--red);}
+.error-bubble::after{content:'';position:absolute;top:-11px;left:24px;border-width:0 8px 12px;border-style:solid;border-color:transparent transparent #fff0f0;}
+.error-bubble.show{display:block;}
+.divider{border:none;border-top:3px solid var(--ink);margin:16px 0;}
+.output-wrap{position:relative;}
+.copy-btn{position:absolute;top:8px;right:8px;font-family:'Bangers',cursive;font-size:.95rem;letter-spacing:1px;background:var(--ink);color:var(--yellow);border:2px solid var(--ink);border-radius:4px;padding:3px 10px;cursor:pointer;box-shadow:2px 2px 0 rgba(0,0,0,.4);transition:transform .1s,box-shadow .1s;}
+.copy-btn:active{transform:translate(1px,1px);box-shadow:1px 1px 0 rgba(0,0,0,.4);}
+.switch-row{display:flex;gap:10px;margin-bottom:16px;}
+.switch-btn{flex:1;font-family:'Bangers',cursive;font-size:1.1rem;letter-spacing:1px;border:3px solid var(--ink);border-radius:6px;padding:8px 16px;cursor:pointer;box-shadow:4px 4px 0 var(--ink);transition:transform .1s,box-shadow .1s;text-transform:uppercase;background:var(--paper2);color:var(--ink);}
+.switch-btn.active{background:var(--blue);color:#fff;}
+.switch-btn:active{transform:translate(2px,2px);box-shadow:2px 2px 0 var(--ink);}
+.form-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-bottom:12px;}
+.info-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:14px;}
+.info-box{background:var(--paper2);border:2px solid var(--ink);border-radius:6px;box-shadow:3px 3px 0 var(--ink);padding:10px 12px;}
+.info-box h4{font-family:'Bangers',cursive;font-size:.95rem;letter-spacing:1px;color:var(--blue);margin-bottom:6px;}
+.info-line{display:flex;justify-content:space-between;font-size:.78rem;padding:1px 0;gap:8px;}
+.info-line span:last-child{font-family:'Space Mono',monospace;font-size:.7rem;text-align:right;}
+.live-epoch-box{background:var(--paper2);border:3px solid var(--ink);border-radius:6px;box-shadow:4px 4px 0 var(--ink);padding:12px 16px;margin-top:12px;}
+.live-epoch-box h4{font-family:'Bangers',cursive;font-size:1rem;letter-spacing:1px;margin-bottom:8px;}
+.epoch-example{display:flex;justify-content:space-between;font-size:.82rem;padding:2px 0;}
+.epoch-example span:last-child{font-family:'Space Mono',monospace;font-weight:700;color:var(--blue);}
+@media(max-width:600px){
+  .form-grid{grid-template-columns:1fr;}
+  .info-grid{grid-template-columns:1fr;}
+  .switch-row{flex-direction:column;}
+  .hero{flex-direction:column;gap:10px;}
+  .hero-text h1{font-size:2rem;}
+}
+</style>
+</head>
+<body>
+<div class="paper-overlay"></div>
+<div class="page-wrap">
+
+  <div class="masthead">
+    <div class="masthead-logo">DEV<span>DUNIA</span> COMICS</div>
+    <div class="masthead-right">
+      <span class="issue-tag">EPOCH</span>
+      <a href="../index.html" class="back-link">&#9664; ALL TOOLS</a>
+    </div>
+  </div>
+
+  <div class="hero">
+    <div class="hero-icon">&#x1F570;</div>
+    <div class="hero-text">
+      <h1>Epoch Converter</h1>
+      <p>Convert between Unix epoch timestamps and human-readable dates. Supports both seconds and milliseconds. All conversion happens right in your browser!</p>
+      <div class="hero-badges">
+        <span class="badge badge-blue">CLIENT-SIDE</span>
+        <span class="badge badge-green">LIVE CLOCK</span>
+        <span class="badge badge-yellow">FREE</span>
+        <span class="badge badge-red">INSTANT</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="panel">
+    <div class="panel-header">
+      &#x1F501; CONVERSION MODE
+      <span class="panel-tag">SELECT</span>
+    </div>
+    <div class="panel-body">
+      <div class="switch-row">
+        <button id="epoch-to-date-btn" class="switch-btn active">&#x1F4C5; Epoch → Date</button>
+        <button id="date-to-epoch-btn" class="switch-btn">&#x23F0; Date → Epoch</button>
+      </div>
+
+      <!-- Epoch to Date -->
+      <div id="epoch-to-date-section">
+        <div class="section-label">Epoch Timestamp (seconds or ms)</div>
+        <input type="text" id="epoch-input" class="comic-input" placeholder="e.g. 1672531200">
+        <div class="btn-row">
+          <button id="convert-epoch-btn" class="btn btn-primary">&#x26A1; Convert to Date!</button>
+          <button id="current-time-btn-1" class="btn btn-purple">&#x23F1; Use Current Time</button>
+          <button id="clear-btn-1" class="btn btn-danger">&#x1F5D1; Clear</button>
+        </div>
+      </div>
+
+      <!-- Date to Epoch -->
+      <div id="date-to-epoch-section" style="display:none;">
+        <div class="form-grid">
+          <div>
+            <div class="section-label">Date</div>
+            <input type="date" id="date-input" class="comic-input">
+          </div>
+          <div>
+            <div class="section-label">Time</div>
+            <input type="time" id="time-input" step="1" class="comic-input">
+          </div>
+          <div>
+            <div class="section-label">Timezone</div>
+            <select id="timezone-select" class="comic-select">
+              <option value="local">Local Time</option>
+              <option value="utc" selected>UTC</option>
+            </select>
+          </div>
+        </div>
+        <div class="btn-row">
+          <button id="convert-date-btn" class="btn btn-success">&#x26A1; Convert to Epoch!</button>
+          <button id="current-time-btn-2" class="btn btn-purple">&#x23F1; Use Current Time</button>
+          <button id="clear-btn-2" class="btn btn-danger">&#x1F5D1; Clear</button>
+        </div>
+      </div>
+
+      <div id="error-bubble" class="error-bubble">
+        &#x1F4A5; <span id="error-msg">Invalid input!</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="panel" id="output-panel" style="display:none;">
+    <div class="panel-header">
+      &#x1F4E4; CONVERSION RESULT
+      <span class="panel-tag">OUTPUT</span>
+    </div>
+    <div class="panel-body">
+      <div class="output-wrap">
+        <textarea id="epoch-output" class="comic-textarea" rows="3" readonly></textarea>
+        <button id="copy-btn" class="copy-btn">&#x1F4CB; COPY</button>
+      </div>
+      <div class="info-grid" style="margin-top:14px;">
+        <div class="info-box">
+          <h4>Human-Readable</h4>
+          <div id="human-date" style="font-size:.82rem;line-height:1.5;"></div>
+        </div>
+        <div class="info-box">
+          <h4>Formats</h4>
+          <div class="info-line"><span>ISO 8601:</span><span id="iso-format">—</span></div>
+          <div class="info-line"><span>UTC:</span><span id="utc-format">—</span></div>
+          <div class="info-line"><span>Local:</span><span id="local-format">—</span></div>
+          <div class="info-line"><span>Timezone:</span><span id="tz-display">—</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="panel">
+    <div class="panel-header">
+      &#x1F4DA; COMMON EXAMPLES
+      <span class="panel-tag">REFERENCE</span>
+    </div>
+    <div class="panel-body">
+      <div class="live-epoch-box">
+        <h4>&#x1F4F6; Live Current Time</h4>
+        <div class="epoch-example"><span>Epoch:</span><span id="current-epoch-example">—</span></div>
+        <div class="epoch-example"><span>Date:</span><span id="current-date-example" style="color:var(--green);font-family:'Space Mono',monospace;font-size:.72rem;font-weight:700;">—</span></div>
+      </div>
+      <div style="height:12px;"></div>
+      <div class="epoch-example" style="padding:4px 0;"><span>January 1, 2020:</span><span>1577836800</span></div>
+      <div class="epoch-example" style="padding:4px 0;"><span>January 1, 2023:</span><span>1672531200</span></div>
+      <div class="epoch-example" style="padding:4px 0;"><span>Unix Epoch Start (1970):</span><span>0</span></div>
+      <div class="epoch-example" style="padding:4px 0;"><span>Y2K (Jan 1, 2000):</span><span>946684800</span></div>
+    </div>
+  </div>
+
+</div>
+<script>
+(function(){
+  var epochToDateBtn = document.getElementById('epoch-to-date-btn');
+  var dateToEpochBtn = document.getElementById('date-to-epoch-btn');
+  var epochToDateSection = document.getElementById('epoch-to-date-section');
+  var dateToEpochSection = document.getElementById('date-to-epoch-section');
+  var epochInput   = document.getElementById('epoch-input');
+  var dateInput    = document.getElementById('date-input');
+  var timeInput    = document.getElementById('time-input');
+  var tzSelect     = document.getElementById('timezone-select');
+  var convertEpoch = document.getElementById('convert-epoch-btn');
+  var convertDate  = document.getElementById('convert-date-btn');
+  var clear1       = document.getElementById('clear-btn-1');
+  var clear2       = document.getElementById('clear-btn-2');
+  var ct1          = document.getElementById('current-time-btn-1');
+  var ct2          = document.getElementById('current-time-btn-2');
+  var copyBtn      = document.getElementById('copy-btn');
+  var outPanel     = document.getElementById('output-panel');
+  var errBubble    = document.getElementById('error-bubble');
+  var errMsg       = document.getElementById('error-msg');
+  var epochOutput  = document.getElementById('epoch-output');
+  var humanDate    = document.getElementById('human-date');
+  var isoFmt       = document.getElementById('iso-format');
+  var utcFmt       = document.getElementById('utc-format');
+  var localFmt     = document.getElementById('local-format');
+  var tzDisplay    = document.getElementById('tz-display');
+  var curEpoch     = document.getElementById('current-epoch-example');
+  var curDate      = document.getElementById('current-date-example');
+
+  function showErr(msg){errMsg.textContent=msg;errBubble.classList.add('show');}
+  function hideErr(){errBubble.classList.remove('show');}
+  function hideOut(){outPanel.style.display='none';}
+
+  function displayResult(date, epoch, mode) {
+    var readable = date.toUTCString();
+    epochOutput.value = mode==='e2d'
+      ? 'Epoch: '+Math.floor(epoch)+'\nDate: '+readable
+      : 'Date: '+readable+'\nEpoch: '+epoch;
+    humanDate.textContent = readable;
+    isoFmt.textContent = date.toISOString();
+    utcFmt.textContent = date.toUTCString();
+    localFmt.textContent = date.toLocaleDateString('en-US',{weekday:'short',month:'short',day:'numeric',year:'numeric',hour:'2-digit',minute:'2-digit',second:'2-digit',hour12:false});
+    var tzStr = date.toString().match(/\(([^)]+)\)/);
+    tzDisplay.textContent = tzStr ? tzStr[1] : 'GMT'+((-date.getTimezoneOffset()/60)>=0?'+':'')+(-date.getTimezoneOffset()/60);
+    outPanel.style.display = 'block';
+    hideErr();
+  }
+
+  function doEpochToDate(){
+    var raw = epochInput.value.trim();
+    if(!raw){showErr('Please enter an epoch timestamp!');hideOut();return;}
+    if(!/^-?\d+$/.test(raw)){showErr('Only numeric timestamps allowed!');hideOut();return;}
+    var n = parseInt(raw,10);
+    var ts = raw.length>10 ? n : n*1000;
+    var d = new Date(ts);
+    if(isNaN(d.getTime())){showErr('Invalid timestamp!');hideOut();return;}
+    displayResult(d, n, 'e2d');
+  }
+
+  function doDateToEpoch(){
+    var dv = dateInput.value, tv = timeInput.value;
+    if(!dv||!tv){showErr('Please select both date and time!');hideOut();return;}
+    var isUTC = tzSelect.value==='utc';
+    var dt = new Date(isUTC ? dv+'T'+tv+'Z' : dv+'T'+tv);
+    if(isNaN(dt.getTime())){showErr('Invalid date/time!');hideOut();return;}
+    var ep = Math.floor(dt.getTime()/1000);
+    epochInput.value = ep;
+    displayResult(dt, ep, 'd2e');
+  }
+
+  function setCurrentTime(){
+    var now = new Date();
+    epochInput.value = Math.floor(now.getTime()/1000);
+    var y=now.getFullYear(), mo=String(now.getMonth()+1).padStart(2,'0'), d=String(now.getDate()).padStart(2,'0');
+    dateInput.value = y+'-'+mo+'-'+d;
+    var h=String(now.getHours()).padStart(2,'0'), m=String(now.getMinutes()).padStart(2,'0'), s=String(now.getSeconds()).padStart(2,'0');
+    timeInput.value = h+':'+m+':'+s;
+  }
+
+  function switchMode(mode){
+    if(mode==='e2d'){
+      epochToDateBtn.classList.add('active'); dateToEpochBtn.classList.remove('active');
+      epochToDateSection.style.display=''; dateToEpochSection.style.display='none';
+    } else {
+      dateToEpochBtn.classList.add('active'); epochToDateBtn.classList.remove('active');
+      dateToEpochSection.style.display=''; epochToDateSection.style.display='none';
+    }
+    hideOut(); hideErr();
+  }
+
+  epochToDateBtn.addEventListener('click',function(){switchMode('e2d');});
+  dateToEpochBtn.addEventListener('click',function(){switchMode('d2e');});
+  convertEpoch.addEventListener('click', doEpochToDate);
+  convertDate.addEventListener('click', doDateToEpoch);
+  ct1.addEventListener('click',function(){setCurrentTime();doEpochToDate();});
+  ct2.addEventListener('click',function(){setCurrentTime();doDateToEpoch();});
+  clear1.addEventListener('click',function(){epochInput.value='';hideOut();hideErr();});
+  clear2.addEventListener('click',function(){dateInput.value='';timeInput.value='';hideOut();hideErr();});
+  epochInput.addEventListener('keypress',function(e){if(e.key==='Enter')doEpochToDate();});
+
+  copyBtn.addEventListener('click',function(){
+    epochOutput.select();
+    try{document.execCommand('copy');}catch(e){}
+    if(navigator.clipboard) navigator.clipboard.writeText(epochOutput.value).catch(function(){});
+    var orig=copyBtn.textContent;
+    copyBtn.textContent='✔ COPIED!';
+    copyBtn.style.background='var(--green)';
+    setTimeout(function(){copyBtn.textContent=orig;copyBtn.style.background='var(--ink)';},1800);
+  });
+
+  function updateLive(){
+    var now = new Date();
+    curEpoch.textContent = Math.floor(now.getTime()/1000);
+    curDate.textContent  = now.toUTCString();
+  }
+  setInterval(updateLive,1000);
+  updateLive();
+
+  setCurrentTime();
+  doEpochToDate();
+})();
+</script>
+</body>
+</html>

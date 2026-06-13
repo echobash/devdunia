@@ -1,0 +1,935 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Code Image Generator — DevDunia Comics</title>
+<meta name="description" content="Create beautiful code screenshots. Paste your code, choose a syntax theme, customize the background, and download a stunning PNG image perfect for sharing.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://devdunia.com/code-image-generator.html">
+<meta property="og:title" content="Code Image Generator — DevDunia Comics">
+<meta property="og:description" content="Create beautiful code screenshots. Paste your code, choose a syntax theme, and download a stunning PNG image.">
+<meta property="og:image" content="https://devdunia.com/images/logo.png">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Bangers&family=Comic+Neue:wght@400;700&family=Space+Mono:wght@400;700&family=Fira+Code:wght@400;500&family=Source+Code+Pro:wght@400;500&display=swap" rel="stylesheet">
+
+<!-- Highlight.js -->
+<link rel="stylesheet" id="hljs-theme" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/atom-one-dark.min.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+
+<!-- html2canvas -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "WebApplication",
+  "name": "Code Image Generator",
+  "url": "https://devdunia.com/code-image-generator.html",
+  "description": "Create beautiful code screenshots. Paste your code, choose a syntax theme, and download a stunning PNG image.",
+  "applicationCategory": "DeveloperApplication",
+  "operatingSystem": "Any",
+  "browserRequirements": "Requires JavaScript",
+  "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" },
+  "creator": { "@type": "Organization", "name": "DevDunia", "url": "https://devdunia.com" }
+}
+</script>
+
+<style>
+:root {
+  --ink: #1a1410;
+  --paper: #fdf3e3;
+  --paper2: #fbe9cc;
+  --red: #e63946;
+  --blue: #1d6fb8;
+  --yellow: #ffd23f;
+  --green: #3fa34d;
+  --pink: #ff6b9d;
+  --purple: #8a4fff;
+  --orange: #ff8c42;
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: 'Comic Neue', cursive;
+  font-weight: 400;
+  color: var(--ink);
+  background-color: var(--paper);
+  background-image: radial-gradient(var(--ink) 0.5px, transparent 0.6px);
+  background-size: 14px 14px;
+  background-attachment: fixed;
+  min-height: 100vh;
+}
+
+.paper-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(253,243,227,.78);
+  pointer-events: none;
+  z-index: 0;
+}
+
+.page-wrap {
+  position: relative;
+  z-index: 1;
+  max-width: 960px;
+  margin: 0 auto;
+  padding: 0 16px 60px;
+}
+
+/* ── MASTHEAD ── */
+.masthead {
+  background: var(--purple);
+  border: 4px solid var(--ink);
+  border-radius: 6px;
+  box-shadow: 7px 7px 0 var(--ink);
+  margin: 18px 0 28px;
+  padding: 10px 20px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.masthead-logo {
+  font-family: 'Bangers', cursive;
+  font-size: 1.9rem;
+  letter-spacing: 2px;
+  color: #fff;
+  text-shadow: 3px 3px 0 var(--ink);
+  line-height: 1;
+}
+.masthead-logo span { color: var(--yellow); }
+.masthead-right { display: flex; align-items: center; gap: 8px; }
+.issue-tag {
+  font-family: 'Bangers', cursive;
+  font-size: .95rem;
+  background: var(--yellow);
+  color: var(--ink);
+  padding: 3px 10px;
+  border-radius: 4px;
+  border: 2px solid var(--ink);
+  letter-spacing: 1px;
+}
+.back-link {
+  font-family: 'Bangers', cursive;
+  font-size: .95rem;
+  color: #fff;
+  text-decoration: none;
+  background: var(--ink);
+  padding: 3px 10px;
+  border-radius: 4px;
+  letter-spacing: 1px;
+  transition: opacity .15s;
+}
+.back-link:hover { opacity: .75; }
+
+/* ── HERO ── */
+.hero {
+  display: flex;
+  align-items: flex-start;
+  gap: 20px;
+  background: var(--paper2);
+  border: 4px solid var(--ink);
+  border-radius: 6px;
+  box-shadow: 7px 7px 0 var(--ink);
+  padding: 20px 24px;
+  margin-bottom: 28px;
+  transform: rotate(-0.4deg);
+}
+.hero-icon { font-size: 3rem; line-height: 1; flex-shrink: 0; filter: drop-shadow(3px 3px 0 var(--ink)); }
+.hero-text h1 {
+  font-family: 'Bangers', cursive;
+  font-size: 2.8rem;
+  letter-spacing: 2px;
+  color: var(--purple);
+  -webkit-text-stroke: 1px var(--ink);
+  text-shadow: 4px 4px 0 var(--ink);
+  line-height: 1;
+  text-transform: uppercase;
+}
+.hero-text p { font-size: .95rem; margin-top: 6px; line-height: 1.5; max-width: 480px; }
+.hero-badges { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 10px; }
+.badge {
+  font-family: 'Space Mono', monospace;
+  font-size: .65rem;
+  font-weight: 700;
+  padding: 3px 8px;
+  border: 2px solid var(--ink);
+  border-radius: 4px;
+  box-shadow: 2px 2px 0 var(--ink);
+}
+.badge-blue   { background: var(--blue);   color: #fff; }
+.badge-green  { background: var(--green);  color: #fff; }
+.badge-yellow { background: var(--yellow); color: var(--ink); }
+.badge-purple { background: var(--purple); color: #fff; }
+.badge-pink   { background: var(--pink);   color: #fff; }
+
+/* ── PANEL ── */
+.panel {
+  background: var(--paper);
+  border: 4px solid var(--ink);
+  border-radius: 6px;
+  box-shadow: 7px 7px 0 var(--ink);
+  overflow: hidden;
+  margin-bottom: 22px;
+}
+.panel-header {
+  background: var(--ink);
+  color: var(--yellow);
+  font-family: 'Bangers', cursive;
+  font-size: 1.2rem;
+  letter-spacing: 2px;
+  padding: 8px 16px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+.panel-header .panel-tag {
+  font-family: 'Space Mono', monospace;
+  font-size: .65rem;
+  font-weight: 700;
+  background: var(--yellow);
+  color: var(--ink);
+  padding: 2px 7px;
+  border-radius: 3px;
+}
+.panel-body { padding: 18px 20px; }
+
+/* ── TEXTAREA ── */
+.comic-textarea {
+  width: 100%;
+  background: #1a1a1a;
+  border: 3px solid var(--ink);
+  border-radius: 6px;
+  padding: 12px 14px;
+  font-family: 'Fira Code', 'Space Mono', monospace;
+  font-size: .82rem;
+  color: #f8f8f2;
+  line-height: 1.6;
+  resize: vertical;
+  min-height: 160px;
+  box-shadow: inset 3px 3px 0 rgba(0,0,0,.3);
+  outline: none;
+  transition: border-color .15s;
+  tab-size: 4;
+}
+.comic-textarea:focus { border-color: var(--purple); }
+.comic-textarea::placeholder { color: #555; font-style: italic; }
+
+/* ── SELECT / INPUT ── */
+.comic-select, .comic-input-text {
+  background: #fff;
+  border: 3px solid var(--ink);
+  border-radius: 6px;
+  padding: 6px 10px;
+  font-family: 'Space Mono', monospace;
+  font-size: .78rem;
+  color: var(--ink);
+  box-shadow: 3px 3px 0 var(--ink);
+  outline: none;
+  cursor: pointer;
+  transition: border-color .15s;
+  min-width: 0;
+}
+.comic-select:focus, .comic-input-text:focus { border-color: var(--purple); }
+
+/* ── RANGE ── */
+input[type=range] { accent-color: var(--purple); cursor: pointer; }
+
+/* ── TOGGLE ── */
+.toggle-track {
+  width: 42px; height: 22px;
+  background: var(--paper2);
+  border: 3px solid var(--ink);
+  border-radius: 999px;
+  position: relative;
+  cursor: pointer;
+  box-shadow: 2px 2px 0 var(--ink);
+  transition: background 0.2s;
+  flex-shrink: 0;
+}
+.toggle-track.on { background: var(--purple); }
+.toggle-thumb {
+  position: absolute;
+  top: 2px; left: 2px;
+  width: 12px; height: 12px;
+  border-radius: 50%;
+  background: var(--ink);
+  transition: transform 0.2s;
+}
+.toggle-track.on .toggle-thumb { transform: translateX(20px); }
+
+/* ── BUTTONS ── */
+.btn-row { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 14px; }
+.btn {
+  font-family: 'Bangers', cursive;
+  font-size: 1.1rem;
+  letter-spacing: 1px;
+  border: 3px solid var(--ink);
+  border-radius: 6px;
+  padding: 8px 20px;
+  cursor: pointer;
+  box-shadow: 4px 4px 0 var(--ink);
+  transition: transform .1s, box-shadow .1s;
+  text-transform: uppercase;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+.btn:active { transform: translate(2px,2px); box-shadow: 2px 2px 0 var(--ink); }
+.btn:disabled { opacity: .6; cursor: not-allowed; }
+.btn-primary { background: var(--blue);   color: #fff; }
+.btn-success { background: var(--green);  color: #fff; }
+.btn-danger  { background: var(--red);    color: #fff; }
+.btn-neutral { background: var(--paper2); color: var(--ink); }
+.btn-purple  { background: var(--purple); color: #fff; }
+.btn-pink    { background: var(--pink);   color: #fff; }
+
+/* ── SECTION LABEL ── */
+.section-label {
+  font-family: 'Bangers', cursive;
+  font-size: .95rem;
+  letter-spacing: 1px;
+  color: var(--ink);
+  margin-bottom: 6px;
+  text-transform: uppercase;
+}
+
+/* ── TOOLBAR OPTIONS ── */
+.toolbar-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 14px;
+  align-items: flex-end;
+}
+.tb-group { display: flex; flex-direction: column; gap: 4px; min-width: 0; }
+.tb-label {
+  font-family: 'Bangers', cursive;
+  font-size: .85rem;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  color: var(--ink);
+}
+.toggle-row { display: flex; align-items: center; gap: 8px; font-size: .85rem; font-family: 'Comic Neue', cursive; }
+
+/* ── BACKGROUND SWATCHES ── */
+.bg-swatches { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; margin-top: 10px; }
+.bg-swatch {
+  width: 28px; height: 28px;
+  border-radius: 50%;
+  cursor: pointer;
+  border: 3px solid transparent;
+  transition: transform 0.14s, border-color 0.14s;
+  flex-shrink: 0;
+  outline: none;
+  box-shadow: 2px 2px 0 var(--ink);
+}
+.bg-swatch:hover { transform: scale(1.15); }
+.bg-swatch.active {
+  border-color: var(--ink);
+  box-shadow: 3px 3px 0 var(--ink);
+}
+
+/* ── CODE WINDOW (export canvas) ── */
+#export-canvas-wrapper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 48px;
+  min-height: 280px;
+  transition: background 0.35s;
+  cursor: default;
+}
+
+#code-window {
+  border-radius: 12px;
+  box-shadow: 0 32px 96px rgba(0,0,0,0.55), 0 0 0 1px rgba(255,255,255,0.07);
+  overflow: hidden;
+  min-width: 280px;
+  max-width: 100%;
+  background: #282c34;
+  position: relative;
+}
+
+#window-titlebar {
+  display: flex;
+  align-items: center;
+  padding: 13px 16px;
+  background: rgba(0,0,0,0.28);
+  position: relative;
+}
+
+.window-dots { display: flex; gap: 8px; z-index: 1; }
+.dot { width: 13px; height: 13px; border-radius: 50%; flex-shrink: 0; }
+.dot-red    { background: #ff5f57; }
+.dot-yellow { background: #febc2e; }
+.dot-green  { background: #28c840; }
+
+#window-title-display {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 12px;
+  color: rgba(255,255,255,0.42);
+  font-family: 'Fira Code', 'Space Mono', monospace;
+  pointer-events: none;
+  white-space: nowrap;
+}
+
+#code-display {
+  padding: 22px 26px;
+  overflow-x: auto;
+}
+#code-display pre { margin: 0; background: transparent !important; padding: 0 !important; }
+#code-display code { background: transparent !important; padding: 0 !important; border-radius: 0 !important; font-size: inherit !important; font-family: inherit !important; display: block; }
+
+/* ── SPINNER ── */
+@keyframes spin { to { transform: rotate(360deg); } }
+.spin { animation: spin 0.8s linear infinite; display: inline-block; }
+
+/* ── STATUS ── */
+#status-msg { display: none; font-family: 'Comic Neue', cursive; }
+#status-msg.visible { display: block; }
+
+/* ── MOBILE ── */
+@media (max-width: 600px) {
+  .toolbar-grid { gap: 10px; }
+  .hero { flex-direction: column; gap: 10px; }
+  .hero-text h1 { font-size: 2rem; }
+  #export-canvas-wrapper { padding: 20px; }
+}
+</style>
+</head>
+<body>
+<div class="paper-overlay"></div>
+<div class="page-wrap">
+
+  <!-- MASTHEAD -->
+  <div class="masthead">
+    <div class="masthead-logo">DEV<span>DUNIA</span> COMICS</div>
+    <div class="masthead-right">
+      <span class="issue-tag">CODE IMG</span>
+      <a href="../index.html" class="back-link">&#9664; ALL TOOLS</a>
+    </div>
+  </div>
+
+  <!-- HERO -->
+  <div class="hero">
+    <div class="hero-icon">&#x1F4F8;</div>
+    <div class="hero-text">
+      <h1>Code Image Generator</h1>
+      <p>Paste your code, pick a theme and gradient background, then download a beautiful PNG — like Carbon.sh, but comic-book style!</p>
+      <div class="hero-badges">
+        <span class="badge badge-purple">10 THEMES</span>
+        <span class="badge badge-pink">PNG EXPORT</span>
+        <span class="badge badge-green">COPY IMAGE</span>
+        <span class="badge badge-blue">LINE NUMBERS</span>
+        <span class="badge badge-yellow">FREE</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- TOOLBAR PANEL -->
+  <div class="panel">
+    <div class="panel-header">
+      &#x1F3A8; CUSTOMIZE YOUR CODE WINDOW
+      <span class="panel-tag">TOOLBAR</span>
+    </div>
+    <div class="panel-body">
+      <div class="toolbar-grid">
+
+        <div class="tb-group">
+          <div class="tb-label">Theme</div>
+          <select id="theme-select" class="comic-select">
+            <option value="atom-one-dark">Atom One Dark</option>
+            <option value="dracula">Dracula</option>
+            <option value="monokai">Monokai</option>
+            <option value="github-dark">GitHub Dark</option>
+            <option value="night-owl">Night Owl</option>
+            <option value="vs2015">VS Code Dark</option>
+            <option value="base16/solarized-dark">Solarized Dark</option>
+            <option value="tokyo-night-dark">Tokyo Night</option>
+            <option value="agate">Agate</option>
+            <option value="nord">Nord</option>
+          </select>
+        </div>
+
+        <div class="tb-group">
+          <div class="tb-label">Language</div>
+          <select id="lang-select" class="comic-select">
+            <option value="auto">Auto Detect</option>
+            <option value="javascript">JavaScript</option>
+            <option value="typescript">TypeScript</option>
+            <option value="python">Python</option>
+            <option value="go">Go</option>
+            <option value="rust">Rust</option>
+            <option value="java">Java</option>
+            <option value="c">C</option>
+            <option value="cpp">C++</option>
+            <option value="csharp">C#</option>
+            <option value="php">PHP</option>
+            <option value="ruby">Ruby</option>
+            <option value="swift">Swift</option>
+            <option value="kotlin">Kotlin</option>
+            <option value="bash">Bash / Shell</option>
+            <option value="sql">SQL</option>
+            <option value="css">CSS</option>
+            <option value="html">HTML</option>
+            <option value="json">JSON</option>
+            <option value="yaml">YAML</option>
+            <option value="markdown">Markdown</option>
+            <option value="plaintext">Plain Text</option>
+          </select>
+        </div>
+
+        <div class="tb-group">
+          <div class="tb-label">Font</div>
+          <select id="font-select" class="comic-select">
+            <option value="'JetBrains Mono',monospace">JetBrains Mono</option>
+            <option value="'Fira Code',monospace">Fira Code</option>
+            <option value="'Source Code Pro',monospace">Source Code Pro</option>
+            <option value="'Courier New',monospace">Courier New</option>
+          </select>
+        </div>
+
+        <div class="tb-group">
+          <div class="tb-label">Size <span id="font-size-val">14</span>px</div>
+          <input type="range" id="font-size" min="11" max="22" value="14" style="width:110px;margin-top:4px;">
+        </div>
+
+        <div class="tb-group">
+          <div class="tb-label">Padding <span id="padding-val">48</span>px</div>
+          <input type="range" id="padding-range" min="16" max="96" value="48" step="8" style="width:110px;margin-top:4px;">
+        </div>
+
+        <div class="tb-group">
+          <div class="tb-label">Window Title</div>
+          <input type="text" id="window-title" value="untitled" maxlength="60" class="comic-input-text" style="width:140px;" placeholder="untitled">
+        </div>
+
+        <div class="tb-group">
+          <div class="tb-label">Line Nums</div>
+          <div class="toggle-row">
+            <div class="toggle-track" id="ln-track" onclick="toggleLineNumbers()">
+              <div class="toggle-thumb" id="ln-thumb"></div>
+            </div>
+            <span id="ln-label">Off</span>
+          </div>
+        </div>
+
+        <div class="tb-group">
+          <div class="tb-label">Shadow</div>
+          <div class="toggle-row">
+            <div class="toggle-track on" id="shadow-track" onclick="toggleShadow()">
+              <div class="toggle-thumb" id="shadow-thumb"></div>
+            </div>
+            <span id="shadow-label">On</span>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Background swatches -->
+      <div style="margin-top:14px;">
+        <div class="tb-label" style="margin-bottom:6px;">Background</div>
+        <div class="bg-swatches">
+          <button class="bg-swatch active" title="Purple Blue"
+                  style="background:linear-gradient(135deg,#667eea,#764ba2)"
+                  data-bg="linear-gradient(135deg,#667eea 0%,#764ba2 100%)"></button>
+          <button class="bg-swatch" title="Pink Red"
+                  style="background:linear-gradient(135deg,#f093fb,#f5576c)"
+                  data-bg="linear-gradient(135deg,#f093fb 0%,#f5576c 100%)"></button>
+          <button class="bg-swatch" title="Blue Cyan"
+                  style="background:linear-gradient(135deg,#4facfe,#00f2fe)"
+                  data-bg="linear-gradient(135deg,#4facfe 0%,#00f2fe 100%)"></button>
+          <button class="bg-swatch" title="Green Teal"
+                  style="background:linear-gradient(135deg,#43e97b,#38f9d7)"
+                  data-bg="linear-gradient(135deg,#43e97b 0%,#38f9d7 100%)"></button>
+          <button class="bg-swatch" title="Sunset"
+                  style="background:linear-gradient(135deg,#fa709a,#fee140)"
+                  data-bg="linear-gradient(135deg,#fa709a 0%,#fee140 100%)"></button>
+          <button class="bg-swatch" title="Ocean Night"
+                  style="background:linear-gradient(135deg,#30cfd0,#330867)"
+                  data-bg="linear-gradient(135deg,#30cfd0 0%,#330867 100%)"></button>
+          <button class="bg-swatch" title="Aurora"
+                  style="background:linear-gradient(135deg,#a8edea,#fed6e3)"
+                  data-bg="linear-gradient(135deg,#a8edea 0%,#fed6e3 100%)"></button>
+          <button class="bg-swatch" title="Deep Space"
+                  style="background:linear-gradient(135deg,#0f0c29,#302b63,#24243e)"
+                  data-bg="linear-gradient(135deg,#0f0c29 0%,#302b63 50%,#24243e 100%)"></button>
+          <button class="bg-swatch" title="Slate Dark"
+                  style="background:linear-gradient(135deg,#1e293b,#0f172a)"
+                  data-bg="linear-gradient(135deg,#1e293b 0%,#0f172a 100%)"></button>
+          <button class="bg-swatch" title="Pure Black"
+                  style="background:#000"
+                  data-bg="#000000"></button>
+          <button class="bg-swatch" title="Crimson"
+                  style="background:linear-gradient(135deg,#c0392b,#8e44ad)"
+                  data-bg="linear-gradient(135deg,#c0392b 0%,#8e44ad 100%)"></button>
+          <button class="bg-swatch" title="Emerald Forest"
+                  style="background:linear-gradient(135deg,#134e5e,#71b280)"
+                  data-bg="linear-gradient(135deg,#134e5e 0%,#71b280 100%)"></button>
+          <!-- Custom colour -->
+          <label class="relative cursor-pointer" title="Custom colour" style="position:relative;cursor:pointer;">
+            <div style="width:28px;height:28px;border-radius:50%;border:3px dashed #aaa;display:flex;align-items:center;justify-content:center;overflow:hidden;box-shadow:2px 2px 0 var(--ink);font-size:14px;color:#888;">
+              +
+              <input type="color" id="custom-bg" value="#1a1a2e" style="position:absolute;opacity:0;width:100%;height:100%;cursor:pointer;">
+            </div>
+          </label>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- PREVIEW CANVAS PANEL -->
+  <div class="panel">
+    <div class="panel-header">
+      &#x1F4BB; CODE WINDOW PREVIEW
+      <span class="panel-tag">PREVIEW</span>
+    </div>
+    <div style="overflow:hidden;background:#1a1410;">
+      <!-- This entire div gets captured by html2canvas -->
+      <div id="export-canvas-wrapper">
+        <div id="code-window">
+          <!-- Title bar -->
+          <div id="window-titlebar">
+            <div class="window-dots">
+              <div class="dot dot-red"></div>
+              <div class="dot dot-yellow"></div>
+              <div class="dot dot-green"></div>
+            </div>
+            <div id="window-title-display">untitled</div>
+          </div>
+          <!-- Code area -->
+          <div id="code-display">
+            <pre><code id="highlighted-code" class="hljs"></code></pre>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- CODE INPUT PANEL -->
+  <div class="panel">
+    <div class="panel-header">
+      &#x270F;&#xFE0F; PASTE YOUR CODE
+      <span class="panel-tag">INPUT</span>
+    </div>
+    <div class="panel-body">
+      <textarea
+        id="code-input"
+        class="comic-textarea"
+        rows="10"
+        spellcheck="false"
+        autocorrect="off"
+        autocapitalize="off"
+        placeholder="// paste your code here..."></textarea>
+    </div>
+  </div>
+
+  <!-- ACTIONS -->
+  <div class="btn-row" style="margin-bottom:22px;">
+    <button id="download-btn" class="btn btn-purple">
+      <span id="dl-icon">&#x1F4E5;</span>
+      <span id="dl-text">Download PNG</span>
+    </button>
+    <button id="copy-img-btn" class="btn btn-pink">
+      <span id="ci-icon">&#x1F4CB;</span>
+      <span id="ci-text">Copy Image</span>
+    </button>
+    <button id="clear-btn" class="btn btn-danger">&#x1F5D1; Clear</button>
+    <button id="reset-btn" class="btn btn-neutral">&#x21BA; Reset All</button>
+  </div>
+
+  <!-- STATUS -->
+  <div id="status-msg" class="panel" style="display:none;">
+    <div class="panel-body" style="text-align:center;font-family:'Bangers',cursive;font-size:1.1rem;letter-spacing:1px;" id="status-inner"></div>
+  </div>
+
+</div><!-- /page-wrap -->
+
+<script>
+// ─────────────────────────────────────────────
+//  Constants (same as original)
+// ─────────────────────────────────────────────
+const HLJS_CDN = 'https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/';
+
+const THEME_BG = {
+    'atom-one-dark':         '#282c34',
+    'dracula':               '#282a36',
+    'monokai':               '#272822',
+    'github-dark':           '#0d1117',
+    'night-owl':             '#011627',
+    'vs2015':                '#1e1e1e',
+    'base16/solarized-dark': '#002b36',
+    'tokyo-night-dark':      '#1a1b26',
+    'agate':                 '#333333',
+    'nord':                  '#2e3440',
+};
+
+const DEFAULT_CODE =
+`const pluckDeep = key => obj =>
+  key.split('.').reduce((acc, key) => acc[key], obj)
+
+const compose = (...fns) => res =>
+  fns.reduce((accum, next) => next(accum), res)
+
+const unfold = (f, seed) => {
+  const go = (f, seed, acc) => {
+    const res = f(seed)
+    return res
+      ? go(f, res[1], acc.concat([res[0]]))
+      : acc
+  }
+  return go(f, seed, [])
+}`;
+
+// ─────────────────────────────────────────────
+//  Element refs
+// ─────────────────────────────────────────────
+const codeInput        = document.getElementById('code-input');
+const highlightedCode  = document.getElementById('highlighted-code');
+const codeDisplay      = document.getElementById('code-display');
+const codeWindow       = document.getElementById('code-window');
+const canvasWrapper    = document.getElementById('export-canvas-wrapper');
+const hljsThemeLink    = document.getElementById('hljs-theme');
+const themeSelect      = document.getElementById('theme-select');
+const langSelect       = document.getElementById('lang-select');
+const fontSelect       = document.getElementById('font-select');
+const fontSizeInput    = document.getElementById('font-size');
+const fontSizeVal      = document.getElementById('font-size-val');
+const paddingInput     = document.getElementById('padding-range');
+const paddingVal       = document.getElementById('padding-val');
+const windowTitleInput = document.getElementById('window-title');
+const windowTitleDisp  = document.getElementById('window-title-display');
+const lnTrack          = document.getElementById('ln-track');
+const shadowTrack      = document.getElementById('shadow-track');
+
+// ─────────────────────────────────────────────
+//  State
+// ─────────────────────────────────────────────
+let lineNumbers   = false;
+let shadowEnabled = true;
+let currentBg     = 'linear-gradient(135deg,#667eea 0%,#764ba2 100%)';
+
+// ─────────────────────────────────────────────
+//  Init
+// ─────────────────────────────────────────────
+codeInput.value = DEFAULT_CODE;
+canvasWrapper.style.background = currentBg;
+refreshHighlight();
+
+// ─────────────────────────────────────────────
+//  Syntax highlight (same as original)
+// ─────────────────────────────────────────────
+function refreshHighlight() {
+    const raw  = codeInput.value || '// paste your code here...';
+    const lang = langSelect.value;
+    let result;
+    try {
+        result = lang === 'auto'
+            ? hljs.highlightAuto(raw)
+            : hljs.highlight(raw, { language: lang, ignoreIllegals: true });
+    } catch (_) {
+        result = hljs.highlightAuto(raw);
+    }
+
+    if (lineNumbers) {
+        const lines = result.value.split('\n');
+        if (lines[lines.length - 1] === '') lines.pop();
+        highlightedCode.innerHTML = lines.map((line, i) =>
+            `<span style="display:block"><span style="display:inline-block;width:2ch;` +
+            `margin-right:18px;color:rgba(255,255,255,0.25);text-align:right;` +
+            `user-select:none;-webkit-user-select:none">${i + 1}</span>${line}</span>`
+        ).join('');
+    } else {
+        highlightedCode.innerHTML = result.value;
+    }
+}
+
+function applyTheme(theme) {
+    hljsThemeLink.href = HLJS_CDN + theme + '.min.css';
+    codeWindow.style.background = THEME_BG[theme] || '#282c34';
+}
+
+function applyFont() {
+    const f = fontSelect.value;
+    const s = fontSizeInput.value + 'px';
+    codeDisplay.style.fontFamily = f;
+    codeDisplay.style.fontSize   = s;
+    fontSizeVal.textContent       = fontSizeInput.value;
+}
+
+function applyPadding() {
+    const p = paddingInput.value + 'px';
+    canvasWrapper.style.padding = p;
+    paddingVal.textContent       = paddingInput.value;
+}
+
+function toggleLineNumbers() {
+    lineNumbers = !lineNumbers;
+    lnTrack.classList.toggle('on', lineNumbers);
+    document.getElementById('ln-label').textContent = lineNumbers ? 'On' : 'Off';
+    refreshHighlight();
+}
+
+function toggleShadow() {
+    shadowEnabled = !shadowEnabled;
+    shadowTrack.classList.toggle('on', shadowEnabled);
+    document.getElementById('shadow-label').textContent = shadowEnabled ? 'On' : 'Off';
+    codeWindow.style.boxShadow = shadowEnabled
+        ? '0 32px 96px rgba(0,0,0,0.55), 0 0 0 1px rgba(255,255,255,0.07)'
+        : 'none';
+}
+
+function applyBg(bg) {
+    currentBg = bg;
+    canvasWrapper.style.background = bg;
+}
+
+document.querySelectorAll('.bg-swatch').forEach(btn => {
+    btn.addEventListener('click', () => {
+        document.querySelectorAll('.bg-swatch').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        applyBg(btn.dataset.bg);
+    });
+});
+
+document.getElementById('custom-bg').addEventListener('input', function () {
+    document.querySelectorAll('.bg-swatch').forEach(b => b.classList.remove('active'));
+    applyBg(this.value);
+});
+
+// ─────────────────────────────────────────────
+//  Event wiring
+// ─────────────────────────────────────────────
+codeInput.addEventListener('input', refreshHighlight);
+themeSelect.addEventListener('change', () => { applyTheme(themeSelect.value); refreshHighlight(); });
+langSelect.addEventListener('change', refreshHighlight);
+fontSelect.addEventListener('change', applyFont);
+fontSizeInput.addEventListener('input', applyFont);
+paddingInput.addEventListener('input', applyPadding);
+windowTitleInput.addEventListener('input', () => {
+    windowTitleDisp.textContent = windowTitleInput.value.trim() || 'untitled';
+});
+
+document.getElementById('clear-btn').addEventListener('click', () => {
+    codeInput.value = '';
+    refreshHighlight();
+});
+
+document.getElementById('reset-btn').addEventListener('click', () => {
+    codeInput.value             = DEFAULT_CODE;
+    themeSelect.value           = 'atom-one-dark';
+    langSelect.value            = 'auto';
+    fontSelect.value            = "'JetBrains Mono',monospace";
+    fontSizeInput.value         = 14;
+    paddingInput.value          = 48;
+    windowTitleInput.value      = 'untitled';
+    windowTitleDisp.textContent = 'untitled';
+    lineNumbers   = false;
+    shadowEnabled = true;
+    lnTrack.classList.remove('on');
+    shadowTrack.classList.add('on');
+    document.getElementById('ln-label').textContent = 'Off';
+    document.getElementById('shadow-label').textContent = 'On';
+    currentBg = 'linear-gradient(135deg,#667eea 0%,#764ba2 100%)';
+    canvasWrapper.style.background = currentBg;
+    document.querySelectorAll('.bg-swatch').forEach(b => b.classList.remove('active'));
+    document.querySelector('.bg-swatch[title="Purple Blue"]').classList.add('active');
+    applyTheme('atom-one-dark');
+    applyFont();
+    applyPadding();
+    codeWindow.style.boxShadow = '0 32px 96px rgba(0,0,0,0.55), 0 0 0 1px rgba(255,255,255,0.07)';
+    refreshHighlight();
+});
+
+// ─────────────────────────────────────────────
+//  Status
+// ─────────────────────────────────────────────
+function showStatus(msg, type) {
+    const el    = document.getElementById('status-msg');
+    const inner = document.getElementById('status-inner');
+    el.style.display = 'block';
+    inner.textContent = msg;
+    inner.style.color = type === 'success' ? 'var(--green)' : 'var(--red)';
+    clearTimeout(el._t);
+    el._t = setTimeout(() => { el.style.display = 'none'; }, 3500);
+}
+
+// ─────────────────────────────────────────────
+//  Export helpers (same as original)
+// ─────────────────────────────────────────────
+async function renderCanvas() {
+    await document.fonts.ready;
+    return html2canvas(canvasWrapper, {
+        scale: Math.max(window.devicePixelRatio || 1, 2) * 1.5,
+        useCORS: true,
+        allowTaint: false,
+        backgroundColor: null,
+        logging: false,
+        imageTimeout: 8000,
+    });
+}
+
+// ─────────────────────────────────────────────
+//  Download PNG
+// ─────────────────────────────────────────────
+document.getElementById('download-btn').addEventListener('click', async function () {
+    const btn = this;
+    const dlText = document.getElementById('dl-text');
+    const dlIcon = document.getElementById('dl-icon');
+    btn.disabled = true;
+    dlIcon.textContent = '⏳';
+    dlText.textContent = 'Generating…';
+    try {
+        const canvas = await renderCanvas();
+        const link = document.createElement('a');
+        link.download = 'code-snippet-' + Date.now() + '.png';
+        link.href = canvas.toDataURL('image/png', 1.0);
+        link.click();
+        showStatus('PNG downloaded!', 'success');
+    } catch (err) {
+        showStatus('Export failed — try a Chromium-based browser.', 'error');
+    } finally {
+        dlIcon.textContent = '📥';
+        dlText.textContent = 'Download PNG';
+        btn.disabled = false;
+    }
+});
+
+// ─────────────────────────────────────────────
+//  Copy image to clipboard
+// ─────────────────────────────────────────────
+document.getElementById('copy-img-btn').addEventListener('click', async function () {
+    const btn = this;
+    const ciText = document.getElementById('ci-text');
+    const ciIcon = document.getElementById('ci-icon');
+    btn.disabled = true;
+    ciIcon.textContent = '⏳';
+    ciText.textContent = 'Copying…';
+    try {
+        const canvas = await renderCanvas();
+        canvas.toBlob(async blob => {
+            try {
+                await navigator.clipboard.write([new ClipboardItem({ 'image/png': blob })]);
+                showStatus('Image copied to clipboard!', 'success');
+            } catch (_) {
+                showStatus('Clipboard access denied — use Download PNG instead.', 'error');
+            }
+        }, 'image/png', 1.0);
+    } catch (err) {
+        showStatus('Failed to generate image.', 'error');
+    } finally {
+        ciIcon.textContent = '📋';
+        ciText.textContent = 'Copy Image';
+        btn.disabled = false;
+    }
+});
+</script>
+</body>
+</html>

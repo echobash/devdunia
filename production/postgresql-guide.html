@@ -1,0 +1,897 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PostgreSQL Guide — DevDunia Comics</title>
+<meta name="description" content="Complete PostgreSQL reference guide with commands, functions, and examples. Essential PostgreSQL documentation for developers.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://devdunia.com/production/postgresql-guide.html">
+<meta property="og:title" content="PostgreSQL Guide — DevDunia Comics">
+<meta property="og:description" content="Complete PostgreSQL reference with commands, functions, and practical examples.">
+<meta property="og:image" content="https://devdunia.com/images/logo.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Bangers&family=Comic+Neue:wght@400;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --ink: #1a1410;
+  --paper: #fdf3e3;
+  --paper2: #fbe9cc;
+  --red: #e63946;
+  --blue: #1d6fb8;
+  --yellow: #ffd23f;
+  --green: #3fa34d;
+  --pink: #ff6b9d;
+  --purple: #8a4fff;
+  --orange: #ff8c42;
+}
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  font-family: 'Comic Neue', cursive;
+  font-weight: 400;
+  color: var(--ink);
+  background-color: var(--paper);
+  background-image: radial-gradient(var(--ink) 0.5px, transparent 0.6px);
+  background-size: 14px 14px;
+  background-attachment: fixed;
+  min-height: 100vh;
+}
+.paper-overlay {
+  position: fixed; inset: 0;
+  background: rgba(253,243,227,.78);
+  pointer-events: none; z-index: 0;
+}
+.page-wrap {
+  position: relative; z-index: 1;
+  max-width: 940px; margin: 0 auto;
+  padding: 0 16px 60px;
+}
+.masthead {
+  background: var(--blue);
+  border: 4px solid var(--ink); border-radius: 6px;
+  box-shadow: 7px 7px 0 var(--ink);
+  margin: 18px 0 28px; padding: 10px 20px;
+  display: flex; align-items: center;
+  justify-content: space-between; flex-wrap: wrap; gap: 8px;
+}
+.masthead-logo {
+  font-family: 'Bangers', cursive; font-size: 1.9rem;
+  letter-spacing: 2px; color: #fff;
+  text-shadow: 3px 3px 0 var(--ink); line-height: 1;
+}
+.masthead-logo span { color: var(--yellow); }
+.masthead-right { display: flex; align-items: center; gap: 8px; }
+.issue-tag {
+  font-family: 'Bangers', cursive; font-size: .95rem;
+  background: var(--yellow); color: var(--ink);
+  padding: 3px 10px; border-radius: 4px;
+  border: 2px solid var(--ink); letter-spacing: 1px;
+}
+.back-link {
+  font-family: 'Bangers', cursive; font-size: .95rem;
+  color: #fff; text-decoration: none;
+  background: var(--ink); padding: 3px 10px;
+  border-radius: 4px; letter-spacing: 1px; transition: opacity .15s;
+}
+.back-link:hover { opacity: .75; }
+.hero {
+  display: flex; align-items: flex-start; gap: 20px;
+  background: var(--paper2);
+  border: 4px solid var(--ink); border-radius: 6px;
+  box-shadow: 7px 7px 0 var(--ink);
+  padding: 20px 24px; margin-bottom: 28px;
+  transform: rotate(-0.4deg);
+}
+.hero-icon { font-size: 3rem; line-height: 1; flex-shrink: 0; filter: drop-shadow(3px 3px 0 var(--ink)); }
+.hero-text h1 {
+  font-family: 'Bangers', cursive; font-size: 2.8rem;
+  letter-spacing: 2px; color: var(--blue);
+  -webkit-text-stroke: 1px var(--ink);
+  text-shadow: 4px 4px 0 var(--ink);
+  line-height: 1; text-transform: uppercase;
+}
+.hero-text p { font-size: .95rem; margin-top: 6px; line-height: 1.5; max-width: 520px; }
+.hero-badges { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 10px; }
+.badge {
+  font-family: 'Space Mono', monospace; font-size: .65rem; font-weight: 700;
+  padding: 3px 8px; border: 2px solid var(--ink);
+  border-radius: 4px; box-shadow: 2px 2px 0 var(--ink);
+}
+.badge-blue   { background: var(--blue);   color: #fff; }
+.badge-green  { background: var(--green);  color: #fff; }
+.badge-yellow { background: var(--yellow); color: var(--ink); }
+.badge-red    { background: var(--red);    color: #fff; }
+.badge-purple { background: var(--purple); color: #fff; }
+/* Search */
+.search-panel {
+  background: var(--paper);
+  border: 4px solid var(--ink); border-radius: 6px;
+  box-shadow: 7px 7px 0 var(--ink);
+  padding: 14px 18px; margin-bottom: 22px;
+}
+.search-input {
+  width: 100%;
+  background: #fff; border: 3px solid var(--ink);
+  border-radius: 6px; padding: 10px 14px;
+  font-family: 'Space Mono', monospace; font-size: .85rem;
+  color: var(--ink); box-shadow: 3px 3px 0 var(--ink);
+  outline: none;
+}
+.search-input:focus { border-color: var(--blue); box-shadow: 3px 3px 0 var(--blue); }
+.search-input::placeholder { color: #aaa; font-style: italic; }
+/* Panels */
+.panel {
+  background: var(--paper);
+  border: 4px solid var(--ink); border-radius: 6px;
+  box-shadow: 7px 7px 0 var(--ink);
+  overflow: hidden; margin-bottom: 22px;
+}
+.panel-header {
+  background: var(--ink); color: var(--yellow);
+  font-family: 'Bangers', cursive; font-size: 1.2rem;
+  letter-spacing: 2px; padding: 8px 16px;
+  display: flex; align-items: center; justify-content: space-between; gap: 10px;
+}
+.panel-header .panel-tag {
+  font-family: 'Space Mono', monospace; font-size: .65rem; font-weight: 700;
+  background: var(--yellow); color: var(--ink);
+  padding: 2px 7px; border-radius: 3px;
+}
+.panel-body { padding: 18px 20px; }
+.grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+/* Command cards */
+.cmd-card {
+  background: var(--paper2);
+  border: 3px solid var(--ink); border-radius: 6px;
+  box-shadow: 4px 4px 0 var(--ink); padding: 14px 16px;
+}
+.cmd-card h3 {
+  font-family: 'Bangers', cursive; font-size: 1rem;
+  letter-spacing: 1px; margin-bottom: 8px;
+}
+.cmd-card h3.blue   { color: var(--blue); }
+.cmd-card h3.green  { color: var(--green); }
+.cmd-card h3.purple { color: var(--purple); }
+.cmd-card h3.orange { color: var(--orange); }
+.cmd-card h3.cyan   { color: #0891b2; }
+.cmd-card h3.pink   { color: var(--pink); }
+.cmd-card h3.indigo { color: #6366f1; }
+.cmd-card h3.yellow { color: #b45309; }
+.cmd-card h3.teal   { color: #0d9488; }
+.cmd-card h3.red    { color: var(--red); }
+.cmd-card h3.emerald{ color: #059669; }
+.syntax-box {
+  background: var(--ink); color: var(--yellow);
+  font-family: 'Space Mono', monospace; font-size: .75rem;
+  padding: 7px 10px; border-radius: 4px; margin-bottom: 6px;
+  cursor: pointer; transition: opacity .15s;
+}
+.syntax-box:hover { opacity: .88; }
+.cmd-desc { font-size: .82rem; line-height: 1.5; margin-bottom: 6px; color: var(--ink); }
+.example-box {
+  background: var(--ink); color: #94a3b8;
+  font-family: 'Space Mono', monospace; font-size: .73rem;
+  padding: 8px 10px; border-radius: 4px;
+  cursor: pointer; transition: opacity .15s; line-height: 1.7;
+}
+.example-box:hover { opacity: .88; }
+.click-hint {
+  font-family: 'Space Mono', monospace; font-size: .6rem;
+  color: var(--ink); opacity: .5;
+  text-align: right; margin-top: 4px;
+}
+.copied-flash {
+  position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%);
+  background: var(--ink); color: var(--yellow);
+  font-family: 'Bangers', cursive; font-size: 1.1rem; letter-spacing: 2px;
+  padding: 8px 24px; border-radius: 6px; border: 3px solid var(--yellow);
+  box-shadow: 4px 4px 0 var(--yellow);
+  opacity: 0; pointer-events: none;
+  transition: opacity .2s;
+  z-index: 999;
+}
+.copied-flash.show { opacity: 1; }
+@media (max-width: 760px) {
+  .grid-2 { grid-template-columns: 1fr; }
+  .hero { flex-direction: column; gap: 10px; }
+  .hero-text h1 { font-size: 2rem; }
+}
+</style>
+</head>
+<body>
+<div class="paper-overlay"></div>
+<div class="copied-flash" id="copied-flash">&#x2714; COPIED!</div>
+<div class="page-wrap">
+
+  <!-- MASTHEAD -->
+  <div class="masthead">
+    <div class="masthead-logo">DEV<span>DUNIA</span> COMICS</div>
+    <div class="masthead-right">
+      <span class="issue-tag">POSTGRESQL</span>
+      <a href="../index.html" class="back-link">&#9664; ALL TOOLS</a>
+    </div>
+  </div>
+
+  <!-- HERO -->
+  <div class="hero">
+    <div class="hero-icon">&#x1F418;</div>
+    <div class="hero-text">
+      <h1>PostgreSQL Guide</h1>
+      <p>Complete PostgreSQL reference with commands, functions, and practical examples. Click any code block to copy it instantly!</p>
+      <div class="hero-badges">
+        <span class="badge badge-blue">DATABASE MGMT</span>
+        <span class="badge badge-green">TABLES</span>
+        <span class="badge badge-purple">JOINS</span>
+        <span class="badge badge-red">TRANSACTIONS</span>
+        <span class="badge badge-yellow">BACKUP</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- SEARCH -->
+  <div class="search-panel">
+    <input type="text" id="searchInput" class="search-input" placeholder="Search PostgreSQL commands, functions, or concepts...">
+  </div>
+
+  <!-- DATABASE MANAGEMENT -->
+  <div class="panel command-section" id="section-db">
+    <div class="panel-header">
+      &#x1F5C4;&#xFE0F; DATABASE MANAGEMENT
+      <span class="panel-tag">DDL</span>
+    </div>
+    <div class="panel-body">
+      <div class="grid-2">
+        <div class="cmd-card">
+          <h3 class="blue">Create Database</h3>
+          <div class="syntax-box" onclick="copyEl(this)">CREATE DATABASE database_name;</div>
+          <p class="cmd-desc">Creates a new database with the specified name.</p>
+          <div class="example-box" onclick="copyEl(this)">-- Example
+CREATE DATABASE myapp;
+CREATE DATABASE test_db WITH ENCODING 'UTF8';</div>
+          <div class="click-hint">click to copy</div>
+        </div>
+        <div class="cmd-card">
+          <h3 class="red">Drop Database</h3>
+          <div class="syntax-box" onclick="copyEl(this)">DROP DATABASE database_name;</div>
+          <p class="cmd-desc">Permanently deletes a database and all its data.</p>
+          <div class="example-box" onclick="copyEl(this)">-- Example
+DROP DATABASE old_db;
+DROP DATABASE IF EXISTS temp_db;</div>
+          <div class="click-hint">click to copy</div>
+        </div>
+        <div class="cmd-card">
+          <h3 class="cyan">Connect to Database</h3>
+          <div class="syntax-box" onclick="copyEl(this)">\c database_name</div>
+          <p class="cmd-desc">Connects to a specific database in psql.</p>
+          <div class="example-box" onclick="copyEl(this)">-- Example
+\c myapp
+\c postgres</div>
+          <div class="click-hint">click to copy</div>
+        </div>
+        <div class="cmd-card">
+          <h3 class="yellow">List Databases</h3>
+          <div class="syntax-box" onclick="copyEl(this)">\l</div>
+          <p class="cmd-desc">Lists all databases in the PostgreSQL server.</p>
+          <div class="example-box" onclick="copyEl(this)">-- Alternative
+SELECT datname FROM pg_database;</div>
+          <div class="click-hint">click to copy</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- TABLE OPERATIONS -->
+  <div class="panel command-section" id="section-tables">
+    <div class="panel-header">
+      &#x1F4CB; TABLE OPERATIONS
+      <span class="panel-tag">TABLES</span>
+    </div>
+    <div class="panel-body">
+      <div class="grid-2">
+        <div class="cmd-card">
+          <h3 class="green">Create Table</h3>
+          <div class="syntax-box" onclick="copyEl(this)">CREATE TABLE table_name (column_definitions);</div>
+          <p class="cmd-desc">Creates a new table with specified columns and constraints.</p>
+          <div class="example-box" onclick="copyEl(this)">CREATE TABLE users (
+  id SERIAL PRIMARY KEY,
+  name VARCHAR(100) NOT NULL,
+  email VARCHAR(255) UNIQUE,
+  created_at TIMESTAMP DEFAULT NOW()
+);</div>
+          <div class="click-hint">click to copy</div>
+        </div>
+        <div class="cmd-card">
+          <h3 class="red">Drop Table</h3>
+          <div class="syntax-box" onclick="copyEl(this)">DROP TABLE table_name;</div>
+          <p class="cmd-desc">Permanently deletes a table and all its data.</p>
+          <div class="example-box" onclick="copyEl(this)">-- Example
+DROP TABLE old_table;
+DROP TABLE IF EXISTS temp_table;</div>
+          <div class="click-hint">click to copy</div>
+        </div>
+        <div class="cmd-card">
+          <h3 class="blue">Alter Table</h3>
+          <div class="syntax-box" onclick="copyEl(this)">ALTER TABLE table_name action;</div>
+          <p class="cmd-desc">Modifies the structure of an existing table.</p>
+          <div class="example-box" onclick="copyEl(this)">-- Add column
+ALTER TABLE users ADD COLUMN age INTEGER;
+-- Drop column
+ALTER TABLE users DROP COLUMN age;
+-- Rename column
+ALTER TABLE users RENAME COLUMN name TO full_name;</div>
+          <div class="click-hint">click to copy</div>
+        </div>
+        <div class="cmd-card">
+          <h3 class="yellow">List Tables</h3>
+          <div class="syntax-box" onclick="copyEl(this)">\dt</div>
+          <p class="cmd-desc">Lists all tables in the current database.</p>
+          <div class="example-box" onclick="copyEl(this)">-- Alternative
+SELECT table_name FROM information_schema.tables
+WHERE table_schema = 'public';</div>
+          <div class="click-hint">click to copy</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- DATA MANIPULATION (DML) -->
+  <div class="panel command-section" id="section-dml">
+    <div class="panel-header">
+      &#x1F4BE; DATA MANIPULATION (DML)
+      <span class="panel-tag">DML</span>
+    </div>
+    <div class="panel-body">
+      <div class="grid-2">
+        <div class="cmd-card">
+          <h3 class="green">INSERT</h3>
+          <div class="syntax-box" onclick="copyEl(this)">INSERT INTO table_name VALUES (values);</div>
+          <p class="cmd-desc">Inserts new rows into a table.</p>
+          <div class="example-box" onclick="copyEl(this)">-- Single row
+INSERT INTO users (name, email) VALUES ('John', 'john@example.com');
+
+-- Multiple rows
+INSERT INTO users (name, email) VALUES
+  ('Alice', 'alice@example.com'),
+  ('Bob', 'bob@example.com');</div>
+          <div class="click-hint">click to copy</div>
+        </div>
+        <div class="cmd-card">
+          <h3 class="blue">SELECT</h3>
+          <div class="syntax-box" onclick="copyEl(this)">SELECT columns FROM table_name WHERE condition;</div>
+          <p class="cmd-desc">Retrieves data from one or more tables.</p>
+          <div class="example-box" onclick="copyEl(this)">-- All columns
+SELECT * FROM users;
+
+-- Specific columns
+SELECT name, email FROM users WHERE age > 18;
+
+-- With ordering
+SELECT * FROM users ORDER BY created_at DESC;</div>
+          <div class="click-hint">click to copy</div>
+        </div>
+        <div class="cmd-card">
+          <h3 class="yellow">UPDATE</h3>
+          <div class="syntax-box" onclick="copyEl(this)">UPDATE table_name SET column = value WHERE condition;</div>
+          <p class="cmd-desc">Modifies existing rows in a table.</p>
+          <div class="example-box" onclick="copyEl(this)">-- Update single row
+UPDATE users SET email = 'new@example.com' WHERE id = 1;
+
+-- Update multiple columns
+UPDATE users SET name = 'John Doe', age = 30 WHERE id = 1;</div>
+          <div class="click-hint">click to copy</div>
+        </div>
+        <div class="cmd-card">
+          <h3 class="red">DELETE</h3>
+          <div class="syntax-box" onclick="copyEl(this)">DELETE FROM table_name WHERE condition;</div>
+          <p class="cmd-desc">Removes rows from a table.</p>
+          <div class="example-box" onclick="copyEl(this)">-- Delete specific row
+DELETE FROM users WHERE id = 1;
+
+-- Delete with condition
+DELETE FROM users WHERE created_at < '2023-01-01';</div>
+          <div class="click-hint">click to copy</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- JOINS -->
+  <div class="panel command-section" id="section-joins">
+    <div class="panel-header">
+      &#x1F517; JOINS
+      <span class="panel-tag">JOINS</span>
+    </div>
+    <div class="panel-body">
+      <div class="grid-2">
+        <div class="cmd-card">
+          <h3 class="orange">INNER JOIN</h3>
+          <div class="syntax-box" onclick="copyEl(this)">SELECT * FROM table1 INNER JOIN table2 ON condition;</div>
+          <p class="cmd-desc">Returns only matching rows from both tables.</p>
+          <div class="example-box" onclick="copyEl(this)">SELECT u.name, p.title
+FROM users u
+INNER JOIN posts p ON u.id = p.user_id;</div>
+          <div class="click-hint">click to copy</div>
+        </div>
+        <div class="cmd-card">
+          <h3 class="orange">LEFT JOIN</h3>
+          <div class="syntax-box" onclick="copyEl(this)">SELECT * FROM table1 LEFT JOIN table2 ON condition;</div>
+          <p class="cmd-desc">Returns all rows from left table and matching rows from right table.</p>
+          <div class="example-box" onclick="copyEl(this)">SELECT u.name, p.title
+FROM users u
+LEFT JOIN posts p ON u.id = p.user_id;</div>
+          <div class="click-hint">click to copy</div>
+        </div>
+        <div class="cmd-card">
+          <h3 class="orange">RIGHT JOIN</h3>
+          <div class="syntax-box" onclick="copyEl(this)">SELECT * FROM table1 RIGHT JOIN table2 ON condition;</div>
+          <p class="cmd-desc">Returns all rows from right table and matching rows from left table.</p>
+          <div class="example-box" onclick="copyEl(this)">SELECT u.name, p.title
+FROM users u
+RIGHT JOIN posts p ON u.id = p.user_id;</div>
+          <div class="click-hint">click to copy</div>
+        </div>
+        <div class="cmd-card">
+          <h3 class="orange">FULL OUTER JOIN</h3>
+          <div class="syntax-box" onclick="copyEl(this)">SELECT * FROM table1 FULL OUTER JOIN table2 ON condition;</div>
+          <p class="cmd-desc">Returns all rows from both tables, with NULLs for non-matching rows.</p>
+          <div class="example-box" onclick="copyEl(this)">SELECT u.name, p.title
+FROM users u
+FULL OUTER JOIN posts p ON u.id = p.user_id;</div>
+          <div class="click-hint">click to copy</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- AGGREGATE FUNCTIONS -->
+  <div class="panel command-section" id="section-agg">
+    <div class="panel-header">
+      &#x1F4CA; AGGREGATE FUNCTIONS
+      <span class="panel-tag">AGGREGATES</span>
+    </div>
+    <div class="panel-body">
+      <div class="grid-2">
+        <div class="cmd-card">
+          <h3 class="cyan">COUNT</h3>
+          <div class="syntax-box" onclick="copyEl(this)">SELECT COUNT(*) FROM table_name;</div>
+          <p class="cmd-desc">Counts the number of rows or non-NULL values.</p>
+          <div class="example-box" onclick="copyEl(this)">-- Count all rows
+SELECT COUNT(*) FROM users;
+
+-- Count non-NULL values
+SELECT COUNT(email) FROM users;
+
+-- Count with condition
+SELECT COUNT(*) FROM users WHERE age > 18;</div>
+          <div class="click-hint">click to copy</div>
+        </div>
+        <div class="cmd-card">
+          <h3 class="cyan">SUM</h3>
+          <div class="syntax-box" onclick="copyEl(this)">SELECT SUM(column) FROM table_name;</div>
+          <p class="cmd-desc">Calculates the sum of numeric values in a column.</p>
+          <div class="example-box" onclick="copyEl(this)">-- Sum all values
+SELECT SUM(price) FROM products;
+
+-- Sum with condition
+SELECT SUM(amount) FROM orders WHERE status = 'completed';</div>
+          <div class="click-hint">click to copy</div>
+        </div>
+        <div class="cmd-card">
+          <h3 class="cyan">AVG</h3>
+          <div class="syntax-box" onclick="copyEl(this)">SELECT AVG(column) FROM table_name;</div>
+          <p class="cmd-desc">Calculates the average of numeric values in a column.</p>
+          <div class="example-box" onclick="copyEl(this)">-- Average value
+SELECT AVG(age) FROM users;
+
+-- Average with rounding
+SELECT ROUND(AVG(price), 2) FROM products;</div>
+          <div class="click-hint">click to copy</div>
+        </div>
+        <div class="cmd-card">
+          <h3 class="cyan">MIN / MAX</h3>
+          <div class="syntax-box" onclick="copyEl(this)">SELECT MIN(column), MAX(column) FROM table_name;</div>
+          <p class="cmd-desc">Finds the minimum and maximum values in a column.</p>
+          <div class="example-box" onclick="copyEl(this)">-- Min and max values
+SELECT MIN(price), MAX(price) FROM products;
+
+-- Min and max with condition
+SELECT MIN(created_at), MAX(created_at) FROM users;</div>
+          <div class="click-hint">click to copy</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- STRING FUNCTIONS -->
+  <div class="panel command-section" id="section-strings">
+    <div class="panel-header">
+      &#x1F4DD; STRING FUNCTIONS
+      <span class="panel-tag">STRINGS</span>
+    </div>
+    <div class="panel-body">
+      <div class="grid-2">
+        <div class="cmd-card">
+          <h3 class="pink">CONCAT</h3>
+          <div class="syntax-box" onclick="copyEl(this)">SELECT CONCAT(string1, string2, ...);</div>
+          <p class="cmd-desc">Concatenates multiple strings together.</p>
+          <div class="example-box" onclick="copyEl(this)">-- Concatenate strings
+SELECT CONCAT(first_name, ' ', last_name) AS full_name FROM users;
+
+-- With separator
+SELECT CONCAT_WS(' - ', title, author) FROM books;</div>
+          <div class="click-hint">click to copy</div>
+        </div>
+        <div class="cmd-card">
+          <h3 class="pink">UPPER / LOWER</h3>
+          <div class="syntax-box" onclick="copyEl(this)">SELECT UPPER(column), LOWER(column) FROM table_name;</div>
+          <p class="cmd-desc">Converts strings to uppercase or lowercase.</p>
+          <div class="example-box" onclick="copyEl(this)">-- Convert case
+SELECT UPPER(name) FROM users;
+SELECT LOWER(email) FROM users;
+
+-- Case-insensitive search
+SELECT * FROM users WHERE LOWER(name) = 'john';</div>
+          <div class="click-hint">click to copy</div>
+        </div>
+        <div class="cmd-card">
+          <h3 class="pink">SUBSTRING</h3>
+          <div class="syntax-box" onclick="copyEl(this)">SELECT SUBSTRING(string FROM start FOR length);</div>
+          <p class="cmd-desc">Extracts a substring from a string.</p>
+          <div class="example-box" onclick="copyEl(this)">-- Extract substring
+SELECT SUBSTRING(email FROM 1 FOR 5) FROM users;
+
+-- Extract domain
+SELECT SUBSTRING(email FROM '@' FOR 50) FROM users;</div>
+          <div class="click-hint">click to copy</div>
+        </div>
+        <div class="cmd-card">
+          <h3 class="pink">LENGTH</h3>
+          <div class="syntax-box" onclick="copyEl(this)">SELECT LENGTH(column) FROM table_name;</div>
+          <p class="cmd-desc">Returns the length of a string in characters.</p>
+          <div class="example-box" onclick="copyEl(this)">-- String length
+SELECT name, LENGTH(name) AS name_length FROM users;
+
+-- Filter by length
+SELECT * FROM users WHERE LENGTH(name) > 10;</div>
+          <div class="click-hint">click to copy</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- DATE FUNCTIONS -->
+  <div class="panel command-section" id="section-dates">
+    <div class="panel-header">
+      &#x1F4C5; DATE FUNCTIONS
+      <span class="panel-tag">DATES</span>
+    </div>
+    <div class="panel-body">
+      <div class="grid-2">
+        <div class="cmd-card">
+          <h3 class="indigo">NOW()</h3>
+          <div class="syntax-box" onclick="copyEl(this)">SELECT NOW();</div>
+          <p class="cmd-desc">Returns the current date and time.</p>
+          <div class="example-box" onclick="copyEl(this)">-- Current timestamp
+SELECT NOW();
+
+-- Insert with current time
+INSERT INTO logs (message, created_at) VALUES ('User login', NOW());</div>
+          <div class="click-hint">click to copy</div>
+        </div>
+        <div class="cmd-card">
+          <h3 class="indigo">DATE_TRUNC</h3>
+          <div class="syntax-box" onclick="copyEl(this)">SELECT DATE_TRUNC('unit', timestamp);</div>
+          <p class="cmd-desc">Truncates a timestamp to specified precision.</p>
+          <div class="example-box" onclick="copyEl(this)">-- Truncate to day
+SELECT DATE_TRUNC('day', created_at) FROM users;
+
+-- Truncate to month
+SELECT DATE_TRUNC('month', created_at) FROM users;</div>
+          <div class="click-hint">click to copy</div>
+        </div>
+        <div class="cmd-card">
+          <h3 class="indigo">EXTRACT</h3>
+          <div class="syntax-box" onclick="copyEl(this)">SELECT EXTRACT(field FROM timestamp);</div>
+          <p class="cmd-desc">Extracts a specific field from a timestamp.</p>
+          <div class="example-box" onclick="copyEl(this)">-- Extract year
+SELECT EXTRACT(YEAR FROM created_at) FROM users;
+
+-- Extract month
+SELECT EXTRACT(MONTH FROM created_at) FROM users;</div>
+          <div class="click-hint">click to copy</div>
+        </div>
+        <div class="cmd-card">
+          <h3 class="indigo">AGE</h3>
+          <div class="syntax-box" onclick="copyEl(this)">SELECT AGE(timestamp1, timestamp2);</div>
+          <p class="cmd-desc">Calculates the age between two timestamps.</p>
+          <div class="example-box" onclick="copyEl(this)">-- Age from now
+SELECT AGE(NOW(), created_at) FROM users;
+
+-- Age between dates
+SELECT AGE('2023-12-31', '2023-01-01');</div>
+          <div class="click-hint">click to copy</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- INDEXES -->
+  <div class="panel command-section" id="section-indexes">
+    <div class="panel-header">
+      &#x26A1; INDEXES
+      <span class="panel-tag">INDEXES</span>
+    </div>
+    <div class="panel-body">
+      <div class="grid-2">
+        <div class="cmd-card">
+          <h3 class="yellow">CREATE INDEX</h3>
+          <div class="syntax-box" onclick="copyEl(this)">CREATE INDEX index_name ON table_name (column);</div>
+          <p class="cmd-desc">Creates an index to improve query performance.</p>
+          <div class="example-box" onclick="copyEl(this)">-- Single column index
+CREATE INDEX idx_user_email ON users (email);
+
+-- Composite index
+CREATE INDEX idx_user_name_age ON users (name, age);
+
+-- Unique index
+CREATE UNIQUE INDEX idx_user_email_unique ON users (email);</div>
+          <div class="click-hint">click to copy</div>
+        </div>
+        <div class="cmd-card">
+          <h3 class="red">DROP INDEX</h3>
+          <div class="syntax-box" onclick="copyEl(this)">DROP INDEX index_name;</div>
+          <p class="cmd-desc">Removes an index from the database.</p>
+          <div class="example-box" onclick="copyEl(this)">-- Drop index
+DROP INDEX idx_user_email;
+
+-- Drop if exists
+DROP INDEX IF EXISTS idx_old_index;</div>
+          <div class="click-hint">click to copy</div>
+        </div>
+        <div class="cmd-card">
+          <h3 class="yellow">List Indexes</h3>
+          <div class="syntax-box" onclick="copyEl(this)">\di</div>
+          <p class="cmd-desc">Lists all indexes in the current database.</p>
+          <div class="example-box" onclick="copyEl(this)">-- Alternative query
+SELECT indexname, tablename FROM pg_indexes
+WHERE schemaname = 'public';</div>
+          <div class="click-hint">click to copy</div>
+        </div>
+        <div class="cmd-card">
+          <h3 class="yellow">Partial Index</h3>
+          <div class="syntax-box" onclick="copyEl(this)">CREATE INDEX ... WHERE condition;</div>
+          <p class="cmd-desc">Creates an index on a subset of rows.</p>
+          <div class="example-box" onclick="copyEl(this)">-- Index only active users
+CREATE INDEX idx_active_users ON users (email)
+WHERE status = 'active';
+
+-- Index only recent orders
+CREATE INDEX idx_recent_orders ON orders (created_at)
+WHERE created_at > '2023-01-01';</div>
+          <div class="click-hint">click to copy</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- VIEWS -->
+  <div class="panel command-section" id="section-views">
+    <div class="panel-header">
+      &#x1F441;&#xFE0F; VIEWS
+      <span class="panel-tag">VIEWS</span>
+    </div>
+    <div class="panel-body">
+      <div class="grid-2">
+        <div class="cmd-card">
+          <h3 class="teal">CREATE VIEW</h3>
+          <div class="syntax-box" onclick="copyEl(this)">CREATE VIEW view_name AS SELECT ...;</div>
+          <p class="cmd-desc">Creates a virtual table based on a query result.</p>
+          <div class="example-box" onclick="copyEl(this)">-- Simple view
+CREATE VIEW active_users AS
+SELECT id, name, email FROM users WHERE status = 'active';
+
+-- Complex view with joins
+CREATE VIEW user_posts AS
+SELECT u.name, p.title, p.created_at
+FROM users u JOIN posts p ON u.id = p.user_id;</div>
+          <div class="click-hint">click to copy</div>
+        </div>
+        <div class="cmd-card">
+          <h3 class="red">DROP VIEW</h3>
+          <div class="syntax-box" onclick="copyEl(this)">DROP VIEW view_name;</div>
+          <p class="cmd-desc">Removes a view from the database.</p>
+          <div class="example-box" onclick="copyEl(this)">-- Drop view
+DROP VIEW active_users;
+
+-- Drop if exists
+DROP VIEW IF EXISTS old_view;</div>
+          <div class="click-hint">click to copy</div>
+        </div>
+        <div class="cmd-card">
+          <h3 class="teal">List Views</h3>
+          <div class="syntax-box" onclick="copyEl(this)">\dv</div>
+          <p class="cmd-desc">Lists all views in the current database.</p>
+          <div class="example-box" onclick="copyEl(this)">-- Alternative query
+SELECT viewname FROM pg_views
+WHERE schemaname = 'public';</div>
+          <div class="click-hint">click to copy</div>
+        </div>
+        <div class="cmd-card">
+          <h3 class="teal">Materialized View</h3>
+          <div class="syntax-box" onclick="copyEl(this)">CREATE MATERIALIZED VIEW ... AS SELECT ...;</div>
+          <p class="cmd-desc">Creates a view that stores the query result physically.</p>
+          <div class="example-box" onclick="copyEl(this)">-- Create materialized view
+CREATE MATERIALIZED VIEW user_stats AS
+SELECT COUNT(*) as total_users, AVG(age) as avg_age
+FROM users;
+
+-- Refresh materialized view
+REFRESH MATERIALIZED VIEW user_stats;</div>
+          <div class="click-hint">click to copy</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- TRANSACTIONS -->
+  <div class="panel command-section" id="section-tx">
+    <div class="panel-header">
+      &#x1F504; TRANSACTIONS
+      <span class="panel-tag">TRANSACTIONS</span>
+    </div>
+    <div class="panel-body">
+      <div class="grid-2">
+        <div class="cmd-card">
+          <h3 class="red">BEGIN</h3>
+          <div class="syntax-box" onclick="copyEl(this)">BEGIN;</div>
+          <p class="cmd-desc">Starts a new transaction block.</p>
+          <div class="example-box" onclick="copyEl(this)">-- Start transaction
+BEGIN;
+
+-- Multiple operations
+INSERT INTO users (name) VALUES ('John');
+UPDATE users SET age = 25 WHERE name = 'John';
+COMMIT;</div>
+          <div class="click-hint">click to copy</div>
+        </div>
+        <div class="cmd-card">
+          <h3 class="green">COMMIT</h3>
+          <div class="syntax-box" onclick="copyEl(this)">COMMIT;</div>
+          <p class="cmd-desc">Commits the current transaction, making changes permanent.</p>
+          <div class="example-box" onclick="copyEl(this)">-- Commit transaction
+BEGIN;
+INSERT INTO users (name) VALUES ('Alice');
+COMMIT; -- Changes are now permanent</div>
+          <div class="click-hint">click to copy</div>
+        </div>
+        <div class="cmd-card">
+          <h3 class="red">ROLLBACK</h3>
+          <div class="syntax-box" onclick="copyEl(this)">ROLLBACK;</div>
+          <p class="cmd-desc">Rolls back the current transaction, undoing all changes.</p>
+          <div class="example-box" onclick="copyEl(this)">-- Rollback transaction
+BEGIN;
+INSERT INTO users (name) VALUES ('Bob');
+ROLLBACK; -- Changes are undone</div>
+          <div class="click-hint">click to copy</div>
+        </div>
+        <div class="cmd-card">
+          <h3 class="blue">SAVEPOINT</h3>
+          <div class="syntax-box" onclick="copyEl(this)">SAVEPOINT name;</div>
+          <p class="cmd-desc">Creates a savepoint within a transaction.</p>
+          <div class="example-box" onclick="copyEl(this)">-- Create savepoint
+BEGIN;
+INSERT INTO users (name) VALUES ('Charlie');
+SAVEPOINT sp1;
+INSERT INTO users (name) VALUES ('David');
+ROLLBACK TO sp1; -- Rollback to savepoint</div>
+          <div class="click-hint">click to copy</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- BACKUP & RESTORE -->
+  <div class="panel command-section" id="section-backup">
+    <div class="panel-header">
+      &#x1F4BE; BACKUP &amp; RESTORE
+      <span class="panel-tag">BACKUP</span>
+    </div>
+    <div class="panel-body">
+      <div class="grid-2">
+        <div class="cmd-card">
+          <h3 class="emerald">pg_dump</h3>
+          <div class="syntax-box" onclick="copyEl(this)">pg_dump database_name > backup.sql</div>
+          <p class="cmd-desc">Creates a backup of a database to a SQL file.</p>
+          <div class="example-box" onclick="copyEl(this)"># Backup entire database
+pg_dump myapp > backup.sql
+
+# Backup with custom format
+pg_dump -Fc myapp > backup.dump
+
+# Backup specific schema
+pg_dump -n public myapp > schema.sql</div>
+          <div class="click-hint">click to copy</div>
+        </div>
+        <div class="cmd-card">
+          <h3 class="emerald">pg_restore</h3>
+          <div class="syntax-box" onclick="copyEl(this)">pg_restore -d database_name backup.dump</div>
+          <p class="cmd-desc">Restores a database from a backup file.</p>
+          <div class="example-box" onclick="copyEl(this)"># Restore from custom format
+pg_restore -d myapp backup.dump
+
+# Restore with clean
+pg_restore -c -d myapp backup.dump
+
+# Restore specific tables
+pg_restore -t users -d myapp backup.dump</div>
+          <div class="click-hint">click to copy</div>
+        </div>
+        <div class="cmd-card">
+          <h3 class="emerald">psql restore</h3>
+          <div class="syntax-box" onclick="copyEl(this)">psql -d database_name -f backup.sql</div>
+          <p class="cmd-desc">Restores a database from a SQL file.</p>
+          <div class="example-box" onclick="copyEl(this)"># Restore from SQL file
+psql -d myapp -f backup.sql
+
+# Restore with verbose output
+psql -d myapp -f backup.sql -v ON_ERROR_STOP=1</div>
+          <div class="click-hint">click to copy</div>
+        </div>
+        <div class="cmd-card">
+          <h3 class="emerald">pg_dumpall</h3>
+          <div class="syntax-box" onclick="copyEl(this)">pg_dumpall > all_databases.sql</div>
+          <p class="cmd-desc">Backs up all databases in a PostgreSQL cluster.</p>
+          <div class="example-box" onclick="copyEl(this)"># Backup all databases
+pg_dumpall > all_databases.sql
+
+# Backup only globals
+pg_dumpall -g > globals.sql
+
+# Backup with roles
+pg_dumpall -r > roles.sql</div>
+          <div class="click-hint">click to copy</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div><!-- /page-wrap -->
+
+<script>
+var flash = document.getElementById('copied-flash');
+var flashTimer;
+
+function copyEl(el) {
+  var text = el.textContent || el.innerText;
+  text = text.trim();
+  if (navigator.clipboard) {
+    navigator.clipboard.writeText(text).then(showFlash);
+  } else {
+    var ta = document.createElement('textarea');
+    ta.value = text;
+    document.body.appendChild(ta);
+    ta.select();
+    try { document.execCommand('copy'); } catch(e) {}
+    document.body.removeChild(ta);
+    showFlash();
+  }
+}
+
+function showFlash() {
+  clearTimeout(flashTimer);
+  flash.classList.add('show');
+  flashTimer = setTimeout(function() { flash.classList.remove('show'); }, 1500);
+}
+
+// Search functionality
+document.getElementById('searchInput').addEventListener('input', function() {
+  var term = this.value.toLowerCase();
+  var sections = document.querySelectorAll('.command-section');
+  sections.forEach(function(section) {
+    var content = section.textContent.toLowerCase();
+    section.style.display = content.includes(term) ? 'block' : 'none';
+  });
+});
+</script>
+</body>
+</html>

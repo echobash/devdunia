@@ -1,0 +1,734 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>OWASP Top 10 — DevDunia Comics</title>
+<meta name="description" content="Learn about OWASP Top 10 security vulnerabilities with examples, prevention methods, and interactive demonstrations.">
+<meta name="keywords" content="OWASP, security vulnerabilities, web security, penetration testing, vulnerability assessment">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://devdunia.com/production/owasp-top10.html">
+<meta property="og:title" content="OWASP Top 10 — DevDunia Comics">
+<meta property="og:description" content="Learn about OWASP Top 10 security vulnerabilities with examples, prevention methods, and interactive demonstrations.">
+<meta property="og:image" content="https://devdunia.com/images/logo.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Bangers&family=Comic+Neue:wght@400;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --ink: #1a1410;
+  --paper: #fdf3e3;
+  --paper2: #fbe9cc;
+  --red: #e63946;
+  --blue: #1d6fb8;
+  --yellow: #ffd23f;
+  --green: #3fa34d;
+  --pink: #ff6b9d;
+  --purple: #8a4fff;
+  --orange: #ff8c42;
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: 'Comic Neue', cursive;
+  font-weight: 400;
+  color: var(--ink);
+  background-color: var(--paper);
+  background-image: radial-gradient(var(--ink) 0.5px, transparent 0.6px);
+  background-size: 14px 14px;
+  background-attachment: fixed;
+  min-height: 100vh;
+}
+
+.paper-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(253,243,227,.78);
+  pointer-events: none;
+  z-index: 0;
+}
+
+.page-wrap {
+  position: relative;
+  z-index: 1;
+  max-width: 960px;
+  margin: 0 auto;
+  padding: 0 16px 60px;
+}
+
+/* MASTHEAD */
+.masthead {
+  background: var(--red);
+  border: 4px solid var(--ink);
+  border-radius: 6px;
+  box-shadow: 7px 7px 0 var(--ink);
+  margin: 18px 0 28px;
+  padding: 10px 20px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.masthead-logo { display: flex; align-items: center; gap: 10px; }
+.masthead-logo img { height: 36px; width: auto; }
+.masthead-logo-text {
+  font-family: 'Bangers', cursive;
+  font-size: 1.9rem;
+  letter-spacing: 2px;
+  color: #fff;
+  text-shadow: 3px 3px 0 var(--ink);
+  line-height: 1;
+}
+.masthead-logo-text span { color: var(--yellow); }
+.masthead-right { display: flex; align-items: center; gap: 8px; }
+.issue-tag {
+  font-family: 'Bangers', cursive;
+  font-size: .95rem;
+  background: var(--yellow);
+  color: var(--ink);
+  padding: 3px 10px;
+  border-radius: 4px;
+  border: 2px solid var(--ink);
+  letter-spacing: 1px;
+}
+.back-link {
+  font-family: 'Bangers', cursive;
+  font-size: .95rem;
+  color: #fff;
+  text-decoration: none;
+  background: var(--ink);
+  padding: 3px 10px;
+  border-radius: 4px;
+  letter-spacing: 1px;
+  transition: opacity .15s;
+}
+.back-link:hover { opacity: .75; }
+
+/* HERO */
+.hero {
+  display: flex;
+  align-items: flex-start;
+  gap: 20px;
+  background: var(--paper2);
+  border: 4px solid var(--ink);
+  border-radius: 6px;
+  box-shadow: 7px 7px 0 var(--ink);
+  padding: 20px 24px;
+  margin-bottom: 28px;
+  transform: rotate(-0.4deg);
+}
+.hero-icon { font-size: 3rem; line-height: 1; flex-shrink: 0; filter: drop-shadow(3px 3px 0 var(--ink)); }
+.hero-text h1 {
+  font-family: 'Bangers', cursive;
+  font-size: 2.8rem;
+  letter-spacing: 2px;
+  color: var(--red);
+  -webkit-text-stroke: 1px var(--ink);
+  text-shadow: 4px 4px 0 var(--ink);
+  line-height: 1;
+  text-transform: uppercase;
+}
+.hero-text p { font-size: .95rem; margin-top: 6px; line-height: 1.5; max-width: 500px; }
+.hero-badges { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 10px; }
+.badge {
+  font-family: 'Space Mono', monospace;
+  font-size: .65rem;
+  font-weight: 700;
+  padding: 3px 8px;
+  border: 2px solid var(--ink);
+  border-radius: 4px;
+  box-shadow: 2px 2px 0 var(--ink);
+}
+.badge-blue   { background: var(--blue);   color: #fff; }
+.badge-green  { background: var(--green);  color: #fff; }
+.badge-yellow { background: var(--yellow); color: var(--ink); }
+.badge-red    { background: var(--red);    color: #fff; }
+.badge-orange { background: var(--orange); color: #fff; }
+
+/* PANEL */
+.panel {
+  background: var(--paper);
+  border: 4px solid var(--ink);
+  border-radius: 6px;
+  box-shadow: 7px 7px 0 var(--ink);
+  overflow: hidden;
+  margin-bottom: 22px;
+}
+.panel-header {
+  background: var(--ink);
+  color: var(--yellow);
+  font-family: 'Bangers', cursive;
+  font-size: 1.2rem;
+  letter-spacing: 2px;
+  padding: 8px 16px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+.panel-header .panel-tag {
+  font-family: 'Space Mono', monospace;
+  font-size: .65rem;
+  font-weight: 700;
+  background: var(--yellow);
+  color: var(--ink);
+  padding: 2px 7px;
+  border-radius: 3px;
+}
+.panel-body { padding: 18px 20px; }
+
+/* NOTE */
+.note-box {
+  background: rgba(29,111,184,.08);
+  border: 3px solid var(--blue);
+  border-radius: 6px;
+  padding: 10px 14px;
+  font-size: .84rem;
+  line-height: 1.6;
+  margin: 10px 0;
+}
+
+/* VULN GRID */
+.vuln-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+  margin: 10px 0;
+}
+
+.vuln-card {
+  background: var(--paper2);
+  border: 3px solid var(--ink);
+  border-radius: 6px;
+  box-shadow: 4px 4px 0 var(--ink);
+  padding: 14px 16px;
+  cursor: pointer;
+  transition: transform .1s, box-shadow .1s;
+  border-left: 6px solid var(--red);
+}
+.vuln-card:hover { transform: translate(-2px,-2px); box-shadow: 6px 6px 0 var(--ink); }
+.vuln-card:active { transform: translate(1px,1px); box-shadow: 2px 2px 0 var(--ink); }
+.vuln-card.active { outline: 3px solid var(--yellow); outline-offset: 2px; }
+
+.vuln-card.severity-critical { border-left-color: var(--red); }
+.vuln-card.severity-high { border-left-color: var(--orange); }
+.vuln-card.severity-medium { border-left-color: #d97706; }
+
+.vuln-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 8px;
+  gap: 8px;
+}
+
+.vuln-title {
+  font-family: 'Bangers', cursive;
+  font-size: .95rem;
+  letter-spacing: 1px;
+  flex: 1;
+}
+
+.sev-tag {
+  font-family: 'Space Mono', monospace;
+  font-size: .58rem;
+  font-weight: 700;
+  padding: 2px 6px;
+  border: 2px solid var(--ink);
+  border-radius: 3px;
+  flex-shrink: 0;
+}
+.sev-critical { background: var(--red); color: #fff; }
+.sev-high     { background: var(--orange); color: #fff; }
+.sev-medium   { background: #d97706; color: #fff; }
+
+.vuln-desc { font-size: .8rem; line-height: 1.5; color: #444; }
+.vuln-meta { font-size: .72rem; color: #777; margin-top: 6px; font-style: italic; }
+
+/* DETAIL PANEL */
+.detail-panel {
+  background: var(--paper);
+  border: 4px solid var(--ink);
+  border-radius: 6px;
+  box-shadow: 7px 7px 0 var(--ink);
+  overflow: hidden;
+  margin: 22px 0;
+  display: none;
+}
+.detail-panel.active { display: block; }
+
+.detail-header {
+  background: var(--red);
+  color: #fff;
+  font-family: 'Bangers', cursive;
+  font-size: 1.3rem;
+  letter-spacing: 2px;
+  padding: 10px 18px;
+}
+
+.detail-body { padding: 18px 20px; }
+
+.code-block {
+  background: var(--ink);
+  color: var(--yellow);
+  font-family: 'Space Mono', monospace;
+  font-size: .72rem;
+  padding: 12px 14px;
+  border-radius: 4px;
+  overflow-x: auto;
+  line-height: 1.6;
+  margin: 8px 0;
+  white-space: pre;
+}
+
+.sec-label {
+  font-family: 'Bangers', cursive;
+  font-size: .95rem;
+  letter-spacing: 2px;
+  color: #888;
+  text-transform: uppercase;
+  margin: 14px 0 8px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.sec-label::after { content: ''; flex: 1; height: 2px; background: var(--ink); }
+
+.example-type {
+  font-family: 'Bangers', cursive;
+  font-size: .9rem;
+  letter-spacing: 1px;
+  color: var(--orange);
+  margin: 10px 0 4px;
+}
+
+.prev-list { padding-left: 0; list-style: none; }
+.prev-list li {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  padding: 6px 10px;
+  border: 2px solid var(--ink);
+  border-radius: 4px;
+  margin-bottom: 6px;
+  font-size: .84rem;
+  background: var(--paper2);
+  box-shadow: 2px 2px 0 var(--ink);
+}
+.prev-list li::before { content: '&#x2713;'; color: var(--green); font-weight: 700; flex-shrink: 0; }
+
+/* PREVENTION GRID */
+.prev-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 12px;
+  margin: 10px 0;
+}
+.prev-card {
+  border: 3px solid var(--ink);
+  border-radius: 6px;
+  box-shadow: 3px 3px 0 var(--ink);
+  padding: 12px 14px;
+}
+.prev-card h3 {
+  font-family: 'Bangers', cursive;
+  font-size: .95rem;
+  letter-spacing: 1px;
+  margin-bottom: 6px;
+}
+.prev-card p { font-size: .8rem; line-height: 1.5; }
+
+/* MOBILE */
+@media (max-width: 760px) {
+  .vuln-grid { grid-template-columns: 1fr; }
+  .prev-grid { grid-template-columns: 1fr 1fr; }
+  .hero { flex-direction: column; gap: 10px; }
+  .hero-text h1 { font-size: 2rem; }
+}
+@media (max-width: 480px) {
+  .prev-grid { grid-template-columns: 1fr; }
+}
+</style>
+</head>
+<body>
+<div class="paper-overlay"></div>
+<div class="page-wrap">
+
+  <!-- MASTHEAD -->
+  <div class="masthead">
+    <div class="masthead-logo">
+      <img src="../images/logo.png" alt="DevDunia">
+      <span class="masthead-logo-text">DEV<span>DUNIA</span> COMICS</span>
+    </div>
+    <div class="masthead-right">
+      <span class="issue-tag">OWASP TOP 10</span>
+      <a href="../index.html" class="back-link">&#9664; ALL TOOLS</a>
+    </div>
+  </div>
+
+  <!-- HERO -->
+  <div class="hero">
+    <div class="hero-icon">&#x1F6E1;</div>
+    <div class="hero-text">
+      <h1>OWASP Top 10</h1>
+      <p>The most critical web application security risks — with real code examples and prevention methods. Click any vulnerability card to see the full breakdown!</p>
+      <div class="hero-badges">
+        <span class="badge badge-red">SECURITY</span>
+        <span class="badge badge-orange">CODE EXAMPLES</span>
+        <span class="badge badge-green">PREVENTION</span>
+        <span class="badge badge-blue">INTERACTIVE</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- INTRO -->
+  <div class="panel">
+    <div class="panel-header">&#x2139; WHAT IS OWASP TOP 10? <span class="panel-tag">INTRO</span></div>
+    <div class="panel-body">
+      <p style="font-size:.9rem;line-height:1.7;margin-bottom:10px;">The OWASP Top 10 is a standard awareness document for developers and web application security. It represents a broad consensus about the most critical security risks to web applications.</p>
+      <div class="note-box">
+        <strong>&#x1F4A1; Note:</strong> This tool is for educational purposes only. Always ensure you have proper authorization before testing security vulnerabilities.
+      </div>
+    </div>
+  </div>
+
+  <!-- VULN GRID -->
+  <div class="panel">
+    <div class="panel-header">&#x1F4CB; TOP 10 VULNERABILITIES — CLICK TO EXPLORE! <span class="panel-tag">INTERACTIVE</span></div>
+    <div class="panel-body">
+      <div class="vuln-grid">
+
+        <div class="vuln-card severity-critical" data-vuln="a01" onclick="showDetail('a01')">
+          <div class="vuln-header">
+            <span class="vuln-title">A01: Broken Access Control</span>
+            <span class="sev-tag sev-critical">CRITICAL</span>
+          </div>
+          <div class="vuln-desc">Restrictions on what authenticated users are allowed to do are not properly enforced.</div>
+          <div class="vuln-meta">&#x1F4C8; 94% of applications tested</div>
+        </div>
+
+        <div class="vuln-card severity-critical" data-vuln="a02" onclick="showDetail('a02')">
+          <div class="vuln-header">
+            <span class="vuln-title">A02: Cryptographic Failures</span>
+            <span class="sev-tag sev-critical">CRITICAL</span>
+          </div>
+          <div class="vuln-desc">Failures related to cryptography which often lead to sensitive data exposure.</div>
+          <div class="vuln-meta">&#x1F512; Previously "Sensitive Data Exposure"</div>
+        </div>
+
+        <div class="vuln-card severity-critical" data-vuln="a03" onclick="showDetail('a03')">
+          <div class="vuln-header">
+            <span class="vuln-title">A03: Injection</span>
+            <span class="sev-tag sev-critical">CRITICAL</span>
+          </div>
+          <div class="vuln-desc">SQL, NoSQL, OS, and LDAP injection flaws occur when untrusted data is sent to an interpreter.</div>
+          <div class="vuln-meta">&#x1F5C4; SQL, NoSQL, OS, LDAP</div>
+        </div>
+
+        <div class="vuln-card severity-high" data-vuln="a04" onclick="showDetail('a04')">
+          <div class="vuln-header">
+            <span class="vuln-title">A04: Insecure Design</span>
+            <span class="sev-tag sev-high">HIGH</span>
+          </div>
+          <div class="vuln-desc">Risks related to design and architectural flaws, with a focus on secure design patterns.</div>
+          <div class="vuln-meta">&#x2728; New in 2021</div>
+        </div>
+
+        <div class="vuln-card severity-high" data-vuln="a05" onclick="showDetail('a05')">
+          <div class="vuln-header">
+            <span class="vuln-title">A05: Security Misconfiguration</span>
+            <span class="sev-tag sev-high">HIGH</span>
+          </div>
+          <div class="vuln-desc">The most commonly seen issue, often due to insecure default configurations.</div>
+          <div class="vuln-meta">&#x2699; 90% of applications</div>
+        </div>
+
+        <div class="vuln-card severity-high" data-vuln="a06" onclick="showDetail('a06')">
+          <div class="vuln-header">
+            <span class="vuln-title">A06: Vulnerable Components</span>
+            <span class="sev-tag sev-high">HIGH</span>
+          </div>
+          <div class="vuln-desc">Using components with known vulnerabilities, including libraries, frameworks, and modules.</div>
+          <div class="vuln-meta">&#x1F9E9; Previously "Using Components"</div>
+        </div>
+
+        <div class="vuln-card severity-high" data-vuln="a07" onclick="showDetail('a07')">
+          <div class="vuln-header">
+            <span class="vuln-title">A07: Authentication Failures</span>
+            <span class="sev-tag sev-high">HIGH</span>
+          </div>
+          <div class="vuln-desc">Confirmation of the user's identity, authentication, and session management is critical.</div>
+          <div class="vuln-meta">&#x1F464; Previously "Broken Authentication"</div>
+        </div>
+
+        <div class="vuln-card severity-medium" data-vuln="a08" onclick="showDetail('a08')">
+          <div class="vuln-header">
+            <span class="vuln-title">A08: Software &amp; Data Integrity Failures</span>
+            <span class="sev-tag sev-medium">MEDIUM</span>
+          </div>
+          <div class="vuln-desc">Code and infrastructure that does not protect against integrity violations.</div>
+          <div class="vuln-meta">&#x2728; New in 2021</div>
+        </div>
+
+        <div class="vuln-card severity-medium" data-vuln="a09" onclick="showDetail('a09')">
+          <div class="vuln-header">
+            <span class="vuln-title">A09: Security Logging Failures</span>
+            <span class="sev-tag sev-medium">MEDIUM</span>
+          </div>
+          <div class="vuln-desc">Insufficient logging and monitoring with ineffective or non-existent incident response.</div>
+          <div class="vuln-meta">&#x1F4CB; Previously "Insufficient Logging"</div>
+        </div>
+
+        <div class="vuln-card severity-medium" data-vuln="a10" onclick="showDetail('a10')">
+          <div class="vuln-header">
+            <span class="vuln-title">A10: Server-Side Request Forgery</span>
+            <span class="sev-tag sev-medium">MEDIUM</span>
+          </div>
+          <div class="vuln-desc">SSRF flaws occur when a web app fetches a remote resource without validating the user-supplied URL.</div>
+          <div class="vuln-meta">&#x2728; New in 2021</div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- DETAIL PANEL -->
+  <div class="detail-panel" id="detail-panel">
+    <div class="detail-header" id="detail-title">&#x1F50D; SELECT A VULNERABILITY ABOVE</div>
+    <div class="detail-body" id="detail-body"></div>
+  </div>
+
+  <!-- PREVENTION GUIDELINES -->
+  <div class="panel">
+    <div class="panel-header">&#x1F6E1; GENERAL PREVENTION GUIDELINES <span class="panel-tag">BEST PRACTICES</span></div>
+    <div class="panel-body">
+      <div class="prev-grid">
+        <div class="prev-card" style="background:rgba(63,163,77,.08);border-color:var(--green);">
+          <h3 style="color:var(--green);">Input Validation</h3>
+          <p>Validate and sanitize all user inputs on both client and server side.</p>
+        </div>
+        <div class="prev-card" style="background:rgba(29,111,184,.08);border-color:var(--blue);">
+          <h3 style="color:var(--blue);">Authentication</h3>
+          <p>Implement strong authentication mechanisms with MFA where possible.</p>
+        </div>
+        <div class="prev-card" style="background:rgba(138,79,255,.08);border-color:var(--purple);">
+          <h3 style="color:var(--purple);">Authorization</h3>
+          <p>Enforce proper access controls — deny by default, grant explicitly.</p>
+        </div>
+        <div class="prev-card" style="background:rgba(255,210,63,.08);border-color:var(--orange);">
+          <h3 style="color:var(--orange);">Encryption</h3>
+          <p>Encrypt sensitive data in transit (HTTPS/TLS) and at rest (AES-256).</p>
+        </div>
+        <div class="prev-card" style="background:rgba(230,57,70,.08);border-color:var(--red);">
+          <h3 style="color:var(--red);">Logging</h3>
+          <p>Implement comprehensive logging and real-time security monitoring.</p>
+        </div>
+        <div class="prev-card" style="background:rgba(63,163,77,.08);border-color:var(--green);">
+          <h3 style="color:var(--green);">Updates</h3>
+          <p>Keep all components, libraries, and frameworks updated and patched.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div><!-- /page-wrap -->
+
+<script>
+(function() {
+
+var vulnerabilities = {
+  a01: {
+    title: 'A01: Broken Access Control',
+    severity: 'CRITICAL',
+    description: 'Restrictions on what authenticated users are allowed to do are not properly enforced. Attackers can exploit these flaws to access unauthorized functionality and/or data.',
+    examples: [
+      {
+        type: 'Directory Traversal',
+        code: '// VULNERABLE CODE\napp.get(\'/files/:filename\', (req, res) => {\n  const filename = req.params.filename;\n  res.sendFile(filename); // No validation!\n});\n\n// SECURE CODE\napp.get(\'/files/:filename\', (req, res) => {\n  const filename = path.basename(req.params.filename);\n  const filepath = path.join(\'/safe/directory/\', filename);\n  if (filepath.startsWith(\'/safe/directory/\')) {\n    res.sendFile(filepath);\n  } else {\n    res.status(403).send(\'Access denied\');\n  }\n});'
+      },
+      {
+        type: 'IDOR (Insecure Direct Object Reference)',
+        code: '// VULNERABLE CODE\napp.get(\'/user/:id\', (req, res) => {\n  const user = getUserById(req.params.id);\n  res.json(user); // No authorization check!\n});\n\n// SECURE CODE\napp.get(\'/user/:id\', authenticateToken, (req, res) => {\n  if (req.user.id !== parseInt(req.params.id)) {\n    return res.status(403).send(\'Access denied\');\n  }\n  const user = getUserById(req.params.id);\n  res.json(user);\n});'
+      }
+    ],
+    prevention: ['Implement proper access controls', 'Use principle of least privilege', 'Validate user permissions for each request', 'Use indirect object references', 'Implement proper session management']
+  },
+  a02: {
+    title: 'A02: Cryptographic Failures',
+    severity: 'CRITICAL',
+    description: 'Failures related to cryptography which often lead to sensitive data exposure or system compromise.',
+    examples: [
+      {
+        type: 'Weak Password Hashing',
+        code: '// VULNERABLE CODE\nconst crypto = require(\'crypto\');\nconst password = \'user123\';\nconst hash = crypto.createHash(\'md5\').update(password).digest(\'hex\');\n\n// SECURE CODE\nconst bcrypt = require(\'bcrypt\');\nconst saltRounds = 12;\nconst hash = await bcrypt.hash(password, saltRounds);'
+      },
+      {
+        type: 'Plain Text Storage',
+        code: '// VULNERABLE CODE\nconst user = {\n  username: \'john\',\n  password: \'plaintext123\' // Never store plain text!\n};\n\n// SECURE CODE\nconst user = {\n  username: \'john\',\n  password: await bcrypt.hash(\'plaintext123\', 12),\n  salt: generateRandomSalt()\n};'
+      }
+    ],
+    prevention: ['Use strong encryption algorithms (AES-256, RSA-2048+)', 'Hash passwords with bcrypt, scrypt, or Argon2', 'Use HTTPS for all communications', 'Implement proper key management', 'Never store sensitive data in plain text']
+  },
+  a03: {
+    title: 'A03: Injection',
+    severity: 'CRITICAL',
+    description: 'SQL, NoSQL, OS, and LDAP injection flaws occur when untrusted data is sent to an interpreter as part of a command or query.',
+    examples: [
+      {
+        type: 'SQL Injection',
+        code: '// VULNERABLE CODE\nconst query = "SELECT * FROM users WHERE username = \'" + username + "\'";\ndb.query(query, (err, result) => {\n  // Direct string concatenation - vulnerable!\n});\n\n// SECURE CODE\nconst query = "SELECT * FROM users WHERE username = ?";\ndb.query(query, [username], (err, result) => {\n  // Parameterized queries - secure!\n});'
+      },
+      {
+        type: 'NoSQL Injection',
+        code: '// VULNERABLE CODE\nconst user = await User.findOne({\n  username: req.body.username,\n  password: req.body.password\n});\n\n// SECURE CODE\nconst user = await User.findOne({\n  username: { $eq: req.body.username },\n  password: { $eq: await bcrypt.hash(req.body.password, 12) }\n});'
+      }
+    ],
+    prevention: ['Use parameterized queries', 'Implement input validation and sanitization', 'Use ORM/ODM frameworks', 'Apply principle of least privilege to database accounts', 'Implement proper error handling']
+  },
+  a04: {
+    title: 'A04: Insecure Design',
+    severity: 'HIGH',
+    description: 'Risks related to design and architectural flaws. Insecure design cannot be fixed by perfect implementation — secure design patterns must be used from the start.',
+    examples: [
+      {
+        type: 'Missing Authorization Controls',
+        code: '// INSECURE DESIGN\nclass UserController {\n  updateProfile(userId, data) {\n    // No authorization check\n    return this.userService.update(userId, data);\n  }\n}\n\n// SECURE DESIGN\nclass UserController {\n  updateProfile(userId, data, currentUser) {\n    if (currentUser.id !== userId && !currentUser.isAdmin) {\n      throw new UnauthorizedError();\n    }\n    return this.userService.update(userId, data);\n  }\n}'
+      }
+    ],
+    prevention: ['Implement threat modeling', 'Use secure design patterns', 'Apply security by design principles', 'Conduct security architecture reviews', 'Implement proper access controls from the start']
+  },
+  a05: {
+    title: 'A05: Security Misconfiguration',
+    severity: 'HIGH',
+    description: 'Security misconfiguration is the most commonly seen issue. It often results from insecure default configurations, incomplete configurations, or misconfigured security controls.',
+    examples: [
+      {
+        type: 'Default Credentials in Production',
+        code: '# VULNERABLE CONFIGURATION\n# Default admin credentials\nadmin:admin123\n\n# SECURE CONFIGURATION\n# Use strong, unique credentials\nadmin:ComplexP@ssw0rd!2024'
+      },
+      {
+        type: 'Debug Mode in Production',
+        code: '# VULNERABLE CONFIGURATION\nDEBUG=True\nSECRET_KEY=dev-key-123\n\n# SECURE CONFIGURATION\nDEBUG=False\nSECRET_KEY=your-super-secret-production-key-here'
+      }
+    ],
+    prevention: ['Remove default accounts and passwords', 'Disable unnecessary features and services', 'Implement proper error handling', 'Use security headers', 'Regular security configuration reviews']
+  },
+  a06: {
+    title: 'A06: Vulnerable Components',
+    severity: 'HIGH',
+    description: 'Using components with known vulnerabilities, including libraries, frameworks, and other software modules. These risks can undermine application defenses and enable various attacks.',
+    examples: [
+      {
+        type: 'Outdated Dependencies',
+        code: '# VULNERABLE package.json\n{\n  "dependencies": {\n    "express": "4.16.0",  # Known vulnerabilities\n    "lodash": "4.17.10"  # Outdated version\n  }\n}\n\n# SECURE package.json\n{\n  "dependencies": {\n    "express": "^4.18.2",  # Latest secure version\n    "lodash": "^4.17.21"  # Updated version\n  }\n}'
+      }
+    ],
+    prevention: ['Keep all components updated', 'Use dependency scanning tools (Snyk, npm audit)', 'Remove unused dependencies', 'Implement security monitoring', 'Use trusted sources for components']
+  },
+  a07: {
+    title: 'A07: Authentication Failures',
+    severity: 'HIGH',
+    description: 'Confirmation of the user\'s identity, authentication, and session management is critical. Failures can allow attackers to assume other users\' identities.',
+    examples: [
+      {
+        type: 'Weak Session Management',
+        code: '// VULNERABLE CODE\napp.use(session({\n  secret: \'weak-secret\',\n  cookie: { secure: false, httpOnly: false }\n}));\n\n// SECURE CODE\napp.use(session({\n  secret: process.env.SESSION_SECRET,\n  cookie: { \n    secure: true, \n    httpOnly: true, \n    maxAge: 3600000,\n    sameSite: \'strict\'\n  }\n}));'
+      }
+    ],
+    prevention: ['Implement strong authentication mechanisms', 'Use secure session management', 'Implement multi-factor authentication', 'Use secure password policies', 'Implement proper logout functionality']
+  },
+  a08: {
+    title: 'A08: Software and Data Integrity Failures',
+    severity: 'MEDIUM',
+    description: 'Software and data integrity failures relate to code and infrastructure that does not protect against integrity violations (e.g., insecure deserialization, malicious CI/CD pipelines).',
+    examples: [
+      {
+        type: 'Insecure CI/CD Pipeline',
+        code: '# VULNERABLE PIPELINE\n# No integrity checks\ndeploy:\n  script:\n    - docker build -t app .\n    - docker push registry/app:latest\n\n# SECURE PIPELINE\ndeploy:\n  script:\n    - docker build -t app .\n    - docker scan app  # Security scanning\n    - docker push registry/app:latest\n    - verify_signature app:latest'
+      }
+    ],
+    prevention: ['Implement code signing', 'Use secure CI/CD pipelines', 'Implement integrity checks for dependencies', 'Use secure update mechanisms', 'Implement proper access controls on CI/CD systems']
+  },
+  a09: {
+    title: 'A09: Security Logging Failures',
+    severity: 'MEDIUM',
+    description: 'Insufficient logging and monitoring, coupled with ineffective or non-existent incident response. Attackers rely on the lack of monitoring and timely response to achieve their goals.',
+    examples: [
+      {
+        type: 'Missing Login Audit Trail',
+        code: '// VULNERABLE CODE\napp.post(\'/login\', (req, res) => {\n  const user = authenticate(req.body);\n  if (user) {\n    res.json({ success: true });\n    // No logging of login attempts!\n  }\n});\n\n// SECURE CODE\napp.post(\'/login\', (req, res) => {\n  const user = authenticate(req.body);\n  if (user) {\n    logger.info(\'Successful login\', { \n      userId: user.id, \n      ip: req.ip, \n      userAgent: req.get(\'User-Agent\') \n    });\n    res.json({ success: true });\n  } else {\n    logger.warn(\'Failed login attempt\', { \n      ip: req.ip, \n      userAgent: req.get(\'User-Agent\') \n    });\n    res.status(401).json({ error: \'Invalid credentials\' });\n  }\n});'
+      }
+    ],
+    prevention: ['Implement comprehensive logging', 'Use centralized logging systems', 'Implement real-time monitoring and alerting', 'Create incident response plans', 'Regular log analysis and review']
+  },
+  a10: {
+    title: 'A10: Server-Side Request Forgery (SSRF)',
+    severity: 'MEDIUM',
+    description: 'SSRF flaws occur whenever a web application is fetching a remote resource without validating the user-supplied URL. Attackers can coerce the application to send requests to unexpected destinations.',
+    examples: [
+      {
+        type: 'Unvalidated URL Fetching',
+        code: '// VULNERABLE CODE\napp.get(\'/fetch\', (req, res) => {\n  const url = req.query.url;\n  fetch(url).then(response => {\n    res.json(response);\n  }); // No URL validation!\n});\n\n// SECURE CODE\napp.get(\'/fetch\', (req, res) => {\n  const url = req.query.url;\n  const allowedHosts = [\'api.example.com\', \'cdn.example.com\'];\n  try {\n    const urlObj = new URL(url);\n    if (!allowedHosts.includes(urlObj.hostname)) {\n      return res.status(400).json({ error: \'Invalid URL\' });\n    }\n    fetch(url).then(response => res.json(response));\n  } catch (error) {\n    res.status(400).json({ error: \'Invalid URL format\' });\n  }\n});'
+      }
+    ],
+    prevention: ['Validate and sanitize all URLs', 'Use allowlists for permitted hosts', 'Implement network segmentation', 'Use outbound proxies to control external requests', 'Disable unnecessary URL schemes']
+  }
+};
+
+window.showDetail = function(id) {
+  var vuln = vulnerabilities[id];
+  if(!vuln) return;
+
+  // Mark active card
+  var cards = document.querySelectorAll('.vuln-card');
+  for(var i=0;i<cards.length;i++) {
+    cards[i].classList.remove('active');
+    if(cards[i].getAttribute('data-vuln') === id) cards[i].classList.add('active');
+  }
+
+  var panel = document.getElementById('detail-panel');
+  var titleEl = document.getElementById('detail-title');
+  var bodyEl = document.getElementById('detail-body');
+
+  var sevColor = vuln.severity === 'CRITICAL' ? 'var(--red)'
+               : vuln.severity === 'HIGH' ? 'var(--orange)'
+               : '#d97706';
+
+  titleEl.textContent = '🔍 ' + vuln.title;
+  titleEl.style.background = sevColor;
+
+  var exHtml = '';
+  for(var j=0;j<vuln.examples.length;j++) {
+    var ex = vuln.examples[j];
+    exHtml += '<div class="example-type">' + ex.type + '</div>' +
+              '<pre class="code-block">' + escHtml(ex.code) + '</pre>';
+  }
+
+  var prevHtml = '<ul class="prev-list">';
+  for(var k=0;k<vuln.prevention.length;k++) {
+    prevHtml += '<li>' + escHtml(vuln.prevention[k]) + '</li>';
+  }
+  prevHtml += '</ul>';
+
+  bodyEl.innerHTML =
+    '<p style="font-size:.9rem;line-height:1.7;margin-bottom:10px;">' + escHtml(vuln.description) + '</p>' +
+    '<div class="sec-label">&#x1F4BB; Code Examples</div>' + exHtml +
+    '<div class="sec-label">&#x1F6E1; Prevention Methods</div>' + prevHtml;
+
+  panel.classList.add('active');
+  setTimeout(function() { panel.scrollIntoView({ behavior: 'smooth', block: 'nearest' }); }, 50);
+};
+
+function escHtml(s) {
+  return String(s)
+    .replace(/&/g,'&amp;')
+    .replace(/</g,'&lt;')
+    .replace(/>/g,'&gt;')
+    .replace(/"/g,'&quot;');
+}
+
+})();
+</script>
+</body>
+</html>

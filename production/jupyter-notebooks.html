@@ -1,0 +1,571 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Jupyter Notebooks — DevDunia Comics</title>
+<meta name="description" content="Jupyter Notebook setup, magic commands, and data visualization examples. Free online Jupyter Notebook reference for developers.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://devdunia.com/production/jupyter-notebooks.html">
+<meta property="og:title" content="Jupyter Notebooks — DevDunia Comics">
+<meta property="og:description" content="Jupyter Notebook setup, magic commands, and data visualization examples.">
+<meta property="og:image" content="https://devdunia.com/images/logo.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Bangers&family=Comic+Neue:wght@400;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --ink: #1a1410;
+  --paper: #fdf3e3;
+  --paper2: #fbe9cc;
+  --red: #e63946;
+  --blue: #1d6fb8;
+  --yellow: #ffd23f;
+  --green: #3fa34d;
+  --pink: #ff6b9d;
+  --purple: #8a4fff;
+  --orange: #ff8c42;
+}
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  font-family: 'Comic Neue', cursive;
+  font-weight: 400;
+  color: var(--ink);
+  background-color: var(--paper);
+  background-image: radial-gradient(var(--ink) 0.5px, transparent 0.6px);
+  background-size: 14px 14px;
+  background-attachment: fixed;
+  min-height: 100vh;
+}
+.paper-overlay {
+  position: fixed; inset: 0;
+  background: rgba(253,243,227,.78);
+  pointer-events: none; z-index: 0;
+}
+.page-wrap {
+  position: relative; z-index: 1;
+  max-width: 900px; margin: 0 auto;
+  padding: 0 16px 60px;
+}
+.masthead {
+  background: var(--orange);
+  border: 4px solid var(--ink); border-radius: 6px;
+  box-shadow: 7px 7px 0 var(--ink);
+  margin: 18px 0 28px; padding: 10px 20px;
+  display: flex; align-items: center;
+  justify-content: space-between; flex-wrap: wrap; gap: 8px;
+}
+.masthead-logo {
+  font-family: 'Bangers', cursive; font-size: 1.9rem;
+  letter-spacing: 2px; color: #fff;
+  text-shadow: 3px 3px 0 var(--ink); line-height: 1;
+}
+.masthead-logo span { color: var(--yellow); }
+.masthead-right { display: flex; align-items: center; gap: 8px; }
+.issue-tag {
+  font-family: 'Bangers', cursive; font-size: .95rem;
+  background: var(--yellow); color: var(--ink);
+  padding: 3px 10px; border-radius: 4px;
+  border: 2px solid var(--ink); letter-spacing: 1px;
+}
+.back-link {
+  font-family: 'Bangers', cursive; font-size: .95rem;
+  color: #fff; text-decoration: none;
+  background: var(--ink); padding: 3px 10px;
+  border-radius: 4px; letter-spacing: 1px; transition: opacity .15s;
+}
+.back-link:hover { opacity: .75; }
+.hero {
+  display: flex; align-items: flex-start; gap: 20px;
+  background: var(--paper2);
+  border: 4px solid var(--ink); border-radius: 6px;
+  box-shadow: 7px 7px 0 var(--ink);
+  padding: 20px 24px; margin-bottom: 28px;
+  transform: rotate(-0.4deg);
+}
+.hero-icon { font-size: 3rem; line-height: 1; flex-shrink: 0; filter: drop-shadow(3px 3px 0 var(--ink)); }
+.hero-text h1 {
+  font-family: 'Bangers', cursive; font-size: 2.8rem;
+  letter-spacing: 2px; color: var(--orange);
+  -webkit-text-stroke: 1px var(--ink);
+  text-shadow: 4px 4px 0 var(--ink);
+  line-height: 1; text-transform: uppercase;
+}
+.hero-text p { font-size: .95rem; margin-top: 6px; line-height: 1.5; max-width: 520px; }
+.hero-badges { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 10px; }
+.badge {
+  font-family: 'Space Mono', monospace; font-size: .65rem; font-weight: 700;
+  padding: 3px 8px; border: 2px solid var(--ink);
+  border-radius: 4px; box-shadow: 2px 2px 0 var(--ink);
+}
+.badge-orange { background: var(--orange); color: #fff; }
+.badge-green  { background: var(--green);  color: #fff; }
+.badge-blue   { background: var(--blue);   color: #fff; }
+.badge-yellow { background: var(--yellow); color: var(--ink); }
+.panel {
+  background: var(--paper);
+  border: 4px solid var(--ink); border-radius: 6px;
+  box-shadow: 7px 7px 0 var(--ink);
+  overflow: hidden; margin-bottom: 22px;
+}
+.panel-header {
+  background: var(--ink); color: var(--yellow);
+  font-family: 'Bangers', cursive; font-size: 1.2rem;
+  letter-spacing: 2px; padding: 8px 16px;
+  display: flex; align-items: center; justify-content: space-between; gap: 10px;
+}
+.panel-header .panel-tag {
+  font-family: 'Space Mono', monospace; font-size: .65rem; font-weight: 700;
+  background: var(--yellow); color: var(--ink);
+  padding: 2px 7px; border-radius: 3px;
+}
+.panel-body { padding: 18px 20px; }
+.grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+.code-card {
+  background: var(--paper2);
+  border: 3px solid var(--ink); border-radius: 6px;
+  box-shadow: 4px 4px 0 var(--ink); overflow: hidden;
+  margin-bottom: 16px;
+}
+.code-card-last { margin-bottom: 0; }
+.code-card-header {
+  background: var(--ink); color: var(--yellow);
+  font-family: 'Bangers', cursive; font-size: 1rem;
+  letter-spacing: 1px; padding: 6px 14px;
+  display: flex; align-items: center; justify-content: space-between;
+}
+.comic-textarea {
+  width: 100%;
+  background: var(--ink);
+  border: none;
+  padding: 12px 14px;
+  font-family: 'Space Mono', monospace;
+  font-size: .78rem;
+  color: var(--yellow);
+  line-height: 1.6;
+  resize: vertical;
+  outline: none;
+  display: block;
+}
+.btn-copy {
+  font-family: 'Bangers', cursive; font-size: .9rem;
+  letter-spacing: 1px;
+  background: var(--yellow); color: var(--ink);
+  border: 2px solid var(--ink); border-radius: 4px;
+  padding: 2px 10px; cursor: pointer;
+  box-shadow: 2px 2px 0 rgba(0,0,0,.4);
+  transition: transform .1s, box-shadow .1s;
+}
+.btn-copy:active { transform: translate(1px,1px); box-shadow: 1px 1px 0 rgba(0,0,0,.4); }
+.ref-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+.ref-card {
+  background: var(--paper2);
+  border: 3px solid var(--ink); border-radius: 6px;
+  box-shadow: 4px 4px 0 var(--ink); padding: 14px 16px;
+}
+.ref-card h4 {
+  font-family: 'Bangers', cursive; font-size: 1rem;
+  letter-spacing: 1px; margin-bottom: 8px; color: var(--orange);
+}
+.ref-card ul { list-style: none; }
+.ref-card li { font-size: .85rem; line-height: 1.7; }
+.ref-card li code {
+  font-family: 'Space Mono', monospace; font-size: .72rem;
+  background: var(--ink); color: var(--yellow);
+  padding: 1px 5px; border-radius: 3px;
+}
+@media (max-width: 760px) {
+  .grid-2 { grid-template-columns: 1fr; }
+  .ref-grid { grid-template-columns: 1fr; }
+  .hero { flex-direction: column; gap: 10px; }
+  .hero-text h1 { font-size: 2rem; }
+}
+</style>
+</head>
+<body>
+<div class="paper-overlay"></div>
+<div class="page-wrap">
+
+  <!-- MASTHEAD -->
+  <div class="masthead">
+    <div class="masthead-logo">DEV<span>DUNIA</span> COMICS</div>
+    <div class="masthead-right">
+      <span class="issue-tag">JUPYTER</span>
+      <a href="../index.html" class="back-link">&#9664; ALL TOOLS</a>
+    </div>
+  </div>
+
+  <!-- HERO -->
+  <div class="hero">
+    <div class="hero-icon">&#x1F4D3;</div>
+    <div class="hero-text">
+      <h1>Jupyter Notebooks</h1>
+      <p>Notebook setup, magic commands, and data visualization examples. From installation to interactive widgets — all the code you need!</p>
+      <div class="hero-badges">
+        <span class="badge badge-orange">SETUP</span>
+        <span class="badge badge-green">MAGIC CMDS</span>
+        <span class="badge badge-blue">MATPLOTLIB</span>
+        <span class="badge badge-yellow">WIDGETS</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- SETUP -->
+  <div class="panel">
+    <div class="panel-header">
+      &#x2699;&#xFE0F; SETUP &amp; INSTALLATION
+      <span class="panel-tag">SETUP</span>
+    </div>
+    <div class="panel-body">
+      <div class="code-card code-card-last">
+        <div class="code-card-header">Installation &amp; Basic Setup <button class="btn-copy" onclick="copyTA('setup-code', this)">COPY</button></div>
+        <textarea id="setup-code" class="comic-textarea" rows="14" readonly># Install Jupyter
+pip install jupyter
+
+# Install additional packages
+pip install jupyterlab
+pip install ipywidgets
+pip install matplotlib seaborn pandas numpy
+
+# Start Jupyter Notebook
+jupyter notebook
+
+# Start JupyterLab (modern interface)
+jupyter lab
+
+# Create a new notebook
+jupyter notebook my_notebook.ipynb
+
+# Convert notebook to different formats
+jupyter nbconvert --to html my_notebook.ipynb
+jupyter nbconvert --to pdf my_notebook.ipynb
+jupyter nbconvert --to python my_notebook.ipynb
+
+# Install extensions
+pip install jupyter_contrib_nbextensions
+jupyter contrib nbextension install --user</textarea>
+      </div>
+    </div>
+  </div>
+
+  <!-- MAGIC COMMANDS -->
+  <div class="panel">
+    <div class="panel-header">
+      &#x2728; MAGIC COMMANDS
+      <span class="panel-tag">MAGIC</span>
+    </div>
+    <div class="panel-body">
+      <div class="grid-2">
+        <div class="code-card code-card-last">
+          <div class="code-card-header">Line Magic Commands <button class="btn-copy" onclick="copyTA('line-magic-code', this)">COPY</button></div>
+          <textarea id="line-magic-code" class="comic-textarea" rows="22" readonly># Timing and profiling
+%time sum(range(1000000))
+%timeit sum(range(1000000))
+
+# System commands
+%pwd                    # Current directory
+%ls                     # List files
+%cd /path/to/directory  # Change directory
+%mkdir new_folder       # Create directory
+
+# Environment and variables
+%env                    # Show environment variables
+%env MY_VAR=value       # Set environment variable
+%who                    # Show all variables
+%whos                   # Show variables with details
+%del variable_name      # Delete variable
+
+# History and debugging
+%history                # Show command history
+%debug                  # Enter debugger
+%pdb on                 # Auto-enter debugger on error
+
+# File operations
+%load filename.py       # Load Python file
+%run filename.py        # Run Python file
+%save filename.py 1-5   # Save lines 1-5 to file
+
+# Display options
+%matplotlib inline      # Show plots inline
+%matplotlib notebook    # Interactive plots
+%config InlineBackend.figure_format = 'svg'</textarea>
+        </div>
+        <div class="code-card code-card-last">
+          <div class="code-card-header">Cell Magic Commands <button class="btn-copy" onclick="copyTA('cell-magic-code', this)">COPY</button></div>
+          <textarea id="cell-magic-code" class="comic-textarea" rows="22" readonly># Run different languages
+%%bash
+echo "Hello from Bash!"
+ls -la
+
+%%html
+<h1>Hello from HTML!</h1>
+<p>This is HTML content in a notebook cell.</p>
+
+%%javascript
+console.log("Hello from JavaScript!");
+alert("Hello World!");
+
+%%latex
+\begin{equation}
+E = mc^2
+\end{equation}
+
+# File operations
+%%writefile my_script.py
+def hello():
+    print("Hello from external file!")
+
+%%writefile -a my_script.py
+def goodbye():
+    print("Goodbye!")
+
+# Capture output
+%%capture captured_output
+print("This output will be captured")
+result = 42
+
+# Show captured output
+captured_output.show()
+
+# Suppress output
+%%capture
+import warnings
+warnings.filterwarnings('ignore')
+print("This won't be displayed")</textarea>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- DATA VISUALIZATION -->
+  <div class="panel">
+    <div class="panel-header">
+      &#x1F4CA; DATA VISUALIZATION
+      <span class="panel-tag">CHARTS</span>
+    </div>
+    <div class="panel-body">
+      <div class="grid-2">
+        <div class="code-card code-card-last">
+          <div class="code-card-header">Matplotlib Examples <button class="btn-copy" onclick="copyTA('matplotlib-code', this)">COPY</button></div>
+          <textarea id="matplotlib-code" class="comic-textarea" rows="22" readonly>import matplotlib.pyplot as plt
+import numpy as np
+
+# Basic plot
+x = np.linspace(0, 10, 100)
+y = np.sin(x)
+plt.figure(figsize=(10, 6))
+plt.plot(x, y, 'b-', linewidth=2, label='sin(x)')
+plt.xlabel('X values')
+plt.ylabel('Y values')
+plt.title('Sine Wave')
+plt.legend()
+plt.grid(True)
+plt.show()
+
+# Multiple subplots
+fig, axes = plt.subplots(2, 2, figsize=(12, 8))
+
+# Subplot 1: Line plot
+x = np.linspace(0, 10, 100)
+axes[0, 0].plot(x, np.sin(x))
+axes[0, 0].set_title('Sine Wave')
+
+# Subplot 2: Scatter plot
+x = np.random.randn(100)
+y = np.random.randn(100)
+axes[0, 1].scatter(x, y, alpha=0.6)
+axes[0, 1].set_title('Scatter Plot')
+
+# Subplot 3: Histogram
+data = np.random.randn(1000)
+axes[1, 0].hist(data, bins=30, alpha=0.7)
+axes[1, 0].set_title('Histogram')
+
+# Subplot 4: Bar chart
+categories = ['A', 'B', 'C', 'D']
+values = [23, 45, 56, 78]
+axes[1, 1].bar(categories, values)
+axes[1, 1].set_title('Bar Chart')
+
+plt.tight_layout()
+plt.show()</textarea>
+        </div>
+        <div class="code-card code-card-last">
+          <div class="code-card-header">Seaborn Examples <button class="btn-copy" onclick="copyTA('seaborn-code', this)">COPY</button></div>
+          <textarea id="seaborn-code" class="comic-textarea" rows="22" readonly>import seaborn as sns
+import pandas as pd
+import numpy as np
+
+# Set style
+sns.set_style("whitegrid")
+sns.set_palette("husl")
+
+# Load sample data
+tips = sns.load_dataset("tips")
+
+# Distribution plots
+plt.figure(figsize=(12, 4))
+
+plt.subplot(1, 3, 1)
+sns.histplot(data=tips, x="total_bill", kde=True)
+plt.title("Total Bill Distribution")
+
+plt.subplot(1, 3, 2)
+sns.boxplot(data=tips, x="day", y="total_bill")
+plt.title("Total Bill by Day")
+
+plt.subplot(1, 3, 3)
+sns.violinplot(data=tips, x="day", y="total_bill", hue="sex")
+plt.title("Total Bill by Day and Sex")
+
+plt.tight_layout()
+plt.show()
+
+# Correlation heatmap
+plt.figure(figsize=(8, 6))
+numeric_data = tips.select_dtypes(include=[np.number])
+correlation_matrix = numeric_data.corr()
+sns.heatmap(correlation_matrix, annot=True, cmap='coolwarm', center=0)
+plt.title("Correlation Heatmap")
+plt.show()
+
+# Pair plot
+sns.pairplot(tips, hue="sex", diag_kind="hist")
+plt.show()</textarea>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- INTERACTIVE WIDGETS -->
+  <div class="panel">
+    <div class="panel-header">
+      &#x1F3AE; INTERACTIVE WIDGETS
+      <span class="panel-tag">WIDGETS</span>
+    </div>
+    <div class="panel-body">
+      <div class="code-card code-card-last">
+        <div class="code-card-header">Interactive Controls <button class="btn-copy" onclick="copyTA('widgets-code', this)">COPY</button></div>
+        <textarea id="widgets-code" class="comic-textarea" rows="28" readonly>import ipywidgets as widgets
+from IPython.display import display
+import matplotlib.pyplot as plt
+import numpy as np
+
+# Basic interactive plot
+def plot_sine_wave(frequency, amplitude):
+    x = np.linspace(0, 4*np.pi, 1000)
+    y = amplitude * np.sin(frequency * x)
+    plt.figure(figsize=(10, 6))
+    plt.plot(x, y, 'b-', linewidth=2)
+    plt.title(f'Sine Wave: f={frequency}, A={amplitude}')
+    plt.xlabel('X')
+    plt.ylabel('Y')
+    plt.grid(True)
+    plt.show()
+
+# Create interactive widgets
+frequency_slider = widgets.FloatSlider(
+    value=1.0, min=0.1, max=5.0, step=0.1, description='Frequency:'
+)
+amplitude_slider = widgets.FloatSlider(
+    value=1.0, min=0.1, max=3.0, step=0.1, description='Amplitude:'
+)
+
+interactive_plot = widgets.interactive(
+    plot_sine_wave,
+    frequency=frequency_slider,
+    amplitude=amplitude_slider
+)
+display(interactive_plot)
+
+# Dropdown and text widgets
+def analyze_data(dataset, operation):
+    if dataset == 'Iris':
+        data = sns.load_dataset('iris')
+    elif dataset == 'Tips':
+        data = sns.load_dataset('tips')
+    else:
+        data = sns.load_dataset('titanic')
+    if operation == 'Info':
+        return data.info()
+    elif operation == 'Describe':
+        return data.describe()
+    else:
+        return data.head()
+
+dataset_dropdown = widgets.Dropdown(
+    options=['Iris', 'Tips', 'Titanic'], value='Iris', description='Dataset:'
+)
+operation_dropdown = widgets.Dropdown(
+    options=['Info', 'Describe', 'Head'], value='Info', description='Operation:'
+)
+
+interactive_analysis = widgets.interactive(
+    analyze_data, dataset=dataset_dropdown, operation=operation_dropdown
+)
+display(interactive_analysis)</textarea>
+      </div>
+    </div>
+  </div>
+
+  <!-- QUICK REFERENCE -->
+  <div class="panel">
+    <div class="panel-header">
+      &#x1F4DA; QUICK REFERENCE
+      <span class="panel-tag">REFERENCE</span>
+    </div>
+    <div class="panel-body">
+      <div class="ref-grid">
+        <div class="ref-card">
+          <h4>Keyboard Shortcuts</h4>
+          <ul>
+            <li>&#x25B6; <code>Shift + Enter</code> — Run cell</li>
+            <li>&#x25B6; <code>Ctrl + Enter</code> — Run cell (stay)</li>
+            <li>&#x25B6; <code>A</code> — Insert cell above</li>
+            <li>&#x25B6; <code>B</code> — Insert cell below</li>
+            <li>&#x25B6; <code>DD</code> — Delete cell</li>
+            <li>&#x25B6; <code>M</code> — Markdown mode</li>
+            <li>&#x25B6; <code>Y</code> — Code mode</li>
+          </ul>
+        </div>
+        <div class="ref-card">
+          <h4>Useful Extensions</h4>
+          <ul>
+            <li>&#x25B6; <code>jupyter_contrib_nbextensions</code></li>
+            <li>&#x25B6; <code>jupyterlab-git</code> — Git integration</li>
+            <li>&#x25B6; <code>jupyterlab-lsp</code> — Language server</li>
+            <li>&#x25B6; <code>jupyterlab-drawio</code> — Diagrams</li>
+            <li>&#x25B6; <code>jupyterlab-toc</code> — Table of contents</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div><!-- /page-wrap -->
+
+<script>
+function copyTA(id, btn) {
+  var el = document.getElementById(id);
+  var text = el ? el.value : '';
+  var orig = btn.textContent;
+  if (navigator.clipboard) {
+    navigator.clipboard.writeText(text).then(function() {
+      btn.textContent = 'COPIED!';
+      btn.style.background = 'var(--green)';
+      btn.style.color = '#fff';
+      setTimeout(function() {
+        btn.textContent = orig;
+        btn.style.background = '';
+        btn.style.color = '';
+      }, 1800);
+    });
+  } else {
+    el.select();
+    try { document.execCommand('copy'); } catch(e) {}
+    btn.textContent = 'COPIED!';
+    setTimeout(function() { btn.textContent = orig; }, 1800);
+  }
+}
+</script>
+</body>
+</html>

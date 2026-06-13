@@ -1,0 +1,801 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>cURL Describer — DevDunia Comics</title>
+<meta name="description" content="Analyze and understand cURL commands for API testing and debugging. Free online cURL describer tool for developers.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://devdunia.com/production/curl-describer.html">
+<meta property="og:title" content="cURL Describer — DevDunia Comics">
+<meta property="og:description" content="Analyze and understand cURL commands for API testing and debugging. Free online cURL describer tool for developers.">
+<meta property="og:image" content="https://devdunia.com/images/logo.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Bangers&family=Comic+Neue:wght@400;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --ink: #1a1410;
+  --paper: #fdf3e3;
+  --paper2: #fbe9cc;
+  --red: #e63946;
+  --blue: #1d6fb8;
+  --yellow: #ffd23f;
+  --green: #3fa34d;
+  --pink: #ff6b9d;
+  --purple: #8a4fff;
+  --orange: #ff8c42;
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: 'Comic Neue', cursive;
+  font-weight: 400;
+  color: var(--ink);
+  background-color: var(--paper);
+  background-image: radial-gradient(var(--ink) 0.5px, transparent 0.6px);
+  background-size: 14px 14px;
+  background-attachment: fixed;
+  min-height: 100vh;
+}
+
+.paper-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(253,243,227,.78);
+  pointer-events: none;
+  z-index: 0;
+}
+
+.page-wrap {
+  position: relative;
+  z-index: 1;
+  max-width: 860px;
+  margin: 0 auto;
+  padding: 0 16px 60px;
+}
+
+/* MASTHEAD */
+.masthead {
+  background: var(--purple);
+  border: 4px solid var(--ink);
+  border-radius: 6px;
+  box-shadow: 7px 7px 0 var(--ink);
+  margin: 18px 0 28px;
+  padding: 10px 20px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.masthead-logo {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.masthead-logo img {
+  height: 36px;
+  width: auto;
+  border: 2px solid var(--yellow);
+  border-radius: 4px;
+}
+
+.masthead-title {
+  font-family: 'Bangers', cursive;
+  font-size: 1.9rem;
+  letter-spacing: 2px;
+  color: #fff;
+  text-shadow: 3px 3px 0 var(--ink);
+  line-height: 1;
+}
+
+.masthead-title span { color: var(--yellow); }
+
+.masthead-right {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.issue-tag {
+  font-family: 'Bangers', cursive;
+  font-size: .95rem;
+  background: var(--yellow);
+  color: var(--ink);
+  padding: 3px 10px;
+  border-radius: 4px;
+  border: 2px solid var(--ink);
+  letter-spacing: 1px;
+}
+
+.back-link {
+  font-family: 'Bangers', cursive;
+  font-size: .95rem;
+  color: #fff;
+  text-decoration: none;
+  background: var(--ink);
+  padding: 3px 10px;
+  border-radius: 4px;
+  letter-spacing: 1px;
+  transition: opacity .15s;
+}
+.back-link:hover { opacity: .75; }
+
+/* HERO */
+.hero {
+  display: flex;
+  align-items: flex-start;
+  gap: 20px;
+  background: var(--paper2);
+  border: 4px solid var(--ink);
+  border-radius: 6px;
+  box-shadow: 7px 7px 0 var(--ink);
+  padding: 20px 24px;
+  margin-bottom: 28px;
+  transform: rotate(-0.4deg);
+}
+
+.hero-icon {
+  font-size: 3rem;
+  line-height: 1;
+  flex-shrink: 0;
+  filter: drop-shadow(3px 3px 0 var(--ink));
+}
+
+.hero-text h1 {
+  font-family: 'Bangers', cursive;
+  font-size: 2.8rem;
+  letter-spacing: 2px;
+  color: var(--purple);
+  -webkit-text-stroke: 1px var(--ink);
+  text-shadow: 4px 4px 0 var(--ink);
+  line-height: 1;
+  text-transform: uppercase;
+}
+
+.hero-text p {
+  font-size: .95rem;
+  margin-top: 6px;
+  line-height: 1.5;
+  max-width: 480px;
+}
+
+.hero-badges {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 10px;
+}
+
+.badge {
+  font-family: 'Space Mono', monospace;
+  font-size: .65rem;
+  font-weight: 700;
+  padding: 3px 8px;
+  border: 2px solid var(--ink);
+  border-radius: 4px;
+  box-shadow: 2px 2px 0 var(--ink);
+}
+.badge-blue   { background: var(--blue);   color: #fff; }
+.badge-green  { background: var(--green);  color: #fff; }
+.badge-yellow { background: var(--yellow); color: var(--ink); }
+.badge-purple { background: var(--purple); color: #fff; }
+
+/* PANEL */
+.panel {
+  background: var(--paper);
+  border: 4px solid var(--ink);
+  border-radius: 6px;
+  box-shadow: 7px 7px 0 var(--ink);
+  overflow: hidden;
+  margin-bottom: 22px;
+}
+
+.panel-header {
+  background: var(--ink);
+  color: var(--yellow);
+  font-family: 'Bangers', cursive;
+  font-size: 1.2rem;
+  letter-spacing: 2px;
+  padding: 8px 16px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.panel-header .panel-tag {
+  font-family: 'Space Mono', monospace;
+  font-size: .65rem;
+  font-weight: 700;
+  background: var(--yellow);
+  color: var(--ink);
+  padding: 2px 7px;
+  border-radius: 3px;
+}
+
+.panel-body { padding: 18px 20px; }
+
+/* TEXTAREA / INPUT */
+.comic-textarea {
+  width: 100%;
+  background: #fff;
+  border: 3px solid var(--ink);
+  border-radius: 6px;
+  padding: 12px 14px;
+  font-family: 'Space Mono', monospace;
+  font-size: .82rem;
+  color: var(--ink);
+  line-height: 1.6;
+  resize: vertical;
+  min-height: 130px;
+  box-shadow: 3px 3px 0 var(--ink);
+  outline: none;
+  transition: border-color .15s;
+}
+.comic-textarea:focus { border-color: var(--purple); }
+.comic-textarea::placeholder { color: #aaa; font-style: italic; }
+
+/* BUTTONS */
+.btn-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 14px;
+}
+
+.btn {
+  font-family: 'Bangers', cursive;
+  font-size: 1.1rem;
+  letter-spacing: 1px;
+  border: 3px solid var(--ink);
+  border-radius: 6px;
+  padding: 8px 20px;
+  cursor: pointer;
+  box-shadow: 4px 4px 0 var(--ink);
+  transition: transform .1s, box-shadow .1s;
+  text-transform: uppercase;
+}
+.btn:active { transform: translate(2px,2px); box-shadow: 2px 2px 0 var(--ink); }
+
+.btn-primary { background: var(--purple); color: #fff; }
+.btn-danger  { background: var(--red);    color: #fff; }
+.btn-neutral { background: var(--paper2); color: var(--ink); }
+
+/* ERROR BUBBLE */
+.error-bubble {
+  display: none;
+  position: relative;
+  background: #fff0f0;
+  border: 3px solid var(--red);
+  border-radius: 14px;
+  padding: 10px 14px;
+  margin-top: 12px;
+  font-size: .9rem;
+  font-weight: 700;
+  color: var(--red);
+}
+.error-bubble::before {
+  content: '';
+  position: absolute;
+  top: -16px; left: 22px;
+  border-width: 0 10px 16px;
+  border-style: solid;
+  border-color: transparent transparent var(--red);
+}
+.error-bubble::after {
+  content: '';
+  position: absolute;
+  top: -11px; left: 24px;
+  border-width: 0 8px 12px;
+  border-style: solid;
+  border-color: transparent transparent #fff0f0;
+}
+.error-bubble.show { display: block; }
+
+/* SECTION LABEL */
+.section-label {
+  font-family: 'Bangers', cursive;
+  font-size: .95rem;
+  letter-spacing: 1px;
+  color: var(--ink);
+  margin-bottom: 6px;
+  text-transform: uppercase;
+}
+
+/* DIVIDER */
+.divider {
+  border: none;
+  border-top: 3px solid var(--ink);
+  margin: 16px 0;
+}
+
+/* ANALYSIS GRID */
+.analysis-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  margin-bottom: 14px;
+}
+
+.info-card {
+  background: var(--paper2);
+  border: 3px solid var(--ink);
+  border-radius: 6px;
+  box-shadow: 3px 3px 0 var(--ink);
+  padding: 10px 12px;
+}
+
+.info-card-label {
+  font-family: 'Bangers', cursive;
+  font-size: .9rem;
+  letter-spacing: 1px;
+  color: var(--ink);
+  opacity: .7;
+  margin-bottom: 3px;
+}
+
+.info-card-value {
+  font-family: 'Space Mono', monospace;
+  font-size: .82rem;
+  color: var(--blue);
+  word-break: break-all;
+}
+
+/* METHOD BADGE */
+.method-badge {
+  display: inline-block;
+  font-family: 'Bangers', cursive;
+  font-size: 1.1rem;
+  letter-spacing: 1px;
+  padding: 2px 10px;
+  border: 3px solid var(--ink);
+  border-radius: 4px;
+  box-shadow: 2px 2px 0 var(--ink);
+}
+
+/* HEADER ROWS */
+.header-row {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  padding: 6px 0;
+  border-bottom: 2px dashed var(--paper2);
+  font-size: .85rem;
+}
+.header-row:last-child { border-bottom: none; }
+.header-key {
+  font-family: 'Space Mono', monospace;
+  font-weight: 700;
+  color: var(--green);
+  flex-shrink: 0;
+}
+.header-val {
+  font-family: 'Space Mono', monospace;
+  color: var(--ink);
+  word-break: break-all;
+}
+
+/* CODE WRAP */
+.code-wrap {
+  position: relative;
+  margin-top: 8px;
+}
+.comic-code {
+  width: 100%;
+  background: var(--ink);
+  color: var(--yellow);
+  border: 3px solid var(--ink);
+  border-radius: 6px;
+  padding: 12px 14px;
+  font-family: 'Space Mono', monospace;
+  font-size: .78rem;
+  line-height: 1.6;
+  resize: vertical;
+  min-height: 100px;
+  box-shadow: 3px 3px 0 rgba(0,0,0,.3);
+  outline: none;
+}
+.copy-btn {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  font-family: 'Bangers', cursive;
+  font-size: .9rem;
+  letter-spacing: 1px;
+  background: var(--yellow);
+  color: var(--ink);
+  border: 2px solid var(--ink);
+  border-radius: 4px;
+  padding: 2px 8px;
+  cursor: pointer;
+  box-shadow: 2px 2px 0 rgba(0,0,0,.3);
+  transition: transform .1s;
+}
+.copy-btn:active { transform: translate(1px,1px); }
+
+/* CODE SECTION LABEL */
+.code-section-label {
+  font-family: 'Bangers', cursive;
+  font-size: 1rem;
+  letter-spacing: 1px;
+  color: var(--purple);
+  margin-bottom: 4px;
+}
+
+/* MOBILE */
+@media (max-width: 760px) {
+  .hero { flex-direction: column; gap: 10px; }
+  .hero-text h1 { font-size: 2rem; }
+  .analysis-grid { grid-template-columns: 1fr; }
+}
+</style>
+</head>
+<body>
+<div class="paper-overlay"></div>
+<div class="page-wrap">
+
+  <!-- MASTHEAD -->
+  <div class="masthead">
+    <div class="masthead-logo">
+      <img src="../images/logo.png" alt="DevDunia">
+      <div class="masthead-title">DEV<span>DUNIA</span> COMICS</div>
+    </div>
+    <div class="masthead-right">
+      <span class="issue-tag">cURL</span>
+      <a href="../index.html" class="back-link">&#9664; ALL TOOLS</a>
+    </div>
+  </div>
+
+  <!-- HERO -->
+  <div class="hero">
+    <div class="hero-icon">&#x1F4E1;</div>
+    <div class="hero-text">
+      <h1>cURL Describer</h1>
+      <p>Paste any cURL command and instantly decode what it does — method, headers, body, auth, and generated code in JS & Python. No server, no magic!</p>
+      <div class="hero-badges">
+        <span class="badge badge-purple">CLIENT-SIDE</span>
+        <span class="badge badge-green">CODE GEN</span>
+        <span class="badge badge-yellow">FREE</span>
+        <span class="badge badge-blue">INSTANT</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- INPUT PANEL -->
+  <div class="panel">
+    <div class="panel-header">
+      &#x1F4CC; PASTE YOUR CURL COMMAND
+      <span class="panel-tag">INPUT</span>
+    </div>
+    <div class="panel-body">
+      <div class="section-label">cURL Command</div>
+      <textarea id="curl-input" class="comic-textarea" rows="7"
+        placeholder="Paste your cURL command here...&#10;e.g. curl -X POST https://api.example.com/users -H &quot;Content-Type: application/json&quot; -d '{&quot;name&quot;:&quot;John&quot;}'"></textarea>
+
+      <div class="btn-row">
+        <button id="analyze-btn" class="btn btn-primary">&#x26A1; Analyze cURL!</button>
+        <button id="clear-btn" class="btn btn-danger">&#x1F5D1; Clear</button>
+      </div>
+
+      <div id="error-bubble" class="error-bubble">
+        &#x1F4A5; <span id="error-msg">Invalid cURL command!</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ANALYSIS PANEL -->
+  <div class="panel" id="analysis-panel" style="display:none;">
+    <div class="panel-header">
+      &#x1F50D; ANALYSIS RESULTS
+      <span class="panel-tag">OUTPUT</span>
+    </div>
+    <div class="panel-body">
+
+      <!-- Basic Info -->
+      <div class="section-label">Basic Information</div>
+      <div class="analysis-grid" style="margin-bottom:16px;">
+        <div class="info-card">
+          <div class="info-card-label">Method</div>
+          <div class="info-card-value">
+            <span id="result-method" class="method-badge" style="background:var(--blue);color:#fff;">GET</span>
+          </div>
+        </div>
+        <div class="info-card">
+          <div class="info-card-label">URL</div>
+          <div class="info-card-value" id="result-url">—</div>
+        </div>
+      </div>
+
+      <!-- Headers -->
+      <div id="headers-section" style="display:none;">
+        <hr class="divider">
+        <div class="section-label">&#x1F4CB; Headers</div>
+        <div id="headers-list"></div>
+      </div>
+
+      <!-- Request Data -->
+      <div id="data-section" style="display:none;">
+        <hr class="divider">
+        <div class="section-label">&#x1F4E6; Request Body</div>
+        <textarea id="result-data" class="comic-code" rows="4" readonly></textarea>
+      </div>
+
+      <!-- Auth -->
+      <div id="auth-section" style="display:none;">
+        <hr class="divider">
+        <div class="section-label">&#x1F512; Authentication</div>
+        <div id="result-auth" class="info-card" style="font-family:'Space Mono',monospace;font-size:.82rem;"></div>
+      </div>
+
+      <!-- Options -->
+      <div id="options-section" style="display:none;">
+        <hr class="divider">
+        <div class="section-label">&#x2699;&#xFE0F; Options</div>
+        <div id="options-list"></div>
+      </div>
+
+      <!-- Generated Code -->
+      <hr class="divider">
+      <div class="section-label">&#x1F4BB; Generated Code</div>
+
+      <div class="code-section-label">JavaScript (Fetch)</div>
+      <div class="code-wrap">
+        <textarea id="js-code" class="comic-code" rows="6" readonly></textarea>
+        <button class="copy-btn copy-code-btn" data-target="js-code">&#x1F4CB; COPY</button>
+      </div>
+
+      <div class="code-section-label" style="margin-top:14px;">Python (Requests)</div>
+      <div class="code-wrap">
+        <textarea id="python-code" class="comic-code" rows="7" readonly></textarea>
+        <button class="copy-btn copy-code-btn" data-target="python-code">&#x1F4CB; COPY</button>
+      </div>
+
+    </div>
+  </div>
+
+</div><!-- /page-wrap -->
+
+<script>
+(function() {
+  var curlInput    = document.getElementById('curl-input');
+  var analyzeBtn   = document.getElementById('analyze-btn');
+  var clearBtn     = document.getElementById('clear-btn');
+  var errBubble    = document.getElementById('error-bubble');
+  var errMsg       = document.getElementById('error-msg');
+  var analysisPanel = document.getElementById('analysis-panel');
+
+  function showError(msg) {
+    errMsg.textContent = msg;
+    errBubble.classList.add('show');
+  }
+  function hideError() { errBubble.classList.remove('show'); }
+
+  function parseCurlTokens(command) {
+    var tokens = [];
+    var current = '';
+    var inQuotes = false;
+    var quoteChar = '';
+    for (var i = 0; i < command.length; i++) {
+      var ch = command[i];
+      if (!inQuotes && (ch === '"' || ch === "'")) {
+        inQuotes = true;
+        quoteChar = ch;
+        current += ch;
+      } else if (inQuotes && ch === quoteChar) {
+        inQuotes = false;
+        current += ch;
+      } else if (!inQuotes && /\s/.test(ch)) {
+        if (current.trim()) { tokens.push(current.trim()); current = ''; }
+      } else {
+        current += ch;
+      }
+    }
+    if (current.trim()) tokens.push(current.trim());
+    return tokens;
+  }
+
+  function stripQuotes(s) {
+    if (!s) return s;
+    if ((s[0] === '"' && s[s.length-1] === '"') ||
+        (s[0] === "'" && s[s.length-1] === "'")) {
+      return s.slice(1, -1);
+    }
+    return s;
+  }
+
+  function analyzeCurlCommand(curlCommand) {
+    var analysis = { method: 'GET', url: '', headers: {}, data: null, auth: null, options: [] };
+    var command = curlCommand.replace(/^curl\s+/, '').trim();
+    var tokens = parseCurlTokens(command);
+    for (var i = 0; i < tokens.length; i++) {
+      var tok = tokens[i];
+      if (tok === '-X' || tok === '--request') {
+        analysis.method = tokens[++i] || 'GET';
+      } else if (tok === '-H' || tok === '--header') {
+        var hv = stripQuotes(tokens[++i]);
+        if (hv) {
+          var ci = hv.indexOf(':');
+          if (ci > 0) {
+            var key = hv.substring(0, ci).trim();
+            var val = hv.substring(ci + 1).trim();
+            analysis.headers[key] = val;
+          }
+        }
+      } else if (tok === '-d' || tok === '--data' || tok === '--data-raw') {
+        analysis.data = stripQuotes(tokens[++i]) || '';
+      } else if (tok === '-u' || tok === '--user') {
+        analysis.auth = stripQuotes(tokens[++i]) || '';
+      } else if (tok.startsWith('-')) {
+        analysis.options.push(tok);
+      } else if (tok.startsWith('http') || tok.startsWith("'http") || tok.startsWith('"http')) {
+        analysis.url = stripQuotes(tok);
+      }
+    }
+    // Infer method
+    if (analysis.data && analysis.method === 'GET') analysis.method = 'POST';
+    return analysis;
+  }
+
+  function generateJSCode(a) {
+    var code = "fetch('" + a.url + "', {\n";
+    code += "  method: '" + a.method + "',\n";
+    if (Object.keys(a.headers).length > 0) {
+      code += "  headers: {\n";
+      for (var k in a.headers) {
+        code += "    '" + k + "': '" + a.headers[k] + "',\n";
+      }
+      code += "  },\n";
+    }
+    if (a.data) code += "  body: '" + a.data + "',\n";
+    code += "})\n.then(r => r.json())\n.then(d => console.log(d))\n.catch(e => console.error('Error:', e));";
+    return code;
+  }
+
+  function generatePythonCode(a) {
+    var code = "import requests\n\n";
+    code += "url = '" + a.url + "'\n";
+    if (Object.keys(a.headers).length > 0) {
+      code += "headers = {\n";
+      for (var k in a.headers) {
+        code += "    '" + k + "': '" + a.headers[k] + "',\n";
+      }
+      code += "}\n";
+    }
+    if (a.data) code += "data = '" + a.data + "'\n";
+    code += "\nresponse = requests." + a.method.toLowerCase() + "(url";
+    if (Object.keys(a.headers).length > 0) code += ", headers=headers";
+    if (a.data) code += ", data=data";
+    code += ")\nprint(response.json())";
+    return code;
+  }
+
+  function getMethodColor(m) {
+    var colors = { GET:'var(--green)', POST:'var(--blue)', PUT:'var(--orange)', DELETE:'var(--red)', PATCH:'var(--purple)' };
+    return colors[m] || 'var(--ink)';
+  }
+
+  function displayAnalysis(a) {
+    // Method
+    var methodEl = document.getElementById('result-method');
+    methodEl.textContent = a.method;
+    methodEl.style.background = getMethodColor(a.method);
+
+    // URL
+    document.getElementById('result-url').textContent = a.url || '(none)';
+
+    // Headers
+    var headSec = document.getElementById('headers-section');
+    var headList = document.getElementById('headers-list');
+    var keys = Object.keys(a.headers);
+    if (keys.length > 0) {
+      headList.innerHTML = '';
+      for (var k in a.headers) {
+        var row = document.createElement('div');
+        row.className = 'header-row';
+        row.innerHTML = '<span class="header-key">' + escHtml(k) + ':</span><span class="header-val">' + escHtml(a.headers[k]) + '</span>';
+        headList.appendChild(row);
+      }
+      headSec.style.display = '';
+    } else {
+      headSec.style.display = 'none';
+    }
+
+    // Data
+    var dataSec = document.getElementById('data-section');
+    if (a.data) {
+      document.getElementById('result-data').value = a.data;
+      dataSec.style.display = '';
+    } else {
+      dataSec.style.display = 'none';
+    }
+
+    // Auth
+    var authSec = document.getElementById('auth-section');
+    if (a.auth) {
+      document.getElementById('result-auth').textContent = a.auth;
+      authSec.style.display = '';
+    } else {
+      authSec.style.display = 'none';
+    }
+
+    // Options
+    var optSec = document.getElementById('options-section');
+    var optList = document.getElementById('options-list');
+    if (a.options.length > 0) {
+      optList.innerHTML = '';
+      a.options.forEach(function(opt) {
+        var d = document.createElement('div');
+        d.style.cssText = 'font-family:Space Mono,monospace;font-size:.82rem;padding:3px 0;color:var(--orange);';
+        d.textContent = opt;
+        optList.appendChild(d);
+      });
+      optSec.style.display = '';
+    } else {
+      optSec.style.display = 'none';
+    }
+
+    // Code
+    document.getElementById('js-code').value = generateJSCode(a);
+    document.getElementById('python-code').value = generatePythonCode(a);
+
+    analysisPanel.style.display = '';
+  }
+
+  function escHtml(s) {
+    return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+  }
+
+  analyzeBtn.addEventListener('click', function() {
+    var cmd = curlInput.value.trim();
+    if (!cmd) { showError('Please paste a cURL command first!'); return; }
+    try {
+      var analysis = analyzeCurlCommand(cmd);
+      displayAnalysis(analysis);
+      hideError();
+    } catch(e) {
+      showError('Unable to analyze: ' + e.message);
+    }
+  });
+
+  clearBtn.addEventListener('click', function() {
+    curlInput.value = '';
+    analysisPanel.style.display = 'none';
+    hideError();
+  });
+
+  // Copy buttons
+  document.addEventListener('click', function(e) {
+    if (e.target.classList.contains('copy-code-btn')) {
+      var targetId = e.target.getAttribute('data-target');
+      var ta = document.getElementById(targetId);
+      if (navigator.clipboard) {
+        navigator.clipboard.writeText(ta.value);
+      } else {
+        ta.select();
+        document.execCommand('copy');
+      }
+      var orig = e.target.textContent;
+      e.target.textContent = '✔ COPIED!';
+      e.target.style.background = 'var(--green)';
+      setTimeout(function() {
+        e.target.textContent = orig;
+        e.target.style.background = 'var(--yellow)';
+      }, 1800);
+    }
+  });
+
+  // Enter key shortcut
+  curlInput.addEventListener('keydown', function(e) {
+    if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') analyzeBtn.click();
+  });
+
+  // Preload example
+  curlInput.value = 'curl -X POST https://api.example.com/users -H "Content-Type: application/json" -d \'{"name": "John Doe", "email": "john@example.com"}\'';
+})();
+</script>
+</body>
+</html>

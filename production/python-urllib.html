@@ -1,0 +1,455 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Python urllib — DevDunia Comics</title>
+<meta name="description" content="Python urllib HTTP client library examples and code snippets. Free online Python urllib reference for developers.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://devdunia.com/production/python-urllib.html">
+<meta property="og:title" content="Python urllib — DevDunia Comics">
+<meta property="og:description" content="Python urllib HTTP client library examples and code snippets.">
+<meta property="og:image" content="https://devdunia.com/images/logo.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Bangers&family=Comic+Neue:wght@400;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --ink: #1a1410;
+  --paper: #fdf3e3;
+  --paper2: #fbe9cc;
+  --red: #e63946;
+  --blue: #1d6fb8;
+  --yellow: #ffd23f;
+  --green: #3fa34d;
+  --pink: #ff6b9d;
+  --purple: #8a4fff;
+  --orange: #ff8c42;
+}
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  font-family: 'Comic Neue', cursive;
+  font-weight: 400;
+  color: var(--ink);
+  background-color: var(--paper);
+  background-image: radial-gradient(var(--ink) 0.5px, transparent 0.6px);
+  background-size: 14px 14px;
+  background-attachment: fixed;
+  min-height: 100vh;
+}
+.paper-overlay {
+  position: fixed; inset: 0;
+  background: rgba(253,243,227,.78);
+  pointer-events: none; z-index: 0;
+}
+.page-wrap {
+  position: relative; z-index: 1;
+  max-width: 900px; margin: 0 auto;
+  padding: 0 16px 60px;
+}
+.masthead {
+  background: var(--green);
+  border: 4px solid var(--ink); border-radius: 6px;
+  box-shadow: 7px 7px 0 var(--ink);
+  margin: 18px 0 28px; padding: 10px 20px;
+  display: flex; align-items: center;
+  justify-content: space-between; flex-wrap: wrap; gap: 8px;
+}
+.masthead-logo {
+  font-family: 'Bangers', cursive; font-size: 1.9rem;
+  letter-spacing: 2px; color: #fff;
+  text-shadow: 3px 3px 0 var(--ink); line-height: 1;
+}
+.masthead-logo span { color: var(--yellow); }
+.masthead-right { display: flex; align-items: center; gap: 8px; }
+.issue-tag {
+  font-family: 'Bangers', cursive; font-size: .95rem;
+  background: var(--yellow); color: var(--ink);
+  padding: 3px 10px; border-radius: 4px;
+  border: 2px solid var(--ink); letter-spacing: 1px;
+}
+.back-link {
+  font-family: 'Bangers', cursive; font-size: .95rem;
+  color: #fff; text-decoration: none;
+  background: var(--ink); padding: 3px 10px;
+  border-radius: 4px; letter-spacing: 1px; transition: opacity .15s;
+}
+.back-link:hover { opacity: .75; }
+.hero {
+  display: flex; align-items: flex-start; gap: 20px;
+  background: var(--paper2);
+  border: 4px solid var(--ink); border-radius: 6px;
+  box-shadow: 7px 7px 0 var(--ink);
+  padding: 20px 24px; margin-bottom: 28px;
+  transform: rotate(-0.4deg);
+}
+.hero-icon { font-size: 3rem; line-height: 1; flex-shrink: 0; filter: drop-shadow(3px 3px 0 var(--ink)); }
+.hero-text h1 {
+  font-family: 'Bangers', cursive; font-size: 2.8rem;
+  letter-spacing: 2px; color: var(--green);
+  -webkit-text-stroke: 1px var(--ink);
+  text-shadow: 4px 4px 0 var(--ink);
+  line-height: 1; text-transform: uppercase;
+}
+.hero-text p { font-size: .95rem; margin-top: 6px; line-height: 1.5; max-width: 520px; }
+.hero-badges { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 10px; }
+.badge {
+  font-family: 'Space Mono', monospace; font-size: .65rem; font-weight: 700;
+  padding: 3px 8px; border: 2px solid var(--ink);
+  border-radius: 4px; box-shadow: 2px 2px 0 var(--ink);
+}
+.badge-green  { background: var(--green);  color: #fff; }
+.badge-blue   { background: var(--blue);   color: #fff; }
+.badge-yellow { background: var(--yellow); color: var(--ink); }
+.badge-red    { background: var(--red);    color: #fff; }
+.panel {
+  background: var(--paper);
+  border: 4px solid var(--ink); border-radius: 6px;
+  box-shadow: 7px 7px 0 var(--ink);
+  overflow: hidden; margin-bottom: 22px;
+}
+.panel-header {
+  background: var(--ink); color: var(--yellow);
+  font-family: 'Bangers', cursive; font-size: 1.2rem;
+  letter-spacing: 2px; padding: 8px 16px;
+  display: flex; align-items: center; justify-content: space-between; gap: 10px;
+}
+.panel-header .panel-tag {
+  font-family: 'Space Mono', monospace; font-size: .65rem; font-weight: 700;
+  background: var(--yellow); color: var(--ink);
+  padding: 2px 7px; border-radius: 3px;
+}
+.panel-body { padding: 18px 20px; }
+.grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+.code-card {
+  background: var(--paper2);
+  border: 3px solid var(--ink); border-radius: 6px;
+  box-shadow: 4px 4px 0 var(--ink); overflow: hidden;
+  margin-bottom: 16px;
+}
+.code-card-header {
+  background: var(--ink); color: var(--yellow);
+  font-family: 'Bangers', cursive; font-size: 1rem;
+  letter-spacing: 1px; padding: 6px 14px;
+  display: flex; align-items: center; justify-content: space-between;
+}
+.comic-textarea {
+  width: 100%;
+  background: var(--ink);
+  border: none; border-radius: 0;
+  padding: 12px 14px;
+  font-family: 'Space Mono', monospace;
+  font-size: .78rem;
+  color: var(--yellow);
+  line-height: 1.6;
+  resize: vertical;
+  min-height: 180px;
+  outline: none;
+  display: block;
+}
+.btn-copy {
+  font-family: 'Bangers', cursive; font-size: .9rem;
+  letter-spacing: 1px;
+  background: var(--yellow); color: var(--ink);
+  border: 2px solid var(--ink); border-radius: 4px;
+  padding: 2px 10px; cursor: pointer;
+  box-shadow: 2px 2px 0 rgba(0,0,0,.4);
+  transition: transform .1s, box-shadow .1s;
+}
+.btn-copy:active { transform: translate(1px,1px); box-shadow: 1px 1px 0 rgba(0,0,0,.4); }
+.section-sub {
+  font-family: 'Bangers', cursive; font-size: 1.1rem;
+  letter-spacing: 1px; color: var(--green);
+  margin: 0 0 10px; text-transform: uppercase;
+}
+.ref-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+.ref-card {
+  background: var(--paper2);
+  border: 3px solid var(--ink); border-radius: 6px;
+  box-shadow: 4px 4px 0 var(--ink); padding: 14px 16px;
+}
+.ref-card h4 {
+  font-family: 'Bangers', cursive; font-size: 1rem;
+  letter-spacing: 1px; margin-bottom: 8px; color: var(--blue);
+}
+.ref-card ul { list-style: none; }
+.ref-card li { font-size: .85rem; line-height: 1.7; }
+.ref-card li code {
+  font-family: 'Space Mono', monospace; font-size: .72rem;
+  background: var(--ink); color: var(--yellow);
+  padding: 1px 5px; border-radius: 3px;
+}
+@media (max-width: 760px) {
+  .grid-2 { grid-template-columns: 1fr; }
+  .ref-grid { grid-template-columns: 1fr; }
+  .hero { flex-direction: column; gap: 10px; }
+  .hero-text h1 { font-size: 2rem; }
+}
+</style>
+</head>
+<body>
+<div class="paper-overlay"></div>
+<div class="page-wrap">
+
+  <!-- MASTHEAD -->
+  <div class="masthead">
+    <div class="masthead-logo">DEV<span>DUNIA</span> COMICS</div>
+    <div class="masthead-right">
+      <span class="issue-tag">URLLIB</span>
+      <a href="../index.html" class="back-link">&#9664; ALL TOOLS</a>
+    </div>
+  </div>
+
+  <!-- HERO -->
+  <div class="hero">
+    <div class="hero-icon">&#x1F40D;</div>
+    <div class="hero-text">
+      <h1>Python urllib</h1>
+      <p>Built-in HTTP client library with request/response handling examples. GET, POST, PUT, DELETE — all covered with copy-ready code snippets!</p>
+      <div class="hero-badges">
+        <span class="badge badge-green">BUILT-IN</span>
+        <span class="badge badge-blue">HTTP</span>
+        <span class="badge badge-red">NO DEPS</span>
+        <span class="badge badge-yellow">PYTHON 3</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- HTTP METHODS -->
+  <div class="panel">
+    <div class="panel-header">
+      &#x1F310; HTTP METHODS
+      <span class="panel-tag">REQUESTS</span>
+    </div>
+    <div class="panel-body">
+      <div class="grid-2">
+        <div class="code-card">
+          <div class="code-card-header">GET Request <button class="btn-copy" onclick="copyTA('get-code', this)">COPY</button></div>
+          <textarea id="get-code" class="comic-textarea" rows="10" readonly>import urllib.request
+import urllib.parse
+import json
+
+# Simple GET request
+url = "https://api.github.com/users/octocat"
+response = urllib.request.urlopen(url)
+data = response.read()
+print(data.decode('utf-8'))
+
+# GET with parameters
+params = {'q': 'python', 'sort': 'stars'}
+url = "https://api.github.com/search/repositories?" + urllib.parse.urlencode(params)
+response = urllib.request.urlopen(url)
+data = json.loads(response.read().decode('utf-8'))
+print(data)</textarea>
+        </div>
+        <div class="code-card">
+          <div class="code-card-header">POST Request <button class="btn-copy" onclick="copyTA('post-code', this)">COPY</button></div>
+          <textarea id="post-code" class="comic-textarea" rows="10" readonly>import urllib.request
+import urllib.parse
+import json
+
+# POST with JSON data
+url = "https://httpbin.org/post"
+data = {"name": "John", "age": 30}
+json_data = json.dumps(data).encode('utf-8')
+
+req = urllib.request.Request(url, data=json_data)
+req.add_header('Content-Type', 'application/json')
+response = urllib.request.urlopen(req)
+result = response.read().decode('utf-8')
+print(result)
+
+# POST with form data
+form_data = urllib.parse.urlencode({'username': 'john', 'password': 'secret'}).encode('utf-8')
+req = urllib.request.Request(url, data=form_data)
+response = urllib.request.urlopen(req)
+print(response.read().decode('utf-8'))</textarea>
+        </div>
+        <div class="code-card">
+          <div class="code-card-header">PUT Request <button class="btn-copy" onclick="copyTA('put-code', this)">COPY</button></div>
+          <textarea id="put-code" class="comic-textarea" rows="10" readonly>import urllib.request
+import urllib.parse
+import json
+
+# PUT request to update resource
+url = "https://httpbin.org/put"
+data = {"id": 1, "name": "Updated Name", "status": "active"}
+json_data = json.dumps(data).encode('utf-8')
+
+req = urllib.request.Request(url, data=json_data, method='PUT')
+req.add_header('Content-Type', 'application/json')
+response = urllib.request.urlopen(req)
+result = response.read().decode('utf-8')
+print(result)
+
+# PUT with custom headers
+headers = {
+    'Authorization': 'Bearer your-token-here',
+    'Content-Type': 'application/json'
+}
+req = urllib.request.Request(url, data=json_data, method='PUT', headers=headers)
+response = urllib.request.urlopen(req)
+print(response.read().decode('utf-8'))</textarea>
+        </div>
+        <div class="code-card">
+          <div class="code-card-header">DELETE Request <button class="btn-copy" onclick="copyTA('delete-code', this)">COPY</button></div>
+          <textarea id="delete-code" class="comic-textarea" rows="10" readonly>import urllib.request
+import urllib.parse
+
+# DELETE request
+url = "https://httpbin.org/delete"
+req = urllib.request.Request(url, method='DELETE')
+response = urllib.request.urlopen(req)
+result = response.read().decode('utf-8')
+print(result)
+
+# DELETE with authentication
+headers = {
+    'Authorization': 'Bearer your-token-here'
+}
+req = urllib.request.Request(url, method='DELETE', headers=headers)
+response = urllib.request.urlopen(req)
+print(response.read().decode('utf-8'))
+
+# DELETE with query parameters
+params = {'id': '123'}
+url_with_params = url + '?' + urllib.parse.urlencode(params)
+req = urllib.request.Request(url_with_params, method='DELETE')
+response = urllib.request.urlopen(req)
+print(response.read().decode('utf-8'))</textarea>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ADVANCED FEATURES -->
+  <div class="panel">
+    <div class="panel-header">
+      &#x2699;&#xFE0F; ADVANCED FEATURES
+      <span class="panel-tag">ADVANCED</span>
+    </div>
+    <div class="panel-body">
+      <div class="grid-2">
+        <div class="code-card">
+          <div class="code-card-header">Error Handling <button class="btn-copy" onclick="copyTA('error-code', this)">COPY</button></div>
+          <textarea id="error-code" class="comic-textarea" rows="14" readonly>import urllib.request
+import urllib.error
+
+def make_request(url):
+    try:
+        response = urllib.request.urlopen(url)
+        data = response.read().decode('utf-8')
+        return data
+    except urllib.error.HTTPError as e:
+        print(f"HTTP Error {e.code}: {e.reason}")
+        return None
+    except urllib.error.URLError as e:
+        print(f"URL Error: {e.reason}")
+        return None
+    except Exception as e:
+        print(f"Unexpected error: {e}")
+        return None
+
+# Usage
+url = "https://httpbin.org/status/404"
+result = make_request(url)
+if result:
+    print(result)
+else:
+    print("Request failed")</textarea>
+        </div>
+        <div class="code-card">
+          <div class="code-card-header">File Download <button class="btn-copy" onclick="copyTA('download-code', this)">COPY</button></div>
+          <textarea id="download-code" class="comic-textarea" rows="14" readonly>import urllib.request
+import os
+
+def download_file(url, filename):
+    try:
+        # Download file
+        urllib.request.urlretrieve(url, filename)
+        print(f"File downloaded: {filename}")
+
+        # Get file info
+        file_size = os.path.getsize(filename)
+        print(f"File size: {file_size} bytes")
+
+    except Exception as e:
+        print(f"Download failed: {e}")
+
+# Download a file
+url = "https://httpbin.org/robots.txt"
+filename = "robots.txt"
+download_file(url, filename)
+
+# Download with progress
+def download_with_progress(url, filename):
+    def progress_hook(block_num, block_size, total_size):
+        downloaded = block_num * block_size
+        if total_size > 0:
+            percent = min(100, (downloaded * 100) // total_size)
+            print(f"\rDownloaded: {percent}%", end='')
+
+    urllib.request.urlretrieve(url, filename, progress_hook)
+    print(f"\nDownload complete: {filename}")</textarea>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- QUICK REFERENCE -->
+  <div class="panel">
+    <div class="panel-header">
+      &#x1F4DA; QUICK REFERENCE
+      <span class="panel-tag">REFERENCE</span>
+    </div>
+    <div class="panel-body">
+      <div class="ref-grid">
+        <div class="ref-card">
+          <h4>Common Modules</h4>
+          <ul>
+            <li>&#x25B6; <code>urllib.request</code> — HTTP requests</li>
+            <li>&#x25B6; <code>urllib.parse</code> — URL parsing</li>
+            <li>&#x25B6; <code>urllib.error</code> — Exception handling</li>
+            <li>&#x25B6; <code>urllib.robotparser</code> — robots.txt parsing</li>
+          </ul>
+        </div>
+        <div class="ref-card">
+          <h4>Key Functions</h4>
+          <ul>
+            <li>&#x25B6; <code>urlopen()</code> — Open URLs</li>
+            <li>&#x25B6; <code>urlretrieve()</code> — Download files</li>
+            <li>&#x25B6; <code>urlencode()</code> — Encode parameters</li>
+            <li>&#x25B6; <code>Request()</code> — Create requests</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div><!-- /page-wrap -->
+
+<script>
+function copyTA(id, btn) {
+  var el = document.getElementById(id);
+  var text = el ? el.value : '';
+  var orig = btn.textContent;
+  if (navigator.clipboard) {
+    navigator.clipboard.writeText(text).then(function() {
+      btn.textContent = 'COPIED!';
+      btn.style.background = 'var(--green)';
+      btn.style.color = '#fff';
+      setTimeout(function() {
+        btn.textContent = orig;
+        btn.style.background = '';
+        btn.style.color = '';
+      }, 1800);
+    });
+  } else {
+    el.select();
+    try { document.execCommand('copy'); } catch(e) {}
+    btn.textContent = 'COPIED!';
+    setTimeout(function() { btn.textContent = orig; }, 1800);
+  }
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>JSON Decoder — DevDunia Comics</title>
+<meta name="description" content="Parse and decode JSON data with error handling and validation. Free online JSON decoder tool for developers.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://devdunia.com/production/json-decoder.html">
+<meta property="og:title" content="JSON Decoder — DevDunia Comics">
+<meta property="og:description" content="Parse and decode JSON data with error handling and validation.">
+<meta property="og:image" content="https://devdunia.com/images/logo.png">
+<link rel="icon" type="image/png" href="../images/logo.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Bangers&family=Comic+Neue:wght@400;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --ink: #1a1410; --paper: #fdf3e3; --paper2: #fbe9cc;
+  --red: #e63946; --blue: #1d6fb8; --yellow: #ffd23f;
+  --green: #3fa34d; --pink: #ff6b9d; --purple: #8a4fff; --orange: #ff8c42;
+}
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: 'Comic Neue', cursive; font-weight: 400; color: var(--ink); background-color: var(--paper); background-image: radial-gradient(var(--ink) 0.5px, transparent 0.6px); background-size: 14px 14px; background-attachment: fixed; min-height: 100vh; }
+.paper-overlay { position: fixed; inset: 0; background: rgba(253,243,227,.78); pointer-events: none; z-index: 0; }
+.page-wrap { position: relative; z-index: 1; max-width: 860px; margin: 0 auto; padding: 0 16px 60px; }
+.masthead { background: var(--purple); border: 4px solid var(--ink); border-radius: 6px; box-shadow: 7px 7px 0 var(--ink); margin: 18px 0 28px; padding: 10px 20px; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 8px; }
+.masthead-logo { display: flex; align-items: center; gap: 10px; }
+.masthead-logo img { height: 36px; width: auto; }
+.masthead-logo-text { font-family: 'Bangers', cursive; font-size: 1.9rem; letter-spacing: 2px; color: #fff; text-shadow: 3px 3px 0 var(--ink); line-height: 1; }
+.masthead-logo-text span { color: var(--yellow); }
+.masthead-right { display: flex; align-items: center; gap: 8px; }
+.issue-tag { font-family: 'Bangers', cursive; font-size: .95rem; background: var(--yellow); color: var(--ink); padding: 3px 10px; border-radius: 4px; border: 2px solid var(--ink); letter-spacing: 1px; }
+.back-link { font-family: 'Bangers', cursive; font-size: .95rem; color: #fff; text-decoration: none; background: var(--ink); padding: 3px 10px; border-radius: 4px; letter-spacing: 1px; transition: opacity .15s; }
+.back-link:hover { opacity: .75; }
+.hero { display: flex; align-items: flex-start; gap: 20px; background: var(--paper2); border: 4px solid var(--ink); border-radius: 6px; box-shadow: 7px 7px 0 var(--ink); padding: 20px 24px; margin-bottom: 28px; transform: rotate(-0.4deg); }
+.hero-icon { font-size: 3rem; line-height: 1; flex-shrink: 0; filter: drop-shadow(3px 3px 0 var(--ink)); }
+.hero-text h1 { font-family: 'Bangers', cursive; font-size: 2.8rem; letter-spacing: 2px; color: var(--purple); -webkit-text-stroke: 1px var(--ink); text-shadow: 4px 4px 0 var(--ink); line-height: 1; text-transform: uppercase; }
+.hero-text p { font-size: .95rem; margin-top: 6px; line-height: 1.5; max-width: 480px; }
+.hero-badges { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 10px; }
+.badge { font-family: 'Space Mono', monospace; font-size: .65rem; font-weight: 700; padding: 3px 8px; border: 2px solid var(--ink); border-radius: 4px; box-shadow: 2px 2px 0 var(--ink); }
+.badge-blue   { background: var(--blue);   color: #fff; }
+.badge-green  { background: var(--green);  color: #fff; }
+.badge-yellow { background: var(--yellow); color: var(--ink); }
+.badge-purple { background: var(--purple); color: #fff; }
+.panel { background: var(--paper); border: 4px solid var(--ink); border-radius: 6px; box-shadow: 7px 7px 0 var(--ink); overflow: hidden; margin-bottom: 22px; }
+.panel-header { background: var(--ink); color: var(--yellow); font-family: 'Bangers', cursive; font-size: 1.2rem; letter-spacing: 2px; padding: 8px 16px; display: flex; align-items: center; justify-content: space-between; gap: 10px; }
+.panel-header .panel-tag { font-family: 'Space Mono', monospace; font-size: .65rem; font-weight: 700; background: var(--yellow); color: var(--ink); padding: 2px 7px; border-radius: 3px; }
+.panel-body { padding: 18px 20px; }
+.section-label { font-family: 'Bangers', cursive; font-size: .95rem; letter-spacing: 1px; color: var(--ink); margin-bottom: 6px; text-transform: uppercase; }
+.comic-textarea { width: 100%; background: #fff; border: 3px solid var(--ink); border-radius: 6px; padding: 12px 14px; font-family: 'Space Mono', monospace; font-size: .82rem; color: var(--ink); line-height: 1.6; resize: vertical; min-height: 130px; box-shadow: inset 3px 3px 0 rgba(0,0,0,.06); outline: none; transition: border-color .15s; }
+.comic-textarea:focus { border-color: var(--purple); }
+.comic-textarea::placeholder { color: #aaa; font-style: italic; }
+.comic-textarea[readonly] { background: var(--paper2); cursor: default; }
+.btn-row { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 14px; }
+.btn { font-family: 'Bangers', cursive; font-size: 1.1rem; letter-spacing: 1px; border: 3px solid var(--ink); border-radius: 6px; padding: 8px 20px; cursor: pointer; box-shadow: 4px 4px 0 var(--ink); transition: transform .1s, box-shadow .1s; text-transform: uppercase; }
+.btn:active { transform: translate(2px,2px); box-shadow: 2px 2px 0 var(--ink); }
+.btn-primary { background: var(--blue);   color: #fff; }
+.btn-danger  { background: var(--red);    color: #fff; }
+.btn-purple  { background: var(--purple); color: #fff; }
+.error-bubble { display: none; position: relative; background: #fff0f0; border: 3px solid var(--red); border-radius: 14px; padding: 10px 14px; margin-top: 12px; font-size: .9rem; font-weight: 700; color: var(--red); }
+.error-bubble::before { content: ''; position: absolute; top: -16px; left: 22px; border-width: 0 10px 16px; border-style: solid; border-color: transparent transparent var(--red); }
+.error-bubble::after { content: ''; position: absolute; top: -11px; left: 24px; border-width: 0 8px 12px; border-style: solid; border-color: transparent transparent #fff0f0; }
+.error-bubble.show { display: block; }
+.success-bubble { display: none; position: relative; background: #f0fff4; border: 3px solid var(--green); border-radius: 14px; padding: 10px 14px; margin-top: 12px; font-size: .88rem; color: var(--ink); font-weight: 700; }
+.success-bubble.show { display: block; }
+.output-wrap { position: relative; }
+.copy-btn { position: absolute; top: 8px; right: 8px; font-family: 'Bangers', cursive; font-size: .95rem; letter-spacing: 1px; background: var(--ink); color: var(--yellow); border: 2px solid var(--ink); border-radius: 4px; padding: 3px 10px; cursor: pointer; box-shadow: 2px 2px 0 rgba(0,0,0,.4); transition: transform .1s, box-shadow .1s; }
+.copy-btn:active { transform: translate(1px,1px); box-shadow: 1px 1px 0 rgba(0,0,0,.4); }
+.stats-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-top: 14px; }
+.stat-card { background: var(--paper2); border: 3px solid var(--ink); border-radius: 6px; box-shadow: 3px 3px 0 var(--ink); padding: 10px 12px; }
+.stat-card-label { font-family: 'Bangers', cursive; font-size: .9rem; letter-spacing: 1px; margin-bottom: 4px; }
+.stat-card-value { font-family: 'Space Mono', monospace; font-size: .8rem; font-weight: 700; }
+.val-blue   { color: var(--blue); }
+.val-green  { color: var(--green); }
+.val-purple { color: var(--purple); }
+@media (max-width: 760px) {
+  .hero { flex-direction: column; gap: 10px; }
+  .hero-text h1 { font-size: 2rem; }
+  .stats-grid { grid-template-columns: 1fr; }
+}
+</style>
+</head>
+<body>
+<div class="paper-overlay"></div>
+<div class="page-wrap">
+
+  <!-- MASTHEAD -->
+  <div class="masthead">
+    <div class="masthead-logo">
+      <img src="../images/logo.png" alt="DevDunia">
+      <div class="masthead-logo-text">DEV<span>DUNIA</span> COMICS</div>
+    </div>
+    <div class="masthead-right">
+      <span class="issue-tag">JSON-D</span>
+      <a href="../index.html" class="back-link">&#9664; ALL TOOLS</a>
+    </div>
+  </div>
+
+  <!-- HERO -->
+  <div class="hero">
+    <div class="hero-icon">&#x1F50D;</div>
+    <div class="hero-text">
+      <h1>JSON Decoder</h1>
+      <p>Parse and validate JSON with x-ray vision! See exactly what type of data you have, how many keys or items, and how deeply nested your structure goes.</p>
+      <div class="hero-badges">
+        <span class="badge badge-purple">PARSE &amp; VALIDATE</span>
+        <span class="badge badge-blue">STRUCTURE ANALYSIS</span>
+        <span class="badge badge-green">INSTANT</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- INPUT PANEL -->
+  <div class="panel">
+    <div class="panel-header">
+      &#x1F4E5; PASTE YOUR JSON HERE
+      <span class="panel-tag">INPUT</span>
+    </div>
+    <div class="panel-body">
+      <div class="section-label">JSON Input</div>
+      <textarea id="json-input" class="comic-textarea" rows="8"
+        placeholder='Paste your JSON here...'></textarea>
+
+      <div class="btn-row">
+        <button id="decode-btn" class="btn btn-purple">&#x1F50D; Decode JSON!</button>
+        <button id="clear-btn" class="btn btn-danger">&#x1F5D1; Clear</button>
+      </div>
+
+      <div id="error-bubble" class="error-bubble">
+        &#x1F4A5; <span id="error-msg">Invalid JSON!</span>
+      </div>
+      <div id="success-bubble" class="success-bubble">
+        &#x2714; JSON is valid and decoded successfully!
+      </div>
+    </div>
+  </div>
+
+  <!-- OUTPUT PANEL -->
+  <div class="panel" id="output-panel" style="display:none;">
+    <div class="panel-header">
+      &#x1F4E4; DECODED OUTPUT
+      <span class="panel-tag">OUTPUT</span>
+    </div>
+    <div class="panel-body">
+      <div class="section-label">Formatted JSON</div>
+      <div class="output-wrap">
+        <textarea id="json-output" class="comic-textarea" rows="12" readonly></textarea>
+        <button id="copy-btn" class="copy-btn">&#x1F4CB; COPY</button>
+      </div>
+
+      <div class="stats-grid">
+        <div class="stat-card">
+          <div class="stat-card-label">Data Type</div>
+          <div class="stat-card-value val-blue" id="stat-type">—</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-card-label">Keys / Items</div>
+          <div class="stat-card-value val-green" id="stat-count">—</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-card-label">Depth</div>
+          <div class="stat-card-value val-purple" id="stat-depth">—</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div><!-- /page-wrap -->
+
+<script>
+(function() {
+  var inputEl     = document.getElementById('json-input');
+  var outputEl    = document.getElementById('json-output');
+  var decodeBtn   = document.getElementById('decode-btn');
+  var clearBtn    = document.getElementById('clear-btn');
+  var copyBtn     = document.getElementById('copy-btn');
+  var outPanel    = document.getElementById('output-panel');
+  var errBubble   = document.getElementById('error-bubble');
+  var errMsg      = document.getElementById('error-msg');
+  var succBubble  = document.getElementById('success-bubble');
+  var statType    = document.getElementById('stat-type');
+  var statCount   = document.getElementById('stat-count');
+  var statDepth   = document.getElementById('stat-depth');
+
+  function showError(msg) { errMsg.textContent = msg; errBubble.classList.add('show'); succBubble.classList.remove('show'); }
+  function hideError() { errBubble.classList.remove('show'); }
+  function showSuccess() { succBubble.classList.add('show'); }
+  function hideSuccess() { succBubble.classList.remove('show'); }
+
+  function calculateDepth(obj, d) {
+    d = d || 0;
+    if (typeof obj !== 'object' || obj === null) return d;
+    var maxD = d;
+    for (var key in obj) {
+      if (obj.hasOwnProperty(key)) {
+        var cd = calculateDepth(obj[key], d + 1);
+        if (cd > maxD) maxD = cd;
+      }
+    }
+    return maxD;
+  }
+
+  function updateStats(obj) {
+    if (Array.isArray(obj)) {
+      statType.textContent  = 'Array';
+      statCount.textContent = obj.length + ' items';
+    } else if (obj === null) {
+      statType.textContent  = 'Null';
+      statCount.textContent = 'N/A';
+    } else if (typeof obj === 'object') {
+      statType.textContent  = 'Object';
+      statCount.textContent = Object.keys(obj).length + ' keys';
+    } else {
+      statType.textContent  = typeof obj;
+      statCount.textContent = 'N/A';
+    }
+    statDepth.textContent = calculateDepth(obj);
+  }
+
+  function decode() {
+    var input = inputEl.value.trim();
+    if (!input) { showError('Please enter some JSON data first!'); return; }
+    try {
+      var parsed = JSON.parse(input);
+      var formatted = JSON.stringify(parsed, null, 2);
+      outputEl.value = formatted;
+      outPanel.style.display = 'block';
+      hideError();
+      showSuccess();
+      updateStats(parsed);
+    } catch (error) {
+      showError('Invalid JSON: ' + error.message);
+      outPanel.style.display = 'none';
+      hideSuccess();
+    }
+  }
+
+  decodeBtn.addEventListener('click', decode);
+
+  clearBtn.addEventListener('click', function() {
+    inputEl.value = '';
+    outputEl.value = '';
+    outPanel.style.display = 'none';
+    hideError();
+    hideSuccess();
+  });
+
+  copyBtn.addEventListener('click', function() {
+    outputEl.select();
+    try { document.execCommand('copy'); } catch(e) {}
+    if (navigator.clipboard) navigator.clipboard.writeText(outputEl.value).catch(function(){});
+    var orig = copyBtn.textContent;
+    copyBtn.textContent = '✔ COPIED!';
+    copyBtn.style.background = 'var(--green)';
+    setTimeout(function() {
+      copyBtn.textContent = orig;
+      copyBtn.style.background = 'var(--ink)';
+    }, 1800);
+  });
+
+  inputEl.addEventListener('keydown', function(e) {
+    if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') { decode(); }
+  });
+
+  window.addEventListener('load', function() {
+    var ex = {"name":"DevDunia","description":"Your world of developer tools","tools":[{"name":"JSON Decoder","category":"Encoding/Decoding","popular":true}],"features":{"free":true,"offline":true,"simple":true}};
+    inputEl.value = JSON.stringify(ex);
+  });
+})();
+</script>
+</body>
+</html>

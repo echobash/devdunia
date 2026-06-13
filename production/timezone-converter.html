@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Timezone Converter — DevDunia Comics</title>
+<meta name="description" content="Convert dates and times between any timezone. Free online timezone converter with epoch support.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://devdunia.com/timezone-converter.html">
+<meta property="og:title" content="Timezone Converter — DevDunia Comics">
+<meta property="og:description" content="Convert dates and times between any timezone. Free online timezone converter.">
+<meta property="og:image" content="https://devdunia.com/images/logo.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Bangers&family=Comic+Neue:wght@400;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+:root{--ink:#1a1410;--paper:#fdf3e3;--paper2:#fbe9cc;--red:#e63946;--blue:#1d6fb8;--yellow:#ffd23f;--green:#3fa34d;--pink:#ff6b9d;--purple:#8a4fff;--orange:#ff8c42;}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'Comic Neue',cursive;font-weight:400;color:var(--ink);background-color:var(--paper);background-image:radial-gradient(var(--ink) 0.5px,transparent 0.6px);background-size:14px 14px;background-attachment:fixed;min-height:100vh;}
+.paper-overlay{position:fixed;inset:0;background:rgba(253,243,227,.78);pointer-events:none;z-index:0;}
+.page-wrap{position:relative;z-index:1;max-width:860px;margin:0 auto;padding:0 16px 60px;}
+.masthead{background:var(--blue);border:4px solid var(--ink);border-radius:6px;box-shadow:7px 7px 0 var(--ink);margin:18px 0 28px;padding:10px 20px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;}
+.masthead-logo{font-family:'Bangers',cursive;font-size:1.9rem;letter-spacing:2px;color:#fff;text-shadow:3px 3px 0 var(--ink);line-height:1;}
+.masthead-logo span{color:var(--yellow);}
+.masthead-right{display:flex;align-items:center;gap:8px;}
+.issue-tag{font-family:'Bangers',cursive;font-size:.95rem;background:var(--yellow);color:var(--ink);padding:3px 10px;border-radius:4px;border:2px solid var(--ink);letter-spacing:1px;}
+.back-link{font-family:'Bangers',cursive;font-size:.95rem;color:#fff;text-decoration:none;background:var(--ink);padding:3px 10px;border-radius:4px;letter-spacing:1px;transition:opacity .15s;}
+.back-link:hover{opacity:.75;}
+.hero{display:flex;align-items:flex-start;gap:20px;background:var(--paper2);border:4px solid var(--ink);border-radius:6px;box-shadow:7px 7px 0 var(--ink);padding:20px 24px;margin-bottom:28px;transform:rotate(-0.4deg);}
+.hero-icon{font-size:3rem;line-height:1;flex-shrink:0;filter:drop-shadow(3px 3px 0 var(--ink));}
+.hero-text h1{font-family:'Bangers',cursive;font-size:2.8rem;letter-spacing:2px;color:var(--blue);-webkit-text-stroke:1px var(--ink);text-shadow:4px 4px 0 var(--ink);line-height:1;text-transform:uppercase;}
+.hero-text p{font-size:.95rem;margin-top:6px;line-height:1.5;max-width:480px;}
+.hero-badges{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px;}
+.badge{font-family:'Space Mono',monospace;font-size:.65rem;font-weight:700;padding:3px 8px;border:2px solid var(--ink);border-radius:4px;box-shadow:2px 2px 0 var(--ink);}
+.badge-blue{background:var(--blue);color:#fff;}.badge-green{background:var(--green);color:#fff;}.badge-yellow{background:var(--yellow);color:var(--ink);}.badge-red{background:var(--red);color:#fff;}
+.panel{background:var(--paper);border:4px solid var(--ink);border-radius:6px;box-shadow:7px 7px 0 var(--ink);overflow:hidden;margin-bottom:22px;}
+.panel-header{background:var(--ink);color:var(--yellow);font-family:'Bangers',cursive;font-size:1.2rem;letter-spacing:2px;padding:8px 16px;display:flex;align-items:center;justify-content:space-between;gap:10px;}
+.panel-header .panel-tag{font-family:'Space Mono',monospace;font-size:.65rem;font-weight:700;background:var(--yellow);color:var(--ink);padding:2px 7px;border-radius:3px;}
+.panel-body{padding:18px 20px;}
+.comic-input{width:100%;background:#fff;border:3px solid var(--ink);border-radius:6px;padding:10px 14px;font-family:'Space Mono',monospace;font-size:.85rem;color:var(--ink);outline:none;box-shadow:3px 3px 0 var(--ink);transition:border-color .15s;}
+.comic-input:focus{border-color:var(--blue);}
+.comic-select{width:100%;background:#fff;border:3px solid var(--ink);border-radius:6px;padding:10px 14px;font-family:'Space Mono',monospace;font-size:.82rem;color:var(--ink);outline:none;box-shadow:3px 3px 0 var(--ink);cursor:pointer;}
+.section-label{font-family:'Bangers',cursive;font-size:.95rem;letter-spacing:1px;color:var(--ink);margin-bottom:6px;text-transform:uppercase;}
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:14px;}
+.btn-row{display:flex;flex-wrap:wrap;gap:10px;margin-top:14px;}
+.btn{font-family:'Bangers',cursive;font-size:1.1rem;letter-spacing:1px;border:3px solid var(--ink);border-radius:6px;padding:8px 20px;cursor:pointer;box-shadow:4px 4px 0 var(--ink);transition:transform .1s,box-shadow .1s;text-transform:uppercase;}
+.btn:active{transform:translate(2px,2px);box-shadow:2px 2px 0 var(--ink);}
+.btn-primary{background:var(--blue);color:#fff;}.btn-danger{background:var(--red);color:#fff;}.btn-purple{background:var(--purple);color:#fff;}
+.result-box{background:var(--paper2);border:3px solid var(--ink);border-radius:6px;box-shadow:4px 4px 0 var(--ink);padding:14px 16px;margin-bottom:12px;}
+.result-box h3{font-family:'Bangers',cursive;font-size:1rem;letter-spacing:1px;margin-bottom:8px;}
+.result-value{font-family:'Space Mono',monospace;font-size:1rem;font-weight:700;color:var(--blue);}
+.result-tz{font-size:.78rem;color:var(--ink);opacity:.7;margin-top:3px;}
+.epoch-box{display:flex;align-items:center;justify-content:space-between;gap:10px;}
+.epoch-val{font-family:'Space Mono',monospace;font-size:1.1rem;font-weight:700;color:var(--purple);}
+.copy-small{font-family:'Bangers',cursive;font-size:.88rem;letter-spacing:1px;background:var(--ink);color:var(--yellow);border:2px solid var(--ink);border-radius:4px;padding:3px 8px;cursor:pointer;box-shadow:2px 2px 0 rgba(0,0,0,.4);transition:transform .1s;}
+.copy-small:active{transform:translate(1px,1px);}
+.divider-dark{border:none;border-top:3px solid var(--ink);margin:14px 0;}
+.tz-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+.tz-item{background:var(--paper2);border:2px solid var(--ink);border-radius:6px;box-shadow:3px 3px 0 var(--ink);padding:10px 12px;}
+.tz-name{font-size:.75rem;font-weight:700;margin-bottom:4px;}
+.tz-time{font-family:'Space Mono',monospace;font-size:.88rem;font-weight:700;color:var(--blue);}
+.tz-date{font-size:.7rem;opacity:.65;margin-top:2px;}
+@media(max-width:600px){
+  .form-row{grid-template-columns:1fr;}
+  .tz-grid{grid-template-columns:1fr;}
+  .hero{flex-direction:column;gap:10px;}
+  .hero-text h1{font-size:2rem;}
+}
+</style>
+</head>
+<body>
+<div class="paper-overlay"></div>
+<div class="page-wrap">
+
+  <div class="masthead">
+    <div class="masthead-logo">DEV<span>DUNIA</span> COMICS</div>
+    <div class="masthead-right">
+      <span class="issue-tag">TIMEZONE</span>
+      <a href="../index.html" class="back-link">&#9664; ALL TOOLS</a>
+    </div>
+  </div>
+
+  <div class="hero">
+    <div class="hero-icon">&#x1F30D;</div>
+    <div class="hero-text">
+      <h1>Timezone Converter</h1>
+      <p>Convert dates and times between any timezone instantly. Also shows the Unix epoch timestamp — perfect for developers working with APIs and databases!</p>
+      <div class="hero-badges">
+        <span class="badge badge-blue">CLIENT-SIDE</span>
+        <span class="badge badge-green">12 TIMEZONES</span>
+        <span class="badge badge-yellow">FREE</span>
+        <span class="badge badge-red">INSTANT</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="panel">
+    <div class="panel-header">
+      &#x1F4E5; INPUT DATE &amp; TIME
+      <span class="panel-tag">INPUT</span>
+    </div>
+    <div class="panel-body">
+      <div class="form-row">
+        <div>
+          <div class="section-label">Date &amp; Time</div>
+          <input type="datetime-local" id="dateInput" class="comic-input">
+        </div>
+        <div>
+          <div class="section-label">From Timezone</div>
+          <select id="sourceTimezone" class="comic-select">
+            <option value="Asia/Kolkata">IST — India Standard Time (GMT+5:30)</option>
+            <option value="UTC">UTC — Coordinated Universal Time (GMT+0)</option>
+            <option value="America/New_York">EST — Eastern Time (GMT-5)</option>
+            <option value="America/Chicago">CST — Central Time (GMT-6)</option>
+            <option value="America/Denver">MST — Mountain Time (GMT-7)</option>
+            <option value="America/Los_Angeles">PST — Pacific Time (GMT-8)</option>
+            <option value="Europe/London">GMT — London (GMT+0)</option>
+            <option value="Europe/Paris">CET — Central European Time (GMT+1)</option>
+            <option value="Europe/Moscow">MSK — Moscow Time (GMT+3)</option>
+            <option value="Asia/Dubai">GST — Gulf Standard Time (GMT+4)</option>
+            <option value="Asia/Shanghai">CST — China Standard Time (GMT+8)</option>
+            <option value="Asia/Tokyo">JST — Japan Standard Time (GMT+9)</option>
+            <option value="Australia/Sydney">AEDT — Sydney Time (GMT+11)</option>
+            <option value="Pacific/Auckland">NZDT — New Zealand Time (GMT+13)</option>
+          </select>
+        </div>
+      </div>
+      <div class="btn-row">
+        <button id="convertBtn" class="btn btn-primary">&#x1F30D; Convert Timezones!</button>
+        <button id="useCurrentTime" class="btn btn-purple">&#x23F1; Use Current Time</button>
+        <button id="clearBtn" class="btn btn-danger">&#x1F5D1; Clear</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="panel" id="resultsPanel" style="display:none;">
+    <div class="panel-header">
+      &#x1F4E4; CONVERSION RESULTS
+      <span class="panel-tag">OUTPUT</span>
+    </div>
+    <div class="panel-body">
+      <div class="result-box">
+        <h3 style="color:var(--blue);">&#x1F550; Source Time</h3>
+        <div class="result-value" id="sourceTime">—</div>
+        <div class="result-tz" id="sourceTimezoneLabel">—</div>
+      </div>
+
+      <div class="result-box">
+        <h3 style="color:var(--purple);">&#x23F0; Unix Timestamp (Epoch)</h3>
+        <div class="epoch-box">
+          <div class="epoch-val" id="epochTime">—</div>
+          <button class="copy-small" id="copyEpoch">&#x1F4CB; COPY</button>
+        </div>
+      </div>
+
+      <div class="divider-dark"></div>
+
+      <div class="section-label">&#x1F310; All Timezones</div>
+      <div class="tz-grid" id="timezoneGrid"></div>
+    </div>
+  </div>
+
+  <div class="panel">
+    <div class="panel-header">
+      &#x2139;&#xFE0F; ABOUT THIS TOOL
+      <span class="panel-tag">INFO</span>
+    </div>
+    <div class="panel-body">
+      <div style="font-size:.88rem;line-height:1.7;">
+        <p>&#x2705; Convert between any timezones using the browser's built-in Intl API</p>
+        <p>&#x2705; Get the Unix epoch timestamp for any date/time</p>
+        <p>&#x2705; See all 12 major timezone conversions at once</p>
+        <p>&#x2705; Copy epoch to clipboard with one click</p>
+        <p>&#x2705; Supports daylight saving time automatically</p>
+      </div>
+    </div>
+  </div>
+
+</div>
+<script>
+(function(){
+  var timezones = [
+    {value:'UTC',display:'UTC (Coordinated Universal Time)'},
+    {value:'America/New_York',display:'New York (Eastern Time)'},
+    {value:'America/Chicago',display:'Chicago (Central Time)'},
+    {value:'America/Los_Angeles',display:'Los Angeles (Pacific Time)'},
+    {value:'Europe/London',display:'London (GMT)'},
+    {value:'Europe/Paris',display:'Paris (Central European)'},
+    {value:'Asia/Kolkata',display:'India (IST)'},
+    {value:'Asia/Dubai',display:'Dubai (Gulf Standard)'},
+    {value:'Asia/Shanghai',display:'Shanghai (China Standard)'},
+    {value:'Asia/Tokyo',display:'Tokyo (Japan Standard)'},
+    {value:'Australia/Sydney',display:'Sydney (Australian Eastern)'},
+    {value:'Pacific/Auckland',display:'Auckland (New Zealand)'}
+  ];
+
+  var dateInput    = document.getElementById('dateInput');
+  var sourceTz     = document.getElementById('sourceTimezone');
+  var convertBtn   = document.getElementById('convertBtn');
+  var resultsPanel = document.getElementById('resultsPanel');
+  var sourceTime   = document.getElementById('sourceTime');
+  var sourceTzLbl  = document.getElementById('sourceTimezoneLabel');
+  var epochTime    = document.getElementById('epochTime');
+  var tzGrid       = document.getElementById('timezoneGrid');
+  var useNow       = document.getElementById('useCurrentTime');
+  var clearBtn     = document.getElementById('clearBtn');
+  var copyEpoch    = document.getElementById('copyEpoch');
+
+  function fmtDate(date, tz) {
+    return new Intl.DateTimeFormat('en-US',{timeZone:tz,year:'numeric',month:'long',day:'numeric',hour:'2-digit',minute:'2-digit',second:'2-digit',hour12:true}).format(date);
+  }
+  function fmtTime(date, tz) {
+    return new Intl.DateTimeFormat('en-US',{timeZone:tz,hour:'2-digit',minute:'2-digit',second:'2-digit',hour12:true}).format(date);
+  }
+  function fmtDateOnly(date, tz) {
+    return new Intl.DateTimeFormat('en-US',{timeZone:tz,year:'numeric',month:'short',day:'numeric',weekday:'short'}).format(date);
+  }
+
+  function initNow(){
+    var now = new Date();
+    var y=now.getFullYear(), mo=String(now.getMonth()+1).padStart(2,'0'), d=String(now.getDate()).padStart(2,'0');
+    var h=String(now.getHours()).padStart(2,'0'), m=String(now.getMinutes()).padStart(2,'0');
+    dateInput.value = y+'-'+mo+'-'+d+'T'+h+':'+m;
+  }
+
+  function convert(){
+    if(!dateInput.value){alert('Please select a date and time');return;}
+    var inputDate = new Date(dateInput.value);
+    var selTz = sourceTz.value;
+    sourceTime.textContent = fmtDate(inputDate, selTz);
+    sourceTzLbl.textContent = sourceTz.options[sourceTz.selectedIndex].text;
+    var epoch = Math.floor(inputDate.getTime()/1000);
+    epochTime.textContent = epoch;
+    tzGrid.innerHTML = '';
+    timezones.forEach(function(tz){
+      var item = document.createElement('div');
+      item.className = 'tz-item';
+      item.innerHTML = '<div class="tz-name">'+tz.display+'</div>'
+        +'<div class="tz-time">'+fmtTime(inputDate, tz.value)+'</div>'
+        +'<div class="tz-date">'+fmtDateOnly(inputDate, tz.value)+'</div>';
+      tzGrid.appendChild(item);
+    });
+    resultsPanel.style.display = 'block';
+    setTimeout(function(){resultsPanel.scrollIntoView({behavior:'smooth',block:'nearest'});},100);
+  }
+
+  function clearAll(){
+    dateInput.value='';
+    resultsPanel.style.display='none';
+    sourceTime.textContent='—';
+    sourceTzLbl.textContent='—';
+    epochTime.textContent='—';
+    tzGrid.innerHTML='';
+  }
+
+  convertBtn.addEventListener('click', convert);
+  useNow.addEventListener('click',function(){initNow();convert();});
+  clearBtn.addEventListener('click', clearAll);
+  dateInput.addEventListener('keypress',function(e){if(e.key==='Enter')convert();});
+
+  copyEpoch.addEventListener('click',function(){
+    var ep = epochTime.textContent;
+    if(navigator.clipboard) navigator.clipboard.writeText(ep).catch(function(){});
+    try{var t=document.createElement('textarea');t.value=ep;document.body.appendChild(t);t.select();document.execCommand('copy');document.body.removeChild(t);}catch(e){}
+    var orig = copyEpoch.textContent;
+    copyEpoch.textContent='✔ COPIED!';
+    copyEpoch.style.background='var(--green)';
+    setTimeout(function(){copyEpoch.textContent=orig;copyEpoch.style.background='var(--ink)';},1800);
+  });
+
+  initNow();
+})();
+</script>
+</body>
+</html>
