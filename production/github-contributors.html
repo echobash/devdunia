@@ -1,0 +1,357 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="icon" type="image/png" href="../images/logo.png">
+<title>GitHub Contributors — DevDunia Comics</title>
+<meta name="description" content="Fetch and display all contributors for any GitHub repository with their avatar, commit count, and profile link.">
+<meta property="og:title" content="GitHub Contributors — DevDunia Comics">
+<meta property="og:description" content="View all contributors for any public GitHub repository instantly.">
+<meta property="og:image" content="https://devdunia.com/images/logo.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Bangers&family=Comic+Neue:wght@400;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --ink:#1a1410; --paper:#fdf3e3; --paper2:#fbe9cc;
+  --red:#e63946; --blue:#1d6fb8; --yellow:#ffd23f;
+  --green:#3fa34d; --pink:#ff6b9d; --purple:#8a4fff; --orange:#ff8c42;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Comic Neue',cursive;color:var(--ink);background:var(--paper);background-image:radial-gradient(var(--ink) 0.5px,transparent 0.6px);background-size:14px 14px;background-attachment:fixed;min-height:100vh}
+.paper-overlay{position:fixed;inset:0;background:rgba(253,243,227,.78);pointer-events:none;z-index:0}
+.page-wrap{position:relative;z-index:1;max-width:900px;margin:0 auto;padding:0 16px 60px}
+
+/* MASTHEAD */
+.masthead{background:var(--purple);border:4px solid var(--ink);border-radius:0 0 6px 6px;box-shadow:0 7px 0 var(--ink);padding:10px 20px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;position:sticky;top:0;z-index:100}
+.masthead-logo{display:flex;align-items:center;gap:8px}
+.masthead-logo img{width:32px;height:32px;border:3px solid var(--ink);border-radius:6px;background:#fff;object-fit:contain;box-shadow:2px 2px 0 var(--ink)}
+.masthead-title{font-family:'Bangers',cursive;font-size:1.7rem;letter-spacing:2px;color:#fff;text-shadow:3px 3px 0 var(--ink);line-height:1}
+.back-link{font-family:'Bangers',cursive;font-size:.95rem;color:#fff;text-decoration:none;background:var(--ink);padding:4px 12px;border-radius:4px;letter-spacing:1px;box-shadow:2px 2px 0 rgba(0,0,0,.3)}
+.back-link:hover{opacity:.8}
+
+/* HERO */
+.hero{background:var(--paper2);border:4px solid var(--ink);border-radius:6px;box-shadow:8px 8px 0 var(--ink);padding:22px 26px;margin:22px 0 24px;transform:rotate(-0.4deg);display:flex;align-items:flex-start;gap:18px}
+.hero-icon{font-size:3rem;line-height:1;flex-shrink:0;filter:drop-shadow(3px 3px 0 var(--ink))}
+.hero-text h1{font-family:'Bangers',cursive;font-size:2.6rem;letter-spacing:2px;color:var(--purple);-webkit-text-stroke:1px var(--ink);text-shadow:4px 4px 0 var(--ink);line-height:1;text-transform:uppercase}
+.hero-text p{font-size:.95rem;margin-top:6px;line-height:1.5}
+.badges{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px}
+.badge{font-family:'Space Mono',monospace;font-size:.65rem;font-weight:700;padding:3px 8px;border:2px solid var(--ink);border-radius:4px;box-shadow:2px 2px 0 var(--ink)}
+.bd-purple{background:var(--purple);color:#fff}
+.bd-blue{background:var(--blue);color:#fff}
+.bd-green{background:var(--green);color:#fff}
+.bd-yellow{background:var(--yellow);color:var(--ink)}
+.bd-ink{background:var(--ink);color:var(--yellow)}
+
+/* PANELS */
+.panel{background:var(--paper);border:4px solid var(--ink);border-radius:6px;box-shadow:7px 7px 0 var(--ink);overflow:hidden;margin-bottom:20px}
+.panel-header{background:var(--ink);color:var(--yellow);font-family:'Bangers',cursive;font-size:1.15rem;letter-spacing:2px;padding:8px 16px;display:flex;align-items:center;justify-content:space-between}
+.panel-tag{font-family:'Space Mono',monospace;font-size:.62rem;font-weight:700;background:var(--yellow);color:var(--ink);padding:2px 7px;border-radius:3px}
+.panel-body{padding:18px 20px}
+
+/* INPUTS */
+.input-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:14px}
+.section-label{font-family:'Bangers',cursive;font-size:.9rem;letter-spacing:1px;margin-bottom:6px;text-transform:uppercase}
+.comic-input{width:100%;background:#fff;border:3px solid var(--ink);border-radius:6px;padding:10px 14px;font-family:'Space Mono',monospace;font-size:.82rem;color:var(--ink);outline:none;box-shadow:3px 3px 0 var(--ink)}
+.comic-input:focus{border-color:var(--purple)}
+.comic-input::placeholder{color:#aaa;font-style:italic}
+
+/* BUTTONS */
+.btn-row{display:flex;flex-wrap:wrap;gap:10px}
+.btn{font-family:'Bangers',cursive;font-size:1.1rem;letter-spacing:1px;border:3px solid var(--ink);border-radius:6px;padding:8px 22px;cursor:pointer;box-shadow:4px 4px 0 var(--ink);transition:transform .1s,box-shadow .1s;text-transform:uppercase}
+.btn:active{transform:translate(2px,2px);box-shadow:2px 2px 0 var(--ink)}
+.btn:disabled{opacity:.4;cursor:not-allowed;transform:none!important}
+.btn-primary{background:var(--purple);color:#fff}
+.btn-danger{background:var(--red);color:#fff}
+
+/* ERROR BUBBLE */
+.error-bubble{display:none;position:relative;background:#fff0f0;border:3px solid var(--red);border-radius:14px;padding:10px 14px;margin-top:12px;font-size:.88rem;font-weight:700;color:var(--red)}
+.error-bubble.show{display:block}
+.error-bubble::before{content:'';position:absolute;bottom:-12px;left:20px;width:0;height:0;border-left:10px solid transparent;border-right:10px solid transparent;border-top:12px solid var(--red)}
+.error-bubble::after{content:'';position:absolute;bottom:-8px;left:23px;width:0;height:0;border-left:7px solid transparent;border-right:7px solid transparent;border-top:9px solid #fff0f0}
+
+/* LOADING */
+.loading-panel{display:none;text-align:center;padding:30px;font-family:'Bangers',cursive;font-size:1.4rem;letter-spacing:2px;color:var(--purple)}
+.loading-panel.show{display:block}
+.spinner{display:inline-block;width:32px;height:32px;border:4px solid var(--ink);border-top:4px solid var(--purple);border-radius:50%;animation:spin .7s linear infinite;vertical-align:middle;margin-right:10px}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+/* STATS ROW */
+.stats-row{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:16px}
+.chip{font-family:'Space Mono',monospace;font-size:.68rem;font-weight:700;padding:3px 10px;border:2px solid var(--ink);border-radius:4px;box-shadow:2px 2px 0 var(--ink)}
+.chip-purple{background:var(--purple);color:#fff}
+.chip-blue{background:var(--blue);color:#fff}
+.chip-green{background:var(--green);color:#fff}
+.chip-yellow{background:var(--yellow);color:var(--ink)}
+
+/* CONTRIBUTOR CARDS GRID */
+.contributors-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:14px}
+.contributor-card{background:#fff;border:3px solid var(--ink);border-radius:6px;box-shadow:4px 4px 0 var(--ink);padding:16px 12px;text-align:center;transition:transform .15s,box-shadow .15s;text-decoration:none;color:var(--ink)}
+.contributor-card:hover{transform:translate(-2px,-2px);box-shadow:6px 6px 0 var(--ink)}
+.contributor-card img{width:72px;height:72px;border-radius:50%;border:3px solid var(--ink);box-shadow:3px 3px 0 var(--ink);object-fit:cover;display:block;margin:0 auto 10px}
+.contributor-login{font-family:'Bangers',cursive;font-size:1.1rem;letter-spacing:1px;color:var(--ink);word-break:break-all}
+.contributor-commits{font-family:'Space Mono',monospace;font-size:.7rem;font-weight:700;background:var(--purple);color:#fff;border:2px solid var(--ink);border-radius:4px;box-shadow:2px 2px 0 var(--ink);padding:2px 8px;display:inline-block;margin-top:6px}
+.contributor-link{font-family:'Comic Neue',cursive;font-size:.75rem;color:var(--blue);text-decoration:underline;display:block;margin-top:8px;font-weight:700}
+
+/* EXAMPLES */
+.example-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.example-card{background:var(--paper2);border:3px solid var(--ink);border-radius:6px;box-shadow:3px 3px 0 var(--ink);padding:10px 14px;cursor:pointer;transition:transform .1s,box-shadow .1s;display:flex;align-items:center;gap:10px}
+.example-card:hover{transform:translate(-1px,-1px);box-shadow:4px 4px 0 var(--ink)}
+.example-card:active{transform:translate(1px,1px);box-shadow:2px 2px 0 var(--ink)}
+.example-icon{font-size:1.4rem;flex-shrink:0}
+.example-label{font-family:'Bangers',cursive;font-size:1rem;letter-spacing:1px}
+.example-sub{font-family:'Space Mono',monospace;font-size:.65rem;color:#666;margin-top:2px}
+
+@media(max-width:600px){.input-grid{grid-template-columns:1fr}.example-grid{grid-template-columns:1fr}.contributors-grid{grid-template-columns:repeat(auto-fill,minmax(140px,1fr))}.hero{flex-direction:column;gap:10px}.hero-text h1{font-size:2rem}}
+</style>
+</head>
+<body>
+<div class="paper-overlay"></div>
+
+<div class="masthead">
+  <div class="masthead-logo">
+    <img src="../images/logo.png" alt="DevDunia">
+    <span class="masthead-title">DEVDUNIA COMICS</span>
+  </div>
+  <a href="../index.html" class="back-link">&#9664; ALL TOOLS</a>
+</div>
+
+<div class="page-wrap">
+
+  <div class="hero">
+    <div class="hero-icon">&#x1F465;</div>
+    <div class="hero-text">
+      <h1>GitHub Contributors</h1>
+      <p>Fetch and display every contributor to any public GitHub repository — with avatars, commit counts, and profile links. Supports paginated repos with 100+ contributors.</p>
+      <div class="badges">
+        <span class="badge bd-purple">GITHUB API</span>
+        <span class="badge bd-blue">PAGINATED</span>
+        <span class="badge bd-green">AVATARS</span>
+        <span class="badge bd-yellow">100+ SUPPORTED</span>
+        <span class="badge bd-ink">FREE</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- INPUT -->
+  <div class="panel">
+    <div class="panel-header">&#x1F50D; REPOSITORY LOOKUP <span class="panel-tag">INPUT</span></div>
+    <div class="panel-body">
+      <div class="input-grid">
+        <div>
+          <div class="section-label">GitHub Owner</div>
+          <input type="text" id="owner-input" class="comic-input" placeholder="e.g. facebook or owner/repo">
+        </div>
+        <div>
+          <div class="section-label">Repository Name</div>
+          <input type="text" id="repo-input" class="comic-input" placeholder="e.g. react">
+        </div>
+      </div>
+      <div class="btn-row">
+        <button id="fetch-btn" class="btn btn-primary">&#x26A1; Fetch Contributors!</button>
+        <button id="clear-btn" class="btn btn-danger">&#x1F5D1; Clear</button>
+      </div>
+      <div id="error-bubble" class="error-bubble"></div>
+    </div>
+  </div>
+
+  <!-- LOADING -->
+  <div id="loading" class="loading-panel">
+    <span class="spinner"></span> Summoning contributors from GitHub...
+  </div>
+
+  <!-- RESULTS -->
+  <div class="panel" id="results-panel" style="display:none;">
+    <div class="panel-header">&#x1F31F; CONTRIBUTORS <span class="panel-tag" id="results-tag">0 FOUND</span></div>
+    <div class="panel-body">
+      <div class="stats-row" id="stats-row"></div>
+      <div class="contributors-grid" id="contributors-grid"></div>
+    </div>
+  </div>
+
+  <!-- EXAMPLES -->
+  <div class="panel">
+    <div class="panel-header">&#x26A1; TRY AN EXAMPLE <span class="panel-tag">PRESETS</span></div>
+    <div class="panel-body">
+      <div class="example-grid">
+        <div class="example-card" data-owner="facebook" data-repo="react">
+          <div class="example-icon">&#x269B;&#xFE0F;</div>
+          <div><div class="example-label">React</div><div class="example-sub">facebook/react</div></div>
+        </div>
+        <div class="example-card" data-owner="torvalds" data-repo="linux">
+          <div class="example-icon">&#x1F427;</div>
+          <div><div class="example-label">Linux</div><div class="example-sub">torvalds/linux</div></div>
+        </div>
+        <div class="example-card" data-owner="vercel" data-repo="next.js">
+          <div class="example-icon">&#x25B2;</div>
+          <div><div class="example-label">Next.js</div><div class="example-sub">vercel/next.js</div></div>
+        </div>
+        <div class="example-card" data-owner="microsoft" data-repo="vscode">
+          <div class="example-icon">&#x1F4BB;</div>
+          <div><div class="example-label">VS Code</div><div class="example-sub">microsoft/vscode</div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+(function() {
+  var ownerInput  = document.getElementById('owner-input');
+  var repoInput   = document.getElementById('repo-input');
+  var fetchBtn    = document.getElementById('fetch-btn');
+  var clearBtn    = document.getElementById('clear-btn');
+  var errBubble   = document.getElementById('error-bubble');
+  var loading     = document.getElementById('loading');
+  var resultsPanel= document.getElementById('results-panel');
+  var resultsTag  = document.getElementById('results-tag');
+  var statsRow    = document.getElementById('stats-row');
+  var grid        = document.getElementById('contributors-grid');
+  var examples    = document.querySelectorAll('.example-card');
+
+  function parseOwnerRepo(ownerVal, repoVal) {
+    var o = ownerVal.trim(), r = repoVal.trim();
+    if (o.indexOf('/') !== -1) {
+      var parts = o.split('/');
+      return { owner: parts[0].trim(), repo: parts[1].trim() || r };
+    }
+    if (r.indexOf('/') !== -1) {
+      var parts2 = r.split('/');
+      return { owner: parts2[0].trim() || o, repo: parts2[1].trim() };
+    }
+    return { owner: o, repo: r };
+  }
+
+  function showError(msg) {
+    errBubble.textContent = '💥 ' + msg;
+    errBubble.classList.add('show');
+  }
+  function clearError() { errBubble.classList.remove('show'); errBubble.textContent = ''; }
+
+  function fetchAllContributors(owner, repo) {
+    clearError();
+    loading.classList.add('show');
+    resultsPanel.style.display = 'none';
+    fetchBtn.disabled = true;
+
+    var all = new Map();
+    var page = 1;
+    var maxPages = 10;
+
+    function fetchPage() {
+      if (page > maxPages) { render(all); return; }
+      var url = 'https://api.github.com/repos/' + encodeURIComponent(owner) + '/' + encodeURIComponent(repo) + '/contributors?per_page=100&page=' + page;
+      var xhr = new XMLHttpRequest();
+      xhr.open('GET', url);
+      xhr.setRequestHeader('Accept', 'application/vnd.github.v3+json');
+      xhr.onload = function() {
+        if (xhr.status === 404) {
+          loading.classList.remove('show');
+          fetchBtn.disabled = false;
+          showError('Repository not found: ' + owner + '/' + repo);
+          return;
+        }
+        if (xhr.status === 403) {
+          loading.classList.remove('show');
+          fetchBtn.disabled = false;
+          showError('GitHub API rate limit hit. Try again in a minute.');
+          return;
+        }
+        if (xhr.status !== 200) {
+          loading.classList.remove('show');
+          fetchBtn.disabled = false;
+          showError('GitHub API error: ' + xhr.status);
+          return;
+        }
+        try {
+          var data = JSON.parse(xhr.responseText);
+          if (!Array.isArray(data) || data.length === 0) { render(all); return; }
+          for (var i = 0; i < data.length; i++) {
+            var c = data[i];
+            if (c && c.id && !all.has(c.id)) { all.set(c.id, c); }
+          }
+          page++;
+          fetchPage();
+        } catch(e) {
+          loading.classList.remove('show');
+          fetchBtn.disabled = false;
+          showError('Failed to parse response from GitHub.');
+        }
+      };
+      xhr.onerror = function() {
+        loading.classList.remove('show');
+        fetchBtn.disabled = false;
+        showError('Network error. Check your connection.');
+      };
+      xhr.send();
+    }
+    fetchPage();
+  }
+
+  function render(map) {
+    loading.classList.remove('show');
+    fetchBtn.disabled = false;
+    var list = [];
+    map.forEach(function(v) { list.push(v); });
+    list.sort(function(a, b) { return b.contributions - a.contributions; });
+
+    var totalCommits = 0;
+    for (var i = 0; i < list.length; i++) { totalCommits += list[i].contributions || 0; }
+
+    resultsTag.textContent = list.length + ' FOUND';
+    statsRow.innerHTML =
+      '<span class="chip chip-purple">' + list.length + ' Contributors</span>' +
+      '<span class="chip chip-blue">' + totalCommits.toLocaleString() + ' Total Commits</span>' +
+      '<span class="chip chip-green">Top: ' + (list[0] ? list[0].login : '—') + '</span>';
+
+    grid.innerHTML = '';
+    for (var j = 0; j < list.length; j++) {
+      var c = list[j];
+      var card = document.createElement('a');
+      card.className = 'contributor-card';
+      card.href = 'https://github.com/' + encodeURIComponent(c.login);
+      card.target = '_blank';
+      card.rel = 'noopener noreferrer';
+      card.innerHTML =
+        '<img src="' + c.avatar_url + '&s=80" alt="' + c.login + '" loading="lazy" width="72" height="72">' +
+        '<div class="contributor-login">@' + c.login + '</div>' +
+        '<div class="contributor-commits">✔ ' + (c.contributions || 0).toLocaleString() + ' commits</div>' +
+        '<div class="contributor-link">View Profile →</div>';
+      grid.appendChild(card);
+    }
+
+    resultsPanel.style.display = 'block';
+  }
+
+  fetchBtn.addEventListener('click', function() {
+    var parsed = parseOwnerRepo(ownerInput.value, repoInput.value);
+    if (!parsed.owner || !parsed.repo) {
+      showError('Please enter both an owner and repository name.'); return;
+    }
+    fetchAllContributors(parsed.owner, parsed.repo);
+  });
+
+  clearBtn.addEventListener('click', function() {
+    ownerInput.value = ''; repoInput.value = '';
+    grid.innerHTML = ''; statsRow.innerHTML = '';
+    resultsPanel.style.display = 'none';
+    clearError();
+    loading.classList.remove('show');
+    fetchBtn.disabled = false;
+  });
+
+  for (var i = 0; i < examples.length; i++) {
+    examples[i].addEventListener('click', function() {
+      ownerInput.value = this.dataset.owner;
+      repoInput.value  = this.dataset.repo;
+      fetchAllContributors(this.dataset.owner, this.dataset.repo);
+    });
+  }
+
+  ownerInput.addEventListener('keydown', function(e) { if (e.key === 'Enter') fetchBtn.click(); });
+  repoInput.addEventListener('keydown',  function(e) { if (e.key === 'Enter') fetchBtn.click(); });
+})();
+</script>
+</body>
+</html>
