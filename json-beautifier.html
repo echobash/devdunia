@@ -2,9 +2,342 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta http-equiv="refresh" content="0; url=production/json-beautifier.html">
-<title>DevDunia</title>
-<script>window.location.replace('production/json-beautifier.html')</script>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>JSON Beautifier — DevDunia Comics</title>
+<meta name="description" content="Beautify and format JSON data with proper indentation and structure. Free online JSON beautifier tool for developers.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://devdunia.com/production/json-beautifier.html">
+<meta property="og:title" content="JSON Beautifier — DevDunia Comics">
+<meta property="og:description" content="Beautify and format JSON data with proper indentation and structure. Free online JSON beautifier tool.">
+<meta property="og:image" content="https://devdunia.com/images/logo.png">
+<link rel="icon" type="image/png" href="images/logo.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Bangers&family=Comic+Neue:wght@400;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --ink: #1a1410;
+  --paper: #fdf3e3;
+  --paper2: #fbe9cc;
+  --red: #e63946;
+  --blue: #1d6fb8;
+  --yellow: #ffd23f;
+  --green: #3fa34d;
+  --pink: #ff6b9d;
+  --purple: #8a4fff;
+  --orange: #ff8c42;
+}
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  font-family: 'Comic Neue', cursive;
+  font-weight: 400;
+  color: var(--ink);
+  background-color: var(--paper);
+  background-image: radial-gradient(var(--ink) 0.5px, transparent 0.6px);
+  background-size: 14px 14px;
+  background-attachment: fixed;
+  min-height: 100vh;
+}
+.paper-overlay {
+  position: fixed; inset: 0;
+  background: rgba(253,243,227,.78);
+  pointer-events: none; z-index: 0;
+}
+.page-wrap {
+  position: relative; z-index: 1;
+  max-width: 1240px; margin: 0 auto;
+  padding: 20px 32px 60px;
+}
+
+
+
+.masthead-logo-text {
+  font-family: 'Bangers', cursive;
+  font-size: 1.9rem; letter-spacing: 2px;
+  color: #fff; text-shadow: 3px 3px 0 var(--ink); line-height: 1;
+}
+.masthead-logo-text span { color: var(--yellow); }
+
+
+
+
+.panel {
+  background: var(--paper);
+  border: 4px solid var(--ink); border-radius: 6px;
+  box-shadow: 7px 7px 0 var(--ink);
+  overflow: hidden; margin-bottom: 22px;
+}
+.panel-header {
+  background: var(--ink); color: var(--yellow);
+  font-family: 'Bangers', cursive; font-size: 1.2rem;
+  letter-spacing: 2px; padding: 8px 16px;
+  display: flex; align-items: center;
+  justify-content: space-between; gap: 10px;
+}
+.panel-header .panel-tag {
+  font-family: 'Space Mono', monospace; font-size: .65rem; font-weight: 700;
+  background: var(--yellow); color: var(--ink);
+  padding: 2px 7px; border-radius: 3px;
+}
+.panel-body { padding: 18px 20px; }
+.section-label {
+  font-family: 'Bangers', cursive; font-size: .95rem;
+  letter-spacing: 1px; color: var(--ink);
+  margin-bottom: 6px; text-transform: uppercase;
+}
+.comic-textarea {
+  width: 100%; background: #fff;
+  border: 3px solid var(--ink); border-radius: 6px;
+  padding: 12px 14px;
+  font-family: 'Space Mono', monospace; font-size: .82rem;
+  color: var(--ink); line-height: 1.6; resize: vertical;
+  min-height: 130px; box-shadow: inset 3px 3px 0 rgba(0,0,0,.06);
+  outline: none; transition: border-color .15s;
+}
+.comic-textarea:focus { border-color: var(--blue); box-shadow: inset 3px 3px 0 rgba(29,111,184,.1); }
+.comic-textarea::placeholder { color: #aaa; font-style: italic; }
+.comic-textarea[readonly] { background: var(--paper2); cursor: default; }
+.options-row {
+  display: flex; flex-wrap: wrap; gap: 14px;
+  margin: 14px 0; align-items: center;
+}
+.indent-label {
+  font-family: 'Bangers', cursive; font-size: 1rem;
+  letter-spacing: 1px; color: var(--ink);
+}
+.indent-select {
+  font-family: 'Space Mono', monospace; font-size: .85rem;
+  border: 3px solid var(--ink); border-radius: 6px;
+  background: #fff; color: var(--ink);
+  padding: 5px 10px; box-shadow: 3px 3px 0 var(--ink);
+  outline: none; cursor: pointer;
+}
+.btn-row { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 14px; }
+.btn {
+  font-family: 'Bangers', cursive; font-size: 1.1rem;
+  letter-spacing: 1px; border: 3px solid var(--ink);
+  border-radius: 6px; padding: 8px 20px; cursor: pointer;
+  box-shadow: 4px 4px 0 var(--ink);
+  transition: transform .1s, box-shadow .1s;
+  text-transform: uppercase;
+}
+.btn:active { transform: translate(2px,2px); box-shadow: 2px 2px 0 var(--ink); }
+.btn-primary { background: var(--blue);   color: #fff; }
+.btn-success { background: var(--green);  color: #fff; }
+.btn-danger  { background: var(--red);    color: #fff; }
+.btn-neutral { background: var(--paper2); color: var(--ink); }
+.btn-purple  { background: var(--purple); color: #fff; }
+.error-bubble {
+  display: none; position: relative;
+  background: #fff0f0; border: 3px solid var(--red);
+  border-radius: 14px; padding: 10px 14px; margin-top: 12px;
+  font-size: .9rem; font-weight: 700; color: var(--red);
+}
+.error-bubble::before {
+  content: ''; position: absolute; top: -16px; left: 22px;
+  border-width: 0 10px 16px; border-style: solid;
+  border-color: transparent transparent var(--red);
+}
+.error-bubble::after {
+  content: ''; position: absolute; top: -11px; left: 24px;
+  border-width: 0 8px 12px; border-style: solid;
+  border-color: transparent transparent #fff0f0;
+}
+.error-bubble.show { display: block; }
+.output-wrap { position: relative; }
+.copy-btn {
+  position: absolute; top: 8px; right: 8px;
+  font-family: 'Bangers', cursive; font-size: .95rem;
+  letter-spacing: 1px; background: var(--ink);
+  color: var(--yellow); border: 2px solid var(--ink);
+  border-radius: 4px; padding: 3px 10px; cursor: pointer;
+  box-shadow: 2px 2px 0 rgba(0,0,0,.4);
+  transition: transform .1s, box-shadow .1s;
+}
+.copy-btn:active { transform: translate(1px,1px); box-shadow: 1px 1px 0 rgba(0,0,0,.4); }
+.stats-row { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 14px; }
+.stat-chip {
+  font-family: 'Space Mono', monospace; font-size: .72rem; font-weight: 700;
+  padding: 4px 10px; border: 2px solid var(--ink); border-radius: 4px;
+  box-shadow: 2px 2px 0 var(--ink);
+  display: flex; align-items: center; gap: 5px;
+}
+.stat-chip .stat-label { opacity: .65; font-weight: 400; }
+.stat-chip.chip-blue   { background: var(--blue);   color: #fff; }
+.stat-chip.chip-green  { background: var(--green);  color: #fff; }
+.stat-chip.chip-purple { background: var(--purple); color: #fff; }
+.stat-chip.chip-yellow { background: var(--yellow); color: var(--ink); }
+.divider { border: none; border-top: 3px solid var(--ink); margin: 16px 0; }
+@media (max-width: 760px) {
+  .stats-row { gap: 6px; }
+  .options-row { flex-direction: column; align-items: flex-start; }
+}
+</style>
 </head>
-<body></body>
+<body>
+<div class="paper-overlay"></div>
+<div data-masthead></div>
+
+<div class="page-wrap">
+
+  <!-- MASTHEAD -->
+
+  <div data-tool-hero
+       data-title="JSON Beautifier"
+       data-chapter="01"
+       data-category="API &amp; Dev Tools"
+       data-icon="&#x1F4C4;"
+       data-desc="Paste minified JSON and format it with proper indentation and syntax highlighting. Validates structure too."
+       data-color="orange"
+       data-badges="JSON,FORMAT,VALIDATE,FREE"
+       data-badge-colors="orange,green,blue,yellow">
+  </div>
+
+  <!-- INPUT PANEL -->
+  <div class="panel">
+    <div class="panel-header">
+      &#x1F4E5; PASTE YOUR JSON HERE
+      <span class="panel-tag">INPUT</span>
+    </div>
+    <div class="panel-body">
+      <div class="section-label">Raw JSON Input</div>
+      <textarea id="json-input" class="comic-textarea" rows="8"
+        placeholder='Paste your JSON here... e.g. {"name":"DevDunia","tools":["beautifier"]}'></textarea>
+
+      <div class="options-row">
+        <span class="indent-label">Indent size:</span>
+        <select id="indent-select" class="indent-select">
+          <option value="2" selected>2 spaces</option>
+          <option value="4">4 spaces</option>
+          <option value="tab">Tab</option>
+        </select>
+      </div>
+
+      <div class="btn-row">
+        <button id="beautify-btn" class="btn btn-success">&#x2728; Beautify!</button>
+        <button id="clear-btn" class="btn btn-danger">&#x1F5D1; Clear</button>
+      </div>
+
+      <div id="error-bubble" class="error-bubble">
+        &#x1F4A5; <span id="error-msg">Invalid JSON!</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- OUTPUT PANEL -->
+  <div class="panel" id="output-panel" style="display:none;">
+    <div class="panel-header">
+      &#x1F4E4; BEAUTIFIED OUTPUT
+      <span class="panel-tag">OUTPUT</span>
+    </div>
+    <div class="panel-body">
+      <div class="section-label">Formatted JSON</div>
+      <div class="output-wrap">
+        <textarea id="json-output" class="comic-textarea" rows="12" readonly></textarea>
+        <button id="copy-btn" class="copy-btn">&#x1F4CB; COPY</button>
+      </div>
+
+      <div class="stats-row">
+        <div class="stat-chip chip-blue">
+          <span class="stat-label">CHARS</span>
+          <span id="stat-chars">—</span>
+        </div>
+        <div class="stat-chip chip-green">
+          <span class="stat-label">LINES</span>
+          <span id="stat-lines">—</span>
+        </div>
+        <div class="stat-chip chip-purple">
+          <span class="stat-label">SIZE</span>
+          <span id="stat-size">—</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div><!-- /page-wrap -->
+
+<script src="masthead.js"></script>
+<script src="hero-banner.js"></script>
+<script src="author-card.js"></script>
+<script>
+(function() {
+  var inputEl    = document.getElementById('json-input');
+  var outputEl   = document.getElementById('json-output');
+  var beautifyBtn= document.getElementById('beautify-btn');
+  var clearBtn   = document.getElementById('clear-btn');
+  var copyBtn    = document.getElementById('copy-btn');
+  var outPanel   = document.getElementById('output-panel');
+  var errBubble  = document.getElementById('error-bubble');
+  var errMsg     = document.getElementById('error-msg');
+  var indentSel  = document.getElementById('indent-select');
+  var statChars  = document.getElementById('stat-chars');
+  var statLines  = document.getElementById('stat-lines');
+  var statSize   = document.getElementById('stat-size');
+
+  function showError(msg) { errMsg.textContent = msg; errBubble.classList.add('show'); }
+  function hideError() { errBubble.classList.remove('show'); }
+
+  function formatBytes(n) {
+    if (n === 0) return '0 B';
+    if (n < 1024) return n + ' B';
+    return (n / 1024).toFixed(1) + ' KB';
+  }
+
+  function getIndent() {
+    var v = indentSel.value;
+    return v === 'tab' ? '\t' : parseInt(v, 10);
+  }
+
+  function beautify() {
+    var input = inputEl.value.trim();
+    if (!input) { showError('Please enter some JSON data first!'); return; }
+    try {
+      var parsed = JSON.parse(input);
+      var beautified = JSON.stringify(parsed, null, getIndent());
+      outputEl.value = beautified;
+      outPanel.style.display = 'block';
+      hideError();
+      var bytes = new Blob([beautified]).size;
+      statChars.textContent = beautified.length.toLocaleString();
+      statLines.textContent = beautified.split('\n').length.toLocaleString();
+      statSize.textContent  = formatBytes(bytes);
+    } catch (error) {
+      showError('Invalid JSON: ' + error.message);
+      outPanel.style.display = 'none';
+    }
+  }
+
+  beautifyBtn.addEventListener('click', beautify);
+
+  clearBtn.addEventListener('click', function() {
+    inputEl.value = '';
+    outputEl.value = '';
+    outPanel.style.display = 'none';
+    hideError();
+  });
+
+  copyBtn.addEventListener('click', function() {
+    outputEl.select();
+    try { document.execCommand('copy'); } catch(e) {}
+    if (navigator.clipboard) navigator.clipboard.writeText(outputEl.value).catch(function(){});
+    var orig = copyBtn.textContent;
+    copyBtn.textContent = '✔ COPIED!';
+    copyBtn.style.background = 'var(--green)';
+    setTimeout(function() {
+      copyBtn.textContent = orig;
+      copyBtn.style.background = 'var(--ink)';
+    }, 1800);
+  });
+
+  inputEl.addEventListener('keydown', function(e) {
+    if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') { beautify(); }
+  });
+
+  // Example on load
+  window.addEventListener('load', function() {
+    var ex = {"name":"DevDunia","description":"Your world of developer tools","tools":[{"name":"JSON Beautifier","category":"Encoding/Decoding","popular":true}],"features":{"free":true,"offline":true,"simple":true}};
+    inputEl.value = JSON.stringify(ex);
+  });
+})();
+</script>
+</body>
 </html>

@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Word Counter — DevDunia Comics</title>
+<meta name="description" content="Count words, characters, sentences, paragraphs, and reading time in any text. Free online word counter for developers.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://devdunia.com/word-counter.html">
+<meta property="og:title" content="Word Counter — DevDunia Comics">
+<meta property="og:description" content="Count words, characters, sentences, paragraphs, and reading time in any text.">
+<meta property="og:image" content="https://devdunia.com/images/logo.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Bangers&family=Comic+Neue:wght@400;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --ink:#1a1410; --paper:#fdf3e3; --paper2:#fbe9cc;
+  --red:#e63946; --blue:#1d6fb8; --yellow:#ffd23f;
+  --green:#3fa34d; --pink:#ff6b9d; --purple:#8a4fff; --orange:#ff8c42;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'Comic Neue',cursive;font-weight:400;color:var(--ink);background-color:var(--paper);background-image:radial-gradient(var(--ink) 0.5px,transparent 0.6px);background-size:14px 14px;background-attachment:fixed;min-height:100vh;}
+.paper-overlay{position:fixed;inset:0;background:rgba(253,243,227,.78);pointer-events:none;z-index:0;}
+.page-wrap{position:relative;z-index:1;max-width: 1240px;margin:0 auto;padding: 20px 32px 60px;}
+
+
+
+
+
+
+
+.hero{display:flex;align-items:flex-start;gap:20px;background:var(--paper2);border:4px solid var(--ink);border-radius:6px;box-shadow:7px 7px 0 var(--ink);padding:20px 24px;margin-bottom:28px;transform:rotate(-0.4deg);}
+.hero-icon{font-size:3rem;line-height:1;flex-shrink:0;filter:drop-shadow(3px 3px 0 var(--ink));}
+.hero-text h1{font-family:'Bangers',cursive;font-size:2.8rem;letter-spacing:2px;color:var(--blue);-webkit-text-stroke:1px var(--ink);text-shadow:4px 4px 0 var(--ink);line-height:1;text-transform:uppercase;}
+.hero-text p{font-size:.95rem;margin-top:6px;line-height:1.5;max-width:480px;}
+.hero-badges{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px;}
+.badge{font-family:'Space Mono',monospace;font-size:.65rem;font-weight:700;padding:3px 8px;border:2px solid var(--ink);border-radius:4px;box-shadow:2px 2px 0 var(--ink);}
+.badge-blue{background:var(--blue);color:#fff;} .badge-green{background:var(--green);color:#fff;} .badge-yellow{background:var(--yellow);color:var(--ink);} .badge-red{background:var(--red);color:#fff;}
+.panel{background:var(--paper);border:4px solid var(--ink);border-radius:6px;box-shadow:7px 7px 0 var(--ink);overflow:hidden;margin-bottom:22px;}
+.panel-header{background:var(--ink);color:var(--yellow);font-family:'Bangers',cursive;font-size:1.2rem;letter-spacing:2px;padding:8px 16px;display:flex;align-items:center;justify-content:space-between;gap:10px;}
+.panel-header .panel-tag{font-family:'Space Mono',monospace;font-size:.65rem;font-weight:700;background:var(--yellow);color:var(--ink);padding:2px 7px;border-radius:3px;}
+.panel-body{padding:18px 20px;}
+.comic-textarea{width:100%;background:#fff;border:3px solid var(--ink);border-radius:6px;padding:12px 14px;font-family:'Space Mono',monospace;font-size:.82rem;color:var(--ink);line-height:1.6;resize:vertical;min-height:130px;box-shadow:inset 3px 3px 0 rgba(0,0,0,.06);outline:none;transition:border-color .15s;}
+.comic-textarea:focus{border-color:var(--blue);box-shadow:inset 3px 3px 0 rgba(29,111,184,.1);}
+.comic-textarea::placeholder{color:#aaa;font-style:italic;}
+.btn-row{display:flex;flex-wrap:wrap;gap:10px;margin-top:14px;}
+.btn{font-family:'Bangers',cursive;font-size:1.1rem;letter-spacing:1px;border:3px solid var(--ink);border-radius:6px;padding:8px 20px;cursor:pointer;box-shadow:4px 4px 0 var(--ink);transition:transform .1s,box-shadow .1s;text-transform:uppercase;}
+.btn:active{transform:translate(2px,2px);box-shadow:2px 2px 0 var(--ink);}
+.btn-primary{background:var(--blue);color:#fff;} .btn-danger{background:var(--red);color:#fff;} .btn-neutral{background:var(--paper2);color:var(--ink);}
+.section-label{font-family:'Bangers',cursive;font-size:.95rem;letter-spacing:1px;color:var(--ink);margin-bottom:6px;text-transform:uppercase;}
+.divider{border:none;border-top:3px solid var(--ink);margin:16px 0;}
+
+/* Stat grid */
+.stat-big-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:18px;}
+.stat-big{background:var(--paper2);border:3px solid var(--ink);border-radius:6px;box-shadow:4px 4px 0 var(--ink);padding:12px 8px;text-align:center;}
+.stat-big-num{font-family:'Bangers',cursive;font-size:2rem;line-height:1;}
+.stat-big-lbl{font-family:'Space Mono',monospace;font-size:.6rem;font-weight:700;opacity:.7;text-transform:uppercase;margin-top:2px;}
+.detail-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px;}
+.detail-box{background:var(--paper2);border:3px solid var(--ink);border-radius:6px;box-shadow:4px 4px 0 var(--ink);padding:12px 14px;}
+.detail-box h4{font-family:'Bangers',cursive;font-size:1rem;letter-spacing:1px;margin-bottom:8px;}
+.detail-row{display:flex;justify-content:space-between;font-size:.82rem;padding:2px 0;}
+.detail-row span:last-child{font-family:'Space Mono',monospace;font-weight:700;}
+.reading-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:10px;}
+.reading-box{background:var(--paper2);border:2px solid var(--ink);border-radius:6px;box-shadow:3px 3px 0 var(--ink);padding:10px;text-align:center;}
+.reading-val{font-family:'Bangers',cursive;font-size:1.4rem;line-height:1;}
+.reading-lbl{font-size:.65rem;font-family:'Space Mono',monospace;font-weight:700;opacity:.65;margin-top:2px;}
+
+@media(max-width:600px){
+  .stat-big-grid{grid-template-columns:1fr 1fr;}
+  .detail-grid{grid-template-columns:1fr;}
+  .reading-grid{grid-template-columns:1fr;}
+  .hero{flex-direction:column;gap:10px;}
+  .hero-text h1{font-size:2rem;}
+}
+</style>
+</head>
+<body>
+<div class="paper-overlay"></div>
+<div data-masthead></div>
+
+<div class="page-wrap">
+
+  <div data-tool-hero
+     data-title="Word Counter"
+     data-chapter="54"
+     data-category="Text Tools"
+     data-icon="&#x1F4DD;"
+     data-desc="Paste any text and get instant counts for words, characters, sentences, paragraphs, and estimated reading time. All client-side, no data sent anywhere!"
+     data-color="pink"
+     data-badges="CLIENT-SIDE,LIVE UPDATES,FREE,INSTANT"
+     data-badge-colors="blue,green,yellow,red">
+  </div>
+
+  
+
+  <div class="panel">
+    <div class="panel-header">
+      &#x1F4E5; PASTE YOUR TEXT HERE
+      <span class="panel-tag">INPUT</span>
+    </div>
+    <div class="panel-body">
+      <textarea id="input-text" class="comic-textarea" rows="8" placeholder="Enter or paste your text here to analyze..."></textarea>
+      <div class="btn-row">
+        <button id="analyze-btn" class="btn btn-primary">&#x26A1; Analyze!</button>
+        <button id="clear-btn" class="btn btn-danger">&#x1F5D1; Clear</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="panel" id="stats-panel" style="display:none;">
+    <div class="panel-header">
+      &#x1F4CA; TEXT STATISTICS
+      <span class="panel-tag">RESULTS</span>
+    </div>
+    <div class="panel-body">
+      <div class="stat-big-grid">
+        <div class="stat-big">
+          <div class="stat-big-num" style="color:var(--blue);" id="word-count">0</div>
+          <div class="stat-big-lbl">Words</div>
+        </div>
+        <div class="stat-big">
+          <div class="stat-big-num" style="color:var(--green);" id="char-count">0</div>
+          <div class="stat-big-lbl">Characters</div>
+        </div>
+        <div class="stat-big">
+          <div class="stat-big-num" style="color:var(--purple);" id="char-no-spaces">0</div>
+          <div class="stat-big-lbl">No Spaces</div>
+        </div>
+        <div class="stat-big">
+          <div class="stat-big-num" style="color:var(--orange);" id="line-count">0</div>
+          <div class="stat-big-lbl">Lines</div>
+        </div>
+      </div>
+
+      <div class="detail-grid">
+        <div class="detail-box">
+          <h4 style="color:var(--blue);">&#x1F4DC; Text Analysis</h4>
+          <div class="detail-row"><span>Sentences:</span><span id="sentence-count">0</span></div>
+          <div class="detail-row"><span>Paragraphs:</span><span id="paragraph-count">0</span></div>
+          <div class="detail-row"><span>Avg words/sentence:</span><span id="avg-words-per-sentence">0</span></div>
+          <div class="detail-row"><span>Avg chars/word:</span><span id="avg-chars-per-word">0</span></div>
+        </div>
+        <div class="detail-box">
+          <h4 style="color:var(--green);">&#x1F9EE; Character Breakdown</h4>
+          <div class="detail-row"><span>Letters:</span><span id="letter-count">0</span></div>
+          <div class="detail-row"><span>Numbers:</span><span id="number-count">0</span></div>
+          <div class="detail-row"><span>Spaces:</span><span id="space-count">0</span></div>
+          <div class="detail-row"><span>Special chars:</span><span id="special-count">0</span></div>
+        </div>
+      </div>
+
+      <div class="section-label">&#x23F1; Reading Time</div>
+      <div class="reading-grid">
+        <div class="reading-box">
+          <div class="reading-val" style="color:var(--blue);" id="reading-time-slow">0 min</div>
+          <div class="reading-lbl">Slow (200 WPM)</div>
+        </div>
+        <div class="reading-box">
+          <div class="reading-val" style="color:var(--green);" id="reading-time-avg">0 min</div>
+          <div class="reading-lbl">Average (250 WPM)</div>
+        </div>
+        <div class="reading-box">
+          <div class="reading-val" style="color:var(--purple);" id="reading-time-fast">0 min</div>
+          <div class="reading-lbl">Fast (300 WPM)</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="panel">
+    <div class="panel-header">
+      &#x1F4A1; FEATURES
+      <span class="panel-tag">INFO</span>
+    </div>
+    <div class="panel-body">
+      <div style="font-size:.88rem;line-height:1.7;">
+        <p><strong>Word Count:</strong> Counts words separated by whitespace</p>
+        <p><strong>Character Count:</strong> Total characters including spaces</p>
+        <p><strong>No-Spaces Count:</strong> Characters excluding all whitespace</p>
+        <p><strong>Line Count:</strong> Number of lines in the text</p>
+        <p><strong>Sentence Analysis:</strong> Counts sentences and calculates averages</p>
+        <p><strong>Reading Time:</strong> Estimates reading time at slow / average / fast speeds</p>
+        <p><strong>Character Breakdown:</strong> Letters, numbers, spaces, and special characters</p>
+      </div>
+    </div>
+  </div>
+
+</div>
+<script>
+(function(){
+  var inputEl = document.getElementById('input-text');
+  var analyzeBtn = document.getElementById('analyze-btn');
+  var clearBtn = document.getElementById('clear-btn');
+  var statsPanel = document.getElementById('stats-panel');
+
+  function analyze() {
+    var text = inputEl.value;
+    if (!text.trim()) { statsPanel.style.display='none'; return; }
+    var words = text.trim() ? text.trim().split(/\s+/).filter(function(w){return w.length>0;}) : [];
+    var wordCount = words.length;
+    var charCount = text.length;
+    var charNoSpaces = text.replace(/\s/g,'').length;
+    var lineCount = text.split('\n').length;
+    var sentences = text.split(/[.!?]+/).filter(function(s){return s.trim().length>0;});
+    var sentenceCount = sentences.length;
+    var avgWords = sentenceCount>0 ? (wordCount/sentenceCount).toFixed(1) : 0;
+    var letters = (text.match(/[a-zA-Z]/g)||[]).length;
+    var numbers = (text.match(/[0-9]/g)||[]).length;
+    var spaces = (text.match(/\s/g)||[]).length;
+    var special = charCount - letters - numbers - spaces;
+    var paragraphs = text.split(/\n\s*\n/).filter(function(p){return p.trim().length>0;});
+    var paragraphCount = paragraphs.length;
+    var avgChars = wordCount>0 ? (charNoSpaces/wordCount).toFixed(1) : 0;
+    var rtSlow = wordCount>0 ? (wordCount/200).toFixed(1) : 0;
+    var rtAvg  = wordCount>0 ? (wordCount/250).toFixed(1) : 0;
+    var rtFast = wordCount>0 ? (wordCount/300).toFixed(1) : 0;
+
+    document.getElementById('word-count').textContent = wordCount;
+    document.getElementById('char-count').textContent = charCount;
+    document.getElementById('char-no-spaces').textContent = charNoSpaces;
+    document.getElementById('line-count').textContent = lineCount;
+    document.getElementById('sentence-count').textContent = sentenceCount;
+    document.getElementById('paragraph-count').textContent = paragraphCount;
+    document.getElementById('avg-words-per-sentence').textContent = avgWords;
+    document.getElementById('avg-chars-per-word').textContent = avgChars;
+    document.getElementById('letter-count').textContent = letters;
+    document.getElementById('number-count').textContent = numbers;
+    document.getElementById('space-count').textContent = spaces;
+    document.getElementById('special-count').textContent = special;
+    document.getElementById('reading-time-slow').textContent = rtSlow + ' min';
+    document.getElementById('reading-time-avg').textContent  = rtAvg  + ' min';
+    document.getElementById('reading-time-fast').textContent = rtFast + ' min';
+    statsPanel.style.display = 'block';
+  }
+
+  inputEl.addEventListener('input', analyze);
+  analyzeBtn.addEventListener('click', analyze);
+  clearBtn.addEventListener('click', function(){
+    inputEl.value='';
+    statsPanel.style.display='none';
+  });
+
+  inputEl.value = 'This is a sample text for analysis.\n\nIt contains multiple paragraphs and sentences. The word counter will analyze various aspects of this text including word count, character count, and reading time.\n\nYou can paste any text here to get detailed statistics about it. The tool will automatically update as you type!';
+  analyze();
+})();
+</script>
+<script src="masthead.js"></script>
+<script src="hero-banner.js"></script>
+<script src="author-card.js"></script>
+</body>
+</html>

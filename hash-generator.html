@@ -2,9 +2,391 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta http-equiv="refresh" content="0; url=production/hash-generator.html">
-<title>DevDunia</title>
-<script>window.location.replace('production/hash-generator.html')</script>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Hash Generator — DevDunia Comics</title>
+<meta name="description" content="Generate MD5, SHA1, SHA256, and SHA512 hashes for any text. Free online hash generator tool for developers.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://devdunia.com/production/hash-generator.html">
+<meta property="og:title" content="Hash Generator — DevDunia Comics">
+<meta property="og:description" content="Generate MD5, SHA1, SHA256, SHA512 hashes from any text. Free, instant, client-side.">
+<meta property="og:image" content="https://devdunia.com/images/logo.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Bangers&family=Comic+Neue:wght@400;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --ink: #1a1410;
+  --paper: #fdf3e3;
+  --paper2: #fbe9cc;
+  --red: #e63946;
+  --blue: #1d6fb8;
+  --yellow: #ffd23f;
+  --green: #3fa34d;
+  --pink: #ff6b9d;
+  --purple: #8a4fff;
+  --orange: #ff8c42;
+}
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  font-family: 'Comic Neue', cursive;
+  font-weight: 400;
+  color: var(--ink);
+  background-color: var(--paper);
+  background-image: radial-gradient(var(--ink) 0.5px, transparent 0.6px);
+  background-size: 14px 14px;
+  background-attachment: fixed;
+  min-height: 100vh;
+}
+.paper-overlay { position: fixed; inset: 0; background: rgba(253,243,227,.78); pointer-events: none; z-index: 0; }
+.page-wrap { position: relative; z-index: 1; max-width: 1240px; margin: 0 auto; padding: 20px 32px 60px; }
+
+
+
+
+
+
+
+
+
+
+/* HERO */
+.hero { display: flex; align-items: flex-start; gap: 20px; background: var(--paper2); border: 4px solid var(--ink); border-radius: 6px; box-shadow: 7px 7px 0 var(--ink); padding: 20px 24px; margin-bottom: 28px; transform: rotate(-0.4deg); }
+.hero-icon { font-size: 3rem; line-height: 1; flex-shrink: 0; filter: drop-shadow(3px 3px 0 var(--ink)); }
+.hero-text h1 { font-family: 'Bangers', cursive; font-size: 2.8rem; letter-spacing: 2px; color: var(--purple); -webkit-text-stroke: 1px var(--ink); text-shadow: 4px 4px 0 var(--ink); line-height: 1; text-transform: uppercase; }
+.hero-text p { font-size: .95rem; margin-top: 6px; line-height: 1.5; max-width: 480px; }
+.hero-badges { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 10px; }
+.badge { font-family: 'Space Mono', monospace; font-size: .65rem; font-weight: 700; padding: 3px 8px; border: 2px solid var(--ink); border-radius: 4px; box-shadow: 2px 2px 0 var(--ink); }
+.badge-blue   { background: var(--blue);   color: #fff; }
+.badge-green  { background: var(--green);  color: #fff; }
+.badge-yellow { background: var(--yellow); color: var(--ink); }
+.badge-purple { background: var(--purple); color: #fff; }
+
+/* PANEL */
+.panel { background: var(--paper); border: 4px solid var(--ink); border-radius: 6px; box-shadow: 7px 7px 0 var(--ink); overflow: hidden; margin-bottom: 22px; }
+.panel-header { background: var(--ink); color: var(--yellow); font-family: 'Bangers', cursive; font-size: 1.2rem; letter-spacing: 2px; padding: 8px 16px; display: flex; align-items: center; justify-content: space-between; gap: 10px; }
+.panel-header .panel-tag { font-family: 'Space Mono', monospace; font-size: .65rem; font-weight: 700; background: var(--yellow); color: var(--ink); padding: 2px 7px; border-radius: 3px; }
+.panel-body { padding: 18px 20px; }
+
+/* TEXTAREA */
+.comic-textarea { width: 100%; background: #fff; border: 3px solid var(--ink); border-radius: 6px; padding: 12px 14px; font-family: 'Space Mono', monospace; font-size: .82rem; color: var(--ink); line-height: 1.6; resize: vertical; min-height: 130px; box-shadow: inset 3px 3px 0 rgba(0,0,0,.06); outline: none; transition: border-color .15s; }
+.comic-textarea:focus { border-color: var(--purple); }
+.comic-textarea::placeholder { color: #aaa; font-style: italic; }
+
+/* SECTION LABEL */
+.section-label { font-family: 'Bangers', cursive; font-size: .95rem; letter-spacing: 1px; color: var(--ink); margin-bottom: 6px; text-transform: uppercase; }
+
+/* CHECKBOX ROW */
+.checkbox-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-bottom: 14px; }
+.checkbox-card {
+  background: var(--paper2); border: 3px solid var(--ink); border-radius: 6px;
+  box-shadow: 3px 3px 0 var(--ink); padding: 10px 12px;
+  display: flex; align-items: center; gap: 8px; cursor: pointer;
+  transition: transform .1s, box-shadow .1s;
+}
+.checkbox-card:hover { transform: translate(-1px,-1px); box-shadow: 5px 5px 0 var(--ink); }
+.checkbox-card input[type="checkbox"] { width: 18px; height: 18px; accent-color: var(--purple); cursor: pointer; flex-shrink: 0; }
+.checkbox-card label { font-family: 'Bangers', cursive; font-size: 1rem; letter-spacing: 1px; cursor: pointer; }
+
+/* BUTTONS */
+.btn-row { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 14px; }
+.btn { font-family: 'Bangers', cursive; font-size: 1.1rem; letter-spacing: 1px; border: 3px solid var(--ink); border-radius: 6px; padding: 8px 20px; cursor: pointer; box-shadow: 4px 4px 0 var(--ink); transition: transform .1s, box-shadow .1s; text-transform: uppercase; }
+.btn:active { transform: translate(2px,2px); box-shadow: 2px 2px 0 var(--ink); }
+.btn-primary { background: var(--purple); color: #fff; }
+.btn-danger  { background: var(--red);    color: #fff; }
+
+/* ERROR BUBBLE */
+.error-bubble { display: none; position: relative; background: #fff0f0; border: 3px solid var(--red); border-radius: 14px; padding: 10px 14px; margin-top: 12px; font-size: .9rem; font-weight: 700; color: var(--red); }
+.error-bubble::before { content: ''; position: absolute; top: -16px; left: 22px; border-width: 0 10px 16px; border-style: solid; border-color: transparent transparent var(--red); }
+.error-bubble::after  { content: ''; position: absolute; top: -11px; left: 24px; border-width: 0 8px 12px; border-style: solid; border-color: transparent transparent #fff0f0; }
+.error-bubble.show { display: block; }
+
+/* HASH RESULTS */
+.hash-result { margin-bottom: 16px; display: none; }
+.hash-result.show { display: block; }
+.hash-result-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 6px; }
+.hash-label { font-family: 'Bangers', cursive; font-size: 1rem; letter-spacing: 1px; padding: 3px 10px; border: 2px solid var(--ink); border-radius: 4px; box-shadow: 2px 2px 0 var(--ink); }
+.hash-value-box {
+  background: #fff; border: 3px solid var(--ink); border-radius: 6px;
+  padding: 10px 14px; font-family: 'Space Mono', monospace;
+  font-size: .78rem; word-break: break-all; line-height: 1.6;
+  box-shadow: 3px 3px 0 var(--ink);
+  position: relative;
+}
+.hash-copy-btn {
+  font-family: 'Bangers', cursive; font-size: .9rem; letter-spacing: 1px;
+  background: var(--ink); color: var(--yellow);
+  border: 2px solid var(--ink); border-radius: 4px;
+  padding: 3px 10px; cursor: pointer;
+  box-shadow: 2px 2px 0 rgba(0,0,0,.4);
+  transition: transform .1s;
+  white-space: nowrap;
+}
+.hash-copy-btn:active { transform: translate(1px,1px); }
+
+/* HOW STEPS */
+.how-steps { display: flex; flex-direction: column; gap: 10px; }
+.how-step { display: flex; align-items: flex-start; gap: 12px; }
+.step-dot { width: 28px; height: 28px; border-radius: 50%; border: 3px solid var(--ink); display: flex; align-items: center; justify-content: center; font-family: 'Bangers', cursive; font-size: 1rem; color: #fff; flex-shrink: 0; box-shadow: 2px 2px 0 var(--ink); }
+.how-step p { font-size: .88rem; line-height: 1.5; padding-top: 2px; }
+.how-step code { font-family: 'Space Mono', monospace; font-size: .75rem; background: var(--ink); color: var(--yellow); padding: 1px 5px; border-radius: 3px; }
+
+@media (max-width: 760px) {
+  .hero { flex-direction: column; gap: 10px; }
+  .hero-text h1 { font-size: 2rem; }
+  .checkbox-grid { grid-template-columns: repeat(2, 1fr); }
+}
+</style>
 </head>
-<body></body>
+<body>
+<div class="paper-overlay"></div>
+<div data-masthead></div>
+
+<div class="page-wrap">
+
+  <div data-tool-hero
+     data-title="Hash Generator"
+     data-chapter="23"
+     data-category="Crypto & Security"
+     data-icon="&#x1F9EA;"
+     data-desc="Transform any text into cryptographic fingerprints! Generate MD5, SHA-1, SHA-256 &amp; SHA-512 hashes instantly — all in your browser, zero servers."
+     data-color="purple"
+     data-badges="MD5,SHA-1,SHA-256,SHA-512"
+     data-badge-colors="blue,green,purple,yellow">
+  </div>
+
+  <!-- MASTHEAD -->
+
+  <!-- HERO -->
+  
+
+  <!-- INPUT PANEL -->
+  <div class="panel">
+    <div class="panel-header">
+      &#x270F; TYPE YOUR TEXT
+      <span class="panel-tag">INPUT</span>
+    </div>
+    <div class="panel-body">
+      <div class="section-label">Input Text</div>
+      <textarea id="hash-input" class="comic-textarea" rows="6" placeholder="Enter text to hash..."></textarea>
+
+      <div class="section-label" style="margin-top:16px;">Hash Types</div>
+      <div class="checkbox-grid">
+        <div class="checkbox-card">
+          <input type="checkbox" id="cb-md5" checked>
+          <label for="cb-md5" style="color:var(--blue);">MD5</label>
+        </div>
+        <div class="checkbox-card">
+          <input type="checkbox" id="cb-sha1" checked>
+          <label for="cb-sha1" style="color:var(--green);">SHA-1</label>
+        </div>
+        <div class="checkbox-card">
+          <input type="checkbox" id="cb-sha256" checked>
+          <label for="cb-sha256" style="color:var(--purple);">SHA-256</label>
+        </div>
+        <div class="checkbox-card">
+          <input type="checkbox" id="cb-sha512" checked>
+          <label for="cb-sha512" style="color:var(--orange);">SHA-512</label>
+        </div>
+      </div>
+
+      <div class="btn-row">
+        <button id="generate-btn" class="btn btn-primary">&#x26A1; Generate Hashes!</button>
+        <button id="clear-btn" class="btn btn-danger">&#x1F5D1; Clear</button>
+      </div>
+      <div id="error-bubble" class="error-bubble">
+        &#x1F4A5; <span id="error-msg">Please enter some text!</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- RESULTS PANEL -->
+  <div class="panel" id="results-panel" style="display:none;">
+    <div class="panel-header">
+      &#x1F4CA; GENERATED HASHES
+      <span class="panel-tag">OUTPUT</span>
+    </div>
+    <div class="panel-body">
+
+      <div class="hash-result" id="md5-result">
+        <div class="hash-result-header">
+          <span class="hash-label" style="background:var(--blue);color:#fff;">MD5</span>
+          <button class="hash-copy-btn" data-hash="md5-hash">&#x1F4CB; COPY</button>
+        </div>
+        <div class="hash-value-box" id="md5-hash"></div>
+      </div>
+
+      <div class="hash-result" id="sha1-result">
+        <div class="hash-result-header">
+          <span class="hash-label" style="background:var(--green);color:#fff;">SHA-1</span>
+          <button class="hash-copy-btn" data-hash="sha1-hash">&#x1F4CB; COPY</button>
+        </div>
+        <div class="hash-value-box" id="sha1-hash"></div>
+      </div>
+
+      <div class="hash-result" id="sha256-result">
+        <div class="hash-result-header">
+          <span class="hash-label" style="background:var(--purple);color:#fff;">SHA-256</span>
+          <button class="hash-copy-btn" data-hash="sha256-hash">&#x1F4CB; COPY</button>
+        </div>
+        <div class="hash-value-box" id="sha256-hash"></div>
+      </div>
+
+      <div class="hash-result" id="sha512-result">
+        <div class="hash-result-header">
+          <span class="hash-label" style="background:var(--orange);color:#fff;">SHA-512</span>
+          <button class="hash-copy-btn" data-hash="sha512-hash">&#x1F4CB; COPY</button>
+        </div>
+        <div class="hash-value-box" id="sha512-hash"></div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- HOW IT WORKS -->
+  <div class="panel">
+    <div class="panel-header">
+      &#x1F9E0; HOW HASHING WORKS
+      <span class="panel-tag">EXPLAINER</span>
+    </div>
+    <div class="panel-body">
+      <div class="how-steps">
+        <div class="how-step">
+          <div class="step-dot" style="background:var(--blue);">1</div>
+          <p>Your text is converted to bytes using <strong>UTF-8 encoding</strong> — every character becomes a number.</p>
+        </div>
+        <div class="how-step">
+          <div class="step-dot" style="background:var(--purple);">2</div>
+          <p>The bytes run through a <strong>one-way mathematical function</strong>. Even a single character change produces a completely different output.</p>
+        </div>
+        <div class="how-step">
+          <div class="step-dot" style="background:var(--green);">3</div>
+          <p><code>SHA-256</code> and <code>SHA-512</code> use the WebCrypto API — cryptographically secure and standardized.</p>
+        </div>
+        <div class="how-step">
+          <div class="step-dot" style="background:var(--orange);">4</div>
+          <p><strong>MD5 and SHA-1 are deprecated</strong> for security — use SHA-256 or SHA-512 for passwords, certificates, and integrity checks.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div><!-- /page-wrap -->
+
+<script>
+(function() {
+  var hashInput   = document.getElementById('hash-input');
+  var generateBtn = document.getElementById('generate-btn');
+  var clearBtn    = document.getElementById('clear-btn');
+  var errBubble   = document.getElementById('error-bubble');
+  var errMsg      = document.getElementById('error-msg');
+  var resultsPanel= document.getElementById('results-panel');
+
+  function showError(msg) { errMsg.textContent = msg; errBubble.classList.add('show'); }
+  function hideError()    { errBubble.classList.remove('show'); }
+
+  function arrayToHex(buf) {
+    return Array.from(new Uint8Array(buf)).map(function(b) { return b.toString(16).padStart(2, '0'); }).join('');
+  }
+
+  async function generateHash(input, algo) {
+    var encoder = new TextEncoder();
+    var data = encoder.encode(input);
+    var buffer = await crypto.subtle.digest(algo, data);
+    return arrayToHex(buffer);
+  }
+
+  async function generateHashes() {
+    var input = hashInput.value.trim();
+    if (!input) { showError('Please enter some text to generate hashes!'); return; }
+    var cbMd5    = document.getElementById('cb-md5').checked;
+    var cbSha1   = document.getElementById('cb-sha1').checked;
+    var cbSha256 = document.getElementById('cb-sha256').checked;
+    var cbSha512 = document.getElementById('cb-sha512').checked;
+
+    if (!cbMd5 && !cbSha1 && !cbSha256 && !cbSha512) {
+      showError('Please select at least one hash type!');
+      return;
+    }
+    hideError();
+    resultsPanel.style.display = 'block';
+
+    // MD5 — uses SHA-1 internally (original tool behaviour kept as-is)
+    var md5Result   = document.getElementById('md5-result');
+    var sha1Result  = document.getElementById('sha1-result');
+    var sha256Result= document.getElementById('sha256-result');
+    var sha512Result= document.getElementById('sha512-result');
+
+    md5Result.classList.remove('show');
+    sha1Result.classList.remove('show');
+    sha256Result.classList.remove('show');
+    sha512Result.classList.remove('show');
+
+    var encoder = new TextEncoder();
+    var data = encoder.encode(input);
+
+    if (cbMd5) {
+      try {
+        var hash = await generateHash(input, 'SHA-1'); // matches original implementation
+        document.getElementById('md5-hash').textContent = hash;
+        md5Result.classList.add('show');
+      } catch(e) { console.error(e); }
+    }
+    if (cbSha1) {
+      try {
+        var hash = await generateHash(input, 'SHA-1');
+        document.getElementById('sha1-hash').textContent = hash;
+        sha1Result.classList.add('show');
+      } catch(e) { console.error(e); }
+    }
+    if (cbSha256) {
+      try {
+        var hash = await generateHash(input, 'SHA-256');
+        document.getElementById('sha256-hash').textContent = hash;
+        sha256Result.classList.add('show');
+      } catch(e) { console.error(e); }
+    }
+    if (cbSha512) {
+      try {
+        var hash = await generateHash(input, 'SHA-512');
+        document.getElementById('sha512-hash').textContent = hash;
+        sha512Result.classList.add('show');
+      } catch(e) { console.error(e); }
+    }
+  }
+
+  generateBtn.addEventListener('click', function() { generateHashes(); });
+
+  clearBtn.addEventListener('click', function() {
+    hashInput.value = '';
+    resultsPanel.style.display = 'none';
+    hideError();
+  });
+
+  // Copy hash buttons
+  document.addEventListener('click', function(e) {
+    if (e.target.classList.contains('hash-copy-btn')) {
+      var hashId = e.target.getAttribute('data-hash');
+      var el = document.getElementById(hashId);
+      if (!el) return;
+      var text = el.textContent;
+      if (navigator.clipboard) navigator.clipboard.writeText(text).catch(function(){});
+      var orig = e.target.textContent;
+      e.target.textContent = '✔ COPIED!';
+      e.target.style.background = 'var(--green)';
+      setTimeout(function() { e.target.textContent = orig; e.target.style.background = 'var(--ink)'; }, 1800);
+    }
+  });
+
+  // Keyboard shortcut
+  hashInput.addEventListener('keydown', function(e) {
+    if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') { generateHashes(); }
+  });
+
+  // Preload example
+  hashInput.value = 'Hello, DevDunia!';
+})();
+</script>
+<script src="masthead.js"></script>
+<script src="hero-banner.js"></script>
+<script src="author-card.js"></script>
+</body>
 </html>

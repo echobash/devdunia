@@ -2,9 +2,335 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta http-equiv="refresh" content="0; url=production/data-structures.html">
-<title>DevDunia</title>
-<script>window.location.replace('production/data-structures.html')</script>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Data Structures — DevDunia Comics</title>
+<meta name="description" content="Learn data structures with definitions, syntax, and examples. Arrays, linked lists, trees, graphs, sorting algorithms and more.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://devdunia.com/production/data-structures.html">
+<meta property="og:title" content="Data Structures — DevDunia Comics">
+<meta property="og:description" content="Learn data structures with definitions, syntax, and examples. Arrays, linked lists, trees, graphs, sorting algorithms and more.">
+<meta property="og:image" content="https://devdunia.com/images/logo.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Bangers&family=Comic+Neue:wght@400;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --ink: #1a1410;
+  --paper: #fdf3e3;
+  --paper2: #fbe9cc;
+  --red: #e63946;
+  --blue: #1d6fb8;
+  --yellow: #ffd23f;
+  --green: #3fa34d;
+  --pink: #ff6b9d;
+  --purple: #8a4fff;
+  --orange: #ff8c42;
+}
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  font-family: 'Comic Neue', cursive;
+  font-weight: 400;
+  color: var(--ink);
+  background-color: var(--paper);
+  background-image: radial-gradient(var(--ink) 0.5px, transparent 0.6px);
+  background-size: 14px 14px;
+  background-attachment: fixed;
+  min-height: 100vh;
+}
+.paper-overlay {
+  position: fixed; inset: 0;
+  background: rgba(253,243,227,.78);
+  pointer-events: none; z-index: 0;
+}
+.page-wrap {
+  position: relative; z-index: 1;
+  max-width: 1240px; margin: 0 auto;
+  padding: 20px 32px 60px;
+}
+
+
+
+
+
+
+
+.hero {
+  display: flex; align-items: flex-start; gap: 20px;
+  background: var(--paper2);
+  border: 4px solid var(--ink); border-radius: 6px;
+  box-shadow: 7px 7px 0 var(--ink);
+  padding: 20px 24px; margin-bottom: 28px;
+  transform: rotate(-0.4deg);
+}
+.hero-icon { font-size: 3rem; line-height: 1; flex-shrink: 0; filter: drop-shadow(3px 3px 0 var(--ink)); }
+.hero-text h1 {
+  font-family: 'Bangers', cursive; font-size: 2.8rem;
+  letter-spacing: 2px; color: var(--purple);
+  -webkit-text-stroke: 1px var(--ink);
+  text-shadow: 4px 4px 0 var(--ink);
+  line-height: 1; text-transform: uppercase;
+}
+.hero-text p { font-size: .95rem; margin-top: 6px; line-height: 1.5; max-width: 540px; }
+.hero-badges { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 10px; }
+.badge {
+  font-family: 'Space Mono', monospace; font-size: .65rem; font-weight: 700;
+  padding: 3px 8px; border: 2px solid var(--ink);
+  border-radius: 4px; box-shadow: 2px 2px 0 var(--ink);
+}
+.badge-green  { background: var(--green);  color: #fff; }
+.badge-blue   { background: var(--blue);   color: #fff; }
+.badge-purple { background: var(--purple); color: #fff; }
+.badge-yellow { background: var(--yellow); color: var(--ink); }
+.badge-red    { background: var(--red);    color: #fff; }
+.panel {
+  background: var(--paper);
+  border: 4px solid var(--ink); border-radius: 6px;
+  box-shadow: 7px 7px 0 var(--ink);
+  overflow: hidden; margin-bottom: 22px;
+}
+.panel-header {
+  background: var(--ink); color: var(--yellow);
+  font-family: 'Bangers', cursive; font-size: 1.2rem;
+  letter-spacing: 2px; padding: 8px 16px;
+  display: flex; align-items: center; justify-content: space-between; gap: 10px;
+}
+.panel-header .panel-tag {
+  font-family: 'Space Mono', monospace; font-size: .65rem; font-weight: 700;
+  background: var(--yellow); color: var(--ink);
+  padding: 2px 7px; border-radius: 3px;
+}
+.panel-body { padding: 18px 20px; }
+.ds-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 14px;
+}
+.ds-card {
+  background: var(--paper2);
+  border: 3px solid var(--ink); border-radius: 6px;
+  box-shadow: 5px 5px 0 var(--ink);
+  padding: 14px 16px;
+  text-decoration: none; color: var(--ink);
+  transition: transform .1s, box-shadow .1s;
+  display: block;
+}
+.ds-card:hover { transform: translate(-2px,-2px); box-shadow: 7px 7px 0 var(--ink); }
+.ds-card:active { transform: translate(1px,1px); box-shadow: 3px 3px 0 var(--ink); }
+.ds-icon {
+  width: 40px; height: 40px; border-radius: 8px;
+  border: 3px solid var(--ink);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 1.2rem; margin-bottom: 10px;
+  box-shadow: 2px 2px 0 var(--ink);
+}
+.ds-icon.green  { background: var(--green);  }
+.ds-icon.blue   { background: var(--blue);   }
+.ds-icon.purple { background: var(--purple); }
+.ds-icon.orange { background: var(--orange); }
+.ds-icon.red    { background: var(--red);    }
+.ds-card h3 {
+  font-family: 'Bangers', cursive; font-size: 1.1rem;
+  letter-spacing: 1px; margin-bottom: 5px;
+  text-transform: uppercase;
+}
+.ds-card p { font-size: .8rem; line-height: 1.5; }
+.ds-card h3.green  { color: var(--green); }
+.ds-card h3.blue   { color: var(--blue); }
+.ds-card h3.purple { color: var(--purple); }
+.ds-card h3.orange { color: var(--orange); }
+.ds-card h3.red    { color: var(--red); }
+@media (max-width: 760px) {
+  .ds-grid { grid-template-columns: 1fr 1fr; }
+  .hero { flex-direction: column; gap: 10px; }
+  .hero-text h1 { font-size: 2rem; }
+}
+@media (max-width: 480px) {
+  .ds-grid { grid-template-columns: 1fr; }
+}
+</style>
 </head>
-<body></body>
+<body>
+<div class="paper-overlay"></div>
+<div data-masthead></div>
+
+<div class="page-wrap">
+
+  <div data-tool-hero
+     data-title="Data Structures"
+     data-chapter="12"
+     data-category="Developer Tools"
+     data-icon="&#x1F9E9;"
+     data-desc="Learn data structures with definitions, syntax, and practical examples. Essential for coding interviews and algorithm design. Click any card to dive deep!"
+     data-color="blue"
+     data-badges="BASIC,ADVANCED,SORTING,SEARCH,INTERVIEW READY"
+     data-badge-colors="green,blue,purple,red,yellow">
+  </div>
+
+  <!-- MASTHEAD -->
+
+  <!-- HERO -->
+  
+
+  <!-- BASIC DATA STRUCTURES -->
+  <div class="panel">
+    <div class="panel-header">
+      &#x1F4E6; BASIC DATA STRUCTURES
+      <span class="panel-tag">BASIC</span>
+    </div>
+    <div class="panel-body">
+      <div class="ds-grid">
+        <a href="datastructures/array-ds.html" class="ds-card">
+          <div class="ds-icon green">&#x1F4CA;</div>
+          <h3 class="green">Array</h3>
+          <p>Fixed-size collection of elements with contiguous memory allocation.</p>
+        </a>
+        <a href="datastructures/linkedlist-ds.html" class="ds-card">
+          <div class="ds-icon green">&#x1F517;</div>
+          <h3 class="green">Linked List</h3>
+          <p>Linear data structure with nodes connected by pointers.</p>
+        </a>
+        <a href="datastructures/stack-ds.html" class="ds-card">
+          <div class="ds-icon green">&#x1F4DA;</div>
+          <h3 class="green">Stack</h3>
+          <p>LIFO (Last In, First Out) data structure with push and pop operations.</p>
+        </a>
+        <a href="datastructures/queue-ds.html" class="ds-card">
+          <div class="ds-icon green">&#x27A1;&#xFE0F;</div>
+          <h3 class="green">Queue</h3>
+          <p>FIFO (First In, First Out) data structure with enqueue and dequeue operations.</p>
+        </a>
+        <a href="hashtable-ds.html" class="ds-card">
+          <div class="ds-icon green">&#x1F511;</div>
+          <h3 class="green">Hash Table</h3>
+          <p>Key-value pairs with O(1) average time complexity for operations.</p>
+        </a>
+        <a href="tree-ds.html" class="ds-card">
+          <div class="ds-icon green">&#x1F333;</div>
+          <h3 class="green">Tree</h3>
+          <p>Hierarchical data structure with nodes and edges, no cycles.</p>
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <!-- ADVANCED DATA STRUCTURES -->
+  <div class="panel">
+    <div class="panel-header">
+      &#x26A1; ADVANCED DATA STRUCTURES
+      <span class="panel-tag">ADVANCED</span>
+    </div>
+    <div class="panel-body">
+      <div class="ds-grid">
+        <a href="bst-ds.html" class="ds-card">
+          <div class="ds-icon blue">&#x1F50D;</div>
+          <h3 class="blue">Binary Search Tree</h3>
+          <p>Binary tree with left child &lt; parent &lt; right child property.</p>
+        </a>
+        <a href="heap-ds.html" class="ds-card">
+          <div class="ds-icon blue">&#x25B2;</div>
+          <h3 class="blue">Heap</h3>
+          <p>Complete binary tree with heap property (min or max heap).</p>
+        </a>
+        <a href="graph-ds.html" class="ds-card">
+          <div class="ds-icon blue">&#x1F578;&#xFE0F;</div>
+          <h3 class="blue">Graph</h3>
+          <p>Vertices and edges, can be directed or undirected, weighted or unweighted.</p>
+        </a>
+        <a href="trie-ds.html" class="ds-card">
+          <div class="ds-icon blue">&#x1F4DD;</div>
+          <h3 class="blue">Trie</h3>
+          <p>Tree-like data structure for storing strings, efficient for prefix searches.</p>
+        </a>
+        <a href="segment-tree-ds.html" class="ds-card">
+          <div class="ds-icon blue">&#x1F4CF;</div>
+          <h3 class="blue">Segment Tree</h3>
+          <p>Tree data structure for range queries and updates in O(log n).</p>
+        </a>
+        <a href="fenwick-tree-ds.html" class="ds-card">
+          <div class="ds-icon blue">&#x1F4C8;</div>
+          <h3 class="blue">Fenwick Tree</h3>
+          <p>Binary Indexed Tree for efficient prefix sum queries and updates.</p>
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <!-- SORTING ALGORITHMS -->
+  <div class="panel">
+    <div class="panel-header">
+      &#x1F500; SORTING ALGORITHMS
+      <span class="panel-tag">SORTING</span>
+    </div>
+    <div class="panel-body">
+      <div class="ds-grid">
+        <a href="quicksort-ds.html" class="ds-card">
+          <div class="ds-icon purple">&#x26A1;</div>
+          <h3 class="purple">Quick Sort</h3>
+          <p>Divide and conquer algorithm with O(n log n) average case.</p>
+        </a>
+        <a href="mergesort-ds.html" class="ds-card">
+          <div class="ds-icon purple">&#x1F500;</div>
+          <h3 class="purple">Merge Sort</h3>
+          <p>Stable sorting algorithm with guaranteed O(n log n) time complexity.</p>
+        </a>
+        <a href="heapsort-ds.html" class="ds-card">
+          <div class="ds-icon purple">&#x25B2;</div>
+          <h3 class="purple">Heap Sort</h3>
+          <p>In-place sorting using heap data structure, O(n log n) time complexity.</p>
+        </a>
+        <a href="bubblesort-ds.html" class="ds-card">
+          <div class="ds-icon purple">&#x1F501;</div>
+          <h3 class="purple">Bubble Sort</h3>
+          <p>Simple comparison-based algorithm, O(n²) time complexity.</p>
+        </a>
+        <a href="insertionsort-ds.html" class="ds-card">
+          <div class="ds-icon purple">&#x2B06;&#xFE0F;</div>
+          <h3 class="purple">Insertion Sort</h3>
+          <p>Efficient for small datasets, O(n²) worst case, O(n) best case.</p>
+        </a>
+        <a href="selectionsort-ds.html" class="ds-card">
+          <div class="ds-icon purple">&#x1F4CB;</div>
+          <h3 class="purple">Selection Sort</h3>
+          <p>Finds minimum element and swaps, O(n²) time complexity.</p>
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <!-- SEARCH ALGORITHMS -->
+  <div class="panel">
+    <div class="panel-header">
+      &#x1F50E; SEARCH ALGORITHMS
+      <span class="panel-tag">SEARCH</span>
+    </div>
+    <div class="panel-body">
+      <div class="ds-grid">
+        <a href="binarysearch-ds.html" class="ds-card">
+          <div class="ds-icon orange">&#x1F50D;</div>
+          <h3 class="orange">Binary Search</h3>
+          <p>Search in sorted array with O(log n) time complexity.</p>
+        </a>
+        <a href="linearsearch-ds.html" class="ds-card">
+          <div class="ds-icon orange">&#x27A1;&#xFE0F;</div>
+          <h3 class="orange">Linear Search</h3>
+          <p>Sequential search through array, O(n) time complexity.</p>
+        </a>
+        <a href="dfs-ds.html" class="ds-card">
+          <div class="ds-icon orange">&#x1F30A;</div>
+          <h3 class="orange">Depth First Search</h3>
+          <p>Graph traversal algorithm using stack or recursion.</p>
+        </a>
+        <a href="bfs-ds.html" class="ds-card">
+          <div class="ds-icon orange">&#x1F4E1;</div>
+          <h3 class="orange">Breadth First Search</h3>
+          <p>Graph traversal algorithm using queue, finds shortest path.</p>
+        </a>
+      </div>
+    </div>
+  </div>
+
+</div><!-- /page-wrap -->
+<script src="masthead.js"></script>
+<script src="hero-banner.js"></script>
+<script src="author-card.js"></script>
+</body>
 </html>

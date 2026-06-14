@@ -2,9 +2,767 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta http-equiv="refresh" content="0; url=production/elasticsearch-tools.html">
-<title>DevDunia</title>
-<script>window.location.replace('production/elasticsearch-tools.html')</script>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Elasticsearch Tools — DevDunia Comics</title>
+<meta name="description" content="Elasticsearch tools and reference. Query builder, mapping viewer, Python and Laravel code examples.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://devdunia.com/production/elasticsearch-tools.html">
+<meta property="og:title" content="Elasticsearch Tools — DevDunia Comics">
+<meta property="og:description" content="Elasticsearch tools and reference. Query builder, mapping viewer, and command reference.">
+<meta property="og:image" content="https://devdunia.com/images/logo.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Bangers&family=Comic+Neue:wght@400;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --ink: #1a1410;
+  --paper: #fdf3e3;
+  --paper2: #fbe9cc;
+  --red: #e63946;
+  --blue: #1d6fb8;
+  --yellow: #ffd23f;
+  --green: #3fa34d;
+  --pink: #ff6b9d;
+  --purple: #8a4fff;
+  --orange: #ff8c42;
+}
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  font-family: 'Comic Neue', cursive;
+  font-weight: 400;
+  color: var(--ink);
+  background-color: var(--paper);
+  background-image: radial-gradient(var(--ink) 0.5px, transparent 0.6px);
+  background-size: 14px 14px;
+  background-attachment: fixed;
+  min-height: 100vh;
+}
+.paper-overlay {
+  position: fixed; inset: 0;
+  background: rgba(253,243,227,.78);
+  pointer-events: none; z-index: 0;
+}
+.page-wrap {
+  position: relative; z-index: 1;
+  max-width: 1240px; margin: 0 auto;
+  padding: 20px 32px 60px;
+}
+
+
+
+
+
+
+
+.hero {
+  display: flex; align-items: flex-start; gap: 20px;
+  background: var(--paper2);
+  border: 4px solid var(--ink); border-radius: 6px;
+  box-shadow: 7px 7px 0 var(--ink);
+  padding: 20px 24px; margin-bottom: 28px;
+  transform: rotate(-0.4deg);
+}
+.hero-icon { font-size: 3rem; line-height: 1; flex-shrink: 0; filter: drop-shadow(3px 3px 0 var(--ink)); }
+.hero-text h1 {
+  font-family: 'Bangers', cursive; font-size: 2.8rem;
+  letter-spacing: 2px; color: var(--blue);
+  -webkit-text-stroke: 1px var(--ink);
+  text-shadow: 4px 4px 0 var(--ink);
+  line-height: 1; text-transform: uppercase;
+}
+.hero-text p { font-size: .95rem; margin-top: 6px; line-height: 1.5; max-width: 520px; }
+.hero-badges { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 10px; }
+.badge {
+  font-family: 'Space Mono', monospace; font-size: .65rem; font-weight: 700;
+  padding: 3px 8px; border: 2px solid var(--ink);
+  border-radius: 4px; box-shadow: 2px 2px 0 var(--ink);
+}
+.badge-blue   { background: var(--blue);   color: #fff; }
+.badge-green  { background: var(--green);  color: #fff; }
+.badge-yellow { background: var(--yellow); color: var(--ink); }
+.badge-red    { background: var(--red);    color: #fff; }
+.badge-purple { background: var(--purple); color: #fff; }
+.panel {
+  background: var(--paper);
+  border: 4px solid var(--ink); border-radius: 6px;
+  box-shadow: 7px 7px 0 var(--ink);
+  overflow: hidden; margin-bottom: 22px;
+}
+.panel-header {
+  background: var(--ink); color: var(--yellow);
+  font-family: 'Bangers', cursive; font-size: 1.2rem;
+  letter-spacing: 2px; padding: 8px 16px;
+  display: flex; align-items: center; justify-content: space-between; gap: 10px;
+}
+.panel-header .panel-tag {
+  font-family: 'Space Mono', monospace; font-size: .65rem; font-weight: 700;
+  background: var(--yellow); color: var(--ink);
+  padding: 2px 7px; border-radius: 3px;
+}
+.panel-body { padding: 18px 20px; }
+.section-title {
+  font-family: 'Bangers', cursive; font-size: 1.5rem;
+  letter-spacing: 2px; color: var(--ink);
+  margin: 24px 0 12px; text-transform: uppercase;
+  display: flex; align-items: center; gap: 10px;
+}
+.section-title .icon { font-size: 1.4rem; }
+.sub-title {
+  font-family: 'Bangers', cursive; font-size: 1.1rem;
+  letter-spacing: 1px; color: var(--blue);
+  margin: 16px 0 8px; text-transform: uppercase;
+}
+.sub-title.green { color: var(--green); }
+.sub-title.purple { color: var(--purple); }
+.code-card {
+  background: var(--paper2);
+  border: 3px solid var(--ink); border-radius: 6px;
+  box-shadow: 4px 4px 0 var(--ink);
+  margin-bottom: 16px; overflow: hidden;
+}
+.code-card-header {
+  background: var(--ink); color: var(--yellow);
+  font-family: 'Bangers', cursive; font-size: 1rem;
+  letter-spacing: 1px; padding: 6px 14px;
+  display: flex; align-items: center; justify-content: space-between;
+}
+.code-card-body { padding: 0; }
+pre {
+  background: var(--ink); color: var(--yellow);
+  font-family: 'Space Mono', monospace; font-size: .78rem;
+  border-radius: 0 0 4px 4px;
+  padding: 12px 16px; overflow-x: auto; line-height: 1.6;
+  margin: 0;
+}
+.btn-copy {
+  font-family: 'Bangers', cursive; font-size: .9rem;
+  letter-spacing: 1px;
+  background: var(--yellow); color: var(--ink);
+  border: 2px solid var(--ink); border-radius: 4px;
+  padding: 2px 10px; cursor: pointer;
+  box-shadow: 2px 2px 0 rgba(0,0,0,.4);
+  transition: transform .1s, box-shadow .1s;
+}
+.btn-copy:active { transform: translate(1px,1px); box-shadow: 1px 1px 0 rgba(0,0,0,.4); }
+.grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+.tip-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-top: 8px; }
+.tip-card {
+  background: var(--paper2);
+  border: 3px solid var(--ink); border-radius: 6px;
+  box-shadow: 4px 4px 0 var(--ink); padding: 14px 16px;
+}
+.tip-card h4 {
+  font-family: 'Bangers', cursive; font-size: 1rem;
+  letter-spacing: 1px; margin-bottom: 8px;
+}
+.tip-card ul { list-style: none; }
+.tip-card li { font-size: .88rem; line-height: 1.7; }
+.tip-card li::before { content: "▶ "; color: var(--blue); font-size: .7rem; }
+.divider { border: none; border-top: 3px solid var(--ink); margin: 20px 0; }
+@media (max-width: 760px) {
+  .grid-2 { grid-template-columns: 1fr; }
+  .tip-grid { grid-template-columns: 1fr; }
+  .hero { flex-direction: column; gap: 10px; }
+  .hero-text h1 { font-size: 2rem; }
+}
+</style>
 </head>
-<body></body>
+<body>
+<div class="paper-overlay"></div>
+<div data-masthead></div>
+
+<div class="page-wrap">
+
+  <div data-tool-hero
+     data-title="Elasticsearch Tools"
+     data-chapter="16"
+     data-category="Developer Tools"
+     data-icon="&#x1F50D;"
+     data-desc="Essential Elasticsearch commands, queries, and code examples for Python and Laravel developers. Index, search, and aggregate like a hero!"
+     data-color="blue"
+     data-badges="PYTHON,LARAVEL,QUERIES,AGGREGATIONS,REFERENCE"
+     data-badge-colors="blue,green,purple,red,yellow">
+  </div>
+
+  <!-- MASTHEAD -->
+
+  <!-- HERO -->
+  
+
+  <!-- PYTHON SECTION -->
+  <div class="panel">
+    <div class="panel-header">
+      &#x1F40D; PYTHON ELASTICSEARCH
+      <span class="panel-tag">PYTHON</span>
+    </div>
+    <div class="panel-body">
+
+      <div class="sub-title">Installation &amp; Setup</div>
+      <div class="code-card">
+        <div class="code-card-header">Install Elasticsearch Python Client <button class="btn-copy" onclick="copyCode('python-install')">COPY</button></div>
+        <div class="code-card-body"><pre id="python-install"># Install Elasticsearch client
+pip install elasticsearch
+
+# For async support
+pip install elasticsearch[async]
+
+# For development with additional features
+pip install elasticsearch[dev]</pre></div>
+      </div>
+
+      <div class="sub-title">Connection Setup</div>
+      <div class="code-card">
+        <div class="code-card-header">Basic Connection <button class="btn-copy" onclick="copyCode('python-connection')">COPY</button></div>
+        <div class="code-card-body"><pre id="python-connection">from elasticsearch import Elasticsearch
+from elasticsearch.helpers import bulk
+
+# Basic connection
+es = Elasticsearch([{'host': 'localhost', 'port': 9200}])
+
+# With authentication
+es = Elasticsearch(
+    ['localhost:9200'],
+    http_auth=('username', 'password'),
+    verify_certs=True,
+    ca_certs='/path/to/ca_certs.pem'
+)
+
+# Cloud connection
+es = Elasticsearch(
+    cloud_id="your_cloud_id",
+    http_auth=('elastic', 'password')
+)
+
+# Check connection
+if es.ping():
+    print("Connected to Elasticsearch!")
+else:
+    print("Could not connect to Elasticsearch")</pre></div>
+      </div>
+
+      <div class="sub-title">CRUD Operations</div>
+      <div class="grid-2">
+        <div class="code-card">
+          <div class="code-card-header">Create Document <button class="btn-copy" onclick="copyCode('python-create')">COPY</button></div>
+          <div class="code-card-body"><pre id="python-create"># Create a single document
+doc = {
+    'title': 'Elasticsearch Guide',
+    'content': 'Comprehensive guide',
+    'tags': ['elasticsearch', 'search'],
+    'created_at': '2024-01-15T10:30:00Z'
+}
+
+# Index with auto-generated ID
+result = es.index(index='articles', body=doc)
+print(f"Created ID: {result['_id']}")
+
+# Index with specific ID
+result = es.index(index='articles', id=1, body=doc)
+
+# Bulk indexing
+documents = [
+    {'_index': 'articles', '_source': {'title': 'Doc 1'}},
+    {'_index': 'articles', '_source': {'title': 'Doc 2'}},
+]
+bulk(es, documents)</pre></div>
+        </div>
+        <div class="code-card">
+          <div class="code-card-header">Read Document <button class="btn-copy" onclick="copyCode('python-read')">COPY</button></div>
+          <div class="code-card-body"><pre id="python-read"># Get document by ID
+doc = es.get(index='articles', id=1)
+print(doc['_source'])
+
+# Search documents
+search_body = {
+    'query': {
+        'match': { 'title': 'Elasticsearch' }
+    }
+}
+
+result = es.search(index='articles', body=search_body)
+for hit in result['hits']['hits']:
+    print(f"Score: {hit['_score']}")
+
+# Search with bool filter
+search_body = {
+    'query': {
+        'bool': {
+            'must': [
+                {'match': {'title': 'guide'}},
+                {'term': {'tags': 'elasticsearch'}}
+            ],
+            'filter': [
+                {'range': {'created_at': {'gte': '2024-01-01'}}}
+            ]
+        }
+    }
+}
+result = es.search(index='articles', body=search_body)</pre></div>
+        </div>
+        <div class="code-card">
+          <div class="code-card-header">Update Document <button class="btn-copy" onclick="copyCode('python-update')">COPY</button></div>
+          <div class="code-card-body"><pre id="python-update"># Partial update using script
+update_body = {
+    'script': {
+        'source': 'ctx._source.views += params.views',
+        'params': {'views': 1}
+    }
+}
+result = es.update(index='articles', id=1, body=update_body)
+
+# Partial update with doc
+update_body = {
+    'doc': {
+        'title': 'New Title',
+        'updated_at': '2024-01-16T10:30:00Z'
+    }
+}
+result = es.update(index='articles', id=1, body=update_body)
+
+# Replace entire document
+updated_doc = {
+    'title': 'Updated Elasticsearch Guide',
+    'tags': ['elasticsearch', 'updated'],
+}
+result = es.index(index='articles', id=1, body=updated_doc)</pre></div>
+        </div>
+        <div class="code-card">
+          <div class="code-card-header">Delete Document <button class="btn-copy" onclick="copyCode('python-delete')">COPY</button></div>
+          <div class="code-card-body"><pre id="python-delete"># Delete document by ID
+result = es.delete(index='articles', id=1)
+print(f"Deleted: {result['result']}")
+
+# Delete by query
+delete_query = {
+    'query': {
+        'term': {'status': 'inactive'}
+    }
+}
+result = es.delete_by_query(index='articles', body=delete_query)
+print(f"Deleted {result['deleted']} documents")
+
+# Delete entire index
+result = es.indices.delete(index='articles')</pre></div>
+        </div>
+      </div>
+
+      <div class="sub-title">Advanced Queries</div>
+      <div class="grid-2">
+        <div class="code-card">
+          <div class="code-card-header">Aggregations <button class="btn-copy" onclick="copyCode('python-aggs')">COPY</button></div>
+          <div class="code-card-body"><pre id="python-aggs"># Terms aggregation
+search_body = {
+    'size': 0,
+    'aggs': {
+        'popular_tags': {
+            'terms': {
+                'field': 'tags.keyword',
+                'size': 10
+            }
+        }
+    }
+}
+
+result = es.search(index='articles', body=search_body)
+for bucket in result['aggregations']['popular_tags']['buckets']:
+    print(f"Tag: {bucket['key']}, Count: {bucket['doc_count']}")
+
+# Date histogram aggregation
+search_body = {
+    'size': 0,
+    'aggs': {
+        'articles_over_time': {
+            'date_histogram': {
+                'field': 'created_at',
+                'calendar_interval': 'month'
+            }
+        }
+    }
+}
+result = es.search(index='articles', body=search_body)</pre></div>
+        </div>
+        <div class="code-card">
+          <div class="code-card-header">Full Text Search <button class="btn-copy" onclick="copyCode('python-search')">COPY</button></div>
+          <div class="code-card-body"><pre id="python-search"># Multi-match query
+search_body = {
+    'query': {
+        'multi_match': {
+            'query': 'elasticsearch guide',
+            'fields': ['title^2', 'content'],
+            'type': 'best_fields',
+            'fuzziness': 'AUTO'
+        }
+    }
+}
+result = es.search(index='articles', body=search_body)
+
+# Bool query with should
+search_body = {
+    'query': {
+        'bool': {
+            'should': [
+                {'match': {'title': 'elasticsearch'}},
+                {'match': {'content': 'elasticsearch'}},
+                {'match': {'tags': 'elasticsearch'}}
+            ],
+            'minimum_should_match': 1
+        }
+    }
+}
+result = es.search(index='articles', body=search_body)</pre></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- LARAVEL SECTION -->
+  <div class="panel">
+    <div class="panel-header">
+      &#x1F336;&#xFE0F; LARAVEL ELASTICSEARCH
+      <span class="panel-tag">LARAVEL</span>
+    </div>
+    <div class="panel-body">
+
+      <div class="sub-title green">Installation &amp; Setup</div>
+      <div class="code-card">
+        <div class="code-card-header">Install Laravel Scout &amp; Elasticsearch <button class="btn-copy" onclick="copyCode('laravel-install')">COPY</button></div>
+        <div class="code-card-body"><pre id="laravel-install"># Install Laravel Scout
+composer require laravel/scout
+
+# Install Elasticsearch driver
+composer require tamayo/laravel-scout-elastic
+
+# Publish Scout configuration
+php artisan vendor:publish --provider="Laravel\Scout\ScoutServiceProvider"
+
+# Publish Elasticsearch configuration
+php artisan vendor:publish --provider="Tamayo\LaravelScoutElastic\ScoutElasticServiceProvider"</pre></div>
+      </div>
+
+      <div class="sub-title green">Configuration</div>
+      <div class="code-card">
+        <div class="code-card-header">Environment Configuration <button class="btn-copy" onclick="copyCode('laravel-config')">COPY</button></div>
+        <div class="code-card-body"><pre id="laravel-config"># .env configuration
+SCOUT_DRIVER=elastic
+ELASTICSEARCH_HOST=localhost:9200
+ELASTICSEARCH_INDEX=laravel
+
+# config/scout.php
+'elastic' => [
+    'index' => env('ELASTICSEARCH_INDEX', 'laravel'),
+    'hosts' => [
+        env('ELASTICSEARCH_HOST', 'localhost:9200'),
+    ],
+],
+
+# config/database.php (add to connections)
+'elasticsearch' => [
+    'driver' => 'elasticsearch',
+    'host' => env('ELASTICSEARCH_HOST', 'localhost:9200'),
+    'index' => env('ELASTICSEARCH_INDEX', 'laravel'),
+],</pre></div>
+      </div>
+
+      <div class="sub-title green">Model Setup</div>
+      <div class="code-card">
+        <div class="code-card-header">Article Model with Scout <button class="btn-copy" onclick="copyCode('laravel-model')">COPY</button></div>
+        <div class="code-card-body"><pre id="laravel-model">&lt;?php
+
+namespace App\Models;
+
+use Illuminate\Database\Eloquent\Model;
+use Laravel\Scout\Searchable;
+
+class Article extends Model
+{
+    use Searchable;
+
+    protected $fillable = ['title', 'content', 'tags', 'published_at', 'views'];
+
+    protected $casts = [
+        'tags' => 'array',
+        'published_at' => 'datetime',
+    ];
+
+    public function toSearchableArray()
+    {
+        return [
+            'title' => $this->title,
+            'content' => $this->content,
+            'tags' => $this->tags,
+            'published_at' => $this->published_at?->toISOString(),
+            'views' => $this->views,
+        ];
+    }
+
+    public function searchableAs()
+    {
+        return 'articles_index';
+    }
+
+    public function shouldBeSearchable()
+    {
+        return $this->published_at !== null;
+    }
+}</pre></div>
+      </div>
+
+      <div class="sub-title green">CRUD Operations</div>
+      <div class="grid-2">
+        <div class="code-card">
+          <div class="code-card-header">Create &amp; Index <button class="btn-copy" onclick="copyCode('laravel-create')">COPY</button></div>
+          <div class="code-card-body"><pre id="laravel-create">&lt;?php
+
+// Create and automatically index
+$article = Article::create([
+    'title' => 'Laravel Elasticsearch Guide',
+    'content' => 'Comprehensive guide',
+    'tags' => ['laravel', 'elasticsearch'],
+    'published_at' => now(),
+    'views' => 0
+]);
+
+// Manually index existing model
+$article->searchable();
+
+// Bulk index all models
+Article::makeAllSearchable();
+
+// Index specific models
+Article::where('published_at', '!=', null)->searchable();
+
+// Remove from search index
+$article->unsearchable();</pre></div>
+        </div>
+        <div class="code-card">
+          <div class="code-card-header">Search Operations <button class="btn-copy" onclick="copyCode('laravel-search')">COPY</button></div>
+          <div class="code-card-body"><pre id="laravel-search">&lt;?php
+
+// Basic search
+$articles = Article::search('elasticsearch')->get();
+
+// Search with pagination
+$articles = Article::search('laravel guide')
+    ->paginate(15);
+
+// Advanced search with filters
+$articles = Article::search('elasticsearch')
+    ->where('tags', 'laravel')
+    ->where('views', '>', 100)
+    ->orderBy('published_at', 'desc')
+    ->get();
+
+// Search with custom query
+$articles = Article::search('', function ($es, $query) {
+    return $es->search($query, [
+        'body' => [
+            'query' => [
+                'bool' => [
+                    'must' => [
+                        ['match' => ['title' => 'elasticsearch']],
+                    ],
+                    'filter' => [
+                        ['term' => ['tags' => 'laravel']]
+                    ]
+                ]
+            ]
+        ]
+    ]);
+})->get();</pre></div>
+        </div>
+      </div>
+
+      <div class="sub-title green">Artisan Commands</div>
+      <div class="code-card">
+        <div class="code-card-header">Useful Commands <button class="btn-copy" onclick="copyCode('laravel-commands')">COPY</button></div>
+        <div class="code-card-body"><pre id="laravel-commands"># Import all models to search index
+php artisan scout:import "App\Models\Article"
+
+# Flush all models from search index
+php artisan scout:flush "App\Models\Article"
+
+# Create custom search command
+php artisan make:command SearchArticles
+
+# Example custom command
+&lt;?php
+
+namespace App\Console\Commands;
+
+use Illuminate\Console\Command;
+use App\Models\Article;
+
+class SearchArticles extends Command
+{
+    protected $signature = 'search:articles {query}';
+    protected $description = 'Search articles in Elasticsearch';
+
+    public function handle()
+    {
+        $query = $this->argument('query');
+        $articles = Article::search($query)->get();
+        $this->info("Found {$articles->count()} articles:");
+        foreach ($articles as $article) {
+            $this->line("- {$article->title}");
+        }
+    }
+}</pre></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- COMMON QUERIES SECTION -->
+  <div class="panel">
+    <div class="panel-header">
+      &#x1F50D; COMMON ELASTICSEARCH QUERIES
+      <span class="panel-tag">QUERIES</span>
+    </div>
+    <div class="panel-body">
+      <div class="grid-2">
+        <div class="code-card">
+          <div class="code-card-header">Match Query <button class="btn-copy" onclick="copyCode('match-query')">COPY</button></div>
+          <div class="code-card-body"><pre id="match-query">{
+  "query": {
+    "match": {
+      "title": "elasticsearch guide"
+    }
+  }
+}</pre></div>
+        </div>
+        <div class="code-card">
+          <div class="code-card-header">Bool Query <button class="btn-copy" onclick="copyCode('bool-query')">COPY</button></div>
+          <div class="code-card-body"><pre id="bool-query">{
+  "query": {
+    "bool": {
+      "must": [
+        { "match": { "title": "elasticsearch" } }
+      ],
+      "should": [
+        { "match": { "content": "guide" } },
+        { "match": { "tags": "tutorial" } }
+      ],
+      "filter": [
+        { "term": { "status": "published" } },
+        { "range": { "created_at": { "gte": "2024-01-01" } } }
+      ],
+      "must_not": [
+        { "term": { "category": "draft" } }
+      ]
+    }
+  }
+}</pre></div>
+        </div>
+        <div class="code-card">
+          <div class="code-card-header">Aggregation Query <button class="btn-copy" onclick="copyCode('agg-query')">COPY</button></div>
+          <div class="code-card-body"><pre id="agg-query">{
+  "size": 0,
+  "aggs": {
+    "popular_tags": {
+      "terms": {
+        "field": "tags.keyword",
+        "size": 10
+      }
+    },
+    "avg_views": {
+      "avg": { "field": "views" }
+    },
+    "articles_by_month": {
+      "date_histogram": {
+        "field": "created_at",
+        "calendar_interval": "month"
+      }
+    }
+  }
+}</pre></div>
+        </div>
+        <div class="code-card">
+          <div class="code-card-header">Range Aggregation <button class="btn-copy" onclick="copyCode('range-agg')">COPY</button></div>
+          <div class="code-card-body"><pre id="range-agg">{
+  "size": 0,
+  "aggs": {
+    "view_ranges": {
+      "range": {
+        "field": "views",
+        "ranges": [
+          { "to": 100 },
+          { "from": 100, "to": 1000 },
+          { "from": 1000 }
+        ]
+      }
+    }
+  }
+}</pre></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- PERFORMANCE TIPS -->
+  <div class="panel">
+    <div class="panel-header">
+      &#x26A1; PERFORMANCE TIPS
+      <span class="panel-tag">TIPS</span>
+    </div>
+    <div class="panel-body">
+      <div class="tip-grid">
+        <div class="tip-card">
+          <h4 style="color:var(--blue);">&#x1F40D; Python Performance</h4>
+          <ul>
+            <li>Use connection pooling</li>
+            <li>Implement bulk operations</li>
+            <li>Use async client for I/O</li>
+            <li>Cache frequently used queries</li>
+            <li>Use scroll API for large datasets</li>
+            <li>Optimize mapping and analyzers</li>
+          </ul>
+        </div>
+        <div class="tip-card">
+          <h4 style="color:var(--green);">&#x1F336;&#xFE0F; Laravel Performance</h4>
+          <ul>
+            <li>Use queue jobs for indexing</li>
+            <li>Implement search result caching</li>
+            <li>Use eager loading with search</li>
+            <li>Optimize toSearchableArray()</li>
+            <li>Use partial updates when possible</li>
+            <li>Monitor search performance</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div><!-- /page-wrap -->
+
+<script>
+function copyCode(id) {
+  var el = document.getElementById(id);
+  var text = el ? el.textContent : '';
+  var btn = event.target;
+  var orig = btn.textContent;
+  if (navigator.clipboard) {
+    navigator.clipboard.writeText(text).then(function() {
+      btn.textContent = 'COPIED!';
+      btn.style.background = 'var(--green)';
+      btn.style.color = '#fff';
+      setTimeout(function() {
+        btn.textContent = orig;
+        btn.style.background = '';
+        btn.style.color = '';
+      }, 1800);
+    });
+  } else {
+    var ta = document.createElement('textarea');
+    ta.value = text;
+    document.body.appendChild(ta);
+    ta.select();
+    try { document.execCommand('copy'); } catch(e) {}
+    document.body.removeChild(ta);
+    btn.textContent = 'COPIED!';
+    setTimeout(function() { btn.textContent = orig; }, 1800);
+  }
+}
+</script>
+<script src="masthead.js"></script>
+<script src="hero-banner.js"></script>
+<script src="author-card.js"></script>
+</body>
 </html>

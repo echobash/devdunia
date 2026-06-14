@@ -2,9 +2,706 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta http-equiv="refresh" content="0; url=production/base64-decoder.html">
-<title>DevDunia</title>
-<script>window.location.replace('production/base64-decoder.html')</script>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Base64 Decoder — DevDunia Comics</title>
+<meta name="description" content="Decode Base64 encoded data back to original format. Free online Base64 decoder tool for developers.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://devdunia.com/base64-decoder.html">
+<meta property="og:title" content="Base64 Decoder — DevDunia Comics">
+<meta property="og:description" content="Decode Base64 encoded data back to original format. Free online Base64 decoder tool.">
+<meta property="og:image" content="https://devdunia.com/images/logo.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Bangers&family=Comic+Neue:wght@400;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --ink: #1a1410;
+  --paper: #fdf3e3;
+  --paper2: #fbe9cc;
+  --red: #e63946;
+  --blue: #1d6fb8;
+  --yellow: #ffd23f;
+  --green: #3fa34d;
+  --pink: #ff6b9d;
+  --purple: #8a4fff;
+  --orange: #ff8c42;
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: 'Comic Neue', cursive;
+  font-weight: 400;
+  color: var(--ink);
+  background-color: var(--paper);
+  background-image: radial-gradient(var(--ink) 0.5px, transparent 0.6px);
+  background-size: 14px 14px;
+  background-attachment: fixed;
+  min-height: 100vh;
+}
+
+.paper-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(253,243,227,.78);
+  pointer-events: none;
+  z-index: 0;
+}
+
+.page-wrap {
+  position: relative;
+  z-index: 1;
+  max-width: 1240px;
+  margin: 0 auto;
+  padding: 20px 32px 60px;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/* ── HERO ── */
+.hero {
+  display: flex;
+  align-items: flex-start;
+  gap: 20px;
+  background: var(--paper2);
+  border: 4px solid var(--ink);
+  border-radius: 6px;
+  box-shadow: 7px 7px 0 var(--ink);
+  padding: 20px 24px;
+  margin-bottom: 28px;
+  transform: rotate(-0.4deg);
+}
+
+.hero-icon {
+  font-size: 3rem;
+  line-height: 1;
+  flex-shrink: 0;
+  filter: drop-shadow(3px 3px 0 var(--ink));
+}
+
+.hero-text h1 {
+  font-family: 'Bangers', cursive;
+  font-size: 2.8rem;
+  letter-spacing: 2px;
+  color: var(--blue);
+  -webkit-text-stroke: 1px var(--ink);
+  text-shadow: 4px 4px 0 var(--ink);
+  line-height: 1;
+  text-transform: uppercase;
+}
+
+.hero-text p {
+  font-size: .95rem;
+  margin-top: 6px;
+  line-height: 1.5;
+  max-width: 480px;
+}
+
+.hero-badges {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 10px;
+}
+
+.badge {
+  font-family: 'Space Mono', monospace;
+  font-size: .65rem;
+  font-weight: 700;
+  padding: 3px 8px;
+  border: 2px solid var(--ink);
+  border-radius: 4px;
+  box-shadow: 2px 2px 0 var(--ink);
+}
+.badge-blue   { background: var(--blue);   color: #fff; }
+.badge-green  { background: var(--green);  color: #fff; }
+.badge-yellow { background: var(--yellow); color: var(--ink); }
+.badge-red    { background: var(--red);    color: #fff; }
+
+/* ── PANEL ── */
+.panel {
+  background: var(--paper);
+  border: 4px solid var(--ink);
+  border-radius: 6px;
+  box-shadow: 7px 7px 0 var(--ink);
+  overflow: hidden;
+  margin-bottom: 22px;
+}
+
+.panel-header {
+  background: var(--ink);
+  color: var(--yellow);
+  font-family: 'Bangers', cursive;
+  font-size: 1.2rem;
+  letter-spacing: 2px;
+  padding: 8px 16px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.panel-header .panel-tag {
+  font-family: 'Space Mono', monospace;
+  font-size: .65rem;
+  font-weight: 700;
+  background: var(--yellow);
+  color: var(--ink);
+  padding: 2px 7px;
+  border-radius: 3px;
+}
+
+.panel-body { padding: 18px 20px; }
+
+/* ── TEXTAREA ── */
+.comic-textarea {
+  width: 100%;
+  background: #fff;
+  border: 3px solid var(--ink);
+  border-radius: 6px;
+  padding: 12px 14px;
+  font-family: 'Space Mono', monospace;
+  font-size: .82rem;
+  color: var(--ink);
+  line-height: 1.6;
+  resize: vertical;
+  min-height: 130px;
+  box-shadow: inset 3px 3px 0 rgba(0,0,0,.06);
+  outline: none;
+  transition: border-color .15s;
+}
+.comic-textarea:focus { border-color: var(--blue); box-shadow: inset 3px 3px 0 rgba(29,111,184,.1); }
+.comic-textarea::placeholder { color: #aaa; font-style: italic; }
+.comic-textarea[readonly] { background: var(--paper2); cursor: default; }
+
+/* ── BUTTONS ── */
+.btn-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 14px;
+}
+
+.btn {
+  font-family: 'Bangers', cursive;
+  font-size: 1.1rem;
+  letter-spacing: 1px;
+  border: 3px solid var(--ink);
+  border-radius: 6px;
+  padding: 8px 20px;
+  cursor: pointer;
+  box-shadow: 4px 4px 0 var(--ink);
+  transition: transform .1s, box-shadow .1s;
+  text-transform: uppercase;
+}
+.btn:active { transform: translate(2px,2px); box-shadow: 2px 2px 0 var(--ink); }
+
+.btn-primary { background: var(--blue);   color: #fff; }
+.btn-success { background: var(--green);  color: #fff; }
+.btn-danger  { background: var(--red);    color: #fff; }
+.btn-neutral { background: var(--paper2); color: var(--ink); }
+.btn-purple  { background: var(--purple); color: #fff; }
+
+/* ── ERROR BUBBLE ── */
+.error-bubble {
+  display: none;
+  position: relative;
+  background: #fff0f0;
+  border: 3px solid var(--red);
+  border-radius: 14px;
+  padding: 10px 14px;
+  margin-top: 12px;
+  font-size: .9rem;
+  font-weight: 700;
+  color: var(--red);
+}
+.error-bubble::before {
+  content: '';
+  position: absolute;
+  top: -16px;
+  left: 22px;
+  border-width: 0 10px 16px;
+  border-style: solid;
+  border-color: transparent transparent var(--red);
+}
+.error-bubble::after {
+  content: '';
+  position: absolute;
+  top: -11px;
+  left: 24px;
+  border-width: 0 8px 12px;
+  border-style: solid;
+  border-color: transparent transparent #fff0f0;
+}
+.error-bubble.show { display: block; }
+
+/* ── SUCCESS BUBBLE ── */
+.success-bubble {
+  display: none;
+  position: relative;
+  background: #f0fff4;
+  border: 3px solid var(--green);
+  border-radius: 14px;
+  padding: 10px 14px;
+  margin-top: 12px;
+  font-size: .88rem;
+  color: var(--ink);
+}
+.success-bubble.show { display: block; }
+
+/* ── STATS ROW ── */
+.stats-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 14px;
+}
+
+.stat-chip {
+  font-family: 'Space Mono', monospace;
+  font-size: .72rem;
+  font-weight: 700;
+  padding: 4px 10px;
+  border: 2px solid var(--ink);
+  border-radius: 4px;
+  box-shadow: 2px 2px 0 var(--ink);
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+.stat-chip .stat-label { opacity: .65; font-weight: 400; }
+.stat-chip.chip-blue   { background: var(--blue);   color: #fff; }
+.stat-chip.chip-green  { background: var(--green);  color: #fff; }
+.stat-chip.chip-purple { background: var(--purple); color: #fff; }
+.stat-chip.chip-yellow { background: var(--yellow); color: var(--ink); }
+
+/* ── OUTPUT COPY WRAP ── */
+.output-wrap { position: relative; }
+.copy-btn {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  font-family: 'Bangers', cursive;
+  font-size: .95rem;
+  letter-spacing: 1px;
+  background: var(--ink);
+  color: var(--yellow);
+  border: 2px solid var(--ink);
+  border-radius: 4px;
+  padding: 3px 10px;
+  cursor: pointer;
+  box-shadow: 2px 2px 0 rgba(0,0,0,.4);
+  transition: transform .1s, box-shadow .1s;
+}
+.copy-btn:active { transform: translate(1px,1px); box-shadow: 1px 1px 0 rgba(0,0,0,.4); }
+
+/* ── EXAMPLES GRID ── */
+.examples-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+
+.example-card {
+  background: var(--paper2);
+  border: 3px solid var(--ink);
+  border-radius: 6px;
+  box-shadow: 4px 4px 0 var(--ink);
+  padding: 10px 12px;
+  cursor: pointer;
+  transition: transform .1s, box-shadow .1s;
+}
+.example-card:hover { transform: translate(-2px,-2px); box-shadow: 6px 6px 0 var(--ink); }
+.example-card:active { transform: translate(1px,1px); box-shadow: 2px 2px 0 var(--ink); }
+
+.example-title {
+  font-family: 'Bangers', cursive;
+  font-size: 1rem;
+  letter-spacing: 1px;
+  margin-bottom: 4px;
+}
+
+.example-encoded {
+  font-family: 'Space Mono', monospace;
+  font-size: .68rem;
+  color: var(--blue);
+  word-break: break-all;
+  margin-bottom: 2px;
+}
+
+.example-arrow {
+  font-size: .75rem;
+  color: var(--ink);
+  opacity: .55;
+}
+
+/* ── SECTION LABEL ── */
+.section-label {
+  font-family: 'Bangers', cursive;
+  font-size: .95rem;
+  letter-spacing: 1px;
+  color: var(--ink);
+  margin-bottom: 6px;
+  text-transform: uppercase;
+}
+
+/* ── DIVIDER ── */
+.divider {
+  border: none;
+  border-top: 3px solid var(--ink);
+  margin: 16px 0;
+}
+
+/* ── HOW IT WORKS ── */
+.how-steps {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.how-step {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+}
+
+.step-dot {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  border: 3px solid var(--ink);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: 'Bangers', cursive;
+  font-size: 1rem;
+  color: #fff;
+  flex-shrink: 0;
+  box-shadow: 2px 2px 0 var(--ink);
+}
+
+.how-step p {
+  font-size: .88rem;
+  line-height: 1.5;
+  padding-top: 2px;
+}
+
+.how-step code {
+  font-family: 'Space Mono', monospace;
+  font-size: .75rem;
+  background: var(--ink);
+  color: var(--yellow);
+  padding: 1px 5px;
+  border-radius: 3px;
+}
+
+/* ── MOBILE ── */
+@media (max-width: 600px) {
+  .examples-grid { grid-template-columns: 1fr; }
+  .hero { flex-direction: column; gap: 10px; }
+  .hero-text h1 { font-size: 2rem; }
+  .stats-row { gap: 6px; }
+}
+</style>
 </head>
-<body></body>
+<body>
+<div class="paper-overlay"></div>
+<div data-masthead></div>
+
+<div class="page-wrap">
+
+  <div data-tool-hero
+     data-title="Base64 Decoder"
+     data-chapter="05"
+     data-category="Encoders & Decoders"
+     data-icon="&#x1F513;"
+     data-desc="Paste any Base64-encoded string and crack it open instantly. No server, no tracking — pure client-side decoding right in your browser!"
+     data-color="green"
+     data-badges="CLIENT-SIDE,NO SERVER,FREE,INSTANT"
+     data-badge-colors="blue,green,yellow,red">
+  </div>
+
+  <!-- MASTHEAD -->
+
+  <!-- HERO -->
+  
+
+  <!-- INPUT PANEL -->
+  <div class="panel">
+    <div class="panel-header">
+      &#x1F4E5; PASTE YOUR BASE64 HERE
+      <span class="panel-tag">INPUT</span>
+    </div>
+    <div class="panel-body">
+      <div class="section-label">Base64 Encoded Data</div>
+      <textarea id="base64-input" class="comic-textarea" rows="6"
+        placeholder="Paste Base64 encoded data here... e.g. SGVsbG8gV29ybGQ="></textarea>
+
+      <div class="btn-row">
+        <button id="decode-btn" class="btn btn-primary">&#x26A1; Decode!</button>
+        <button id="encode-btn" class="btn btn-neutral">&#x1F504; Encode Instead</button>
+        <button id="clear-btn" class="btn btn-danger">&#x1F5D1; Clear</button>
+      </div>
+
+      <div id="error-bubble" class="error-bubble">
+        &#x1F4A5; <span id="error-msg">Invalid Base64!</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- OUTPUT PANEL -->
+  <div class="panel" id="output-panel" style="display:none;">
+    <div class="panel-header">
+      &#x1F4E4; DECODED OUTPUT
+      <span class="panel-tag">OUTPUT</span>
+    </div>
+    <div class="panel-body">
+      <div class="section-label">Decoded Text</div>
+      <div class="output-wrap">
+        <textarea id="base64-output" class="comic-textarea" rows="7" readonly></textarea>
+        <button id="copy-btn" class="copy-btn">&#x1F4CB; COPY</button>
+      </div>
+
+      <!-- STATS -->
+      <div class="stats-row" id="stats-row">
+        <div class="stat-chip chip-blue">
+          <span class="stat-label">B64 SIZE</span>
+          <span id="stat-b64-size">—</span>
+        </div>
+        <div class="stat-chip chip-green">
+          <span class="stat-label">DECODED</span>
+          <span id="stat-dec-size">—</span>
+        </div>
+        <div class="stat-chip chip-purple">
+          <span class="stat-label">OVERHEAD</span>
+          <span id="stat-overhead">—</span>
+        </div>
+        <div class="stat-chip chip-yellow">
+          <span class="stat-label">PADDING</span>
+          <span id="stat-padding">—</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- EXAMPLES PANEL -->
+  <div class="panel">
+    <div class="panel-header">
+      &#x1F4DA; TRY AN EXAMPLE — CLICK TO LOAD!
+      <span class="panel-tag">EXAMPLES</span>
+    </div>
+    <div class="panel-body">
+      <div class="examples-grid">
+        <div class="example-card" data-encoded="SGVsbG8gV29ybGQ=">
+          <div class="example-title" style="color:var(--blue);">Simple Text</div>
+          <div class="example-encoded">SGVsbG8gV29ybGQ=</div>
+          <div class="example-arrow">&#x2193; "Hello World"</div>
+        </div>
+        <div class="example-card" data-encoded="eyJuYW1lIjoiQWxpIiwidG9vbCI6IkRldk51bmlhIn0=">
+          <div class="example-title" style="color:var(--green);">JSON Object</div>
+          <div class="example-encoded">eyJuYW1lIjoiQWxpIiwidG9vbCI6IkRldk51bmlhIn0=</div>
+          <div class="example-arrow">&#x2193; {"name":"Ali",...}</div>
+        </div>
+        <div class="example-card" data-encoded="aHR0cHM6Ly9kZXZkdW5pYS5jb20=">
+          <div class="example-title" style="color:var(--purple);">URL</div>
+          <div class="example-encoded">aHR0cHM6Ly9kZXZkdW5pYS5jb20=</div>
+          <div class="example-arrow">&#x2193; https://devdunia.com</div>
+        </div>
+        <div class="example-card" data-encoded="U2VjcmV0TWVzc2FnZTEyMw==">
+          <div class="example-title" style="color:var(--red);">Hidden Message</div>
+          <div class="example-encoded">U2VjcmV0TWVzc2FnZTEyMw==</div>
+          <div class="example-arrow">&#x2193; SecretMessage123</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- HOW IT WORKS -->
+  <div class="panel">
+    <div class="panel-header">
+      &#x1F9E0; HOW BASE64 WORKS
+      <span class="panel-tag">EXPLAINER</span>
+    </div>
+    <div class="panel-body">
+      <div class="how-steps">
+        <div class="how-step">
+          <div class="step-dot" style="background:var(--blue);">1</div>
+          <p>Every character in your text becomes its <strong>ASCII number</strong> (e.g. 'H' → 72, 'i' → 105).</p>
+        </div>
+        <div class="how-step">
+          <div class="step-dot" style="background:var(--green);">2</div>
+          <p>Those bytes are grouped into <strong>3-byte chunks</strong> (24 bits) then split into <strong>four 6-bit groups</strong>.</p>
+        </div>
+        <div class="how-step">
+          <div class="step-dot" style="background:var(--orange);">3</div>
+          <p>Each 6-bit value maps to one of <strong>64 characters</strong>: A-Z, a-z, 0-9, +, /. That's where the name comes from!</p>
+        </div>
+        <div class="how-step">
+          <div class="step-dot" style="background:var(--purple);">4</div>
+          <p><code>=</code> padding is added to make the output length a multiple of 4. This decoder strips it automatically.</p>
+        </div>
+        <div class="how-step">
+          <div class="step-dot" style="background:var(--red);">5</div>
+          <p>Decoding is the exact reverse — Base64 chars → 6-bit groups → bytes → original text. <strong>~33% size overhead</strong> is the trade-off for safe ASCII transport.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div><!-- /page-wrap -->
+
+<script>
+(function() {
+  var inputEl   = document.getElementById('base64-input');
+  var outputEl  = document.getElementById('base64-output');
+  var decodeBtn = document.getElementById('decode-btn');
+  var encodeBtn = document.getElementById('encode-btn');
+  var clearBtn  = document.getElementById('clear-btn');
+  var copyBtn   = document.getElementById('copy-btn');
+  var outPanel  = document.getElementById('output-panel');
+  var errBubble = document.getElementById('error-bubble');
+  var errMsg    = document.getElementById('error-msg');
+
+  var statB64   = document.getElementById('stat-b64-size');
+  var statDec   = document.getElementById('stat-dec-size');
+  var statOver  = document.getElementById('stat-overhead');
+  var statPad   = document.getElementById('stat-padding');
+
+  var encodeMode = false;
+
+  function showError(msg) {
+    errMsg.textContent = msg;
+    errBubble.classList.add('show');
+  }
+  function hideError() { errBubble.classList.remove('show'); }
+
+  function showOutput(text) {
+    outputEl.value = text;
+    outPanel.style.display = 'block';
+    hideError();
+  }
+
+  function formatBytes(n) {
+    if (n === 0) return '0 B';
+    if (n < 1024) return n + ' B';
+    return (n / 1024).toFixed(1) + ' KB';
+  }
+
+  function isValidBase64(str) {
+    try { return btoa(atob(str)) === str; } catch(e) { return false; }
+  }
+
+  function decode() {
+    var raw = inputEl.value.trim();
+    if (!raw) { showError('Please paste some Base64 data first!'); return; }
+    var clean = raw.replace(/\s/g, '');
+    if (!isValidBase64(clean)) { showError('That does not look like valid Base64. Check for typos!'); outPanel.style.display='none'; return; }
+    var decoded;
+    try { decoded = atob(clean); } catch(e) { showError('Decode failed: ' + e.message); return; }
+    showOutput(decoded);
+    var b64Bytes = new Blob([clean]).size;
+    var decBytes = new Blob([decoded]).size;
+    var overhead = b64Bytes > 0 ? (((b64Bytes - decBytes) / b64Bytes) * 100).toFixed(1) : '0';
+    var padMatch = clean.match(/=+$/);
+    var padCount = padMatch ? padMatch[0].length : 0;
+    statB64.textContent  = formatBytes(b64Bytes);
+    statDec.textContent  = formatBytes(decBytes);
+    statOver.textContent = overhead + '%';
+    statPad.textContent  = padCount + ' chars';
+  }
+
+  function encode() {
+    var raw = inputEl.value;
+    if (!raw) { showError('Please type some text to encode!'); return; }
+    try {
+      var encoded = btoa(unescape(encodeURIComponent(raw)));
+      showOutput(encoded);
+      var rawBytes = new Blob([raw]).size;
+      var encBytes = new Blob([encoded]).size;
+      statB64.textContent  = formatBytes(encBytes);
+      statDec.textContent  = formatBytes(rawBytes);
+      statOver.textContent = rawBytes > 0 ? (((encBytes - rawBytes) / rawBytes) * 100).toFixed(1) + '%' : '0%';
+      var padMatch = encoded.match(/=+$/);
+      statPad.textContent  = (padMatch ? padMatch[0].length : 0) + ' chars';
+    } catch(e) { showError('Encode failed: ' + e.message); }
+  }
+
+  decodeBtn.addEventListener('click', function() {
+    if (encodeMode) { decode.call = null; encode(); } else { decode(); }
+  });
+
+  encodeBtn.addEventListener('click', function() {
+    encodeMode = !encodeMode;
+    if (encodeMode) {
+      decodeBtn.textContent = '⚡ Encode!';
+      encodeBtn.textContent = 'ὐ4 Decode Instead';
+      inputEl.placeholder = 'Type plain text here to encode to Base64...';
+    } else {
+      decodeBtn.textContent = '⚡ Decode!';
+      encodeBtn.textContent = 'ὐ4 Encode Instead';
+      inputEl.placeholder = 'Paste Base64 encoded data here...';
+    }
+    outPanel.style.display = 'none';
+    hideError();
+  });
+
+  clearBtn.addEventListener('click', function() {
+    inputEl.value = '';
+    outputEl.value = '';
+    outPanel.style.display = 'none';
+    hideError();
+    encodeMode = false;
+    decodeBtn.textContent = '⚡ Decode!';
+    encodeBtn.textContent = 'ὐ4 Encode Instead';
+    inputEl.placeholder = 'Paste Base64 encoded data here... e.g. SGVsbG8gV29ybGQ=';
+  });
+
+  copyBtn.addEventListener('click', function() {
+    outputEl.select();
+    try { document.execCommand('copy'); } catch(e) {}
+    if (navigator.clipboard) navigator.clipboard.writeText(outputEl.value).catch(function(){});
+    var orig = copyBtn.textContent;
+    copyBtn.textContent = '✔ COPIED!';
+    copyBtn.style.background = 'var(--green)';
+    setTimeout(function() {
+      copyBtn.textContent = orig;
+      copyBtn.style.background = 'var(--ink)';
+    }, 1800);
+  });
+
+  // Example cards
+  var cards = document.querySelectorAll('.example-card');
+  for (var i = 0; i < cards.length; i++) {
+    cards[i].addEventListener('click', function() {
+      inputEl.value = this.dataset.encoded;
+      encodeMode = false;
+      decodeBtn.textContent = '⚡ Decode!';
+      decode();
+    });
+  }
+
+  // Keyboard shortcut
+  inputEl.addEventListener('keydown', function(e) {
+    if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') { encodeMode ? encode() : decode(); }
+  });
+
+  // Preload
+  inputEl.value = 'SGVsbG8gRnJvbSBEZXZEdW5pYSE=';
+})();
+</script>
+<script src="masthead.js"></script>
+<script src="hero-banner.js"></script>
+<script src="author-card.js"></script>
+</body>
 </html>

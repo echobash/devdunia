@@ -2,9 +2,468 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta http-equiv="refresh" content="0; url=production/markdown-editor.html">
-<title>DevDunia</title>
-<script>window.location.replace('production/markdown-editor.html')</script>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Markdown Editor — DevDunia Comics</title>
+<meta name="description" content="Write and preview Markdown with live rendering, syntax highlighting, and export options. Perfect for documentation, README files, and content creation.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://devdunia.com/markdown-editor.html">
+<meta property="og:title" content="Markdown Editor — DevDunia Comics">
+<meta property="og:description" content="Write and preview Markdown with live rendering. Free online Markdown editor tool.">
+<meta property="og:image" content="https://devdunia.com/images/logo.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Bangers&family=Comic+Neue:wght@400;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<!-- marked.js CDN (same as original) -->
+<script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+<!-- highlight.js CDN (same as original) -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css">
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "WebApplication",
+  "name": "Markdown Editor with Live Preview",
+  "url": "https://devdunia.com/markdown-editor.html",
+  "description": "Free online Markdown editor. Write Markdown and see a live rendered HTML preview side by side.",
+  "applicationCategory": "DeveloperApplication",
+  "operatingSystem": "Any",
+  "browserRequirements": "Requires JavaScript",
+  "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" },
+  "creator": { "@type": "Organization", "name": "DevDunia", "url": "https://devdunia.com" }
+}
+</script>
+
+<style>
+:root {
+  --ink: #1a1410;
+  --paper: #fdf3e3;
+  --paper2: #fbe9cc;
+  --red: #e63946;
+  --blue: #1d6fb8;
+  --yellow: #ffd23f;
+  --green: #3fa34d;
+  --pink: #ff6b9d;
+  --purple: #8a4fff;
+  --orange: #ff8c42;
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: 'Comic Neue', cursive;
+  font-weight: 400;
+  color: var(--ink);
+  background-color: var(--paper);
+  background-image: radial-gradient(var(--ink) 0.5px, transparent 0.6px);
+  background-size: 14px 14px;
+  background-attachment: fixed;
+  min-height: 100vh;
+}
+
+.paper-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(253,243,227,.78);
+  pointer-events: none;
+  z-index: 0;
+}
+
+.page-wrap {
+  position: relative;
+  z-index: 1;
+  max-width: 1240px;
+  margin: 0 auto;
+  padding: 20px 32px 60px;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/* ── MOBILE ── */
+
+/* ── PANEL ── */
+.panel {
+  background: var(--paper);
+  border: 4px solid var(--ink);
+  border-radius: 6px;
+  box-shadow: 7px 7px 0 var(--ink);
+  overflow: hidden;
+  margin-bottom: 22px;
+}
+
+.panel-header {
+  background: var(--ink);
+  color: var(--yellow);
+  font-family: 'Bangers', cursive;
+  font-size: 1.2rem;
+  letter-spacing: 2px;
+  padding: 8px 16px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.panel-header .panel-tag {
+  font-family: 'Space Mono', monospace;
+  font-size: .65rem;
+  font-weight: 700;
+  background: var(--yellow);
+  color: var(--ink);
+  padding: 2px 7px;
+  border-radius: 3px;
+}
+
+.panel-body { padding: 18px 20px; }
+
+/* ── TEXTAREA ── */
+.comic-textarea {
+  width: 100%;
+  background: #fff;
+  border: 3px solid var(--ink);
+  border-radius: 6px;
+  padding: 12px 14px;
+  font-family: 'Space Mono', monospace;
+  font-size: .82rem;
+  color: var(--ink);
+  line-height: 1.6;
+  resize: vertical;
+  min-height: 420px;
+  box-shadow: inset 3px 3px 0 rgba(0,0,0,.06);
+  outline: none;
+  transition: border-color .15s;
+}
+.comic-textarea:focus { border-color: var(--purple); box-shadow: inset 3px 3px 0 rgba(138,79,255,.1); }
+.comic-textarea::placeholder { color: #aaa; font-style: italic; }
+
+/* ── BUTTONS ── */
+.btn-row { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 14px; }
+
+.btn {
+  font-family: 'Bangers', cursive;
+  font-size: 1.1rem;
+  letter-spacing: 1px;
+  border: 3px solid var(--ink);
+  border-radius: 6px;
+  padding: 8px 20px;
+  cursor: pointer;
+  box-shadow: 4px 4px 0 var(--ink);
+  transition: transform .1s, box-shadow .1s;
+  text-transform: uppercase;
+}
+.btn:active { transform: translate(2px,2px); box-shadow: 2px 2px 0 var(--ink); }
+
+.btn-danger  { background: var(--red);    color: #fff; }
+.btn-neutral { background: var(--paper2); color: var(--ink); }
+.btn-success { background: var(--green);  color: #fff; }
+.btn-purple  { background: var(--purple); color: #fff; }
+
+/* ── SECTION LABEL ── */
+.section-label {
+  font-family: 'Bangers', cursive;
+  font-size: .95rem;
+  letter-spacing: 1px;
+  color: var(--ink);
+  margin-bottom: 6px;
+  text-transform: uppercase;
+}
+
+/* ── EDITOR / PREVIEW SPLIT ── */
+.split-panels {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 22px;
+}
+
+/* ── MARKDOWN PREVIEW ── */
+.markdown-preview {
+  background: #fff;
+  border: 3px solid var(--ink);
+  border-radius: 6px;
+  padding: 16px 18px;
+  min-height: 420px;
+  box-shadow: inset 3px 3px 0 rgba(0,0,0,.06);
+  overflow-y: auto;
+  font-family: 'Comic Neue', cursive;
+  font-size: .92rem;
+  line-height: 1.6;
+  color: var(--ink);
+}
+
+.markdown-preview h1,
+.markdown-preview h2,
+.markdown-preview h3,
+.markdown-preview h4,
+.markdown-preview h5,
+.markdown-preview h6 {
+  font-family: 'Bangers', cursive;
+  letter-spacing: 1px;
+  margin-top: 1.2rem;
+  margin-bottom: 0.4rem;
+  color: var(--blue);
+}
+.markdown-preview h1 { font-size: 2rem; border-bottom: 3px solid var(--ink); padding-bottom: .3rem; }
+.markdown-preview h2 { font-size: 1.5rem; border-bottom: 2px solid var(--ink); padding-bottom: .2rem; }
+.markdown-preview h3 { font-size: 1.2rem; }
+
+.markdown-preview p { margin-bottom: .8rem; }
+
+.markdown-preview code {
+  font-family: 'Space Mono', monospace;
+  font-size: .78rem;
+  background: var(--ink);
+  color: var(--yellow);
+  padding: 1px 5px;
+  border-radius: 3px;
+}
+
+.markdown-preview pre {
+  background: var(--ink);
+  border-radius: 6px;
+  padding: 14px;
+  overflow-x: auto;
+  margin: .8rem 0;
+  border: 2px solid var(--ink);
+  box-shadow: 4px 4px 0 rgba(0,0,0,.3);
+}
+.markdown-preview pre code {
+  background: transparent;
+  color: #f8f8f2;
+  padding: 0;
+  font-size: .8rem;
+}
+
+.markdown-preview blockquote {
+  border-left: 5px solid var(--blue);
+  background: var(--paper2);
+  padding: .6rem 1rem;
+  margin: .8rem 0;
+  font-style: italic;
+  border-radius: 0 6px 6px 0;
+}
+
+.markdown-preview table {
+  border-collapse: collapse;
+  width: 100%;
+  margin: .8rem 0;
+  border: 3px solid var(--ink);
+  box-shadow: 4px 4px 0 var(--ink);
+}
+.markdown-preview th,
+.markdown-preview td {
+  border: 2px solid var(--ink);
+  padding: .4rem .7rem;
+  text-align: left;
+}
+.markdown-preview th {
+  background: var(--ink);
+  color: var(--yellow);
+  font-family: 'Bangers', cursive;
+  letter-spacing: 1px;
+}
+
+.markdown-preview ul,
+.markdown-preview ol { margin: .6rem 0 .6rem 1.5rem; }
+.markdown-preview li { margin-bottom: .2rem; }
+
+.markdown-preview a { color: var(--blue); text-decoration: underline; }
+.markdown-preview a:hover { color: var(--purple); }
+
+.markdown-preview img { max-width: 100%; height: auto; border: 3px solid var(--ink); border-radius: 6px; margin: .6rem 0; }
+
+.markdown-preview hr { border: none; border-top: 3px solid var(--ink); margin: 1.2rem 0; }
+
+/* ── STATS ── */
+.stats-row { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 14px; }
+.stat-chip {
+  font-family: 'Space Mono', monospace;
+  font-size: .72rem;
+  font-weight: 700;
+  padding: 4px 10px;
+  border: 2px solid var(--ink);
+  border-radius: 4px;
+  box-shadow: 2px 2px 0 var(--ink);
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+.stat-chip .stat-label { opacity: .65; font-weight: 400; }
+.stat-chip.chip-purple { background: var(--purple); color: #fff; }
+.stat-chip.chip-blue   { background: var(--blue);   color: #fff; }
+.stat-chip.chip-green  { background: var(--green);  color: #fff; }
+
+/* ── MOBILE ── */
+@media (max-width: 760px) {
+  .split-panels { grid-template-columns: 1fr; }
+}
+</style>
 </head>
-<body></body>
+<body>
+<div class="paper-overlay"></div>
+<div data-masthead></div>
+
+<div class="page-wrap">
+
+  <!-- MASTHEAD -->
+
+  <!-- HERO -->
+  <div data-tool-hero
+       data-title="Markdown Editor"
+       data-chapter="01"
+       data-category="Text Tools"
+       data-icon="&#x270F;"
+       data-desc="Live Markdown editor with instant preview. Supports GFM&#44; tables&#44; code blocks and export to HTML."
+       data-color="blue"
+       data-badges="MARKDOWN,LIVE,GFM,FREE"
+       data-badge-colors="blue,green,orange,yellow">
+  </div>
+
+  <!-- CONTROLS -->
+  <div class="panel">
+    <div class="panel-header">
+      &#x2699;&#xFE0F; CONTROLS
+      <span class="panel-tag">TOOLBAR</span>
+    </div>
+    <div class="panel-body">
+      <div class="btn-row">
+        <button id="clear-btn" class="btn btn-danger">&#x1F5D1; Clear</button>
+        <button id="copy-md-btn" class="btn btn-neutral">&#x1F4CB; Copy Markdown</button>
+        <button id="copy-html-btn" class="btn btn-purple">&#x1F4C4; Copy HTML</button>
+      </div>
+      <div class="stats-row">
+        <div class="stat-chip chip-purple">
+          <span class="stat-label">WORDS</span>
+          <span id="stat-words">0</span>
+        </div>
+        <div class="stat-chip chip-blue">
+          <span class="stat-label">CHARS</span>
+          <span id="stat-chars">0</span>
+        </div>
+        <div class="stat-chip chip-green">
+          <span class="stat-label">LINES</span>
+          <span id="stat-lines">0</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- EDITOR + PREVIEW SPLIT -->
+  <div class="split-panels">
+
+    <!-- MARKDOWN EDITOR -->
+    <div class="panel" style="margin-bottom:0;">
+      <div class="panel-header">
+        &#x270F;&#xFE0F; MARKDOWN EDITOR
+        <span class="panel-tag">INPUT</span>
+      </div>
+      <div class="panel-body">
+        <textarea
+          id="markdown-editor"
+          class="comic-textarea"
+          placeholder="Start writing your Markdown here...&#10;&#10;# Welcome to Markdown Editor&#10;&#10;This is a **live preview** editor!"
+        ></textarea>
+      </div>
+    </div>
+
+    <!-- LIVE PREVIEW -->
+    <div class="panel" style="margin-bottom:0;">
+      <div class="panel-header">
+        &#x1F50D; LIVE PREVIEW
+        <span class="panel-tag">OUTPUT</span>
+      </div>
+      <div class="panel-body">
+        <div id="markdown-preview" class="markdown-preview">
+          <p style="color:#aaa;font-style:italic;">Start typing in the editor to see the live preview...</p>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- /split-panels -->
+
+</div><!-- /page-wrap -->
+
+<script src="masthead.js"></script>
+<script src="hero-banner.js"></script>
+<script src="author-card.js"></script>
+<script>
+(function() {
+  // Configure marked (same as original)
+  marked.setOptions({
+    highlight: function(code, lang) {
+      if (lang && hljs.getLanguage(lang)) {
+        return hljs.highlight(code, { language: lang }).value;
+      }
+      return hljs.highlightAuto(code).value;
+    },
+    breaks: true,
+    gfm: true
+  });
+
+  var editor  = document.getElementById('markdown-editor');
+  var preview = document.getElementById('markdown-preview');
+  var statWords = document.getElementById('stat-words');
+  var statChars = document.getElementById('stat-chars');
+  var statLines = document.getElementById('stat-lines');
+
+  function updateStats(text) {
+    statChars.textContent = text.length;
+    statLines.textContent = text ? text.split('\n').length : 0;
+    var words = text.trim() ? text.trim().split(/\s+/).length : 0;
+    statWords.textContent = words;
+  }
+
+  function updatePreview() {
+    var markdown = editor.value;
+    var html = marked.parse(markdown);
+    preview.innerHTML = html;
+    updateStats(markdown);
+    // Re-highlight any code blocks
+    preview.querySelectorAll('pre code').forEach(function(block) {
+      hljs.highlightElement(block);
+    });
+  }
+
+  editor.addEventListener('input', updatePreview);
+
+  document.getElementById('clear-btn').addEventListener('click', function() {
+    editor.value = '';
+    preview.innerHTML = '<p style="color:#aaa;font-style:italic;">Start typing in the editor to see the live preview...</p>';
+    updateStats('');
+  });
+
+  document.getElementById('copy-md-btn').addEventListener('click', function() {
+    try { navigator.clipboard.writeText(editor.value).catch(function(){}); } catch(e) {}
+    var orig = this.textContent;
+    this.textContent = '✔ Copied!';
+    var btn = this;
+    setTimeout(function() { btn.textContent = orig; }, 1800);
+  });
+
+  document.getElementById('copy-html-btn').addEventListener('click', function() {
+    var html = marked.parse(editor.value);
+    try { navigator.clipboard.writeText(html).catch(function(){}); } catch(e) {}
+    var orig = this.textContent;
+    this.textContent = '✔ Copied!';
+    var btn = this;
+    setTimeout(function() { btn.textContent = orig; }, 1800);
+  });
+
+  // Preload example (same content as original)
+  window.addEventListener('load', function() {
+    editor.value = '# Welcome to Markdown Editor\n\nThis is a **live preview** editor. Try these features:\n\n## Features\n- **Bold text**\n- *Italic text*\n- `Inline code`\n- [Links](https://devdunia.com)\n\n### Code Blocks\n```javascript\nfunction hello() {\n    console.log(\'Hello, World!\');\n}\n```\n\n### Tables\n| Column 1 | Column 2 | Column 3 |\n|----------|----------|----------|\n| Data 1   | Data 2   | Data 3   |\n\n> This is a blockquote\n\n---\n\n1. First item\n2. Second item\n3. Third item';
+    updatePreview();
+  });
+})();
+</script>
+</body>
 </html>

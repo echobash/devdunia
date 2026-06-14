@@ -2,9 +2,619 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta http-equiv="refresh" content="0; url=production/base62-decoder.html">
-<title>DevDunia</title>
-<script>window.location.replace('production/base62-decoder.html')</script>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Base62 Decoder — DevDunia Comics</title>
+<meta name="description" content="Decode Base62 encoded data back to original format. Free online Base62 decoder tool for developers.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://devdunia.com/base62-decoder.html">
+<meta property="og:title" content="Base62 Decoder — DevDunia Comics">
+<meta property="og:description" content="Decode Base62 encoded data back to original format. Free online Base62 decoder tool for developers.">
+<meta property="og:image" content="https://devdunia.com/images/logo.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Bangers&family=Comic+Neue:wght@400;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --ink: #1a1410;
+  --paper: #fdf3e3;
+  --paper2: #fbe9cc;
+  --red: #e63946;
+  --blue: #1d6fb8;
+  --yellow: #ffd23f;
+  --green: #3fa34d;
+  --pink: #ff6b9d;
+  --purple: #8a4fff;
+  --orange: #ff8c42;
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: 'Comic Neue', cursive;
+  font-weight: 400;
+  color: var(--ink);
+  background-color: var(--paper);
+  background-image: radial-gradient(var(--ink) 0.5px, transparent 0.6px);
+  background-size: 14px 14px;
+  background-attachment: fixed;
+  min-height: 100vh;
+}
+
+.paper-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(253,243,227,.78);
+  pointer-events: none;
+  z-index: 0;
+}
+
+.page-wrap {
+  position: relative;
+  z-index: 1;
+  max-width: 1240px;
+  margin: 0 auto;
+  padding: 20px 32px 60px;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+.hero {
+  display: flex;
+  align-items: flex-start;
+  gap: 20px;
+  background: var(--paper2);
+  border: 4px solid var(--ink);
+  border-radius: 6px;
+  box-shadow: 7px 7px 0 var(--ink);
+  padding: 20px 24px;
+  margin-bottom: 28px;
+  transform: rotate(-0.4deg);
+}
+
+.hero-icon {
+  font-size: 3rem;
+  line-height: 1;
+  flex-shrink: 0;
+  filter: drop-shadow(3px 3px 0 var(--ink));
+}
+
+.hero-text h1 {
+  font-family: 'Bangers', cursive;
+  font-size: 2.8rem;
+  letter-spacing: 2px;
+  color: var(--purple);
+  -webkit-text-stroke: 1px var(--ink);
+  text-shadow: 4px 4px 0 var(--ink);
+  line-height: 1;
+  text-transform: uppercase;
+}
+
+.hero-text p {
+  font-size: .95rem;
+  margin-top: 6px;
+  line-height: 1.5;
+  max-width: 480px;
+}
+
+.hero-badges {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 10px;
+}
+
+.badge {
+  font-family: 'Space Mono', monospace;
+  font-size: .65rem;
+  font-weight: 700;
+  padding: 3px 8px;
+  border: 2px solid var(--ink);
+  border-radius: 4px;
+  box-shadow: 2px 2px 0 var(--ink);
+}
+.badge-blue   { background: var(--blue);   color: #fff; }
+.badge-green  { background: var(--green);  color: #fff; }
+.badge-yellow { background: var(--yellow); color: var(--ink); }
+.badge-red    { background: var(--red);    color: #fff; }
+.badge-purple { background: var(--purple); color: #fff; }
+
+.panel {
+  background: var(--paper);
+  border: 4px solid var(--ink);
+  border-radius: 6px;
+  box-shadow: 7px 7px 0 var(--ink);
+  overflow: hidden;
+  margin-bottom: 22px;
+}
+
+.panel-header {
+  background: var(--ink);
+  color: var(--yellow);
+  font-family: 'Bangers', cursive;
+  font-size: 1.2rem;
+  letter-spacing: 2px;
+  padding: 8px 16px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.panel-header .panel-tag {
+  font-family: 'Space Mono', monospace;
+  font-size: .65rem;
+  font-weight: 700;
+  background: var(--yellow);
+  color: var(--ink);
+  padding: 2px 7px;
+  border-radius: 3px;
+}
+
+.panel-body { padding: 18px 20px; }
+
+.comic-textarea {
+  width: 100%;
+  background: #fff;
+  border: 3px solid var(--ink);
+  border-radius: 6px;
+  padding: 12px 14px;
+  font-family: 'Space Mono', monospace;
+  font-size: .82rem;
+  color: var(--ink);
+  line-height: 1.6;
+  resize: vertical;
+  min-height: 130px;
+  box-shadow: inset 3px 3px 0 rgba(0,0,0,.06);
+  outline: none;
+  transition: border-color .15s;
+}
+.comic-textarea:focus { border-color: var(--purple); box-shadow: inset 3px 3px 0 rgba(138,79,255,.1); }
+.comic-textarea::placeholder { color: #aaa; font-style: italic; }
+.comic-textarea[readonly] { background: var(--paper2); cursor: default; }
+
+.btn-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 14px;
+}
+
+.btn {
+  font-family: 'Bangers', cursive;
+  font-size: 1.1rem;
+  letter-spacing: 1px;
+  border: 3px solid var(--ink);
+  border-radius: 6px;
+  padding: 8px 20px;
+  cursor: pointer;
+  box-shadow: 4px 4px 0 var(--ink);
+  transition: transform .1s, box-shadow .1s;
+  text-transform: uppercase;
+}
+.btn:active { transform: translate(2px,2px); box-shadow: 2px 2px 0 var(--ink); }
+
+.btn-primary { background: var(--purple); color: #fff; }
+.btn-danger  { background: var(--red);    color: #fff; }
+
+.error-bubble {
+  display: none;
+  position: relative;
+  background: #fff0f0;
+  border: 3px solid var(--red);
+  border-radius: 14px;
+  padding: 10px 14px;
+  margin-top: 12px;
+  font-size: .9rem;
+  font-weight: 700;
+  color: var(--red);
+}
+.error-bubble::before {
+  content: '';
+  position: absolute;
+  top: -16px;
+  left: 22px;
+  border-width: 0 10px 16px;
+  border-style: solid;
+  border-color: transparent transparent var(--red);
+}
+.error-bubble::after {
+  content: '';
+  position: absolute;
+  top: -11px;
+  left: 24px;
+  border-width: 0 8px 12px;
+  border-style: solid;
+  border-color: transparent transparent #fff0f0;
+}
+.error-bubble.show { display: block; }
+
+.output-wrap { position: relative; }
+.copy-btn {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  font-family: 'Bangers', cursive;
+  font-size: .95rem;
+  letter-spacing: 1px;
+  background: var(--ink);
+  color: var(--yellow);
+  border: 2px solid var(--ink);
+  border-radius: 4px;
+  padding: 3px 10px;
+  cursor: pointer;
+  box-shadow: 2px 2px 0 rgba(0,0,0,.4);
+  transition: transform .1s, box-shadow .1s;
+}
+.copy-btn:active { transform: translate(1px,1px); box-shadow: 1px 1px 0 rgba(0,0,0,.4); }
+
+.stats-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 14px;
+}
+
+.stat-chip {
+  font-family: 'Space Mono', monospace;
+  font-size: .72rem;
+  font-weight: 700;
+  padding: 4px 10px;
+  border: 2px solid var(--ink);
+  border-radius: 4px;
+  box-shadow: 2px 2px 0 var(--ink);
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+.stat-chip .stat-label { opacity: .65; font-weight: 400; }
+.stat-chip.chip-blue   { background: var(--blue);   color: #fff; }
+.stat-chip.chip-green  { background: var(--green);  color: #fff; }
+.stat-chip.chip-purple { background: var(--purple); color: #fff; }
+
+.section-label {
+  font-family: 'Bangers', cursive;
+  font-size: .95rem;
+  letter-spacing: 1px;
+  color: var(--ink);
+  margin-bottom: 6px;
+  text-transform: uppercase;
+}
+
+.examples-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+
+.example-card {
+  background: var(--paper2);
+  border: 3px solid var(--ink);
+  border-radius: 6px;
+  box-shadow: 4px 4px 0 var(--ink);
+  padding: 10px 12px;
+  cursor: pointer;
+  transition: transform .1s, box-shadow .1s;
+}
+.example-card:hover { transform: translate(-2px,-2px); box-shadow: 6px 6px 0 var(--ink); }
+.example-card:active { transform: translate(1px,1px); box-shadow: 2px 2px 0 var(--ink); }
+
+.example-title {
+  font-family: 'Bangers', cursive;
+  font-size: 1rem;
+  letter-spacing: 1px;
+  margin-bottom: 4px;
+}
+
+.example-preview {
+  font-family: 'Space Mono', monospace;
+  font-size: .68rem;
+  color: var(--purple);
+  word-break: break-all;
+  margin-bottom: 2px;
+}
+
+.example-arrow {
+  font-size: .75rem;
+  color: var(--ink);
+  opacity: .55;
+}
+
+.how-steps { display: flex; flex-direction: column; gap: 10px; }
+.how-step { display: flex; align-items: flex-start; gap: 12px; }
+.step-dot {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  border: 3px solid var(--ink);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: 'Bangers', cursive;
+  font-size: 1rem;
+  color: #fff;
+  flex-shrink: 0;
+  box-shadow: 2px 2px 0 var(--ink);
+}
+.how-step p { font-size: .88rem; line-height: 1.5; padding-top: 2px; }
+.how-step code {
+  font-family: 'Space Mono', monospace;
+  font-size: .75rem;
+  background: var(--ink);
+  color: var(--yellow);
+  padding: 1px 5px;
+  border-radius: 3px;
+}
+
+@media (max-width: 600px) {
+  .examples-grid { grid-template-columns: 1fr; }
+  .hero { flex-direction: column; gap: 10px; }
+  .hero-text h1 { font-size: 2rem; }
+}
+</style>
 </head>
-<body></body>
+<body>
+<div class="paper-overlay"></div>
+<div data-masthead></div>
+
+<div class="page-wrap">
+
+  <div data-tool-hero
+     data-title="Base62 Decoder"
+     data-chapter="03"
+     data-category="Encoders & Decoders"
+     data-icon="&#x1F513;"
+     data-desc="Crack open Base62-encoded strings and reveal the original text. Reverse the encoding process instantly — pure client-side magic, no server required!"
+     data-color="green"
+     data-badges="DECODE,CLIENT-SIDE,NO SERVER,FREE"
+     data-badge-colors="purple,blue,green,yellow">
+  </div>
+
+  <!-- MASTHEAD -->
+
+  <!-- HERO -->
+  
+
+  <!-- INPUT PANEL -->
+  <div class="panel">
+    <div class="panel-header">
+      &#x1F4E5; PASTE YOUR BASE62 HERE
+      <span class="panel-tag">INPUT</span>
+    </div>
+    <div class="panel-body">
+      <div class="section-label">Base62 Encoded String</div>
+      <textarea id="base62-input" class="comic-textarea" rows="4"
+        placeholder="Enter Base62 encoded string to decode..."></textarea>
+
+      <div class="btn-row">
+        <button id="decode-btn" class="btn btn-primary">&#x26A1; Decode from Base62!</button>
+        <button id="clear-btn" class="btn btn-danger">&#x1F5D1; Clear</button>
+      </div>
+
+      <div id="error-bubble" class="error-bubble">
+        &#x1F4A5; <span id="error-msg">Invalid Base62 string!</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- OUTPUT PANEL -->
+  <div class="panel" id="output-panel" style="display:none;">
+    <div class="panel-header">
+      &#x1F4E4; DECODED OUTPUT
+      <span class="panel-tag">OUTPUT</span>
+    </div>
+    <div class="panel-body">
+      <div class="section-label">Decoded Result</div>
+      <div class="output-wrap">
+        <textarea id="base62-output" class="comic-textarea" rows="6" readonly></textarea>
+        <button id="copy-btn" class="copy-btn">&#x1F4CB; COPY</button>
+      </div>
+
+      <div class="stats-row">
+        <div class="stat-chip chip-blue">
+          <span class="stat-label">BASE62 SIZE</span>
+          <span id="stat-b62">—</span>
+        </div>
+        <div class="stat-chip chip-green">
+          <span class="stat-label">DECODED</span>
+          <span id="stat-decoded">—</span>
+        </div>
+        <div class="stat-chip chip-purple">
+          <span class="stat-label">COMPRESSION</span>
+          <span id="stat-compression">—</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- EXAMPLES PANEL -->
+  <div class="panel">
+    <div class="panel-header">
+      &#x1F4DA; TRY AN EXAMPLE — CLICK TO LOAD!
+      <span class="panel-tag">EXAMPLES</span>
+    </div>
+    <div class="panel-body">
+      <div class="examples-grid">
+        <div class="example-card" data-encoded="AKRfxYADYEmO3sJOfsNFm2iaVur">
+          <div class="example-title" style="color:var(--blue);">Hello from DevDunia!</div>
+          <div class="example-preview">AKRfxYADYEmO3sJOfsNFm2iaVur</div>
+          <div class="example-arrow">&#x2193; Decode to reveal text</div>
+        </div>
+        <div class="example-card" data-encoded="T8dgcjAQ">
+          <div class="example-title" style="color:var(--green);">Hello</div>
+          <div class="example-preview">T8dgcjAQ</div>
+          <div class="example-arrow">&#x2193; Decode to reveal text</div>
+        </div>
+        <div class="example-card" data-encoded="1wgp">
+          <div class="example-title" style="color:var(--purple);">Test</div>
+          <div class="example-preview">1wgp</div>
+          <div class="example-arrow">&#x2193; Decode to reveal text</div>
+        </div>
+        <div class="example-card" data-encoded="0">
+          <div class="example-title" style="color:var(--red);">Zero Byte</div>
+          <div class="example-preview">0</div>
+          <div class="example-arrow">&#x2193; Leading zero byte</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- HOW IT WORKS -->
+  <div class="panel">
+    <div class="panel-header">
+      &#x1F9E0; HOW BASE62 DECODING WORKS
+      <span class="panel-tag">EXPLAINER</span>
+    </div>
+    <div class="panel-body">
+      <div class="how-steps">
+        <div class="how-step">
+          <div class="step-dot" style="background:var(--purple);">1</div>
+          <p>Each character in the Base62 string maps to a number: <code>0–9 → 0–9</code>, <code>A–Z → 10–35</code>, <code>a–z → 36–61</code>.</p>
+        </div>
+        <div class="how-step">
+          <div class="step-dot" style="background:var(--blue);">2</div>
+          <p>Characters are combined into one <strong>BigInt number</strong> by repeatedly multiplying by 62 and adding each digit's value (base-62 to decimal).</p>
+        </div>
+        <div class="how-step">
+          <div class="step-dot" style="background:var(--green);">3</div>
+          <p>The big number is converted back to <strong>bytes</strong> by taking mod 256 and dividing — reversing the encoding's base-256 process.</p>
+        </div>
+        <div class="how-step">
+          <div class="step-dot" style="background:var(--orange);">4</div>
+          <p>Bytes are decoded as <strong>UTF-8 text</strong> using TextDecoder. If it's not valid UTF-8, the raw hex values are shown instead.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div><!-- /page-wrap -->
+
+<script>
+(function() {
+  var inputEl   = document.getElementById('base62-input');
+  var outputEl  = document.getElementById('base62-output');
+  var decodeBtn = document.getElementById('decode-btn');
+  var clearBtn  = document.getElementById('clear-btn');
+  var copyBtn   = document.getElementById('copy-btn');
+  var outPanel  = document.getElementById('output-panel');
+  var errBubble = document.getElementById('error-bubble');
+  var errMsg    = document.getElementById('error-msg');
+  var statB62   = document.getElementById('stat-b62');
+  var statDec   = document.getElementById('stat-decoded');
+  var statComp  = document.getElementById('stat-compression');
+
+  var ALPHABET = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz';
+
+  function showError(msg) {
+    errMsg.textContent = msg;
+    errBubble.classList.add('show');
+    outPanel.style.display = 'none';
+  }
+  function hideError() { errBubble.classList.remove('show'); }
+
+  function formatBytes(n) {
+    if (n === 0) return '0 B';
+    if (n < 1024) return n + ' B';
+    return (n / 1024).toFixed(1) + ' KB';
+  }
+
+  function isValidBase62(str) {
+    for (var i = 0; i < str.length; i++) {
+      if (ALPHABET.indexOf(str[i]) === -1) return false;
+    }
+    return true;
+  }
+
+  function decodeFromBase62(input) {
+    if (!input || input === ALPHABET[0]) return '';
+    var leadingZeros = 0;
+    for (var i = 0; i < input.length && input[i] === ALPHABET[0]; i++) { leadingZeros++; }
+    var num = 0n;
+    for (var j = 0; j < input.length; j++) {
+      var idx = ALPHABET.indexOf(input[j]);
+      if (idx === -1) throw new Error('Invalid Base62 character: ' + input[j]);
+      num = num * 62n + BigInt(idx);
+    }
+    var bytes = [];
+    while (num > 0n) {
+      bytes.unshift(Number(num % 256n));
+      num = num / 256n;
+    }
+    var result = new Uint8Array(leadingZeros + bytes.length);
+    for (var k = 0; k < leadingZeros; k++) { result[k] = 0; }
+    for (var l = 0; l < bytes.length; l++) { result[leadingZeros + l] = bytes[l]; }
+    try {
+      return new TextDecoder().decode(result);
+    } catch(e) {
+      return Array.from(result).map(function(b) { return b.toString(16).padStart(2, '0'); }).join(' ');
+    }
+  }
+
+  function doDecode() {
+    var input = inputEl.value.trim();
+    if (!input) { showError('Please enter a Base62 string to decode!'); return; }
+    if (!isValidBase62(input)) { showError('Invalid Base62 string. Allowed characters: 0–9, A–Z, a–z'); return; }
+    try {
+      var decoded = decodeFromBase62(input);
+      outputEl.value = decoded;
+      outPanel.style.display = 'block';
+      hideError();
+      var encBytes = new Blob([input]).size;
+      var decBytes = new Blob([decoded]).size;
+      statB62.textContent  = formatBytes(encBytes);
+      statDec.textContent  = formatBytes(decBytes);
+      statComp.textContent = decBytes === 0 ? '0%' : (((encBytes - decBytes) / decBytes) * 100).toFixed(1) + '%';
+    } catch(e) {
+      showError('Error decoding: ' + e.message);
+    }
+  }
+
+  decodeBtn.addEventListener('click', doDecode);
+
+  clearBtn.addEventListener('click', function() {
+    inputEl.value = '';
+    outputEl.value = '';
+    outPanel.style.display = 'none';
+    hideError();
+  });
+
+  copyBtn.addEventListener('click', function() {
+    outputEl.select();
+    try { document.execCommand('copy'); } catch(e) {}
+    if (navigator.clipboard) navigator.clipboard.writeText(outputEl.value).catch(function(){});
+    var orig = copyBtn.textContent;
+    copyBtn.textContent = '✔ COPIED!';
+    copyBtn.style.background = 'var(--green)';
+    setTimeout(function() { copyBtn.textContent = orig; copyBtn.style.background = 'var(--ink)'; }, 1800);
+  });
+
+  // Example cards
+  var cards = document.querySelectorAll('.example-card');
+  for (var i = 0; i < cards.length; i++) {
+    cards[i].addEventListener('click', function() {
+      inputEl.value = this.dataset.encoded;
+      doDecode();
+    });
+  }
+
+  inputEl.addEventListener('keydown', function(e) {
+    if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') { doDecode(); }
+  });
+
+  // Preload
+  inputEl.value = 'AKRfxYADYEmO3sJOfsNFm2iaVur';
+})();
+</script>
+<script src="masthead.js"></script>
+<script src="hero-banner.js"></script>
+<script src="author-card.js"></script>
+</body>
 </html>

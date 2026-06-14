@@ -2,9 +2,217 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta http-equiv="refresh" content="0; url=production/python-pandas.html">
-<title>DevDunia</title>
-<script>window.location.replace('production/python-pandas.html')</script>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Python Pandas — DevDunia Comics</title>
+<meta name="description" content="Data manipulation, CSV handling, and DataFrame operations. Free online Python Pandas examples for developers.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://devdunia.com/production/python-pandas.html">
+<meta property="og:title" content="Python Pandas — DevDunia Comics">
+<meta property="og:description" content="Data manipulation, CSV handling, and DataFrame operations.">
+<meta property="og:image" content="https://devdunia.com/images/logo.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Bangers&family=Comic+Neue:wght@400;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+:root{--ink:#1a1410;--paper:#fdf3e3;--paper2:#fbe9cc;--red:#e63946;--blue:#1d6fb8;--yellow:#ffd23f;--green:#3fa34d;--pink:#ff6b9d;--purple:#8a4fff;--orange:#ff8c42;}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'Comic Neue',cursive;font-weight:400;color:var(--ink);background-color:var(--paper);background-image:radial-gradient(var(--ink) 0.5px,transparent 0.6px);background-size:14px 14px;background-attachment:fixed;min-height:100vh;}
+.paper-overlay{position:fixed;inset:0;background:rgba(253,243,227,.78);pointer-events:none;z-index:0;}
+.page-wrap{position:relative;z-index:1;max-width: 1240px;margin:0 auto;padding: 20px 32px 60px;}
+
+
+
+
+
+
+
+.hero{display:flex;align-items:flex-start;gap:20px;background:var(--paper2);border:4px solid var(--ink);border-radius:6px;box-shadow:7px 7px 0 var(--ink);padding:20px 24px;margin-bottom:28px;transform:rotate(-0.4deg);}
+.hero-icon{font-size:3rem;line-height:1;flex-shrink:0;filter:drop-shadow(3px 3px 0 var(--ink));}
+.hero-text h1{font-family:'Bangers',cursive;font-size:2.6rem;letter-spacing:2px;color:var(--orange);-webkit-text-stroke:1px var(--ink);text-shadow:4px 4px 0 var(--ink);line-height:1;text-transform:uppercase;}
+.hero-text p{font-size:.95rem;margin-top:6px;line-height:1.5;max-width:480px;}
+.hero-badges{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px;}
+.badge{font-family:'Space Mono',monospace;font-size:.65rem;font-weight:700;padding:3px 8px;border:2px solid var(--ink);border-radius:4px;box-shadow:2px 2px 0 var(--ink);}
+.badge-blue{background:var(--blue);color:#fff;}.badge-green{background:var(--green);color:#fff;}.badge-yellow{background:var(--yellow);color:var(--ink);}.badge-purple{background:var(--purple);color:#fff;}.badge-orange{background:var(--orange);color:#fff;}.badge-red{background:var(--red);color:#fff;}
+.panel{background:var(--paper);border:4px solid var(--ink);border-radius:6px;box-shadow:7px 7px 0 var(--ink);overflow:hidden;margin-bottom:22px;}
+.panel-header{background:var(--ink);color:var(--yellow);font-family:'Bangers',cursive;font-size:1.2rem;letter-spacing:2px;padding:8px 16px;display:flex;align-items:center;justify-content:space-between;gap:10px;}
+.panel-tag{font-family:'Space Mono',monospace;font-size:.65rem;font-weight:700;background:var(--yellow);color:var(--ink);padding:2px 7px;border-radius:3px;}
+.panel-body{padding:18px 20px;}
+.op-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-bottom:4px;}
+.op-btn{font-family:'Bangers',cursive;font-size:.95rem;letter-spacing:1px;border:3px solid var(--ink);border-radius:6px;padding:9px 6px;cursor:pointer;box-shadow:4px 4px 0 var(--ink);transition:transform .1s,box-shadow .1s;text-transform:uppercase;}
+.op-btn:active,.op-btn.active{transform:translate(2px,2px);box-shadow:2px 2px 0 var(--ink);filter:brightness(.85);}
+.btn-basic{background:var(--green);color:#fff;}.btn-csv{background:var(--blue);color:#fff;}.btn-filter{background:var(--purple);color:#fff;}.btn-group{background:var(--orange);color:#fff;}.btn-merge{background:var(--red);color:#fff;}.btn-analysis{background:var(--pink);color:#fff;}
+.btn{font-family:'Bangers',cursive;font-size:1rem;letter-spacing:1px;border:3px solid var(--ink);border-radius:6px;padding:8px 20px;cursor:pointer;box-shadow:4px 4px 0 var(--ink);transition:transform .1s,box-shadow .1s;text-transform:uppercase;}
+.btn:active{transform:translate(2px,2px);box-shadow:2px 2px 0 var(--ink);}
+.btn-primary{background:var(--orange);color:#fff;}
+.btn-row{display:flex;flex-wrap:wrap;gap:10px;margin-top:14px;}
+.output-wrap{position:relative;}
+.copy-btn{position:absolute;top:8px;right:8px;font-family:'Bangers',cursive;font-size:.9rem;letter-spacing:1px;background:var(--ink);color:var(--yellow);border:2px solid var(--yellow);border-radius:4px;padding:3px 10px;cursor:pointer;transition:transform .1s;}
+.copy-btn:active{transform:translate(1px,1px);}
+.req-block{background:var(--ink);color:var(--yellow);font-family:'Space Mono',monospace;font-size:.78rem;border-radius:6px;padding:12px 16px;border:3px solid var(--ink);line-height:1.5;}
+.ops-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+.op-ref{background:var(--paper2);border:3px solid var(--ink);border-radius:6px;box-shadow:4px 4px 0 var(--ink);padding:12px 14px;}
+.op-ref h4{font-family:'Bangers',cursive;letter-spacing:1px;font-size:1rem;margin-bottom:5px;}
+.op-ref code{font-family:'Space Mono',monospace;font-size:.72rem;background:var(--ink);color:var(--yellow);padding:1px 4px;border-radius:3px;}
+.op-ref p{font-size:.8rem;line-height:1.5;margin-top:4px;}
+.speech-bubble{position:relative;background:var(--yellow);border:3px solid var(--ink);border-radius:14px;padding:10px 14px;margin-top:14px;font-size:.88rem;font-weight:700;}
+@media(max-width:760px){.op-grid{grid-template-columns:1fr 1fr;}.hero{flex-direction:column;gap:10px;}.hero-text h1{font-size:2rem;}.ops-grid{grid-template-columns:1fr;}}
+</style>
 </head>
-<body></body>
+<body>
+<div class="paper-overlay"></div>
+<div data-masthead></div>
+
+<div class="page-wrap">
+
+  <div data-tool-hero
+     data-title="Python Pandas"
+     data-chapter="41"
+     data-category="Developer Tools"
+     data-icon="&#x1F43C;"
+     data-desc="Generate Pandas code for data manipulation, CSV handling, filtering, grouping, merging, and full data analysis. Pick an operation and go!"
+     data-color="blue"
+     data-badges="DATAFRAMES,CSV I/O,GROUPBY,MERGE,ANALYSIS"
+     data-badge-colors="green,blue,orange,purple,red">
+  </div>
+
+  
+
+  <!-- OPERATION SELECTOR -->
+  <div class="panel">
+    <div class="panel-header">&#x1F4CA; SELECT OPERATION <span class="panel-tag">STEP 1</span></div>
+    <div class="panel-body">
+      <div class="op-grid">
+        <button class="op-btn btn-basic active" data-op="basic">Basic Ops</button>
+        <button class="op-btn btn-csv" data-op="csv">CSV Handling</button>
+        <button class="op-btn btn-filter" data-op="filtering">Filtering</button>
+        <button class="op-btn btn-group" data-op="grouping">Grouping</button>
+        <button class="op-btn btn-merge" data-op="merging">Merging</button>
+        <button class="op-btn btn-analysis" data-op="analysis">Analysis</button>
+      </div>
+      <div class="btn-row">
+        <button id="generate-btn" class="btn btn-primary">&#x26A1; Generate Pandas Code!</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- OUTPUT -->
+  <div class="panel" id="output-panel" style="display:none;">
+    <div class="panel-header">&#x1F40D; GENERATED PANDAS CODE <span class="panel-tag">OUTPUT</span></div>
+    <div class="panel-body">
+      <div class="output-wrap">
+        <textarea id="generated-code" style="width:100%;background:var(--ink);color:var(--yellow);border:3px solid var(--ink);border-radius:6px;padding:12px 16px;font-family:'Space Mono',monospace;font-size:.75rem;line-height:1.55;resize:vertical;outline:none;" readonly rows="30"></textarea>
+        <button id="copy-btn" class="copy-btn">&#x1F4CB; COPY</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- REQUIREMENTS -->
+  <div class="panel">
+    <div class="panel-header">&#x1F4E6; REQUIREMENTS <span class="panel-tag">INSTALL</span></div>
+    <div class="panel-body">
+      <div class="req-block">pandas==2.1.0<br>numpy==1.24.3<br>matplotlib==3.7.2</div>
+      <div class="speech-bubble">&#x1F4A1; Install with: <code style="background:var(--ink);color:var(--yellow);padding:2px 6px;border-radius:3px;font-family:'Space Mono',monospace;font-size:.78rem;">pip install pandas numpy matplotlib</code></div>
+    </div>
+  </div>
+
+  <!-- QUICK REFERENCE -->
+  <div class="panel">
+    <div class="panel-header">&#x1F4D6; QUICK REFERENCE <span class="panel-tag">CHEATSHEET</span></div>
+    <div class="panel-body">
+      <div class="ops-grid">
+        <div class="op-ref">
+          <h4 style="color:var(--blue);">Data Loading</h4>
+          <p><code>pd.read_csv()</code> <code>pd.read_excel()</code> <code>pd.read_json()</code></p>
+        </div>
+        <div class="op-ref">
+          <h4 style="color:var(--green);">Inspection</h4>
+          <p><code>df.head()</code> <code>df.info()</code> <code>df.describe()</code></p>
+        </div>
+        <div class="op-ref">
+          <h4 style="color:var(--red);">Cleaning</h4>
+          <p><code>df.dropna()</code> <code>df.fillna()</code> <code>df.drop_duplicates()</code></p>
+        </div>
+        <div class="op-ref">
+          <h4 style="color:var(--orange);">Selection</h4>
+          <p><code>df.loc[]</code> <code>df.iloc[]</code> <code>df.query()</code></p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+<script>
+(function(){
+  var opBtns = document.querySelectorAll('.op-btn');
+  var generateBtn = document.getElementById('generate-btn');
+  var outputPanel = document.getElementById('output-panel');
+  var generatedCode = document.getElementById('generated-code');
+  var copyBtn = document.getElementById('copy-btn');
+  var selectedOp = 'basic';
+
+  opBtns.forEach(function(btn){
+    btn.addEventListener('click', function(){
+      selectedOp = this.getAttribute('data-op');
+      opBtns.forEach(function(b){ b.classList.remove('active'); });
+      this.classList.add('active');
+    });
+  });
+
+  generateBtn.addEventListener('click', function(){
+    var code = generatePandasCode();
+    generatedCode.value = code;
+    generatedCode.rows = Math.max(20, code.split('\n').length + 2);
+    outputPanel.style.display = 'block';
+    outputPanel.scrollIntoView({behavior:'smooth'});
+  });
+
+  copyBtn.addEventListener('click', function(){
+    generatedCode.select();
+    try{ document.execCommand('copy'); }catch(e){}
+    if(navigator.clipboard) navigator.clipboard.writeText(generatedCode.value).catch(function(){});
+    var orig=copyBtn.textContent;
+    copyBtn.textContent='COPIED!';
+    copyBtn.style.background='var(--green)';
+    setTimeout(function(){ copyBtn.textContent=orig; copyBtn.style.background='var(--ink)'; },1800);
+  });
+
+  function generatePandasCode(){
+    switch(selectedOp){
+      case 'csv': return generateCSVHandling();
+      case 'filtering': return generateDataFiltering();
+      case 'grouping': return generateGroupingAggregation();
+      case 'merging': return generateDataMerging();
+      case 'analysis': return generateDataAnalysis();
+      default: return generateBasicOperations();
+    }
+  }
+
+  function generateBasicOperations(){
+    return 'import pandas as pd\nimport numpy as np\n\n# Create a sample DataFrame\ndata = {\n    \'Name\': [\'Alice\', \'Bob\', \'Charlie\', \'David\', \'Eve\'],\n    \'Age\': [25, 30, 35, 28, 32],\n    \'City\': [\'New York\', \'London\', \'Tokyo\', \'Paris\', \'Sydney\'],\n    \'Salary\': [50000, 60000, 70000, 55000, 65000]\n}\n\ndf = pd.DataFrame(data)\n\n# Basic DataFrame operations\nprint("DataFrame Info:")\nprint(df.info())\nprint("\\nFirst 3 rows:")\nprint(df.head(3))\nprint("\\nDataFrame shape:", df.shape)\nprint("\\nColumn names:", df.columns.tolist())\n\n# Basic statistics\nprint("\\nBasic Statistics:")\nprint(df.describe())\n\n# Accessing data\nprint("\\nAccessing specific columns:")\nprint(df[\'Name\'])\nprint("\\nAccessing multiple columns:")\nprint(df[[\'Name\', \'Age\']])\n\n# Adding new column\ndf[\'Bonus\'] = df[\'Salary\'] * 0.1\nprint("\\nDataFrame with bonus column:")\nprint(df)\n\n# Sorting\nprint("\\nSorted by Age:")\nprint(df.sort_values(\'Age\'))\n\n# Filtering\nprint("\\nPeople older than 30:")\nprint(df[df[\'Age\'] > 30])';
+  }
+
+  function generateCSVHandling(){
+    return 'import pandas as pd\n\n# Reading CSV files\n# df = pd.read_csv(\'data.csv\')\n# df = pd.read_csv(\'data.csv\', sep=\';\')  # Custom separator\n# df = pd.read_csv(\'data.csv\', header=0)  # Specify header row\n# df = pd.read_csv(\'data.csv\', index_col=0)  # Use first column as index\n\n# Create sample data for demonstration\ndata = {\n    \'ID\': [1, 2, 3, 4, 5],\n    \'Product\': [\'Laptop\', \'Mouse\', \'Keyboard\', \'Monitor\', \'Headphones\'],\n    \'Price\': [999.99, 29.99, 79.99, 299.99, 149.99],\n    \'Category\': [\'Electronics\', \'Accessories\', \'Accessories\', \'Electronics\', \'Accessories\'],\n    \'Stock\': [10, 50, 25, 15, 30]\n}\n\ndf = pd.DataFrame(data)\n\n# Writing to CSV\ndf.to_csv(\'products.csv\', index=False)\nprint("Data written to products.csv")\n\n# Reading from CSV\ndf_read = pd.read_csv(\'products.csv\')\nprint("\\nData read from CSV:")\nprint(df_read)\n\n# Handling missing values in CSV\ndf_with_nulls = df.copy()\ndf_with_nulls.loc[1, \'Price\'] = None\ndf_with_nulls.loc[3, \'Stock\'] = None\n\nprint("\\nDataFrame with missing values:")\nprint(df_with_nulls)\n\ndf_with_nulls.to_csv(\'products_with_nulls.csv\', index=False)\n\ndf_clean = pd.read_csv(\'products_with_nulls.csv\')\nprint("\\nFill NaN with 0:")\nprint(df_clean.fillna(0))\nprint("\\nDrop rows with NaN:")\nprint(df_clean.dropna())';
+  }
+
+  function generateDataFiltering(){
+    return 'import pandas as pd\nimport numpy as np\n\n# Create sample data\ndata = {\n    \'Name\': [\'Alice\', \'Bob\', \'Charlie\', \'David\', \'Eve\', \'Frank\', \'Grace\', \'Henry\'],\n    \'Age\': [25, 30, 35, 28, 32, 45, 29, 38],\n    \'Department\': [\'IT\', \'HR\', \'IT\', \'Finance\', \'IT\', \'HR\', \'Finance\', \'IT\'],\n    \'Salary\': [50000, 60000, 70000, 55000, 65000, 80000, 58000, 72000],\n    \'Experience\': [2, 5, 8, 3, 6, 15, 4, 10]\n}\n\ndf = pd.DataFrame(data)\nprint("Original DataFrame:")\nprint(df)\n\n# 1. Filter by single condition\nprint("\\n1. IT department employees:")\nprint(df[df[\'Department\'] == \'IT\'])\n\n# 2. Multiple conditions\nprint("\\n2. Senior IT employees (experience > 5):")\nprint(df[(df[\'Department\'] == \'IT\') & (df[\'Experience\'] > 5)])\n\n# 3. Salary range\nprint("\\n3. Salary between 60K and 80K:")\nprint(df[(df[\'Salary\'] >= 60000) & (df[\'Salary\'] <= 80000)])\n\n# 4. Using query\nprint("\\n4. Using query method:")\nprint(df.query(\'Age < 30 and Department == "IT"\'))\n\n# 5. Using isin\nprint("\\n5. IT or Finance departments:")\nprint(df[df[\'Department\'].isin([\'IT\', \'Finance\'])])\n\n# 6. String filtering\nprint("\\n6. Names containing \'a\' (case-insensitive):")\nprint(df[df[\'Name\'].str.contains(\'a\', case=False)])\n\n# 7. loc for complex filtering\nprint("\\n7. Age > 30 AND Salary > 60K (selected columns):")\nprint(df.loc[(df[\'Age\'] > 30) & (df[\'Salary\'] > 60000), [\'Name\', \'Department\', \'Salary\']])';
+  }
+
+  function generateGroupingAggregation(){
+    return 'import pandas as pd\nimport numpy as np\n\n# Create sample sales data\ndata = {\n    \'Date\': pd.date_range(\'2023-01-01\', periods=20, freq=\'D\'),\n    \'Product\': [\'Laptop\', \'Mouse\', \'Keyboard\', \'Monitor\'] * 5,\n    \'Category\': [\'Electronics\', \'Accessories\', \'Accessories\', \'Electronics\'] * 5,\n    \'Sales\': [1000, 50, 100, 500, 1200, 60, 110, 550, 1100, 45, 95, 480, 1300, 55, 105, 520, 1150, 65, 115, 510],\n    \'Quantity\': [1, 10, 5, 2, 1, 12, 6, 2, 1, 9, 5, 2, 1, 11, 5, 2, 1, 13, 6, 2],\n    \'Region\': [\'North\', \'South\', \'East\', \'West\'] * 5\n}\n\ndf = pd.DataFrame(data)\nprint("Sample Sales Data:")\nprint(df.head(8))\n\n# 1. Group by product - total sales\nprint("\\n1. Total sales by Product:")\nprint(df.groupby(\'Product\')[\'Sales\'].sum())\n\n# 2. Multiple aggregations\nprint("\\n2. Category stats:")\nprint(df.groupby(\'Category\').agg({\'Sales\': [\'sum\', \'mean\', \'count\'], \'Quantity\': \'sum\'}))\n\n# 3. Multiple grouping\nprint("\\n3. Category + Region sales:")\nprint(df.groupby([\'Category\', \'Region\'])[\'Sales\'].sum())\n\n# 4. Custom aggregation\nprint("\\n4. Custom aggregation:")\nprint(df.groupby(\'Product\').agg({\'Sales\': [\'sum\', \'mean\', \'std\'], \'Quantity\': [\'sum\', \'max\']}))\n\n# 5. Transform\nprint("\\n5. Add category mean to each row:")\ndf[\'Category_Mean\'] = df.groupby(\'Category\')[\'Sales\'].transform(\'mean\')\nprint(df[[\'Product\', \'Category\', \'Sales\', \'Category_Mean\']].head(8))\n\n# 6. Pivot table\nprint("\\n6. Pivot table - Sales by Category and Region:")\nprint(df.pivot_table(values=\'Sales\', index=\'Category\', columns=\'Region\', aggfunc=\'sum\'))';
+  }
+
+  function generateDataMerging(){
+    return 'import pandas as pd\n\n# Create sample datasets\nemployees = pd.DataFrame({\n    \'Employee_ID\': [1, 2, 3, 4, 5],\n    \'Name\': [\'Alice\', \'Bob\', \'Charlie\', \'David\', \'Eve\'],\n    \'Department_ID\': [10, 20, 10, 30, 20],\n    \'Salary\': [50000, 60000, 70000, 55000, 65000]\n})\n\ndepartments = pd.DataFrame({\n    \'Department_ID\': [10, 20, 30, 40],\n    \'Department_Name\': [\'IT\', \'HR\', \'Finance\', \'Marketing\'],\n    \'Manager\': [\'John\', \'Jane\', \'Mike\', \'Sarah\']\n})\n\nprojects = pd.DataFrame({\n    \'Employee_ID\': [1, 2, 1, 3, 4, 2],\n    \'Project_Name\': [\'Project A\', \'Project B\', \'Project C\', \'Project A\', \'Project D\', \'Project C\'],\n    \'Hours\': [40, 35, 20, 45, 30, 25]\n})\n\nprint("Employees:\\n", employees)\nprint("\\nDepartments:\\n", departments)\n\n# 1. Inner join\nprint("\\n1. INNER JOIN - Employees with Departments:")\nprint(pd.merge(employees, departments, on=\'Department_ID\', how=\'inner\'))\n\n# 2. Left join\nprint("\\n2. LEFT JOIN - All employees with departments:")\nprint(pd.merge(employees, departments, on=\'Department_ID\', how=\'left\'))\n\n# 3. Right join\nprint("\\n3. RIGHT JOIN - All departments with employees:")\nprint(pd.merge(employees, departments, on=\'Department_ID\', how=\'right\'))\n\n# 4. Outer join\nprint("\\n4. OUTER JOIN - All records:")\nprint(pd.merge(employees, departments, on=\'Department_ID\', how=\'outer\'))\n\n# 5. Multiple merges\nprint("\\n5. Triple merge - Employees + Departments + Projects:")\nmulti_merge = pd.merge(\n    pd.merge(employees, departments, on=\'Department_ID\', how=\'left\'),\n    projects, on=\'Employee_ID\', how=\'left\'\n)\nprint(multi_merge)\n\n# 6. Concatenation\nprint("\\n6. Concatenating DataFrames:")\nnew_employees = pd.DataFrame({\n    \'Employee_ID\': [6, 7],\n    \'Name\': [\'Frank\', \'Grace\'],\n    \'Department_ID\': [10, 30],\n    \'Salary\': [58000, 62000]\n})\nprint(pd.concat([employees, new_employees], ignore_index=True))';
+  }
+
+  function generateDataAnalysis(){
+    return 'import pandas as pd\nimport numpy as np\n\n# Create comprehensive sample data\nnp.random.seed(42)\ndata = {\n    \'Date\': pd.date_range(\'2023-01-01\', periods=100, freq=\'D\'),\n    \'Product\': np.random.choice([\'Laptop\', \'Mouse\', \'Keyboard\', \'Monitor\', \'Headphones\'], 100),\n    \'Category\': np.random.choice([\'Electronics\', \'Accessories\'], 100),\n    \'Sales\': np.random.normal(1000, 300, 100).round(2),\n    \'Quantity\': np.random.randint(1, 20, 100),\n    \'Region\': np.random.choice([\'North\', \'South\', \'East\', \'West\'], 100),\n    \'Customer_Rating\': np.random.uniform(1, 5, 100).round(1)\n}\n\ndf = pd.DataFrame(data)\nprint("Sample Data:")\nprint(df.head())\nprint(f"\\nDataset shape: {df.shape}")\n\n# 1. Descriptive Statistics\nprint("\\n1. Descriptive Statistics:")\nprint(df.describe())\n\n# 2. Correlation Matrix\nprint("\\n2. Correlation Matrix:")\nnumeric_cols = df.select_dtypes(include=[np.number]).columns\nprint(df[numeric_cols].corr())\n\n# 3. Time Series Analysis\ndf[\'Date\'] = pd.to_datetime(df[\'Date\'])\ndf.set_index(\'Date\', inplace=True)\nmonthly_sales = df[\'Sales\'].resample(\'M\').sum()\nprint("\\n3. Monthly Sales Trend:")\nprint(monthly_sales)\n\ndf[\'Sales_MA_7\'] = df[\'Sales\'].rolling(window=7).mean()\nprint("\\n7-day Moving Average (first 10 days):")\nprint(df[\'Sales_MA_7\'].head(10))\n\n# 4. Categorical Analysis\nprint("\\n4. Sales by Category:")\nprint(df.groupby(\'Category\').agg({\'Sales\':[\'sum\',\'mean\',\'count\'],\'Customer_Rating\':\'mean\'}))\n\n# 5. Top Products\nprint("\\n5. Top 5 Products by Total Sales:")\nprint(df.groupby(\'Product\')[\'Sales\'].sum().sort_values(ascending=False).head())\n\n# 6. Outlier Detection (IQR)\nprint("\\n6. Outlier Detection (IQR method):")\nQ1 = df[\'Sales\'].quantile(0.25)\nQ3 = df[\'Sales\'].quantile(0.75)\nIQR = Q3 - Q1\noutliers = df[(df[\'Sales\'] < Q1 - 1.5*IQR) | (df[\'Sales\'] > Q3 + 1.5*IQR)]\nprint(f"Number of outliers: {len(outliers)}")\n\n# 7. Data Quality\nprint("\\n7. Data Quality Checks:")\nprint(f"Missing values: {df.isnull().sum().sum()}")\nprint(f"Unique products: {df[\'Product\'].nunique()}")\nprint(f"Date range: {df.index.min()} to {df.index.max()}")';
+  }
+})();
+</script>
+<script src="masthead.js"></script>
+<script src="hero-banner.js"></script>
+<script src="author-card.js"></script>
+</body>
 </html>

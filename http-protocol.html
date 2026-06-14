@@ -2,9 +2,433 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta http-equiv="refresh" content="0; url=production/http-protocol.html">
-<title>DevDunia</title>
-<script>window.location.replace('production/http-protocol.html')</script>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>HTTP Protocol Guide — DevDunia Comics</title>
+<meta name="description" content="HTTP protocol reference guide. Learn HTTP methods, status codes, headers, and request/response structure with examples.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://devdunia.com/production/http-protocol.html">
+<meta property="og:title" content="HTTP Protocol Guide — DevDunia Comics">
+<meta property="og:description" content="HTTP protocol reference. Complete guide to HTTP methods, status codes, and headers.">
+<meta property="og:image" content="https://devdunia.com/images/logo.png">
+<link rel="icon" type="image/png" href="images/logo.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Bangers&family=Comic+Neue:wght@400;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+:root{--ink:#1a1410;--paper:#fdf3e3;--paper2:#fbe9cc;--red:#e63946;--blue:#1d6fb8;--yellow:#ffd23f;--green:#3fa34d;--pink:#ff6b9d;--purple:#8a4fff;--orange:#ff8c42;}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'Comic Neue',cursive;font-weight:400;color:var(--ink);background-color:var(--paper);background-image:radial-gradient(var(--ink) 0.5px,transparent 0.6px);background-size:14px 14px;background-attachment:fixed;min-height:100vh;}
+.paper-overlay{position:fixed;inset:0;background:rgba(253,243,227,.78);pointer-events:none;z-index:0;}
+.page-wrap{position:relative;z-index:1;max-width: 1240px;margin:0 auto;padding: 20px 32px 60px;}
+
+
+
+
+
+
+
+.panel{background:var(--paper);border:4px solid var(--ink);border-radius:6px;box-shadow:7px 7px 0 var(--ink);overflow:hidden;margin-bottom:22px;}
+.panel-header{background:var(--ink);color:var(--yellow);font-family:'Bangers',cursive;font-size:1.2rem;letter-spacing:2px;padding:8px 16px;display:flex;align-items:center;justify-content:space-between;gap:10px;}
+.panel-header .panel-tag{font-family:'Space Mono',monospace;font-size:.65rem;font-weight:700;background:var(--yellow);color:var(--ink);padding:2px 7px;border-radius:3px;}
+.panel-body{padding:18px 20px;}
+.chapter-badge{display:inline-flex;align-items:center;justify-content:center;width:48px;height:48px;border-radius:50%;background:var(--ink);color:var(--yellow);font-family:'Bangers',cursive;font-size:1.4rem;flex-shrink:0;box-shadow:3px 3px 0 rgba(0,0,0,.2);margin-right:12px;}
+.chapter-header{display:flex;align-items:center;margin-bottom:14px;}
+.chapter-title{font-family:'Bangers',cursive;font-size:1.5rem;letter-spacing:2px;text-transform:uppercase;}
+.speech-bubble{position:relative;background:var(--yellow);border:3px solid var(--ink);border-radius:12px;padding:12px 16px;margin:14px 0;font-size:.9rem;line-height:1.5;}
+.speech-bubble::before{content:'';position:absolute;bottom:-18px;left:24px;border-width:18px 10px 0;border-style:solid;border-color:var(--ink) transparent transparent;}
+.speech-bubble::after{content:'';position:absolute;bottom:-12px;left:26px;border-width:14px 8px 0;border-style:solid;border-color:var(--yellow) transparent transparent;}
+.methods-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:14px;}
+.method-card{border:3px solid var(--ink);border-radius:6px;box-shadow:4px 4px 0 var(--ink);overflow:hidden;}
+.method-card-header{padding:8px 12px;font-family:'Bangers',cursive;font-size:1.1rem;letter-spacing:1px;color:#fff;}
+.method-card-body{padding:10px 12px;background:var(--paper2);}
+.method-card-body p{font-size:.85rem;margin-bottom:6px;}
+code,.code-block{background:var(--ink);color:var(--yellow);font-family:'Space Mono',monospace;font-size:.78rem;border-radius:4px;padding:1px 5px;}
+.code-block{display:block;padding:12px 16px;margin:8px 0;border-radius:6px;line-height:1.7;overflow-x:auto;white-space:pre;}
+.status-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:14px;}
+.status-card{border:3px solid var(--ink);border-radius:6px;box-shadow:4px 4px 0 var(--ink);overflow:hidden;}
+.status-card-header{padding:8px 12px;font-family:'Bangers',cursive;font-size:1rem;letter-spacing:1px;color:#fff;}
+.status-card-body{padding:10px 12px;background:var(--paper2);}
+.status-card-body li{font-size:.85rem;list-style:none;padding:2px 0;}
+.comic-table{width:100%;border-collapse:collapse;margin-bottom:12px;}
+.comic-table th{background:var(--ink);color:var(--yellow);font-family:'Bangers',cursive;font-size:.95rem;letter-spacing:1px;padding:8px 10px;text-align:left;border:2px solid var(--ink);}
+.comic-table td{padding:6px 10px;border:2px solid var(--ink);font-size:.82rem;font-family:'Comic Neue',cursive;}
+.comic-table tr:nth-child(even) td{background:var(--paper2);}
+.comic-table tr:nth-child(odd) td{background:var(--paper);}
+.version-block{border:3px solid var(--ink);border-radius:6px;box-shadow:4px 4px 0 var(--ink);overflow:hidden;margin-bottom:14px;}
+.version-header{padding:10px 14px;font-family:'Bangers',cursive;font-size:1.2rem;letter-spacing:1px;color:#fff;display:flex;align-items:center;gap:8px;}
+.version-body{padding:12px 14px;background:var(--paper2);}
+.two-col{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:10px;}
+.feature-box{border:2px solid var(--ink);border-radius:4px;padding:10px 12px;background:var(--paper);}
+.feature-box h5{font-family:'Bangers',cursive;letter-spacing:1px;margin-bottom:6px;}
+.feature-box li{font-size:.82rem;list-style:none;padding:2px 0;}
+.feature-box li::before{content:"• ";color:var(--blue);}
+@media(max-width:760px){.methods-grid,.status-grid,.two-col{grid-template-columns:1fr;}}
+</style>
 </head>
-<body></body>
+<body>
+<div class="paper-overlay"></div>
+<div data-masthead></div>
+
+<div class="page-wrap">
+
+  <div data-tool-hero
+       data-title="HTTP Protocol"
+       data-chapter="01"
+       data-category="Network Protocols"
+       data-icon="&#x1F310;"
+       data-desc="Visual reference for HTTP methods&#44; status codes&#44; headers and request/response lifecycle. Developer-friendly."
+       data-color="blue"
+       data-badges="HTTP,STATUS CODES,HEADERS,FREE"
+       data-badge-colors="blue,green,orange,yellow">
+  </div>
+
+  <!-- CH1: WHAT IS HTTP -->
+  <div class="panel">
+    <div class="panel-header">&#x2139;&#xFE0F; WHAT IS HTTP?<span class="panel-tag">CH.1</span></div>
+    <div class="panel-body">
+      <div class="chapter-header">
+        <div class="chapter-badge">1</div>
+        <div class="chapter-title" style="color:var(--blue);">The Web's Common Tongue</div>
+      </div>
+      <p style="font-size:.95rem;line-height:1.6;margin-bottom:14px;">HTTP (Hypertext Transfer Protocol) is an application-layer protocol for distributed, collaborative, hypermedia information systems. It's the foundation of data communication for the World Wide Web.</p>
+      <div class="methods-grid">
+        <div style="border:3px solid var(--blue);border-radius:6px;padding:12px;background:var(--paper2);">
+          <h4 style="font-family:'Bangers',cursive;color:var(--blue);letter-spacing:1px;margin-bottom:6px;">STATELESS</h4>
+          <p style="font-size:.85rem;line-height:1.4;">Each request is independent and doesn't retain information about previous requests.</p>
+        </div>
+        <div style="border:3px solid var(--green);border-radius:6px;padding:12px;background:var(--paper2);">
+          <h4 style="font-family:'Bangers',cursive;color:var(--green);letter-spacing:1px;margin-bottom:6px;">REQUEST/RESPONSE</h4>
+          <p style="font-size:.85rem;line-height:1.4;">Client sends requests, server responds with data or status information.</p>
+        </div>
+        <div style="border:3px solid var(--purple);border-radius:6px;padding:12px;background:var(--paper2);">
+          <h4 style="font-family:'Bangers',cursive;color:var(--purple);letter-spacing:1px;margin-bottom:6px;">TEXT-BASED</h4>
+          <p style="font-size:.85rem;line-height:1.4;">Human-readable protocol that's easy to debug and understand.</p>
+        </div>
+        <div style="border:3px solid var(--orange);border-radius:6px;padding:12px;background:var(--paper2);">
+          <h4 style="font-family:'Bangers',cursive;color:var(--orange);letter-spacing:1px;margin-bottom:6px;">CLIENT-SERVER</h4>
+          <p style="font-size:.85rem;line-height:1.4;">Separates concerns — browser (client) asks, web server (server) answers.</p>
+        </div>
+      </div>
+      <div class="speech-bubble">
+        <strong>HTTP Request Flow:</strong> Browser asks → DNS resolves domain → TCP connects → HTTP request sent → Server processes → HTTP response returned → Browser renders
+      </div>
+    </div>
+  </div>
+
+  <!-- CH2: HTTP METHODS -->
+  <div class="panel">
+    <div class="panel-header">&#x1F4E8; HTTP METHODS<span class="panel-tag">CH.2</span></div>
+    <div class="panel-body">
+      <div class="chapter-header">
+        <div class="chapter-badge">2</div>
+        <div class="chapter-title" style="color:var(--green);">The Action Verbs</div>
+      </div>
+      <div class="methods-grid">
+        <div class="method-card">
+          <div class="method-card-header" style="background:var(--green);">GET</div>
+          <div class="method-card-body">
+            <p>Retrieve data from server. Safe and idempotent — never modifies data.</p>
+            <code class="code-block">GET /api/users HTTP/1.1
+Host: example.com</code>
+          </div>
+        </div>
+        <div class="method-card">
+          <div class="method-card-header" style="background:var(--blue);">POST</div>
+          <div class="method-card-body">
+            <p>Send data to server to create a new resource. Not idempotent.</p>
+            <code class="code-block">POST /api/users HTTP/1.1
+Content-Type: application/json
+{"name": "John"}</code>
+          </div>
+        </div>
+        <div class="method-card">
+          <div class="method-card-header" style="background:var(--orange);">PUT</div>
+          <div class="method-card-body">
+            <p>Update an existing resource completely. Idempotent — same result each time.</p>
+            <code class="code-block">PUT /api/users/123 HTTP/1.1
+Content-Type: application/json
+{"name": "Jane"}</code>
+          </div>
+        </div>
+        <div class="method-card">
+          <div class="method-card-header" style="background:var(--red);">DELETE</div>
+          <div class="method-card-body">
+            <p>Remove a resource. Idempotent — deleting twice has the same effect.</p>
+            <code class="code-block">DELETE /api/users/123 HTTP/1.1</code>
+          </div>
+        </div>
+      </div>
+      <div class="methods-grid">
+        <div class="method-card">
+          <div class="method-card-header" style="background:var(--purple);">PATCH</div>
+          <div class="method-card-body">
+            <p>Partially update a resource. Only sends changed fields, unlike PUT.</p>
+            <code class="code-block">PATCH /api/users/123 HTTP/1.1
+{"email": "new@example.com"}</code>
+          </div>
+        </div>
+        <div class="method-card">
+          <div class="method-card-header" style="background:var(--ink);">HEAD / OPTIONS</div>
+          <div class="method-card-body">
+            <p><strong>HEAD:</strong> Like GET but no body — just headers. <strong>OPTIONS:</strong> Discover allowed methods.</p>
+            <code class="code-block">OPTIONS /api/users HTTP/1.1
+→ Allow: GET, POST, PUT</code>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- CH3: STATUS CODES -->
+  <div class="panel">
+    <div class="panel-header">&#x1F4CA; HTTP STATUS CODES<span class="panel-tag">CH.3</span></div>
+    <div class="panel-body">
+      <div class="chapter-header">
+        <div class="chapter-badge">3</div>
+        <div class="chapter-title" style="color:var(--red);">The Server's Reply</div>
+      </div>
+      <div class="status-grid">
+        <div class="status-card">
+          <div class="status-card-header" style="background:var(--green);">2xx — SUCCESS</div>
+          <div class="status-card-body">
+            <ul>
+              <li><strong>200</strong> OK — Request succeeded</li>
+              <li><strong>201</strong> Created — Resource created</li>
+              <li><strong>204</strong> No Content — Success, no body</li>
+              <li><strong>206</strong> Partial Content — Range response</li>
+            </ul>
+          </div>
+        </div>
+        <div class="status-card">
+          <div class="status-card-header" style="background:var(--blue);">3xx — REDIRECTION</div>
+          <div class="status-card-body">
+            <ul>
+              <li><strong>301</strong> Moved Permanently</li>
+              <li><strong>302</strong> Found (temporary redirect)</li>
+              <li><strong>304</strong> Not Modified (use cache)</li>
+              <li><strong>307</strong> Temporary Redirect</li>
+            </ul>
+          </div>
+        </div>
+        <div class="status-card">
+          <div class="status-card-header" style="background:var(--orange);">4xx — CLIENT ERROR</div>
+          <div class="status-card-body">
+            <ul>
+              <li><strong>400</strong> Bad Request</li>
+              <li><strong>401</strong> Unauthorized</li>
+              <li><strong>403</strong> Forbidden</li>
+              <li><strong>404</strong> Not Found</li>
+              <li><strong>429</strong> Too Many Requests</li>
+            </ul>
+          </div>
+        </div>
+        <div class="status-card">
+          <div class="status-card-header" style="background:var(--red);">5xx — SERVER ERROR</div>
+          <div class="status-card-body">
+            <ul>
+              <li><strong>500</strong> Internal Server Error</li>
+              <li><strong>502</strong> Bad Gateway</li>
+              <li><strong>503</strong> Service Unavailable</li>
+              <li><strong>504</strong> Gateway Timeout</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- CH4: HEADERS -->
+  <div class="panel">
+    <div class="panel-header">&#x1F4CB; COMMON HTTP HEADERS<span class="panel-tag">CH.4</span></div>
+    <div class="panel-body">
+      <div class="chapter-header">
+        <div class="chapter-badge">4</div>
+        <div class="chapter-title" style="color:var(--purple);">The Metadata Envelope</div>
+      </div>
+      <p style="font-size:.9rem;margin-bottom:12px;">HTTP headers carry metadata about the request or response. Sorted by popularity:</p>
+      <table class="comic-table">
+        <thead>
+          <tr><th>Header</th><th>Type</th><th>Description</th><th>Example</th></tr>
+        </thead>
+        <tbody>
+          <tr><td><strong>Content-Type</strong></td><td>Response</td><td>Media type of the resource</td><td>application/json</td></tr>
+          <tr><td><strong>User-Agent</strong></td><td>Request</td><td>Client application info</td><td>Mozilla/5.0...</td></tr>
+          <tr><td><strong>Host</strong></td><td>Request</td><td>Target server hostname</td><td>example.com</td></tr>
+          <tr><td><strong>Accept</strong></td><td>Request</td><td>Acceptable response types</td><td>application/json</td></tr>
+          <tr><td><strong>Cache-Control</strong></td><td>Both</td><td>Caching directives</td><td>no-cache</td></tr>
+          <tr><td><strong>Content-Length</strong></td><td>Response</td><td>Size of response body</td><td>1024</td></tr>
+          <tr><td><strong>Authorization</strong></td><td>Request</td><td>Authentication credentials</td><td>Bearer token123</td></tr>
+          <tr><td><strong>Accept-Encoding</strong></td><td>Request</td><td>Acceptable compression</td><td>gzip, deflate</td></tr>
+          <tr><td><strong>Content-Encoding</strong></td><td>Response</td><td>Compression used</td><td>gzip</td></tr>
+          <tr><td><strong>Connection</strong></td><td>Both</td><td>Connection control</td><td>keep-alive</td></tr>
+          <tr><td><strong>Set-Cookie</strong></td><td>Response</td><td>Cookie to set on client</td><td>session=abc123</td></tr>
+          <tr><td><strong>Cookie</strong></td><td>Request</td><td>Cookies to send to server</td><td>session=abc123</td></tr>
+          <tr><td><strong>Location</strong></td><td>Response</td><td>Redirect URL</td><td>https://example.com/new</td></tr>
+          <tr><td><strong>Referer</strong></td><td>Request</td><td>Previous page URL</td><td>https://google.com</td></tr>
+          <tr><td><strong>Accept-Language</strong></td><td>Request</td><td>Preferred languages</td><td>en-US, en</td></tr>
+          <tr><td><strong>X-Forwarded-For</strong></td><td>Request</td><td>Client IP address (proxy)</td><td>192.168.1.1</td></tr>
+          <tr><td><strong>ETag</strong></td><td>Response</td><td>Resource version identifier</td><td>"abc123"</td></tr>
+          <tr><td><strong>If-None-Match</strong></td><td>Request</td><td>Conditional request</td><td>"abc123"</td></tr>
+          <tr><td><strong>Server</strong></td><td>Response</td><td>Server software info</td><td>nginx/1.18.0</td></tr>
+          <tr><td><strong>X-Requested-With</strong></td><td>Request</td><td>AJAX request indicator</td><td>XMLHttpRequest</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- CH5: HTTP VERSIONS -->
+  <div class="panel">
+    <div class="panel-header">&#x23F3; HTTP VERSIONS EVOLUTION<span class="panel-tag">CH.5</span></div>
+    <div class="panel-body">
+      <div class="chapter-header">
+        <div class="chapter-badge">5</div>
+        <div class="chapter-title" style="color:var(--orange);">The Upgrade Arc</div>
+      </div>
+
+      <div class="version-block">
+        <div class="version-header" style="background:var(--orange);">&#x1F5C2;&#xFE0F; HTTP/0.9 (1991) — The Original</div>
+        <div class="version-body">
+          <div class="two-col">
+            <div class="feature-box">
+              <h5 style="color:var(--orange);">Features</h5>
+              <ul>
+                <li>Only GET method</li>
+                <li>No headers whatsoever</li>
+                <li>HTML-only responses</li>
+                <li>Connection closes after response</li>
+              </ul>
+            </div>
+            <div class="feature-box">
+              <h5>Example</h5>
+              <code class="code-block">Request:
+GET /index.html
+
+Response:
+&lt;html&gt;...&lt;/html&gt;</code>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="version-block">
+        <div class="version-header" style="background:var(--blue);">&#x1F4C4; HTTP/1.0 (1996) — Headers &amp; Status Codes</div>
+        <div class="version-body">
+          <div class="two-col">
+            <div class="feature-box">
+              <h5 style="color:var(--blue);">New Features</h5>
+              <ul>
+                <li>HTTP headers introduced</li>
+                <li>Status codes (200, 404, etc.)</li>
+                <li>Content-Type support</li>
+                <li>POST, HEAD methods added</li>
+              </ul>
+            </div>
+            <div class="feature-box">
+              <h5>Example</h5>
+              <code class="code-block">GET /index.html HTTP/1.0
+Host: example.com
+
+HTTP/1.0 200 OK
+Content-Type: text/html</code>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="version-block">
+        <div class="version-header" style="background:var(--green);">&#x1F517; HTTP/1.1 (1997) — Persistent Connections</div>
+        <div class="version-body">
+          <div class="two-col">
+            <div class="feature-box">
+              <h5 style="color:var(--green);">Major Improvements</h5>
+              <ul>
+                <li>Persistent connections (keep-alive)</li>
+                <li>Pipelining support</li>
+                <li>Chunked transfer encoding</li>
+                <li>Host header required</li>
+                <li>PUT, DELETE, OPTIONS methods</li>
+              </ul>
+            </div>
+            <div class="feature-box">
+              <h5>Example</h5>
+              <code class="code-block">GET /page1.html HTTP/1.1
+GET /page2.html HTTP/1.1
+Connection: keep-alive
+
+# Multiple requests on
+# same connection!</code>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="version-block">
+        <div class="version-header" style="background:var(--purple);">&#x26A1; HTTP/2 (2015) — Multiplexing &amp; Binary</div>
+        <div class="version-body">
+          <div class="two-col">
+            <div class="feature-box">
+              <h5 style="color:var(--purple);">Revolutionary Features</h5>
+              <ul>
+                <li>Binary protocol (not text)</li>
+                <li>Multiplexing (multiple streams)</li>
+                <li>Server push capability</li>
+                <li>Header compression (HPACK)</li>
+                <li>Stream prioritization</li>
+              </ul>
+            </div>
+            <div class="feature-box">
+              <h5 style="color:var(--purple);">Benefits</h5>
+              <ul>
+                <li>Faster page loading</li>
+                <li>Reduced latency</li>
+                <li>Better resource utilization</li>
+                <li>Backward compatible with HTTP/1.1</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- CH6: HTTP VS HTTPS -->
+  <div class="panel">
+    <div class="panel-header">&#x1F512; HTTP vs HTTPS<span class="panel-tag">CH.6</span></div>
+    <div class="panel-body">
+      <div class="chapter-header">
+        <div class="chapter-badge">6</div>
+        <div class="chapter-title" style="color:var(--red);">Lock It Down!</div>
+      </div>
+      <div class="two-col">
+        <div style="border:3px solid var(--orange);border-radius:6px;padding:14px;background:var(--paper2);">
+          <h4 style="font-family:'Bangers',cursive;color:var(--orange);letter-spacing:1px;margin-bottom:8px;">HTTP (Port 80)</h4>
+          <ul style="list-style:none;font-size:.88rem;line-height:1.8;">
+            <li>&#x274C; Unencrypted communication</li>
+            <li>&#x2705; Faster performance</li>
+            <li>&#x2705; No SSL/TLS overhead</li>
+            <li>&#x274C; Vulnerable to MITM attacks</li>
+            <li>&#x274C; Data can be intercepted</li>
+          </ul>
+        </div>
+        <div style="border:3px solid var(--green);border-radius:6px;padding:14px;background:var(--paper2);">
+          <h4 style="font-family:'Bangers',cursive;color:var(--green);letter-spacing:1px;margin-bottom:8px;">HTTPS (Port 443)</h4>
+          <ul style="list-style:none;font-size:.88rem;line-height:1.8;">
+            <li>&#x2705; Encrypted with SSL/TLS</li>
+            <li>&#x2705; Secure data transmission</li>
+            <li>&#x2705; Certificate validation</li>
+            <li>&#x26A0;&#xFE0F; Slightly slower (encryption overhead)</li>
+            <li>&#x2705; Required for modern web apps</li>
+          </ul>
+        </div>
+      </div>
+      <div class="speech-bubble" style="margin-top:16px;">
+        <strong>Always use HTTPS in production!</strong> Modern browsers mark HTTP sites as "Not Secure" and search engines penalize unencrypted pages in SEO rankings.
+      </div>
+    </div>
+  </div>
+
+</div>
+<script src="masthead.js"></script>
+<script src="hero-banner.js"></script>
+<script src="author-card.js"></script>
+</body>
 </html>

@@ -2,9 +2,279 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta http-equiv="refresh" content="0; url=production/payment-tester.html">
-<title>DevDunia</title>
-<script>window.location.replace('production/payment-tester.html')</script>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Payment Tester — DevDunia Comics</title>
+<meta name="description" content="Test Stripe and payment flows using dummy card details — safe sandbox environment.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://devdunia.com/production/payment-tester.html">
+<meta property="og:title" content="Payment Tester — DevDunia Comics">
+<meta property="og:image" content="https://devdunia.com/images/logo.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Bangers&family=Comic+Neue:wght@400;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --ink:#1a1410; --paper:#fdf3e3; --paper2:#fbe9cc;
+  --red:#e63946; --blue:#1d6fb8; --yellow:#ffd23f;
+  --green:#3fa34d; --pink:#ff6b9d; --purple:#8a4fff; --orange:#ff8c42;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'Comic Neue',cursive;font-weight:400;color:var(--ink);background-color:var(--paper);background-image:radial-gradient(var(--ink) 0.5px,transparent 0.6px);background-size:14px 14px;background-attachment:fixed;min-height:100vh;}
+.paper-overlay{position:fixed;inset:0;background:rgba(253,243,227,.78);pointer-events:none;z-index:0;}
+.page-wrap{position:relative;z-index:1;max-width: 1240px;margin:0 auto;padding: 20px 32px 60px;}
+
+
+
+
+
+
+
+.hero{display:flex;align-items:flex-start;gap:20px;background:var(--paper2);border:4px solid var(--ink);border-radius:6px;box-shadow:7px 7px 0 var(--ink);padding:20px 24px;margin-bottom:28px;transform:rotate(-0.4deg);}
+.hero-icon{font-size:3rem;line-height:1;flex-shrink:0;filter:drop-shadow(3px 3px 0 var(--ink));}
+.hero-text h1{font-family:'Bangers',cursive;font-size:2.8rem;letter-spacing:2px;color:var(--green);-webkit-text-stroke:1px var(--ink);text-shadow:4px 4px 0 var(--ink);line-height:1;text-transform:uppercase;}
+.hero-text p{font-size:.95rem;margin-top:6px;line-height:1.5;max-width:480px;}
+.hero-badges{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px;}
+.badge{font-family:'Space Mono',monospace;font-size:.65rem;font-weight:700;padding:3px 8px;border:2px solid var(--ink);border-radius:4px;box-shadow:2px 2px 0 var(--ink);}
+.badge-blue{background:var(--blue);color:#fff;}
+.badge-green{background:var(--green);color:#fff;}
+.badge-yellow{background:var(--yellow);color:var(--ink);}
+.badge-red{background:var(--red);color:#fff;}
+.badge-orange{background:var(--orange);color:#fff;}
+.panel{background:var(--paper);border:4px solid var(--ink);border-radius:6px;box-shadow:7px 7px 0 var(--ink);overflow:hidden;margin-bottom:22px;}
+.panel-header{background:var(--ink);color:var(--yellow);font-family:'Bangers',cursive;font-size:1.2rem;letter-spacing:2px;padding:8px 16px;display:flex;align-items:center;justify-content:space-between;gap:10px;}
+.panel-header .panel-tag{font-family:'Space Mono',monospace;font-size:.65rem;font-weight:700;background:var(--yellow);color:var(--ink);padding:2px 7px;border-radius:3px;}
+.panel-body{padding:18px 20px;}
+.cards-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:14px;}
+.test-card{border:4px solid var(--ink);border-radius:6px;box-shadow:5px 5px 0 var(--ink);padding:14px;cursor:pointer;transition:transform .1s,box-shadow .1s;position:relative;overflow:hidden;}
+.test-card::before{content:'CLICK TO COPY';position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);font-family:'Bangers',cursive;font-size:1.1rem;letter-spacing:2px;color:#fff;background:rgba(0,0,0,.65);padding:6px 14px;border-radius:4px;opacity:0;transition:opacity .2s;white-space:nowrap;}
+.test-card:hover::before{opacity:1;}
+.test-card:hover{transform:translate(-2px,-2px);box-shadow:7px 7px 0 var(--ink);}
+.test-card:active{transform:translate(2px,2px);box-shadow:2px 2px 0 var(--ink);}
+.card-visa{background:linear-gradient(135deg,#1d6fb8,#0d4a80);}
+.card-mc{background:linear-gradient(135deg,#e63946,#9b2226);}
+.card-amex{background:linear-gradient(135deg,#3fa34d,#2d7a38);}
+.card-3ds{background:linear-gradient(135deg,#8a4fff,#6333cc);}
+.card-decline{background:linear-gradient(135deg,#ff8c42,#cc6420);}
+.card-name{font-family:'Bangers',cursive;font-size:1.1rem;letter-spacing:1px;color:#fff;text-shadow:2px 2px 0 rgba(0,0,0,.4);margin-bottom:6px;}
+.card-number{font-family:'Space Mono',monospace;font-size:.9rem;color:#fff;letter-spacing:2px;margin-bottom:4px;}
+.card-info{font-size:.75rem;color:rgba(255,255,255,.8);}
+.card-status{display:inline-block;font-family:'Bangers',cursive;font-size:.8rem;letter-spacing:1px;padding:2px 8px;border-radius:3px;border:2px solid rgba(255,255,255,.6);margin-top:6px;}
+.status-success{background:rgba(63,163,77,.8);color:#fff;}
+.status-decline{background:rgba(230,57,70,.8);color:#fff;}
+.status-3ds{background:rgba(29,111,184,.8);color:#fff;}
+.section-title{font-family:'Bangers',cursive;font-size:1.3rem;letter-spacing:2px;color:var(--ink);margin-bottom:14px;text-transform:uppercase;}
+.more-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
+.more-box{background:var(--paper2);border:3px solid var(--ink);border-radius:6px;box-shadow:4px 4px 0 var(--ink);padding:14px;}
+.more-box-title{font-family:'Bangers',cursive;font-size:1rem;letter-spacing:1px;color:var(--ink);margin-bottom:8px;}
+.more-item{font-family:'Space Mono',monospace;font-size:.72rem;padding:4px 0;border-bottom:1px dashed rgba(26,20,16,.2);display:flex;justify-content:space-between;align-items:center;gap:8px;}
+.more-item:last-child{border-bottom:none;}
+.card-num{color:var(--blue);font-weight:700;}
+.card-desc{color:var(--ink);opacity:.7;font-size:.65rem;}
+.code-panel{background:#1a1410;border:3px solid var(--ink);border-radius:6px;padding:14px;position:relative;}
+.code-panel pre{font-family:'Space Mono',monospace;font-size:.72rem;color:#ffd23f;line-height:1.6;overflow-x:auto;white-space:pre-wrap;word-break:break-all;}
+.copy-code-btn{position:absolute;top:8px;right:8px;font-family:'Bangers',cursive;font-size:.85rem;letter-spacing:1px;background:var(--yellow);color:var(--ink);border:2px solid var(--yellow);border-radius:4px;padding:2px 8px;cursor:pointer;box-shadow:2px 2px 0 rgba(0,0,0,.4);transition:transform .1s;}
+.copy-code-btn:active{transform:translate(1px,1px);}
+.integrations-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;}
+.int-block h3{font-family:'Bangers',cursive;font-size:1.1rem;letter-spacing:1px;color:var(--ink);margin-bottom:8px;}
+.copied-flash{background:var(--green) !important;}
+@media(max-width:600px){.hero{flex-direction:column;gap:10px;}.hero-text h1{font-size:2rem;}.cards-grid{grid-template-columns:1fr 1fr;}.more-grid{grid-template-columns:1fr;}.integrations-grid{grid-template-columns:1fr;}}
+</style>
 </head>
-<body></body>
+<body>
+<div class="paper-overlay"></div>
+<div data-masthead></div>
+
+<div class="page-wrap">
+
+  <div data-tool-hero
+     data-title="Payment Tester"
+     data-chapter="37"
+     data-category="Developer Tools"
+     data-icon="&#x1F4B3;"
+     data-desc="Test Stripe payment flows using dummy cards! Safe sandbox environment — click any card to copy the number instantly. No real money involved!"
+     data-color="blue"
+     data-badges="STRIPE SANDBOX,CLICK TO COPY,FREE,NO REAL CHARGES"
+     data-badge-colors="green,blue,yellow,red">
+  </div>
+
+  
+
+  <div class="panel">
+    <div class="panel-header">
+      &#x1F4B3; STRIPE TEST CARDS — CLICK TO COPY!
+      <span class="panel-tag">TEST CARDS</span>
+    </div>
+    <div class="panel-body">
+      <div class="cards-grid">
+        <div class="test-card card-visa" data-number="4242424242424242">
+          <div class="card-name">Visa</div>
+          <div class="card-number">4242 4242 4242 4242</div>
+          <div class="card-info">Any future date &bull; Any CVC</div>
+          <div class="card-status status-success">SUCCESS</div>
+        </div>
+        <div class="test-card card-mc" data-number="5555555555554444">
+          <div class="card-name">Mastercard</div>
+          <div class="card-number">5555 5555 5555 4444</div>
+          <div class="card-info">Any future date &bull; Any CVC</div>
+          <div class="card-status status-success">SUCCESS</div>
+        </div>
+        <div class="test-card card-amex" data-number="378282246310005">
+          <div class="card-name">Amex</div>
+          <div class="card-number">3782 822463 10005</div>
+          <div class="card-info">Any future date &bull; Any CVC</div>
+          <div class="card-status status-success">SUCCESS</div>
+        </div>
+        <div class="test-card card-3ds" data-number="4000002500003155">
+          <div class="card-name">Visa 3D Secure</div>
+          <div class="card-number">4000 0025 0000 3155</div>
+          <div class="card-info">Requires authentication</div>
+          <div class="card-status status-3ds">3D SECURE</div>
+        </div>
+        <div class="test-card card-decline" data-number="4000000000000002">
+          <div class="card-name">Visa</div>
+          <div class="card-number">4000 0000 0000 0002</div>
+          <div class="card-info">Generic decline</div>
+          <div class="card-status status-decline">DECLINE</div>
+        </div>
+        <div class="test-card card-decline" data-number="4000000000009995">
+          <div class="card-name">Visa</div>
+          <div class="card-number">4000 0000 0000 9995</div>
+          <div class="card-info">Insufficient funds</div>
+          <div class="card-status status-decline">DECLINE</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="panel">
+    <div class="panel-header">
+      &#x1F4CB; MORE TEST SCENARIOS
+      <span class="panel-tag">EDGE CASES</span>
+    </div>
+    <div class="panel-body">
+      <div class="more-grid">
+        <div class="more-box">
+          <div class="more-box-title" style="color:var(--red);">&#x1F4A5; Processing Errors</div>
+          <div class="more-item"><span class="card-num">4000 0000 0000 0119</span><span class="card-desc">Processing error</span></div>
+          <div class="more-item"><span class="card-num">4000 0000 0000 0069</span><span class="card-desc">Expired card</span></div>
+          <div class="more-item"><span class="card-num">4000 0000 0000 0127</span><span class="card-desc">Incorrect CVC</span></div>
+        </div>
+        <div class="more-box">
+          <div class="more-box-title" style="color:var(--purple);">&#x26A1; Special Cases</div>
+          <div class="more-item"><span class="card-num">4000 0000 0000 0341</span><span class="card-desc">Attaching SCA</span></div>
+          <div class="more-item"><span class="card-num">4000 0000 0000 3220</span><span class="card-desc">Non-3D Secure</span></div>
+          <div class="more-item"><span class="card-num">4000 0000 0000 3063</span><span class="card-desc">Always requires payment</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="panel">
+    <div class="panel-header">
+      &#x1F4BB; INTEGRATION GUIDE
+      <span class="panel-tag">CODE</span>
+    </div>
+    <div class="panel-body">
+      <div class="integrations-grid">
+        <div class="int-block">
+          <h3>&#x1F5A5; Frontend (JavaScript)</h3>
+          <div class="code-panel">
+            <button class="copy-code-btn" data-code="frontend">COPY</button>
+            <pre id="frontend-code">// Initialize Stripe
+const stripe = Stripe('pk_test_your_key');
+
+// Create payment element
+const elements = stripe.elements();
+const cardElement = elements.create('card');
+cardElement.mount('#card-element');
+
+// Handle form submission
+form.addEventListener('submit', async (event) => {
+  event.preventDefault();
+  const {error, paymentMethod} = await stripe.createPaymentMethod({
+    type: 'card',
+    card: cardElement,
+  });
+  if (error) {
+    console.error(error);
+  } else {
+    console.log(paymentMethod);
+  }
+});</pre>
+          </div>
+        </div>
+        <div class="int-block">
+          <h3>&#x1F5A7; Backend (Node.js)</h3>
+          <div class="code-panel">
+            <button class="copy-code-btn" data-code="backend">COPY</button>
+            <pre id="backend-code">// Node.js example
+const stripe = require('stripe')('sk_test_your_key');
+
+app.post('/create-payment-intent', async (req, res) => {
+  const {amount, currency = 'usd'} = req.body;
+  try {
+    const paymentIntent = await stripe.paymentIntents.create({
+      amount: amount * 100, // cents
+      currency,
+      automatic_payment_methods: {
+        enabled: true,
+      },
+    });
+    res.json({
+      clientSecret: paymentIntent.client_secret
+    });
+  } catch (error) {
+    res.status(400).json({error: error.message});
+  }
+});</pre>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+(function() {
+  document.querySelectorAll('.test-card').forEach(function(card) {
+    card.addEventListener('click', function() {
+      var number = this.dataset.number;
+      var self = this;
+      if (navigator.clipboard) {
+        navigator.clipboard.writeText(number).then(function() {
+          self.classList.add('copied-flash');
+          setTimeout(function() { self.classList.remove('copied-flash'); }, 900);
+        }).catch(function() {});
+      }
+    });
+  });
+
+  document.querySelectorAll('.copy-code-btn').forEach(function(btn) {
+    btn.addEventListener('click', function() {
+      var codeId = this.dataset.code;
+      var el = document.getElementById(codeId + '-code');
+      if (!el) return;
+      var text = el.textContent;
+      var self = this;
+      if (navigator.clipboard) {
+        navigator.clipboard.writeText(text).then(function() {
+          var orig = self.textContent;
+          self.textContent = 'COPIED!';
+          self.style.background = 'var(--green)';
+          self.style.color = '#fff';
+          setTimeout(function() {
+            self.textContent = orig;
+            self.style.background = '';
+            self.style.color = '';
+          }, 1800);
+        }).catch(function() {});
+      }
+    });
+  });
+})();
+</script>
+<script src="masthead.js"></script>
+<script src="hero-banner.js"></script>
+<script src="author-card.js"></script>
+</body>
 </html>

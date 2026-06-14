@@ -2,9 +2,492 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta http-equiv="refresh" content="0; url=production/docker-commands.html">
-<title>DevDunia</title>
-<script>window.location.replace('production/docker-commands.html')</script>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Docker Commands Cheat Sheet — DevDunia Comics</title>
+<meta name="description" content="Docker commands cheat sheet with examples. Essential Docker commands for containerization, images, and orchestration.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://devdunia.com/production/docker-commands.html">
+<meta property="og:title" content="Docker Commands Cheat Sheet — DevDunia Comics">
+<meta property="og:description" content="Docker commands cheat sheet with examples. Essential Docker commands for containerization, images, and orchestration.">
+<meta property="og:image" content="https://devdunia.com/images/logo.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Bangers&family=Comic+Neue:wght@400;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --ink: #1a1410;
+  --paper: #fdf3e3;
+  --paper2: #fbe9cc;
+  --red: #e63946;
+  --blue: #1d6fb8;
+  --yellow: #ffd23f;
+  --green: #3fa34d;
+  --pink: #ff6b9d;
+  --purple: #8a4fff;
+  --orange: #ff8c42;
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: 'Comic Neue', cursive;
+  font-weight: 400;
+  color: var(--ink);
+  background-color: var(--paper);
+  background-image: radial-gradient(var(--ink) 0.5px, transparent 0.6px);
+  background-size: 14px 14px;
+  background-attachment: fixed;
+  min-height: 100vh;
+}
+
+.paper-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(253,243,227,.78);
+  pointer-events: none;
+  z-index: 0;
+}
+
+.page-wrap {
+  position: relative;
+  z-index: 1;
+  max-width: 1240px;
+  margin: 0 auto;
+  padding: 20px 32px 60px;
+}
+
+
+
+
+
+
+
+
+.masthead-logo-text {
+  font-family: 'Bangers', cursive;
+  font-size: 1.9rem;
+  letter-spacing: 2px;
+  color: #fff;
+  text-shadow: 3px 3px 0 var(--ink);
+  line-height: 1;
+}
+
+.masthead-logo-text span { color: var(--yellow); }
+
+
+
+
+
+
+
+
+/* HERO */
+.hero {
+  display: flex;
+  align-items: flex-start;
+  gap: 20px;
+  background: var(--paper2);
+  border: 4px solid var(--ink);
+  border-radius: 6px;
+  box-shadow: 7px 7px 0 var(--ink);
+  padding: 20px 24px;
+  margin-bottom: 28px;
+  transform: rotate(-0.4deg);
+}
+
+.hero-icon { font-size: 3rem; line-height: 1; flex-shrink: 0; filter: drop-shadow(3px 3px 0 var(--ink)); }
+
+.hero-text h1 {
+  font-family: 'Bangers', cursive;
+  font-size: 2.8rem;
+  letter-spacing: 2px;
+  color: var(--blue);
+  -webkit-text-stroke: 1px var(--ink);
+  text-shadow: 4px 4px 0 var(--ink);
+  line-height: 1;
+  text-transform: uppercase;
+}
+
+.hero-text p { font-size: .95rem; margin-top: 6px; line-height: 1.5; max-width: 480px; }
+
+.hero-badges { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 10px; }
+
+.badge {
+  font-family: 'Space Mono', monospace;
+  font-size: .65rem;
+  font-weight: 700;
+  padding: 3px 8px;
+  border: 2px solid var(--ink);
+  border-radius: 4px;
+  box-shadow: 2px 2px 0 var(--ink);
+}
+.badge-blue   { background: var(--blue);   color: #fff; }
+.badge-green  { background: var(--green);  color: #fff; }
+.badge-yellow { background: var(--yellow); color: var(--ink); }
+.badge-red    { background: var(--red);    color: #fff; }
+.badge-orange { background: var(--orange); color: #fff; }
+
+/* PANEL */
+.panel {
+  background: var(--paper);
+  border: 4px solid var(--ink);
+  border-radius: 6px;
+  box-shadow: 7px 7px 0 var(--ink);
+  overflow: hidden;
+  margin-bottom: 22px;
+}
+
+.panel-header {
+  background: var(--ink);
+  color: var(--yellow);
+  font-family: 'Bangers', cursive;
+  font-size: 1.2rem;
+  letter-spacing: 2px;
+  padding: 8px 16px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.panel-header.blue-hdr  { background: var(--blue); }
+.panel-header.green-hdr { background: var(--green); }
+.panel-header.orange-hdr { background: var(--orange); }
+.panel-header.purple-hdr { background: var(--purple); }
+
+.panel-header .panel-tag {
+  font-family: 'Space Mono', monospace;
+  font-size: .65rem;
+  font-weight: 700;
+  background: var(--yellow);
+  color: var(--ink);
+  padding: 2px 7px;
+  border-radius: 3px;
+}
+
+.panel-body { padding: 18px 20px; }
+
+/* CMD GRID */
+.cmd-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+}
+
+.cmd-card {
+  background: var(--paper2);
+  border: 3px solid var(--ink);
+  border-radius: 6px;
+  box-shadow: 4px 4px 0 var(--ink);
+  padding: 12px 14px;
+  position: relative;
+  transition: transform .1s, box-shadow .1s;
+}
+.cmd-card:hover { transform: translate(-2px,-2px); box-shadow: 6px 6px 0 var(--ink); }
+
+.cmd-card-title {
+  font-family: 'Bangers', cursive;
+  font-size: 1rem;
+  letter-spacing: 1px;
+  margin-bottom: 6px;
+  color: var(--ink);
+}
+
+.cmd-code {
+  font-family: 'Space Mono', monospace;
+  font-size: .75rem;
+  background: var(--ink);
+  color: var(--yellow);
+  padding: 6px 10px;
+  border-radius: 4px;
+  margin: 6px 0;
+  word-break: break-all;
+  display: block;
+}
+
+.cmd-desc { font-size: .78rem; color: #555; line-height: 1.4; margin-top: 4px; }
+
+.copy-btn {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  font-family: 'Bangers', cursive;
+  font-size: .78rem;
+  letter-spacing: 1px;
+  background: var(--ink);
+  color: var(--yellow);
+  border: 2px solid var(--ink);
+  border-radius: 3px;
+  padding: 2px 8px;
+  cursor: pointer;
+  box-shadow: 2px 2px 0 rgba(0,0,0,.4);
+  transition: transform .1s, box-shadow .1s;
+}
+.copy-btn:active { transform: translate(1px,1px); box-shadow: 1px 1px 0 rgba(0,0,0,.4); }
+
+/* MOBILE */
+@media (max-width: 760px) {
+  .cmd-grid { grid-template-columns: 1fr; }
+  .hero { flex-direction: column; gap: 10px; }
+  .hero-text h1 { font-size: 2rem; }
+}
+</style>
 </head>
-<body></body>
+<body>
+<div class="paper-overlay"></div>
+<div data-masthead></div>
+
+<div class="page-wrap">
+
+  <div data-tool-hero
+     data-title="Docker Commands"
+     data-chapter="14"
+     data-category="Developer Tools"
+     data-icon="&#x1F433;"
+     data-desc="Essential Docker commands for containerization, images, and orchestration. Copy any command with one click!"
+     data-color="blue"
+     data-badges="CONTAINERS,IMAGES,COMPOSE,ONE-CLICK COPY"
+     data-badge-colors="blue,green,orange,yellow">
+  </div>
+
+  <!-- MASTHEAD -->
+
+  <!-- HERO -->
+  
+
+  <!-- GETTING STARTED -->
+  <div class="panel">
+    <div class="panel-header blue-hdr">&#x1F680; GETTING STARTED <span class="panel-tag">CHAPTER 1</span></div>
+    <div class="panel-body">
+      <div class="cmd-grid">
+        <div class="cmd-card">
+          <button class="copy-btn" onclick="copyCmd(this,'docker run -d -p 80:80 nginx')">COPY</button>
+          <div class="cmd-card-title">Run Container</div>
+          <code class="cmd-code">docker run -d -p 80:80 nginx</code>
+          <div class="cmd-desc">Run nginx in detached mode on port 80</div>
+        </div>
+        <div class="cmd-card">
+          <button class="copy-btn" onclick="copyCmd(this,'docker run -it ubuntu bash')">COPY</button>
+          <div class="cmd-card-title">Interactive Container</div>
+          <code class="cmd-code">docker run -it ubuntu bash</code>
+          <div class="cmd-desc">Run Ubuntu container with interactive bash</div>
+        </div>
+        <div class="cmd-card">
+          <button class="copy-btn" onclick="copyCmd(this,'docker ps')">COPY</button>
+          <div class="cmd-card-title">List Containers</div>
+          <code class="cmd-code">docker ps</code>
+          <div class="cmd-desc">List running containers</div>
+        </div>
+        <div class="cmd-card">
+          <button class="copy-btn" onclick="copyCmd(this,'docker ps -a')">COPY</button>
+          <div class="cmd-card-title">List All Containers</div>
+          <code class="cmd-code">docker ps -a</code>
+          <div class="cmd-desc">List all containers (including stopped)</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- CONTAINER MANAGEMENT -->
+  <div class="panel">
+    <div class="panel-header green-hdr">&#x2699; CONTAINER MANAGEMENT <span class="panel-tag">CHAPTER 2</span></div>
+    <div class="panel-body">
+      <div class="cmd-grid">
+        <div class="cmd-card">
+          <button class="copy-btn" onclick="copyCmd(this,'docker stop &lt;container_id&gt;')">COPY</button>
+          <div class="cmd-card-title">Stop Container</div>
+          <code class="cmd-code">docker stop &lt;container_id&gt;</code>
+          <div class="cmd-desc">Stop a running container gracefully</div>
+        </div>
+        <div class="cmd-card">
+          <button class="copy-btn" onclick="copyCmd(this,'docker rm &lt;container_id&gt;')">COPY</button>
+          <div class="cmd-card-title">Remove Container</div>
+          <code class="cmd-code">docker rm &lt;container_id&gt;</code>
+          <div class="cmd-desc">Remove a stopped container</div>
+        </div>
+        <div class="cmd-card">
+          <button class="copy-btn" onclick="copyCmd(this,'docker exec -it &lt;container_id&gt; bash')">COPY</button>
+          <div class="cmd-card-title">Execute Command</div>
+          <code class="cmd-code">docker exec -it &lt;container_id&gt; bash</code>
+          <div class="cmd-desc">Execute bash in a running container</div>
+        </div>
+        <div class="cmd-card">
+          <button class="copy-btn" onclick="copyCmd(this,'docker logs &lt;container_id&gt;')">COPY</button>
+          <div class="cmd-card-title">View Logs</div>
+          <code class="cmd-code">docker logs &lt;container_id&gt;</code>
+          <div class="cmd-desc">View container logs</div>
+        </div>
+        <div class="cmd-card">
+          <button class="copy-btn" onclick="copyCmd(this,'docker start &lt;container_id&gt;')">COPY</button>
+          <div class="cmd-card-title">Start Container</div>
+          <code class="cmd-code">docker start &lt;container_id&gt;</code>
+          <div class="cmd-desc">Start a stopped container</div>
+        </div>
+        <div class="cmd-card">
+          <button class="copy-btn" onclick="copyCmd(this,'docker restart &lt;container_id&gt;')">COPY</button>
+          <div class="cmd-card-title">Restart Container</div>
+          <code class="cmd-code">docker restart &lt;container_id&gt;</code>
+          <div class="cmd-desc">Restart a running or stopped container</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- IMAGE MANAGEMENT -->
+  <div class="panel">
+    <div class="panel-header orange-hdr">&#x1F5BC; IMAGE MANAGEMENT <span class="panel-tag">CHAPTER 3</span></div>
+    <div class="panel-body">
+      <div class="cmd-grid">
+        <div class="cmd-card">
+          <button class="copy-btn" onclick="copyCmd(this,'docker images')">COPY</button>
+          <div class="cmd-card-title">List Images</div>
+          <code class="cmd-code">docker images</code>
+          <div class="cmd-desc">List all local Docker images</div>
+        </div>
+        <div class="cmd-card">
+          <button class="copy-btn" onclick="copyCmd(this,'docker pull nginx')">COPY</button>
+          <div class="cmd-card-title">Pull Image</div>
+          <code class="cmd-code">docker pull nginx</code>
+          <div class="cmd-desc">Download image from Docker Hub registry</div>
+        </div>
+        <div class="cmd-card">
+          <button class="copy-btn" onclick="copyCmd(this,'docker build -t myapp .')">COPY</button>
+          <div class="cmd-card-title">Build Image</div>
+          <code class="cmd-code">docker build -t myapp .</code>
+          <div class="cmd-desc">Build image from Dockerfile in current dir</div>
+        </div>
+        <div class="cmd-card">
+          <button class="copy-btn" onclick="copyCmd(this,'docker rmi &lt;image_id&gt;')">COPY</button>
+          <div class="cmd-card-title">Remove Image</div>
+          <code class="cmd-code">docker rmi &lt;image_id&gt;</code>
+          <div class="cmd-desc">Remove a Docker image from local storage</div>
+        </div>
+        <div class="cmd-card">
+          <button class="copy-btn" onclick="copyCmd(this,'docker tag myapp myapp:v1.0')">COPY</button>
+          <div class="cmd-card-title">Tag Image</div>
+          <code class="cmd-code">docker tag myapp myapp:v1.0</code>
+          <div class="cmd-desc">Add a tag/version to an existing image</div>
+        </div>
+        <div class="cmd-card">
+          <button class="copy-btn" onclick="copyCmd(this,'docker push myapp:latest')">COPY</button>
+          <div class="cmd-card-title">Push Image</div>
+          <code class="cmd-code">docker push myapp:latest</code>
+          <div class="cmd-desc">Push image to a registry</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- DOCKER COMPOSE -->
+  <div class="panel">
+    <div class="panel-header purple-hdr">&#x1F3B5; DOCKER COMPOSE <span class="panel-tag">CHAPTER 4</span></div>
+    <div class="panel-body">
+      <div class="cmd-grid">
+        <div class="cmd-card">
+          <button class="copy-btn" onclick="copyCmd(this,'docker-compose up')">COPY</button>
+          <div class="cmd-card-title">Start Services</div>
+          <code class="cmd-code">docker-compose up</code>
+          <div class="cmd-desc">Start all services defined in docker-compose.yml</div>
+        </div>
+        <div class="cmd-card">
+          <button class="copy-btn" onclick="copyCmd(this,'docker-compose up -d')">COPY</button>
+          <div class="cmd-card-title">Start in Background</div>
+          <code class="cmd-code">docker-compose up -d</code>
+          <div class="cmd-desc">Start services in detached (background) mode</div>
+        </div>
+        <div class="cmd-card">
+          <button class="copy-btn" onclick="copyCmd(this,'docker-compose down')">COPY</button>
+          <div class="cmd-card-title">Stop Services</div>
+          <code class="cmd-code">docker-compose down</code>
+          <div class="cmd-desc">Stop and remove all containers and networks</div>
+        </div>
+        <div class="cmd-card">
+          <button class="copy-btn" onclick="copyCmd(this,'docker-compose logs')">COPY</button>
+          <div class="cmd-card-title">View Logs</div>
+          <code class="cmd-code">docker-compose logs</code>
+          <div class="cmd-desc">View logs from all services</div>
+        </div>
+        <div class="cmd-card">
+          <button class="copy-btn" onclick="copyCmd(this,'docker-compose build')">COPY</button>
+          <div class="cmd-card-title">Build Services</div>
+          <code class="cmd-code">docker-compose build</code>
+          <div class="cmd-desc">Build or rebuild service images</div>
+        </div>
+        <div class="cmd-card">
+          <button class="copy-btn" onclick="copyCmd(this,'docker-compose ps')">COPY</button>
+          <div class="cmd-card-title">List Services</div>
+          <code class="cmd-code">docker-compose ps</code>
+          <div class="cmd-desc">List containers for each service</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- CLEANUP -->
+  <div class="panel">
+    <div class="panel-header">&#x1F9F9; CLEANUP COMMANDS <span class="panel-tag">PRO TIP</span></div>
+    <div class="panel-body">
+      <div class="cmd-grid">
+        <div class="cmd-card">
+          <button class="copy-btn" onclick="copyCmd(this,'docker system prune')">COPY</button>
+          <div class="cmd-card-title">Prune System</div>
+          <code class="cmd-code">docker system prune</code>
+          <div class="cmd-desc">Remove all stopped containers, unused networks, dangling images</div>
+        </div>
+        <div class="cmd-card">
+          <button class="copy-btn" onclick="copyCmd(this,'docker system prune -a')">COPY</button>
+          <div class="cmd-card-title">Full Prune</div>
+          <code class="cmd-code">docker system prune -a</code>
+          <div class="cmd-desc">Remove everything unused including unused images</div>
+        </div>
+        <div class="cmd-card">
+          <button class="copy-btn" onclick="copyCmd(this,'docker volume prune')">COPY</button>
+          <div class="cmd-card-title">Prune Volumes</div>
+          <code class="cmd-code">docker volume prune</code>
+          <div class="cmd-desc">Remove all unused volumes</div>
+        </div>
+        <div class="cmd-card">
+          <button class="copy-btn" onclick="copyCmd(this,'docker network prune')">COPY</button>
+          <div class="cmd-card-title">Prune Networks</div>
+          <code class="cmd-code">docker network prune</code>
+          <div class="cmd-desc">Remove all unused networks</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div><!-- /page-wrap -->
+
+<script>
+function copyCmd(btn, cmd) {
+  var text = cmd.replace(/&lt;/g,'<').replace(/&gt;/g,'>').replace(/&amp;/g,'&');
+  var orig = btn.textContent;
+  if (navigator.clipboard) {
+    navigator.clipboard.writeText(text).then(function() {
+      btn.textContent = 'COPIED!';
+      btn.style.background = 'var(--green)';
+      setTimeout(function() { btn.textContent = orig; btn.style.background = 'var(--ink)'; }, 1800);
+    }).catch(function() { fallbackCopy(btn, text, orig); });
+  } else {
+    fallbackCopy(btn, text, orig);
+  }
+}
+
+function fallbackCopy(btn, text, orig) {
+  var ta = document.createElement('textarea');
+  ta.value = text;
+  ta.style.position = 'fixed';
+  ta.style.left = '-9999px';
+  document.body.appendChild(ta);
+  ta.select();
+  try { document.execCommand('copy'); } catch(e){}
+  document.body.removeChild(ta);
+  btn.textContent = 'COPIED!';
+  btn.style.background = 'var(--green)';
+  setTimeout(function() { btn.textContent = orig; btn.style.background = 'var(--ink)'; }, 1800);
+}
+</script>
+<script src="masthead.js"></script>
+<script src="hero-banner.js"></script>
+<script src="author-card.js"></script>
+</body>
 </html>

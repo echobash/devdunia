@@ -2,9 +2,249 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta http-equiv="refresh" content="0; url=production/text-sharer.html">
-<title>DevDunia</title>
-<script>window.location.replace('production/text-sharer.html')</script>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Text Sharer — DevDunia Comics</title>
+<meta name="description" content="Share any text by QR code – polished, fast, and private.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://devdunia.com/production/text-sharer.html">
+<meta property="og:title" content="Text Sharer — DevDunia Comics">
+<meta property="og:image" content="https://devdunia.com/images/logo.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Bangers&family=Comic+Neue:wght@400;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+:root{--ink:#1a1410;--paper:#fdf3e3;--paper2:#fbe9cc;--red:#e63946;--blue:#1d6fb8;--yellow:#ffd23f;--green:#3fa34d;--pink:#ff6b9d;--purple:#8a4fff;--orange:#ff8c42;}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'Comic Neue',cursive;font-weight:400;color:var(--ink);background-color:var(--paper);background-image:radial-gradient(var(--ink) 0.5px,transparent 0.6px);background-size:14px 14px;background-attachment:fixed;min-height:100vh;}
+.paper-overlay{position:fixed;inset:0;background:rgba(253,243,227,.78);pointer-events:none;z-index:0;}
+.page-wrap{position:relative;z-index:1;max-width: 1240px;margin:0 auto;padding: 20px 32px 60px;}
+
+
+
+
+
+
+
+.hero{display:flex;align-items:flex-start;gap:20px;background:var(--paper2);border:4px solid var(--ink);border-radius:6px;box-shadow:7px 7px 0 var(--ink);padding:20px 24px;margin-bottom:28px;transform:rotate(-0.4deg);}
+.hero-icon{font-size:3rem;line-height:1;flex-shrink:0;filter:drop-shadow(3px 3px 0 var(--ink));}
+.hero-text h1{font-family:'Bangers',cursive;font-size:2.8rem;letter-spacing:2px;color:var(--blue);-webkit-text-stroke:1px var(--ink);text-shadow:4px 4px 0 var(--ink);line-height:1;text-transform:uppercase;}
+.hero-text p{font-size:.95rem;margin-top:6px;line-height:1.5;max-width:480px;}
+.hero-badges{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px;}
+.badge{font-family:'Space Mono',monospace;font-size:.65rem;font-weight:700;padding:3px 8px;border:2px solid var(--ink);border-radius:4px;box-shadow:2px 2px 0 var(--ink);}
+.badge-blue{background:var(--blue);color:#fff;}.badge-green{background:var(--green);color:#fff;}.badge-yellow{background:var(--yellow);color:var(--ink);}.badge-red{background:var(--red);color:#fff;}
+.panel{background:var(--paper);border:4px solid var(--ink);border-radius:6px;box-shadow:7px 7px 0 var(--ink);overflow:hidden;margin-bottom:22px;}
+.panel-header{background:var(--ink);color:var(--yellow);font-family:'Bangers',cursive;font-size:1.2rem;letter-spacing:2px;padding:8px 16px;display:flex;align-items:center;justify-content:space-between;gap:10px;}
+.panel-header .panel-tag{font-family:'Space Mono',monospace;font-size:.65rem;font-weight:700;background:var(--yellow);color:var(--ink);padding:2px 7px;border-radius:3px;}
+.panel-body{padding:18px 20px;}
+.comic-textarea{width:100%;background:#fff;border:3px solid var(--ink);border-radius:6px;padding:12px 14px;font-family:'Space Mono',monospace;font-size:.82rem;color:var(--ink);line-height:1.6;resize:vertical;min-height:200px;box-shadow:inset 3px 3px 0 rgba(0,0,0,.06);outline:none;transition:border-color .15s;word-wrap:break-word;overflow-wrap:break-word;}
+.comic-textarea:focus{border-color:var(--blue);box-shadow:inset 3px 3px 0 rgba(29,111,184,.1);}
+.comic-textarea::placeholder{color:#aaa;font-style:italic;}
+.comic-textarea[readonly]{background:var(--paper2);cursor:default;white-space:pre-wrap;}
+.section-label{font-family:'Bangers',cursive;font-size:.95rem;letter-spacing:1px;color:var(--ink);margin-bottom:6px;text-transform:uppercase;}
+.char-count{font-family:'Space Mono',monospace;font-size:.72rem;color:var(--ink);opacity:.6;margin-top:4px;}
+.btn-row{display:flex;flex-wrap:wrap;gap:10px;margin-top:14px;}
+.btn{font-family:'Bangers',cursive;font-size:1.1rem;letter-spacing:1px;border:3px solid var(--ink);border-radius:6px;padding:8px 20px;cursor:pointer;box-shadow:4px 4px 0 var(--ink);transition:transform .1s,box-shadow .1s;text-transform:uppercase;}
+.btn:active{transform:translate(2px,2px);box-shadow:2px 2px 0 var(--ink);}
+.btn-primary{background:var(--blue);color:#fff;}
+.btn-success{background:var(--green);color:#fff;}
+.btn-danger{background:var(--red);color:#fff;}
+.btn-neutral{background:var(--paper2);color:var(--ink);}
+.qr-wrap{display:flex;flex-direction:column;align-items:center;gap:16px;padding:10px 0;}
+.qr-box{background:#fff;border:4px solid var(--ink);border-radius:6px;box-shadow:6px 6px 0 var(--ink);padding:16px;display:inline-block;}
+.qr-box canvas{display:block;max-width:100%;height:auto;}
+.note-bubble{background:var(--paper2);border:3px solid var(--ink);border-radius:14px;padding:10px 14px;margin-top:8px;font-size:.85rem;line-height:1.5;max-width:420px;text-align:center;}
+.reader-text{width:100%;background:#fff;border:3px solid var(--ink);border-radius:6px;padding:12px 14px;font-family:'Space Mono',monospace;font-size:.82rem;color:var(--ink);line-height:1.6;min-height:160px;box-shadow:inset 3px 3px 0 rgba(0,0,0,.06);white-space:pre-wrap;word-wrap:break-word;overflow-wrap:break-word;overflow-x:auto;}
+@media(max-width:600px){.hero{flex-direction:column;gap:10px;}.hero-text h1{font-size:2rem;}}
+</style>
 </head>
-<body></body>
+<body>
+<div class="paper-overlay"></div>
+<div data-masthead></div>
+
+<div class="page-wrap">
+
+  <div data-tool-hero
+     data-title="Text Sharer"
+     data-chapter="49"
+     data-category="Crypto & Security"
+     data-icon="&#x1F4F2;"
+     data-desc="Gmail blocking copy-paste? We got you! Paste text, generate a QR code, scan it on any device to view and copy instantly. No accounts, no tracking!"
+     data-color="purple"
+     data-badges="QR POWERED,PRIVATE,FREE,INSTANT"
+     data-badge-colors="blue,green,yellow,red">
+  </div>
+
+  
+
+  <!-- COMPOSE PANEL -->
+  <div class="panel" id="compose">
+    <div class="panel-header">
+      &#x270F; TYPE OR PASTE YOUR TEXT
+      <span class="panel-tag">COMPOSE</span>
+    </div>
+    <div class="panel-body">
+      <div class="section-label">Your Text</div>
+      <textarea id="shareText" class="comic-textarea" rows="10" placeholder="Paste or type the text you want to share across devices..."></textarea>
+      <div class="char-count"><span id="charCount">0</span> characters</div>
+      <div class="btn-row">
+        <button id="makeQR" class="btn btn-primary">&#x1F4F7; Create QR Code</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- QR PANEL -->
+  <div class="panel" id="qrView" style="display:none;">
+    <div class="panel-header">
+      &#x1F4F1; SCAN WITH YOUR PHONE!
+      <span class="panel-tag">QR CODE</span>
+    </div>
+    <div class="panel-body">
+      <div class="qr-wrap">
+        <div class="qr-box">
+          <canvas id="qrCanvas" width="320" height="320"></canvas>
+        </div>
+        <div class="note-bubble">
+          &#x1F4A1; Scan this QR code to open the text on any device. The link opens a read-only view where you can copy the text!
+        </div>
+      </div>
+      <div class="btn-row" style="justify-content:center;">
+        <button id="downloadPNG" class="btn btn-success">&#x1F4E5; Download PNG</button>
+        <button id="backBtn" class="btn btn-neutral">&#x2190; Back</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- READER PANEL -->
+  <div class="panel" id="reader" style="display:none;">
+    <div class="panel-header">
+      &#x1F4DC; SHARED TEXT
+      <span class="panel-tag">READ</span>
+    </div>
+    <div class="panel-body">
+      <div class="section-label">Here is your shared text</div>
+      <div class="reader-text" id="viewText"></div>
+      <div class="btn-row">
+        <button id="copyBtn" class="btn btn-primary">&#x1F4CB; Copy Text</button>
+        <button id="newBtn" class="btn btn-neutral">&#x2795; Create New</button>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+(function(){
+  var shareText = document.getElementById('shareText');
+  var charCount = document.getElementById('charCount');
+  var makeQR = document.getElementById('makeQR');
+  var compose = document.getElementById('compose');
+  var qrView = document.getElementById('qrView');
+  var qrCanvas = document.getElementById('qrCanvas');
+  var backBtn = document.getElementById('backBtn');
+  var downloadPNG = document.getElementById('downloadPNG');
+  var reader = document.getElementById('reader');
+  var viewText = document.getElementById('viewText');
+  var copyBtn = document.getElementById('copyBtn');
+  var newBtn = document.getElementById('newBtn');
+
+  shareText.addEventListener('input', function() {
+    var n = shareText.value.length;
+    charCount.textContent = n;
+  });
+
+  function utf8ToB64(str){ return btoa(unescape(encodeURIComponent(str))); }
+  function b64ToUtf8(b64){ return decodeURIComponent(escape(atob(b64))); }
+
+  function makeLink(txt){
+    var payload = utf8ToB64(txt);
+    return location.origin + location.pathname + '?view=1#text=' + payload;
+  }
+
+  function showQR(txt){
+    var url = makeLink(txt);
+    var isMobile = window.innerWidth < 640;
+    var size = isMobile ? 240 : 320;
+    var qrUrl = 'https://api.qrserver.com/v1/create-qr-code/?size=' + size + 'x' + size + '&data=' + encodeURIComponent(url);
+    var img = new Image();
+    img.crossOrigin = 'anonymous';
+    img.onload = function(){
+      var ctx = qrCanvas.getContext('2d');
+      qrCanvas.width = size;
+      qrCanvas.height = size;
+      ctx.clearRect(0,0,size,size);
+      ctx.drawImage(img,0,0,size,size);
+      compose.style.display = 'none';
+      reader.style.display = 'none';
+      qrView.style.display = '';
+    };
+    img.onerror = function(){
+      alert('Failed to generate QR. Please check your connection and try again.');
+    };
+    img.src = qrUrl;
+
+    downloadPNG.onclick = function() {
+      var link = document.createElement('a');
+      link.download = 'text-share-qr.png';
+      link.href = qrUrl;
+      link.click();
+    };
+  }
+
+  makeQR.addEventListener('click', function(){
+    var txt = shareText.value.trim();
+    if (!txt){ alert('Please enter some text.'); return; }
+    showQR(txt);
+  });
+
+  backBtn.addEventListener('click', function(){
+    qrView.style.display = 'none';
+    compose.style.display = '';
+  });
+
+  copyBtn.addEventListener('click', function(){
+    var text = viewText.textContent || '';
+    if (navigator.clipboard) {
+      navigator.clipboard.writeText(text).then(function(){
+        copyBtn.textContent = '&#x2714; Copied!';
+        setTimeout(function(){ copyBtn.innerHTML = '&#x1F4CB; Copy Text'; }, 1200);
+      }).catch(function(){});
+    } else {
+      var ta = document.createElement('textarea');
+      ta.value = text;
+      document.body.appendChild(ta);
+      ta.select();
+      document.execCommand('copy');
+      document.body.removeChild(ta);
+    }
+    copyBtn.textContent = 'Copied!';
+    setTimeout(function(){ copyBtn.innerHTML = '&#x1F4CB; Copy Text'; }, 1200);
+  });
+
+  newBtn.addEventListener('click', function(){
+    location.href = location.pathname;
+  });
+
+  // Reader mode
+  var params = new URLSearchParams(location.search);
+  if (params.get('view') === '1') {
+    var h = '';
+    if (location.hash.startsWith('#text=')) {
+      var raw = location.hash.slice(6);
+      try { h = b64ToUtf8(raw); }
+      catch(e) {
+        try { h = decodeURIComponent(raw); } catch(_) { h = raw; }
+      }
+    }
+    if (h) {
+      compose.style.display = 'none';
+      qrView.style.display = 'none';
+      reader.style.display = '';
+      viewText.textContent = h;
+    }
+  }
+})();
+</script>
+<script src="masthead.js"></script>
+<script src="hero-banner.js"></script>
+<script src="author-card.js"></script>
+</body>
 </html>

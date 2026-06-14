@@ -2,9 +2,560 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta http-equiv="refresh" content="0; url=production/html-viewer.html">
-<title>DevDunia</title>
-<script>window.location.replace('production/html-viewer.html')</script>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>HTML Viewer — DevDunia Comics</title>
+<meta name="description" content="Preview and render HTML code in real-time. Free online HTML viewer tool for developers.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://devdunia.com/html-viewer.html">
+<meta property="og:title" content="HTML Viewer — DevDunia Comics">
+<meta property="og:description" content="Preview and render HTML code in real-time. Free online HTML viewer tool for developers.">
+<meta property="og:image" content="https://devdunia.com/images/logo.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Bangers&family=Comic+Neue:wght@400;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --ink: #1a1410;
+  --paper: #fdf3e3;
+  --paper2: #fbe9cc;
+  --red: #e63946;
+  --blue: #1d6fb8;
+  --yellow: #ffd23f;
+  --green: #3fa34d;
+  --pink: #ff6b9d;
+  --purple: #8a4fff;
+  --orange: #ff8c42;
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: 'Comic Neue', cursive;
+  font-weight: 400;
+  color: var(--ink);
+  background-color: var(--paper);
+  background-image: radial-gradient(var(--ink) 0.5px, transparent 0.6px);
+  background-size: 14px 14px;
+  background-attachment: fixed;
+  min-height: 100vh;
+}
+
+.paper-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(253,243,227,.78);
+  pointer-events: none;
+  z-index: 0;
+}
+
+.page-wrap {
+  position: relative;
+  z-index: 1;
+  max-width: 1240px;
+  margin: 0 auto;
+  padding: 20px 32px 60px;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/* ── HERO ── */
+.hero {
+  display: flex;
+  align-items: flex-start;
+  gap: 20px;
+  background: var(--paper2);
+  border: 4px solid var(--ink);
+  border-radius: 6px;
+  box-shadow: 7px 7px 0 var(--ink);
+  padding: 20px 24px;
+  margin-bottom: 28px;
+  transform: rotate(-0.4deg);
+}
+
+.hero-icon {
+  font-size: 3rem;
+  line-height: 1;
+  flex-shrink: 0;
+  filter: drop-shadow(3px 3px 0 var(--ink));
+}
+
+.hero-text h1 {
+  font-family: 'Bangers', cursive;
+  font-size: 2.8rem;
+  letter-spacing: 2px;
+  color: var(--blue);
+  -webkit-text-stroke: 1px var(--ink);
+  text-shadow: 4px 4px 0 var(--ink);
+  line-height: 1;
+  text-transform: uppercase;
+}
+
+.hero-text p {
+  font-size: .95rem;
+  margin-top: 6px;
+  line-height: 1.5;
+  max-width: 480px;
+}
+
+.hero-badges {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 10px;
+}
+
+.badge {
+  font-family: 'Space Mono', monospace;
+  font-size: .65rem;
+  font-weight: 700;
+  padding: 3px 8px;
+  border: 2px solid var(--ink);
+  border-radius: 4px;
+  box-shadow: 2px 2px 0 var(--ink);
+}
+.badge-blue   { background: var(--blue);   color: #fff; }
+.badge-green  { background: var(--green);  color: #fff; }
+.badge-yellow { background: var(--yellow); color: var(--ink); }
+.badge-red    { background: var(--red);    color: #fff; }
+.badge-orange { background: var(--orange); color: #fff; }
+
+/* ── PANEL ── */
+.panel {
+  background: var(--paper);
+  border: 4px solid var(--ink);
+  border-radius: 6px;
+  box-shadow: 7px 7px 0 var(--ink);
+  overflow: hidden;
+  margin-bottom: 22px;
+}
+
+.panel-header {
+  background: var(--ink);
+  color: var(--yellow);
+  font-family: 'Bangers', cursive;
+  font-size: 1.2rem;
+  letter-spacing: 2px;
+  padding: 8px 16px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.panel-header .panel-tag {
+  font-family: 'Space Mono', monospace;
+  font-size: .65rem;
+  font-weight: 700;
+  background: var(--yellow);
+  color: var(--ink);
+  padding: 2px 7px;
+  border-radius: 3px;
+}
+
+.panel-body { padding: 18px 20px; }
+
+/* ── TEXTAREA ── */
+.comic-textarea {
+  width: 100%;
+  background: #fff;
+  border: 3px solid var(--ink);
+  border-radius: 6px;
+  padding: 12px 14px;
+  font-family: 'Space Mono', monospace;
+  font-size: .82rem;
+  color: var(--ink);
+  line-height: 1.6;
+  resize: vertical;
+  min-height: 130px;
+  box-shadow: inset 3px 3px 0 rgba(0,0,0,.06);
+  outline: none;
+  transition: border-color .15s;
+}
+.comic-textarea:focus { border-color: var(--blue); box-shadow: inset 3px 3px 0 rgba(29,111,184,.1); }
+.comic-textarea::placeholder { color: #aaa; font-style: italic; }
+
+/* ── BUTTONS ── */
+.btn-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 14px;
+}
+
+.btn {
+  font-family: 'Bangers', cursive;
+  font-size: 1.1rem;
+  letter-spacing: 1px;
+  border: 3px solid var(--ink);
+  border-radius: 6px;
+  padding: 8px 20px;
+  cursor: pointer;
+  box-shadow: 4px 4px 0 var(--ink);
+  transition: transform .1s, box-shadow .1s;
+  text-transform: uppercase;
+}
+.btn:active { transform: translate(2px,2px); box-shadow: 2px 2px 0 var(--ink); }
+
+.btn-primary { background: var(--blue);   color: #fff; }
+.btn-success { background: var(--green);  color: #fff; }
+.btn-danger  { background: var(--red);    color: #fff; }
+.btn-neutral { background: var(--paper2); color: var(--ink); }
+.btn-orange  { background: var(--orange); color: #fff; }
+
+/* ── ERROR BUBBLE ── */
+.error-bubble {
+  display: none;
+  position: relative;
+  background: #fff0f0;
+  border: 3px solid var(--red);
+  border-radius: 14px;
+  padding: 10px 14px;
+  margin-top: 12px;
+  font-size: .9rem;
+  font-weight: 700;
+  color: var(--red);
+}
+.error-bubble::before {
+  content: '';
+  position: absolute;
+  top: -16px;
+  left: 22px;
+  border-width: 0 10px 16px;
+  border-style: solid;
+  border-color: transparent transparent var(--red);
+}
+.error-bubble::after {
+  content: '';
+  position: absolute;
+  top: -11px;
+  left: 24px;
+  border-width: 0 8px 12px;
+  border-style: solid;
+  border-color: transparent transparent #fff0f0;
+}
+.error-bubble.show { display: block; }
+
+/* ── SECTION LABEL ── */
+.section-label {
+  font-family: 'Bangers', cursive;
+  font-size: .95rem;
+  letter-spacing: 1px;
+  color: var(--ink);
+  margin-bottom: 6px;
+  text-transform: uppercase;
+}
+
+/* ── STATS ROW ── */
+.stats-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 14px;
+}
+
+.stat-chip {
+  font-family: 'Space Mono', monospace;
+  font-size: .72rem;
+  font-weight: 700;
+  padding: 4px 10px;
+  border: 2px solid var(--ink);
+  border-radius: 4px;
+  box-shadow: 2px 2px 0 var(--ink);
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+.stat-chip .stat-label { opacity: .65; font-weight: 400; }
+.stat-chip.chip-blue   { background: var(--blue);   color: #fff; }
+.stat-chip.chip-green  { background: var(--green);  color: #fff; }
+
+/* ── EDITOR / PREVIEW SPLIT ── */
+.split-panels {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 22px;
+}
+
+/* ── IFRAME PREVIEW ── */
+.preview-wrap {
+  border: 3px solid var(--ink);
+  border-radius: 6px;
+  box-shadow: inset 3px 3px 0 rgba(0,0,0,.06);
+  overflow: hidden;
+  background: #fff;
+  min-height: 400px;
+}
+
+.preview-wrap iframe {
+  width: 100%;
+  height: 100%;
+  min-height: 400px;
+  border: 0;
+  display: block;
+  background: white;
+}
+
+/* ── DIVIDER ── */
+.divider {
+  border: none;
+  border-top: 3px solid var(--ink);
+  margin: 16px 0;
+}
+
+/* ── MOBILE ── */
+@media (max-width: 760px) {
+  .split-panels { grid-template-columns: 1fr; }
+  .hero { flex-direction: column; gap: 10px; }
+  .hero-text h1 { font-size: 2rem; }
+  .preview-wrap, .preview-wrap iframe { min-height: 260px; }
+}
+</style>
 </head>
-<body></body>
+<body>
+<div class="paper-overlay"></div>
+<div data-masthead></div>
+
+<div class="page-wrap">
+
+  <div data-tool-hero
+     data-title="HTML Viewer"
+     data-chapter="25"
+     data-category="Developer Tools"
+     data-icon="&#x1F5A5;&#xFE0F;"
+     data-desc="Paste your HTML code and see it rendered live in a sandboxed iframe. Load files, toggle auto-preview, or click Preview to see your markup in action!"
+     data-color="blue"
+     data-badges="LIVE PREVIEW,SANDBOXED,FILE LOAD,AUTO-PREVIEW"
+     data-badge-colors="blue,green,yellow,orange">
+  </div>
+
+  <!-- MASTHEAD -->
+
+  <!-- HERO -->
+  
+
+  <!-- TOOLBAR PANEL -->
+  <div class="panel">
+    <div class="panel-header">
+      &#x2699;&#xFE0F; CONTROLS
+      <span class="panel-tag">TOOLBAR</span>
+    </div>
+    <div class="panel-body">
+      <div class="btn-row">
+        <button id="preview-btn" class="btn btn-primary">&#x1F440; Preview HTML</button>
+        <button id="auto-preview-toggle" class="btn btn-success">&#x26A1; Enable Auto Preview</button>
+        <button id="load-file-btn" class="btn btn-neutral">&#x1F4C2; Load File</button>
+        <button id="clear-all-btn" class="btn btn-danger">&#x1F5D1; Clear All</button>
+      </div>
+      <div class="stats-row" style="margin-top:12px;">
+        <div class="stat-chip chip-blue">
+          <span class="stat-label">CHARS</span>
+          <span id="char-count">0</span>
+        </div>
+        <div class="stat-chip chip-green">
+          <span class="stat-label">STATUS</span>
+          <span id="preview-status">Ready</span>
+        </div>
+      </div>
+      <div id="error-bubble" class="error-bubble">
+        &#x1F4A5; <span id="error-msg">Please enter some HTML code to preview</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- EDITOR + PREVIEW SPLIT -->
+  <div class="split-panels">
+
+    <!-- HTML CODE INPUT -->
+    <div class="panel" style="margin-bottom:0;">
+      <div class="panel-header">
+        &#x270F;&#xFE0F; HTML CODE
+        <span class="panel-tag">INPUT</span>
+      </div>
+      <div class="panel-body">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">
+          <div class="section-label" style="margin-bottom:0;">Your Markup</div>
+          <button id="copy-html-btn" class="btn btn-neutral" style="font-size:.85rem;padding:4px 12px;box-shadow:2px 2px 0 var(--ink);">&#x1F4CB; Copy</button>
+        </div>
+        <textarea
+          id="html-input"
+          class="comic-textarea"
+          rows="18"
+          placeholder="Enter your HTML code here...&#10;&#10;Example:&#10;&lt;h1&gt;Hello World&lt;/h1&gt;&#10;&lt;p&gt;This is a paragraph.&lt;/p&gt;"
+        ></textarea>
+      </div>
+    </div>
+
+    <!-- PREVIEW -->
+    <div class="panel" style="margin-bottom:0;">
+      <div class="panel-header">
+        &#x1F50D; LIVE PREVIEW
+        <span class="panel-tag">OUTPUT</span>
+      </div>
+      <div class="panel-body">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">
+          <div class="section-label" style="margin-bottom:0;">Rendered HTML</div>
+          <button id="refresh-preview-btn" class="btn btn-neutral" style="font-size:.85rem;padding:4px 12px;box-shadow:2px 2px 0 var(--ink);">&#x1F504; Refresh</button>
+        </div>
+        <div class="preview-wrap">
+          <iframe
+            id="html-preview"
+            sandbox="allow-same-origin allow-scripts"
+            title="HTML Preview"
+          ></iframe>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- /split-panels -->
+
+  <!-- HOW IT WORKS -->
+  <div class="panel" style="margin-top:22px;">
+    <div class="panel-header">
+      &#x1F9E0; HOW TO USE
+      <span class="panel-tag">GUIDE</span>
+    </div>
+    <div class="panel-body">
+      <div style="display:flex;flex-direction:column;gap:10px;">
+        <div style="display:flex;align-items:flex-start;gap:12px;">
+          <div style="width:28px;height:28px;border-radius:50%;border:3px solid var(--ink);display:flex;align-items:center;justify-content:center;font-family:'Bangers',cursive;font-size:1rem;color:#fff;flex-shrink:0;box-shadow:2px 2px 0 var(--ink);background:var(--blue);">1</div>
+          <p style="font-size:.88rem;line-height:1.5;padding-top:2px;">Type or paste your <strong>HTML code</strong> in the left panel — full documents or snippets both work.</p>
+        </div>
+        <div style="display:flex;align-items:flex-start;gap:12px;">
+          <div style="width:28px;height:28px;border-radius:50%;border:3px solid var(--ink);display:flex;align-items:center;justify-content:center;font-family:'Bangers',cursive;font-size:1rem;color:#fff;flex-shrink:0;box-shadow:2px 2px 0 var(--ink);background:var(--green);">2</div>
+          <p style="font-size:.88rem;line-height:1.5;padding-top:2px;">Click <strong>Preview HTML</strong> to render it, or enable <strong>Auto Preview</strong> to see changes as you type.</p>
+        </div>
+        <div style="display:flex;align-items:flex-start;gap:12px;">
+          <div style="width:28px;height:28px;border-radius:50%;border:3px solid var(--ink);display:flex;align-items:center;justify-content:center;font-family:'Bangers',cursive;font-size:1rem;color:#fff;flex-shrink:0;box-shadow:2px 2px 0 var(--ink);background:var(--orange);">3</div>
+          <p style="font-size:.88rem;line-height:1.5;padding-top:2px;">Use <strong>Load File</strong> to open a local <code style="font-family:'Space Mono',monospace;font-size:.75rem;background:var(--ink);color:var(--yellow);padding:1px 5px;border-radius:3px;">.html</code> or <code style="font-family:'Space Mono',monospace;font-size:.75rem;background:var(--ink);color:var(--yellow);padding:1px 5px;border-radius:3px;">.htm</code> file directly from your computer.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div><!-- /page-wrap -->
+
+<!-- Hidden file input -->
+<input type="file" id="file-input" accept=".html,.htm,.txt" style="display:none;">
+
+<script>
+(function() {
+  var htmlInput        = document.getElementById('html-input');
+  var previewBtn       = document.getElementById('preview-btn');
+  var autoToggle       = document.getElementById('auto-preview-toggle');
+  var htmlPreview      = document.getElementById('html-preview');
+  var charCount        = document.getElementById('char-count');
+  var previewStatus    = document.getElementById('preview-status');
+  var clearAllBtn      = document.getElementById('clear-all-btn');
+  var copyHtmlBtn      = document.getElementById('copy-html-btn');
+  var loadFileBtn      = document.getElementById('load-file-btn');
+  var refreshPreviewBtn= document.getElementById('refresh-preview-btn');
+  var fileInput        = document.getElementById('file-input');
+  var errBubble        = document.getElementById('error-bubble');
+  var errMsg           = document.getElementById('error-msg');
+
+  var autoPreviewEnabled = false;
+
+  function showError(msg) {
+    errMsg.textContent = msg;
+    errBubble.classList.add('show');
+  }
+  function hideError() { errBubble.classList.remove('show'); }
+
+  function updatePreview() {
+    var html = htmlInput.value.trim();
+    if (!html) { showError('Please enter some HTML code to preview'); return; }
+    try {
+      var iframeDoc = htmlPreview.contentDocument || htmlPreview.contentWindow.document;
+      iframeDoc.open();
+      iframeDoc.write(html);
+      iframeDoc.close();
+      hideError();
+      previewStatus.textContent = 'Rendered';
+    } catch(e) {
+      showError('Error rendering HTML: ' + e.message);
+    }
+  }
+
+  htmlInput.addEventListener('input', function() {
+    var count = this.value.length;
+    charCount.textContent = count;
+    if (autoPreviewEnabled && this.value.trim()) updatePreview();
+  });
+
+  previewBtn.addEventListener('click', updatePreview);
+  refreshPreviewBtn.addEventListener('click', updatePreview);
+
+  autoToggle.addEventListener('click', function() {
+    autoPreviewEnabled = !autoPreviewEnabled;
+    if (autoPreviewEnabled) {
+      autoToggle.textContent = '⚡ Disable Auto Preview';
+      autoToggle.classList.remove('btn-success');
+      autoToggle.classList.add('btn-orange');
+      if (htmlInput.value.trim()) updatePreview();
+    } else {
+      autoToggle.textContent = '⚡ Enable Auto Preview';
+      autoToggle.classList.remove('btn-orange');
+      autoToggle.classList.add('btn-success');
+    }
+  });
+
+  loadFileBtn.addEventListener('click', function() { fileInput.click(); });
+
+  fileInput.addEventListener('change', function(e) {
+    var file = e.target.files[0];
+    if (file) {
+      var reader = new FileReader();
+      reader.onload = function(e) {
+        htmlInput.value = e.target.result;
+        charCount.textContent = htmlInput.value.length;
+        if (autoPreviewEnabled) updatePreview();
+      };
+      reader.readAsText(file);
+    }
+  });
+
+  copyHtmlBtn.addEventListener('click', function() {
+    try { navigator.clipboard.writeText(htmlInput.value).catch(function(){}); } catch(e) {}
+    var orig = copyHtmlBtn.textContent;
+    copyHtmlBtn.textContent = '✔ Copied!';
+    setTimeout(function() { copyHtmlBtn.textContent = orig; }, 2000);
+  });
+
+  clearAllBtn.addEventListener('click', function() {
+    htmlInput.value = '';
+    charCount.textContent = '0';
+    previewStatus.textContent = 'Ready';
+    try {
+      var iframeDoc = htmlPreview.contentDocument || htmlPreview.contentWindow.document;
+      iframeDoc.open(); iframeDoc.write(''); iframeDoc.close();
+    } catch(e) {}
+    hideError();
+  });
+
+  // Preload example
+  window.addEventListener('load', function() {
+    htmlInput.value = '<!DOCTYPE html>\n<html>\n<head>\n  <title>Hello DevDunia</title>\n  <style>\n    body {\n      font-family: Arial, sans-serif;\n      padding: 20px;\n      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);\n      color: white;\n    }\n    h1 { text-align: center; margin-top: 50px; }\n    p  { text-align: center; font-size: 18px; }\n  </style>\n</head>\n<body>\n  <h1>🚀 Welcome to HTML Viewer!</h1>\n  <p>Edit the HTML code on the left to see live preview here.</p>\n<script src="masthead.js"></script>
+<script src="hero-banner.js"></script>
+<script src="author-card.js"></script>
+</body>\n</html>';
+    charCount.textContent = htmlInput.value.length;
+    updatePreview();
+  });
+})();
+</script>
+<script src="masthead.js"></script>
+<script src="hero-banner.js"></script>
+<script src="author-card.js"></script>
+</body>
 </html>

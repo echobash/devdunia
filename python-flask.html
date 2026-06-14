@@ -2,9 +2,229 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta http-equiv="refresh" content="0; url=production/python-flask.html">
-<title>DevDunia</title>
-<script>window.location.replace('production/python-flask.html')</script>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Python Flask API — DevDunia Comics</title>
+<meta name="description" content="Simple Flask API endpoints, routing, and request handling. Free online Python Flask examples for developers.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://devdunia.com/production/python-flask.html">
+<meta property="og:title" content="Python Flask API — DevDunia Comics">
+<meta property="og:description" content="Simple Flask API endpoints, routing, and request handling examples.">
+<meta property="og:image" content="https://devdunia.com/images/logo.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Bangers&family=Comic+Neue:wght@400;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+:root{--ink:#1a1410;--paper:#fdf3e3;--paper2:#fbe9cc;--red:#e63946;--blue:#1d6fb8;--yellow:#ffd23f;--green:#3fa34d;--pink:#ff6b9d;--purple:#8a4fff;--orange:#ff8c42;}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'Comic Neue',cursive;font-weight:400;color:var(--ink);background-color:var(--paper);background-image:radial-gradient(var(--ink) 0.5px,transparent 0.6px);background-size:14px 14px;background-attachment:fixed;min-height:100vh;}
+.paper-overlay{position:fixed;inset:0;background:rgba(253,243,227,.78);pointer-events:none;z-index:0;}
+.page-wrap{position:relative;z-index:1;max-width: 1240px;margin:0 auto;padding: 20px 32px 60px;}
+
+
+
+
+
+
+
+.hero{display:flex;align-items:flex-start;gap:20px;background:var(--paper2);border:4px solid var(--ink);border-radius:6px;box-shadow:7px 7px 0 var(--ink);padding:20px 24px;margin-bottom:28px;transform:rotate(-0.4deg);}
+.hero-icon{font-size:3rem;line-height:1;flex-shrink:0;filter:drop-shadow(3px 3px 0 var(--ink));}
+.hero-text h1{font-family:'Bangers',cursive;font-size:2.6rem;letter-spacing:2px;color:var(--purple);-webkit-text-stroke:1px var(--ink);text-shadow:4px 4px 0 var(--ink);line-height:1;text-transform:uppercase;}
+.hero-text p{font-size:.95rem;margin-top:6px;line-height:1.5;max-width:480px;}
+.hero-badges{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px;}
+.badge{font-family:'Space Mono',monospace;font-size:.65rem;font-weight:700;padding:3px 8px;border:2px solid var(--ink);border-radius:4px;box-shadow:2px 2px 0 var(--ink);}
+.badge-blue{background:var(--blue);color:#fff;}.badge-green{background:var(--green);color:#fff;}.badge-yellow{background:var(--yellow);color:var(--ink);}.badge-purple{background:var(--purple);color:#fff;}.badge-orange{background:var(--orange);color:#fff;}
+.panel{background:var(--paper);border:4px solid var(--ink);border-radius:6px;box-shadow:7px 7px 0 var(--ink);overflow:hidden;margin-bottom:22px;}
+.panel-header{background:var(--ink);color:var(--yellow);font-family:'Bangers',cursive;font-size:1.2rem;letter-spacing:2px;padding:8px 16px;display:flex;align-items:center;justify-content:space-between;gap:10px;}
+.panel-tag{font-family:'Space Mono',monospace;font-size:.65rem;font-weight:700;background:var(--yellow);color:var(--ink);padding:2px 7px;border-radius:3px;}
+.panel-body{padding:18px 20px;}
+.type-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-bottom:14px;}
+.type-btn{font-family:'Bangers',cursive;font-size:1.05rem;letter-spacing:1px;border:3px solid var(--ink);border-radius:6px;padding:10px 8px;cursor:pointer;box-shadow:4px 4px 0 var(--ink);transition:transform .1s,box-shadow .1s;text-transform:uppercase;}
+.type-btn:active,.type-btn.active{transform:translate(2px,2px);box-shadow:2px 2px 0 var(--ink);filter:brightness(.85);}
+.btn-basic{background:var(--green);color:#fff;}.btn-crud{background:var(--blue);color:#fff;}.btn-auth{background:var(--purple);color:#fff;}
+.config-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:14px;}
+.section-label{font-family:'Bangers',cursive;font-size:.95rem;letter-spacing:1px;color:var(--ink);margin-bottom:6px;text-transform:uppercase;}
+.comic-input{width:100%;background:#fff;border:3px solid var(--ink);border-radius:6px;padding:10px 14px;font-family:'Space Mono',monospace;font-size:.82rem;color:var(--ink);box-shadow:3px 3px 0 var(--ink);outline:none;}
+.comic-input:focus{border-color:var(--purple);}
+.comic-textarea[readonly]{width:100%;background:var(--ink);color:var(--yellow);border:3px solid var(--ink);border-radius:6px;padding:12px 14px;font-family:'Space Mono',monospace;font-size:.78rem;line-height:1.6;resize:vertical;min-height:200px;outline:none;}
+.btn{font-family:'Bangers',cursive;font-size:1rem;letter-spacing:1px;border:3px solid var(--ink);border-radius:6px;padding:8px 20px;cursor:pointer;box-shadow:4px 4px 0 var(--ink);transition:transform .1s,box-shadow .1s;text-transform:uppercase;}
+.btn:active{transform:translate(2px,2px);box-shadow:2px 2px 0 var(--ink);}
+.btn-primary{background:var(--purple);color:#fff;}.btn-success{background:var(--green);color:#fff;}.btn-danger{background:var(--red);color:#fff;}
+.btn-row{display:flex;flex-wrap:wrap;gap:10px;margin-top:14px;}
+.output-wrap{position:relative;}
+.copy-btn{position:absolute;top:8px;right:8px;font-family:'Bangers',cursive;font-size:.9rem;letter-spacing:1px;background:var(--ink);color:var(--yellow);border:2px solid var(--yellow);border-radius:4px;padding:3px 10px;cursor:pointer;transition:transform .1s;}
+.copy-btn:active{transform:translate(1px,1px);}
+.req-block{background:var(--ink);color:var(--yellow);font-family:'Space Mono',monospace;font-size:.78rem;border-radius:6px;padding:12px 16px;border:3px solid var(--ink);line-height:1.5;}
+.speech-bubble{position:relative;background:var(--yellow);border:3px solid var(--ink);border-radius:14px;padding:10px 14px;margin-top:14px;font-size:.88rem;font-weight:700;}
+.speech-bubble::before{content:'';position:absolute;bottom:-17px;left:22px;border-width:16px 10px 0;border-style:solid;border-color:var(--ink) transparent transparent;}
+.speech-bubble::after{content:'';position:absolute;bottom:-12px;left:24px;border-width:12px 8px 0;border-style:solid;border-color:var(--yellow) transparent transparent;}
+.info-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
+.info-card{background:var(--paper2);border:3px solid var(--ink);border-radius:6px;box-shadow:4px 4px 0 var(--ink);padding:12px 14px;}
+.info-card h4{font-family:'Bangers',cursive;letter-spacing:1px;font-size:1rem;margin-bottom:6px;}
+.info-card p{font-size:.82rem;line-height:1.5;}
+.divider{border:none;border-top:3px solid var(--ink);margin:14px 0;}
+@media(max-width:760px){.type-grid{grid-template-columns:1fr;}.config-grid{grid-template-columns:1fr;}.hero{flex-direction:column;gap:10px;}.hero-text h1{font-size:2rem;}.info-grid{grid-template-columns:1fr;}}
+</style>
 </head>
-<body></body>
+<body>
+<div class="paper-overlay"></div>
+<div data-masthead></div>
+
+<div class="page-wrap">
+
+  <div data-tool-hero
+     data-title="Python Flask API"
+     data-chapter="39"
+     data-category="Developer Tools"
+     data-icon="&#x1F9AA;"
+     data-desc="Generate complete Flask API boilerplate — Basic REST, full CRUD operations, or JWT-authenticated endpoints. Configure and copy in seconds!"
+     data-color="blue"
+     data-badges="BASIC API,CRUD,JWT AUTH,FLASK-CORS"
+     data-badge-colors="green,blue,purple,orange">
+  </div>
+
+  
+
+  <!-- API TYPE -->
+  <div class="panel">
+    <div class="panel-header">&#x1F3AF; CHOOSE API TYPE <span class="panel-tag">STEP 1</span></div>
+    <div class="panel-body">
+      <div class="type-grid">
+        <button class="type-btn btn-basic active" data-type="basic">Basic API</button>
+        <button class="type-btn btn-crud" data-type="crud">CRUD API</button>
+        <button class="type-btn btn-auth" data-type="auth">Auth API</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- CONFIG -->
+  <div class="panel">
+    <div class="panel-header">&#x2699;&#xFE0F; CONFIGURE <span class="panel-tag">STEP 2</span></div>
+    <div class="panel-body">
+      <div class="config-grid">
+        <div>
+          <div class="section-label">App Name</div>
+          <input type="text" id="app-name" class="comic-input" value="my_api" placeholder="my_api">
+        </div>
+        <div>
+          <div class="section-label">Port</div>
+          <input type="number" id="port" class="comic-input" value="5000" placeholder="5000">
+        </div>
+      </div>
+      <div class="btn-row">
+        <button id="generate-btn" class="btn btn-primary">&#x26A1; Generate Flask Code!</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- OUTPUT -->
+  <div class="panel" id="output-panel" style="display:none;">
+    <div class="panel-header">&#x1F40D; GENERATED FLASK CODE <span class="panel-tag">OUTPUT</span></div>
+    <div class="panel-body">
+      <div class="output-wrap">
+        <textarea id="generated-code" class="comic-textarea" readonly rows="35" style="width:100%;background:var(--ink);color:var(--yellow);border:3px solid var(--ink);border-radius:6px;padding:12px 16px;font-family:'Space Mono',monospace;font-size:.75rem;line-height:1.55;resize:vertical;outline:none;"></textarea>
+        <button id="copy-btn" class="copy-btn">&#x1F4CB; COPY</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- REQUIREMENTS -->
+  <div class="panel">
+    <div class="panel-header">&#x1F4E6; REQUIREMENTS <span class="panel-tag">INSTALL</span></div>
+    <div class="panel-body">
+      <div class="req-block">Flask==2.3.3<br>Flask-CORS==4.0.0</div>
+      <div class="speech-bubble">
+        &#x1F4A1; <strong>Install with:</strong> <code style="background:var(--ink);color:var(--yellow);padding:2px 6px;border-radius:3px;font-family:'Space Mono',monospace;font-size:.78rem;">pip install Flask Flask-CORS</code>
+      </div>
+    </div>
+  </div>
+
+  <!-- USAGE -->
+  <div class="panel">
+    <div class="panel-header">&#x1F680; USAGE INSTRUCTIONS <span class="panel-tag">HOW TO</span></div>
+    <div class="panel-body">
+      <div class="info-grid">
+        <div class="info-card">
+          <h4 style="color:var(--blue);">1. Install</h4>
+          <p><code style="font-family:'Space Mono',monospace;font-size:.75rem;background:var(--ink);color:var(--yellow);padding:2px 5px;border-radius:3px;">pip install -r requirements.txt</code></p>
+        </div>
+        <div class="info-card">
+          <h4 style="color:var(--green);">2. Run</h4>
+          <p><code style="font-family:'Space Mono',monospace;font-size:.75rem;background:var(--ink);color:var(--yellow);padding:2px 5px;border-radius:3px;">python app.py</code></p>
+        </div>
+        <div class="info-card">
+          <h4 style="color:var(--orange);">3. Access</h4>
+          <p><code style="font-family:'Space Mono',monospace;font-size:.75rem;background:var(--ink);color:var(--yellow);padding:2px 5px;border-radius:3px;">http://localhost:5000</code></p>
+        </div>
+        <div class="info-card">
+          <h4 style="color:var(--purple);">4. Test</h4>
+          <p>Use Postman, curl, or the Python Requests generator on this site!</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+<script>
+(function(){
+  var typeBtns = document.querySelectorAll('.type-btn');
+  var appNameInput = document.getElementById('app-name');
+  var portInput = document.getElementById('port');
+  var generateBtn = document.getElementById('generate-btn');
+  var outputPanel = document.getElementById('output-panel');
+  var generatedCode = document.getElementById('generated-code');
+  var copyBtn = document.getElementById('copy-btn');
+  var selectedType = 'basic';
+
+  typeBtns.forEach(function(btn){
+    btn.addEventListener('click', function(){
+      selectedType = this.getAttribute('data-type');
+      typeBtns.forEach(function(b){ b.classList.remove('active'); });
+      this.classList.add('active');
+    });
+  });
+
+  generateBtn.addEventListener('click', function(){
+    var appName = appNameInput.value.trim() || 'my_api';
+    var port = portInput.value.trim() || '5000';
+    var code = generateFlaskCode(appName, port);
+    generatedCode.value = code;
+    generatedCode.rows = Math.max(20, code.split('\n').length + 2);
+    outputPanel.style.display = 'block';
+    outputPanel.scrollIntoView({behavior:'smooth'});
+  });
+
+  copyBtn.addEventListener('click', function(){
+    generatedCode.select();
+    try{ document.execCommand('copy'); }catch(e){}
+    if(navigator.clipboard) navigator.clipboard.writeText(generatedCode.value).catch(function(){});
+    var orig = copyBtn.textContent;
+    copyBtn.textContent = 'COPIED!';
+    copyBtn.style.background = 'var(--green)';
+    setTimeout(function(){ copyBtn.textContent=orig; copyBtn.style.background='var(--ink)'; },1800);
+  });
+
+  function generateFlaskCode(appName, port){
+    switch(selectedType){
+      case 'crud': return generateCRUDAPI(appName, port);
+      case 'auth': return generateAuthAPI(appName, port);
+      default: return generateBasicAPI(appName, port);
+    }
+  }
+
+  function generateBasicAPI(appName, port){
+    return 'from flask import Flask, jsonify, request\nfrom flask_cors import CORS\n\napp = Flask(__name__)\nCORS(app)\n\n# Sample data\nusers = [\n    {"id": 1, "name": "John Doe", "email": "john@example.com"},\n    {"id": 2, "name": "Jane Smith", "email": "jane@example.com"}\n]\n\n@app.route(\'/\')\ndef home():\n    return jsonify({\n        "message": "Welcome to ' + appName + ' API",\n        "version": "1.0.0",\n        "endpoints": [\n            "GET /users - Get all users",\n            "GET /users/<id> - Get user by ID",\n            "POST /users - Create new user"\n        ]\n    })\n\n@app.route(\'/users\', methods=[\'GET\'])\ndef get_users():\n    return jsonify(users)\n\n@app.route(\'/users/<int:user_id>\', methods=[\'GET\'])\ndef get_user(user_id):\n    user = next((u for u in users if u[\'id\'] == user_id), None)\n    if user:\n        return jsonify(user)\n    return jsonify({"error": "User not found"}), 404\n\n@app.route(\'/users\', methods=[\'POST\'])\ndef create_user():\n    data = request.get_json()\n    if not data or \'name\' not in data or \'email\' not in data:\n        return jsonify({"error": "Name and email are required"}), 400\n    new_user = {\n        "id": len(users) + 1,\n        "name": data[\'name\'],\n        "email": data[\'email\']\n    }\n    users.append(new_user)\n    return jsonify(new_user), 201\n\n@app.route(\'/health\')\ndef health_check():\n    return jsonify({"status": "healthy", "service": "' + appName + '"})\n\nif __name__ == \'__main__\':\n    app.run(debug=True, host=\'0.0.0.0\', port=' + port + ')';
+  }
+
+  function generateCRUDAPI(appName, port){
+    return 'from flask import Flask, jsonify, request\nfrom flask_cors import CORS\n\napp = Flask(__name__)\nCORS(app)\n\n# In-memory database (replace with real database in production)\nitems = [\n    {"id": 1, "name": "Item 1", "description": "First item", "price": 10.99},\n    {"id": 2, "name": "Item 2", "description": "Second item", "price": 20.99}\n]\n\n@app.route(\'/\')\ndef home():\n    return jsonify({\n        "message": "Welcome to ' + appName + ' CRUD API",\n        "version": "1.0.0"\n    })\n\n# READ - Get all items\n@app.route(\'/items\', methods=[\'GET\'])\ndef get_items():\n    return jsonify(items)\n\n# READ - Get item by ID\n@app.route(\'/items/<int:item_id>\', methods=[\'GET\'])\ndef get_item(item_id):\n    item = next((i for i in items if i[\'id\'] == item_id), None)\n    if item:\n        return jsonify(item)\n    return jsonify({"error": "Item not found"}), 404\n\n# CREATE - Add new item\n@app.route(\'/items\', methods=[\'POST\'])\ndef create_item():\n    data = request.get_json()\n    if not data or \'name\' not in data:\n        return jsonify({"error": "Name is required"}), 400\n    new_item = {\n        "id": max([i[\'id\'] for i in items], default=0) + 1,\n        "name": data[\'name\'],\n        "description": data.get(\'description\', \'\'),\n        "price": data.get(\'price\', 0.0)\n    }\n    items.append(new_item)\n    return jsonify(new_item), 201\n\n# UPDATE - Update existing item\n@app.route(\'/items/<int:item_id>\', methods=[\'PUT\'])\ndef update_item(item_id):\n    item = next((i for i in items if i[\'id\'] == item_id), None)\n    if not item:\n        return jsonify({"error": "Item not found"}), 404\n    data = request.get_json()\n    if not data:\n        return jsonify({"error": "No data provided"}), 400\n    if \'name\' in data: item[\'name\'] = data[\'name\']\n    if \'description\' in data: item[\'description\'] = data[\'description\']\n    if \'price\' in data: item[\'price\'] = data[\'price\']\n    return jsonify(item)\n\n# DELETE - Delete item\n@app.route(\'/items/<int:item_id>\', methods=[\'DELETE\'])\ndef delete_item(item_id):\n    global items\n    item = next((i for i in items if i[\'id\'] == item_id), None)\n    if not item:\n        return jsonify({"error": "Item not found"}), 404\n    items = [i for i in items if i[\'id\'] != item_id]\n    return jsonify({"message": "Item deleted successfully"})\n\n@app.route(\'/health\')\ndef health_check():\n    return jsonify({"status": "healthy", "service": "' + appName + '"})\n\nif __name__ == \'__main__\':\n    app.run(debug=True, host=\'0.0.0.0\', port=' + port + ')';
+  }
+
+  function generateAuthAPI(appName, port){
+    return 'from flask import Flask, jsonify, request, make_response\nfrom flask_cors import CORS\nimport jwt\nimport datetime\nfrom functools import wraps\n\napp = Flask(__name__)\nCORS(app)\napp.config[\'SECRET_KEY\'] = \'your-secret-key-change-in-production\'\n\n# Sample users database\nusers_db = {\n    "admin": {"password": "admin123", "role": "admin"},\n    "user": {"password": "user123", "role": "user"}\n}\n\ndef token_required(f):\n    @wraps(f)\n    def decorated(*args, **kwargs):\n        token = request.headers.get(\'Authorization\')\n        if not token:\n            return jsonify({\'message\': \'Token is missing!\'}), 401\n        try:\n            if token.startswith(\'Bearer \'):\n                token = token[7:]\n            data = jwt.decode(token, app.config[\'SECRET_KEY\'], algorithms=[\'HS256\'])\n            current_user = data[\'user\']\n        except:\n            return jsonify({\'message\': \'Token is invalid!\'}), 401\n        return f(current_user, *args, **kwargs)\n    return decorated\n\n@app.route(\'/\')\ndef home():\n    return jsonify({\n        "message": "Welcome to ' + appName + ' Auth API",\n        "version": "1.0.0",\n        "endpoints": [\n            "POST /login - Login and get token",\n            "GET /protected - Protected route (requires token)",\n            "GET /admin - Admin only route"\n        ]\n    })\n\n@app.route(\'/login\', methods=[\'POST\'])\ndef login():\n    data = request.get_json()\n    if not data or \'username\' not in data or \'password\' not in data:\n        return jsonify({\'message\': \'Username and password required\'}), 400\n    username = data[\'username\']\n    password = data[\'password\']\n    if username in users_db and users_db[username][\'password\'] == password:\n        token = jwt.encode({\n            \'user\': username,\n            \'exp\': datetime.datetime.utcnow() + datetime.timedelta(hours=24)\n        }, app.config[\'SECRET_KEY\'], algorithm=\'HS256\')\n        return jsonify({\'token\': token, \'user\': username, \'role\': users_db[username][\'role\']})\n    return jsonify({\'message\': \'Invalid credentials\'}), 401\n\n@app.route(\'/protected\')\n@token_required\ndef protected(current_user):\n    return jsonify({\'message\': f\'Hello {current_user}! This is a protected route.\', \'user\': current_user})\n\n@app.route(\'/admin\')\n@token_required\ndef admin_only(current_user):\n    if users_db[current_user][\'role\'] != \'admin\':\n        return jsonify({\'message\': \'Admin access required\'}), 403\n    return jsonify({\'message\': f\'Welcome admin {current_user}!\', \'admin_data\': \'Sensitive admin information\'})\n\n@app.route(\'/health\')\ndef health_check():\n    return jsonify({"status": "healthy", "service": "' + appName + '"})\n\nif __name__ == \'__main__\':\n    app.run(debug=True, host=\'0.0.0.0\', port=' + port + ')';
+  }
+})();
+</script>
+<script src="masthead.js"></script>
+<script src="hero-banner.js"></script>
+<script src="author-card.js"></script>
+</body>
 </html>

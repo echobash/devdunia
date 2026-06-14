@@ -2,9 +2,446 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta http-equiv="refresh" content="0; url=production/env-generator.html">
-<title>DevDunia</title>
-<script>window.location.replace('production/env-generator.html')</script>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ENV Generator — DevDunia Comics</title>
+<meta name="description" content="Generate .env files and environment variables for your projects. Free online environment variable generator for developers.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://devdunia.com/production/env-generator.html">
+<meta property="og:title" content="ENV Generator — DevDunia Comics">
+<meta property="og:description" content="Generate .env files and environment variables for your projects.">
+<meta property="og:image" content="https://devdunia.com/images/logo.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Bangers&family=Comic+Neue:wght@400;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --ink: #1a1410;
+  --paper: #fdf3e3;
+  --paper2: #fbe9cc;
+  --red: #e63946;
+  --blue: #1d6fb8;
+  --yellow: #ffd23f;
+  --green: #3fa34d;
+  --pink: #ff6b9d;
+  --purple: #8a4fff;
+  --orange: #ff8c42;
+}
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  font-family: 'Comic Neue', cursive;
+  font-weight: 400; color: var(--ink);
+  background-color: var(--paper);
+  background-image: radial-gradient(var(--ink) 0.5px, transparent 0.6px);
+  background-size: 14px 14px; background-attachment: fixed;
+  min-height: 100vh;
+}
+.paper-overlay { position: fixed; inset: 0; background: rgba(253,243,227,.78); pointer-events: none; z-index: 0; }
+.page-wrap { position: relative; z-index: 1; max-width: 1240px; margin: 0 auto; padding: 20px 32px 60px; }
+
+
+
+
+
+
+
+
+/* HERO */
+.hero {
+  display: flex; align-items: flex-start; gap: 20px;
+  background: var(--paper2); border: 4px solid var(--ink); border-radius: 6px;
+  box-shadow: 7px 7px 0 var(--ink); padding: 20px 24px;
+  margin-bottom: 28px; transform: rotate(-0.4deg);
+}
+.hero-icon { font-size: 3rem; line-height: 1; flex-shrink: 0; filter: drop-shadow(3px 3px 0 var(--ink)); }
+.hero-text h1 { font-family: 'Bangers', cursive; font-size: 2.8rem; letter-spacing: 2px; color: var(--green); -webkit-text-stroke: 1px var(--ink); text-shadow: 4px 4px 0 var(--ink); line-height: 1; text-transform: uppercase; }
+.hero-text p { font-size: .95rem; margin-top: 6px; line-height: 1.5; max-width: 480px; }
+.hero-badges { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 10px; }
+.badge { font-family: 'Space Mono', monospace; font-size: .65rem; font-weight: 700; padding: 3px 8px; border: 2px solid var(--ink); border-radius: 4px; box-shadow: 2px 2px 0 var(--ink); }
+.badge-blue   { background: var(--blue);   color: #fff; }
+.badge-green  { background: var(--green);  color: #fff; }
+.badge-yellow { background: var(--yellow); color: var(--ink); }
+.badge-red    { background: var(--red);    color: #fff; }
+/* PANEL */
+.panel { background: var(--paper); border: 4px solid var(--ink); border-radius: 6px; box-shadow: 7px 7px 0 var(--ink); overflow: hidden; margin-bottom: 22px; }
+.panel-header { background: var(--ink); color: var(--yellow); font-family: 'Bangers', cursive; font-size: 1.2rem; letter-spacing: 2px; padding: 8px 16px; display: flex; align-items: center; justify-content: space-between; gap: 10px; }
+.panel-header .panel-tag { font-family: 'Space Mono', monospace; font-size: .65rem; font-weight: 700; background: var(--yellow); color: var(--ink); padding: 2px 7px; border-radius: 3px; }
+.panel-body { padding: 18px 20px; }
+/* SECTION LABEL */
+.section-label { font-family: 'Bangers', cursive; font-size: .95rem; letter-spacing: 1px; color: var(--ink); margin-bottom: 6px; text-transform: uppercase; }
+/* COMIC SELECT */
+.comic-select {
+  width: 100%; background: #fff; border: 3px solid var(--ink); border-radius: 6px;
+  padding: 9px 12px; font-family: 'Comic Neue', cursive; font-size: .9rem; color: var(--ink);
+  box-shadow: 3px 3px 0 var(--ink); outline: none; cursor: pointer;
+  -webkit-appearance: none; appearance: none;
+}
+.comic-select:focus { border-color: var(--green); }
+/* MAIN LAYOUT */
+.builder-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 18px; }
+/* VARIABLE ROWS */
+.variable-row {
+  background: var(--paper2); border: 3px solid var(--ink); border-radius: 6px;
+  padding: 14px 16px; margin-bottom: 12px;
+  box-shadow: 3px 3px 0 var(--ink);
+}
+.var-inputs { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; margin-bottom: 10px; }
+.var-input-group { display: flex; flex-direction: column; gap: 4px; }
+.var-input-label { font-family: 'Space Mono', monospace; font-size: .68rem; color: var(--ink); opacity: .7; }
+.comic-input {
+  width: 100%; background: #fff; border: 2px solid var(--ink); border-radius: 4px;
+  padding: 7px 10px; font-family: 'Space Mono', monospace; font-size: .78rem;
+  color: var(--ink); box-shadow: 2px 2px 0 var(--ink); outline: none;
+}
+.comic-input:focus { border-color: var(--green); }
+.var-row-footer { display: flex; justify-content: space-between; align-items: center; }
+.comic-check-label { display: flex; align-items: center; gap: 8px; cursor: pointer; font-size: .85rem; }
+.comic-check-label input[type="checkbox"] { width: 16px; height: 16px; accent-color: var(--red); cursor: pointer; }
+/* TEXTAREA */
+.comic-textarea {
+  width: 100%; background: #fff; border: 3px solid var(--ink); border-radius: 6px;
+  padding: 12px 14px; font-family: 'Space Mono', monospace; font-size: .78rem;
+  color: var(--ink); line-height: 1.6; resize: vertical; min-height: 300px;
+  box-shadow: 3px 3px 0 var(--ink); outline: none;
+}
+.comic-textarea[readonly] { background: var(--paper2); }
+/* OUTPUT HEADER */
+.output-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px; }
+/* BUTTONS */
+.btn { font-family: 'Bangers', cursive; font-size: 1.1rem; letter-spacing: 1px; border: 3px solid var(--ink); border-radius: 6px; padding: 8px 20px; cursor: pointer; box-shadow: 4px 4px 0 var(--ink); transition: transform .1s, box-shadow .1s; text-transform: uppercase; }
+.btn:active { transform: translate(2px,2px); box-shadow: 2px 2px 0 var(--ink); }
+.btn-primary { background: var(--green); color: #fff; }
+.btn-success { background: var(--blue);  color: #fff; }
+.btn-purple  { background: var(--purple); color: #fff; }
+.btn-danger  { background: var(--red);   color: #fff; }
+.btn-neutral { background: var(--paper2); color: var(--ink); }
+.btn-sm { font-size: .85rem; padding: 5px 14px; box-shadow: 2px 2px 0 var(--ink); }
+.btn-row { display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 16px; }
+.btn-remove { background: var(--red); color: #fff; border: 2px solid var(--ink); border-radius: 4px; padding: 4px 12px; font-family: 'Bangers', cursive; font-size: .9rem; letter-spacing: 1px; cursor: pointer; box-shadow: 2px 2px 0 var(--ink); transition: transform .1s; }
+.btn-remove:active { transform: translate(1px,1px); }
+.btn-add {
+  width: 100%; font-family: 'Bangers', cursive; font-size: 1.1rem;
+  letter-spacing: 1px; background: var(--green); color: #fff;
+  border: 3px solid var(--ink); border-radius: 6px;
+  padding: 10px; cursor: pointer; box-shadow: 4px 4px 0 var(--ink);
+  transition: transform .1s, box-shadow .1s; text-transform: uppercase;
+}
+.btn-add:active { transform: translate(2px,2px); box-shadow: 2px 2px 0 var(--ink); }
+/* TEMPLATES GRID */
+.templates-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; }
+.template-btn {
+  font-family: 'Bangers', cursive; font-size: .95rem; letter-spacing: 1px;
+  background: var(--paper2); color: var(--ink); border: 3px solid var(--ink);
+  border-radius: 6px; padding: 8px 10px; cursor: pointer;
+  box-shadow: 3px 3px 0 var(--ink); transition: transform .1s, box-shadow .1s;
+  text-align: center;
+}
+.template-btn:hover { background: var(--yellow); }
+.template-btn:active { transform: translate(2px,2px); box-shadow: 1px 1px 0 var(--ink); }
+/* PRACTICES */
+.practice-list { list-style: none; display: flex; flex-direction: column; gap: 8px; }
+.practice-list li { display: flex; align-items: flex-start; gap: 10px; font-size: .9rem; line-height: 1.4; }
+.practice-list li::before { content: '✓'; font-family: 'Bangers', cursive; font-size: 1.1rem; color: var(--green); flex-shrink: 0; }
+@media (max-width: 760px) {
+  .builder-grid { grid-template-columns: 1fr; }
+  .var-inputs { grid-template-columns: 1fr; }
+  .templates-grid { grid-template-columns: repeat(2, 1fr); }
+  .hero { flex-direction: column; gap: 10px; }
+  .hero-text h1 { font-size: 2rem; }
+}
+</style>
 </head>
-<body></body>
+<body>
+<div class="paper-overlay"></div>
+<div data-masthead></div>
+
+<div class="page-wrap">
+
+  <div data-tool-hero
+     data-title="ENV Generator"
+     data-chapter="18"
+     data-category="Generators"
+     data-icon="&#x1F4C1;"
+     data-desc="Build .env files for any project type — Node.js, React, Laravel, Django, Docker and more. Add variables, mark secrets, download ready-to-use config files!"
+     data-color="orange"
+     data-badges="10+ TEMPLATES,DOWNLOAD .ENV,FREE,INSTANT"
+     data-badge-colors="green,blue,yellow,red">
+  </div>
+
+  <!-- MASTHEAD -->
+
+  <!-- HERO -->
+  
+
+  <!-- PROJECT TYPE -->
+  <div class="panel">
+    <div class="panel-header">
+      &#x1F3AF; PROJECT TYPE
+      <span class="panel-tag">CONFIG</span>
+    </div>
+    <div class="panel-body">
+      <div class="section-label">Select Project Type</div>
+      <select id="project-type" class="comic-select">
+        <option value="custom">Custom</option>
+        <option value="nodejs">Node.js</option>
+        <option value="react">React</option>
+        <option value="vue">Vue.js</option>
+        <option value="angular">Angular</option>
+        <option value="laravel">Laravel</option>
+        <option value="django">Django</option>
+        <option value="flask">Flask</option>
+        <option value="spring">Spring Boot</option>
+        <option value="rails">Ruby on Rails</option>
+        <option value="docker">Docker</option>
+        <option value="kubernetes">Kubernetes</option>
+      </select>
+    </div>
+  </div>
+
+  <!-- BUILDER PANEL -->
+  <div class="panel">
+    <div class="panel-header">
+      &#x1F6E0; BUILD YOUR .ENV
+      <span class="panel-tag">BUILDER</span>
+    </div>
+    <div class="panel-body">
+      <div class="builder-grid">
+        <!-- Left: Variables -->
+        <div>
+          <div class="section-label">&#x2795; Add Environment Variables</div>
+          <div id="variables-container"></div>
+          <button id="add-variable-btn" class="btn-add">&#x2795; Add Variable</button>
+        </div>
+
+        <!-- Right: Output -->
+        <div>
+          <div class="output-header">
+            <div class="section-label">&#x1F4C4; Generated .env File</div>
+            <button id="copy-env-btn" class="btn btn-neutral btn-sm">&#x1F4CB; Copy</button>
+          </div>
+          <textarea id="env-output" class="comic-textarea" readonly></textarea>
+        </div>
+      </div>
+
+      <div class="btn-row">
+        <button id="generate-btn" class="btn btn-primary">&#x26A1; Generate .env</button>
+        <button id="download-btn" class="btn btn-purple">&#x1F4E5; Download .env</button>
+        <button id="clear-all-btn" class="btn btn-danger">&#x1F5D1; Clear All</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- QUICK TEMPLATES -->
+  <div class="panel">
+    <div class="panel-header">
+      &#x1F9E9; QUICK TEMPLATES
+      <span class="panel-tag">SHORTCUTS</span>
+    </div>
+    <div class="panel-body">
+      <div class="templates-grid">
+        <button class="template-btn" data-template="nodejs">Node.js</button>
+        <button class="template-btn" data-template="react">React</button>
+        <button class="template-btn" data-template="laravel">Laravel</button>
+        <button class="template-btn" data-template="django">Django</button>
+        <button class="template-btn" data-template="docker">Docker</button>
+        <button class="template-btn" data-template="database">Database</button>
+        <button class="template-btn" data-template="api">API Keys</button>
+        <button class="template-btn" data-template="auth">Auth</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- BEST PRACTICES -->
+  <div class="panel">
+    <div class="panel-header">
+      &#x1F9E0; BEST PRACTICES
+      <span class="panel-tag">TIPS</span>
+    </div>
+    <div class="panel-body">
+      <ul class="practice-list">
+        <li><strong>Never commit .env files</strong> to version control</li>
+        <li><strong>Use descriptive names</strong> for environment variables</li>
+        <li><strong>Add .env to .gitignore</strong> to prevent accidental commits</li>
+        <li><strong>Use different values</strong> for development, staging, and production</li>
+        <li><strong>Keep sensitive data secure</strong> and use proper encryption</li>
+        <li><strong>Document your variables</strong> in README or documentation</li>
+      </ul>
+    </div>
+  </div>
+
+</div><!-- /page-wrap -->
+
+<script>
+(function() {
+  var projectTypeSelect = document.getElementById('project-type');
+  var variablesContainer = document.getElementById('variables-container');
+  var addVariableBtn = document.getElementById('add-variable-btn');
+  var generateBtn = document.getElementById('generate-btn');
+  var copyEnvBtn = document.getElementById('copy-env-btn');
+  var downloadBtn = document.getElementById('download-btn');
+  var clearAllBtn = document.getElementById('clear-all-btn');
+  var envOutput = document.getElementById('env-output');
+
+  addVariableBtn.addEventListener('click', function() { addVariableRow(); });
+  generateBtn.addEventListener('click', generateEnvFile);
+  copyEnvBtn.addEventListener('click', function() { copyToClipboard(envOutput.value); });
+  downloadBtn.addEventListener('click', downloadEnvFile);
+  clearAllBtn.addEventListener('click', function() {
+    variablesContainer.innerHTML = '';
+    envOutput.value = '';
+  });
+
+  projectTypeSelect.addEventListener('change', function() { loadProjectTemplate(this.value); });
+
+  document.querySelectorAll('.template-btn').forEach(function(btn) {
+    btn.addEventListener('click', function() { loadProjectTemplate(this.getAttribute('data-template')); });
+  });
+
+  function addVariableRow(key, value, description, isSecret) {
+    key = key || ''; value = value || ''; description = description || ''; isSecret = isSecret || false;
+    var row = document.createElement('div');
+    row.className = 'variable-row';
+    row.innerHTML = '<div class="var-inputs">' +
+      '<div class="var-input-group"><div class="var-input-label">Variable Name</div><input type="text" class="variable-key comic-input" placeholder="DATABASE_URL" value="' + escAttr(key) + '"></div>' +
+      '<div class="var-input-group"><div class="var-input-label">Value</div><input type="text" class="variable-value comic-input" placeholder="value..." value="' + escAttr(value) + '"></div>' +
+      '<div class="var-input-group"><div class="var-input-label">Description</div><input type="text" class="variable-description comic-input" placeholder="Description..." value="' + escAttr(description) + '"></div>' +
+    '</div>' +
+    '<div class="var-row-footer">' +
+      '<label class="comic-check-label"><input type="checkbox" class="variable-secret"' + (isSecret ? ' checked' : '') + '> Mark as secret</label>' +
+      '<button class="btn-remove">&#x2715; Remove</button>' +
+    '</div>';
+    variablesContainer.appendChild(row);
+
+    row.querySelector('.btn-remove').addEventListener('click', function() { row.remove(); generateEnvFile(); });
+    row.querySelectorAll('input[type="text"]').forEach(function(inp) { inp.addEventListener('input', generateEnvFile); });
+    row.querySelector('.variable-secret').addEventListener('change', generateEnvFile);
+    generateEnvFile();
+  }
+
+  function generateEnvFile() {
+    var rows = variablesContainer.querySelectorAll('.variable-row');
+    var content = '';
+    var projectType = projectTypeSelect.value;
+    if (projectType !== 'custom') {
+      content += '# ' + projectType.toUpperCase() + ' Environment Variables\n# Generated by DevDunia\n\n';
+    }
+    rows.forEach(function(row) {
+      var key  = row.querySelector('.variable-key').value.trim();
+      var val  = row.querySelector('.variable-value').value.trim();
+      var desc = row.querySelector('.variable-description').value.trim();
+      var secret = row.querySelector('.variable-secret').checked;
+      if (key && val) {
+        if (desc) content += '# ' + desc + '\n';
+        if (secret) {
+          content += '# ' + key + '=' + val + '\n' + key + '=your_' + key.toLowerCase() + '_here\n\n';
+        } else {
+          content += key + '=' + val + '\n\n';
+        }
+      }
+    });
+    envOutput.value = content;
+  }
+
+  function loadProjectTemplate(templateName) {
+    variablesContainer.innerHTML = '';
+    var templates = {
+      nodejs: [
+        { key: 'NODE_ENV', value: 'development', description: 'Environment (development, production, test)' },
+        { key: 'PORT', value: '3000', description: 'Server port' },
+        { key: 'DATABASE_URL', value: 'mongodb://localhost:27017/myapp', description: 'MongoDB connection string' },
+        { key: 'JWT_SECRET', value: 'your_jwt_secret_here', description: 'JWT signing secret', secret: true },
+        { key: 'API_KEY', value: 'your_api_key_here', description: 'External API key', secret: true }
+      ],
+      react: [
+        { key: 'REACT_APP_API_URL', value: 'http://localhost:3001/api', description: 'Backend API URL' },
+        { key: 'REACT_APP_ENV', value: 'development', description: 'Environment' },
+        { key: 'REACT_APP_VERSION', value: '1.0.0', description: 'App version' },
+        { key: 'REACT_APP_GOOGLE_ANALYTICS', value: 'GA_TRACKING_ID', description: 'Google Analytics tracking ID' }
+      ],
+      laravel: [
+        { key: 'APP_NAME', value: 'Laravel', description: 'Application name' },
+        { key: 'APP_ENV', value: 'local', description: 'Environment' },
+        { key: 'APP_KEY', value: 'base64:your_app_key_here', description: 'Application key', secret: true },
+        { key: 'APP_DEBUG', value: 'true', description: 'Debug mode' },
+        { key: 'DB_CONNECTION', value: 'mysql', description: 'Database connection' },
+        { key: 'DB_HOST', value: '127.0.0.1', description: 'Database host' },
+        { key: 'DB_PORT', value: '3306', description: 'Database port' },
+        { key: 'DB_DATABASE', value: 'laravel', description: 'Database name' },
+        { key: 'DB_USERNAME', value: 'root', description: 'Database username' },
+        { key: 'DB_PASSWORD', value: 'your_password_here', description: 'Database password', secret: true }
+      ],
+      django: [
+        { key: 'DEBUG', value: 'True', description: 'Debug mode' },
+        { key: 'SECRET_KEY', value: 'your_secret_key_here', description: 'Django secret key', secret: true },
+        { key: 'DATABASE_URL', value: 'postgresql://user:pass@localhost:5432/db', description: 'Database URL' },
+        { key: 'ALLOWED_HOSTS', value: 'localhost,127.0.0.1', description: 'Allowed hosts' },
+        { key: 'EMAIL_HOST', value: 'smtp.gmail.com', description: 'Email host' },
+        { key: 'EMAIL_PORT', value: '587', description: 'Email port' }
+      ],
+      docker: [
+        { key: 'COMPOSE_PROJECT_NAME', value: 'myapp', description: 'Docker Compose project name' },
+        { key: 'POSTGRES_DB', value: 'myapp_db', description: 'PostgreSQL database name' },
+        { key: 'POSTGRES_USER', value: 'postgres', description: 'PostgreSQL username' },
+        { key: 'POSTGRES_PASSWORD', value: 'your_password_here', description: 'PostgreSQL password', secret: true },
+        { key: 'REDIS_URL', value: 'redis://redis:6379', description: 'Redis connection URL' }
+      ],
+      database: [
+        { key: 'DB_HOST', value: 'localhost', description: 'Database host' },
+        { key: 'DB_PORT', value: '5432', description: 'Database port' },
+        { key: 'DB_NAME', value: 'myapp', description: 'Database name' },
+        { key: 'DB_USER', value: 'postgres', description: 'Database username' },
+        { key: 'DB_PASSWORD', value: 'your_password_here', description: 'Database password', secret: true },
+        { key: 'DB_SSL', value: 'false', description: 'Enable SSL connection' }
+      ],
+      api: [
+        { key: 'API_BASE_URL', value: 'https://api.example.com', description: 'Base API URL' },
+        { key: 'API_KEY', value: 'your_api_key_here', description: 'API key', secret: true },
+        { key: 'API_SECRET', value: 'your_api_secret_here', description: 'API secret', secret: true },
+        { key: 'API_TIMEOUT', value: '30000', description: 'API timeout in milliseconds' }
+      ],
+      auth: [
+        { key: 'JWT_SECRET', value: 'your_jwt_secret_here', description: 'JWT signing secret', secret: true },
+        { key: 'JWT_EXPIRES_IN', value: '24h', description: 'JWT expiration time' },
+        { key: 'REFRESH_TOKEN_SECRET', value: 'your_refresh_secret_here', description: 'Refresh token secret', secret: true },
+        { key: 'GOOGLE_CLIENT_ID', value: 'your_google_client_id', description: 'Google OAuth client ID' },
+        { key: 'GOOGLE_CLIENT_SECRET', value: 'your_google_client_secret', description: 'Google OAuth client secret', secret: true }
+      ]
+    };
+    var data = templates[templateName] || [];
+    data.forEach(function(v) { addVariableRow(v.key, v.value, v.description, v.secret); });
+    generateEnvFile();
+  }
+
+  function copyToClipboard(text) {
+    if (navigator.clipboard) {
+      navigator.clipboard.writeText(text).then(function() {
+        var orig = copyEnvBtn.textContent;
+        copyEnvBtn.textContent = '✔ Copied!';
+        copyEnvBtn.style.background = 'var(--green)';
+        copyEnvBtn.style.color = '#fff';
+        setTimeout(function() { copyEnvBtn.textContent = orig; copyEnvBtn.style.background = ''; copyEnvBtn.style.color = ''; }, 2000);
+      });
+    }
+  }
+
+  function downloadEnvFile() {
+    var content = envOutput.value;
+    if (!content.trim()) { alert('Please generate .env content first'); return; }
+    var blob = new Blob([content], { type: 'text/plain' });
+    var url = URL.createObjectURL(blob);
+    var link = document.createElement('a');
+    link.href = url; link.download = '.env'; link.click();
+    URL.revokeObjectURL(url);
+  }
+
+  function escAttr(str) {
+    return str.replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+  }
+
+  // Initialize with a default variable
+  addVariableRow('NODE_ENV', 'development', 'Environment (development, production, test)');
+})();
+</script>
+<script src="masthead.js"></script>
+<script src="hero-banner.js"></script>
+<script src="author-card.js"></script>
+</body>
 </html>

@@ -2,9 +2,732 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta http-equiv="refresh" content="0; url=production/email-header-analyzer.html">
-<title>DevDunia</title>
-<script>window.location.replace('production/email-header-analyzer.html')</script>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Email Header Analyzer — DevDunia Comics</title>
+<meta name="description" content="Analyze email headers for SPF, DKIM, DMARC validation, email spoofing detection, and security analysis.">
+<meta name="keywords" content="email security, SPF, DKIM, DMARC, email headers, phishing detection, email analysis">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://devdunia.com/email-header-analyzer.html">
+<meta property="og:title" content="Email Header Analyzer — DevDunia Comics">
+<meta property="og:description" content="Analyze email headers for SPF, DKIM, DMARC validation, email spoofing detection, and security analysis.">
+<meta property="og:image" content="https://devdunia.com/images/logo.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Bangers&family=Comic+Neue:wght@400;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --ink: #1a1410;
+  --paper: #fdf3e3;
+  --paper2: #fbe9cc;
+  --red: #e63946;
+  --blue: #1d6fb8;
+  --yellow: #ffd23f;
+  --green: #3fa34d;
+  --pink: #ff6b9d;
+  --purple: #8a4fff;
+  --orange: #ff8c42;
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: 'Comic Neue', cursive;
+  font-weight: 400;
+  color: var(--ink);
+  background-color: var(--paper);
+  background-image: radial-gradient(var(--ink) 0.5px, transparent 0.6px);
+  background-size: 14px 14px;
+  background-attachment: fixed;
+  min-height: 100vh;
+}
+
+.paper-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(253,243,227,.78);
+  pointer-events: none;
+  z-index: 0;
+}
+
+.page-wrap {
+  position: relative;
+  z-index: 1;
+  max-width: 1240px;
+  margin: 0 auto;
+  padding: 20px 32px 60px;
+}
+
+
+
+
+
+
+
+
+
+
+/* ── PANEL ── */
+.panel {
+  background: var(--paper);
+  border: 4px solid var(--ink);
+  border-radius: 6px;
+  box-shadow: 7px 7px 0 var(--ink);
+  overflow: hidden;
+  margin-bottom: 22px;
+}
+.panel-header {
+  background: var(--ink);
+  color: var(--yellow);
+  font-family: 'Bangers', cursive;
+  font-size: 1.2rem;
+  letter-spacing: 2px;
+  padding: 8px 16px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+.panel-header .panel-tag {
+  font-family: 'Space Mono', monospace;
+  font-size: .65rem;
+  font-weight: 700;
+  background: var(--yellow);
+  color: var(--ink);
+  padding: 2px 7px;
+  border-radius: 3px;
+}
+.panel-body { padding: 18px 20px; }
+
+/* ── TEXTAREA ── */
+.comic-textarea {
+  width: 100%;
+  background: #fff;
+  border: 3px solid var(--ink);
+  border-radius: 6px;
+  padding: 12px 14px;
+  font-family: 'Space Mono', monospace;
+  font-size: .78rem;
+  color: var(--ink);
+  line-height: 1.6;
+  resize: vertical;
+  min-height: 200px;
+  box-shadow: inset 3px 3px 0 rgba(0,0,0,.06);
+  outline: none;
+  transition: border-color .15s;
+}
+.comic-textarea:focus { border-color: var(--blue); }
+.comic-textarea::placeholder { color: #aaa; font-style: italic; }
+
+/* ── BUTTONS ── */
+.btn-row { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 14px; }
+.btn {
+  font-family: 'Bangers', cursive;
+  font-size: 1.1rem;
+  letter-spacing: 1px;
+  border: 3px solid var(--ink);
+  border-radius: 6px;
+  padding: 8px 20px;
+  cursor: pointer;
+  box-shadow: 4px 4px 0 var(--ink);
+  transition: transform .1s, box-shadow .1s;
+  text-transform: uppercase;
+}
+.btn:active { transform: translate(2px,2px); box-shadow: 2px 2px 0 var(--ink); }
+.btn-primary { background: var(--blue);   color: #fff; }
+.btn-success { background: var(--green);  color: #fff; }
+.btn-danger  { background: var(--red);    color: #fff; }
+.btn-neutral { background: var(--paper2); color: var(--ink); }
+
+/* ── SECTION LABEL ── */
+.section-label {
+  font-family: 'Bangers', cursive;
+  font-size: .95rem;
+  letter-spacing: 1px;
+  color: var(--ink);
+  margin-bottom: 6px;
+  text-transform: uppercase;
+}
+
+/* ── ERROR BUBBLE ── */
+.error-bubble {
+  display: none;
+  position: relative;
+  background: #fff0f0;
+  border: 3px solid var(--red);
+  border-radius: 14px;
+  padding: 10px 14px;
+  margin-top: 12px;
+  font-size: .9rem;
+  font-weight: 700;
+  color: var(--red);
+}
+.error-bubble::before {
+  content: '';
+  position: absolute;
+  top: -16px; left: 22px;
+  border-width: 0 10px 16px;
+  border-style: solid;
+  border-color: transparent transparent var(--red);
+}
+.error-bubble::after {
+  content: '';
+  position: absolute;
+  top: -11px; left: 24px;
+  border-width: 0 8px 12px;
+  border-style: solid;
+  border-color: transparent transparent #fff0f0;
+}
+.error-bubble.show { display: block; }
+
+/* ── SECURITY OVERVIEW GRID ── */
+.security-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 14px;
+  margin-bottom: 4px;
+}
+.security-card {
+  border: 3px solid var(--ink);
+  border-radius: 6px;
+  padding: 14px 16px;
+  box-shadow: 4px 4px 0 var(--ink);
+}
+.security-card .sc-title {
+  font-family: 'Bangers', cursive;
+  font-size: 1.1rem;
+  letter-spacing: 1px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 6px;
+}
+.security-card p { font-size: .82rem; line-height: 1.4; }
+
+.sc-blue   { background: #e8f0ff; border-color: var(--blue); }
+.sc-purple { background: #f0e8ff; border-color: var(--purple); }
+.sc-orange { background: #fff3e8; border-color: var(--orange); }
+
+.status-icon { font-size: 1.3rem; }
+.status-pass   { color: var(--green); }
+.status-fail   { color: var(--red); }
+.status-warn   { color: var(--orange); }
+.status-info   { color: var(--blue); }
+.status-unknown{ color: #888; }
+
+/* ── DETAIL GRID ── */
+.detail-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+}
+.detail-card {
+  border: 3px solid var(--ink);
+  border-radius: 6px;
+  box-shadow: 4px 4px 0 var(--ink);
+  overflow: hidden;
+}
+.detail-card-header {
+  background: var(--ink);
+  color: var(--yellow);
+  font-family: 'Bangers', cursive;
+  font-size: 1rem;
+  letter-spacing: 1px;
+  padding: 6px 14px;
+}
+.detail-card-body { padding: 12px 14px; font-size: .84rem; line-height: 1.5; }
+.detail-row { display: flex; justify-content: space-between; margin-bottom: 6px; gap: 8px; }
+.detail-label { opacity: .7; }
+.detail-value { font-family: 'Space Mono', monospace; font-size: .75rem; font-weight: 700; }
+
+/* ── PARSED HEADERS ── */
+.parsed-headers-box {
+  background: var(--ink);
+  border-radius: 6px;
+  padding: 14px;
+  max-height: 320px;
+  overflow-y: auto;
+  font-family: 'Space Mono', monospace;
+  font-size: .72rem;
+  line-height: 1.6;
+  word-break: break-all;
+}
+.parsed-headers-box .header-key { color: var(--yellow); font-weight: 700; }
+.parsed-headers-box .header-val { color: #f8f8f2; }
+
+/* ── COPY BTN INLINE ── */
+.copy-btn-sm {
+  font-family: 'Bangers', cursive;
+  font-size: .9rem;
+  letter-spacing: 1px;
+  background: var(--ink);
+  color: var(--yellow);
+  border: 2px solid var(--ink);
+  border-radius: 4px;
+  padding: 3px 10px;
+  cursor: pointer;
+  box-shadow: 2px 2px 0 rgba(0,0,0,.4);
+  transition: transform .1s;
+}
+.copy-btn-sm:active { transform: translate(1px,1px); }
+
+/* ── WARNING / INFO CARD ── */
+.check-card {
+  border: 3px solid var(--ink);
+  border-radius: 6px;
+  padding: 10px 14px;
+  margin-bottom: 8px;
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+}
+.check-icon { font-size: 1.2rem; flex-shrink: 0; }
+.check-content strong { display: block; font-family: 'Bangers', cursive; font-size: 1rem; letter-spacing: 1px; }
+.check-content span { font-size: .82rem; }
+.check-card.warn { background: #fff8e8; border-color: var(--orange); }
+.check-card.info { background: #e8f0ff; border-color: var(--blue); }
+
+/* ── EXPLAINER GRID ── */
+.explainer-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; }
+.explainer-card {
+  border: 3px solid var(--ink);
+  border-radius: 6px;
+  box-shadow: 4px 4px 0 var(--ink);
+  overflow: hidden;
+}
+.explainer-card-header {
+  font-family: 'Bangers', cursive;
+  font-size: 1rem;
+  letter-spacing: 1px;
+  padding: 6px 14px;
+}
+.explainer-card-body { padding: 10px 12px; font-size: .82rem; line-height: 1.5; }
+.explainer-card-body code {
+  font-family: 'Space Mono', monospace;
+  font-size: .7rem;
+  background: var(--ink);
+  color: var(--yellow);
+  padding: 1px 4px;
+  border-radius: 3px;
+  word-break: break-all;
+}
+.ecard-blue   { background: var(--blue);   color: #fff; }
+.ecard-purple { background: var(--purple); color: #fff; }
+.ecard-orange { background: var(--orange); color: #fff; }
+
+/* ── BEST PRACTICES ── */
+.bp-list { list-style: none; display: flex; flex-direction: column; gap: 5px; }
+.bp-list li { font-size: .85rem; line-height: 1.5; padding-left: 20px; position: relative; }
+.bp-list li::before { content: '▸'; position: absolute; left: 0; color: var(--green); font-weight: 700; }
+
+/* ── DIVIDER ── */
+.divider { border: none; border-top: 3px solid var(--ink); margin: 16px 0; }
+
+/* ── MOBILE ── */
+@media (max-width: 760px) {
+  .security-grid { grid-template-columns: 1fr; }
+  .detail-grid   { grid-template-columns: 1fr; }
+  .explainer-grid { grid-template-columns: 1fr; }
+}
+</style>
 </head>
-<body></body>
+<body>
+<div class="paper-overlay"></div>
+<div data-masthead></div>
+
+<div class="page-wrap">
+
+  <!-- MASTHEAD -->
+
+  <!-- HERO -->
+  <div data-tool-hero
+       data-title="Email Header Analyzer"
+       data-chapter="03"
+       data-category="Security &amp; VAPT"
+       data-icon="&#x1F4E7;"
+       data-desc="Paste raw email headers and extract sender IP&#44; mail path&#44; SPF&#44; DKIM and spam score information."
+       data-color="red"
+       data-badges="EMAIL,SPF,DKIM,FREE"
+       data-badge-colors="red,orange,blue,yellow">
+  </div>
+
+  <!-- INPUT PANEL -->
+  <div class="panel">
+    <div class="panel-header">
+      &#x1F4E5; PASTE EMAIL HEADERS
+      <span class="panel-tag">INPUT</span>
+    </div>
+    <div class="panel-body">
+      <p style="font-size:.88rem;line-height:1.5;margin-bottom:12px;">Paste the raw email headers below to analyze SPF, DKIM, DMARC records and detect potential security issues.</p>
+      <div class="section-label">Email Headers (Raw Format)</div>
+      <textarea
+        id="email-headers"
+        class="comic-textarea"
+        rows="10"
+        placeholder="Received: from mail.example.com (mail.example.com [192.168.1.1])&#10;Authentication-Results: mx.google.com;&#10;    dkim=pass header.i=@example.com;&#10;    spf=pass smtp.mailfrom=sender@example.com;&#10;    dmarc=pass header.from=example.com&#10;DKIM-Signature: v=1; a=rsa-sha256; d=example.com;&#10;From: Sender Name &lt;sender@example.com&gt;&#10;To: user@gmail.com&#10;Subject: Test Email"
+      ></textarea>
+
+      <div class="btn-row">
+        <button id="analyze-btn" class="btn btn-primary">&#x1F50D; Analyze Headers</button>
+        <button id="clear-btn" class="btn btn-danger">&#x1F5D1; Clear</button>
+        <button id="example-btn" class="btn btn-success">&#x1F4A1; Load Example</button>
+      </div>
+
+      <div id="error-bubble" class="error-bubble">
+        &#x1F4A5; <span id="error-msg">Please paste email headers to analyze.</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ANALYSIS RESULTS (hidden until analyzed) -->
+  <div id="analysis-results" style="display:none;">
+
+    <!-- SECURITY STATUS OVERVIEW -->
+    <div class="panel">
+      <div class="panel-header">
+        &#x1F6E1;&#xFE0F; SECURITY STATUS OVERVIEW
+        <span class="panel-tag">RESULTS</span>
+      </div>
+      <div class="panel-body">
+        <div id="security-overview" class="security-grid">
+          <!-- populated by JS -->
+        </div>
+      </div>
+    </div>
+
+    <!-- DETAILED ANALYSIS GRID -->
+    <div class="detail-grid" style="margin-bottom:22px;">
+      <!-- SPF -->
+      <div class="detail-card">
+        <div class="detail-card-header">&#x2705; SPF — Sender Policy Framework</div>
+        <div class="detail-card-body" id="spf-analysis"><!-- JS --></div>
+      </div>
+      <!-- DKIM -->
+      <div class="detail-card">
+        <div class="detail-card-header">&#x1F511; DKIM — DomainKeys Identified Mail</div>
+        <div class="detail-card-body" id="dkim-analysis"><!-- JS --></div>
+      </div>
+      <!-- DMARC -->
+      <div class="detail-card">
+        <div class="detail-card-header">&#x1F6E1;&#xFE0F; DMARC — Domain-based Authentication</div>
+        <div class="detail-card-body" id="dmarc-analysis"><!-- JS --></div>
+      </div>
+      <!-- Additional checks -->
+      <div class="detail-card">
+        <div class="detail-card-header">&#x26A0;&#xFE0F; Additional Security Checks</div>
+        <div class="detail-card-body" id="additional-checks"><!-- JS --></div>
+      </div>
+    </div>
+
+    <!-- PARSED HEADERS -->
+    <div class="panel">
+      <div class="panel-header">
+        &#x1F4BB; PARSED HEADERS
+        <button id="copy-headers-btn" class="copy-btn-sm">&#x1F4CB; COPY</button>
+      </div>
+      <div class="panel-body">
+        <div id="parsed-headers" class="parsed-headers-box"><!-- JS --></div>
+      </div>
+    </div>
+
+  </div><!-- /analysis-results -->
+
+  <!-- EDUCATIONAL PANEL -->
+  <div class="panel">
+    <div class="panel-header">
+      &#x1F393; EMAIL SECURITY EXPLAINED
+      <span class="panel-tag">LEARN</span>
+    </div>
+    <div class="panel-body">
+      <div class="explainer-grid">
+        <div class="explainer-card">
+          <div class="explainer-card-header ecard-blue">&#x2705; SPF</div>
+          <div class="explainer-card-body">
+            SPF allows domain owners to specify which mail servers are authorized to send emails for their domain.
+            <br><br>
+            <strong>Example:</strong><br>
+            <code>v=spf1 include:_spf.google.com ~all</code>
+          </div>
+        </div>
+        <div class="explainer-card">
+          <div class="explainer-card-header ecard-purple">&#x1F511; DKIM</div>
+          <div class="explainer-card-body">
+            DKIM provides email authentication by allowing the sender to digitally sign emails with a private key.
+            <br><br>
+            <strong>Example:</strong><br>
+            <code>DKIM-Signature: v=1; a=rsa-sha256; d=example.com</code>
+          </div>
+        </div>
+        <div class="explainer-card">
+          <div class="explainer-card-header ecard-orange">&#x1F6E1;&#xFE0F; DMARC</div>
+          <div class="explainer-card-body">
+            DMARC builds on SPF and DKIM to provide domain-level email authentication and policy enforcement.
+            <br><br>
+            <strong>Example:</strong><br>
+            <code>v=DMARC1; p=quarantine; rua=mailto:dmarc@example.com</code>
+          </div>
+        </div>
+      </div>
+
+      <hr class="divider">
+
+      <div style="background:var(--paper2);border:3px solid var(--green);border-radius:6px;box-shadow:4px 4px 0 var(--ink);padding:14px 16px;">
+        <div style="font-family:'Bangers',cursive;font-size:1.1rem;letter-spacing:1px;color:var(--green);margin-bottom:8px;">&#x1F4A1; EMAIL SECURITY BEST PRACTICES</div>
+        <ul class="bp-list">
+          <li>Always check SPF, DKIM, and DMARC records before trusting emails</li>
+          <li>Be suspicious of emails with mismatched sender domains</li>
+          <li>Look for suspicious header patterns and unusual routing hops</li>
+          <li>Verify sender information through multiple channels if in doubt</li>
+          <li>Report suspicious emails to your IT security team immediately</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+</div><!-- /page-wrap -->
+
+<script>
+// ── Email header parsing & analysis (same logic as original) ──
+
+function parseEmailHeaders(headers) {
+    var lines = headers.split('\n');
+    var parsedHeaders = {};
+    lines.forEach(function(line) {
+        if (line.trim() && line.includes(':')) {
+            var colonIndex = line.indexOf(':');
+            var key = line.substring(0, colonIndex).trim();
+            var value = line.substring(colonIndex + 1).trim();
+            if (parsedHeaders[key]) {
+                if (Array.isArray(parsedHeaders[key])) {
+                    parsedHeaders[key].push(value);
+                } else {
+                    parsedHeaders[key] = [parsedHeaders[key], value];
+                }
+            } else {
+                parsedHeaders[key] = value;
+            }
+        }
+    });
+    return parsedHeaders;
+}
+
+function analyzeSPF(headers) {
+    var spfStatus = 'unknown';
+    var spfDetails = '';
+    var authResults = headers['Authentication-Results'] || headers['ARC-Authentication-Results'];
+    if (authResults) {
+        var authString = Array.isArray(authResults) ? authResults.join(' ') : authResults;
+        if (authString.includes('spf=pass'))     { spfStatus = 'pass';     spfDetails = 'SPF authentication passed'; }
+        else if (authString.includes('spf=fail')) { spfStatus = 'fail';     spfDetails = 'SPF authentication failed'; }
+        else if (authString.includes('spf=softfail')) { spfStatus = 'softfail'; spfDetails = 'SPF softfail — domain not authorized but not explicitly forbidden'; }
+        else if (authString.includes('spf=neutral')) { spfStatus = 'neutral'; spfDetails = 'SPF neutral — no policy found'; }
+    }
+    var receivedSPF = headers['Received-SPF'];
+    if (receivedSPF) {
+        var spfString = Array.isArray(receivedSPF) ? receivedSPF.join(' ') : receivedSPF;
+        if (spfString.includes('pass'))      { spfStatus = 'pass'; spfDetails = 'SPF check passed'; }
+        else if (spfString.includes('fail')) { spfStatus = 'fail'; spfDetails = 'SPF check failed'; }
+    }
+    return { status: spfStatus, details: spfDetails, raw: receivedSPF || authResults };
+}
+
+function analyzeDKIM(headers) {
+    var dkimStatus = 'unknown';
+    var dkimDetails = '';
+    var dkimSignature = headers['DKIM-Signature'];
+    if (!dkimSignature) {
+        return { status: 'fail', details: 'No DKIM signature found', raw: null };
+    }
+    var authResults = headers['Authentication-Results'] || headers['ARC-Authentication-Results'];
+    if (authResults) {
+        var authString = Array.isArray(authResults) ? authResults.join(' ') : authResults;
+        if (authString.includes('dkim=pass'))     { dkimStatus = 'pass';    dkimDetails = 'DKIM signature verification passed'; }
+        else if (authString.includes('dkim=fail')) { dkimStatus = 'fail';   dkimDetails = 'DKIM signature verification failed'; }
+        else if (authString.includes('dkim=neutral')) { dkimStatus = 'neutral'; dkimDetails = 'DKIM signature verification neutral'; }
+    }
+    return { status: dkimStatus, details: dkimDetails, raw: dkimSignature };
+}
+
+function analyzeDMARC(headers) {
+    var dmarcStatus = 'unknown';
+    var dmarcDetails = '';
+    var authResults = headers['Authentication-Results'] || headers['ARC-Authentication-Results'];
+    if (authResults) {
+        var authString = Array.isArray(authResults) ? authResults.join(' ') : authResults;
+        if (authString.includes('dmarc=pass'))     { dmarcStatus = 'pass';    dmarcDetails = 'DMARC policy check passed'; }
+        else if (authString.includes('dmarc=fail')) { dmarcStatus = 'fail';   dmarcDetails = 'DMARC policy check failed'; }
+        else if (authString.includes('dmarc=neutral')) { dmarcStatus = 'neutral'; dmarcDetails = 'DMARC policy check neutral'; }
+    }
+    return { status: dmarcStatus, details: dmarcDetails, raw: authResults };
+}
+
+function performAdditionalChecks(headers) {
+    var checks = [];
+    var suspiciousHeaders = ['X-Originating-IP', 'X-Forwarded-For', 'X-Real-IP'];
+    suspiciousHeaders.forEach(function(header) {
+        if (headers[header]) {
+            checks.push({ type: 'warning', message: 'Suspicious header found: ' + header, details: headers[header] });
+        }
+    });
+    if (!headers['Authentication-Results'] && !headers['ARC-Authentication-Results']) {
+        checks.push({ type: 'warning', message: 'No authentication results found', details: 'This email may not have been properly authenticated' });
+    }
+    var receivedHeaders = Object.keys(headers).filter(function(key) { return key.toLowerCase().startsWith('received'); });
+    if (receivedHeaders.length > 5) {
+        checks.push({ type: 'info', message: 'Multiple relay hops detected (' + receivedHeaders.length + ')', details: 'Email has been relayed through multiple servers' });
+    }
+    var from = headers['From'];
+    var returnPath = headers['Return-Path'];
+    if (from && returnPath) {
+        var fromMatch = from.match(/<([^>]+)>/);
+        var rpMatch   = returnPath.match(/<([^>]+)>/);
+        var fromEmail = fromMatch ? fromMatch[1] : from;
+        var rpEmail   = rpMatch   ? rpMatch[1]   : returnPath;
+        if (fromEmail !== rpEmail) {
+            checks.push({ type: 'warning', message: 'From address mismatch', details: 'From: ' + fromEmail + ', Return-Path: ' + rpEmail });
+        }
+    }
+    return checks;
+}
+
+function statusIcon(status) {
+    var map = { pass: '✅', fail: '❌', softfail: '⚠️', neutral: 'ℹ️', unknown: '❓' };
+    return map[status] || '❓';
+}
+
+function statusClass(status) {
+    var map = { pass: 'status-pass', fail: 'status-fail', softfail: 'status-warn', neutral: 'status-info', unknown: 'status-unknown' };
+    return map[status] || 'status-unknown';
+}
+
+function analyzeEmailHeaders() {
+    var headersText = document.getElementById('email-headers').value.trim();
+    var errBubble   = document.getElementById('error-bubble');
+    var errMsg      = document.getElementById('error-msg');
+
+    if (!headersText) {
+        errMsg.textContent = 'Please paste email headers to analyze.';
+        errBubble.classList.add('show');
+        return;
+    }
+    errBubble.classList.remove('show');
+
+    var headers         = parseEmailHeaders(headersText);
+    var spfResult       = analyzeSPF(headers);
+    var dkimResult      = analyzeDKIM(headers);
+    var dmarcResult     = analyzeDMARC(headers);
+    var additionalChecks = performAdditionalChecks(headers);
+
+    // Security overview
+    var securityOverview = document.getElementById('security-overview');
+    securityOverview.innerHTML =
+        '<div class="security-card sc-blue">' +
+            '<div class="sc-title"><span>SPF</span><span class="status-icon ' + statusClass(spfResult.status) + '">' + statusIcon(spfResult.status) + '</span></div>' +
+            '<p>' + (spfResult.details || 'No SPF data found') + '</p>' +
+        '</div>' +
+        '<div class="security-card sc-purple">' +
+            '<div class="sc-title"><span>DKIM</span><span class="status-icon ' + statusClass(dkimResult.status) + '">' + statusIcon(dkimResult.status) + '</span></div>' +
+            '<p>' + (dkimResult.details || 'No DKIM data found') + '</p>' +
+        '</div>' +
+        '<div class="security-card sc-orange">' +
+            '<div class="sc-title"><span>DMARC</span><span class="status-icon ' + statusClass(dmarcResult.status) + '">' + statusIcon(dmarcResult.status) + '</span></div>' +
+            '<p>' + (dmarcResult.details || 'No DMARC data found') + '</p>' +
+        '</div>';
+
+    // SPF detail
+    document.getElementById('spf-analysis').innerHTML =
+        '<div class="detail-row"><span class="detail-label">Status:</span><span class="detail-value ' + statusClass(spfResult.status) + '">' + spfResult.status.toUpperCase() + '</span></div>' +
+        '<div style="font-size:.82rem;margin-bottom:6px;">' + (spfResult.details || '—') + '</div>' +
+        (spfResult.raw ? '<div style="font-size:.72rem;color:#666;font-family:\'Space Mono\',monospace;word-break:break-all;">' + (Array.isArray(spfResult.raw) ? spfResult.raw[0] : spfResult.raw).substring(0, 120) + '...</div>' : '');
+
+    // DKIM detail
+    document.getElementById('dkim-analysis').innerHTML =
+        '<div class="detail-row"><span class="detail-label">Status:</span><span class="detail-value ' + statusClass(dkimResult.status) + '">' + dkimResult.status.toUpperCase() + '</span></div>' +
+        '<div style="font-size:.82rem;margin-bottom:6px;">' + (dkimResult.details || '—') + '</div>' +
+        (dkimResult.raw ? '<div style="font-size:.72rem;color:#666;font-family:\'Space Mono\',monospace;word-break:break-all;">' + (Array.isArray(dkimResult.raw) ? dkimResult.raw[0] : dkimResult.raw).substring(0, 100) + '...</div>' : '');
+
+    // DMARC detail
+    document.getElementById('dmarc-analysis').innerHTML =
+        '<div class="detail-row"><span class="detail-label">Status:</span><span class="detail-value ' + statusClass(dmarcResult.status) + '">' + dmarcResult.status.toUpperCase() + '</span></div>' +
+        '<div style="font-size:.82rem;">' + (dmarcResult.details || '—') + '</div>';
+
+    // Additional checks
+    if (additionalChecks.length === 0) {
+        document.getElementById('additional-checks').innerHTML = '<p style="font-size:.85rem;color:#555;">No additional security issues detected.</p>';
+    } else {
+        document.getElementById('additional-checks').innerHTML = additionalChecks.map(function(check) {
+            return '<div class="check-card ' + (check.type === 'warning' ? 'warn' : 'info') + '">' +
+                '<div class="check-icon">' + (check.type === 'warning' ? '⚠️' : 'ℹ️') + '</div>' +
+                '<div class="check-content"><strong>' + check.message + '</strong><span>' + check.details + '</span></div>' +
+                '</div>';
+        }).join('');
+    }
+
+    // Parsed headers
+    var parsedHtml = Object.entries(headers).map(function(entry) {
+        var k = entry[0]; var v = entry[1];
+        return '<div style="margin-bottom:5px;"><span class="header-key">' + k + ':</span> <span class="header-val">' + (Array.isArray(v) ? v.join(', ') : v) + '</span></div>';
+    }).join('');
+    document.getElementById('parsed-headers').innerHTML = parsedHtml;
+
+    // Show results
+    var results = document.getElementById('analysis-results');
+    results.style.display = 'block';
+    results.scrollIntoView({ behavior: 'smooth' });
+}
+
+// ── Event listeners ──
+document.addEventListener('DOMContentLoaded', function() {
+    document.getElementById('analyze-btn').addEventListener('click', analyzeEmailHeaders);
+
+    document.getElementById('clear-btn').addEventListener('click', function() {
+        document.getElementById('email-headers').value = '';
+        document.getElementById('analysis-results').style.display = 'none';
+        document.getElementById('error-bubble').classList.remove('show');
+    });
+
+    document.getElementById('example-btn').addEventListener('click', function() {
+        document.getElementById('email-headers').value =
+'Received: from mail.example.com (mail.example.com [192.168.1.1])\n' +
+'    by mx.google.com with ESMTPS id abc123def456\n' +
+'    for user@gmail.com; Mon, 01 Jan 2024 12:00:00 -0800 (PST)\n' +
+'Return-Path: sender@example.com\n' +
+'Delivered-To: user@gmail.com\n' +
+'ARC-Authentication-Results: i=1; mx.google.com;\n' +
+'    dkim=pass header.i=@example.com header.s=20240101 header.b=abc123def456;\n' +
+'    spf=pass (google.com: domain of sender@example.com designates 192.168.1.1 as permitted sender) smtp.mailfrom=sender@example.com;\n' +
+'    dmarc=pass (p=quarantine sp=quarantine dis=none) header.from=example.com\n' +
+'Authentication-Results: mx.google.com;\n' +
+'    dkim=pass header.i=@example.com header.s=20240101 header.b=abc123def456;\n' +
+'    spf=pass (google.com: domain of sender@example.com designates 192.168.1.1 as permitted sender) smtp.mailfrom=sender@example.com;\n' +
+'    dmarc=pass (p=quarantine sp=quarantine dis=none) header.from=example.com\n' +
+'Received-SPF: pass (google.com: domain of sender@example.com designates 192.168.1.1 as permitted sender) client-ip=192.168.1.1;\n' +
+'DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=example.com;\n' +
+'    h=from:to:subject:date:message-id:mime-version;\n' +
+'    s=20240101; t=1640995200; bh=def456ghi789...; b=abc123def456...\n' +
+'From: Sender Name <sender@example.com>\n' +
+'To: user@gmail.com\n' +
+'Subject: Test Email\n' +
+'Date: Mon, 01 Jan 2024 12:00:00 -0800\n' +
+'Message-ID: <abc123def456@example.com>\n' +
+'MIME-Version: 1.0\n' +
+'Content-Type: text/plain; charset=UTF-8';
+    });
+
+    document.getElementById('copy-headers-btn').addEventListener('click', function() {
+        var headersText = document.getElementById('email-headers').value;
+        try { navigator.clipboard.writeText(headersText).catch(function(){}); } catch(e) {}
+        var orig = this.textContent;
+        this.textContent = '✔ COPIED!';
+        this.style.background = 'var(--green)';
+        var btn = this;
+        setTimeout(function() {
+            btn.textContent = orig;
+            btn.style.background = 'var(--ink)';
+        }, 2000);
+    });
+});
+</script>
+<script src="masthead.js"></script>
+<script src="hero-banner.js"></script>
+<script src="author-card.js"></script>
+</body>
 </html>

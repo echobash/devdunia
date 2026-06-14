@@ -2,9 +2,1009 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta http-equiv="refresh" content="0; url=production/bash-zero-to-hero.html">
-<title>DevDunia</title>
-<script>window.location.replace('production/bash-zero-to-hero.html')</script>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Bash: Zero to Hero — DevDunia Comics</title>
+<meta name="description" content="Interactive Linux Bash learning path. 5 missions, real challenges, XP system. Go from zero to hero in the terminal.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://devdunia.com/production/bash-zero-to-hero.html">
+<meta property="og:title" content="Bash: Zero to Hero — DevDunia Comics">
+<meta property="og:description" content="Interactive Linux Bash learning path. 5 missions, real challenges, XP system. Go from zero to hero in the terminal.">
+<meta property="og:image" content="https://devdunia.com/images/logo.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Bangers&family=Comic+Neue:wght@400;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --ink: #1a1410;
+  --paper: #fdf3e3;
+  --paper2: #fbe9cc;
+  --red: #e63946;
+  --blue: #1d6fb8;
+  --yellow: #ffd23f;
+  --green: #3fa34d;
+  --pink: #ff6b9d;
+  --purple: #8a4fff;
+  --orange: #ff8c42;
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: 'Comic Neue', cursive;
+  font-weight: 400;
+  color: var(--ink);
+  background-color: var(--paper);
+  background-image: radial-gradient(var(--ink) 0.5px, transparent 0.6px);
+  background-size: 14px 14px;
+  background-attachment: fixed;
+  min-height: 100vh;
+}
+
+.paper-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(253,243,227,.78);
+  pointer-events: none;
+  z-index: 0;
+}
+
+.page-wrap {
+  position: relative;
+  z-index: 1;
+  max-width: 1240px;
+  margin: 0 auto;
+  padding: 20px 32px 60px;
+}
+
+
+
+
+
+
+
+
+.masthead-logo-text {
+  font-family: 'Bangers', cursive;
+  font-size: 1.9rem;
+  letter-spacing: 2px;
+  color: #fff;
+  text-shadow: 3px 3px 0 var(--ink);
+  line-height: 1;
+}
+
+.masthead-logo-text span { color: var(--yellow); }
+
+
+
+
+
+
+
+
+/* HERO */
+.hero {
+  display: flex;
+  align-items: flex-start;
+  gap: 20px;
+  background: var(--paper2);
+  border: 4px solid var(--ink);
+  border-radius: 6px;
+  box-shadow: 7px 7px 0 var(--ink);
+  padding: 20px 24px;
+  margin-bottom: 28px;
+  transform: rotate(-0.4deg);
+}
+
+.hero-icon {
+  font-size: 3rem;
+  line-height: 1;
+  flex-shrink: 0;
+  filter: drop-shadow(3px 3px 0 var(--ink));
+}
+
+.hero-text h1 {
+  font-family: 'Bangers', cursive;
+  font-size: 2.8rem;
+  letter-spacing: 2px;
+  color: var(--green);
+  -webkit-text-stroke: 1px var(--ink);
+  text-shadow: 4px 4px 0 var(--ink);
+  line-height: 1;
+  text-transform: uppercase;
+}
+
+.hero-text p {
+  font-size: .95rem;
+  margin-top: 6px;
+  line-height: 1.5;
+  max-width: 520px;
+}
+
+.hero-badges {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 10px;
+}
+
+.badge {
+  font-family: 'Space Mono', monospace;
+  font-size: .65rem;
+  font-weight: 700;
+  padding: 3px 8px;
+  border: 2px solid var(--ink);
+  border-radius: 4px;
+  box-shadow: 2px 2px 0 var(--ink);
+}
+.badge-blue   { background: var(--blue);   color: #fff; }
+.badge-green  { background: var(--green);  color: #fff; }
+.badge-yellow { background: var(--yellow); color: var(--ink); }
+.badge-red    { background: var(--red);    color: #fff; }
+.badge-purple { background: var(--purple); color: #fff; }
+.badge-orange { background: var(--orange); color: #fff; }
+
+/* XP BAR */
+.xp-bar-panel {
+  background: var(--ink);
+  border: 4px solid var(--ink);
+  border-radius: 6px;
+  box-shadow: 7px 7px 0 var(--ink);
+  padding: 12px 20px;
+  margin-bottom: 22px;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.xp-label {
+  font-family: 'Bangers', cursive;
+  font-size: 1.1rem;
+  color: var(--yellow);
+  letter-spacing: 2px;
+  flex-shrink: 0;
+}
+
+.xp-track {
+  flex: 1;
+  min-width: 120px;
+  background: rgba(255,255,255,.15);
+  border: 2px solid var(--yellow);
+  border-radius: 4px;
+  height: 18px;
+  overflow: hidden;
+}
+
+.xp-fill {
+  height: 100%;
+  background: var(--yellow);
+  transition: width .5s ease;
+}
+
+.xp-num {
+  font-family: 'Bangers', cursive;
+  font-size: 1.3rem;
+  color: var(--yellow);
+  letter-spacing: 1px;
+  flex-shrink: 0;
+}
+
+.rank-badge {
+  font-family: 'Bangers', cursive;
+  font-size: .85rem;
+  letter-spacing: 1px;
+  background: var(--yellow);
+  color: var(--ink);
+  padding: 3px 10px;
+  border-radius: 4px;
+  border: 2px solid rgba(255,255,255,.3);
+}
+
+/* LAYOUT */
+.layout {
+  display: grid;
+  grid-template-columns: 300px 1fr;
+  gap: 22px;
+  align-items: start;
+}
+
+/* PANEL */
+.panel {
+  background: var(--paper);
+  border: 4px solid var(--ink);
+  border-radius: 6px;
+  box-shadow: 7px 7px 0 var(--ink);
+  overflow: hidden;
+  margin-bottom: 22px;
+}
+
+.panel-header {
+  background: var(--ink);
+  color: var(--yellow);
+  font-family: 'Bangers', cursive;
+  font-size: 1.15rem;
+  letter-spacing: 2px;
+  padding: 8px 16px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.panel-header .panel-tag {
+  font-family: 'Space Mono', monospace;
+  font-size: .62rem;
+  font-weight: 700;
+  background: var(--yellow);
+  color: var(--ink);
+  padding: 2px 7px;
+  border-radius: 3px;
+}
+
+.panel-body { padding: 16px 18px; }
+
+/* MISSION CARDS */
+.mc {
+  position: relative;
+  padding: 12px 14px;
+  border: 3px solid var(--ink);
+  border-left: 5px solid transparent;
+  border-radius: 4px;
+  margin-bottom: 10px;
+  cursor: pointer;
+  transition: border-color .2s, background .2s, transform .1s;
+  background: var(--paper);
+  box-shadow: 3px 3px 0 var(--ink);
+  user-select: none;
+}
+
+.mc:hover:not(.mc-locked) { transform: translate(-2px,-2px); box-shadow: 5px 5px 0 var(--ink); }
+.mc:active:not(.mc-locked) { transform: translate(1px,1px); box-shadow: 2px 2px 0 var(--ink); }
+.mc-locked { cursor: not-allowed; opacity: .6; }
+.mc-active { border-left-color: var(--green); background: rgba(63,163,77,.08); }
+.mc-completed { border-left-color: var(--yellow); background: rgba(255,210,63,.08); }
+.mc-viewing { outline: 2px dashed var(--ink); outline-offset: 2px; }
+
+.mc-top { display: flex; align-items: center; justify-content: space-between; margin-bottom: 4px; }
+.mc-left { display: flex; align-items: center; gap: 8px; }
+.mc-num { font-family: 'Space Mono', monospace; font-size: .65rem; opacity: .6; }
+.mc-name { font-family: 'Bangers', cursive; font-size: 1.1rem; letter-spacing: 1px; }
+.mc-active .mc-name { color: var(--green); }
+.mc-completed .mc-name { color: var(--orange); }
+.mc-locked .mc-name { color: #999; }
+
+.mc-badge {
+  font-family: 'Space Mono', monospace;
+  font-size: .58rem;
+  font-weight: 700;
+  padding: 2px 6px;
+  border: 2px solid var(--ink);
+  border-radius: 3px;
+  flex-shrink: 0;
+}
+.badge-active { background: var(--green); color: #fff; }
+.badge-completed { background: var(--yellow); color: var(--ink); }
+.badge-locked { background: #ddd; color: #666; }
+
+.mc-desc { font-size: .78rem; color: #555; line-height: 1.4; margin-top: 2px; }
+.mc-bottom { display: flex; align-items: center; justify-content: space-between; margin-top: 8px; }
+.mc-xp { font-family: 'Space Mono', monospace; font-size: .7rem; font-weight: 700; }
+.mc-active .mc-xp { color: var(--green); }
+.mc-completed .mc-xp { color: var(--orange); }
+
+/* RESET BTN */
+.reset-btn {
+  width: 100%;
+  padding: 8px;
+  background: var(--paper2);
+  border: 3px solid var(--ink);
+  border-radius: 4px;
+  font-family: 'Bangers', cursive;
+  font-size: .9rem;
+  letter-spacing: 1px;
+  cursor: pointer;
+  box-shadow: 3px 3px 0 var(--ink);
+  transition: all .15s;
+  color: var(--ink);
+}
+.reset-btn:hover { background: var(--red); color: #fff; }
+.reset-btn:active { transform: translate(2px,2px); box-shadow: 1px 1px 0 var(--ink); }
+
+/* MISSION DETAIL */
+.mission-header-bar {
+  background: var(--green);
+  color: #fff;
+  font-family: 'Bangers', cursive;
+  font-size: 1.5rem;
+  letter-spacing: 2px;
+  padding: 10px 18px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.mission-header-bar.done-bg { background: var(--orange); }
+.mission-header-bar.locked-bg { background: #888; }
+
+.mh-xp-tag {
+  font-family: 'Bangers', cursive;
+  font-size: 1.1rem;
+  background: var(--yellow);
+  color: var(--ink);
+  padding: 2px 10px;
+  border-radius: 4px;
+  border: 2px solid rgba(0,0,0,.2);
+}
+
+/* STORY BLOCK */
+.story-block {
+  border-left: 5px solid var(--green);
+  padding: 10px 14px;
+  background: rgba(63,163,77,.06);
+  font-style: italic;
+  font-size: .88rem;
+  line-height: 1.7;
+  color: var(--ink);
+}
+
+/* COMMAND CHIPS */
+.cmds { display: flex; flex-wrap: wrap; gap: 7px; margin: 8px 0; }
+
+.cmd-wrap { position: relative; display: inline-block; }
+
+.cmd-btn {
+  display: inline-block;
+  padding: 5px 11px;
+  background: var(--ink);
+  color: var(--yellow);
+  font-family: 'Space Mono', monospace;
+  font-size: .72rem;
+  border: 2px solid var(--ink);
+  border-radius: 4px;
+  box-shadow: 2px 2px 0 rgba(0,0,0,.4);
+  cursor: default;
+  transition: opacity .15s;
+}
+.cmd-wrap:hover .cmd-btn { opacity: .85; }
+
+.cmd-tip {
+  position: absolute;
+  top: calc(100% + 8px);
+  left: 50%;
+  transform: translateX(-50%);
+  background: var(--ink);
+  border: 2px solid var(--yellow);
+  color: var(--paper);
+  font-family: 'Comic Neue', cursive;
+  font-size: .78rem;
+  padding: 8px 12px;
+  line-height: 1.5;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity .15s;
+  z-index: 200;
+  white-space: normal;
+  text-align: center;
+  width: 230px;
+  border-radius: 4px;
+  box-shadow: 4px 4px 0 var(--ink);
+}
+
+.cmd-tip::before {
+  content: '';
+  position: absolute;
+  bottom: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  border: 6px solid transparent;
+  border-bottom-color: var(--yellow);
+}
+
+.cmd-wrap:hover .cmd-tip { opacity: 1; }
+
+.cmd-hint {
+  font-size: .72rem;
+  color: #888;
+  font-style: italic;
+  margin-top: 4px;
+}
+
+/* CHALLENGE BOX */
+.chal-box {
+  background: var(--paper2);
+  border: 3px solid var(--ink);
+  border-left: 6px solid var(--green);
+  border-radius: 4px;
+  padding: 12px 16px;
+}
+
+.chal-prompt {
+  font-family: 'Space Mono', monospace;
+  font-size: .75rem;
+  color: var(--green);
+  letter-spacing: .05em;
+  margin-bottom: 8px;
+  font-weight: 700;
+}
+
+.chal-text {
+  font-size: .88rem;
+  line-height: 1.7;
+}
+
+.chal-text code {
+  font-family: 'Space Mono', monospace;
+  font-size: .75rem;
+  background: var(--ink);
+  color: var(--yellow);
+  padding: 1px 5px;
+  border-radius: 3px;
+}
+
+/* CHECKLIST */
+.checklist { display: flex; flex-direction: column; gap: 8px; }
+
+.ci {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 10px 12px;
+  border: 2px solid var(--ink);
+  border-radius: 4px;
+  font-size: .84rem;
+  line-height: 1.5;
+  transition: background .18s;
+  background: var(--paper);
+  box-shadow: 2px 2px 0 var(--ink);
+}
+.ci:not(.ci-ro) { cursor: pointer; }
+.ci:not(.ci-ro):hover { background: var(--paper2); }
+.ci-checked { border-color: var(--green); background: rgba(63,163,77,.1) !important; }
+.ci-checked .ci-label { text-decoration: line-through; color: #666; }
+
+.ci-box {
+  width: 18px;
+  height: 18px;
+  flex-shrink: 0;
+  margin-top: 1px;
+  border: 2px solid var(--ink);
+  border-radius: 3px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: .7rem;
+  font-weight: 700;
+  transition: all .18s;
+  background: #fff;
+}
+.ci-checked .ci-box { background: var(--green); border-color: var(--green); color: #fff; }
+
+/* COMPLETE BTN */
+.complete-btn {
+  width: 100%;
+  padding: 14px;
+  margin-top: 14px;
+  background: var(--paper2);
+  border: 3px solid var(--ink);
+  border-radius: 6px;
+  font-family: 'Bangers', cursive;
+  font-size: 1.2rem;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  cursor: not-allowed;
+  color: #aaa;
+  box-shadow: 4px 4px 0 var(--ink);
+  transition: all .2s;
+}
+.complete-btn.ready {
+  background: var(--green);
+  color: #fff;
+  cursor: pointer;
+  border-color: var(--green);
+}
+.complete-btn.ready:hover { opacity: .9; }
+.complete-btn.ready:active { transform: translate(2px,2px); box-shadow: 2px 2px 0 var(--ink); }
+
+/* DONE BANNER */
+.done-banner {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 16px;
+  background: rgba(255,210,63,.15);
+  border: 3px solid var(--yellow);
+  border-radius: 6px;
+  margin-top: 14px;
+  font-family: 'Bangers', cursive;
+  font-size: 1.1rem;
+  letter-spacing: 1px;
+  color: var(--orange);
+}
+
+/* ALL DONE */
+.all-done {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 400px;
+  gap: 16px;
+  text-align: center;
+  padding: 40px 20px;
+}
+.all-done-icon { font-size: 5rem; }
+.all-done h2 {
+  font-family: 'Bangers', cursive;
+  font-size: 2.5rem;
+  color: var(--orange);
+  letter-spacing: 2px;
+  text-shadow: 3px 3px 0 var(--ink);
+}
+.all-done p { font-size: .9rem; line-height: 1.7; max-width: 440px; color: #555; }
+.final-xp { font-family: 'Bangers', cursive; font-size: 3rem; color: var(--green); text-shadow: 3px 3px 0 var(--ink); }
+
+/* XP FLY */
+@keyframes xpFly {
+  0%   { transform: translate(-50%,-50%) scale(.4); opacity: 0; }
+  15%  { transform: translate(-50%,-55%) scale(1.5); opacity: 1; }
+  65%  { transform: translate(-50%,-85%) scale(1.1); opacity: 1; }
+  100% { transform: translate(-50%,-115%) scale(.9); opacity: 0; }
+}
+.xp-fly {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  font-family: 'Bangers', cursive;
+  font-size: 3.5rem;
+  color: var(--yellow);
+  pointer-events: none;
+  z-index: 9999;
+  text-shadow: 3px 3px 0 var(--ink), 0 0 30px var(--yellow);
+  animation: xpFly 2s ease-out forwards;
+}
+
+/* SECTION LABEL */
+.sec-label {
+  font-family: 'Bangers', cursive;
+  font-size: .9rem;
+  letter-spacing: 2px;
+  color: #888;
+  text-transform: uppercase;
+  margin: 14px 0 8px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.sec-label::after { content: ''; flex: 1; height: 2px; background: var(--ink); }
+
+/* BLINK */
+@keyframes blink { 0%,100%{opacity:1} 50%{opacity:0} }
+.cursor-blink::after { content: '_'; color: var(--green); animation: blink 1s step-end infinite; }
+
+/* MOBILE */
+@media (max-width: 760px) {
+  .layout { grid-template-columns: 1fr; }
+  .hero { flex-direction: column; gap: 10px; }
+  .hero-text h1 { font-size: 2rem; }
+  .cmd-tip { left: 0; transform: none; }
+  .cmd-tip::before { left: 20px; transform: none; }
+}
+</style>
 </head>
-<body></body>
+<body>
+<div class="paper-overlay"></div>
+<div data-masthead></div>
+
+<div class="page-wrap">
+
+  <div data-tool-hero
+     data-title="Bash: Zero to Hero"
+     data-chapter="06"
+     data-category="Developer Tools"
+     data-icon="&#x1F4BB;"
+     data-desc="5 missions. Real challenges. XP system. Go from blinking cursor to Terminal Wizard — one mission at a time. Check off tasks to unlock the next level!"
+     data-color="blue"
+     data-badges="5 MISSIONS,XP SYSTEM,INTERACTIVE,BEGINNER FRIENDLY,REAL CHALLENGES"
+     data-badge-colors="green,blue,purple,yellow,orange">
+  </div>
+
+  <!-- MASTHEAD -->
+
+  <!-- HERO -->
+  
+
+  <!-- XP BAR -->
+  <div class="xp-bar-panel">
+    <span class="xp-label">&#x26A1; XP</span>
+    <div class="xp-track"><div class="xp-fill" id="xp-fill" style="width:0%"></div></div>
+    <span class="xp-num" id="xp-num">0 XP</span>
+    <span class="rank-badge" id="rank-badge">Cursor Blinker</span>
+  </div>
+
+  <!-- LAYOUT -->
+  <div class="layout">
+
+    <!-- LEFT: MISSION LIST -->
+    <div>
+      <div class="panel">
+        <div class="panel-header">&#x1F3AE; MISSION CONTROL <span class="panel-tag">CAMPAIGN</span></div>
+        <div class="panel-body" id="mission-list"></div>
+      </div>
+      <button class="reset-btn" id="reset-btn">&#x26A0; Reset All Progress</button>
+    </div>
+
+    <!-- RIGHT: MISSION DETAIL -->
+    <div class="panel" id="detail-panel">
+      <div id="mission-detail">
+        <div class="panel-body" style="text-align:center;padding:40px 20px;color:#888;">
+          <div style="font-size:3rem;margin-bottom:12px">&#x1F4A1;</div>
+          <div style="font-family:'Bangers',cursive;font-size:1.4rem;letter-spacing:2px;">Select a Mission to Begin!</div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+</div><!-- /page-wrap -->
+
+<script>
+(function() {
+'use strict';
+
+var MISSIONS = [
+{
+  id:1, name:'Survive', xp:500, time:'30 min',
+  desc:'Navigate the filesystem without a mouse. Just you and the cursor.',
+  story:'You wake up. Black screen. Blinking cursor. No mouse. No desktop. No app icons. Just you and a single text prompt. The entire computer is right there — accessible through words. Your job right now is one thing: don\'t panic. Learn to walk before you run.',
+  commands:[
+    {cmd:'pwd',           tip:'Print Working Directory — answers "where am I right now?" Shows your full path.'},
+    {cmd:'ls',            tip:'List — shows all files and folders in your current location.'},
+    {cmd:'ls -la',        tip:'List ALL files including hidden ones (starting with .) with permissions, size and date.'},
+    {cmd:'cd [folder]',   tip:'Change Directory — move INTO a named folder. Like double-clicking a folder.'},
+    {cmd:'cd ~',          tip:'Teleport instantly to your home directory. Always a safe landing.'},
+    {cmd:'cd ..',         tip:'Go one level UP — back to the parent folder. Like pressing the Back button.'},
+    {cmd:'touch [file]',  tip:'Create a new empty file instantly. touch notes.txt creates a blank notes.txt.'},
+    {cmd:'mkdir [name]',  tip:'MaKe DIRectory — create a new folder. mkdir projects makes a folder called projects.'},
+    {cmd:'cp [src] [to]', tip:'Copy a file from one place to another. Original stays. New copy is created.'},
+    {cmd:'mv [src] [to]', tip:'Move or rename a file — same command does both. mv old.txt new.txt renames it.'},
+    {cmd:'rm [file]',     tip:'Delete a file PERMANENTLY. There is NO trash can in the terminal. Be careful.'},
+    {cmd:'cat [file]',    tip:'Print the entire contents of a file to your screen. Good for short files.'},
+    {cmd:'less [file]',   tip:'Read a long file one page at a time. Use arrows to scroll. Press q to quit.'},
+    {cmd:'head [file]',   tip:'Show only the FIRST 10 lines of a file. Add -n 20 to see 20 lines.'},
+    {cmd:'tail [file]',   tip:'Show only the LAST 10 lines of a file. Great for checking recent log entries.'},
+  ],
+  challenge:'A folder called <code>dungeon/</code> has been created with 5 folders nested inside each other. Somewhere deep inside is a file called <code>flag.txt</code>. Navigate the dungeon level by level, find the file, and read its contents — using only terminal commands. No file manager allowed.',
+  subtasks:[
+    'I can navigate to any folder and always know where I am (pwd + cd)',
+    'I created a file, copied it, renamed it with mv, then deleted it with rm',
+    'I read a file using cat, and checked its last few lines using tail',
+    'I found the flag.txt deep inside nested folders and read its contents',
+  ]
+},
+{
+  id:2, name:'Hunt', xp:750, time:'30 min',
+  desc:'Find the needle in 80,000 lines of logs. You have 60 seconds.',
+  story:'Production is down. 80,000 lines of logs scrolling past. Your boss is calling. You have 60 seconds to find what broke. You cannot read every line. You need to search, filter, and hunt — at the speed of thought. This is what grep was born for.',
+  commands:[
+    {cmd:'cmd1 | cmd2',        tip:'Pipe — the most powerful idea in the terminal. Sends output of cmd1 directly into cmd2 as input.'},
+    {cmd:'grep "word" file',   tip:'Search for "word" inside a file. Prints every line that contains it.'},
+    {cmd:'grep -i "word"',     tip:'Case-insensitive search. ERROR = error = Error = eRrOr. All match.'},
+    {cmd:'grep -n "word"',     tip:'Show the LINE NUMBER next to each matching line. Great for knowing where to look.'},
+    {cmd:'grep -r "word" .',   tip:'Search recursively through ALL files in ALL subdirectories from your current location.'},
+    {cmd:'grep -v "word"',     tip:'Invert match — show lines that do NOT contain the word. Filter out the noise.'},
+    {cmd:'find . -name "*.log"',tip:'Find files by name pattern starting from the current directory. * is a wildcard.'},
+    {cmd:'find . -type f',     tip:'Find only regular files (not directories or symlinks). Combine with -name for power.'},
+    {cmd:'find . -type d',     tip:'Find only directories. Useful when you\'re looking for a folder, not a file.'},
+    {cmd:'find . -mtime -1',   tip:'Find files modified within the last 1 day. -mtime -7 = last week.'},
+  ],
+  challenge:'You have a file called <code>access.log</code> with 5,000 lines. Find all lines containing the word <code>ERROR</code> that also come from the IP address <code>192.168.1.105</code>. Print only those matching lines, each with its line number.',
+  subtasks:[
+    'I used a pipe (|) to send the output of one command into another',
+    'I found every line containing a specific word in a large file using grep',
+    'I searched through all files in all subdirectories using grep -r',
+    'I found a specific file anywhere on the system using find and -name',
+  ]
+},
+{
+  id:3, name:'Control', xp:750, time:'30 min',
+  desc:'Something is eating your CPU. Find it. Kill it. Own your machine.',
+  story:'Something is eating your CPU. A script is running that shouldn\'t be. Another file says "permission denied" and you don\'t know why. In any GUI you\'d click around helplessly. In the terminal, you\'ll find the culprit in ten seconds and end it with surgical precision.',
+  commands:[
+    {cmd:'ls -la',         tip:'The permission columns (rwxr-xr-x) show exactly who can Read, Write, and eXecute each file.'},
+    {cmd:'chmod +x file',  tip:'Make a file executable — now you can run it as a program with ./file'},
+    {cmd:'chmod 755 file', tip:'Set permissions with numbers. 7=rwx (full access), 5=r-x (read+execute), 4=r-- (read only).'},
+    {cmd:'chown user file',tip:'Change WHO owns a file. Only the current owner or root (admin) can do this.'},
+    {cmd:'ps',             tip:'Show processes running in your current terminal session only.'},
+    {cmd:'ps aux',         tip:'Show ALL processes from ALL users system-wide, with CPU%, memory% and PID (Process ID).'},
+    {cmd:'kill [PID]',     tip:'Politely ask a process to stop using its ID number. The process can finish cleanly.'},
+    {cmd:'kill -9 [PID]',  tip:'Force kill a process immediately. It cannot refuse, save data, or do cleanup. Use as last resort.'},
+    {cmd:'top',            tip:'Live updating view of CPU and memory usage. Press q to quit. Like Task Manager for terminal.'},
+    {cmd:'htop',           tip:'A prettier version of top with colors and easier navigation. May need: sudo apt install htop'},
+  ],
+  challenge:'A process called <code>rogue.sh</code> is running in the background consuming CPU. Use <code>ps aux | grep rogue</code> to find its PID (the number in column 2), then kill it. Also fix a script that gives you "permission denied" by making it executable.',
+  subtasks:[
+    'I read file permissions with ls -la and understood what each rwx column means',
+    'I made a script executable with chmod +x and successfully ran it with ./script.sh',
+    'I listed all running processes with ps aux and found a specific one by name',
+    'I found a rogue process by its name and killed it using its PID',
+  ]
+},
+{
+  id:4, name:'Automate', xp:1500, time:'60 min',
+  desc:'Stop doing it manually. Write a script. Let the computer do the work.',
+  story:'You keep doing the same thing manually. Renaming 50 files. Cleaning folders. Running the same 6 commands. Every single day. Twenty times. Today, that stops forever. You are going to teach the computer to do your job — and it will do it faster, perfectly, every time.',
+  commands:[
+    {cmd:'#!/bin/bash',        tip:'Shebang — must be the very first line of every bash script. Tells the OS: use bash to run this.'},
+    {cmd:'NAME="value"',       tip:'Create a variable called NAME with a value. NO spaces around the = sign!'},
+    {cmd:'echo $NAME',         tip:'Print a variable\'s value to screen. The $ sign means "value of this variable".'},
+    {cmd:'DATE=$(date +%F)',    tip:'Run a command and capture its output into a variable. $(...) is command substitution.'},
+    {cmd:'if [ condition ]',   tip:'Start a conditional block. Only runs the code inside if the condition is true.'},
+    {cmd:'[ -f file ]',        tip:'Check if a FILE exists. Returns true (0) or false (1). Use inside if statements.'},
+    {cmd:'[ -d dir ]',         tip:'Check if a DIRECTORY exists. Returns true if the folder is there.'},
+    {cmd:'else / fi',          tip:'else handles the "false" case. fi ends every if block. Think: "if" backwards.'},
+    {cmd:'for f in *.txt; do', tip:'Loop over every .txt file in the folder and run your code on each one.'},
+    {cmd:'$1  $2  $@',         tip:'Arguments passed when you run the script. $1 is first arg, $2 second, $@ means ALL args.'},
+    {cmd:'set -e',             tip:'Exit the entire script immediately if any single command fails. Your safety net.'},
+  ],
+  challenge:'Write a script called <code>backup.sh</code> that: (1) takes a folder path as argument <code>$1</code>, (2) creates a compressed backup named <code>folder_YYYY-MM-DD.tar.gz</code>, (3) checks if today\'s backup already exists and skips if so, (4) logs every action with a timestamp to a file called <code>backup.log</code>.',
+  subtasks:[
+    'I wrote a script with a variable, made it executable with chmod +x, and ran it with ./script.sh',
+    'I wrote an if/else block that checks if a file or directory exists with [ -f ] or [ -d ]',
+    'I wrote a for loop that reads files one by one and does something to each',
+    'I wrote and successfully ran the full backup.sh script end-to-end',
+  ]
+},
+{
+  id:5, name:'Ship It', xp:2500, time:'30 min',
+  desc:'Real server. Real problems. No hand-holding. Combine everything.',
+  story:'No more hand-holding. Real server. Real problems. You solve them alone. You\'ve earned every single command across 4 missions. Now you combine them all into one professional script. This is what intermediate bash looks like. After this, you will never be afraid of a terminal again.',
+  commands:[
+    {cmd:'set -euo pipefail',    tip:'The professional safety net. Stops on error (-e), undefined variable (-u), or broken pipe (-o pipefail).'},
+    {cmd:'du -sh file',          tip:'Disk Usage — shows how big a file or folder is in human-readable format (MB, GB).'},
+    {cmd:'find . -size +100M',   tip:'Find files larger than 100 megabytes. Change 100M to any size you want.'},
+    {cmd:'tar -czf out.tar.gz d/',tip:'Compress a directory into a .tar.gz archive. c=create, z=gzip, f=filename.'},
+    {cmd:'sed -i \'s/old/new/g\'',tip:'Find "old" text and replace it with "new" IN the file directly. g=all occurrences.'},
+    {cmd:'echo "..." >> file',   tip:'APPEND a line to a file. >> adds without deleting existing content. > would overwrite!'},
+    {cmd:'pkill [name]',         tip:'Kill processes by NAME instead of PID number. Easier when you know the process name.'},
+    {cmd:'wc -l file',           tip:'Word Count — counts the number of lines in a file. wc -w counts words.'},
+    {cmd:'2>&1',                 tip:'Redirect error messages (stderr) to the same place as normal output (stdout).'},
+    {cmd:'All missions 1-4',     tip:'Everything you learned — navigation, grep, find, chmod, kill, variables, loops, if/else.'},
+  ],
+  challenge:'A server has 3 problems: (1) log files in <code>/var/logs/</code> are over 100MB each and must be archived with today\'s date, (2) a process called <code>bloat</code> is running and must be killed, (3) a config file contains the word <code>localhost</code> which must be replaced with <code>prod.server.com</code>. Write ONE script called <code>fix.sh</code> with <code>set -euo pipefail</code> that solves all three and logs every action it takes.',
+  subtasks:[
+    'I identified all 3 problems and planned exactly what commands solve each one',
+    'I wrote the log archiving section: find large files, tar them, log each action',
+    'I wrote the process killer and sed replacement section with proper logging',
+    'I combined all three into one clean fix.sh script with set -euo pipefail',
+  ]
+}];
+
+var RANKS = [
+  {min:0,    name:'Cursor Blinker'},
+  {min:500,  name:'Shell Apprentice'},
+  {min:1250, name:'Pipe Master'},
+  {min:2000, name:'Script Sorcerer'},
+  {min:3500, name:'Terminal Wizard'},
+];
+
+var MAX_XP = MISSIONS.reduce(function(a,m){ return a+m.xp; }, 0);
+
+var S = { completed:[], xp:0, checks:{}, viewing:1 };
+
+function load(){
+  try {
+    var raw = localStorage.getItem('bash-hero-comic-v1');
+    if(raw) S = Object.assign(S, JSON.parse(raw));
+  } catch(_){}
+  if(status(S.viewing) === 'locked') S.viewing = activeMission();
+}
+
+function save(){
+  try { localStorage.setItem('bash-hero-comic-v1', JSON.stringify(S)); } catch(_){}
+}
+
+function activeMission(){
+  for(var i=0;i<MISSIONS.length;i++) if(!S.completed.includes(MISSIONS[i].id)) return MISSIONS[i].id;
+  return MISSIONS[MISSIONS.length-1].id;
+}
+
+function status(id){
+  if(S.completed.includes(id)) return 'completed';
+  if(id === activeMission()) return 'active';
+  return 'locked';
+}
+
+function rankName(xp){
+  var r = RANKS[0];
+  for(var i=0;i<RANKS.length;i++) if(xp >= RANKS[i].min) r = RANKS[i];
+  return r.name;
+}
+
+function esc(s){
+  return String(s)
+    .replace(/&/g,'&amp;')
+    .replace(/</g,'&lt;')
+    .replace(/>/g,'&gt;')
+    .replace(/"/g,'&quot;');
+}
+
+function renderHeader(){
+  document.getElementById('xp-num').textContent = S.xp + ' XP';
+  document.getElementById('rank-badge').textContent = rankName(S.xp);
+  var pct = MAX_XP > 0 ? Math.min(100, (S.xp/MAX_XP)*100) : 0;
+  document.getElementById('xp-fill').style.width = pct + '%';
+}
+
+function renderLeft(){
+  var list = document.getElementById('mission-list');
+  list.innerHTML = MISSIONS.map(function(m){
+    var st = status(m.id);
+    var isV = S.viewing === m.id;
+    var chk = (S.checks[m.id]||[]).length;
+    var namePart = st==='active'
+      ? '<span class="cursor-blink">' + m.name + '</span>'
+      : m.name;
+    var badgeTxt = st==='locked' ? '&#x1F512; Locked'
+                 : st==='active' ? '&#x25B6; Active' : '&#x2713; Done';
+    var xpNote = st==='active' && chk>0 ? ' ' + chk + '/' + m.subtasks.length : '';
+    return '<div class="mc mc-' + st + (isV?' mc-viewing':'') + '" onclick="view(' + m.id + ')">' +
+      '<div class="mc-top">' +
+        '<div class="mc-left">' +
+          '<span class="mc-num">M' + m.id + '</span>' +
+          '<span class="mc-name">' + namePart + '</span>' +
+        '</div>' +
+        '<span class="mc-badge badge-' + st + '">' + badgeTxt + '</span>' +
+      '</div>' +
+      '<div class="mc-desc">' + esc(m.desc) + '</div>' +
+      '<div class="mc-bottom">' +
+        '<span class="mc-xp">+' + m.xp + ' XP' + xpNote + '</span>' +
+      '</div>' +
+    '</div>';
+  }).join('');
+}
+
+function renderRight(){
+  var dp = document.getElementById('mission-detail');
+
+  // All done
+  if(S.completed.length === MISSIONS.length){
+    dp.innerHTML = '<div class="mission-header-bar done-bg">&#x1F3C6; ALL MISSIONS COMPLETE!</div>' +
+      '<div class="panel-body"><div class="all-done">' +
+        '<div class="all-done-icon">&#x1F3C6;</div>' +
+        '<h2>Terminal Wizard!</h2>' +
+        '<div class="final-xp">' + MAX_XP + ' XP</div>' +
+        '<p>You started with zero knowledge and a blinking cursor.<br>' +
+        'You can now navigate any filesystem, hunt through logs, kill rogue processes,<br>' +
+        'write automation scripts, and deploy production fixes.<br><br>' +
+        '<strong>That is not beginner territory anymore.</strong></p>' +
+        '<p style="color:#888;font-size:.8rem;margin-top:8px;">Click any mission on the left to review it anytime.</p>' +
+      '</div></div>';
+    return;
+  }
+
+  var m = null;
+  for(var i=0;i<MISSIONS.length;i++) if(MISSIONS[i].id===S.viewing){ m=MISSIONS[i]; break; }
+  if(!m){ dp.innerHTML = ''; return; }
+
+  var st = status(m.id);
+  var isActive = st === 'active';
+  var isDone   = st === 'completed';
+  var chks = S.checks[m.id] || [];
+  var allChk = chks.length === m.subtasks.length;
+
+  var headerColor = isDone ? 'done-bg' : st==='locked' ? 'locked-bg' : '';
+
+  var cmdsHtml = m.commands.map(function(c){
+    return '<div class="cmd-wrap">' +
+      '<span class="cmd-btn">' + esc(c.cmd) + '</span>' +
+      '<div class="cmd-tip">' + esc(c.tip) + '</div>' +
+    '</div>';
+  }).join('');
+
+  var tasksHtml = m.subtasks.map(function(t,i){
+    var on = chks.indexOf(i) !== -1;
+    return '<div class="ci' + (on?' ci-checked':'') + (isActive?'':' ci-ro') + '"' +
+      (isActive ? ' onclick="toggle(' + m.id + ',' + i + ')"' : '') + '>' +
+      '<div class="ci-box">' + (on?'&#x2713;':'') + '</div>' +
+      '<div class="ci-label">' + esc(t) + '</div>' +
+    '</div>';
+  }).join('');
+
+  var completeHtml = '';
+  if(isActive){
+    var remaining = m.subtasks.length - chks.length;
+    completeHtml = '<button class="complete-btn' + (allChk?' ready':'') + '" id="cbtn"' +
+      (allChk ? ' onclick="complete(' + m.id + ')"' : '') + '>' +
+      (allChk
+        ? '&#x25B6; Complete Mission &amp; Unlock Next!'
+        : 'Complete ' + remaining + ' more task' + (remaining!==1?'s':'') + ' to unlock') +
+    '</button>';
+  }
+  if(isDone){
+    completeHtml = '<div class="done-banner">&#x2713; Mission Complete — ' + m.xp + ' XP earned!</div>';
+  }
+
+  dp.innerHTML =
+    '<div class="mission-header-bar ' + headerColor + '">' +
+      '&#x1F4CB; MISSION ' + m.id + ': ' + m.name.toUpperCase() +
+      '<span class="mh-xp-tag">+' + m.xp + ' XP</span>' +
+    '</div>' +
+    '<div class="panel-body">' +
+      '<div class="sec-label">&#x23F1; Est. Time: ' + m.time + '</div>' +
+
+      '<div class="sec-label">The Story</div>' +
+      '<div class="story-block">' + esc(m.story) + '</div>' +
+
+      '<div class="sec-label">Your Weapons</div>' +
+      '<div class="cmds">' + cmdsHtml + '</div>' +
+      '<div class="cmd-hint">&#x2191; Hover any command badge to see what it does in plain English</div>' +
+
+      '<div class="sec-label">The Challenge</div>' +
+      '<div class="chal-box">' +
+        '<div class="chal-prompt">$ challenge --mission-' + m.id + ' --difficulty=real</div>' +
+        '<div class="chal-text">' + m.challenge + '</div>' +
+      '</div>' +
+
+      '<div class="sec-label">Check Off When Done</div>' +
+      '<div class="checklist">' + tasksHtml + '</div>' +
+      completeHtml +
+    '</div>';
+}
+
+function render(){
+  renderHeader();
+  renderLeft();
+  renderRight();
+}
+
+window.view = function(id){
+  if(status(id)==='locked') return;
+  S.viewing = id;
+  save();
+  render();
+};
+
+window.toggle = function(mId, idx){
+  if(!S.checks[mId]) S.checks[mId] = [];
+  var arr = S.checks[mId];
+  var pos = arr.indexOf(idx);
+  if(pos===-1) arr.push(idx); else arr.splice(pos,1);
+  save();
+  renderRight();
+  renderLeft();
+};
+
+window.complete = function(mId){
+  var m = null;
+  for(var i=0;i<MISSIONS.length;i++) if(MISSIONS[i].id===mId){ m=MISSIONS[i]; break; }
+  if(!m || S.completed.indexOf(mId)!==-1) return;
+  S.completed.push(mId);
+  S.xp += m.xp;
+
+  var el = document.createElement('div');
+  el.className = 'xp-fly';
+  el.textContent = '+' + m.xp + ' XP!';
+  document.body.appendChild(el);
+  setTimeout(function(){ el.remove(); }, 2000);
+
+  var nextId = activeMission();
+  S.viewing = nextId;
+  save();
+  render();
+};
+
+document.getElementById('reset-btn').addEventListener('click', function(){
+  if(!confirm('Reset all progress? This will erase your XP and completed missions.')) return;
+  S = {completed:[],xp:0,checks:{},viewing:1};
+  save();
+  render();
+});
+
+load();
+render();
+})();
+</script>
+<script src="masthead.js"></script>
+<script src="hero-banner.js"></script>
+<script src="author-card.js"></script>
+</body>
 </html>

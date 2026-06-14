@@ -2,9 +2,530 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta http-equiv="refresh" content="0; url=production/ascii-converter.html">
-<title>DevDunia</title>
-<script>window.location.replace('production/ascii-converter.html')</script>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ASCII ⇄ Hex ⇄ Binary Converter — DevDunia Comics</title>
+<meta name="description" content="Convert between ASCII, hexadecimal, and binary formats. Free online ASCII/Hex/Binary converter for developers.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://devdunia.com/ascii-converter.html">
+<meta property="og:title" content="ASCII ⇄ Hex ⇄ Binary Converter — DevDunia Comics">
+<meta property="og:description" content="Convert between ASCII, hexadecimal, and binary formats. Free online ASCII/Hex/Binary converter for developers.">
+<meta property="og:image" content="https://devdunia.com/images/logo.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Bangers&family=Comic+Neue:wght@400;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --ink: #1a1410;
+  --paper: #fdf3e3;
+  --paper2: #fbe9cc;
+  --red: #e63946;
+  --blue: #1d6fb8;
+  --yellow: #ffd23f;
+  --green: #3fa34d;
+  --pink: #ff6b9d;
+  --purple: #8a4fff;
+  --orange: #ff8c42;
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: 'Comic Neue', cursive;
+  font-weight: 400;
+  color: var(--ink);
+  background-color: var(--paper);
+  background-image: radial-gradient(var(--ink) 0.5px, transparent 0.6px);
+  background-size: 14px 14px;
+  background-attachment: fixed;
+  min-height: 100vh;
+}
+
+.paper-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(253,243,227,.78);
+  pointer-events: none;
+  z-index: 0;
+}
+
+.page-wrap {
+  position: relative;
+  z-index: 1;
+  max-width: 1240px;
+  margin: 0 auto;
+  padding: 20px 32px 60px;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/* PANEL */
+.panel {
+  background: var(--paper);
+  border: 4px solid var(--ink);
+  border-radius: 6px;
+  box-shadow: 7px 7px 0 var(--ink);
+  overflow: hidden;
+  margin-bottom: 22px;
+}
+
+.panel-header {
+  background: var(--ink);
+  color: var(--yellow);
+  font-family: 'Bangers', cursive;
+  font-size: 1.2rem;
+  letter-spacing: 2px;
+  padding: 8px 16px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.panel-header .panel-tag {
+  font-family: 'Space Mono', monospace;
+  font-size: .65rem;
+  font-weight: 700;
+  background: var(--yellow);
+  color: var(--ink);
+  padding: 2px 7px;
+  border-radius: 3px;
+}
+
+.panel-body { padding: 18px 20px; }
+
+/* TEXTAREA */
+.comic-textarea {
+  width: 100%;
+  background: #fff;
+  border: 3px solid var(--ink);
+  border-radius: 6px;
+  padding: 12px 14px;
+  font-family: 'Space Mono', monospace;
+  font-size: .82rem;
+  color: var(--ink);
+  line-height: 1.6;
+  resize: vertical;
+  min-height: 130px;
+  box-shadow: inset 3px 3px 0 rgba(0,0,0,.06);
+  outline: none;
+  transition: border-color .15s;
+}
+.comic-textarea:focus { border-color: var(--blue); box-shadow: inset 3px 3px 0 rgba(29,111,184,.1); }
+.comic-textarea::placeholder { color: #aaa; font-style: italic; }
+.comic-textarea[readonly] { background: var(--paper2); cursor: default; }
+
+/* BUTTONS */
+.btn-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 14px;
+}
+
+.btn {
+  font-family: 'Bangers', cursive;
+  font-size: 1.1rem;
+  letter-spacing: 1px;
+  border: 3px solid var(--ink);
+  border-radius: 6px;
+  padding: 8px 20px;
+  cursor: pointer;
+  box-shadow: 4px 4px 0 var(--ink);
+  transition: transform .1s, box-shadow .1s;
+  text-transform: uppercase;
+}
+.btn:active { transform: translate(2px,2px); box-shadow: 2px 2px 0 var(--ink); }
+
+.btn-primary { background: var(--blue);   color: #fff; }
+.btn-success { background: var(--green);  color: #fff; }
+.btn-danger  { background: var(--red);    color: #fff; }
+.btn-neutral { background: var(--paper2); color: var(--ink); }
+.btn-purple  { background: var(--purple); color: #fff; }
+.btn-orange  { background: var(--orange); color: #fff; }
+
+/* ERROR BUBBLE */
+.error-bubble {
+  display: none;
+  position: relative;
+  background: #fff0f0;
+  border: 3px solid var(--red);
+  border-radius: 14px;
+  padding: 10px 14px;
+  margin-top: 12px;
+  font-size: .9rem;
+  font-weight: 700;
+  color: var(--red);
+}
+.error-bubble::before {
+  content: '';
+  position: absolute;
+  top: -16px;
+  left: 22px;
+  border-width: 0 10px 16px;
+  border-style: solid;
+  border-color: transparent transparent var(--red);
+}
+.error-bubble::after {
+  content: '';
+  position: absolute;
+  top: -11px;
+  left: 24px;
+  border-width: 0 8px 12px;
+  border-style: solid;
+  border-color: transparent transparent #fff0f0;
+}
+.error-bubble.show { display: block; }
+
+/* OUTPUT */
+.output-wrap { position: relative; }
+.copy-btn {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  font-family: 'Bangers', cursive;
+  font-size: .95rem;
+  letter-spacing: 1px;
+  background: var(--ink);
+  color: var(--yellow);
+  border: 2px solid var(--ink);
+  border-radius: 4px;
+  padding: 3px 10px;
+  cursor: pointer;
+  box-shadow: 2px 2px 0 rgba(0,0,0,.4);
+  transition: transform .1s, box-shadow .1s;
+}
+.copy-btn:active { transform: translate(1px,1px); box-shadow: 1px 1px 0 rgba(0,0,0,.4); }
+
+/* SECTION LABEL */
+.section-label {
+  font-family: 'Bangers', cursive;
+  font-size: .95rem;
+  letter-spacing: 1px;
+  color: var(--ink);
+  margin-bottom: 6px;
+  text-transform: uppercase;
+}
+
+/* DIVIDER */
+.divider {
+  border: none;
+  border-top: 3px solid var(--ink);
+  margin: 16px 0;
+}
+
+/* HOW IT WORKS */
+.how-steps {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.how-step {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+}
+
+.step-dot {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  border: 3px solid var(--ink);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: 'Bangers', cursive;
+  font-size: 1rem;
+  color: #fff;
+  flex-shrink: 0;
+  box-shadow: 2px 2px 0 var(--ink);
+}
+
+.how-step p {
+  font-size: .88rem;
+  line-height: 1.5;
+  padding-top: 2px;
+}
+
+.how-step code {
+  font-family: 'Space Mono', monospace;
+  font-size: .75rem;
+  background: var(--ink);
+  color: var(--yellow);
+  padding: 1px 5px;
+  border-radius: 3px;
+}
+
+/* ASCII TABLE */
+.ascii-table-wrap {
+  overflow-x: auto;
+  margin-top: 4px;
+}
+
+.comic-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-family: 'Space Mono', monospace;
+  font-size: .7rem;
+}
+
+.comic-table th {
+  background: var(--ink);
+  color: var(--yellow);
+  font-family: 'Bangers', cursive;
+  font-size: .85rem;
+  letter-spacing: 1px;
+  padding: 6px 8px;
+  text-align: left;
+  border: 2px solid var(--ink);
+}
+
+.comic-table td {
+  padding: 4px 8px;
+  border: 1px solid var(--ink);
+  color: var(--ink);
+}
+
+.comic-table tr:nth-child(even) td { background: var(--paper2); }
+.comic-table tr:nth-child(odd) td  { background: #fff; }
+
+/* MOBILE */
+@media (max-width: 600px) {
+}
+</style>
 </head>
-<body></body>
+<body>
+<div class="paper-overlay"></div>
+<div data-masthead></div>
+
+<div class="page-wrap">
+
+  <!-- MASTHEAD -->
+
+  <div data-tool-hero
+       data-title="ASCII Converter"
+       data-chapter="08"
+       data-category="Encoders &amp; Decoders"
+       data-icon="&#x1F522;"
+       data-desc="Convert text to ASCII codes and back. Decimal, hex, octal and binary representations instantly."
+       data-color="blue"
+       data-badges="ASCII,HEX,BINARY,FREE"
+       data-badge-colors="blue,orange,ink,yellow">
+  </div>
+
+  <!-- INPUT PANEL -->
+  <div class="panel">
+    <div class="panel-header">
+      &#x2328; INPUT TEXT OR DATA
+      <span class="panel-tag">INPUT</span>
+    </div>
+    <div class="panel-body">
+      <div class="section-label">Enter Text or Values</div>
+      <textarea id="input-text" class="comic-textarea" rows="4"
+        placeholder="Enter text to convert... e.g. Hello World"></textarea>
+
+      <div class="btn-row">
+        <button id="to-hex-btn" class="btn btn-primary">&#x26A1; ASCII &#x2192; Hex</button>
+        <button id="from-hex-btn" class="btn btn-success">&#x1F501; Hex &#x2192; ASCII</button>
+        <button id="to-binary-btn" class="btn btn-purple">&#x1F4BB; ASCII &#x2192; Binary</button>
+        <button id="from-binary-btn" class="btn btn-orange">&#x1F504; Binary &#x2192; ASCII</button>
+        <button id="clear-btn" class="btn btn-danger">&#x1F5D1; Clear</button>
+      </div>
+
+      <div id="error-bubble" class="error-bubble">
+        &#x1F4A5; <span id="error-msg">Something went wrong!</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- OUTPUT PANEL -->
+  <div class="panel" id="output-panel" style="display:none;">
+    <div class="panel-header">
+      &#x1F4E4; CONVERTED OUTPUT
+      <span class="panel-tag">OUTPUT</span>
+    </div>
+    <div class="panel-body">
+      <div class="section-label">Result</div>
+      <div class="output-wrap">
+        <textarea id="output-text" class="comic-textarea" rows="6" readonly></textarea>
+        <button id="copy-btn" class="copy-btn">&#x1F4CB; COPY</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ASCII TABLE PANEL -->
+  <div class="panel">
+    <div class="panel-header">
+      &#x1F4D6; ASCII REFERENCE TABLE
+      <span class="panel-tag">REFERENCE</span>
+    </div>
+    <div class="panel-body">
+      <div class="ascii-table-wrap">
+        <table class="comic-table">
+          <thead>
+            <tr>
+              <th>Char</th>
+              <th>DEC</th>
+              <th>Hex</th>
+              <th>Binary</th>
+              <th>Char</th>
+              <th>DEC</th>
+              <th>Hex</th>
+              <th>Binary</th>
+            </tr>
+          </thead>
+          <tbody id="ascii-table"></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- HOW IT WORKS -->
+  <div class="panel">
+    <div class="panel-header">
+      &#x1F9E0; HOW THE CONVERSION WORKS
+      <span class="panel-tag">EXPLAINER</span>
+    </div>
+    <div class="panel-body">
+      <div class="how-steps">
+        <div class="how-step">
+          <div class="step-dot" style="background:var(--orange);">1</div>
+          <p>Every character has an <strong>ASCII code</strong> — a number from 0–127 (e.g. <code>A = 65</code>, <code>a = 97</code>). These are the building blocks.</p>
+        </div>
+        <div class="how-step">
+          <div class="step-dot" style="background:var(--blue);">2</div>
+          <p><strong>Hex</strong> (base-16) uses digits 0–9 and A–F. Each ASCII byte maps to exactly 2 hex digits (e.g. <code>A → 41</code>). Used everywhere in debugging and networking.</p>
+        </div>
+        <div class="how-step">
+          <div class="step-dot" style="background:var(--purple);">3</div>
+          <p><strong>Binary</strong> (base-2) is the raw machine language. Each ASCII byte becomes 8 bits (e.g. <code>A → 01000001</code>). CPUs think in binary!</p>
+        </div>
+        <div class="how-step">
+          <div class="step-dot" style="background:var(--green);">4</div>
+          <p>All conversions go through the ASCII decimal value as a pivot. ASCII ↔ Decimal ↔ Hex ↔ Binary — they are all the same number in different bases.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div><!-- /page-wrap -->
+
+<script>
+(function() {
+  var inputEl   = document.getElementById('input-text');
+  var outputEl  = document.getElementById('output-text');
+  var outPanel  = document.getElementById('output-panel');
+  var errBubble = document.getElementById('error-bubble');
+  var errMsg    = document.getElementById('error-msg');
+  var copyBtn   = document.getElementById('copy-btn');
+
+  function showError(msg) {
+    errMsg.textContent = msg;
+    errBubble.classList.add('show');
+    outPanel.style.display = 'none';
+  }
+  function hideError() { errBubble.classList.remove('show'); }
+
+  function showOutput(text) {
+    outputEl.value = text;
+    outPanel.style.display = 'block';
+    hideError();
+  }
+
+  function asciiToHex(str) {
+    return str.split('').map(function(c) {
+      return c.charCodeAt(0).toString(16).toUpperCase().padStart(2, '0');
+    }).join(' ');
+  }
+
+  function hexToAscii(hex) {
+    var cleaned = hex.replace(/\s+/g, '');
+    var pairs = cleaned.match(/.{2}/g);
+    if (!pairs) throw new Error('No valid hex pairs found');
+    return pairs.map(function(h) { return String.fromCharCode(parseInt(h, 16)); }).join('');
+  }
+
+  function asciiToBinary(str) {
+    return str.split('').map(function(c) {
+      return c.charCodeAt(0).toString(2).padStart(8, '0');
+    }).join(' ');
+  }
+
+  function binaryToAscii(binary) {
+    var cleaned = binary.replace(/\s+/g, '');
+    var bytes = cleaned.match(/.{8}/g);
+    if (!bytes) throw new Error('No valid 8-bit groups found');
+    return bytes.map(function(b) { return String.fromCharCode(parseInt(b, 2)); }).join('');
+  }
+
+  document.getElementById('to-hex-btn').addEventListener('click', function() {
+    var v = inputEl.value.trim();
+    if (!v) { showError('Please enter some text to convert!'); return; }
+    try { showOutput(asciiToHex(v)); } catch(e) { showError('Error: ' + e.message); }
+  });
+
+  document.getElementById('from-hex-btn').addEventListener('click', function() {
+    var v = inputEl.value.trim();
+    if (!v) { showError('Please enter hex values to convert!'); return; }
+    try { showOutput(hexToAscii(v)); } catch(e) { showError('Error: ' + e.message); }
+  });
+
+  document.getElementById('to-binary-btn').addEventListener('click', function() {
+    var v = inputEl.value.trim();
+    if (!v) { showError('Please enter some text to convert!'); return; }
+    try { showOutput(asciiToBinary(v)); } catch(e) { showError('Error: ' + e.message); }
+  });
+
+  document.getElementById('from-binary-btn').addEventListener('click', function() {
+    var v = inputEl.value.trim();
+    if (!v) { showError('Please enter binary values to convert!'); return; }
+    try { showOutput(binaryToAscii(v)); } catch(e) { showError('Error: ' + e.message); }
+  });
+
+  document.getElementById('clear-btn').addEventListener('click', function() {
+    inputEl.value = '';
+    outputEl.value = '';
+    outPanel.style.display = 'none';
+    hideError();
+  });
+
+  copyBtn.addEventListener('click', function() {
+    outputEl.select();
+    try { document.execCommand('copy'); } catch(e) {}
+    if (navigator.clipboard) navigator.clipboard.writeText(outputEl.value).catch(function(){});
+    var orig = copyBtn.textContent;
+    copyBtn.textContent = '✔ COPIED!';
+    copyBtn.style.background = 'var(--green)';
+    setTimeout(function() { copyBtn.textContent = orig; copyBtn.style.background = 'var(--ink)'; }, 1800);
+  });
+
+  // Generate ASCII table
+  var tbody = document.getElementById('ascii-table');
+  var rows = '';
+  for (var i = 0; i < 128; i += 2) {
+    var c1 = i < 32 ? '&#x2022;' : (i === 60 ? '&lt;' : i === 62 ? '&gt;' : i === 38 ? '&amp;' : String.fromCharCode(i));
+    var c2 = (i+1) < 32 ? '&#x2022;' : ((i+1) === 60 ? '&lt;' : (i+1) === 62 ? '&gt;' : (i+1) === 38 ? '&amp;' : String.fromCharCode(i+1));
+    rows += '<tr><td>' + c1 + '</td><td>' + i + '</td><td>' + i.toString(16).toUpperCase().padStart(2,'0') + '</td><td>' + i.toString(2).padStart(8,'0') + '</td>';
+    rows += '<td>' + c2 + '</td><td>' + (i+1) + '</td><td>' + (i+1).toString(16).toUpperCase().padStart(2,'0') + '</td><td>' + (i+1).toString(2).padStart(8,'0') + '</td></tr>';
+  }
+  tbody.innerHTML = rows;
+
+  // Preload
+  inputEl.value = 'Hello World!';
+})();
+</script>
+<script src="masthead.js"></script>
+<script src="hero-banner.js"></script>
+<script src="author-card.js"></script>
+</body>
 </html>

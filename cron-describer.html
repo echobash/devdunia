@@ -2,9 +2,707 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta http-equiv="refresh" content="0; url=production/cron-describer.html">
-<title>DevDunia</title>
-<script>window.location.replace('production/cron-describer.html')</script>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Cron Describer — DevDunia Comics</title>
+<meta name="description" content="Describe and explain cron expressions in human-readable format. Free online cron describer tool for developers.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://devdunia.com/production/cron-describer.html">
+<meta property="og:title" content="Cron Describer — DevDunia Comics">
+<meta property="og:description" content="Describe and explain cron expressions in human-readable format. Free online cron describer tool for developers.">
+<meta property="og:image" content="https://devdunia.com/images/logo.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Bangers&family=Comic+Neue:wght@400;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --ink: #1a1410;
+  --paper: #fdf3e3;
+  --paper2: #fbe9cc;
+  --red: #e63946;
+  --blue: #1d6fb8;
+  --yellow: #ffd23f;
+  --green: #3fa34d;
+  --pink: #ff6b9d;
+  --purple: #8a4fff;
+  --orange: #ff8c42;
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: 'Comic Neue', cursive;
+  font-weight: 400;
+  color: var(--ink);
+  background-color: var(--paper);
+  background-image: radial-gradient(var(--ink) 0.5px, transparent 0.6px);
+  background-size: 14px 14px;
+  background-attachment: fixed;
+  min-height: 100vh;
+}
+
+.paper-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(253,243,227,.78);
+  pointer-events: none;
+  z-index: 0;
+}
+
+.page-wrap {
+  position: relative;
+  z-index: 1;
+  max-width: 1240px;
+  margin: 0 auto;
+  padding: 20px 32px 60px;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/* HERO */
+.hero {
+  display: flex;
+  align-items: flex-start;
+  gap: 20px;
+  background: var(--paper2);
+  border: 4px solid var(--ink);
+  border-radius: 6px;
+  box-shadow: 7px 7px 0 var(--ink);
+  padding: 20px 24px;
+  margin-bottom: 28px;
+  transform: rotate(-0.4deg);
+}
+
+.hero-icon {
+  font-size: 3rem;
+  line-height: 1;
+  flex-shrink: 0;
+  filter: drop-shadow(3px 3px 0 var(--ink));
+}
+
+.hero-text h1 {
+  font-family: 'Bangers', cursive;
+  font-size: 2.8rem;
+  letter-spacing: 2px;
+  color: var(--blue);
+  -webkit-text-stroke: 1px var(--ink);
+  text-shadow: 4px 4px 0 var(--ink);
+  line-height: 1;
+  text-transform: uppercase;
+}
+
+.hero-text p {
+  font-size: .95rem;
+  margin-top: 6px;
+  line-height: 1.5;
+  max-width: 480px;
+}
+
+.hero-badges {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 10px;
+}
+
+.badge {
+  font-family: 'Space Mono', monospace;
+  font-size: .65rem;
+  font-weight: 700;
+  padding: 3px 8px;
+  border: 2px solid var(--ink);
+  border-radius: 4px;
+  box-shadow: 2px 2px 0 var(--ink);
+}
+.badge-blue   { background: var(--blue);   color: #fff; }
+.badge-green  { background: var(--green);  color: #fff; }
+.badge-yellow { background: var(--yellow); color: var(--ink); }
+.badge-orange { background: var(--orange); color: #fff; }
+
+/* PANEL */
+.panel {
+  background: var(--paper);
+  border: 4px solid var(--ink);
+  border-radius: 6px;
+  box-shadow: 7px 7px 0 var(--ink);
+  overflow: hidden;
+  margin-bottom: 22px;
+}
+
+.panel-header {
+  background: var(--ink);
+  color: var(--yellow);
+  font-family: 'Bangers', cursive;
+  font-size: 1.2rem;
+  letter-spacing: 2px;
+  padding: 8px 16px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.panel-header .panel-tag {
+  font-family: 'Space Mono', monospace;
+  font-size: .65rem;
+  font-weight: 700;
+  background: var(--yellow);
+  color: var(--ink);
+  padding: 2px 7px;
+  border-radius: 3px;
+}
+
+.panel-body { padding: 18px 20px; }
+
+/* INPUT ROW */
+.input-row {
+  display: flex;
+  gap: 10px;
+  align-items: stretch;
+}
+
+.comic-input {
+  flex: 1;
+  background: #fff;
+  border: 3px solid var(--ink);
+  border-radius: 6px;
+  padding: 10px 14px;
+  font-family: 'Space Mono', monospace;
+  font-size: .88rem;
+  color: var(--ink);
+  box-shadow: 3px 3px 0 var(--ink);
+  outline: none;
+  transition: border-color .15s;
+}
+.comic-input:focus { border-color: var(--blue); }
+.comic-input::placeholder { color: #aaa; font-style: italic; }
+
+.btn {
+  font-family: 'Bangers', cursive;
+  font-size: 1.1rem;
+  letter-spacing: 1px;
+  border: 3px solid var(--ink);
+  border-radius: 6px;
+  padding: 8px 20px;
+  cursor: pointer;
+  box-shadow: 4px 4px 0 var(--ink);
+  transition: transform .1s, box-shadow .1s;
+  text-transform: uppercase;
+}
+.btn:active { transform: translate(2px,2px); box-shadow: 2px 2px 0 var(--ink); }
+.btn-primary { background: var(--blue);   color: #fff; }
+.btn-danger  { background: var(--red);    color: #fff; }
+
+/* HINT */
+.input-hint {
+  font-size: .78rem;
+  color: var(--ink);
+  opacity: .6;
+  margin-top: 6px;
+}
+
+/* ERROR BUBBLE */
+.error-bubble {
+  display: none;
+  position: relative;
+  background: #fff0f0;
+  border: 3px solid var(--red);
+  border-radius: 14px;
+  padding: 10px 14px;
+  margin-top: 12px;
+  font-size: .9rem;
+  font-weight: 700;
+  color: var(--red);
+}
+.error-bubble::before {
+  content: '';
+  position: absolute;
+  top: -16px; left: 22px;
+  border-width: 0 10px 16px;
+  border-style: solid;
+  border-color: transparent transparent var(--red);
+}
+.error-bubble::after {
+  content: '';
+  position: absolute;
+  top: -11px; left: 24px;
+  border-width: 0 8px 12px;
+  border-style: solid;
+  border-color: transparent transparent #fff0f0;
+}
+.error-bubble.show { display: block; }
+
+/* SECTION LABEL */
+.section-label {
+  font-family: 'Bangers', cursive;
+  font-size: .95rem;
+  letter-spacing: 1px;
+  color: var(--ink);
+  margin-bottom: 8px;
+  text-transform: uppercase;
+}
+
+/* DIVIDER */
+.divider {
+  border: none;
+  border-top: 3px solid var(--ink);
+  margin: 16px 0;
+}
+
+/* BREAKDOWN GRID */
+.breakdown-grid {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 10px;
+  margin-bottom: 6px;
+}
+
+.breakdown-cell {
+  background: var(--paper2);
+  border: 3px solid var(--ink);
+  border-radius: 6px;
+  box-shadow: 3px 3px 0 var(--ink);
+  padding: 10px 8px;
+  text-align: center;
+}
+
+.breakdown-cell-label {
+  font-family: 'Space Mono', monospace;
+  font-size: .62rem;
+  font-weight: 700;
+  opacity: .6;
+  margin-bottom: 4px;
+  text-transform: uppercase;
+}
+
+.breakdown-cell-value {
+  font-family: 'Bangers', cursive;
+  font-size: 1.4rem;
+  letter-spacing: 1px;
+  line-height: 1;
+  margin-bottom: 4px;
+}
+
+.breakdown-cell-desc {
+  font-size: .65rem;
+  line-height: 1.3;
+  color: var(--ink);
+  opacity: .75;
+}
+
+/* DESCRIPTION BOX */
+.description-box {
+  background: var(--paper2);
+  border: 3px solid var(--ink);
+  border-radius: 6px;
+  box-shadow: 3px 3px 0 var(--ink);
+  padding: 14px 16px;
+  font-size: 1rem;
+  font-weight: 700;
+  line-height: 1.5;
+}
+
+/* NEXT RUNS */
+.run-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 6px 10px;
+  background: var(--paper2);
+  border: 2px solid var(--ink);
+  border-radius: 4px;
+  box-shadow: 2px 2px 0 var(--ink);
+  margin-bottom: 6px;
+  font-size: .82rem;
+}
+.run-label {
+  font-family: 'Bangers', cursive;
+  font-size: .9rem;
+  letter-spacing: 1px;
+}
+.run-time {
+  font-family: 'Space Mono', monospace;
+  font-size: .78rem;
+  color: var(--blue);
+}
+
+/* EXAMPLES GRID */
+.examples-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+}
+
+.example-btn {
+  background: var(--paper2);
+  border: 3px solid var(--ink);
+  border-radius: 6px;
+  box-shadow: 3px 3px 0 var(--ink);
+  padding: 8px 12px;
+  cursor: pointer;
+  text-align: left;
+  transition: transform .1s, box-shadow .1s;
+}
+.example-btn:hover { transform: translate(-2px,-2px); box-shadow: 5px 5px 0 var(--ink); }
+.example-btn:active { transform: translate(1px,1px); box-shadow: 1px 1px 0 var(--ink); }
+
+.example-cron {
+  font-family: 'Bangers', cursive;
+  font-size: 1rem;
+  letter-spacing: 1px;
+  color: var(--blue);
+  margin-bottom: 2px;
+}
+.example-desc {
+  font-size: .72rem;
+  color: var(--ink);
+  opacity: .7;
+}
+
+/* MOBILE */
+@media (max-width: 760px) {
+  .hero { flex-direction: column; gap: 10px; }
+  .hero-text h1 { font-size: 2rem; }
+  .breakdown-grid { grid-template-columns: repeat(3, 1fr); }
+  .examples-grid { grid-template-columns: 1fr; }
+  .input-row { flex-direction: column; }
+}
+</style>
 </head>
-<body></body>
+<body>
+<div class="paper-overlay"></div>
+<div data-masthead></div>
+
+<div class="page-wrap">
+
+  <div data-tool-hero
+     data-title="Cron Describer"
+     data-chapter="09"
+     data-category="Developer Tools"
+     data-icon="&#x23F0;"
+     data-desc="Type any cron expression and get a plain-English description, a field breakdown, and the next 5 run times — all instantly in your browser!"
+     data-color="blue"
+     data-badges="5-FIELD CRON,NEXT RUNS,FREE,INSTANT"
+     data-badge-colors="blue,green,yellow,orange">
+  </div>
+
+  <!-- MASTHEAD -->
+
+  <!-- HERO -->
+  
+
+  <!-- INPUT PANEL -->
+  <div class="panel">
+    <div class="panel-header">
+      &#x270F;&#xFE0F; ENTER CRON EXPRESSION
+      <span class="panel-tag">INPUT</span>
+    </div>
+    <div class="panel-body">
+      <div class="input-row">
+        <input type="text" id="cron-input" class="comic-input"
+          placeholder="e.g. 0 9 * * 1-5">
+        <button id="describe-btn" class="btn btn-primary">&#x26A1; Describe!</button>
+      </div>
+      <div class="input-hint">&#x1F4A1; Format: minute hour day month day-of-week &nbsp;|&nbsp; e.g. "*/15 * * * *" = every 15 minutes</div>
+      <div id="error-bubble" class="error-bubble">
+        &#x1F4A5; <span id="error-msg">Invalid cron expression!</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- BREAKDOWN PANEL -->
+  <div class="panel">
+    <div class="panel-header">
+      &#x1F9E9; FIELD BREAKDOWN
+      <span class="panel-tag">STRUCTURE</span>
+    </div>
+    <div class="panel-body">
+      <div class="breakdown-grid">
+        <div class="breakdown-cell">
+          <div class="breakdown-cell-label">Minute</div>
+          <div class="breakdown-cell-value" id="minute-field" style="color:var(--blue);">*</div>
+          <div class="breakdown-cell-desc" id="minute-desc">every minute</div>
+        </div>
+        <div class="breakdown-cell">
+          <div class="breakdown-cell-label">Hour</div>
+          <div class="breakdown-cell-value" id="hour-field" style="color:var(--green);">*</div>
+          <div class="breakdown-cell-desc" id="hour-desc">every hour</div>
+        </div>
+        <div class="breakdown-cell">
+          <div class="breakdown-cell-label">Day</div>
+          <div class="breakdown-cell-value" id="day-field" style="color:var(--purple);">*</div>
+          <div class="breakdown-cell-desc" id="day-desc">every day</div>
+        </div>
+        <div class="breakdown-cell">
+          <div class="breakdown-cell-label">Month</div>
+          <div class="breakdown-cell-value" id="month-field" style="color:var(--orange);">*</div>
+          <div class="breakdown-cell-desc" id="month-desc">every month</div>
+        </div>
+        <div class="breakdown-cell">
+          <div class="breakdown-cell-label">Day of Week</div>
+          <div class="breakdown-cell-value" id="dow-field" style="color:var(--pink);">*</div>
+          <div class="breakdown-cell-desc" id="dow-desc">every day of week</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- DESCRIPTION PANEL -->
+  <div class="panel" id="description-panel" style="display:none;">
+    <div class="panel-header">
+      &#x1F4AC; HUMAN-READABLE DESCRIPTION
+      <span class="panel-tag">RESULT</span>
+    </div>
+    <div class="panel-body">
+      <div class="description-box" id="description-text"></div>
+
+      <hr class="divider">
+      <div class="section-label">&#x23F3; Next 5 Run Times</div>
+      <div id="next-runs"></div>
+    </div>
+  </div>
+
+  <!-- EXAMPLES PANEL -->
+  <div class="panel">
+    <div class="panel-header">
+      &#x1F4DA; COMMON CRON EXAMPLES — CLICK TO LOAD!
+      <span class="panel-tag">EXAMPLES</span>
+    </div>
+    <div class="panel-body">
+      <div class="examples-grid">
+        <button class="example-btn" data-cron="0 9 * * 1-5">
+          <div class="example-cron">0 9 * * 1-5</div>
+          <div class="example-desc">9 AM on weekdays</div>
+        </button>
+        <button class="example-btn" data-cron="0 0 * * 0">
+          <div class="example-cron">0 0 * * 0</div>
+          <div class="example-desc">Midnight on Sunday</div>
+        </button>
+        <button class="example-btn" data-cron="*/15 * * * *">
+          <div class="example-cron">*/15 * * * *</div>
+          <div class="example-desc">Every 15 minutes</div>
+        </button>
+        <button class="example-btn" data-cron="0 0 1 * *">
+          <div class="example-cron">0 0 1 * *</div>
+          <div class="example-desc">First day of month at midnight</div>
+        </button>
+        <button class="example-btn" data-cron="0 2 * * *">
+          <div class="example-cron">0 2 * * *</div>
+          <div class="example-desc">2 AM daily</div>
+        </button>
+        <button class="example-btn" data-cron="30 6 * * 1,3,5">
+          <div class="example-cron">30 6 * * 1,3,5</div>
+          <div class="example-desc">6:30 AM on Mon, Wed, Fri</div>
+        </button>
+        <button class="example-btn" data-cron="0 0 * * 1">
+          <div class="example-cron">0 0 * * 1</div>
+          <div class="example-desc">Midnight on Monday</div>
+        </button>
+        <button class="example-btn" data-cron="0 12 * * 6,0">
+          <div class="example-cron">0 12 * * 6,0</div>
+          <div class="example-desc">Noon on weekends</div>
+        </button>
+      </div>
+    </div>
+  </div>
+
+</div><!-- /page-wrap -->
+
+<script>
+(function() {
+  var cronInput = document.getElementById('cron-input');
+  var describeBtn = document.getElementById('describe-btn');
+  var errBubble = document.getElementById('error-bubble');
+  var errMsg = document.getElementById('error-msg');
+  var descPanel = document.getElementById('description-panel');
+
+  function showError(msg) {
+    errMsg.textContent = msg;
+    errBubble.classList.add('show');
+    descPanel.style.display = 'none';
+  }
+  function hideError() { errBubble.classList.remove('show'); }
+
+  function getDayName(d) {
+    var days = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
+    return days[parseInt(d)] || d;
+  }
+
+  function getMonthName(m) {
+    var months = ['','January','February','March','April','May','June','July','August','September','October','November','December'];
+    return months[parseInt(m)] || m;
+  }
+
+  function parseField(field, min, max, type) {
+    if (field === '*') return 'every ' + type;
+    if (field.includes('/')) {
+      var parts = field.split('/');
+      var range = parts[0], step = parts[1];
+      if (range === '*') return 'every ' + step + ' ' + type + 's';
+      return 'every ' + step + ' ' + type + 's from ' + range;
+    }
+    if (field.includes('-')) {
+      var pp = field.split('-');
+      if (type === 'day of week') return 'from ' + getDayName(pp[0]) + ' to ' + getDayName(pp[1]);
+      if (type === 'month') return 'from ' + getMonthName(pp[0]) + ' to ' + getMonthName(pp[1]);
+      return 'from ' + pp[0] + ' to ' + pp[1];
+    }
+    if (field.includes(',')) {
+      var vals = field.split(',');
+      if (type === 'day of week') return 'on ' + vals.map(getDayName).join(', ');
+      if (type === 'month') return 'in ' + vals.map(getMonthName).join(', ');
+      return 'on ' + vals.join(', ');
+    }
+    if (type === 'day of week') return 'on ' + getDayName(field);
+    if (type === 'month') return 'in ' + getMonthName(field);
+    return 'at ' + field;
+  }
+
+  function generateDescription(md, hd, dd, mod, dowd) {
+    if (md.includes('every') && hd.includes('every') && dd.includes('every') && mod.includes('every') && dowd.includes('every')) {
+      return 'This cron job runs every minute.';
+    }
+    var parts = [];
+    if (!md.includes('every minute')) parts.push(md);
+    if (!hd.includes('every hour')) parts.push(hd);
+    if (!dd.includes('every day')) parts.push(dd);
+    if (!mod.includes('every month')) parts.push(mod);
+    if (!dowd.includes('every day of week')) parts.push(dowd);
+    if (parts.length === 0) return 'This cron job runs every minute.';
+    return 'This cron job runs ' + parts.join(' and ') + '.';
+  }
+
+  function matchesField(value, field, min, max) {
+    if (field === '*') return true;
+    if (field.includes('-')) {
+      var pp = field.split('-').map(Number);
+      return value >= pp[0] && value <= pp[1];
+    }
+    if (field.includes(',')) {
+      return field.split(',').map(Number).indexOf(value) !== -1;
+    }
+    if (field.includes('/')) {
+      var ps = field.split('/');
+      var stepNum = parseInt(ps[1]);
+      if (ps[0] === '*') return value % stepNum === 0;
+      var start = parseInt(ps[0]);
+      return value >= start && (value - start) % stepNum === 0;
+    }
+    return parseInt(field) === value;
+  }
+
+  function matchesCron(date, minute, hour, day, month, dayOfWeek) {
+    return matchesField(date.getMinutes(), minute, 0, 59) &&
+           matchesField(date.getHours(), hour, 0, 23) &&
+           matchesField(date.getDate(), day, 1, 31) &&
+           matchesField(date.getMonth() + 1, month, 1, 12) &&
+           matchesField(date.getDay(), dayOfWeek, 0, 6);
+  }
+
+  function calculateNextRuns(minute, hour, day, month, dayOfWeek, count) {
+    var runs = [];
+    var now = new Date();
+    var current = new Date(now.getTime() + 60000);
+    var limit = 365 * 24 * 60 * 60 * 1000;
+    while (runs.length < count) {
+      if (matchesCron(current, minute, hour, day, month, dayOfWeek)) {
+        runs.push(new Date(current));
+      }
+      current.setMinutes(current.getMinutes() + 1);
+      if (current.getTime() - now.getTime() > limit) break;
+    }
+    return runs;
+  }
+
+  function describeCron(expr) {
+    var parts = expr.trim().split(/\s+/);
+    if (parts.length !== 5) throw new Error('Must have exactly 5 fields');
+    var minute = parts[0], hour = parts[1], day = parts[2], month = parts[3], dow = parts[4];
+    var md = parseField(minute, 0, 59, 'minute');
+    var hd = parseField(hour, 0, 23, 'hour');
+    var dd = parseField(day, 1, 31, 'day');
+    var mod = parseField(month, 1, 12, 'month');
+    var dowd = parseField(dow, 0, 6, 'day of week');
+    // Update breakdown
+    document.getElementById('minute-field').textContent = minute;
+    document.getElementById('minute-desc').textContent = md;
+    document.getElementById('hour-field').textContent = hour;
+    document.getElementById('hour-desc').textContent = hd;
+    document.getElementById('day-field').textContent = day;
+    document.getElementById('day-desc').textContent = dd;
+    document.getElementById('month-field').textContent = month;
+    document.getElementById('month-desc').textContent = mod;
+    document.getElementById('dow-field').textContent = dow;
+    document.getElementById('dow-desc').textContent = dowd;
+    // Description
+    var desc = generateDescription(md, hd, dd, mod, dowd);
+    document.getElementById('description-text').textContent = desc;
+    // Next runs
+    var runsEl = document.getElementById('next-runs');
+    runsEl.innerHTML = '';
+    try {
+      var runs = calculateNextRuns(minute, hour, day, month, dow, 5);
+      if (runs.length === 0) {
+        runsEl.innerHTML = '<div style="font-style:italic;opacity:.6;">No runs found within the next year.</div>';
+      } else {
+        runs.forEach(function(r, i) {
+          var row = document.createElement('div');
+          row.className = 'run-row';
+          row.innerHTML = '<span class="run-label">RUN ' + (i+1) + '</span><span class="run-time">' + r.toLocaleString() + '</span>';
+          runsEl.appendChild(row);
+        });
+      }
+    } catch(e) {
+      runsEl.innerHTML = '<div style="color:var(--red);">Error calculating run times.</div>';
+    }
+    descPanel.style.display = '';
+  }
+
+  describeBtn.addEventListener('click', function() {
+    var expr = cronInput.value.trim();
+    if (!expr) { showError('Please enter a cron expression first!'); return; }
+    try {
+      describeCron(expr);
+      hideError();
+    } catch(e) {
+      showError('Invalid cron expression: ' + e.message);
+    }
+  });
+
+  // Example buttons
+  var exBtns = document.querySelectorAll('.example-btn');
+  for (var i = 0; i < exBtns.length; i++) {
+    exBtns[i].addEventListener('click', function() {
+      cronInput.value = this.getAttribute('data-cron');
+      describeBtn.click();
+    });
+  }
+
+  cronInput.addEventListener('keydown', function(e) {
+    if (e.key === 'Enter') describeBtn.click();
+  });
+
+  // Preload
+  cronInput.value = '0 9 * * 1-5';
+  describeBtn.click();
+})();
+</script>
+<script src="masthead.js"></script>
+<script src="hero-banner.js"></script>
+<script src="author-card.js"></script>
+</body>
 </html>

@@ -2,9 +2,414 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta http-equiv="refresh" content="0; url=production/python-openai.html">
-<title>DevDunia</title>
-<script>window.location.replace('production/python-openai.html')</script>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Python OpenAI API — DevDunia Comics</title>
+<meta name="description" content="Python OpenAI API examples and code snippets. ChatGPT, GPT-4, and other OpenAI API integrations for developers.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://devdunia.com/production/python-openai.html">
+<meta property="og:title" content="Python OpenAI API — DevDunia Comics">
+<meta property="og:description" content="Python OpenAI API examples — ChatGPT, GPT-4, function calling, streaming.">
+<meta property="og:image" content="https://devdunia.com/images/logo.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Bangers&family=Comic+Neue:wght@400;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+:root{--ink:#1a1410;--paper:#fdf3e3;--paper2:#fbe9cc;--red:#e63946;--blue:#1d6fb8;--yellow:#ffd23f;--green:#3fa34d;--pink:#ff6b9d;--purple:#8a4fff;--orange:#ff8c42;}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'Comic Neue',cursive;font-weight:400;color:var(--ink);background-color:var(--paper);background-image:radial-gradient(var(--ink) 0.5px,transparent 0.6px);background-size:14px 14px;background-attachment:fixed;min-height:100vh;}
+.paper-overlay{position:fixed;inset:0;background:rgba(253,243,227,.78);pointer-events:none;z-index:0;}
+.page-wrap{position:relative;z-index:1;max-width: 1240px;margin:0 auto;padding: 20px 32px 60px;}
+
+
+
+
+
+
+
+.hero{display:flex;align-items:flex-start;gap:20px;background:var(--paper2);border:4px solid var(--ink);border-radius:6px;box-shadow:7px 7px 0 var(--ink);padding:20px 24px;margin-bottom:28px;transform:rotate(-0.4deg);}
+.hero-icon{font-size:3rem;line-height:1;flex-shrink:0;filter:drop-shadow(3px 3px 0 var(--ink));}
+.hero-text h1{font-family:'Bangers',cursive;font-size:2.6rem;letter-spacing:2px;color:var(--green);-webkit-text-stroke:1px var(--ink);text-shadow:4px 4px 0 var(--ink);line-height:1;text-transform:uppercase;}
+.hero-text p{font-size:.95rem;margin-top:6px;line-height:1.5;max-width:500px;}
+.hero-badges{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px;}
+.badge{font-family:'Space Mono',monospace;font-size:.65rem;font-weight:700;padding:3px 8px;border:2px solid var(--ink);border-radius:4px;box-shadow:2px 2px 0 var(--ink);}
+.badge-blue{background:var(--blue);color:#fff;}.badge-green{background:var(--green);color:#fff;}.badge-yellow{background:var(--yellow);color:var(--ink);}.badge-purple{background:var(--purple);color:#fff;}.badge-orange{background:var(--orange);color:#fff;}.badge-red{background:var(--red);color:#fff;}
+.panel{background:var(--paper);border:4px solid var(--ink);border-radius:6px;box-shadow:7px 7px 0 var(--ink);overflow:hidden;margin-bottom:22px;}
+.panel-header{background:var(--ink);color:var(--yellow);font-family:'Bangers',cursive;font-size:1.2rem;letter-spacing:2px;padding:8px 16px;display:flex;align-items:center;justify-content:space-between;gap:10px;}
+.panel-tag{font-family:'Space Mono',monospace;font-size:.65rem;font-weight:700;background:var(--yellow);color:var(--ink);padding:2px 7px;border-radius:3px;}
+.panel-body{padding:18px 20px;}
+.chapter-badge{display:inline-block;font-family:'Bangers',cursive;font-size:1.1rem;letter-spacing:2px;padding:4px 14px;border:3px solid var(--ink);border-radius:6px;box-shadow:3px 3px 0 var(--ink);margin-bottom:12px;}
+.code-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;}
+.code-card{background:var(--paper2);border:3px solid var(--ink);border-radius:6px;box-shadow:4px 4px 0 var(--ink);overflow:hidden;}
+.code-card-header{background:var(--ink);color:var(--yellow);font-family:'Bangers',cursive;font-size:1rem;letter-spacing:1px;padding:6px 12px;display:flex;align-items:center;justify-content:space-between;}
+.code-card-body{padding:0;}
+.code-block{background:var(--ink);color:var(--yellow);font-family:'Space Mono',monospace;font-size:.7rem;line-height:1.5;padding:12px 14px;width:100%;resize:none;border:none;outline:none;overflow:auto;}
+.copy-sm{font-family:'Bangers',cursive;font-size:.8rem;letter-spacing:1px;background:var(--green);color:#fff;border:2px solid var(--ink);border-radius:4px;padding:2px 8px;cursor:pointer;transition:transform .1s;}
+.copy-sm:active{transform:translate(1px,1px);}
+.ref-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
+.ref-card{background:var(--paper2);border:3px solid var(--ink);border-radius:6px;box-shadow:4px 4px 0 var(--ink);padding:12px 14px;}
+.ref-card h4{font-family:'Bangers',cursive;letter-spacing:1px;font-size:1rem;margin-bottom:6px;}
+.ref-card li{font-size:.8rem;line-height:1.6;list-style:none;}
+.ref-card code{font-family:'Space Mono',monospace;font-size:.72rem;background:var(--ink);color:var(--yellow);padding:1px 4px;border-radius:3px;}
+.setup-block{background:var(--ink);color:var(--yellow);font-family:'Space Mono',monospace;font-size:.75rem;border-radius:6px;padding:14px 16px;border:3px solid var(--ink);line-height:1.6;position:relative;}
+.copy-abs{position:absolute;top:8px;right:8px;font-family:'Bangers',cursive;font-size:.85rem;letter-spacing:1px;background:var(--green);color:#fff;border:2px solid var(--ink);border-radius:4px;padding:2px 8px;cursor:pointer;transition:transform .1s;}
+.copy-abs:active{transform:translate(1px,1px);}
+@media(max-width:760px){.code-grid{grid-template-columns:1fr;}.hero{flex-direction:column;gap:10px;}.hero-text h1{font-size:2rem;}.ref-grid{grid-template-columns:1fr;}}
+</style>
 </head>
-<body></body>
+<body>
+<div class="paper-overlay"></div>
+<div data-masthead></div>
+
+<div class="page-wrap">
+
+  <div data-tool-hero
+     data-title="Python OpenAI API"
+     data-chapter="40"
+     data-category="Developer Tools"
+     data-icon="&#x1F916;"
+     data-desc="ChatGPT, GPT-4, function calling, streaming, and text analysis. Complete Python code snippets for every OpenAI use case — ready to copy and run!"
+     data-color="blue"
+     data-badges="GPT-3.5,GPT-4,STREAMING,FUNCTIONS,ANALYSIS"
+     data-badge-colors="green,blue,purple,orange,red">
+  </div>
+
+  
+
+  <!-- SETUP -->
+  <div class="panel">
+    <div class="panel-header">&#x2699;&#xFE0F; CHAPTER 1: SETUP &amp; INSTALLATION <span class="panel-tag">SETUP</span></div>
+    <div class="panel-body">
+      <span class="chapter-badge" style="background:var(--green);color:#fff;border-color:var(--ink);">CH.1</span>
+      <div class="setup-block" id="setup-code">
+# Install OpenAI library
+pip install openai
+
+# Basic setup
+import openai
+import os
+
+# Set your API key
+openai.api_key = "your-api-key-here"
+# Or set as environment variable
+# os.environ["OPENAI_API_KEY"] = "your-api-key-here"
+
+# Initialize client (for newer versions)
+from openai import OpenAI
+client = OpenAI(api_key="your-api-key-here")</div>
+      <button class="copy-abs" onclick="copyBlock('setup-code', this)">&#x1F4CB; COPY</button>
+    </div>
+  </div>
+
+  <!-- CHATGPT EXAMPLES -->
+  <div class="panel">
+    <div class="panel-header">&#x1F4AC; CHAPTER 2: CHATGPT EXAMPLES <span class="panel-tag">CHAT</span></div>
+    <div class="panel-body">
+      <span class="chapter-badge" style="background:var(--blue);color:#fff;">CH.2</span>
+      <div class="code-grid">
+        <div class="code-card">
+          <div class="code-card-header">Simple Chat <button class="copy-sm" onclick="copyBlock('chat-code', this)">COPY</button></div>
+          <div class="code-card-body">
+            <textarea id="chat-code" class="code-block" rows="16" readonly>import openai
+
+def simple_chat(message):
+    response = openai.ChatCompletion.create(
+        model="gpt-3.5-turbo",
+        messages=[
+            {"role": "system", "content": "You are a helpful assistant."},
+            {"role": "user", "content": message}
+        ],
+        max_tokens=150,
+        temperature=0.7
+    )
+    return response.choices[0].message.content
+
+# Usage
+message = "Explain quantum computing in simple terms"
+response = simple_chat(message)
+print(response)
+
+# With newer API
+from openai import OpenAI
+client = OpenAI()
+
+def chat_with_gpt(message):
+    response = client.chat.completions.create(
+        model="gpt-3.5-turbo",
+        messages=[{"role": "user", "content": message}]
+    )
+    return response.choices[0].message.content</textarea>
+          </div>
+        </div>
+        <div class="code-card">
+          <div class="code-card-header">Conversation History <button class="copy-sm" onclick="copyBlock('conversation-code', this)">COPY</button></div>
+          <div class="code-card-body">
+            <textarea id="conversation-code" class="code-block" rows="16" readonly>from openai import OpenAI
+client = OpenAI()
+
+class ChatBot:
+    def __init__(self):
+        self.conversation_history = []
+
+    def add_message(self, role, content):
+        self.conversation_history.append(
+            {"role": role, "content": content}
+        )
+
+    def chat(self, user_message):
+        self.add_message("user", user_message)
+        response = client.chat.completions.create(
+            model="gpt-3.5-turbo",
+            messages=self.conversation_history,
+            max_tokens=200
+        )
+        assistant_message = response.choices[0].message.content
+        self.add_message("assistant", assistant_message)
+        return assistant_message
+
+    def get_history(self):
+        return self.conversation_history
+
+# Usage
+bot = ChatBot()
+response1 = bot.chat("Hello, how are you?")
+response2 = bot.chat("What's the weather like?")
+print("History:", bot.get_history())</textarea>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- GPT-4 EXAMPLES -->
+  <div class="panel">
+    <div class="panel-header">&#x1F9E0; CHAPTER 3: GPT-4 EXAMPLES <span class="panel-tag">GPT-4</span></div>
+    <div class="panel-body">
+      <span class="chapter-badge" style="background:var(--purple);color:#fff;">CH.3</span>
+      <div class="code-grid">
+        <div class="code-card">
+          <div class="code-card-header">Code Generation <button class="copy-sm" onclick="copyBlock('code-gen-code', this)">COPY</button></div>
+          <div class="code-card-body">
+            <textarea id="code-gen-code" class="code-block" rows="18" readonly>from openai import OpenAI
+client = OpenAI()
+
+def generate_code(description, language="python"):
+    prompt = f"""Generate {language} code for:
+{description}
+
+Please provide:
+1. Clean, well-commented code
+2. Brief explanation of the approach
+3. Example usage if applicable"""
+
+    response = client.chat.completions.create(
+        model="gpt-4",
+        messages=[
+            {"role": "system", "content": "You are an expert programmer. Generate clean, efficient code with proper comments."},
+            {"role": "user", "content": prompt}
+        ],
+        max_tokens=1000,
+        temperature=0.3
+    )
+    return response.choices[0].message.content
+
+# Usage
+description = "Create a function to find the longest common subsequence"
+code = generate_code(description, "python")
+print(code)</textarea>
+          </div>
+        </div>
+        <div class="code-card">
+          <div class="code-card-header">Text Analysis <button class="copy-sm" onclick="copyBlock('analysis-code', this)">COPY</button></div>
+          <div class="code-card-body">
+            <textarea id="analysis-code" class="code-block" rows="18" readonly>from openai import OpenAI
+client = OpenAI()
+
+def analyze_text(text, analysis_type="sentiment"):
+    analysis_prompts = {
+        "sentiment": "Analyze the sentiment (positive, negative, neutral) with a confidence score.",
+        "summary": "Provide a concise summary in 2-3 sentences.",
+        "keywords": "Extract the main keywords and key phrases.",
+        "tone": "Analyze the tone and writing style."
+    }
+
+    prompt = f"{analysis_prompts.get(analysis_type, 'Analyze this text')}\n\nText: {text}"
+
+    response = client.chat.completions.create(
+        model="gpt-4",
+        messages=[
+            {"role": "system", "content": "You are a text analysis expert. Provide clear, structured analysis."},
+            {"role": "user", "content": prompt}
+        ],
+        max_tokens=300,
+        temperature=0.2
+    )
+    return response.choices[0].message.content
+
+# Usage
+text = "I'm really excited about this new project!"
+print(f"Sentiment: {analyze_text(text, 'sentiment')}")
+print(f"Summary: {analyze_text(text, 'summary')}")</textarea>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ADVANCED FEATURES -->
+  <div class="panel">
+    <div class="panel-header">&#x26A1; CHAPTER 4: ADVANCED FEATURES <span class="panel-tag">ADVANCED</span></div>
+    <div class="panel-body">
+      <span class="chapter-badge" style="background:var(--orange);color:#fff;">CH.4</span>
+      <div class="code-grid">
+        <div class="code-card">
+          <div class="code-card-header">Function Calling <button class="copy-sm" onclick="copyBlock('function-code', this)">COPY</button></div>
+          <div class="code-card-body">
+            <textarea id="function-code" class="code-block" rows="22" readonly>from openai import OpenAI
+import json
+
+client = OpenAI()
+
+# Define functions the model can call
+functions = [
+    {
+        "name": "get_weather",
+        "description": "Get current weather for a location",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "location": {
+                    "type": "string",
+                    "description": "City name"
+                }
+            },
+            "required": ["location"]
+        }
+    }
+]
+
+def get_weather(location):
+    return f"Weather in {location}: Sunny, 25 C"
+
+def chat_with_functions(message):
+    response = client.chat.completions.create(
+        model="gpt-3.5-turbo",
+        messages=[{"role": "user", "content": message}],
+        functions=functions,
+        function_call="auto"
+    )
+    msg = response.choices[0].message
+    if msg.function_call:
+        fn_name = msg.function_call.name
+        fn_args = json.loads(msg.function_call.arguments)
+        if fn_name == "get_weather":
+            result = get_weather(fn_args["location"])
+            response = client.chat.completions.create(
+                model="gpt-3.5-turbo",
+                messages=[
+                    {"role": "user", "content": message},
+                    {"role": "function", "name": fn_name, "content": result}
+                ]
+            )
+            return response.choices[0].message.content
+    return msg.content
+
+result = chat_with_functions("What's the weather in Tokyo?")
+print(result)</textarea>
+          </div>
+        </div>
+        <div class="code-card">
+          <div class="code-card-header">Streaming Responses <button class="copy-sm" onclick="copyBlock('streaming-code', this)">COPY</button></div>
+          <div class="code-card-body">
+            <textarea id="streaming-code" class="code-block" rows="22" readonly>from openai import OpenAI
+
+client = OpenAI()
+
+def stream_chat(message):
+    stream = client.chat.completions.create(
+        model="gpt-3.5-turbo",
+        messages=[{"role": "user", "content": message}],
+        stream=True
+    )
+
+    full_response = ""
+    for chunk in stream:
+        if chunk.choices[0].delta.content is not None:
+            content = chunk.choices[0].delta.content
+            print(content, end='', flush=True)
+            full_response += content
+
+    return full_response
+
+def stream_with_callback(message, callback=None):
+    stream = client.chat.completions.create(
+        model="gpt-3.5-turbo",
+        messages=[{"role": "user", "content": message}],
+        stream=True
+    )
+
+    full_response = ""
+    for chunk in stream:
+        if chunk.choices[0].delta.content is not None:
+            content = chunk.choices[0].delta.content
+            full_response += content
+            if callback:
+                callback(content)
+
+    return full_response
+
+# Usage
+def print_chunk(chunk):
+    print(chunk, end='', flush=True)
+
+message = "Write a short story about a robot learning to paint"
+response = stream_with_callback(message, print_chunk)</textarea>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- QUICK REFERENCE -->
+  <div class="panel">
+    <div class="panel-header">&#x1F4D6; QUICK REFERENCE <span class="panel-tag">CHEATSHEET</span></div>
+    <div class="panel-body">
+      <div class="ref-grid">
+        <div class="ref-card">
+          <h4 style="color:var(--blue);">Popular Models</h4>
+          <ul>
+            <li><code>gpt-3.5-turbo</code> — Fast, cost-effective</li>
+            <li><code>gpt-4</code> — Most capable</li>
+            <li><code>gpt-4-turbo</code> — Latest GPT-4 variant</li>
+            <li><code>text-embedding-ada-002</code> — Embeddings</li>
+          </ul>
+        </div>
+        <div class="ref-card">
+          <h4 style="color:var(--green);">Key Parameters</h4>
+          <ul>
+            <li><code>max_tokens</code> — Response length limit</li>
+            <li><code>temperature</code> — Creativity (0–2)</li>
+            <li><code>top_p</code> — Nucleus sampling</li>
+            <li><code>stream</code> — Real-time responses</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+<script>
+function copyBlock(id, btn){
+  var el = document.getElementById(id);
+  var text = el.tagName==='TEXTAREA' ? el.value : el.textContent;
+  try{ if(el.tagName==='TEXTAREA'){ el.select(); document.execCommand('copy'); } }catch(e){}
+  if(navigator.clipboard) navigator.clipboard.writeText(text).catch(function(){});
+  var orig=btn.textContent;
+  btn.textContent='COPIED!';
+  btn.style.background='var(--blue)';
+  setTimeout(function(){ btn.textContent=orig; btn.style.background=btn.classList.contains('copy-abs')?'var(--green)':'var(--green)'; },1800);
+}
+</script>
+<script src="masthead.js"></script>
+<script src="hero-banner.js"></script>
+<script src="author-card.js"></script>
+</body>
 </html>

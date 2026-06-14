@@ -2,9 +2,287 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta http-equiv="refresh" content="0; url=production/base64-encoder.html">
-<title>DevDunia</title>
-<script>window.location.replace('production/base64-encoder.html')</script>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Base64 Encoder — DevDunia Comics</title>
+<meta name="description" content="Convert text and binary data to Base64 encoding format. Free online Base64 encoder tool for developers.">
+<meta property="og:title" content="Base64 Encoder — DevDunia Comics">
+<meta property="og:description" content="Convert text and binary data to Base64 encoding format. Free online Base64 encoder tool.">
+<meta property="og:image" content="https://devdunia.com/images/logo.png">
+<link rel="icon" type="image/png" href="images/logo.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Bangers&family=Comic+Neue:wght@400;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --ink:#1a1410; --paper:#fdf3e3; --paper2:#fbe9cc;
+  --red:#e63946; --blue:#1d6fb8; --yellow:#ffd23f;
+  --green:#3fa34d; --pink:#ff6b9d; --purple:#8a4fff; --orange:#ff8c42;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Comic Neue',cursive;font-weight:400;color:var(--ink);background-color:var(--paper);background-image:radial-gradient(var(--ink) 0.5px,transparent 0.6px);background-size:14px 14px;background-attachment:fixed;min-height:100vh}
+.paper-overlay{position:fixed;inset:0;background:rgba(253,243,227,.78);pointer-events:none;z-index:0}
+
+/* masthead injected by masthead.js */
+
+/* ── PAGE WRAP (centered, shows halftone bg) ── */
+.page-wrap{position:relative;z-index:1;max-width: 1240px;margin:0 auto;padding:20px 32px 60px}
+
+/* hero styles injected by hero-banner.js */
+
+/* ── PANEL ── */
+.panel{background:var(--paper);border:4px solid var(--ink);border-radius:6px;box-shadow:7px 7px 0 var(--ink);overflow:hidden;margin-bottom:22px}
+.panel-header{background:var(--ink);color:var(--yellow);font-family:'Bangers',cursive;font-size:1.2rem;letter-spacing:2px;padding:8px 16px;display:flex;align-items:center;justify-content:space-between;gap:10px}
+.panel-tag{font-family:'Space Mono',monospace;font-size:.65rem;font-weight:700;background:var(--yellow);color:var(--ink);padding:2px 7px;border-radius:3px}
+.panel-body{padding:18px 20px}
+
+/* ── TEXTAREA ── */
+.comic-textarea{width:100%;background:#fff;border:3px solid var(--ink);border-radius:6px;padding:12px 14px;font-family:'Space Mono',monospace;font-size:.82rem;color:var(--ink);line-height:1.6;resize:vertical;min-height:90px;outline:none;transition:border-color .15s}
+.comic-textarea:focus{border-color:var(--green)}
+.comic-textarea::placeholder{color:#aaa;font-style:italic}
+.comic-textarea[readonly]{background:var(--paper2);cursor:default}
+
+/* ── BUTTONS ── */
+.btn-row{display:flex;flex-wrap:wrap;gap:10px;margin-top:14px}
+.btn{font-family:'Bangers',cursive;font-size:1.1rem;letter-spacing:1px;border:3px solid var(--ink);border-radius:6px;padding:8px 20px;cursor:pointer;box-shadow:4px 4px 0 var(--ink);transition:transform .1s,box-shadow .1s;text-transform:uppercase}
+.btn:active{transform:translate(2px,2px);box-shadow:2px 2px 0 var(--ink)}
+.btn-primary{background:var(--green);color:#fff}
+.btn-danger{background:var(--red);color:#fff}
+
+/* ── ERROR BUBBLE ── */
+.error-bubble{display:none;position:relative;background:#fff0f0;border:3px solid var(--red);border-radius:14px;padding:10px 14px;margin-top:12px;font-size:.9rem;font-weight:700;color:var(--red)}
+.error-bubble::before{content:'';position:absolute;top:-16px;left:22px;border-width:0 10px 16px;border-style:solid;border-color:transparent transparent var(--red)}
+.error-bubble::after{content:'';position:absolute;top:-11px;left:24px;border-width:0 8px 12px;border-style:solid;border-color:transparent transparent #fff0f0}
+.error-bubble.show{display:block}
+
+/* ── STATS ── */
+.stats-row{display:flex;flex-wrap:wrap;gap:10px;margin-top:14px}
+.stat-chip{font-family:'Space Mono',monospace;font-size:.72rem;font-weight:700;padding:4px 10px;border:2px solid var(--ink);border-radius:4px;box-shadow:2px 2px 0 var(--ink);display:flex;align-items:center;gap:5px}
+.stat-chip .stat-label{opacity:.65;font-weight:400}
+.chip-blue{background:var(--blue);color:#fff}
+.chip-green{background:var(--green);color:#fff}
+.chip-purple{background:var(--purple);color:#fff}
+.chip-yellow{background:var(--yellow);color:var(--ink)}
+
+/* ── OUTPUT COPY ── */
+.output-wrap{position:relative}
+.copy-btn{position:absolute;top:8px;right:8px;font-family:'Bangers',cursive;font-size:.95rem;letter-spacing:1px;background:var(--ink);color:var(--yellow);border:2px solid var(--ink);border-radius:4px;padding:3px 10px;cursor:pointer;box-shadow:2px 2px 0 rgba(0,0,0,.4);transition:transform .1s}
+.copy-btn:active{transform:translate(1px,1px)}
+
+/* ── EXAMPLES ── */
+.examples-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.example-card{background:var(--paper2);border:3px solid var(--ink);border-radius:6px;box-shadow:4px 4px 0 var(--ink);padding:10px 12px;cursor:pointer;transition:transform .1s,box-shadow .1s}
+.example-card:hover{transform:translate(-2px,-2px);box-shadow:6px 6px 0 var(--ink)}
+.example-card:active{transform:translate(1px,1px);box-shadow:2px 2px 0 var(--ink)}
+.example-title{font-family:'Bangers',cursive;font-size:1rem;letter-spacing:1px;margin-bottom:4px}
+.example-plain{font-family:'Space Mono',monospace;font-size:.68rem;color:var(--green);word-break:break-all;margin-bottom:2px}
+.example-arrow{font-size:.75rem;color:var(--ink);opacity:.55}
+
+/* ── SECTION LABEL ── */
+.section-label{font-family:'Bangers',cursive;font-size:.95rem;letter-spacing:1px;color:var(--ink);margin-bottom:6px;text-transform:uppercase}
+
+/* ── HOW IT WORKS ── */
+.how-steps{display:flex;flex-direction:column;gap:10px}
+.how-step{display:flex;align-items:flex-start;gap:12px}
+.step-dot{width:28px;height:28px;border-radius:50%;border:3px solid var(--ink);display:flex;align-items:center;justify-content:center;font-family:'Bangers',cursive;font-size:1rem;color:#fff;flex-shrink:0;box-shadow:2px 2px 0 var(--ink)}
+.how-step p{font-size:.88rem;line-height:1.5;padding-top:2px}
+.how-step code{font-family:'Space Mono',monospace;font-size:.75rem;background:var(--ink);color:var(--yellow);padding:1px 5px;border-radius:3px}
+
+/* ── MOBILE ── */
+@media(max-width:860px){
+  /* hero mobile handled by hero-banner.js */
+  /* masthead mobile handled by masthead.js */
+  .examples-grid{grid-template-columns:1fr}
+  .page-wrap{padding:20px 16px 60px}
+}
+</style>
 </head>
-<body></body>
+<body>
+<div class="paper-overlay"></div>
+
+<div data-masthead></div>
+
+<div class="page-wrap">
+
+  <!-- HERO: config drives title, chapter, icon, desc, badges, color -->
+  <div data-tool-hero
+       data-title="Base64 Encoder"
+       data-chapter="01"
+       data-category="Encoders &amp; Decoders"
+       data-icon="&#x1F512;"
+       data-desc="Transform any text into Base64 instantly. No server, no tracking — pure client-side encoding right in your browser."
+       data-color="green"
+       data-badges="CLIENT-SIDE,FREE,NO SERVER,INSTANT"
+       data-badge-colors="white,yellow,ink,red">
+  </div>
+
+  <!-- INPUT PANEL -->
+  <div class="panel">
+    <div class="panel-header">&#x270F; TYPE YOUR TEXT HERE <span class="panel-tag">INPUT</span></div>
+    <div class="panel-body">
+      <div class="section-label">Plain Text to Encode</div>
+      <textarea id="base64-input" class="comic-textarea" rows="6" placeholder="Enter text or binary data to encode to Base64... e.g. Hello World"></textarea>
+      <div class="btn-row">
+        <button id="encode-btn" class="btn btn-primary">&#x26A1; Encode!</button>
+        <button id="clear-btn" class="btn btn-danger">&#x1F5D1; Clear</button>
+      </div>
+      <div id="error-bubble" class="error-bubble">&#x1F4A5; <span id="error-msg">Please enter some text!</span></div>
+    </div>
+  </div>
+
+  <!-- OUTPUT PANEL -->
+  <div class="panel" id="output-panel" style="display:none;">
+    <div class="panel-header">&#x1F4E4; BASE64 ENCODED OUTPUT <span class="panel-tag">OUTPUT</span></div>
+    <div class="panel-body">
+      <div class="section-label">Base64 Result</div>
+      <div class="output-wrap">
+        <textarea id="base64-output" class="comic-textarea" rows="7" readonly></textarea>
+        <button id="copy-btn" class="copy-btn">&#x1F4CB; COPY</button>
+      </div>
+      <div class="stats-row" id="stats-row">
+        <div class="stat-chip chip-blue"><span class="stat-label">ORIGINAL</span><span id="stat-orig-size">—</span></div>
+        <div class="stat-chip chip-green"><span class="stat-label">B64 SIZE</span><span id="stat-b64-size">—</span></div>
+        <div class="stat-chip chip-purple"><span class="stat-label">OVERHEAD</span><span id="stat-overhead">—</span></div>
+        <div class="stat-chip chip-yellow"><span class="stat-label">PADDING</span><span id="stat-padding">—</span></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- EXAMPLES -->
+  <div class="panel">
+    <div class="panel-header">&#x1F4DA; TRY AN EXAMPLE — CLICK TO LOAD! <span class="panel-tag">EXAMPLES</span></div>
+    <div class="panel-body">
+      <div class="examples-grid">
+        <div class="example-card" data-plain="Hello World">
+          <div class="example-title" style="color:var(--green);">Simple Text</div>
+          <div class="example-plain">"Hello World"</div>
+          <div class="example-arrow">&#x2193; SGVsbG8gV29ybGQ=</div>
+        </div>
+        <div class="example-card" data-plain='{"name":"Ali","tool":"DevDunia"}'>
+          <div class="example-title" style="color:var(--blue);">JSON Object</div>
+          <div class="example-plain">{"name":"Ali","tool":"DevDunia"}</div>
+          <div class="example-arrow">&#x2193; eyJuYW1lIjoiQWxp...</div>
+        </div>
+        <div class="example-card" data-plain="https://devdunia.com">
+          <div class="example-title" style="color:var(--purple);">URL</div>
+          <div class="example-plain">https://devdunia.com</div>
+          <div class="example-arrow">&#x2193; aHR0cHM6Ly9kZXZk...</div>
+        </div>
+        <div class="example-card" data-plain="SecretMessage123">
+          <div class="example-title" style="color:var(--red);">Secret Data</div>
+          <div class="example-plain">"SecretMessage123"</div>
+          <div class="example-arrow">&#x2193; U2VjcmV0TWVzc2FnZTEyMw==</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- HOW IT WORKS -->
+  <div class="panel">
+    <div class="panel-header">&#x1F9E0; HOW BASE64 ENCODING WORKS <span class="panel-tag">EXPLAINER</span></div>
+    <div class="panel-body">
+      <div class="how-steps">
+        <div class="how-step">
+          <div class="step-dot" style="background:var(--green);">1</div>
+          <p>Every character in your text becomes its <strong>ASCII number</strong> (e.g. 'H' &rarr; 72, 'i' &rarr; 105).</p>
+        </div>
+        <div class="how-step">
+          <div class="step-dot" style="background:var(--blue);">2</div>
+          <p>Those bytes are grouped into <strong>3-byte chunks</strong> (24 bits) then split into <strong>four 6-bit groups</strong>.</p>
+        </div>
+        <div class="how-step">
+          <div class="step-dot" style="background:var(--orange);">3</div>
+          <p>Each 6-bit value maps to one of <strong>64 characters</strong>: A-Z, a-z, 0-9, +, /. That's where the name comes from!</p>
+        </div>
+        <div class="how-step">
+          <div class="step-dot" style="background:var(--purple);">4</div>
+          <p><code>=</code> padding is added to make the output length a multiple of 4. This encoder adds it automatically.</p>
+        </div>
+        <div class="how-step">
+          <div class="step-dot" style="background:var(--red);">5</div>
+          <p>The result is <strong>safe ASCII text</strong> — great for embedding data in JSON, HTML, URLs, or email headers. ~33% size increase is the trade-off.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div><!-- /page-wrap -->
+
+<script src="masthead.js"></script>
+<script src="hero-banner.js"></script>
+<script src="author-card.js"></script>
+<script>
+(function() {
+  var inputEl   = document.getElementById('base64-input');
+  var outputEl  = document.getElementById('base64-output');
+  var encodeBtn = document.getElementById('encode-btn');
+  var clearBtn  = document.getElementById('clear-btn');
+  var copyBtn   = document.getElementById('copy-btn');
+  var outPanel  = document.getElementById('output-panel');
+  var errBubble = document.getElementById('error-bubble');
+  var errMsg    = document.getElementById('error-msg');
+  var statOrig  = document.getElementById('stat-orig-size');
+  var statB64   = document.getElementById('stat-b64-size');
+  var statOver  = document.getElementById('stat-overhead');
+  var statPad   = document.getElementById('stat-padding');
+
+  function safeEncode(raw) {
+    try { return btoa(unescape(encodeURIComponent(raw))); } catch(e) { return ''; }
+  }
+
+  function showError(msg) { errMsg.textContent = msg; errBubble.classList.add('show'); }
+  function hideError() { errBubble.classList.remove('show'); }
+
+  function formatBytes(n) {
+    if (n === 0) return '0 B';
+    if (n < 1024) return n + ' B';
+    return (n / 1024).toFixed(1) + ' KB';
+  }
+
+  function encode() {
+    var raw = inputEl.value;
+    if (!raw) { showError('Please enter some text to encode!'); return; }
+    try {
+      var encoded = safeEncode(raw);
+      if (!encoded) throw new Error('Encoding failed');
+      outputEl.value = encoded;
+      outPanel.style.display = 'block';
+      hideError();
+      var rawBytes = new Blob([raw]).size;
+      var encBytes = new Blob([encoded]).size;
+      statOrig.textContent = formatBytes(rawBytes);
+      statB64.textContent  = formatBytes(encBytes);
+      statOver.textContent = rawBytes > 0 ? (((encBytes - rawBytes) / rawBytes) * 100).toFixed(1) + '%' : '0%';
+      var padMatch = encoded.match(/=+$/);
+      statPad.textContent = (padMatch ? padMatch[0].length : 0) + ' chars';
+    } catch(e) { showError('Encode failed: ' + e.message); }
+  }
+
+  encodeBtn.addEventListener('click', encode);
+
+  clearBtn.addEventListener('click', function() {
+    inputEl.value = ''; outputEl.value = '';
+    outPanel.style.display = 'none'; hideError();
+  });
+
+  copyBtn.addEventListener('click', function() {
+    outputEl.select();
+    try { document.execCommand('copy'); } catch(e) {}
+    if (navigator.clipboard) navigator.clipboard.writeText(outputEl.value).catch(function(){});
+    copyBtn.textContent = '✔ COPIED!';
+    copyBtn.style.background = 'var(--green)';
+    setTimeout(function() { copyBtn.textContent = '📋 COPY'; copyBtn.style.background = 'var(--ink)'; }, 1800);
+  });
+
+  var cards = document.querySelectorAll('.example-card');
+  for (var i = 0; i < cards.length; i++) {
+    cards[i].addEventListener('click', function() { inputEl.value = this.dataset.plain; encode(); });
+  }
+
+  inputEl.addEventListener('keydown', function(e) {
+    if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') encode();
+  });
+
+  inputEl.value = 'Hello from DevDunia!';
+})();
+</script>
+</body>
 </html>

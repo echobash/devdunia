@@ -2,9 +2,419 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta http-equiv="refresh" content="0; url=production/tcp-protocol.html">
-<title>DevDunia</title>
-<script>window.location.replace('production/tcp-protocol.html')</script>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TCP Protocol Guide — DevDunia Comics</title>
+<meta name="description" content="TCP protocol reference. Complete guide to TCP connection, three-way handshake, flow control, and reliability.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://devdunia.com/production/tcp-protocol.html">
+<meta property="og:title" content="TCP Protocol Guide — DevDunia Comics">
+<meta property="og:description" content="TCP protocol reference. Complete guide to TCP connection, handshake, and reliability.">
+<meta property="og:image" content="https://devdunia.com/images/logo.png">
+<link rel="icon" type="image/png" href="images/logo.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Bangers&family=Comic+Neue:wght@400;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+:root{--ink:#1a1410;--paper:#fdf3e3;--paper2:#fbe9cc;--red:#e63946;--blue:#1d6fb8;--yellow:#ffd23f;--green:#3fa34d;--pink:#ff6b9d;--purple:#8a4fff;--orange:#ff8c42;}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'Comic Neue',cursive;font-weight:400;color:var(--ink);background-color:var(--paper);background-image:radial-gradient(var(--ink) 0.5px,transparent 0.6px);background-size:14px 14px;background-attachment:fixed;min-height:100vh;}
+.paper-overlay{position:fixed;inset:0;background:rgba(253,243,227,.78);pointer-events:none;z-index:0;}
+.page-wrap{position:relative;z-index:1;max-width: 1240px;margin:0 auto;padding: 20px 32px 60px;}
+
+
+
+
+
+
+
+.panel{background:var(--paper);border:4px solid var(--ink);border-radius:6px;box-shadow:7px 7px 0 var(--ink);overflow:hidden;margin-bottom:22px;}
+.panel-header{background:var(--ink);color:var(--yellow);font-family:'Bangers',cursive;font-size:1.2rem;letter-spacing:2px;padding:8px 16px;display:flex;align-items:center;justify-content:space-between;gap:10px;}
+.panel-header .panel-tag{font-family:'Space Mono',monospace;font-size:.65rem;font-weight:700;background:var(--yellow);color:var(--ink);padding:2px 7px;border-radius:3px;}
+.panel-body{padding:18px 20px;}
+.chapter-badge{display:inline-flex;align-items:center;justify-content:center;width:48px;height:48px;border-radius:50%;background:var(--ink);color:var(--yellow);font-family:'Bangers',cursive;font-size:1.4rem;flex-shrink:0;margin-right:12px;}
+.chapter-header{display:flex;align-items:center;margin-bottom:14px;}
+.chapter-title{font-family:'Bangers',cursive;font-size:1.5rem;letter-spacing:2px;text-transform:uppercase;}
+.speech-bubble{position:relative;background:var(--yellow);border:3px solid var(--ink);border-radius:12px;padding:12px 16px;margin:14px 0;font-size:.9rem;line-height:1.5;}
+.speech-bubble::before{content:'';position:absolute;bottom:-18px;left:24px;border-width:18px 10px 0;border-style:solid;border-color:var(--ink) transparent transparent;}
+.speech-bubble::after{content:'';position:absolute;bottom:-12px;left:26px;border-width:14px 8px 0;border-style:solid;border-color:var(--yellow) transparent transparent;}
+code,.code-block{background:var(--ink);color:var(--yellow);font-family:'Space Mono',monospace;font-size:.78rem;border-radius:4px;padding:1px 5px;}
+.code-block{display:block;padding:12px 16px;margin:8px 0;border-radius:6px;line-height:1.7;overflow-x:auto;white-space:pre;}
+.two-col{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+.feature-box{border:2px solid var(--ink);border-radius:6px;padding:12px 14px;background:var(--paper2);}
+.feature-box h4{font-family:'Bangers',cursive;letter-spacing:1px;margin-bottom:8px;font-size:1.1rem;}
+.feature-box li{font-size:.85rem;list-style:none;padding:2px 0;line-height:1.5;}
+/* HANDSHAKE VISUAL */
+.handshake-flow{display:flex;flex-direction:column;gap:0;margin:14px 0;}
+.hf-step{display:flex;align-items:center;gap:12px;padding:10px 0;border-bottom:2px dashed var(--ink);}
+.hf-step:last-child{border-bottom:none;}
+.hf-num{width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:'Bangers',cursive;font-size:1.1rem;color:#fff;flex-shrink:0;border:2px solid var(--ink);}
+.hf-arrow{font-size:1.2rem;flex-shrink:0;}
+.hf-label{font-family:'Space Mono',monospace;font-size:.8rem;font-weight:700;}
+.hf-desc{font-size:.83rem;color:#444;margin-top:2px;}
+/* STATES */
+.states-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin:10px 0;}
+.state-chip{border:2px solid var(--ink);border-radius:4px;padding:8px 10px;text-align:center;box-shadow:3px 3px 0 var(--ink);}
+.state-chip-name{font-family:'Bangers',cursive;font-size:1rem;letter-spacing:1px;}
+.state-chip-desc{font-size:.72rem;margin-top:2px;}
+/* PORTS GRID */
+.ports-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+.ports-box{border:3px solid var(--ink);border-radius:6px;overflow:hidden;}
+.ports-box-header{padding:8px 12px;font-family:'Bangers',cursive;font-size:1rem;letter-spacing:1px;color:#fff;}
+.ports-box-body{padding:10px 12px;background:var(--paper2);}
+.ports-box-body li{list-style:none;font-size:.85rem;padding:3px 0;font-family:'Space Mono',monospace;}
+/* TABLE */
+.comic-table{width:100%;border-collapse:collapse;margin-bottom:12px;}
+.comic-table th{background:var(--ink);color:var(--yellow);font-family:'Bangers',cursive;font-size:.95rem;letter-spacing:1px;padding:8px 10px;text-align:left;border:2px solid var(--ink);}
+.comic-table td{padding:6px 10px;border:2px solid var(--ink);font-size:.83rem;}
+.comic-table tr:nth-child(even) td{background:var(--paper2);}
+.comic-table tr:nth-child(odd) td{background:var(--paper);}
+@media(max-width:760px){.two-col,.ports-grid,.states-grid{grid-template-columns:1fr;}.hero{flex-direction:column;gap:10px;}.hero-text h1{font-size:2rem;}}
+</style>
 </head>
-<body></body>
+<body>
+<div class="paper-overlay"></div>
+<div data-masthead></div>
+
+<div class="page-wrap">
+
+  <div data-tool-hero
+       data-title="TCP Protocol"
+       data-chapter="03"
+       data-category="Network Protocols"
+       data-icon="&#x1F4F6;"
+       data-desc="Visual guide to the TCP protocol — handshake&#44; flow control&#44; congestion control and packet structure."
+       data-color="blue"
+       data-badges="TCP,HANDSHAKE,NETWORK,FREE"
+       data-badge-colors="blue,orange,green,yellow">
+  </div>
+
+  <!-- CH1: WHAT IS TCP -->
+  <div class="panel">
+    <div class="panel-header">&#x2139;&#xFE0F; WHAT IS TCP?<span class="panel-tag">CH.1</span></div>
+    <div class="panel-body">
+      <div class="chapter-header">
+        <div class="chapter-badge">1</div>
+        <div class="chapter-title" style="color:var(--green);">The Reliable Postman</div>
+      </div>
+      <p style="font-size:.95rem;line-height:1.6;margin-bottom:14px;">TCP (Transmission Control Protocol) is a connection-oriented, reliable transport protocol that ensures data is delivered <strong>correctly and in order</strong>. It's one of the core protocols of the Internet, sitting in Layer 4 of the OSI model.</p>
+      <div class="two-col">
+        <div class="feature-box">
+          <h4 style="color:var(--green);">Reliable</h4>
+          <ul>
+            <li>&#x2705; Guarantees data delivery</li>
+            <li>&#x2705; Error checking built-in</li>
+            <li>&#x2705; Automatic retransmission</li>
+            <li>&#x2705; Data never silently lost</li>
+          </ul>
+        </div>
+        <div class="feature-box">
+          <h4 style="color:var(--blue);">Connection-Oriented</h4>
+          <ul>
+            <li>&#x1F4DE; Handshake before sending</li>
+            <li>&#x1F4DE; Dedicated connection maintained</li>
+            <li>&#x1F4DE; Proper teardown when done</li>
+            <li>&#x1F4DE; Both sides aware of state</li>
+          </ul>
+        </div>
+        <div class="feature-box">
+          <h4 style="color:var(--purple);">Ordered</h4>
+          <ul>
+            <li>&#x1F522; Sequence numbers on packets</li>
+            <li>&#x1F522; Receiver reorders if needed</li>
+            <li>&#x1F522; App gets data in right order</li>
+            <li>&#x1F522; No out-of-sequence delivery</li>
+          </ul>
+        </div>
+        <div class="feature-box">
+          <h4 style="color:var(--orange);">Flow Controlled</h4>
+          <ul>
+            <li>&#x1F6A6; Sliding window protocol</li>
+            <li>&#x1F6A6; Prevents overwhelming receiver</li>
+            <li>&#x1F6A6; Congestion control (slow start)</li>
+            <li>&#x1F6A6; Adapts to network conditions</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- CH2: THREE-WAY HANDSHAKE -->
+  <div class="panel">
+    <div class="panel-header">&#x1F91D; THREE-WAY HANDSHAKE<span class="panel-tag">CH.2</span></div>
+    <div class="panel-body">
+      <div class="chapter-header">
+        <div class="chapter-badge">2</div>
+        <div class="chapter-title" style="color:var(--blue);">SYN-SYN/ACK-ACK</div>
+      </div>
+      <p style="font-size:.9rem;line-height:1.5;margin-bottom:14px;">Before any data is sent, TCP establishes a connection using the famous <strong>three-way handshake</strong>. Think of it as knocking on the door and waiting to be invited in.</p>
+      <div class="handshake-flow">
+        <div class="hf-step">
+          <div class="hf-num" style="background:var(--blue);">1</div>
+          <div class="hf-arrow">&#x27A1;&#xFE0F;</div>
+          <div>
+            <div class="hf-label">CLIENT → SERVER: SYN (seq=x)</div>
+            <div class="hf-desc">"Hey server, I want to connect! I'll use sequence number x. Are you listening?"</div>
+          </div>
+        </div>
+        <div class="hf-step">
+          <div class="hf-num" style="background:var(--green);">2</div>
+          <div class="hf-arrow">&#x2B05;&#xFE0F;</div>
+          <div>
+            <div class="hf-label">SERVER → CLIENT: SYN-ACK (seq=y, ack=x+1)</div>
+            <div class="hf-desc">"Got it! I acknowledge your x. Here's my sequence number y. Ready to connect!"</div>
+          </div>
+        </div>
+        <div class="hf-step">
+          <div class="hf-num" style="background:var(--orange);">3</div>
+          <div class="hf-arrow">&#x27A1;&#xFE0F;</div>
+          <div>
+            <div class="hf-label">CLIENT → SERVER: ACK (seq=x+1, ack=y+1)</div>
+            <div class="hf-desc">"Acknowledged your y! Connection established. Let's send data now!"</div>
+          </div>
+        </div>
+      </div>
+      <div class="speech-bubble">
+        <strong>Why three steps?</strong> Two would only confirm one direction works. Three ensures BOTH client→server AND server→client channels are working properly before data flows!
+      </div>
+    </div>
+  </div>
+
+  <!-- CH3: KEY FEATURES -->
+  <div class="panel">
+    <div class="panel-header">&#x1F9E0; KEY TCP FEATURES<span class="panel-tag">CH.3</span></div>
+    <div class="panel-body">
+      <div class="chapter-header">
+        <div class="chapter-badge">3</div>
+        <div class="chapter-title" style="color:var(--purple);">Under the Hood</div>
+      </div>
+      <div class="two-col" style="gap:14px;">
+        <div class="feature-box">
+          <h4 style="color:var(--green);">Flow Control</h4>
+          <p style="font-size:.85rem;margin-bottom:8px;">Prevents overwhelming the receiver by controlling data transmission rate using sliding window protocol.</p>
+          <code class="code-block">// Sliding Window Protocol
+Window Size =
+  min(receiver_buffer,
+      network_capacity)
+
+Sender waits for ACK
+before sending more data</code>
+        </div>
+        <div class="feature-box">
+          <h4 style="color:var(--blue);">Error Detection</h4>
+          <p style="font-size:.85rem;margin-bottom:8px;">Uses checksums to detect corrupted data and requests retransmission automatically.</p>
+          <code class="code-block">// Checksum Calculation
+checksum =
+  sum_of_all_bytes % 65536
+
+if (checksum != received) {
+  request_retransmission();
+}</code>
+        </div>
+        <div class="feature-box">
+          <h4 style="color:var(--purple);">Congestion Control</h4>
+          <p style="font-size:.85rem;margin-bottom:8px;">Manages network traffic to prevent congestion collapse using slow-start and AIMD algorithms.</p>
+          <code class="code-block">// Slow Start Algorithm
+cwnd = 1; // Congestion Window
+while (cwnd &lt; ssthresh) {
+  cwnd *= 2; // Exponential
+}
+// Then: linear growth</code>
+        </div>
+        <div class="feature-box">
+          <h4 style="color:var(--orange);">Ordered Delivery</h4>
+          <p style="font-size:.85rem;margin-bottom:8px;">Sequence numbers ensure packets arrive at the application in correct order, regardless of network routing.</p>
+          <code class="code-block">// Sequence Numbers
+seq_num =
+  initial_seq + bytes_sent
+
+Receiver buffers
+out-of-order packets,
+delivers in sequence</code>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- CH4: HEADER STRUCTURE -->
+  <div class="panel">
+    <div class="panel-header">&#x1F4E6; TCP HEADER STRUCTURE<span class="panel-tag">CH.4</span></div>
+    <div class="panel-body">
+      <div class="chapter-header">
+        <div class="chapter-badge">4</div>
+        <div class="chapter-title" style="color:var(--orange);">The Packet Anatomy</div>
+      </div>
+      <p style="font-size:.9rem;margin-bottom:12px;">Every TCP packet has a minimum 20-byte header carrying critical control information:</p>
+      <table class="comic-table">
+        <thead>
+          <tr><th>Field</th><th>Size</th><th>Purpose</th></tr>
+        </thead>
+        <tbody>
+          <tr><td><strong style="color:var(--green);">Source Port</strong></td><td>16 bits</td><td>Sender's port number (identifies sending application)</td></tr>
+          <tr><td><strong style="color:var(--green);">Dest Port</strong></td><td>16 bits</td><td>Receiver's port number (identifies destination app)</td></tr>
+          <tr><td><strong style="color:var(--blue);">Sequence Number</strong></td><td>32 bits</td><td>Position of this segment in the byte stream</td></tr>
+          <tr><td><strong style="color:var(--blue);">Acknowledgment</strong></td><td>32 bits</td><td>Next expected byte from the other side</td></tr>
+          <tr><td><strong style="color:var(--purple);">Header Length</strong></td><td>4 bits</td><td>Length of the TCP header in 32-bit words</td></tr>
+          <tr><td><strong style="color:var(--purple);">Flags (Control)</strong></td><td>6 bits</td><td>SYN, ACK, FIN, RST, PSH, URG control bits</td></tr>
+          <tr><td><strong style="color:var(--orange);">Window Size</strong></td><td>16 bits</td><td>Number of bytes receiver can accept (flow control)</td></tr>
+          <tr><td><strong style="color:var(--orange);">Checksum</strong></td><td>16 bits</td><td>Error detection over header and data</td></tr>
+          <tr><td><strong style="color:var(--red);">Urgent Pointer</strong></td><td>16 bits</td><td>Points to urgent data (when URG flag set)</td></tr>
+          <tr><td><strong>Options</strong></td><td>Variable</td><td>Optional: MSS, window scaling, timestamps</td></tr>
+          <tr><td><strong>Data</strong></td><td>Variable</td><td>Application payload</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- CH5: CONNECTION STATES -->
+  <div class="panel">
+    <div class="panel-header">&#x1F504; TCP CONNECTION STATES<span class="panel-tag">CH.5</span></div>
+    <div class="panel-body">
+      <div class="chapter-header">
+        <div class="chapter-badge">5</div>
+        <div class="chapter-title" style="color:var(--red);">The State Machine</div>
+      </div>
+      <p style="font-size:.9rem;margin-bottom:12px;">TCP connections move through well-defined states during their lifecycle:</p>
+      <div class="states-grid">
+        <div class="state-chip" style="background:var(--paper2);">
+          <div class="state-chip-name">CLOSED</div>
+          <div class="state-chip-desc">No connection exists</div>
+        </div>
+        <div class="state-chip" style="background:#e8f5e9;">
+          <div class="state-chip-name" style="color:var(--green);">LISTEN</div>
+          <div class="state-chip-desc">Server waiting for SYN</div>
+        </div>
+        <div class="state-chip" style="background:#e3f2fd;">
+          <div class="state-chip-name" style="color:var(--blue);">SYN_SENT</div>
+          <div class="state-chip-desc">Client sent SYN, waiting</div>
+        </div>
+        <div class="state-chip" style="background:#e8f5e9;">
+          <div class="state-chip-name" style="color:var(--green);">SYN_RCVD</div>
+          <div class="state-chip-desc">Server got SYN, sent SYN-ACK</div>
+        </div>
+        <div class="state-chip" style="background:#f3e5f5;border-color:var(--green);">
+          <div class="state-chip-name" style="color:var(--green);">ESTABLISHED</div>
+          <div class="state-chip-desc">&#x2705; Data transfer active</div>
+        </div>
+        <div class="state-chip" style="background:#fff3e0;">
+          <div class="state-chip-name" style="color:var(--orange);">FIN_WAIT_1</div>
+          <div class="state-chip-desc">Sent FIN, closing</div>
+        </div>
+        <div class="state-chip" style="background:#fff3e0;">
+          <div class="state-chip-name" style="color:var(--orange);">FIN_WAIT_2</div>
+          <div class="state-chip-desc">Got ACK for FIN</div>
+        </div>
+        <div class="state-chip" style="background:#fce4ec;">
+          <div class="state-chip-name" style="color:var(--red);">CLOSE_WAIT</div>
+          <div class="state-chip-desc">Got FIN, sending data</div>
+        </div>
+        <div class="state-chip" style="background:#fce4ec;">
+          <div class="state-chip-name" style="color:var(--red);">LAST_ACK</div>
+          <div class="state-chip-desc">Sent FIN, await ACK</div>
+        </div>
+        <div class="state-chip" style="background:#ede7f6;">
+          <div class="state-chip-name" style="color:var(--purple);">TIME_WAIT</div>
+          <div class="state-chip-desc">Waiting 2xMSL timeout</div>
+        </div>
+        <div class="state-chip" style="background:#f5f5f5;">
+          <div class="state-chip-name">CLOSING</div>
+          <div class="state-chip-desc">Both closing simultaneously</div>
+        </div>
+        <div class="state-chip" style="background:var(--paper2);">
+          <div class="state-chip-name">CLOSED</div>
+          <div class="state-chip-desc">&#x2705; Connection ended</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- CH6: TCP VS UDP -->
+  <div class="panel">
+    <div class="panel-header">&#x2694;&#xFE0F; TCP VS UDP COMPARISON<span class="panel-tag">CH.6</span></div>
+    <div class="panel-body">
+      <div class="chapter-header">
+        <div class="chapter-badge">6</div>
+        <div class="chapter-title" style="color:var(--orange);">Choose Your Fighter</div>
+      </div>
+      <table class="comic-table">
+        <thead>
+          <tr><th>Feature</th><th style="color:var(--yellow);">TCP</th><th style="color:var(--yellow);">UDP</th></tr>
+        </thead>
+        <tbody>
+          <tr><td><strong>Connection</strong></td><td>Connection-oriented (handshake)</td><td>Connectionless (fire &amp; forget)</td></tr>
+          <tr><td><strong>Reliability</strong></td><td><span style="color:var(--green);font-weight:700;">High — guaranteed delivery</span></td><td><span style="color:var(--orange);font-weight:700;">Low — best effort only</span></td></tr>
+          <tr><td><strong>Ordering</strong></td><td><span style="color:var(--green);font-weight:700;">Guaranteed in-order</span></td><td><span style="color:var(--orange);font-weight:700;">Not guaranteed</span></td></tr>
+          <tr><td><strong>Speed</strong></td><td>Slower (overhead of ACKs)</td><td><span style="color:var(--green);font-weight:700;">Faster (minimal overhead)</span></td></tr>
+          <tr><td><strong>Header Size</strong></td><td>20 bytes minimum</td><td><span style="color:var(--green);font-weight:700;">Only 8 bytes</span></td></tr>
+          <tr><td><strong>Flow Control</strong></td><td>Yes (sliding window)</td><td>No</td></tr>
+          <tr><td><strong>Congestion Control</strong></td><td>Yes (slow start, AIMD)</td><td>No</td></tr>
+          <tr><td><strong>Use Cases</strong></td><td>Web, email, file transfer, SSH</td><td>Gaming, streaming, DNS, VoIP</td></tr>
+        </tbody>
+      </table>
+      <div class="speech-bubble">
+        <strong>Mental model:</strong> TCP is like a certified mail service — slow but every package arrives and is confirmed. UDP is like dropping a flyer in people's mailboxes — fast, but some might end up in the wind!
+      </div>
+    </div>
+  </div>
+
+  <!-- CH7: COMMON TCP PORTS -->
+  <div class="panel">
+    <div class="panel-header">&#x1F511; COMMON TCP PORTS<span class="panel-tag">CH.7</span></div>
+    <div class="panel-body">
+      <div class="chapter-header">
+        <div class="chapter-badge">7</div>
+        <div class="chapter-title" style="color:var(--blue);">Port Directory</div>
+      </div>
+      <div class="ports-grid">
+        <div class="ports-box">
+          <div class="ports-box-header" style="background:var(--blue);">Web Services</div>
+          <div class="ports-box-body">
+            <ul>
+              <li>80 ─ HTTP</li>
+              <li>443 ─ HTTPS</li>
+              <li>8080 ─ HTTP Alternate</li>
+              <li>8443 ─ HTTPS Alternate</li>
+            </ul>
+          </div>
+        </div>
+        <div class="ports-box">
+          <div class="ports-box-header" style="background:var(--green);">Email</div>
+          <div class="ports-box-body">
+            <ul>
+              <li>25 ─ SMTP</li>
+              <li>110 ─ POP3</li>
+              <li>143 ─ IMAP</li>
+              <li>587 ─ SMTP Submission</li>
+            </ul>
+          </div>
+        </div>
+        <div class="ports-box">
+          <div class="ports-box-header" style="background:var(--purple);">File Transfer / Remote</div>
+          <div class="ports-box-body">
+            <ul>
+              <li>21 ─ FTP Control</li>
+              <li>22 ─ SSH / SFTP</li>
+              <li>23 ─ Telnet</li>
+              <li>3389 ─ RDP</li>
+            </ul>
+          </div>
+        </div>
+        <div class="ports-box">
+          <div class="ports-box-header" style="background:var(--orange);">Databases</div>
+          <div class="ports-box-body">
+            <ul>
+              <li>3306 ─ MySQL</li>
+              <li>5432 ─ PostgreSQL</li>
+              <li>1433 ─ SQL Server</li>
+              <li>27017 ─ MongoDB</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+<script src="masthead.js"></script>
+<script src="hero-banner.js"></script>
+<script src="author-card.js"></script>
+</body>
 </html>

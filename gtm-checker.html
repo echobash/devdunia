@@ -2,9 +2,712 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta http-equiv="refresh" content="0; url=production/gtm-checker.html">
-<title>DevDunia</title>
-<script>window.location.replace('production/gtm-checker.html')</script>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GTM Tag Checker — DevDunia Comics</title>
+<meta name="description" content="Check if a website has Google Tag Manager (GTM) installed. Detect GTM container IDs and verify GTM implementation.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://devdunia.com/gtm-checker.html">
+<meta property="og:title" content="GTM Tag Checker — DevDunia Comics">
+<meta property="og:description" content="Check if a website has Google Tag Manager (GTM) installed. Detect GTM container IDs and verify GTM implementation.">
+<meta property="og:image" content="https://devdunia.com/images/logo.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Bangers&family=Comic+Neue:wght@400;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --ink: #1a1410;
+  --paper: #fdf3e3;
+  --paper2: #fbe9cc;
+  --red: #e63946;
+  --blue: #1d6fb8;
+  --yellow: #ffd23f;
+  --green: #3fa34d;
+  --pink: #ff6b9d;
+  --purple: #8a4fff;
+  --orange: #ff8c42;
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: 'Comic Neue', cursive;
+  font-weight: 400;
+  color: var(--ink);
+  background-color: var(--paper);
+  background-image: radial-gradient(var(--ink) 0.5px, transparent 0.6px);
+  background-size: 14px 14px;
+  background-attachment: fixed;
+  min-height: 100vh;
+}
+
+.paper-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(253,243,227,.78);
+  pointer-events: none;
+  z-index: 0;
+}
+
+.page-wrap {
+  position: relative;
+  z-index: 1;
+  max-width: 1240px;
+  margin: 0 auto;
+  padding: 20px 32px 60px;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+.hero {
+  display: flex;
+  align-items: flex-start;
+  gap: 20px;
+  background: var(--paper2);
+  border: 4px solid var(--ink);
+  border-radius: 6px;
+  box-shadow: 7px 7px 0 var(--ink);
+  padding: 20px 24px;
+  margin-bottom: 28px;
+  transform: rotate(-0.4deg);
+}
+
+.hero-icon {
+  font-size: 3rem;
+  line-height: 1;
+  flex-shrink: 0;
+  filter: drop-shadow(3px 3px 0 var(--ink));
+}
+
+.hero-text h1 {
+  font-family: 'Bangers', cursive;
+  font-size: 2.8rem;
+  letter-spacing: 2px;
+  color: var(--blue);
+  -webkit-text-stroke: 1px var(--ink);
+  text-shadow: 4px 4px 0 var(--ink);
+  line-height: 1;
+  text-transform: uppercase;
+}
+
+.hero-text p {
+  font-size: .95rem;
+  margin-top: 6px;
+  line-height: 1.5;
+  max-width: 480px;
+}
+
+.hero-badges {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 10px;
+}
+
+.badge {
+  font-family: 'Space Mono', monospace;
+  font-size: .65rem;
+  font-weight: 700;
+  padding: 3px 8px;
+  border: 2px solid var(--ink);
+  border-radius: 4px;
+  box-shadow: 2px 2px 0 var(--ink);
+}
+.badge-blue   { background: var(--blue);   color: #fff; }
+.badge-green  { background: var(--green);  color: #fff; }
+.badge-yellow { background: var(--yellow); color: var(--ink); }
+.badge-red    { background: var(--red);    color: #fff; }
+
+.panel {
+  background: var(--paper);
+  border: 4px solid var(--ink);
+  border-radius: 6px;
+  box-shadow: 7px 7px 0 var(--ink);
+  overflow: hidden;
+  margin-bottom: 22px;
+}
+
+.panel-header {
+  background: var(--ink);
+  color: var(--yellow);
+  font-family: 'Bangers', cursive;
+  font-size: 1.2rem;
+  letter-spacing: 2px;
+  padding: 8px 16px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.panel-header .panel-tag {
+  font-family: 'Space Mono', monospace;
+  font-size: .65rem;
+  font-weight: 700;
+  background: var(--yellow);
+  color: var(--ink);
+  padding: 2px 7px;
+  border-radius: 3px;
+}
+
+.panel-body { padding: 18px 20px; }
+
+.section-label {
+  font-family: 'Bangers', cursive;
+  font-size: .95rem;
+  letter-spacing: 1px;
+  color: var(--ink);
+  margin-bottom: 6px;
+  text-transform: uppercase;
+}
+
+/* URL input row */
+.url-row {
+  display: flex;
+  gap: 0;
+  margin-bottom: 6px;
+}
+
+.comic-select {
+  background: var(--paper2);
+  border: 3px solid var(--ink);
+  border-right: none;
+  border-radius: 6px 0 0 6px;
+  padding: 10px 10px;
+  font-family: 'Space Mono', monospace;
+  font-size: .8rem;
+  color: var(--ink);
+  outline: none;
+  box-shadow: 3px 3px 0 var(--ink);
+  cursor: pointer;
+}
+
+.comic-input-url {
+  flex: 1;
+  background: #fff;
+  border: 3px solid var(--ink);
+  border-radius: 0 6px 6px 0;
+  padding: 10px 12px;
+  font-family: 'Space Mono', monospace;
+  font-size: .82rem;
+  color: var(--ink);
+  outline: none;
+  transition: border-color .15s;
+}
+.comic-input-url:focus { border-color: var(--blue); }
+
+.comic-textarea {
+  width: 100%;
+  background: #fff;
+  border: 3px solid var(--ink);
+  border-radius: 6px;
+  padding: 12px 14px;
+  font-family: 'Space Mono', monospace;
+  font-size: .82rem;
+  color: var(--ink);
+  line-height: 1.6;
+  resize: vertical;
+  min-height: 100px;
+  box-shadow: inset 3px 3px 0 rgba(0,0,0,.06);
+  outline: none;
+  transition: border-color .15s;
+}
+.comic-textarea:focus { border-color: var(--blue); }
+.comic-textarea::placeholder { color: #aaa; font-style: italic; }
+
+.btn-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 14px;
+}
+
+.btn {
+  font-family: 'Bangers', cursive;
+  font-size: 1.1rem;
+  letter-spacing: 1px;
+  border: 3px solid var(--ink);
+  border-radius: 6px;
+  padding: 8px 20px;
+  cursor: pointer;
+  box-shadow: 4px 4px 0 var(--ink);
+  transition: transform .1s, box-shadow .1s;
+  text-transform: uppercase;
+}
+.btn:active { transform: translate(2px,2px); box-shadow: 2px 2px 0 var(--ink); }
+.btn:disabled { opacity: .5; cursor: not-allowed; transform: none; }
+
+.btn-primary { background: var(--blue);  color: #fff; }
+.btn-danger  { background: var(--red);   color: #fff; }
+
+/* Result status bubble */
+.status-found {
+  background: #f0fff4;
+  border: 3px solid var(--green);
+  border-radius: 14px;
+  padding: 14px 18px;
+  margin-bottom: 16px;
+  font-weight: 700;
+  color: var(--green);
+}
+
+.status-not-found {
+  background: #fffdf0;
+  border: 3px solid var(--yellow);
+  border-radius: 14px;
+  padding: 14px 18px;
+  margin-bottom: 16px;
+  font-weight: 700;
+  color: #8a7100;
+}
+
+.status-error {
+  background: #fff0f0;
+  border: 3px solid var(--red);
+  border-radius: 14px;
+  padding: 14px 18px;
+  margin-bottom: 16px;
+  font-weight: 700;
+  color: var(--red);
+}
+
+.status-title {
+  font-family: 'Bangers', cursive;
+  font-size: 1.4rem;
+  letter-spacing: 1px;
+  margin-bottom: 4px;
+}
+
+.status-subtitle {
+  font-size: .88rem;
+  font-weight: 400;
+}
+
+/* Container IDs */
+.container-id-list {
+  margin-top: 12px;
+}
+
+.container-id-item {
+  background: var(--paper2);
+  border: 3px solid var(--ink);
+  border-radius: 6px;
+  box-shadow: 3px 3px 0 var(--ink);
+  padding: 10px 14px;
+  margin-bottom: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.container-id-text {
+  font-family: 'Bangers', cursive;
+  font-size: 1.4rem;
+  letter-spacing: 2px;
+  color: var(--blue);
+  text-shadow: 2px 2px 0 var(--ink);
+}
+
+.gtm-link {
+  font-family: 'Bangers', cursive;
+  font-size: .9rem;
+  letter-spacing: 1px;
+  color: var(--purple);
+  text-decoration: none;
+  border: 2px solid var(--purple);
+  border-radius: 4px;
+  padding: 2px 8px;
+  transition: background .1s, color .1s;
+}
+.gtm-link:hover { background: var(--purple); color: #fff; }
+
+/* Code snippets */
+.code-panel {
+  background: var(--ink);
+  border-radius: 6px;
+  padding: 12px 14px;
+  margin-top: 10px;
+  font-family: 'Space Mono', monospace;
+  font-size: .72rem;
+  color: var(--yellow);
+  line-height: 1.7;
+  overflow-x: auto;
+  max-height: 160px;
+  overflow-y: auto;
+  word-break: break-all;
+}
+
+.snippet-label {
+  font-family: 'Bangers', cursive;
+  font-size: 1rem;
+  letter-spacing: 1px;
+  color: var(--ink);
+  margin-top: 14px;
+  margin-bottom: 4px;
+}
+
+/* Guide panel */
+.guide-card {
+  background: var(--paper2);
+  border: 3px solid var(--ink);
+  border-radius: 6px;
+  box-shadow: 4px 4px 0 var(--ink);
+  padding: 12px 14px;
+  margin-bottom: 12px;
+}
+
+.guide-card-title {
+  font-family: 'Bangers', cursive;
+  font-size: 1.1rem;
+  letter-spacing: 1px;
+  margin-bottom: 8px;
+}
+
+.guide-card ul {
+  font-size: .88rem;
+  padding-left: 18px;
+  line-height: 1.7;
+}
+
+.guide-card-code {
+  background: var(--ink);
+  border-radius: 4px;
+  padding: 8px 12px;
+  font-family: 'Space Mono', monospace;
+  font-size: .68rem;
+  color: var(--yellow);
+  line-height: 1.6;
+  margin-bottom: 8px;
+  overflow-x: auto;
+}
+
+.guide-card-code .comment { color: var(--green); }
+.guide-card-code .tag-color { color: var(--orange); }
+
+.divider {
+  border: none;
+  border-top: 3px solid var(--ink);
+  margin: 16px 0;
+}
+
+.how-steps { display: flex; flex-direction: column; gap: 10px; }
+.how-step { display: flex; align-items: flex-start; gap: 12px; }
+.step-dot {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  border: 3px solid var(--ink);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: 'Bangers', cursive;
+  font-size: 1rem;
+  color: #fff;
+  flex-shrink: 0;
+  box-shadow: 2px 2px 0 var(--ink);
+}
+.how-step p { font-size: .88rem; line-height: 1.5; padding-top: 2px; }
+.how-step code {
+  font-family: 'Space Mono', monospace;
+  font-size: .75rem;
+  background: var(--ink);
+  color: var(--yellow);
+  padding: 1px 5px;
+  border-radius: 3px;
+}
+
+@media (max-width: 600px) {
+  .hero { flex-direction: column; gap: 10px; }
+  .hero-text h1 { font-size: 2rem; }
+  .url-row { flex-direction: column; }
+  .comic-select { border-right: 3px solid var(--ink); border-radius: 6px; margin-bottom: -3px; }
+  .comic-input-url { border-radius: 6px; }
+}
+</style>
 </head>
-<body></body>
+<body>
+<div class="paper-overlay"></div>
+<div data-masthead></div>
+
+<div class="page-wrap">
+
+  <div data-tool-hero
+     data-title="GTM Tag Checker"
+     data-chapter="21"
+     data-category="Developer Tools"
+     data-icon="&#x1F50D;"
+     data-desc="Detect if any website has Google Tag Manager installed! Enter a URL to fetch and scan, or paste the page HTML directly. Finds container IDs, script tags, noscript tags, and dataLayer!"
+     data-color="blue"
+     data-badges="GTM DETECT,CONTAINER ID,DATALAYER,FREE"
+     data-badge-colors="blue,green,red,yellow">
+  </div>
+
+  <!-- MASTHEAD -->
+
+  <!-- HERO -->
+  
+
+  <!-- INPUT PANEL -->
+  <div class="panel">
+    <div class="panel-header">
+      &#x1F310; CHECK A WEBSITE OR PASTE HTML
+      <span class="panel-tag">INPUT</span>
+    </div>
+    <div class="panel-body">
+      <div class="section-label">&#x1F517; Enter URL</div>
+      <div class="url-row">
+        <select id="protocol-select" class="comic-select">
+          <option value="https://">https://</option>
+          <option value="http://">http://</option>
+        </select>
+        <input type="text" id="url-input" class="comic-input-url" placeholder="example.com">
+      </div>
+      <p style="font-size:.8rem;color:#777;margin-bottom:14px;font-style:italic;">Uses a CORS proxy to fetch the page. May not work for all sites.</p>
+
+      <div class="section-label">&#x1F4CB; Or Paste HTML Source</div>
+      <textarea id="html-input" class="comic-textarea" rows="4"
+        placeholder="Paste HTML source code here to scan for GTM tags..."></textarea>
+
+      <div class="btn-row">
+        <button id="check-btn" class="btn btn-primary">&#x1F50D; Check GTM!</button>
+        <button id="clear-btn" class="btn btn-danger">&#x1F5D1; Clear</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- RESULTS PANEL -->
+  <div class="panel" id="results-panel" style="display:none;">
+    <div class="panel-header">
+      &#x1F4CA; GTM DETECTION RESULTS
+      <span class="panel-tag">RESULTS</span>
+    </div>
+    <div class="panel-body">
+      <div id="gtm-status"></div>
+      <div id="gtm-details"></div>
+      <div id="gtm-snippets"></div>
+    </div>
+  </div>
+
+  <!-- GTM GUIDE PANEL -->
+  <div class="panel">
+    <div class="panel-header">
+      &#x1F4DA; GTM IMPLEMENTATION GUIDE
+      <span class="panel-tag">REFERENCE</span>
+    </div>
+    <div class="panel-body">
+
+      <div class="guide-card">
+        <div class="guide-card-title" style="color:var(--blue);">Standard GTM Script (in &lt;head&gt;)</div>
+        <div class="guide-card-code">
+          <span class="comment">// Place in the &lt;head&gt; section</span><br>
+          &lt;!-- Google Tag Manager --&gt;<br>
+          &lt;script&gt;(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':<br>
+          new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],<br>
+          j=d.createElement(s),dl=l!='dataLayer'?'&amp;l='+l:'';j.async=true;j.src=<br>
+          'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);<br>
+          })(window,document,'script','dataLayer','<span style="color:var(--yellow);">GTM-XXXXXXX</span>');&lt;/script&gt;<br>
+          &lt;!-- End Google Tag Manager --&gt;
+        </div>
+      </div>
+
+      <div class="guide-card">
+        <div class="guide-card-title" style="color:var(--green);">GTM Noscript Tag (after &lt;body&gt;)</div>
+        <div class="guide-card-code">
+          <span class="comment">// Place immediately after opening &lt;body&gt;</span><br>
+          &lt;!-- Google Tag Manager (noscript) --&gt;<br>
+          &lt;noscript&gt;&lt;iframe src="https://www.googletagmanager.com/ns.html?id=<span style="color:var(--yellow);">GTM-XXXXXXX</span>"<br>
+          height="0" width="0" style="display:none;visibility:hidden"&gt;&lt;/iframe&gt;&lt;/noscript&gt;<br>
+          &lt;!-- End Google Tag Manager (noscript) --&gt;
+        </div>
+      </div>
+
+      <div class="guide-card">
+        <div class="guide-card-title" style="color:var(--purple);">Container ID Format</div>
+        <div style="font-family:'Space Mono',monospace;font-size:.82rem;line-height:2;">
+          <span style="background:var(--blue);color:#fff;padding:2px 8px;border-radius:4px;border:2px solid var(--ink);">GTM-XXXXXXX</span> &nbsp;— 7-char standard format<br>
+          <span style="background:var(--green);color:#fff;padding:2px 8px;border-radius:4px;border:2px solid var(--ink);">GTM-XXXXXX</span> &nbsp;— 6-char alternative format
+        </div>
+      </div>
+
+      <div class="guide-card" style="border-color:var(--green);">
+        <div class="guide-card-title" style="color:var(--green);">Benefits of Google Tag Manager</div>
+        <ul>
+          <li>Manage tags without touching website code</li>
+          <li>Centralized tag management interface</li>
+          <li>Version control and rollback capabilities</li>
+          <li>Async tag loading for faster pages</li>
+          <li>Built-in templates for popular tags</li>
+          <li>Advanced debugging and preview mode</li>
+        </ul>
+      </div>
+
+    </div>
+  </div>
+
+</div><!-- /page-wrap -->
+
+<script>
+(function() {
+  var urlInput      = document.getElementById('url-input');
+  var protocolSel   = document.getElementById('protocol-select');
+  var htmlInput     = document.getElementById('html-input');
+  var checkBtn      = document.getElementById('check-btn');
+  var clearBtn      = document.getElementById('clear-btn');
+  var resultsPanel  = document.getElementById('results-panel');
+  var gtmStatus     = document.getElementById('gtm-status');
+  var gtmDetails    = document.getElementById('gtm-details');
+  var gtmSnippets   = document.getElementById('gtm-snippets');
+
+  urlInput.value = 'devdunia.com';
+
+  function escapeHtml(text) {
+    var d = document.createElement('div');
+    d.textContent = text;
+    return d.innerHTML;
+  }
+
+  function findGTMTags(html) {
+    var results = { found: false, containerIds: [], scriptTag: null, noscriptTag: null, dataLayer: null };
+
+    var idPattern = /GTM-[A-Z0-9]{6,7}/gi;
+    var foundIds = html.match(idPattern);
+    if (foundIds) {
+      results.found = true;
+      results.containerIds = foundIds.filter(function(v, i, a) { return a.indexOf(v) === i; }).map(function(id) { return id.toUpperCase(); });
+    }
+
+    var scriptPattern = /<script[^>]*>[\s\S]*?googletagmanager\.com\/gtm\.js[\s\S]*?<\/script>/gi;
+    var scriptMatch = html.match(scriptPattern);
+    if (scriptMatch) { results.scriptTag = scriptMatch[0]; }
+
+    var noscriptPattern = /<noscript[^>]*>[\s\S]*?googletagmanager\.com\/ns\.html[\s\S]*?<\/noscript>/gi;
+    var noscriptMatch = html.match(noscriptPattern);
+    if (noscriptMatch) { results.noscriptTag = noscriptMatch[0]; }
+
+    var dlPattern = /dataLayer\s*=\s*(\[[\s\S]*?\]|window\.dataLayer)/gi;
+    var dlMatch = html.match(dlPattern);
+    if (dlMatch) { results.dataLayer = dlMatch[0]; }
+
+    return results;
+  }
+
+  function displayResults(results, source) {
+    resultsPanel.style.display = 'block';
+
+    if (results.found) {
+      gtmStatus.innerHTML = '<div class="status-found">'
+        + '<div class="status-title">&#x2705; Google Tag Manager Found!</div>'
+        + '<div class="status-subtitle">GTM is installed on this website. Source: <code style="font-family:\'Space Mono\',monospace;font-size:.75rem;">' + escapeHtml(source) + '</code></div>'
+        + '</div>';
+    } else {
+      gtmStatus.innerHTML = '<div class="status-not-found">'
+        + '<div class="status-title">&#x26A0;&#xFE0F; GTM Not Detected</div>'
+        + '<div class="status-subtitle">No Google Tag Manager tags found. Source: <code style="font-family:\'Space Mono\',monospace;font-size:.75rem;">' + escapeHtml(source) + '</code></div>'
+        + '</div>';
+    }
+
+    var detailsHtml = '';
+    if (results.containerIds.length > 0) {
+      detailsHtml += '<div class="section-label">&#x1F3F7; Container ID(s) Found</div>';
+      detailsHtml += '<div class="container-id-list">';
+      results.containerIds.forEach(function(id) {
+        detailsHtml += '<div class="container-id-item">'
+          + '<span class="container-id-text">' + escapeHtml(id) + '</span>'
+          + '<a href="https://tagmanager.google.com/" target="_blank" class="gtm-link">View GTM &#x2197;</a>'
+          + '</div>';
+      });
+      detailsHtml += '</div>';
+    }
+    gtmDetails.innerHTML = detailsHtml;
+
+    var snippetsHtml = '';
+    if (results.scriptTag) {
+      snippetsHtml += '<div class="snippet-label">&#x1F4DC; GTM Script Tag (in &lt;head&gt;)</div>';
+      snippetsHtml += '<div class="code-panel">' + escapeHtml(results.scriptTag.substring(0, 600)) + (results.scriptTag.length > 600 ? '...' : '') + '</div>';
+    }
+    if (results.noscriptTag) {
+      snippetsHtml += '<div class="snippet-label">&#x1F4DC; GTM Noscript Tag (after &lt;body&gt;)</div>';
+      snippetsHtml += '<div class="code-panel">' + escapeHtml(results.noscriptTag) + '</div>';
+    }
+    if (results.dataLayer) {
+      snippetsHtml += '<div class="snippet-label">&#x1F4CA; DataLayer Found</div>';
+      snippetsHtml += '<div class="code-panel">' + escapeHtml(results.dataLayer.substring(0, 400)) + (results.dataLayer.length > 400 ? '...' : '') + '</div>';
+    }
+    gtmSnippets.innerHTML = snippetsHtml;
+  }
+
+  function checkFromHTML(html) {
+    var results = findGTMTags(html);
+    displayResults(results, 'Pasted HTML');
+  }
+
+  function checkFromURL(url) {
+    checkBtn.disabled = true;
+    checkBtn.textContent = '&#x23F3; Checking...';
+
+    var proxyUrl = 'https://api.allorigins.win/get?url=' + encodeURIComponent(url);
+    fetch(proxyUrl)
+      .then(function(r) { return r.json(); })
+      .then(function(data) {
+        if (data.contents) {
+          var results = findGTMTags(data.contents);
+          displayResults(results, url);
+        } else {
+          throw new Error('Could not fetch page content');
+        }
+      })
+      .catch(function(error) {
+        resultsPanel.style.display = 'block';
+        gtmStatus.innerHTML = '<div class="status-error">'
+          + '<div class="status-title">&#x274C; Error Fetching Website</div>'
+          + '<div class="status-subtitle">' + escapeHtml(error.message) + '<br><br>Tip: Try pasting the HTML source directly in the textarea above.</div>'
+          + '</div>';
+        gtmDetails.innerHTML = '';
+        gtmSnippets.innerHTML = '';
+      })
+      .finally(function() {
+        checkBtn.disabled = false;
+        checkBtn.textContent = '&#x1F50D; Check GTM!';
+      });
+  }
+
+  checkBtn.addEventListener('click', function() {
+    var htmlContent = htmlInput.value.trim();
+    if (htmlContent) {
+      checkFromHTML(htmlContent);
+    } else {
+      var domain = urlInput.value.trim();
+      if (!domain) { alert('Please enter a domain or paste HTML source code'); return; }
+      checkFromURL(protocolSel.value + domain);
+    }
+  });
+
+  urlInput.addEventListener('keypress', function(e) {
+    if (e.key === 'Enter') { checkBtn.click(); }
+  });
+
+  clearBtn.addEventListener('click', function() {
+    urlInput.value = '';
+    htmlInput.value = '';
+    resultsPanel.style.display = 'none';
+    gtmStatus.innerHTML = '';
+    gtmDetails.innerHTML = '';
+    gtmSnippets.innerHTML = '';
+  });
+})();
+</script>
+<script src="masthead.js"></script>
+<script src="hero-banner.js"></script>
+<script src="author-card.js"></script>
+</body>
 </html>

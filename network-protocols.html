@@ -2,9 +2,304 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta http-equiv="refresh" content="0; url=production/network-protocols.html">
-<title>DevDunia</title>
-<script>window.location.replace('production/network-protocols.html')</script>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Network Protocols Guide — DevDunia Comics</title>
+<meta name="description" content="Network protocols reference. Comprehensive guide to TCP, UDP, HTTP, DNS, TLS and other core networking protocols.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://devdunia.com/production/network-protocols.html">
+<meta property="og:title" content="Network Protocols Guide — DevDunia Comics">
+<meta property="og:description" content="Comprehensive guide to TCP, UDP, HTTP, DNS, and more networking protocols.">
+<meta property="og:image" content="https://devdunia.com/images/logo.png">
+<link rel="icon" type="image/png" href="images/logo.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Bangers&family=Comic+Neue:wght@400;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --ink:#1a1410; --paper:#fdf3e3; --paper2:#fbe9cc;
+  --red:#e63946; --blue:#1d6fb8; --yellow:#ffd23f;
+  --green:#3fa34d; --pink:#ff6b9d; --purple:#8a4fff; --orange:#ff8c42;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'Comic Neue',cursive;font-weight:400;color:var(--ink);background-color:var(--paper);background-image:radial-gradient(var(--ink) 0.5px,transparent 0.6px);background-size:14px 14px;background-attachment:fixed;min-height:100vh;}
+.paper-overlay{position:fixed;inset:0;background:rgba(253,243,227,.78);pointer-events:none;z-index:0;}
+.page-wrap{position:relative;z-index:1;max-width: 1240px;margin:0 auto;padding: 20px 32px 60px;}
+
+
+
+
+
+
+
+
+/* PANEL */
+/* PANEL */
+.panel{background:var(--paper);border:4px solid var(--ink);border-radius:6px;box-shadow:7px 7px 0 var(--ink);overflow:hidden;margin-bottom:22px;}
+.panel-header{background:var(--ink);color:var(--yellow);font-family:'Bangers',cursive;font-size:1.2rem;letter-spacing:2px;padding:8px 16px;display:flex;align-items:center;justify-content:space-between;gap:10px;}
+.panel-header .panel-tag{font-family:'Space Mono',monospace;font-size:.65rem;font-weight:700;background:var(--yellow);color:var(--ink);padding:2px 7px;border-radius:3px;}
+.panel-body{padding:18px 20px;}
+/* CHAPTER BADGES */
+.chapter-badge{display:inline-flex;align-items:center;justify-content:center;width:48px;height:48px;border-radius:50%;background:var(--ink);color:var(--yellow);font-family:'Bangers',cursive;font-size:1.4rem;flex-shrink:0;box-shadow:3px 3px 0 var(--ink);margin-right:12px;}
+.chapter-header{display:flex;align-items:center;margin-bottom:14px;}
+.chapter-title{font-family:'Bangers',cursive;font-size:1.6rem;letter-spacing:2px;text-transform:uppercase;}
+/* CARDS GRID */
+.cards-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px;}
+.proto-card{border:3px solid var(--ink);border-radius:6px;box-shadow:4px 4px 0 var(--ink);overflow:hidden;}
+.proto-card-header{padding:10px 14px;font-family:'Bangers',cursive;font-size:1.2rem;letter-spacing:1px;color:#fff;display:flex;align-items:center;gap:8px;}
+.proto-card-body{padding:12px 14px;background:var(--paper2);}
+.proto-card-body p{font-size:.88rem;line-height:1.5;margin-bottom:8px;}
+/* SPEECH BUBBLE */
+.speech-bubble{position:relative;background:var(--yellow);border:3px solid var(--ink);border-radius:12px;padding:12px 16px;margin:14px 0;font-size:.9rem;line-height:1.5;}
+.speech-bubble::before{content:'';position:absolute;bottom:-18px;left:24px;border-width:18px 10px 0;border-style:solid;border-color:var(--ink) transparent transparent;}
+.speech-bubble::after{content:'';position:absolute;bottom:-12px;left:26px;border-width:14px 8px 0;border-style:solid;border-color:var(--yellow) transparent transparent;}
+/* TABLE */
+.comic-table{width:100%;border-collapse:collapse;margin-bottom:12px;}
+.comic-table th{background:var(--ink);color:var(--yellow);font-family:'Bangers',cursive;font-size:1rem;letter-spacing:1px;padding:8px 12px;text-align:left;border:2px solid var(--ink);}
+.comic-table td{padding:7px 12px;border:2px solid var(--ink);font-size:.85rem;}
+.comic-table tr:nth-child(even) td{background:var(--paper2);}
+.comic-table tr:nth-child(odd) td{background:var(--paper);}
+/* CODE */
+code,.code-block{background:var(--ink);color:var(--yellow);font-family:'Space Mono',monospace;font-size:.8rem;border-radius:4px;padding:1px 5px;}
+.code-block{display:block;padding:12px 16px;margin:10px 0;border-radius:6px;line-height:1.6;overflow-x:auto;}
+/* STRIPE ACCENT */
+.stripe-blue{border-left:5px solid var(--blue);padding-left:14px;margin:10px 0;}
+.stripe-green{border-left:5px solid var(--green);padding-left:14px;margin:10px 0;}
+.stripe-orange{border-left:5px solid var(--orange);padding-left:14px;margin:10px 0;}
+.stripe-purple{border-left:5px solid var(--purple);padding-left:14px;margin:10px 0;}
+/* LINK CARDS */
+.link-cards{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:14px;}
+.link-card{border:3px solid var(--ink);border-radius:6px;box-shadow:4px 4px 0 var(--ink);padding:14px;text-decoration:none;color:var(--ink);transition:transform .1s,box-shadow .1s;display:block;}
+.link-card:hover{transform:translate(-2px,-2px);box-shadow:6px 6px 0 var(--ink);}
+.link-card-title{font-family:'Bangers',cursive;font-size:1.3rem;letter-spacing:1px;margin-bottom:4px;}
+.link-card-desc{font-size:.82rem;line-height:1.4;}
+@media(max-width:760px){.cards-grid,.link-cards{grid-template-columns:1fr;}}
+</style>
 </head>
-<body></body>
+<body>
+<div class="paper-overlay"></div>
+<div data-masthead></div>
+
+<div class="page-wrap">
+
+  <!-- MASTHEAD -->
+
+  <!-- HERO -->
+  <div data-tool-hero
+       data-title="Network Protocols"
+       data-chapter="05"
+       data-category="Network Protocols"
+       data-icon="&#x1F5A7;"
+       data-desc="Reference guide for common network protocols — DNS&#44; HTTP&#44; TCP&#44; UDP&#44; TLS and more with visual explanations."
+       data-color="blue"
+       data-badges="DNS,TCP,UDP,FREE"
+       data-badge-colors="blue,orange,green,yellow">
+  </div>
+
+  <!-- CHAPTER 1: OVERVIEW -->
+  <div class="panel">
+    <div class="panel-header">
+      &#x1F4E1; NETWORK PROTOCOLS OVERVIEW
+      <span class="panel-tag">CH.1</span>
+    </div>
+    <div class="panel-body">
+      <div class="chapter-header">
+        <div class="chapter-badge">1</div>
+        <div class="chapter-title" style="color:var(--blue);">What Are Network Protocols?</div>
+      </div>
+      <p style="font-size:.95rem;line-height:1.6;margin-bottom:14px;">Network protocols are the <strong>rules and standards</strong> that govern how data is transmitted and received over networks. They ensure reliable communication between devices across different networks and systems — think of them as the grammar rules of the internet's language.</p>
+      <div class="speech-bubble">
+        <strong>Pro Tip:</strong> Without protocols, computers would be like people speaking different languages with no translator. Protocols are the universal translator!
+      </div>
+    </div>
+  </div>
+
+  <!-- CHAPTER 2: OSI MODEL OVERVIEW -->
+  <div class="panel">
+    <div class="panel-header">
+      &#x1F3D7;&#xFE0F; OSI MODEL (OPEN SYSTEMS INTERCONNECTION)
+      <span class="panel-tag">CH.2</span>
+    </div>
+    <div class="panel-body">
+      <div class="chapter-header">
+        <div class="chapter-badge">2</div>
+        <div class="chapter-title" style="color:var(--purple);">The 7-Layer Cake</div>
+      </div>
+      <p style="font-size:.9rem;line-height:1.5;margin-bottom:14px;">The OSI model divides network communication into 7 layers — each with a specific job. Data flows down through all layers when sending, and back up through all layers when receiving.</p>
+
+      <table class="comic-table">
+        <thead>
+          <tr>
+            <th>#</th>
+            <th>Layer</th>
+            <th>Job</th>
+            <th>Protocols</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td><strong style="color:var(--blue);">7</strong></td><td><strong>Application</strong></td><td>User interface, services</td><td>HTTP, FTP, SMTP, DNS</td></tr>
+          <tr><td><strong style="color:var(--purple);">6</strong></td><td><strong>Presentation</strong></td><td>Data translation, encryption</td><td>SSL/TLS, JPEG, MPEG</td></tr>
+          <tr><td><strong style="color:var(--green);">5</strong></td><td><strong>Session</strong></td><td>Session management</td><td>NetBIOS, RPC</td></tr>
+          <tr><td><strong style="color:var(--orange);">4</strong></td><td><strong>Transport</strong></td><td>End-to-end delivery</td><td>TCP, UDP</td></tr>
+          <tr><td><strong style="color:var(--yellow);background:var(--ink);">3</strong></td><td><strong>Network</strong></td><td>Routing, addressing</td><td>IP, ICMP, ARP</td></tr>
+          <tr><td><strong style="color:var(--red);">2</strong></td><td><strong>Data Link</strong></td><td>Physical addressing</td><td>Ethernet, WiFi</td></tr>
+          <tr><td><strong>1</strong></td><td><strong>Physical</strong></td><td>Raw bit transmission</td><td>Cables, Radio, Fiber</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- CHAPTER 3: PROTOCOL CARDS -->
+  <div class="panel">
+    <div class="panel-header">
+      &#x1F4BB; THE CORE PROTOCOLS
+      <span class="panel-tag">CH.3</span>
+    </div>
+    <div class="panel-body">
+      <div class="chapter-header">
+        <div class="chapter-badge">3</div>
+        <div class="chapter-title" style="color:var(--green);">Meet the Players</div>
+      </div>
+      <div class="cards-grid">
+        <div class="proto-card">
+          <div class="proto-card-header" style="background:var(--blue);">&#x1F310; HTTP</div>
+          <div class="proto-card-body">
+            <p><strong>Hypertext Transfer Protocol</strong> — the foundation of data communication for the World Wide Web.</p>
+            <div class="hero-badges" style="margin-top:6px;">
+              <span class="badge badge-blue">Application Layer</span>
+              <span class="badge badge-yellow">Request/Response</span>
+            </div>
+            <p style="margin-top:8px;font-size:.8rem;"><em>Use cases: Web browsing, REST APIs, file downloads</em></p>
+          </div>
+        </div>
+        <div class="proto-card">
+          <div class="proto-card-header" style="background:var(--green);">&#x1F517; TCP</div>
+          <div class="proto-card-body">
+            <p><strong>Transmission Control Protocol</strong> — reliable, ordered, connection-oriented delivery with error checking.</p>
+            <div class="hero-badges" style="margin-top:6px;">
+              <span class="badge badge-green">Transport Layer</span>
+              <span class="badge badge-blue">Reliable</span>
+            </div>
+            <p style="margin-top:8px;font-size:.8rem;"><em>Use cases: File transfer, email, web browsing</em></p>
+          </div>
+        </div>
+        <div class="proto-card">
+          <div class="proto-card-header" style="background:var(--orange);">&#x26A1; UDP</div>
+          <div class="proto-card-body">
+            <p><strong>User Datagram Protocol</strong> — fast, connectionless, minimal overhead. Speed over reliability.</p>
+            <div class="hero-badges" style="margin-top:6px;">
+              <span class="badge badge-orange">Transport Layer</span>
+              <span class="badge badge-red">Connectionless</span>
+            </div>
+            <p style="margin-top:8px;font-size:.8rem;"><em>Use cases: Gaming, streaming, DNS queries</em></p>
+          </div>
+        </div>
+        <div class="proto-card">
+          <div class="proto-card-header" style="background:var(--purple);">&#x1F3D7;&#xFE0F; OSI Model</div>
+          <div class="proto-card-body">
+            <p><strong>Open Systems Interconnection</strong> — 7-layer conceptual framework standardizing how networks communicate.</p>
+            <div class="hero-badges" style="margin-top:6px;">
+              <span class="badge badge-purple">7 Layers</span>
+              <span class="badge badge-green">Standard</span>
+            </div>
+            <p style="margin-top:8px;font-size:.8rem;"><em>Use cases: Network design, troubleshooting</em></p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- CHAPTER 4: COMPARISON TABLE -->
+  <div class="panel">
+    <div class="panel-header">
+      &#x1F4CA; PROTOCOL COMPARISON
+      <span class="panel-tag">CH.4</span>
+    </div>
+    <div class="panel-body">
+      <div class="chapter-header">
+        <div class="chapter-badge">4</div>
+        <div class="chapter-title" style="color:var(--orange);">Head-to-Head</div>
+      </div>
+      <table class="comic-table">
+        <thead>
+          <tr>
+            <th>Protocol</th>
+            <th>Layer</th>
+            <th>Connection</th>
+            <th>Reliability</th>
+            <th>Speed</th>
+            <th>Use Cases</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong style="color:var(--blue);">HTTP</strong></td>
+            <td>Application (7)</td>
+            <td>Stateless</td>
+            <td>Depends on TCP</td>
+            <td>Medium</td>
+            <td>Web browsing, APIs</td>
+          </tr>
+          <tr>
+            <td><strong style="color:var(--green);">TCP</strong></td>
+            <td>Transport (4)</td>
+            <td>Connection-oriented</td>
+            <td><span style="color:var(--green);font-weight:700;">High</span></td>
+            <td>Slower</td>
+            <td>File transfer, email</td>
+          </tr>
+          <tr>
+            <td><strong style="color:var(--orange);">UDP</strong></td>
+            <td>Transport (4)</td>
+            <td>Connectionless</td>
+            <td><span style="color:var(--orange);font-weight:700;">Low</span></td>
+            <td><span style="color:var(--green);font-weight:700;">Faster</span></td>
+            <td>Gaming, streaming</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <div class="speech-bubble" style="background:var(--paper2);">
+        <strong>Remember:</strong> TCP = Tortoise (slow but reliable). UDP = Hare (fast but sometimes loses packets). Your app decides which animal wins the race!
+      </div>
+    </div>
+  </div>
+
+  <!-- CHAPTER 5: DEEP DIVE LINKS -->
+  <div class="panel">
+    <div class="panel-header">
+      &#x1F9ED; EXPLORE EACH PROTOCOL
+      <span class="panel-tag">CH.5</span>
+    </div>
+    <div class="panel-body">
+      <div class="chapter-header">
+        <div class="chapter-badge">5</div>
+        <div class="chapter-title" style="color:var(--red);">Go Deeper!</div>
+      </div>
+      <p style="font-size:.9rem;margin-bottom:14px;">Each protocol deserves its own spotlight. Click any card below to dive into the full reference guide.</p>
+      <div class="link-cards">
+        <a href="http-protocol.html" class="link-card" style="border-color:var(--blue);">
+          <div class="link-card-title" style="color:var(--blue);">&#x1F310; HTTP Protocol</div>
+          <div class="link-card-desc">Methods, status codes, headers, HTTP/1 vs HTTP/2, HTTPS. The full web communication guide.</div>
+        </a>
+        <a href="tcp-protocol.html" class="link-card" style="border-color:var(--green);">
+          <div class="link-card-title" style="color:var(--green);">&#x1F517; TCP Protocol</div>
+          <div class="link-card-desc">Three-way handshake, flow control, congestion control, TCP states and common ports.</div>
+        </a>
+        <a href="udp-protocol.html" class="link-card" style="border-color:var(--orange);">
+          <div class="link-card-title" style="color:var(--orange);">&#x26A1; UDP Protocol</div>
+          <div class="link-card-desc">Speed over reliability, header structure, DNS/gaming/streaming use cases, Python examples.</div>
+        </a>
+        <a href="osi-model.html" class="link-card" style="border-color:var(--purple);">
+          <div class="link-card-title" style="color:var(--purple);">&#x1F3D7;&#xFE0F; OSI Model</div>
+          <div class="link-card-desc">All 7 layers explained, data encapsulation process, OSI vs TCP/IP model comparison.</div>
+        </a>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<script src="masthead.js"></script>
+<script src="hero-banner.js"></script>
+<script src="author-card.js"></script>
+</body>
 </html>

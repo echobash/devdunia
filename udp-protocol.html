@@ -2,9 +2,786 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta http-equiv="refresh" content="0; url=production/udp-protocol.html">
-<title>DevDunia</title>
-<script>window.location.replace('production/udp-protocol.html')</script>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>UDP Protocol Guide — DevDunia Comics</title>
+<meta name="description" content="UDP protocol reference. Learn how UDP works, its advantages over TCP, and when to use it in applications.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://devdunia.com/production/udp-protocol.html">
+<meta property="og:title" content="UDP Protocol Guide — DevDunia Comics">
+<meta property="og:description" content="UDP protocol reference. Learn how UDP works, its use cases, and differences from TCP.">
+<meta property="og:image" content="https://devdunia.com/images/logo.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Bangers&family=Comic+Neue:wght@400;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --ink: #1a1410;
+  --paper: #fdf3e3;
+  --paper2: #fbe9cc;
+  --red: #e63946;
+  --blue: #1d6fb8;
+  --yellow: #ffd23f;
+  --green: #3fa34d;
+  --pink: #ff6b9d;
+  --purple: #8a4fff;
+  --orange: #ff8c42;
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: 'Comic Neue', cursive;
+  font-weight: 400;
+  color: var(--ink);
+  background-color: var(--paper);
+  background-image: radial-gradient(var(--ink) 0.5px, transparent 0.6px);
+  background-size: 14px 14px;
+  background-attachment: fixed;
+  min-height: 100vh;
+}
+
+.paper-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(253,243,227,.78);
+  pointer-events: none;
+  z-index: 0;
+}
+
+.page-wrap {
+  position: relative;
+  z-index: 1;
+  max-width: 1240px;
+  margin: 0 auto;
+  padding: 20px 32px 60px;
+}
+
+
+
+
+
+.masthead-logo-text {
+  font-family: 'Bangers', cursive;
+  font-size: 1.9rem;
+  letter-spacing: 2px;
+  color: #fff;
+  text-shadow: 3px 3px 0 var(--ink);
+  line-height: 1;
+}
+.masthead-logo-text span { color: var(--yellow); }
+
+
+
+
+
+/* HERO */
+.hero {
+  display: flex;
+  align-items: flex-start;
+  gap: 20px;
+  background: var(--paper2);
+  border: 4px solid var(--ink);
+  border-radius: 6px;
+  box-shadow: 7px 7px 0 var(--ink);
+  padding: 20px 24px;
+  margin-bottom: 28px;
+  transform: rotate(-0.4deg);
+}
+.hero-icon { font-size: 3rem; line-height: 1; flex-shrink: 0; filter: drop-shadow(3px 3px 0 var(--ink)); }
+.hero-text h1 {
+  font-family: 'Bangers', cursive;
+  font-size: 2.8rem;
+  letter-spacing: 2px;
+  color: var(--orange);
+  -webkit-text-stroke: 1px var(--ink);
+  text-shadow: 4px 4px 0 var(--ink);
+  line-height: 1;
+  text-transform: uppercase;
+}
+.hero-text p { font-size: .95rem; margin-top: 6px; line-height: 1.5; max-width: 500px; }
+.hero-badges { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 10px; }
+.badge {
+  font-family: 'Space Mono', monospace;
+  font-size: .65rem;
+  font-weight: 700;
+  padding: 3px 8px;
+  border: 2px solid var(--ink);
+  border-radius: 4px;
+  box-shadow: 2px 2px 0 var(--ink);
+}
+.badge-blue   { background: var(--blue);   color: #fff; }
+.badge-green  { background: var(--green);  color: #fff; }
+.badge-yellow { background: var(--yellow); color: var(--ink); }
+.badge-orange { background: var(--orange); color: #fff; }
+.badge-red    { background: var(--red);    color: #fff; }
+
+/* PANEL */
+.panel {
+  background: var(--paper);
+  border: 4px solid var(--ink);
+  border-radius: 6px;
+  box-shadow: 7px 7px 0 var(--ink);
+  overflow: hidden;
+  margin-bottom: 22px;
+}
+.panel-header {
+  background: var(--ink);
+  color: var(--yellow);
+  font-family: 'Bangers', cursive;
+  font-size: 1.2rem;
+  letter-spacing: 2px;
+  padding: 8px 16px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+.panel-header .panel-tag {
+  font-family: 'Space Mono', monospace;
+  font-size: .65rem;
+  font-weight: 700;
+  background: var(--yellow);
+  color: var(--ink);
+  padding: 2px 7px;
+  border-radius: 3px;
+}
+.panel-body { padding: 18px 20px; }
+
+/* INFO GRID */
+.info-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 14px;
+  margin: 12px 0;
+}
+.info-card {
+  background: var(--paper2);
+  border: 3px solid var(--ink);
+  border-radius: 6px;
+  box-shadow: 3px 3px 0 var(--ink);
+  padding: 12px 14px;
+}
+.info-card h3 {
+  font-family: 'Bangers', cursive;
+  font-size: 1rem;
+  letter-spacing: 1px;
+  margin-bottom: 6px;
+}
+.info-card p { font-size: .82rem; line-height: 1.5; }
+
+/* UDP FLOW DIAGRAM */
+.udp-flow {
+  display: flex;
+  align-items: flex-start;
+  gap: 0;
+  margin: 14px 0;
+  overflow-x: auto;
+}
+
+.flow-col {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  flex: 1;
+  min-width: 120px;
+}
+
+.flow-node {
+  background: var(--paper2);
+  border: 3px solid var(--ink);
+  border-radius: 6px;
+  box-shadow: 3px 3px 0 var(--ink);
+  padding: 10px 14px;
+  text-align: center;
+  font-family: 'Bangers', cursive;
+  font-size: .95rem;
+  letter-spacing: 1px;
+  width: 100%;
+}
+
+.flow-arrow {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex: 0 0 40px;
+  font-size: 1.5rem;
+  padding-top: 14px;
+  color: var(--ink);
+}
+
+.flow-step {
+  background: var(--ink);
+  color: var(--yellow);
+  font-family: 'Space Mono', monospace;
+  font-size: .65rem;
+  padding: 4px 8px;
+  border-radius: 3px;
+  text-align: center;
+  width: 100%;
+}
+
+/* UDP HEADER VISUAL */
+.udp-header-visual {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0;
+  border: 3px solid var(--ink);
+  border-radius: 6px;
+  overflow: hidden;
+  margin: 12px 0;
+  box-shadow: 4px 4px 0 var(--ink);
+}
+
+.header-field {
+  padding: 14px;
+  text-align: center;
+  border: 2px solid var(--ink);
+}
+
+.header-field-name {
+  font-family: 'Bangers', cursive;
+  font-size: 1rem;
+  letter-spacing: 1px;
+}
+
+.header-field-bits {
+  font-family: 'Space Mono', monospace;
+  font-size: .65rem;
+  margin-top: 4px;
+  opacity: .75;
+}
+
+.header-field-desc { font-size: .72rem; color: #555; margin-top: 4px; }
+
+.header-data {
+  grid-column: span 2;
+  padding: 14px;
+  text-align: center;
+  background: var(--paper2);
+  border: 2px solid var(--ink);
+}
+
+/* COMPARE GRID */
+.compare-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+  margin: 12px 0;
+}
+
+/* TABLE */
+.comic-table {
+  width: 100%;
+  border-collapse: collapse;
+  border: 3px solid var(--ink);
+  overflow: hidden;
+  margin: 10px 0;
+}
+.comic-table th {
+  background: var(--ink);
+  color: var(--yellow);
+  font-family: 'Bangers', cursive;
+  font-size: .9rem;
+  letter-spacing: 1px;
+  padding: 8px 12px;
+  text-align: left;
+}
+.comic-table td {
+  padding: 8px 12px;
+  font-size: .82rem;
+  border-top: 2px solid var(--ink);
+}
+.comic-table tr:nth-child(even) td { background: var(--paper2); }
+.comic-table tr:nth-child(odd) td { background: var(--paper); }
+.col-udp { color: var(--orange); font-weight: 700; }
+.col-tcp { color: var(--green); font-weight: 700; }
+
+/* CODE BLOCK */
+.code-block {
+  background: var(--ink);
+  color: var(--yellow);
+  font-family: 'Space Mono', monospace;
+  font-size: .72rem;
+  padding: 12px 14px;
+  border-radius: 4px;
+  overflow-x: auto;
+  line-height: 1.6;
+  margin: 8px 0;
+}
+
+/* APP CARDS */
+.app-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 14px;
+  margin: 12px 0;
+}
+
+.app-card {
+  background: var(--paper2);
+  border: 3px solid var(--ink);
+  border-radius: 6px;
+  box-shadow: 4px 4px 0 var(--ink);
+  padding: 14px 16px;
+}
+
+.app-card h4 {
+  font-family: 'Bangers', cursive;
+  font-size: 1rem;
+  letter-spacing: 1px;
+  margin-bottom: 6px;
+}
+
+.app-card p { font-size: .8rem; line-height: 1.5; color: #444; margin-bottom: 8px; }
+
+/* PORT GRID */
+.port-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr 1fr;
+  gap: 12px;
+  margin: 12px 0;
+}
+
+.port-card {
+  background: var(--paper2);
+  border: 3px solid var(--ink);
+  border-radius: 6px;
+  box-shadow: 3px 3px 0 var(--ink);
+  padding: 12px 14px;
+}
+
+.port-card h4 {
+  font-family: 'Bangers', cursive;
+  font-size: .9rem;
+  letter-spacing: 1px;
+  margin-bottom: 8px;
+}
+
+.port-card ul { list-style: none; padding: 0; }
+.port-card li { font-family: 'Space Mono', monospace; font-size: .7rem; padding: 3px 0; border-bottom: 1px solid rgba(0,0,0,.1); }
+.port-card li:last-child { border-bottom: none; }
+
+/* CODE PAIR */
+.code-pair {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+  margin: 12px 0;
+}
+
+.code-panel {
+  background: var(--paper2);
+  border: 3px solid var(--ink);
+  border-radius: 6px;
+  box-shadow: 3px 3px 0 var(--ink);
+  overflow: hidden;
+}
+
+.code-panel-title {
+  background: var(--ink);
+  color: var(--yellow);
+  font-family: 'Bangers', cursive;
+  font-size: .9rem;
+  letter-spacing: 1px;
+  padding: 6px 12px;
+}
+
+.code-panel .code-block { border-radius: 0; margin: 0; }
+
+/* PRO/CON */
+.pro-con-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+  margin: 12px 0;
+}
+
+.pro-card {
+  background: rgba(63,163,77,.06);
+  border: 3px solid var(--green);
+  border-radius: 6px;
+  box-shadow: 3px 3px 0 var(--ink);
+  padding: 14px 16px;
+}
+.con-card {
+  background: rgba(230,57,70,.06);
+  border: 3px solid var(--red);
+  border-radius: 6px;
+  box-shadow: 3px 3px 0 var(--ink);
+  padding: 14px 16px;
+}
+
+.pro-card h4 { font-family: 'Bangers', cursive; font-size: 1rem; letter-spacing: 1px; color: var(--green); margin-bottom: 10px; }
+.con-card h4 { font-family: 'Bangers', cursive; font-size: 1rem; letter-spacing: 1px; color: var(--red); margin-bottom: 10px; }
+
+.pro-card ul, .con-card ul { list-style: none; padding: 0; display: flex; flex-direction: column; gap: 6px; }
+.pro-card li { display: flex; align-items: flex-start; gap: 6px; font-size: .84rem; line-height: 1.4; }
+.con-card li { display: flex; align-items: flex-start; gap: 6px; font-size: .84rem; line-height: 1.4; }
+.pro-card li::before { content: '✓'; color: var(--green); font-weight: 700; flex-shrink: 0; }
+.con-card li::before { content: '✗'; color: var(--red); font-weight: 700; flex-shrink: 0; }
+
+/* MOBILE */
+@media (max-width: 760px) {
+  .info-grid { grid-template-columns: 1fr; }
+  .app-grid { grid-template-columns: 1fr; }
+  .port-grid { grid-template-columns: 1fr 1fr; }
+  .compare-grid { grid-template-columns: 1fr; }
+  .code-pair { grid-template-columns: 1fr; }
+  .pro-con-grid { grid-template-columns: 1fr; }
+  .hero { flex-direction: column; gap: 10px; }
+  .hero-text h1 { font-size: 2rem; }
+  .udp-header-visual { grid-template-columns: 1fr; }
+  .header-data { grid-column: span 1; }
+}
+@media (max-width: 480px) {
+  .port-grid { grid-template-columns: 1fr; }
+}
+</style>
 </head>
-<body></body>
+<body>
+<div class="paper-overlay"></div>
+<div data-masthead></div>
+
+<div class="page-wrap">
+
+  <div data-tool-hero
+     data-title="UDP Protocol Guide"
+     data-chapter="51"
+     data-category="Developer Tools"
+     data-icon="&#x26A1;"
+     data-desc="User Datagram Protocol — fast, connectionless communication. No handshake, no guarantee, maximum speed. Here's everything you need to know!"
+     data-color="blue"
+     data-badges="CONNECTIONLESS,LOW LATENCY,8-BYTE HEADER,BEST EFFORT"
+     data-badge-colors="orange,green,blue,yellow">
+  </div>
+
+  <!-- MASTHEAD -->
+
+  <!-- HERO -->
+  
+
+  <!-- WHAT IS UDP -->
+  <div class="panel">
+    <div class="panel-header">&#x2139; WHAT IS UDP? <span class="panel-tag">CHAPTER 1</span></div>
+    <div class="panel-body">
+      <p style="font-size:.9rem;line-height:1.7;margin-bottom:14px;">UDP (User Datagram Protocol) is a connectionless, lightweight transport protocol that provides fast data transmission with minimal overhead. It's ideal for real-time applications where speed is more important than reliability.</p>
+      <div class="info-grid">
+        <div class="info-card">
+          <h3 style="color:var(--orange);">&#x26A1; Fast</h3>
+          <p>Minimal overhead and no connection establishment delays. Data is sent immediately.</p>
+        </div>
+        <div class="info-card">
+          <h3 style="color:var(--red);">&#x1F4E1; Connectionless</h3>
+          <p>No handshake required — data is sent immediately without establishing a connection first.</p>
+        </div>
+        <div class="info-card">
+          <h3 style="color:var(--purple);">&#x1F3AF; Best Effort</h3>
+          <p>No guarantee of delivery, ordering, or duplicate protection. Fire and forget.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- UDP FLOW -->
+  <div class="panel">
+    <div class="panel-header">&#x1F4E1; UDP COMMUNICATION FLOW <span class="panel-tag">CHAPTER 2</span></div>
+    <div class="panel-body">
+      <p style="font-size:.9rem;line-height:1.7;margin-bottom:14px;">Unlike TCP which requires a 3-way handshake, UDP simply fires packets at the destination. No connection setup, no teardown.</p>
+
+      <!-- ASCII-style flow diagram -->
+      <div style="overflow-x:auto;">
+        <table style="width:100%;border-collapse:collapse;font-family:'Space Mono',monospace;font-size:.75rem;">
+          <tr>
+            <td style="width:35%;text-align:center;padding:8px;">
+              <div style="background:var(--blue);color:#fff;border:3px solid var(--ink);border-radius:6px;padding:10px;box-shadow:3px 3px 0 var(--ink);font-family:'Bangers',cursive;font-size:1rem;letter-spacing:1px;">CLIENT</div>
+            </td>
+            <td style="width:30%;text-align:center;padding:4px;"></td>
+            <td style="width:35%;text-align:center;padding:8px;">
+              <div style="background:var(--green);color:#fff;border:3px solid var(--ink);border-radius:6px;padding:10px;box-shadow:3px 3px 0 var(--ink);font-family:'Bangers',cursive;font-size:1rem;letter-spacing:1px;">SERVER</div>
+            </td>
+          </tr>
+          <tr>
+            <td style="text-align:right;padding:4px 12px;font-size:.7rem;color:#555;">Send data immediately<br>No connection setup</td>
+            <td style="text-align:center;padding:4px;">
+              <div style="background:var(--ink);color:var(--yellow);padding:4px 8px;border-radius:3px;font-size:.65rem;margin-bottom:4px;">UDP Packet (Data) &#x27A1;</div>
+            </td>
+            <td style="text-align:left;padding:4px 12px;font-size:.7rem;color:#555;">Receives if lucky<br>No acknowledgment</td>
+          </tr>
+          <tr>
+            <td style="text-align:right;padding:4px 12px;font-size:.7rem;color:#555;">No retransmission<br>if packet lost</td>
+            <td style="text-align:center;padding:4px;">
+              <div style="background:var(--orange);color:#fff;padding:4px 8px;border-radius:3px;font-size:.65rem;margin-bottom:4px;">&#x2B05; UDP Response (Optional)</div>
+            </td>
+            <td style="text-align:left;padding:4px 12px;font-size:.7rem;color:#555;">Response is optional<br>Not required by protocol</td>
+          </tr>
+          <tr>
+            <td colspan="3" style="text-align:center;padding:8px;">
+              <div style="background:var(--paper2);border:2px dashed var(--ink);border-radius:4px;padding:8px;font-size:.78rem;color:#555;font-style:italic;">
+                No handshake. No acknowledgment. No retransmission. Just speed.
+              </div>
+            </td>
+          </tr>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- UDP HEADER STRUCTURE -->
+  <div class="panel">
+    <div class="panel-header">&#x1F4C4; UDP HEADER STRUCTURE <span class="panel-tag">CHAPTER 3</span></div>
+    <div class="panel-body">
+      <p style="font-size:.9rem;line-height:1.7;margin-bottom:12px;">UDP has a tiny 8-byte header — compared to TCP's 20+ bytes. This is one reason UDP is so fast and efficient.</p>
+
+      <div class="udp-header-visual">
+        <div class="header-field" style="background:rgba(255,140,66,.15);border-color:var(--orange);">
+          <div class="header-field-name" style="color:var(--orange);">Source Port</div>
+          <div class="header-field-bits">16 bits</div>
+          <div class="header-field-desc">Sender's port number (optional)</div>
+        </div>
+        <div class="header-field" style="background:rgba(255,140,66,.15);border-color:var(--orange);">
+          <div class="header-field-name" style="color:var(--orange);">Destination Port</div>
+          <div class="header-field-bits">16 bits</div>
+          <div class="header-field-desc">Receiver's port number</div>
+        </div>
+        <div class="header-field" style="background:rgba(29,111,184,.1);border-color:var(--blue);">
+          <div class="header-field-name" style="color:var(--blue);">Length</div>
+          <div class="header-field-bits">16 bits</div>
+          <div class="header-field-desc">Total length in bytes (header + data)</div>
+        </div>
+        <div class="header-field" style="background:rgba(29,111,184,.1);border-color:var(--blue);">
+          <div class="header-field-name" style="color:var(--blue);">Checksum</div>
+          <div class="header-field-bits">16 bits</div>
+          <div class="header-field-desc">Optional error checking</div>
+        </div>
+        <div class="header-data">
+          <div class="header-field-name">Data (Variable Length)</div>
+          <div class="header-field-desc">The actual payload — can be up to 65,507 bytes</div>
+        </div>
+      </div>
+
+      <div style="text-align:center;margin-top:8px;">
+        <span style="font-family:'Space Mono',monospace;font-size:.75rem;background:var(--yellow);color:var(--ink);border:2px solid var(--ink);border-radius:4px;padding:4px 12px;box-shadow:2px 2px 0 var(--ink);">
+          Total Header Size: Only 8 bytes!
+        </span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ADVANTAGES / DISADVANTAGES -->
+  <div class="panel">
+    <div class="panel-header">&#x2696; UDP CHARACTERISTICS <span class="panel-tag">CHAPTER 4</span></div>
+    <div class="panel-body">
+      <div class="pro-con-grid">
+        <div class="pro-card">
+          <h4>&#x2705; Advantages</h4>
+          <ul>
+            <li>Low latency — no connection setup delay</li>
+            <li>Minimal overhead — only 8-byte header</li>
+            <li>No flow control — constant data rate</li>
+            <li>Multicast and broadcast support</li>
+            <li>Simple implementation</li>
+          </ul>
+        </div>
+        <div class="con-card">
+          <h4>&#x274C; Disadvantages</h4>
+          <ul>
+            <li>No delivery guarantee</li>
+            <li>No ordering guarantee</li>
+            <li>No built-in error detection</li>
+            <li>No congestion control</li>
+            <li>No flow control</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- UDP vs TCP -->
+  <div class="panel">
+    <div class="panel-header">&#x26A1; UDP vs TCP COMPARISON <span class="panel-tag">CHAPTER 5</span></div>
+    <div class="panel-body">
+      <table class="comic-table">
+        <thead>
+          <tr>
+            <th>Feature</th>
+            <th style="color:var(--yellow);">UDP</th>
+            <th style="color:var(--yellow);">TCP</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>Connection</strong></td>
+            <td><span class="col-udp">Connectionless</span></td>
+            <td>Connection-oriented</td>
+          </tr>
+          <tr>
+            <td><strong>Reliability</strong></td>
+            <td><span class="col-udp">Best effort</span></td>
+            <td><span class="col-tcp">Guaranteed</span></td>
+          </tr>
+          <tr>
+            <td><strong>Ordering</strong></td>
+            <td><span class="col-udp">Not guaranteed</span></td>
+            <td><span class="col-tcp">Guaranteed</span></td>
+          </tr>
+          <tr>
+            <td><strong>Speed</strong></td>
+            <td><span class="col-tcp">Very fast</span></td>
+            <td>Slower (overhead)</td>
+          </tr>
+          <tr>
+            <td><strong>Header Size</strong></td>
+            <td><span class="col-tcp">8 bytes</span></td>
+            <td>20+ bytes</td>
+          </tr>
+          <tr>
+            <td><strong>Error Checking</strong></td>
+            <td><span class="col-udp">Optional checksum</span></td>
+            <td><span class="col-tcp">Full error detection</span></td>
+          </tr>
+          <tr>
+            <td><strong>Handshake</strong></td>
+            <td><span class="col-tcp">None</span></td>
+            <td>3-way handshake</td>
+          </tr>
+          <tr>
+            <td><strong>Use Cases</strong></td>
+            <td>Gaming, streaming, DNS</td>
+            <td>Web, email, file transfer</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- COMMON UDP APPLICATIONS -->
+  <div class="panel">
+    <div class="panel-header">&#x1F4F1; COMMON UDP APPLICATIONS <span class="panel-tag">CHAPTER 6</span></div>
+    <div class="panel-body">
+      <div class="app-grid">
+        <div class="app-card">
+          <h4 style="color:var(--blue);">DNS (Port 53)</h4>
+          <p>Domain name resolution — fast lookups are more important than reliability. Client retries if no response.</p>
+          <div class="code-block">// DNS Query
+Query: example.com
+Response: 192.168.1.1
+If lost → client retries</div>
+        </div>
+
+        <div class="app-card">
+          <h4 style="color:var(--green);">Gaming (Port 27015)</h4>
+          <p>Real-time multiplayer games — low latency is critical. A few dropped packets is acceptable.</p>
+          <div class="code-block">// Game Packet
+Player: (x, y, z)
+Action: shoot/move
+Timestamp: 1234567890</div>
+        </div>
+
+        <div class="app-card">
+          <h4 style="color:var(--purple);">Streaming (RTP/5004)</h4>
+          <p>Video/audio streaming — missing frames are acceptable. Better to skip than freeze.</p>
+          <div class="code-block">// Video Frame
+Frame data: [binary]
+Sequence: 001, 002...
+If lost → skip to next</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- COMMON UDP PORTS -->
+  <div class="panel">
+    <div class="panel-header">&#x1F522; COMMON UDP PORTS <span class="panel-tag">CHAPTER 7</span></div>
+    <div class="panel-body">
+      <div class="port-grid">
+        <div class="port-card">
+          <h4 style="color:var(--blue);">Network Services</h4>
+          <ul>
+            <li>53 — DNS</li>
+            <li>67 — DHCP Server</li>
+            <li>68 — DHCP Client</li>
+            <li>123 — NTP</li>
+          </ul>
+        </div>
+        <div class="port-card">
+          <h4 style="color:var(--green);">Gaming</h4>
+          <ul>
+            <li>27015 — Steam</li>
+            <li>25565 — Minecraft</li>
+            <li>7777 — Terraria</li>
+            <li>27005 — Source Engine</li>
+          </ul>
+        </div>
+        <div class="port-card">
+          <h4 style="color:var(--purple);">Streaming</h4>
+          <ul>
+            <li>5004 — RTP</li>
+            <li>5005 — RTCP</li>
+            <li>1935 — RTMP</li>
+            <li>8080 — HTTP Alt</li>
+          </ul>
+        </div>
+        <div class="port-card">
+          <h4 style="color:var(--orange);">System Services</h4>
+          <ul>
+            <li>161 — SNMP</li>
+            <li>162 — SNMP Trap</li>
+            <li>514 — Syslog</li>
+            <li>69 — TFTP</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- PROGRAMMING EXAMPLE -->
+  <div class="panel">
+    <div class="panel-header">&#x1F4BB; UDP PROGRAMMING EXAMPLE <span class="panel-tag">CHAPTER 8</span></div>
+    <div class="panel-body">
+      <p style="font-size:.9rem;line-height:1.7;margin-bottom:12px;">Here's a minimal Python UDP server and client demonstrating how simple UDP communication is:</p>
+      <div class="code-pair">
+        <div class="code-panel">
+          <div class="code-panel-title">&#x1F5A5; Python UDP Server</div>
+          <div class="code-block">import socket
+
+# Create UDP socket
+sock = socket.socket(
+  socket.AF_INET,
+  socket.SOCK_DGRAM
+)
+sock.bind(('localhost', 8080))
+
+while True:
+  data, addr = sock.recvfrom(1024)
+  print(f"Got: {data} from {addr}")
+  sock.sendto(b"Hello Client", addr)</div>
+        </div>
+        <div class="code-panel">
+          <div class="code-panel-title">&#x1F4F1; Python UDP Client</div>
+          <div class="code-block">import socket
+
+# Create UDP socket
+sock = socket.socket(
+  socket.AF_INET,
+  socket.SOCK_DGRAM
+)
+
+# Send message
+message = b"Hello Server"
+sock.sendto(message,
+  ('localhost', 8080))
+
+# Receive response
+data, addr = sock.recvfrom(1024)
+print(f"Got: {data} from {addr}")</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div><!-- /page-wrap -->
+<script src="masthead.js"></script>
+<script src="hero-banner.js"></script>
+<script src="author-card.js"></script>
+</body>
 </html>

@@ -2,9 +2,486 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta http-equiv="refresh" content="0; url=production/leetcode-commit-message.html">
-<title>DevDunia</title>
-<script>window.location.replace('production/leetcode-commit-message.html')</script>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Leetcode Commit Message Generator — DevDunia Comics</title>
+<meta name="description" content="Generate file names and commit messages for Leetcode problems. Free online Leetcode commit message generator for developers.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://devdunia.com/leetcode-commit-message.html">
+<meta property="og:title" content="Leetcode Commit Message Generator — DevDunia Comics">
+<meta property="og:description" content="Generate file names and commit messages for Leetcode problems. Free online tool.">
+<meta property="og:image" content="https://devdunia.com/images/logo.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Bangers&family=Comic+Neue:wght@400;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --ink: #1a1410;
+  --paper: #fdf3e3;
+  --paper2: #fbe9cc;
+  --red: #e63946;
+  --blue: #1d6fb8;
+  --yellow: #ffd23f;
+  --green: #3fa34d;
+  --pink: #ff6b9d;
+  --purple: #8a4fff;
+  --orange: #ff8c42;
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: 'Comic Neue', cursive;
+  font-weight: 400;
+  color: var(--ink);
+  background-color: var(--paper);
+  background-image: radial-gradient(var(--ink) 0.5px, transparent 0.6px);
+  background-size: 14px 14px;
+  background-attachment: fixed;
+  min-height: 100vh;
+}
+
+.paper-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(253,243,227,.78);
+  pointer-events: none;
+  z-index: 0;
+}
+
+.page-wrap {
+  position: relative;
+  z-index: 1;
+  max-width: 1240px;
+  margin: 0 auto;
+  padding: 20px 32px 60px;
+}
+
+
+
+
+
+
+
+
+
+
+/* ── HERO ── */
+.hero {
+  display: flex;
+  align-items: flex-start;
+  gap: 20px;
+  background: var(--paper2);
+  border: 4px solid var(--ink);
+  border-radius: 6px;
+  box-shadow: 7px 7px 0 var(--ink);
+  padding: 20px 24px;
+  margin-bottom: 28px;
+  transform: rotate(-0.4deg);
+}
+.hero-icon { font-size: 3rem; line-height: 1; flex-shrink: 0; filter: drop-shadow(3px 3px 0 var(--ink)); }
+.hero-text h1 {
+  font-family: 'Bangers', cursive;
+  font-size: 2.6rem;
+  letter-spacing: 2px;
+  color: var(--green);
+  -webkit-text-stroke: 1px var(--ink);
+  text-shadow: 4px 4px 0 var(--ink);
+  line-height: 1;
+  text-transform: uppercase;
+}
+.hero-text p { font-size: .95rem; margin-top: 6px; line-height: 1.5; max-width: 480px; }
+.hero-badges { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 10px; }
+.badge {
+  font-family: 'Space Mono', monospace;
+  font-size: .65rem;
+  font-weight: 700;
+  padding: 3px 8px;
+  border: 2px solid var(--ink);
+  border-radius: 4px;
+  box-shadow: 2px 2px 0 var(--ink);
+}
+.badge-blue   { background: var(--blue);   color: #fff; }
+.badge-green  { background: var(--green);  color: #fff; }
+.badge-yellow { background: var(--yellow); color: var(--ink); }
+.badge-orange { background: var(--orange); color: #fff; }
+
+/* ── PANEL ── */
+.panel {
+  background: var(--paper);
+  border: 4px solid var(--ink);
+  border-radius: 6px;
+  box-shadow: 7px 7px 0 var(--ink);
+  overflow: hidden;
+  margin-bottom: 22px;
+}
+.panel-header {
+  background: var(--ink);
+  color: var(--yellow);
+  font-family: 'Bangers', cursive;
+  font-size: 1.2rem;
+  letter-spacing: 2px;
+  padding: 8px 16px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+.panel-header .panel-tag {
+  font-family: 'Space Mono', monospace;
+  font-size: .65rem;
+  font-weight: 700;
+  background: var(--yellow);
+  color: var(--ink);
+  padding: 2px 7px;
+  border-radius: 3px;
+}
+.panel-body { padding: 18px 20px; }
+
+/* ── TEXTAREA ── */
+.comic-textarea {
+  width: 100%;
+  background: #fff;
+  border: 3px solid var(--ink);
+  border-radius: 6px;
+  padding: 12px 14px;
+  font-family: 'Space Mono', monospace;
+  font-size: .82rem;
+  color: var(--ink);
+  line-height: 1.6;
+  resize: vertical;
+  min-height: 80px;
+  box-shadow: inset 3px 3px 0 rgba(0,0,0,.06);
+  outline: none;
+  transition: border-color .15s;
+}
+.comic-textarea:focus { border-color: var(--green); }
+.comic-textarea::placeholder { color: #aaa; font-style: italic; }
+.comic-textarea[readonly] { background: var(--paper2); cursor: default; }
+
+/* ── BUTTONS ── */
+.btn-row { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 14px; }
+.btn {
+  font-family: 'Bangers', cursive;
+  font-size: 1.1rem;
+  letter-spacing: 1px;
+  border: 3px solid var(--ink);
+  border-radius: 6px;
+  padding: 8px 20px;
+  cursor: pointer;
+  box-shadow: 4px 4px 0 var(--ink);
+  transition: transform .1s, box-shadow .1s;
+  text-transform: uppercase;
+}
+.btn:active { transform: translate(2px,2px); box-shadow: 2px 2px 0 var(--ink); }
+.btn-primary { background: var(--blue);   color: #fff; }
+.btn-success { background: var(--green);  color: #fff; }
+.btn-danger  { background: var(--red);    color: #fff; }
+.btn-neutral { background: var(--paper2); color: var(--ink); }
+
+/* ── SECTION LABEL ── */
+.section-label {
+  font-family: 'Bangers', cursive;
+  font-size: .95rem;
+  letter-spacing: 1px;
+  color: var(--ink);
+  margin-bottom: 6px;
+  text-transform: uppercase;
+}
+
+/* ── OUTPUT COPY WRAP ── */
+.output-wrap { position: relative; margin-bottom: 18px; }
+.copy-btn {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  font-family: 'Bangers', cursive;
+  font-size: .95rem;
+  letter-spacing: 1px;
+  background: var(--ink);
+  color: var(--yellow);
+  border: 2px solid var(--ink);
+  border-radius: 4px;
+  padding: 3px 10px;
+  cursor: pointer;
+  box-shadow: 2px 2px 0 rgba(0,0,0,.4);
+  transition: transform .1s, box-shadow .1s;
+}
+.copy-btn:active { transform: translate(1px,1px); box-shadow: 1px 1px 0 rgba(0,0,0,.4); }
+
+/* ── ERROR BUBBLE ── */
+.error-bubble {
+  display: none;
+  position: relative;
+  background: #fff0f0;
+  border: 3px solid var(--red);
+  border-radius: 14px;
+  padding: 10px 14px;
+  margin-top: 12px;
+  font-size: .9rem;
+  font-weight: 700;
+  color: var(--red);
+}
+.error-bubble::before {
+  content: '';
+  position: absolute;
+  top: -16px; left: 22px;
+  border-width: 0 10px 16px;
+  border-style: solid;
+  border-color: transparent transparent var(--red);
+}
+.error-bubble::after {
+  content: '';
+  position: absolute;
+  top: -11px; left: 24px;
+  border-width: 0 8px 12px;
+  border-style: solid;
+  border-color: transparent transparent #fff0f0;
+}
+.error-bubble.show { display: block; }
+
+/* ── EXAMPLES GRID ── */
+.examples-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+}
+.example-card {
+  background: var(--paper2);
+  border: 3px solid var(--ink);
+  border-radius: 6px;
+  box-shadow: 4px 4px 0 var(--ink);
+  padding: 12px 14px;
+  font-size: .82rem;
+  line-height: 1.5;
+}
+.example-card strong { font-family: 'Bangers', cursive; letter-spacing: 1px; font-size: .95rem; display: block; margin-bottom: 4px; }
+.example-card code {
+  font-family: 'Space Mono', monospace;
+  font-size: .72rem;
+  background: var(--ink);
+  color: var(--yellow);
+  padding: 1px 4px;
+  border-radius: 3px;
+}
+
+/* ── HINT ── */
+.hint {
+  font-size: .82rem;
+  color: #888;
+  margin-top: 6px;
+  font-style: italic;
+}
+
+/* ── MOBILE ── */
+@media (max-width: 600px) {
+  .examples-grid { grid-template-columns: 1fr; }
+  .hero { flex-direction: column; gap: 10px; }
+  .hero-text h1 { font-size: 2rem; }
+}
+</style>
 </head>
-<body></body>
+<body>
+<div class="paper-overlay"></div>
+<div data-masthead></div>
+
+<div class="page-wrap">
+
+  <div data-tool-hero
+     data-title="Leetcode Commit Message Generator"
+     data-chapter="30"
+     data-category="Developer Tools"
+     data-icon="&#x1F9A0;"
+     data-desc="Paste a Leetcode problem name and instantly get a proper snake_case filename and a ready-to-run git commit message. Level up your Leetcode grind!"
+     data-color="blue"
+     data-badges="SNAKE_CASE,GIT COMMIT,INSTANT,FREE"
+     data-badge-colors="green,blue,orange,yellow">
+  </div>
+
+  <!-- MASTHEAD -->
+
+  <!-- HERO -->
+  
+
+  <!-- INPUT PANEL -->
+  <div class="panel">
+    <div class="panel-header">
+      &#x1F4E5; ENTER LEETCODE PROBLEM
+      <span class="panel-tag">INPUT</span>
+    </div>
+    <div class="panel-body">
+      <div class="section-label">Problem Name</div>
+      <textarea
+        id="problem-input"
+        class="comic-textarea"
+        rows="3"
+        placeholder="Enter Leetcode problem name (e.g., 1304. Find N Unique Integers Sum up to Zero)"
+      ></textarea>
+      <div class="hint">&#x1F4A1; Format: "Problem Number. Problem Title" (e.g., "1304. Find N Unique Integers Sum up to Zero")</div>
+
+      <div class="btn-row">
+        <button id="generate-btn" class="btn btn-success">&#x26A1; Generate!</button>
+        <button id="clear-btn" class="btn btn-danger">&#x1F5D1; Clear All</button>
+      </div>
+
+      <div id="error-bubble" class="error-bubble">
+        &#x1F4A5; <span id="error-msg">Invalid format. Please use: "123. Problem Title"</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- OUTPUT PANEL -->
+  <div class="panel" id="output-section" style="display:none;">
+    <div class="panel-header">
+      &#x1F4E4; GENERATED OUTPUT
+      <span class="panel-tag">OUTPUT</span>
+    </div>
+    <div class="panel-body">
+
+      <div class="section-label">File Name</div>
+      <div class="output-wrap">
+        <textarea id="filename-output" class="comic-textarea" rows="2" readonly></textarea>
+        <button class="copy-btn" data-target="filename-output">&#x1F4CB; COPY</button>
+      </div>
+
+      <div class="section-label">Commit Message</div>
+      <div class="output-wrap">
+        <textarea id="commit-output" class="comic-textarea" rows="2" readonly></textarea>
+        <button class="copy-btn" data-target="commit-output">&#x1F4CB; COPY</button>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- EXAMPLES PANEL -->
+  <div class="panel">
+    <div class="panel-header">
+      &#x1F4DA; EXAMPLES
+      <span class="panel-tag">HOW IT WORKS</span>
+    </div>
+    <div class="panel-body">
+      <div class="examples-grid">
+        <div class="example-card">
+          <strong style="color:var(--blue);">Input:</strong>
+          1304. Find N Unique Integers Sum up to Zero
+          <br><br>
+          <strong style="color:var(--green);">File:</strong>
+          <code>find_n_unique_integers_sum_up_to_zero_1304.py</code>
+          <br><br>
+          <strong style="color:var(--orange);">Commit:</strong>
+          <code>git commit -m "Solve Leetcode Problem 1304. Find N Unique Integers Sum up to Zero"</code>
+        </div>
+        <div class="example-card">
+          <strong style="color:var(--blue);">Input:</strong>
+          1. Two Sum
+          <br><br>
+          <strong style="color:var(--green);">File:</strong>
+          <code>two_sum_1.py</code>
+          <br><br>
+          <strong style="color:var(--orange);">Commit:</strong>
+          <code>git commit -m "Solve Leetcode Problem 1. Two Sum"</code>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div><!-- /page-wrap -->
+
+<script>
+(function() {
+  var problemInput   = document.getElementById('problem-input');
+  var filenameOutput = document.getElementById('filename-output');
+  var commitOutput   = document.getElementById('commit-output');
+  var generateBtn    = document.getElementById('generate-btn');
+  var clearBtn       = document.getElementById('clear-btn');
+  var outputSection  = document.getElementById('output-section');
+  var errBubble      = document.getElementById('error-bubble');
+  var errMsg         = document.getElementById('error-msg');
+
+  function showError(msg) {
+    errMsg.textContent = msg;
+    errBubble.classList.add('show');
+  }
+  function hideError() { errBubble.classList.remove('show'); }
+
+  function showOutput() { outputSection.style.display = 'block'; }
+
+  function generateFilename(title, number) {
+    var filename = title
+      .toLowerCase()
+      .replace(/[^\w\s]/g, '')
+      .replace(/\s+/g, '_')
+      .replace(/_+/g, '_')
+      .replace(/^_|_$/g, '');
+    return filename + '_' + number + '.py';
+  }
+
+  function generateLeetcodeOutputs(problemName) {
+    var match = problemName.match(/^(\d+)\.\s*(.+)$/);
+    if (!match) {
+      throw new Error('Invalid format. Please use format: "123. Problem Title"');
+    }
+    var problemNumber = match[1];
+    var problemTitle  = match[2].trim();
+    var filename      = generateFilename(problemTitle, problemNumber);
+    var commitMessage = 'git commit -m "Solve Leetcode Problem ' + problemNumber + '. ' + problemTitle + '"';
+    return { filename: filename, commitMessage: commitMessage };
+  }
+
+  generateBtn.addEventListener('click', function() {
+    var input = problemInput.value.trim();
+    if (!input) { showError('Please enter a Leetcode problem name'); return; }
+    try {
+      var result = generateLeetcodeOutputs(input);
+      filenameOutput.value = result.filename;
+      commitOutput.value   = result.commitMessage;
+      showOutput();
+      hideError();
+    } catch(e) {
+      showError(e.message);
+    }
+  });
+
+  clearBtn.addEventListener('click', function() {
+    problemInput.value   = '';
+    filenameOutput.value = '';
+    commitOutput.value   = '';
+    outputSection.style.display = 'none';
+    hideError();
+  });
+
+  // Copy buttons
+  document.querySelectorAll('.copy-btn').forEach(function(btn) {
+    btn.addEventListener('click', function() {
+      var targetId = this.dataset.target;
+      var el = document.getElementById(targetId);
+      try {
+        el.select();
+        document.execCommand('copy');
+        navigator.clipboard.writeText(el.value).catch(function(){});
+      } catch(e) {}
+      var orig = this.textContent;
+      this.textContent = '✔ COPIED!';
+      this.style.background = 'var(--green)';
+      var b = this;
+      setTimeout(function() {
+        b.textContent = orig;
+        b.style.background = 'var(--ink)';
+      }, 1800);
+    });
+  });
+
+  // Keyboard shortcut: Enter to generate
+  problemInput.addEventListener('keydown', function(e) {
+    if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') { generateBtn.click(); }
+  });
+
+  // Preload example (same as original)
+  window.addEventListener('load', function() {
+    problemInput.value = '1304. Find N Unique Integers Sum up to Zero';
+  });
+})();
+</script>
+<script src="masthead.js"></script>
+<script src="hero-banner.js"></script>
+<script src="author-card.js"></script>
+</body>
 </html>

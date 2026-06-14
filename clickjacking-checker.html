@@ -2,9 +2,297 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta http-equiv="refresh" content="0; url=production/clickjacking-checker.html">
-<title>DevDunia</title>
-<script>window.location.replace('production/clickjacking-checker.html')</script>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Clickjacking Checker — DevDunia Comics</title>
+<meta name="description" content="Test websites for clickjacking vulnerabilities. Check if a site can be embedded in an iframe.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://devdunia.com/production/clickjacking-checker.html">
+<meta property="og:title" content="Clickjacking Checker — DevDunia Comics">
+<meta property="og:description" content="Test websites for clickjacking vulnerabilities. Check X-Frame-Options and CSP headers.">
+<meta property="og:image" content="https://devdunia.com/images/logo.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Bangers&family=Comic+Neue:wght@400;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --ink: #1a1410;
+  --paper: #fdf3e3;
+  --paper2: #fbe9cc;
+  --red: #e63946;
+  --blue: #1d6fb8;
+  --yellow: #ffd23f;
+  --green: #3fa34d;
+  --pink: #ff6b9d;
+  --purple: #8a4fff;
+  --orange: #ff8c42;
+}
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: 'Comic Neue', cursive; font-weight: 400; color: var(--ink); background-color: var(--paper); background-image: radial-gradient(var(--ink) 0.5px, transparent 0.6px); background-size: 14px 14px; background-attachment: fixed; min-height: 100vh; }
+.paper-overlay { position: fixed; inset: 0; background: rgba(253,243,227,.78); pointer-events: none; z-index: 0; }
+.page-wrap { position: relative; z-index: 1; max-width: 1240px; margin: 0 auto; padding: 20px 32px 60px; }
+
+
+
+
+
+
+
+
+
+
+/* PANEL */
+.panel { background: var(--paper); border: 4px solid var(--ink); border-radius: 6px; box-shadow: 7px 7px 0 var(--ink); overflow: hidden; margin-bottom: 22px; }
+.panel-header { background: var(--ink); color: var(--yellow); font-family: 'Bangers', cursive; font-size: 1.2rem; letter-spacing: 2px; padding: 8px 16px; display: flex; align-items: center; justify-content: space-between; gap: 10px; }
+.panel-header .panel-tag { font-family: 'Space Mono', monospace; font-size: .65rem; font-weight: 700; background: var(--yellow); color: var(--ink); padding: 2px 7px; border-radius: 3px; }
+.panel-body { padding: 18px 20px; }
+
+/* URL INPUT ROW */
+.url-row { display: flex; gap: 8px; align-items: stretch; flex-wrap: wrap; }
+.protocol-select {
+  font-family: 'Space Mono', monospace; font-size: .82rem;
+  background: var(--paper2); border: 3px solid var(--ink); border-radius: 6px;
+  padding: 10px 10px; color: var(--ink); outline: none;
+  box-shadow: 3px 3px 0 var(--ink); cursor: pointer;
+  flex-shrink: 0;
+}
+.comic-input {
+  flex: 1; background: #fff; border: 3px solid var(--ink); border-radius: 6px;
+  padding: 10px 14px; font-family: 'Space Mono', monospace; font-size: .82rem;
+  color: var(--ink); outline: none; box-shadow: inset 3px 3px 0 rgba(0,0,0,.06);
+  transition: border-color .15s;
+}
+.comic-input:focus { border-color: var(--red); }
+.comic-input::placeholder { color: #aaa; font-style: italic; }
+
+/* BUTTONS */
+.btn { font-family: 'Bangers', cursive; font-size: 1.1rem; letter-spacing: 1px; border: 3px solid var(--ink); border-radius: 6px; padding: 8px 20px; cursor: pointer; box-shadow: 4px 4px 0 var(--ink); transition: transform .1s, box-shadow .1s; text-transform: uppercase; }
+.btn:active { transform: translate(2px,2px); box-shadow: 2px 2px 0 var(--ink); }
+.btn-danger  { background: var(--red);    color: #fff; }
+
+/* IFRAME BOX */
+.iframe-box {
+  width: 100%; height: 340px; border: 4px solid var(--ink); border-radius: 6px;
+  background: #f0f0f0; overflow: hidden; box-shadow: 5px 5px 0 var(--ink);
+  display: block; margin-top: 14px;
+}
+
+/* LEGEND */
+.legend { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 14px; }
+.legend-item { display: flex; align-items: center; gap: 6px; font-size: .85rem; }
+.legend-dot { width: 14px; height: 14px; border-radius: 50%; border: 2px solid var(--ink); }
+
+/* INFO GRID */
+.info-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-bottom: 16px; }
+
+/* CODE BOX */
+.code-box { font-family: 'Space Mono', monospace; font-size: .75rem; background: var(--ink); color: var(--green); border-radius: 6px; padding: 10px 12px; margin: 8px 0; overflow-x: auto; line-height: 1.6; }
+
+/* INFO CARD */
+.info-card { background: var(--paper2); border: 3px solid var(--ink); border-radius: 6px; box-shadow: 4px 4px 0 var(--ink); padding: 14px 16px; }
+.info-card h4 { font-family: 'Bangers', cursive; font-size: 1.1rem; letter-spacing: 1px; margin-bottom: 8px; }
+.info-card ul { list-style: disc; padding-left: 18px; font-size: .88rem; line-height: 1.6; }
+.info-card li { margin-bottom: 4px; }
+
+/* HOW STEPS */
+.how-steps { display: flex; flex-direction: column; gap: 10px; }
+.how-step { display: flex; align-items: flex-start; gap: 12px; }
+.step-dot { width: 28px; height: 28px; border-radius: 50%; border: 3px solid var(--ink); display: flex; align-items: center; justify-content: center; font-family: 'Bangers', cursive; font-size: 1rem; color: #fff; flex-shrink: 0; box-shadow: 2px 2px 0 var(--ink); }
+.how-step p { font-size: .88rem; line-height: 1.5; padding-top: 2px; }
+.how-step code { font-family: 'Space Mono', monospace; font-size: .75rem; background: var(--ink); color: var(--yellow); padding: 1px 5px; border-radius: 3px; }
+
+/* DIVIDER */
+.divider { border: none; border-top: 3px solid var(--ink); margin: 16px 0; }
+
+@media (max-width: 760px) {
+  .info-grid { grid-template-columns: 1fr; }
+  .url-row { flex-direction: column; }
+}
+</style>
 </head>
-<body></body>
+<body>
+<div class="paper-overlay"></div>
+<div data-masthead></div>
+
+<div class="page-wrap">
+
+  <!-- MASTHEAD -->
+
+  <!-- HERO -->
+  <div data-tool-hero
+       data-title="Clickjacking Checker"
+       data-chapter="02"
+       data-category="Security &amp; VAPT"
+       data-icon="&#x1F6E1;"
+       data-desc="Test any URL for clickjacking vulnerabilities by loading it in an iframe. See if X-Frame-Options blocks it."
+       data-color="red"
+       data-badges="SECURITY,X-FRAME,VAPT,FREE"
+       data-badge-colors="red,orange,purple,yellow">
+  </div>
+
+  <!-- TEST PANEL -->
+  <div class="panel">
+    <div class="panel-header">
+      &#x1F50E; TEST A WEBSITE
+      <span class="panel-tag">TOOL</span>
+    </div>
+    <div class="panel-body">
+      <div class="url-row">
+        <select id="protocol-select" class="protocol-select">
+          <option value="https://">https://</option>
+          <option value="http://">http://</option>
+        </select>
+        <input type="text" id="url-input" class="comic-input" placeholder="example.com">
+        <button id="test-btn" class="btn btn-danger">&#x26A1; Test!</button>
+      </div>
+
+      <div id="iframe-section" style="display:none;">
+        <iframe id="test-iframe" class="iframe-box"
+          sandbox="allow-scripts allow-same-origin allow-forms allow-popups"
+          loading="lazy"></iframe>
+
+        <div class="legend">
+          <div class="legend-item">
+            <div class="legend-dot" style="background:var(--red);"></div>
+            <span><strong>Site loads</strong> → Vulnerable to clickjacking!</span>
+          </div>
+          <div class="legend-item">
+            <div class="legend-dot" style="background:var(--green);"></div>
+            <span><strong>Site blocked / blank</strong> → Protected!</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- WHAT IS CLICKJACKING -->
+  <div class="panel">
+    <div class="panel-header">
+      &#x1F4A1; WHAT IS CLICKJACKING?
+      <span class="panel-tag">EXPLAINER</span>
+    </div>
+    <div class="panel-body">
+      <div class="info-grid">
+        <div class="info-card">
+          <h4 style="color:var(--red);">&#x26A0; The Attack</h4>
+          <p style="font-size:.88rem;line-height:1.6;margin-bottom:8px;">A clickjacking attack tricks users into clicking on something different from what they perceive.</p>
+          <div class="how-steps">
+            <div class="how-step">
+              <div class="step-dot" style="background:var(--red);">1</div>
+              <p>Attacker creates a malicious webpage and embeds your site in a hidden iframe.</p>
+            </div>
+            <div class="how-step">
+              <div class="step-dot" style="background:var(--orange);">2</div>
+              <p>Invisible elements are overlaid on top of your real buttons.</p>
+            </div>
+            <div class="how-step">
+              <div class="step-dot" style="background:var(--purple);">3</div>
+              <p>User clicks what they see — but triggers actions on your site without knowing.</p>
+            </div>
+          </div>
+          <div style="margin-top:10px;font-size:.82rem;font-weight:700;color:var(--red);">Real targets: Like buttons, bank transfers, admin actions, purchase confirmations.</div>
+        </div>
+
+        <div class="info-card">
+          <h4 style="color:var(--green);">&#x2705; How to Prevent</h4>
+          <p style="font-size:.88rem;margin-bottom:8px;">Use HTTP response headers to block iframe embedding:</p>
+          <div style="font-family:'Bangers',cursive;letter-spacing:1px;font-size:.9rem;margin-bottom:4px;">Method 1: X-Frame-Options</div>
+          <div class="code-box">X-Frame-Options: DENY</div>
+          <ul style="font-size:.82rem;list-style:disc;padding-left:16px;margin-bottom:10px;line-height:1.7;">
+            <li><code style="font-family:'Space Mono',monospace;font-size:.72rem;">DENY</code> — never allow framing</li>
+            <li><code style="font-family:'Space Mono',monospace;font-size:.72rem;">SAMEORIGIN</code> — same-origin only</li>
+          </ul>
+          <div style="font-family:'Bangers',cursive;letter-spacing:1px;font-size:.9rem;margin-bottom:4px;">Method 2: CSP</div>
+          <div class="code-box">Content-Security-Policy:<br>frame-ancestors 'none'</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- REFERENCE PANEL -->
+  <div class="panel">
+    <div class="panel-header">
+      &#x1F4CB; HEADER REFERENCE
+      <span class="panel-tag">REFERENCE</span>
+    </div>
+    <div class="panel-body">
+      <div class="info-grid">
+        <div class="info-card">
+          <h4 style="color:var(--blue);">X-Frame-Options Values</h4>
+          <div class="code-box">X-Frame-Options: DENY</div>
+          <p style="font-size:.82rem;margin-bottom:8px;">Never allow framing (most secure).</p>
+          <div class="code-box">X-Frame-Options: SAMEORIGIN</div>
+          <p style="font-size:.82rem;margin-bottom:8px;">Only allow same-origin framing.</p>
+          <div class="code-box">X-Frame-Options: ALLOW-FROM https://trusted.com</div>
+          <p style="font-size:.82rem;color:var(--red);font-weight:700;">&#x26A0; Deprecated — use CSP instead!</p>
+        </div>
+        <div class="info-card">
+          <h4 style="color:var(--purple);">CSP frame-ancestors</h4>
+          <div class="code-box">frame-ancestors 'none'</div>
+          <p style="font-size:.82rem;margin-bottom:8px;">Block all framing.</p>
+          <div class="code-box">frame-ancestors 'self'</div>
+          <p style="font-size:.82rem;margin-bottom:8px;">Same-origin only.</p>
+          <div class="code-box">frame-ancestors 'self' https://trusted.com</div>
+          <p style="font-size:.82rem;margin-bottom:8px;">Specific allowlist.</p>
+          <div class="code-box">frame-ancestors https://*.example.com</div>
+          <p style="font-size:.82rem;">All subdomains of example.com.</p>
+        </div>
+      </div>
+
+      <hr class="divider">
+
+      <div class="info-card">
+        <h4 style="color:var(--orange);">&#x1F4A1; Best Practices</h4>
+        <ul>
+          <li>Use <strong>both</strong> X-Frame-Options and CSP for maximum compatibility.</li>
+          <li>Set headers on <strong>all pages</strong>, including error pages.</li>
+          <li>Prefer <code style="font-family:'Space Mono',monospace;font-size:.75rem;background:var(--ink);color:var(--yellow);padding:1px 4px;border-radius:3px;">DENY</code> unless you need same-origin embedding.</li>
+          <li>Test regularly — security regressions happen!</li>
+          <li>Consider JavaScript frame-busting as a defense-in-depth backup.</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+</div><!-- /page-wrap -->
+
+<script>
+(function() {
+  var urlInput       = document.getElementById('url-input');
+  var protocolSelect = document.getElementById('protocol-select');
+  var testBtn        = document.getElementById('test-btn');
+  var iframeSection  = document.getElementById('iframe-section');
+  var testIframe     = document.getElementById('test-iframe');
+
+  urlInput.value = 'devdunia.com';
+
+  testBtn.addEventListener('click', function() {
+    var protocol = protocolSelect.value;
+    var domain   = urlInput.value.trim();
+    if (!domain) { alert('Please enter a domain to test'); return; }
+
+    var fullUrl = protocol + domain;
+    testWebsite(fullUrl);
+  });
+
+  urlInput.addEventListener('keypress', function(e) {
+    if (e.key === 'Enter') { testBtn.click(); }
+  });
+
+  function testWebsite(url) {
+    testBtn.disabled = true;
+    testBtn.textContent = '⏳ Testing...';
+
+    testIframe.src = url;
+    iframeSection.style.display = 'block';
+
+    setTimeout(function() {
+      testBtn.disabled = false;
+      testBtn.textContent = '⚡ Test!';
+    }, 2000);
+  }
+})();
+</script>
+<script src="masthead.js"></script>
+<script src="hero-banner.js"></script>
+<script src="author-card.js"></script>
+</body>
 </html>
