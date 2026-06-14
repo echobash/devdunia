@@ -50,66 +50,24 @@ body {
 .page-wrap {
   position: relative;
   z-index: 1;
-  max-width: 1100px;
+  max-width: 1240px;
   margin: 0 auto;
-  padding: 0 16px 60px;
+  padding: 20px 32px 60px;
 }
 
-/* ── MASTHEAD ── */
-.masthead {
-  background: var(--blue);
-  border: 4px solid var(--ink);
-  border-radius: 6px;
-  box-shadow: 7px 7px 0 var(--ink);
-  margin: 18px 0 28px;
-  padding: 10px 20px;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  flex-wrap: wrap;
-  gap: 8px;
-}
 
-.masthead-logo {
-  font-family: 'Bangers', cursive;
-  font-size: 1.9rem;
-  letter-spacing: 2px;
-  color: #fff;
-  text-shadow: 3px 3px 0 var(--ink);
-  line-height: 1;
-}
 
-.masthead-logo span { color: var(--yellow); }
 
-.masthead-right {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
 
-.issue-tag {
-  font-family: 'Bangers', cursive;
-  font-size: .95rem;
-  background: var(--yellow);
-  color: var(--ink);
-  padding: 3px 10px;
-  border-radius: 4px;
-  border: 2px solid var(--ink);
-  letter-spacing: 1px;
-}
 
-.back-link {
-  font-family: 'Bangers', cursive;
-  font-size: .95rem;
-  color: #fff;
-  text-decoration: none;
-  background: var(--ink);
-  padding: 3px 10px;
-  border-radius: 4px;
-  letter-spacing: 1px;
-  transition: opacity .15s;
-}
-.back-link:hover { opacity: .75; }
+
+
+
+
+
+
+
+
 
 /* ── HERO ── */
 .hero {
@@ -366,31 +324,25 @@ body {
 </head>
 <body>
 <div class="paper-overlay"></div>
+<div data-masthead></div>
+
 <div class="page-wrap">
 
-  <!-- MASTHEAD -->
-  <div class="masthead">
-    <div class="masthead-logo">DEV<span>DUNIA</span> COMICS</div>
-    <div class="masthead-right">
-      <span class="issue-tag">HTML VIEWER</span>
-      <a href="../index.html" class="back-link">&#9664; ALL TOOLS</a>
-    </div>
+  <div data-tool-hero
+     data-title="HTML Viewer"
+     data-chapter="25"
+     data-category="Developer Tools"
+     data-icon="&#x1F5A5;&#xFE0F;"
+     data-desc="Paste your HTML code and see it rendered live in a sandboxed iframe. Load files, toggle auto-preview, or click Preview to see your markup in action!"
+     data-color="blue"
+     data-badges="LIVE PREVIEW,SANDBOXED,FILE LOAD,AUTO-PREVIEW"
+     data-badge-colors="blue,green,yellow,orange">
   </div>
 
+  <!-- MASTHEAD -->
+
   <!-- HERO -->
-  <div class="hero">
-    <div class="hero-icon">&#x1F5A5;&#xFE0F;</div>
-    <div class="hero-text">
-      <h1>HTML Viewer</h1>
-      <p>Paste your HTML code and see it rendered live in a sandboxed iframe. Load files, toggle auto-preview, or click Preview to see your markup in action!</p>
-      <div class="hero-badges">
-        <span class="badge badge-blue">LIVE PREVIEW</span>
-        <span class="badge badge-green">SANDBOXED</span>
-        <span class="badge badge-yellow">FILE LOAD</span>
-        <span class="badge badge-orange">AUTO-PREVIEW</span>
-      </div>
-    </div>
-  </div>
+  
 
   <!-- TOOLBAR PANEL -->
   <div class="panel">
@@ -593,11 +545,17 @@ body {
 
   // Preload example
   window.addEventListener('load', function() {
-    htmlInput.value = '<!DOCTYPE html>\n<html>\n<head>\n  <title>Hello DevDunia</title>\n  <style>\n    body {\n      font-family: Arial, sans-serif;\n      padding: 20px;\n      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);\n      color: white;\n    }\n    h1 { text-align: center; margin-top: 50px; }\n    p  { text-align: center; font-size: 18px; }\n  </style>\n</head>\n<body>\n  <h1>🚀 Welcome to HTML Viewer!</h1>\n  <p>Edit the HTML code on the left to see live preview here.</p>\n</body>\n</html>';
+    htmlInput.value = '<!DOCTYPE html>\n<html>\n<head>\n  <title>Hello DevDunia</title>\n  <style>\n    body {\n      font-family: Arial, sans-serif;\n      padding: 20px;\n      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);\n      color: white;\n    }\n    h1 { text-align: center; margin-top: 50px; }\n    p  { text-align: center; font-size: 18px; }\n  </style>\n</head>\n<body>\n  <h1>🚀 Welcome to HTML Viewer!</h1>\n  <p>Edit the HTML code on the left to see live preview here.</p>\n<script src="masthead.js"></script>
+<script src="hero-banner.js"></script>
+<script src="author-card.js"></script>
+</body>\n</html>';
     charCount.textContent = htmlInput.value.length;
     updatePreview();
   });
 })();
 </script>
+<script src="masthead.js"></script>
+<script src="hero-banner.js"></script>
+<script src="author-card.js"></script>
 </body>
 </html>

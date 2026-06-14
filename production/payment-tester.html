@@ -20,14 +20,14 @@
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
 body{font-family:'Comic Neue',cursive;font-weight:400;color:var(--ink);background-color:var(--paper);background-image:radial-gradient(var(--ink) 0.5px,transparent 0.6px);background-size:14px 14px;background-attachment:fixed;min-height:100vh;}
 .paper-overlay{position:fixed;inset:0;background:rgba(253,243,227,.78);pointer-events:none;z-index:0;}
-.page-wrap{position:relative;z-index:1;max-width:860px;margin:0 auto;padding:0 16px 60px;}
-.masthead{background:var(--green);border:4px solid var(--ink);border-radius:6px;box-shadow:7px 7px 0 var(--ink);margin:18px 0 28px;padding:10px 20px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;}
-.masthead-logo{font-family:'Bangers',cursive;font-size:1.9rem;letter-spacing:2px;color:#fff;text-shadow:3px 3px 0 var(--ink);line-height:1;}
-.masthead-logo span{color:var(--yellow);}
-.masthead-right{display:flex;align-items:center;gap:8px;}
-.issue-tag{font-family:'Bangers',cursive;font-size:.95rem;background:var(--yellow);color:var(--ink);padding:3px 10px;border-radius:4px;border:2px solid var(--ink);letter-spacing:1px;}
-.back-link{font-family:'Bangers',cursive;font-size:.95rem;color:#fff;text-decoration:none;background:var(--ink);padding:3px 10px;border-radius:4px;letter-spacing:1px;transition:opacity .15s;}
-.back-link:hover{opacity:.75;}
+.page-wrap{position:relative;z-index:1;max-width: 1240px;margin:0 auto;padding: 20px 32px 60px;}
+
+
+
+
+
+
+
 .hero{display:flex;align-items:flex-start;gap:20px;background:var(--paper2);border:4px solid var(--ink);border-radius:6px;box-shadow:7px 7px 0 var(--ink);padding:20px 24px;margin-bottom:28px;transform:rotate(-0.4deg);}
 .hero-icon{font-size:3rem;line-height:1;flex-shrink:0;filter:drop-shadow(3px 3px 0 var(--ink));}
 .hero-text h1{font-family:'Bangers',cursive;font-size:2.8rem;letter-spacing:2px;color:var(--green);-webkit-text-stroke:1px var(--ink);text-shadow:4px 4px 0 var(--ink);line-height:1;text-transform:uppercase;}
@@ -81,29 +81,22 @@ body{font-family:'Comic Neue',cursive;font-weight:400;color:var(--ink);backgroun
 </head>
 <body>
 <div class="paper-overlay"></div>
+<div data-masthead></div>
+
 <div class="page-wrap">
 
-  <div class="masthead">
-    <div class="masthead-logo">DEV<span>DUNIA</span> COMICS</div>
-    <div class="masthead-right">
-      <span class="issue-tag">PAYMENTS</span>
-      <a href="../index.html" class="back-link">&#9664; ALL TOOLS</a>
-    </div>
+  <div data-tool-hero
+     data-title="Payment Tester"
+     data-chapter="37"
+     data-category="Developer Tools"
+     data-icon="&#x1F4B3;"
+     data-desc="Test Stripe payment flows using dummy cards! Safe sandbox environment — click any card to copy the number instantly. No real money involved!"
+     data-color="blue"
+     data-badges="STRIPE SANDBOX,CLICK TO COPY,FREE,NO REAL CHARGES"
+     data-badge-colors="green,blue,yellow,red">
   </div>
 
-  <div class="hero">
-    <div class="hero-icon">&#x1F4B3;</div>
-    <div class="hero-text">
-      <h1>Payment Tester</h1>
-      <p>Test Stripe payment flows using dummy cards! Safe sandbox environment — click any card to copy the number instantly. No real money involved!</p>
-      <div class="hero-badges">
-        <span class="badge badge-green">STRIPE SANDBOX</span>
-        <span class="badge badge-blue">CLICK TO COPY</span>
-        <span class="badge badge-yellow">FREE</span>
-        <span class="badge badge-red">NO REAL CHARGES</span>
-      </div>
-    </div>
-  </div>
+  
 
   <div class="panel">
     <div class="panel-header">
@@ -280,5 +273,8 @@ app.post('/create-payment-intent', async (req, res) => {
   });
 })();
 </script>
+<script src="masthead.js"></script>
+<script src="hero-banner.js"></script>
+<script src="author-card.js"></script>
 </body>
 </html>

@@ -43,64 +43,16 @@ body {
 }
 .page-wrap {
   position: relative; z-index: 1;
-  max-width: 900px; margin: 0 auto;
-  padding: 0 16px 60px;
+  max-width: 1240px; margin: 0 auto;
+  padding: 20px 32px 60px;
 }
-.masthead {
-  background: var(--purple);
-  border: 4px solid var(--ink); border-radius: 6px;
-  box-shadow: 7px 7px 0 var(--ink);
-  margin: 18px 0 28px; padding: 10px 20px;
-  display: flex; align-items: center;
-  justify-content: space-between; flex-wrap: wrap; gap: 8px;
-}
-.masthead-logo {
-  font-family: 'Bangers', cursive; font-size: 1.9rem;
-  letter-spacing: 2px; color: #fff;
-  text-shadow: 3px 3px 0 var(--ink); line-height: 1;
-}
-.masthead-logo span { color: var(--yellow); }
-.masthead-right { display: flex; align-items: center; gap: 8px; }
-.issue-tag {
-  font-family: 'Bangers', cursive; font-size: .95rem;
-  background: var(--yellow); color: var(--ink);
-  padding: 3px 10px; border-radius: 4px;
-  border: 2px solid var(--ink); letter-spacing: 1px;
-}
-.back-link {
-  font-family: 'Bangers', cursive; font-size: .95rem;
-  color: #fff; text-decoration: none;
-  background: var(--ink); padding: 3px 10px;
-  border-radius: 4px; letter-spacing: 1px; transition: opacity .15s;
-}
-.back-link:hover { opacity: .75; }
-.hero {
-  display: flex; align-items: flex-start; gap: 20px;
-  background: var(--paper2);
-  border: 4px solid var(--ink); border-radius: 6px;
-  box-shadow: 7px 7px 0 var(--ink);
-  padding: 20px 24px; margin-bottom: 28px;
-  transform: rotate(-0.4deg);
-}
-.hero-icon { font-size: 3rem; line-height: 1; flex-shrink: 0; filter: drop-shadow(3px 3px 0 var(--ink)); }
-.hero-text h1 {
-  font-family: 'Bangers', cursive; font-size: 2.8rem;
-  letter-spacing: 2px; color: var(--purple);
-  -webkit-text-stroke: 1px var(--ink);
-  text-shadow: 4px 4px 0 var(--ink);
-  line-height: 1; text-transform: uppercase;
-}
-.hero-text p { font-size: .95rem; margin-top: 6px; line-height: 1.5; max-width: 520px; }
-.hero-badges { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 10px; }
-.badge {
-  font-family: 'Space Mono', monospace; font-size: .65rem; font-weight: 700;
-  padding: 3px 8px; border: 2px solid var(--ink);
-  border-radius: 4px; box-shadow: 2px 2px 0 var(--ink);
-}
-.badge-purple { background: var(--purple); color: #fff; }
-.badge-green  { background: var(--green);  color: #fff; }
-.badge-blue   { background: var(--blue);   color: #fff; }
-.badge-yellow { background: var(--yellow); color: var(--ink); }
+
+
+
+
+
+
+
 .panel {
   background: var(--paper);
   border: 4px solid var(--ink); border-radius: 6px;
@@ -176,37 +128,26 @@ body {
 @media (max-width: 760px) {
   .grid-2 { grid-template-columns: 1fr; }
   .ref-grid { grid-template-columns: 1fr; }
-  .hero { flex-direction: column; gap: 10px; }
-  .hero-text h1 { font-size: 2rem; }
 }
 </style>
 </head>
 <body>
 <div class="paper-overlay"></div>
+<div data-masthead></div>
+
 <div class="page-wrap">
 
   <!-- MASTHEAD -->
-  <div class="masthead">
-    <div class="masthead-logo">DEV<span>DUNIA</span> COMICS</div>
-    <div class="masthead-right">
-      <span class="issue-tag">PLOTLY</span>
-      <a href="../index.html" class="back-link">&#9664; ALL TOOLS</a>
-    </div>
-  </div>
 
-  <!-- HERO -->
-  <div class="hero">
-    <div class="hero-icon">&#x1F4C8;</div>
-    <div class="hero-text">
-      <h1>Plotly</h1>
-      <p>Interactive charts, dashboards, and data visualization examples. Line plots, scatter, bar, pie, 3D surfaces, heatmaps, and Dash apps — all here!</p>
-      <div class="hero-badges">
-        <span class="badge badge-purple">INTERACTIVE</span>
-        <span class="badge badge-blue">3D CHARTS</span>
-        <span class="badge badge-green">DASH</span>
-        <span class="badge badge-yellow">EXPRESS API</span>
-      </div>
-    </div>
+  <div data-tool-hero
+       data-title="Plotly Charts"
+       data-chapter="08"
+       data-category="API &amp; Dev Tools"
+       data-icon="&#x1F4C8;"
+       data-desc="Build and preview interactive Plotly charts — bar&#44; line&#44; scatter&#44; pie and more — directly in the browser."
+       data-color="blue"
+       data-badges="PLOTLY,CHARTS,INTERACTIVE,FREE"
+       data-badge-colors="blue,purple,green,yellow">
   </div>
 
   <!-- SETUP -->
@@ -556,5 +497,8 @@ function copyTA(id, btn) {
   }
 }
 </script>
+<script src="masthead.js"></script>
+<script src="hero-banner.js"></script>
+<script src="author-card.js"></script>
 </body>
 </html>

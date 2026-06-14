@@ -43,38 +43,16 @@ body {
 }
 .page-wrap {
   position: relative; z-index: 1;
-  max-width: 960px; margin: 0 auto;
-  padding: 0 16px 60px;
+  max-width: 1240px; margin: 0 auto;
+  padding: 20px 32px 60px;
 }
-.masthead {
-  background: var(--red);
-  border: 4px solid var(--ink); border-radius: 6px;
-  box-shadow: 7px 7px 0 var(--ink);
-  margin: 18px 0 28px; padding: 10px 20px;
-  display: flex; align-items: center;
-  justify-content: space-between; flex-wrap: wrap; gap: 8px;
-}
-.masthead-logo {
-  font-family: 'Bangers', cursive; font-size: 1.9rem;
-  letter-spacing: 2px; color: #fff;
-  text-shadow: 3px 3px 0 var(--ink); line-height: 1;
-}
-.masthead-logo span { color: var(--yellow); }
-.masthead-right { display: flex; align-items: center; gap: 8px; }
-.issue-tag {
-  font-family: 'Bangers', cursive; font-size: .95rem;
-  background: var(--yellow); color: var(--ink);
-  padding: 3px 10px; border-radius: 4px;
-  border: 2px solid var(--ink); letter-spacing: 1px;
-}
-.back-link {
-  font-family: 'Bangers', cursive; font-size: .95rem;
-  color: #fff; text-decoration: none;
-  background: var(--ink); padding: 3px 10px;
-  border-radius: 4px; letter-spacing: 1px;
-  transition: opacity .15s;
-}
-.back-link:hover { opacity: .75; }
+
+
+
+
+
+
+
 .hero {
   display: flex; align-items: flex-start; gap: 20px;
   background: var(--paper2);
@@ -217,32 +195,25 @@ body {
 </head>
 <body>
 <div class="paper-overlay"></div>
+<div data-masthead></div>
+
 <div class="page-wrap">
 
-  <!-- MASTHEAD -->
-  <div class="masthead">
-    <div class="masthead-logo">DEV<span>DUNIA</span> COMICS</div>
-    <div class="masthead-right">
-      <span class="issue-tag">REDIS</span>
-      <a href="../index.html" class="back-link">&#9664; ALL TOOLS</a>
-    </div>
+  <div data-tool-hero
+     data-title="Redis Command Explorer"
+     data-chapter="45"
+     data-category="Developer Tools"
+     data-icon="&#x1F9E8;"
+     data-desc="Interactive Redis command reference with examples, performance complexity, and use cases. Search, filter by category, and copy any command instantly!"
+     data-color="blue"
+     data-badges="STRINGS,LISTS,SETS,HASHES,SORTED SETS"
+     data-badge-colors="red,blue,green,purple,yellow">
   </div>
 
+  <!-- MASTHEAD -->
+
   <!-- HERO -->
-  <div class="hero">
-    <div class="hero-icon">&#x1F9E8;</div>
-    <div class="hero-text">
-      <h1>Redis Command Explorer</h1>
-      <p>Interactive Redis command reference with examples, performance complexity, and use cases. Search, filter by category, and copy any command instantly!</p>
-      <div class="hero-badges">
-        <span class="badge badge-red">STRINGS</span>
-        <span class="badge badge-blue">LISTS</span>
-        <span class="badge badge-green">SETS</span>
-        <span class="badge badge-purple">HASHES</span>
-        <span class="badge badge-yellow">SORTED SETS</span>
-      </div>
-    </div>
-  </div>
+  
 
   <!-- SEARCH & FILTER -->
   <div class="search-panel">
@@ -452,5 +423,8 @@ catBtns.forEach(function(btn) {
 
 displayCommands();
 </script>
+<script src="masthead.js"></script>
+<script src="hero-banner.js"></script>
+<script src="author-card.js"></script>
 </body>
 </html>

@@ -28,28 +28,16 @@
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 body { font-family: 'Comic Neue', cursive; font-weight: 400; color: var(--ink); background-color: var(--paper); background-image: radial-gradient(var(--ink) 0.5px, transparent 0.6px); background-size: 14px 14px; background-attachment: fixed; min-height: 100vh; }
 .paper-overlay { position: fixed; inset: 0; background: rgba(253,243,227,.78); pointer-events: none; z-index: 0; }
-.page-wrap { position: relative; z-index: 1; max-width: 860px; margin: 0 auto; padding: 0 16px 60px; }
+.page-wrap { position: relative; z-index: 1; max-width: 1240px; margin: 0 auto; padding: 20px 32px 60px; }
 
-/* MASTHEAD */
-.masthead { background: var(--red); border: 4px solid var(--ink); border-radius: 6px; box-shadow: 7px 7px 0 var(--ink); margin: 18px 0 28px; padding: 10px 20px; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 8px; }
-.masthead-logo { font-family: 'Bangers', cursive; font-size: 1.9rem; letter-spacing: 2px; color: #fff; text-shadow: 3px 3px 0 var(--ink); line-height: 1; }
-.masthead-logo span { color: var(--yellow); }
-.masthead-right { display: flex; align-items: center; gap: 8px; }
-.issue-tag { font-family: 'Bangers', cursive; font-size: .95rem; background: var(--yellow); color: var(--ink); padding: 3px 10px; border-radius: 4px; border: 2px solid var(--ink); letter-spacing: 1px; }
-.back-link { font-family: 'Bangers', cursive; font-size: .95rem; color: #fff; text-decoration: none; background: var(--ink); padding: 3px 10px; border-radius: 4px; letter-spacing: 1px; transition: opacity .15s; }
-.back-link:hover { opacity: .75; }
 
-/* HERO */
-.hero { display: flex; align-items: flex-start; gap: 20px; background: var(--paper2); border: 4px solid var(--ink); border-radius: 6px; box-shadow: 7px 7px 0 var(--ink); padding: 20px 24px; margin-bottom: 28px; transform: rotate(-0.4deg); }
-.hero-icon { font-size: 3rem; line-height: 1; flex-shrink: 0; filter: drop-shadow(3px 3px 0 var(--ink)); }
-.hero-text h1 { font-family: 'Bangers', cursive; font-size: 2.8rem; letter-spacing: 2px; color: var(--red); -webkit-text-stroke: 1px var(--ink); text-shadow: 4px 4px 0 var(--ink); line-height: 1; text-transform: uppercase; }
-.hero-text p { font-size: .95rem; margin-top: 6px; line-height: 1.5; max-width: 480px; }
-.hero-badges { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 10px; }
-.badge { font-family: 'Space Mono', monospace; font-size: .65rem; font-weight: 700; padding: 3px 8px; border: 2px solid var(--ink); border-radius: 4px; box-shadow: 2px 2px 0 var(--ink); }
-.badge-red    { background: var(--red);    color: #fff; }
-.badge-green  { background: var(--green);  color: #fff; }
-.badge-orange { background: var(--orange); color: #fff; }
-.badge-yellow { background: var(--yellow); color: var(--ink); }
+
+
+
+
+
+
+
 
 /* PANEL */
 .panel { background: var(--paper); border: 4px solid var(--ink); border-radius: 6px; box-shadow: 7px 7px 0 var(--ink); overflow: hidden; margin-bottom: 22px; }
@@ -115,8 +103,6 @@ body { font-family: 'Comic Neue', cursive; font-weight: 400; color: var(--ink); 
 .divider { border: none; border-top: 3px solid var(--ink); margin: 16px 0; }
 
 @media (max-width: 760px) {
-  .hero { flex-direction: column; gap: 10px; }
-  .hero-text h1 { font-size: 2rem; }
   .info-grid { grid-template-columns: 1fr; }
   .url-row { flex-direction: column; }
 }
@@ -124,30 +110,22 @@ body { font-family: 'Comic Neue', cursive; font-weight: 400; color: var(--ink); 
 </head>
 <body>
 <div class="paper-overlay"></div>
+<div data-masthead></div>
+
 <div class="page-wrap">
 
   <!-- MASTHEAD -->
-  <div class="masthead">
-    <div class="masthead-logo">DEV<span>DUNIA</span> COMICS</div>
-    <div class="masthead-right">
-      <span class="issue-tag">SECURITY</span>
-      <a href="../index.html" class="back-link">&#9664; ALL TOOLS</a>
-    </div>
-  </div>
 
   <!-- HERO -->
-  <div class="hero">
-    <div class="hero-icon">&#x1F6E1;</div>
-    <div class="hero-text">
-      <h1>Clickjacking Checker</h1>
-      <p>Can a villain embed your website in a hidden iframe? Find out now! Test any URL to see if it's protected against clickjacking attacks.</p>
-      <div class="hero-badges">
-        <span class="badge badge-red">SECURITY</span>
-        <span class="badge badge-orange">X-FRAME</span>
-        <span class="badge badge-green">CSP</span>
-        <span class="badge badge-yellow">IFRAME TEST</span>
-      </div>
-    </div>
+  <div data-tool-hero
+       data-title="Clickjacking Checker"
+       data-chapter="02"
+       data-category="Security &amp; VAPT"
+       data-icon="&#x1F6E1;"
+       data-desc="Test any URL for clickjacking vulnerabilities by loading it in an iframe. See if X-Frame-Options blocks it."
+       data-color="red"
+       data-badges="SECURITY,X-FRAME,VAPT,FREE"
+       data-badge-colors="red,orange,purple,yellow">
   </div>
 
   <!-- TEST PANEL -->
@@ -313,5 +291,8 @@ body { font-family: 'Comic Neue', cursive; font-weight: 400; color: var(--ink); 
   }
 })();
 </script>
+<script src="masthead.js"></script>
+<script src="hero-banner.js"></script>
+<script src="author-card.js"></script>
 </body>
 </html>

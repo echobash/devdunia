@@ -50,78 +50,27 @@ body {
 .page-wrap {
   position: relative;
   z-index: 1;
-  max-width: 900px;
+  max-width: 1240px;
   margin: 0 auto;
-  padding: 0 16px 60px;
+  padding: 20px 32px 60px;
 }
 
-/* MASTHEAD */
-.masthead {
-  background: var(--orange);
-  border: 4px solid var(--ink);
-  border-radius: 6px;
-  box-shadow: 7px 7px 0 var(--ink);
-  margin: 18px 0 28px;
-  padding: 10px 20px;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  flex-wrap: wrap;
-  gap: 8px;
-}
 
-.masthead-logo {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-}
 
-.masthead-logo img {
-  height: 36px;
-  width: auto;
-  border: 2px solid var(--yellow);
-  border-radius: 4px;
-}
 
-.masthead-title {
-  font-family: 'Bangers', cursive;
-  font-size: 1.9rem;
-  letter-spacing: 2px;
-  color: #fff;
-  text-shadow: 3px 3px 0 var(--ink);
-  line-height: 1;
-}
-.masthead-title span { color: var(--yellow); }
 
-.masthead-right {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
 
-.issue-tag {
-  font-family: 'Bangers', cursive;
-  font-size: .95rem;
-  background: var(--yellow);
-  color: var(--ink);
-  padding: 3px 10px;
-  border-radius: 4px;
-  border: 2px solid var(--ink);
-  letter-spacing: 1px;
-}
 
-.back-link {
-  font-family: 'Bangers', cursive;
-  font-size: .95rem;
-  color: #fff;
-  text-decoration: none;
-  background: var(--ink);
-  padding: 3px 10px;
-  border-radius: 4px;
-  letter-spacing: 1px;
-  transition: opacity .15s;
-}
-.back-link:hover { opacity: .75; }
+
+
+
+
+
+
+
+
+
+
 
 /* HERO */
 .hero {
@@ -462,34 +411,25 @@ body {
 </head>
 <body>
 <div class="paper-overlay"></div>
+<div data-masthead></div>
+
 <div class="page-wrap">
 
-  <!-- MASTHEAD -->
-  <div class="masthead">
-    <div class="masthead-logo">
-      <img src="../images/logo.png" alt="DevDunia">
-      <div class="masthead-title">DEV<span>DUNIA</span> COMICS</div>
-    </div>
-    <div class="masthead-right">
-      <span class="issue-tag">REGEX</span>
-      <a href="../index.html" class="back-link">&#9664; ALL TOOLS</a>
-    </div>
+  <div data-tool-hero
+     data-title="Regex Tester"
+     data-chapter="46"
+     data-category="Text Tools"
+     data-icon="&#x1F50E;"
+     data-desc="Write a regex pattern, enter test text, and see live match highlighting with full details — groups, positions, and counts. Auto-tests as you type!"
+     data-color="pink"
+     data-badges="LIVE HIGHLIGHT,AUTO-TEST,FREE,GROUPS"
+     data-badge-colors="orange,green,yellow,blue">
   </div>
 
+  <!-- MASTHEAD -->
+
   <!-- HERO -->
-  <div class="hero">
-    <div class="hero-icon">&#x1F50E;</div>
-    <div class="hero-text">
-      <h1>Regex Tester</h1>
-      <p>Write a regex pattern, enter test text, and see live match highlighting with full details — groups, positions, and counts. Auto-tests as you type!</p>
-      <div class="hero-badges">
-        <span class="badge badge-orange">LIVE HIGHLIGHT</span>
-        <span class="badge badge-green">AUTO-TEST</span>
-        <span class="badge badge-yellow">FREE</span>
-        <span class="badge badge-blue">GROUPS</span>
-      </div>
-    </div>
-  </div>
+  
 
   <!-- REGEX INPUT PANEL -->
   <div class="panel">
@@ -782,5 +722,8 @@ body {
   testRegex();
 })();
 </script>
+<script src="masthead.js"></script>
+<script src="hero-banner.js"></script>
+<script src="author-card.js"></script>
 </body>
 </html>

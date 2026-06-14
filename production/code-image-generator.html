@@ -74,57 +74,19 @@ body {
 .page-wrap {
   position: relative;
   z-index: 1;
-  max-width: 960px;
+  max-width: 1240px;
   margin: 0 auto;
-  padding: 0 16px 60px;
+  padding: 20px 32px 60px;
 }
 
-/* ── MASTHEAD ── */
-.masthead {
-  background: var(--purple);
-  border: 4px solid var(--ink);
-  border-radius: 6px;
-  box-shadow: 7px 7px 0 var(--ink);
-  margin: 18px 0 28px;
-  padding: 10px 20px;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  flex-wrap: wrap;
-  gap: 8px;
-}
-.masthead-logo {
-  font-family: 'Bangers', cursive;
-  font-size: 1.9rem;
-  letter-spacing: 2px;
-  color: #fff;
-  text-shadow: 3px 3px 0 var(--ink);
-  line-height: 1;
-}
-.masthead-logo span { color: var(--yellow); }
-.masthead-right { display: flex; align-items: center; gap: 8px; }
-.issue-tag {
-  font-family: 'Bangers', cursive;
-  font-size: .95rem;
-  background: var(--yellow);
-  color: var(--ink);
-  padding: 3px 10px;
-  border-radius: 4px;
-  border: 2px solid var(--ink);
-  letter-spacing: 1px;
-}
-.back-link {
-  font-family: 'Bangers', cursive;
-  font-size: .95rem;
-  color: #fff;
-  text-decoration: none;
-  background: var(--ink);
-  padding: 3px 10px;
-  border-radius: 4px;
-  letter-spacing: 1px;
-  transition: opacity .15s;
-}
-.back-link:hover { opacity: .75; }
+
+
+
+
+
+
+
+
 
 /* ── HERO ── */
 .hero {
@@ -406,32 +368,25 @@ input[type=range] { accent-color: var(--purple); cursor: pointer; }
 </head>
 <body>
 <div class="paper-overlay"></div>
+<div data-masthead></div>
+
 <div class="page-wrap">
 
-  <!-- MASTHEAD -->
-  <div class="masthead">
-    <div class="masthead-logo">DEV<span>DUNIA</span> COMICS</div>
-    <div class="masthead-right">
-      <span class="issue-tag">CODE IMG</span>
-      <a href="../index.html" class="back-link">&#9664; ALL TOOLS</a>
-    </div>
+  <div data-tool-hero
+     data-title="Code Image Generator"
+     data-chapter="08"
+     data-category="Generators"
+     data-icon="&#x1F4F8;"
+     data-desc="Paste your code, pick a theme and gradient background, then download a beautiful PNG — like Carbon.sh, but comic-book style!"
+     data-color="orange"
+     data-badges="10 THEMES,PNG EXPORT,COPY IMAGE,LINE NUMBERS,FREE"
+     data-badge-colors="purple,pink,green,blue,yellow">
   </div>
 
+  <!-- MASTHEAD -->
+
   <!-- HERO -->
-  <div class="hero">
-    <div class="hero-icon">&#x1F4F8;</div>
-    <div class="hero-text">
-      <h1>Code Image Generator</h1>
-      <p>Paste your code, pick a theme and gradient background, then download a beautiful PNG — like Carbon.sh, but comic-book style!</p>
-      <div class="hero-badges">
-        <span class="badge badge-purple">10 THEMES</span>
-        <span class="badge badge-pink">PNG EXPORT</span>
-        <span class="badge badge-green">COPY IMAGE</span>
-        <span class="badge badge-blue">LINE NUMBERS</span>
-        <span class="badge badge-yellow">FREE</span>
-      </div>
-    </div>
-  </div>
+  
 
   <!-- TOOLBAR PANEL -->
   <div class="panel">
@@ -931,5 +886,8 @@ document.getElementById('copy-img-btn').addEventListener('click', async function
     }
 });
 </script>
+<script src="masthead.js"></script>
+<script src="hero-banner.js"></script>
+<script src="author-card.js"></script>
 </body>
 </html>

@@ -71,111 +71,25 @@ body {
 .page-wrap {
   position: relative;
   z-index: 1;
-  max-width: 1100px;
+  max-width: 1240px;
   margin: 0 auto;
-  padding: 0 16px 60px;
+  padding: 20px 32px 60px;
 }
 
-/* ── MASTHEAD ── */
-.masthead {
-  background: var(--blue);
-  border: 4px solid var(--ink);
-  border-radius: 6px;
-  box-shadow: 7px 7px 0 var(--ink);
-  margin: 18px 0 28px;
-  padding: 10px 20px;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  flex-wrap: wrap;
-  gap: 8px;
-}
 
-.masthead-logo {
-  font-family: 'Bangers', cursive;
-  font-size: 1.9rem;
-  letter-spacing: 2px;
-  color: #fff;
-  text-shadow: 3px 3px 0 var(--ink);
-  line-height: 1;
-}
-.masthead-logo span { color: var(--yellow); }
 
-.masthead-right { display: flex; align-items: center; gap: 8px; }
 
-.issue-tag {
-  font-family: 'Bangers', cursive;
-  font-size: .95rem;
-  background: var(--yellow);
-  color: var(--ink);
-  padding: 3px 10px;
-  border-radius: 4px;
-  border: 2px solid var(--ink);
-  letter-spacing: 1px;
-}
 
-.back-link {
-  font-family: 'Bangers', cursive;
-  font-size: .95rem;
-  color: #fff;
-  text-decoration: none;
-  background: var(--ink);
-  padding: 3px 10px;
-  border-radius: 4px;
-  letter-spacing: 1px;
-  transition: opacity .15s;
-}
-.back-link:hover { opacity: .75; }
 
-/* ── HERO ── */
-.hero {
-  display: flex;
-  align-items: flex-start;
-  gap: 20px;
-  background: var(--paper2);
-  border: 4px solid var(--ink);
-  border-radius: 6px;
-  box-shadow: 7px 7px 0 var(--ink);
-  padding: 20px 24px;
-  margin-bottom: 28px;
-  transform: rotate(-0.4deg);
-}
 
-.hero-icon {
-  font-size: 3rem;
-  line-height: 1;
-  flex-shrink: 0;
-  filter: drop-shadow(3px 3px 0 var(--ink));
-}
 
-.hero-text h1 {
-  font-family: 'Bangers', cursive;
-  font-size: 2.8rem;
-  letter-spacing: 2px;
-  color: var(--purple);
-  -webkit-text-stroke: 1px var(--ink);
-  text-shadow: 4px 4px 0 var(--ink);
-  line-height: 1;
-  text-transform: uppercase;
-}
 
-.hero-text p { font-size: .95rem; margin-top: 6px; line-height: 1.5; max-width: 480px; }
 
-.hero-badges { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 10px; }
 
-.badge {
-  font-family: 'Space Mono', monospace;
-  font-size: .65rem;
-  font-weight: 700;
-  padding: 3px 8px;
-  border: 2px solid var(--ink);
-  border-radius: 4px;
-  box-shadow: 2px 2px 0 var(--ink);
-}
-.badge-blue   { background: var(--blue);   color: #fff; }
-.badge-green  { background: var(--green);  color: #fff; }
-.badge-yellow { background: var(--yellow); color: var(--ink); }
-.badge-purple { background: var(--purple); color: #fff; }
+
+
+
+/* ── MOBILE ── */
 
 /* ── PANEL ── */
 .panel {
@@ -391,37 +305,27 @@ body {
 /* ── MOBILE ── */
 @media (max-width: 760px) {
   .split-panels { grid-template-columns: 1fr; }
-  .hero { flex-direction: column; gap: 10px; }
-  .hero-text h1 { font-size: 2rem; }
 }
 </style>
 </head>
 <body>
 <div class="paper-overlay"></div>
+<div data-masthead></div>
+
 <div class="page-wrap">
 
   <!-- MASTHEAD -->
-  <div class="masthead">
-    <div class="masthead-logo">DEV<span>DUNIA</span> COMICS</div>
-    <div class="masthead-right">
-      <span class="issue-tag">MARKDOWN</span>
-      <a href="../index.html" class="back-link">&#9664; ALL TOOLS</a>
-    </div>
-  </div>
 
   <!-- HERO -->
-  <div class="hero">
-    <div class="hero-icon">&#x1F4DD;</div>
-    <div class="hero-text">
-      <h1>Markdown Editor</h1>
-      <p>Write Markdown on the left and watch it render live on the right — with syntax highlighting, GFM tables, and code blocks!</p>
-      <div class="hero-badges">
-        <span class="badge badge-purple">LIVE PREVIEW</span>
-        <span class="badge badge-green">SYNTAX HIGHLIGHT</span>
-        <span class="badge badge-blue">GFM TABLES</span>
-        <span class="badge badge-yellow">FREE</span>
-      </div>
-    </div>
+  <div data-tool-hero
+       data-title="Markdown Editor"
+       data-chapter="01"
+       data-category="Text Tools"
+       data-icon="&#x270F;"
+       data-desc="Live Markdown editor with instant preview. Supports GFM&#44; tables&#44; code blocks and export to HTML."
+       data-color="blue"
+       data-badges="MARKDOWN,LIVE,GFM,FREE"
+       data-badge-colors="blue,green,orange,yellow">
   </div>
 
   <!-- CONTROLS -->
@@ -488,6 +392,9 @@ body {
 
 </div><!-- /page-wrap -->
 
+<script src="masthead.js"></script>
+<script src="hero-banner.js"></script>
+<script src="author-card.js"></script>
 <script>
 (function() {
   // Configure marked (same as original)

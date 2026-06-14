@@ -22,28 +22,16 @@
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
 body{font-family:'Comic Neue',cursive;font-weight:400;color:var(--ink);background-color:var(--paper);background-image:radial-gradient(var(--ink) 0.5px,transparent 0.6px);background-size:14px 14px;background-attachment:fixed;min-height:100vh;}
 .paper-overlay{position:fixed;inset:0;background:rgba(253,243,227,.78);pointer-events:none;z-index:0;}
-.page-wrap{position:relative;z-index:1;max-width:900px;margin:0 auto;padding:0 16px 60px;}
-/* MASTHEAD */
-.masthead{background:var(--blue);border:4px solid var(--ink);border-radius:6px;box-shadow:7px 7px 0 var(--ink);margin:18px 0 28px;padding:10px 20px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;}
-.masthead-logo{font-family:'Bangers',cursive;font-size:1.9rem;letter-spacing:2px;color:#fff;text-shadow:3px 3px 0 var(--ink);line-height:1;}
-.masthead-logo span{color:var(--yellow);}
-.masthead-right{display:flex;align-items:center;gap:8px;}
-.issue-tag{font-family:'Bangers',cursive;font-size:.95rem;background:var(--yellow);color:var(--ink);padding:3px 10px;border-radius:4px;border:2px solid var(--ink);letter-spacing:1px;}
-.back-link{font-family:'Bangers',cursive;font-size:.95rem;color:#fff;text-decoration:none;background:var(--ink);padding:3px 10px;border-radius:4px;letter-spacing:1px;transition:opacity .15s;}
-.back-link:hover{opacity:.75;}
-/* HERO */
-.hero{display:flex;align-items:flex-start;gap:20px;background:var(--paper2);border:4px solid var(--ink);border-radius:6px;box-shadow:7px 7px 0 var(--ink);padding:20px 24px;margin-bottom:28px;transform:rotate(-0.4deg);}
-.hero-icon{font-size:3rem;line-height:1;flex-shrink:0;filter:drop-shadow(3px 3px 0 var(--ink));}
-.hero-text h1{font-family:'Bangers',cursive;font-size:2.6rem;letter-spacing:2px;color:var(--blue);-webkit-text-stroke:1px var(--ink);text-shadow:4px 4px 0 var(--ink);line-height:1;text-transform:uppercase;}
-.hero-text p{font-size:.95rem;margin-top:6px;line-height:1.5;max-width:520px;}
-.hero-badges{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px;}
-.badge{font-family:'Space Mono',monospace;font-size:.65rem;font-weight:700;padding:3px 8px;border:2px solid var(--ink);border-radius:4px;box-shadow:2px 2px 0 var(--ink);}
-.badge-blue{background:var(--blue);color:#fff;}
-.badge-green{background:var(--green);color:#fff;}
-.badge-yellow{background:var(--yellow);color:var(--ink);}
-.badge-red{background:var(--red);color:#fff;}
-.badge-purple{background:var(--purple);color:#fff;}
-.badge-orange{background:var(--orange);color:#fff;}
+.page-wrap{position:relative;z-index:1;max-width: 1240px;margin:0 auto;padding: 20px 32px 60px;}
+
+
+
+
+
+
+
+
+/* PANEL */
 /* PANEL */
 .panel{background:var(--paper);border:4px solid var(--ink);border-radius:6px;box-shadow:7px 7px 0 var(--ink);overflow:hidden;margin-bottom:22px;}
 .panel-header{background:var(--ink);color:var(--yellow);font-family:'Bangers',cursive;font-size:1.2rem;letter-spacing:2px;padding:8px 16px;display:flex;align-items:center;justify-content:space-between;gap:10px;}
@@ -83,36 +71,27 @@ code,.code-block{background:var(--ink);color:var(--yellow);font-family:'Space Mo
 .link-card:hover{transform:translate(-2px,-2px);box-shadow:6px 6px 0 var(--ink);}
 .link-card-title{font-family:'Bangers',cursive;font-size:1.3rem;letter-spacing:1px;margin-bottom:4px;}
 .link-card-desc{font-size:.82rem;line-height:1.4;}
-@media(max-width:760px){.cards-grid,.link-cards{grid-template-columns:1fr;}.hero{flex-direction:column;gap:10px;}.hero-text h1{font-size:2rem;}}
+@media(max-width:760px){.cards-grid,.link-cards{grid-template-columns:1fr;}}
 </style>
 </head>
 <body>
 <div class="paper-overlay"></div>
+<div data-masthead></div>
+
 <div class="page-wrap">
 
   <!-- MASTHEAD -->
-  <div class="masthead">
-    <div class="masthead-logo">DEV<span>DUNIA</span> COMICS</div>
-    <div class="masthead-right">
-      <span class="issue-tag">NET PROTOCOLS</span>
-      <a href="../index.html" class="back-link">&#9664; ALL TOOLS</a>
-    </div>
-  </div>
 
   <!-- HERO -->
-  <div class="hero">
-    <div class="hero-icon">&#x1F310;</div>
-    <div class="hero-text">
-      <h1>Network Protocols Guide</h1>
-      <p>Comprehensive guide to the rules and standards that govern how data travels across networks. From HTTP to TCP — every layer explained in comic style!</p>
-      <div class="hero-badges">
-        <span class="badge badge-blue">TCP</span>
-        <span class="badge badge-green">UDP</span>
-        <span class="badge badge-yellow">HTTP</span>
-        <span class="badge badge-purple">OSI MODEL</span>
-        <span class="badge badge-orange">DNS</span>
-      </div>
-    </div>
+  <div data-tool-hero
+       data-title="Network Protocols"
+       data-chapter="05"
+       data-category="Network Protocols"
+       data-icon="&#x1F5A7;"
+       data-desc="Reference guide for common network protocols — DNS&#44; HTTP&#44; TCP&#44; UDP&#44; TLS and more with visual explanations."
+       data-color="blue"
+       data-badges="DNS,TCP,UDP,FREE"
+       data-badge-colors="blue,orange,green,yellow">
   </div>
 
   <!-- CHAPTER 1: OVERVIEW -->
@@ -318,5 +297,9 @@ code,.code-block{background:var(--ink);color:var(--yellow);font-family:'Space Mo
   </div>
 
 </div>
+
+<script src="masthead.js"></script>
+<script src="hero-banner.js"></script>
+<script src="author-card.js"></script>
 </body>
 </html>

@@ -50,79 +50,28 @@ body {
 .page-wrap {
   position: relative;
   z-index: 1;
-  max-width: 860px;
+  max-width: 1240px;
   margin: 0 auto;
-  padding: 0 16px 60px;
+  padding: 20px 32px 60px;
 }
 
-/* MASTHEAD */
-.masthead {
-  background: var(--blue);
-  border: 4px solid var(--ink);
-  border-radius: 6px;
-  box-shadow: 7px 7px 0 var(--ink);
-  margin: 18px 0 28px;
-  padding: 10px 20px;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  flex-wrap: wrap;
-  gap: 8px;
-}
 
-.masthead-logo {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-}
 
-.masthead-logo img {
-  height: 36px;
-  width: auto;
-  border: 2px solid var(--yellow);
-  border-radius: 4px;
-}
 
-.masthead-title {
-  font-family: 'Bangers', cursive;
-  font-size: 1.9rem;
-  letter-spacing: 2px;
-  color: #fff;
-  text-shadow: 3px 3px 0 var(--ink);
-  line-height: 1;
-}
 
-.masthead-title span { color: var(--yellow); }
 
-.masthead-right {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
 
-.issue-tag {
-  font-family: 'Bangers', cursive;
-  font-size: .95rem;
-  background: var(--yellow);
-  color: var(--ink);
-  padding: 3px 10px;
-  border-radius: 4px;
-  border: 2px solid var(--ink);
-  letter-spacing: 1px;
-}
 
-.back-link {
-  font-family: 'Bangers', cursive;
-  font-size: .95rem;
-  color: #fff;
-  text-decoration: none;
-  background: var(--ink);
-  padding: 3px 10px;
-  border-radius: 4px;
-  letter-spacing: 1px;
-  transition: opacity .15s;
-}
-.back-link:hover { opacity: .75; }
+
+
+
+
+
+
+
+
+
+
 
 /* HERO */
 .hero {
@@ -436,34 +385,25 @@ body {
 </head>
 <body>
 <div class="paper-overlay"></div>
+<div data-masthead></div>
+
 <div class="page-wrap">
 
-  <!-- MASTHEAD -->
-  <div class="masthead">
-    <div class="masthead-logo">
-      <img src="../images/logo.png" alt="DevDunia">
-      <div class="masthead-title">DEV<span>DUNIA</span> COMICS</div>
-    </div>
-    <div class="masthead-right">
-      <span class="issue-tag">CRON</span>
-      <a href="../index.html" class="back-link">&#9664; ALL TOOLS</a>
-    </div>
+  <div data-tool-hero
+     data-title="Cron Describer"
+     data-chapter="09"
+     data-category="Developer Tools"
+     data-icon="&#x23F0;"
+     data-desc="Type any cron expression and get a plain-English description, a field breakdown, and the next 5 run times — all instantly in your browser!"
+     data-color="blue"
+     data-badges="5-FIELD CRON,NEXT RUNS,FREE,INSTANT"
+     data-badge-colors="blue,green,yellow,orange">
   </div>
 
+  <!-- MASTHEAD -->
+
   <!-- HERO -->
-  <div class="hero">
-    <div class="hero-icon">&#x23F0;</div>
-    <div class="hero-text">
-      <h1>Cron Describer</h1>
-      <p>Type any cron expression and get a plain-English description, a field breakdown, and the next 5 run times — all instantly in your browser!</p>
-      <div class="hero-badges">
-        <span class="badge badge-blue">5-FIELD CRON</span>
-        <span class="badge badge-green">NEXT RUNS</span>
-        <span class="badge badge-yellow">FREE</span>
-        <span class="badge badge-orange">INSTANT</span>
-      </div>
-    </div>
-  </div>
+  
 
   <!-- INPUT PANEL -->
   <div class="panel">
@@ -761,5 +701,8 @@ body {
   describeBtn.click();
 })();
 </script>
+<script src="masthead.js"></script>
+<script src="hero-banner.js"></script>
+<script src="author-card.js"></script>
 </body>
 </html>

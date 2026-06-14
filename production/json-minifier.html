@@ -36,20 +36,16 @@ body {
   min-height: 100vh;
 }
 .paper-overlay { position: fixed; inset: 0; background: rgba(253,243,227,.78); pointer-events: none; z-index: 0; }
-.page-wrap { position: relative; z-index: 1; max-width: 860px; margin: 0 auto; padding: 0 16px 60px; }
-.masthead {
-  background: var(--orange); border: 4px solid var(--ink); border-radius: 6px;
-  box-shadow: 7px 7px 0 var(--ink); margin: 18px 0 28px; padding: 10px 20px;
-  display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 8px;
-}
-.masthead-logo { display: flex; align-items: center; gap: 10px; }
-.masthead-logo img { height: 36px; width: auto; }
+.page-wrap { position: relative; z-index: 1; max-width: 1240px; margin: 0 auto; padding: 20px 32px 60px; }
+
+
+
 .masthead-logo-text { font-family: 'Bangers', cursive; font-size: 1.9rem; letter-spacing: 2px; color: #fff; text-shadow: 3px 3px 0 var(--ink); line-height: 1; }
 .masthead-logo-text span { color: var(--yellow); }
-.masthead-right { display: flex; align-items: center; gap: 8px; }
-.issue-tag { font-family: 'Bangers', cursive; font-size: .95rem; background: var(--yellow); color: var(--ink); padding: 3px 10px; border-radius: 4px; border: 2px solid var(--ink); letter-spacing: 1px; }
-.back-link { font-family: 'Bangers', cursive; font-size: .95rem; color: #fff; text-decoration: none; background: var(--ink); padding: 3px 10px; border-radius: 4px; letter-spacing: 1px; transition: opacity .15s; }
-.back-link:hover { opacity: .75; }
+
+
+
+
 .hero { display: flex; align-items: flex-start; gap: 20px; background: var(--paper2); border: 4px solid var(--ink); border-radius: 6px; box-shadow: 7px 7px 0 var(--ink); padding: 20px 24px; margin-bottom: 28px; transform: rotate(-0.4deg); }
 .hero-icon { font-size: 3rem; line-height: 1; flex-shrink: 0; filter: drop-shadow(3px 3px 0 var(--ink)); }
 .hero-text h1 { font-family: 'Bangers', cursive; font-size: 2.8rem; letter-spacing: 2px; color: var(--orange); -webkit-text-stroke: 1px var(--ink); text-shadow: 4px 4px 0 var(--ink); line-height: 1; text-transform: uppercase; }
@@ -101,34 +97,25 @@ body {
 </head>
 <body>
 <div class="paper-overlay"></div>
+<div data-masthead></div>
+
 <div class="page-wrap">
 
-  <!-- MASTHEAD -->
-  <div class="masthead">
-    <div class="masthead-logo">
-      <img src="../images/logo.png" alt="DevDunia">
-      <div class="masthead-logo-text">DEV<span>DUNIA</span> COMICS</div>
-    </div>
-    <div class="masthead-right">
-      <span class="issue-tag">JSON-M</span>
-      <a href="../index.html" class="back-link">&#9664; ALL TOOLS</a>
-    </div>
+  <div data-tool-hero
+     data-title="JSON Minifier"
+     data-chapter="27"
+     data-category="Converters & Formatters"
+     data-icon="&#x1F5DC;"
+     data-desc="Squash your verbose, pretty-printed JSON into a tight, compact single line — strip every byte of whitespace and slash payload sizes!"
+     data-color="blue"
+     data-badges="SHRINK IT,VALIDATES JSON,CLIENT-SIDE,FREE"
+     data-badge-colors="orange,blue,green,purple">
   </div>
 
+  <!-- MASTHEAD -->
+
   <!-- HERO -->
-  <div class="hero">
-    <div class="hero-icon">&#x1F5DC;</div>
-    <div class="hero-text">
-      <h1>JSON Minifier</h1>
-      <p>Squash your verbose, pretty-printed JSON into a tight, compact single line — strip every byte of whitespace and slash payload sizes!</p>
-      <div class="hero-badges">
-        <span class="badge badge-orange">SHRINK IT</span>
-        <span class="badge badge-blue">VALIDATES JSON</span>
-        <span class="badge badge-green">CLIENT-SIDE</span>
-        <span class="badge badge-purple">FREE</span>
-      </div>
-    </div>
-  </div>
+  
 
   <!-- INPUT PANEL -->
   <div class="panel">
@@ -262,5 +249,8 @@ body {
   });
 })();
 </script>
+<script src="masthead.js"></script>
+<script src="hero-banner.js"></script>
+<script src="author-card.js"></script>
 </body>
 </html>

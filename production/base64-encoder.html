@@ -21,25 +21,10 @@
 body{font-family:'Comic Neue',cursive;font-weight:400;color:var(--ink);background-color:var(--paper);background-image:radial-gradient(var(--ink) 0.5px,transparent 0.6px);background-size:14px 14px;background-attachment:fixed;min-height:100vh}
 .paper-overlay{position:fixed;inset:0;background:rgba(253,243,227,.78);pointer-events:none;z-index:0}
 
-/* ── MASTHEAD (full-width sticky) ── */
-.masthead{position:sticky;top:0;z-index:100;background:var(--green);border-bottom:4px solid var(--ink);box-shadow:0 6px 0 var(--ink);padding:0 28px;height:54px;display:grid;grid-template-columns:1fr auto 1fr;align-items:center;gap:12px}
-.masthead-left{display:flex;align-items:center;gap:10px}
-.masthead-left img{width:30px;height:30px;border:3px solid var(--ink);border-radius:5px;background:#fff;object-fit:contain;box-shadow:2px 2px 0 var(--ink)}
-.brand{font-family:'Bangers',cursive;font-size:1.7rem;letter-spacing:2px;color:#fff;text-shadow:3px 3px 0 var(--ink);line-height:1}
-.brand span{color:var(--yellow)}
-.issue-pill{font-family:'Bangers',cursive;font-size:.9rem;letter-spacing:2px;background:var(--ink);color:var(--yellow);padding:4px 14px;border-radius:20px;white-space:nowrap}
-.masthead-right{display:flex;align-items:center;gap:8px;justify-content:flex-end}
-.by-label{font-family:'Comic Neue',cursive;font-size:.75rem;color:rgba(255,255,255,.7);font-style:italic}
-.author-link{font-family:'Bangers',cursive;font-size:.95rem;letter-spacing:1px;color:var(--yellow);text-decoration:none;text-shadow:1px 1px 0 var(--ink)}
-.author-link:hover{text-decoration:underline}
-.icon-btn{width:28px;height:28px;border:2px solid var(--ink);border-radius:5px;display:flex;align-items:center;justify-content:center;background:#fff;box-shadow:2px 2px 0 var(--ink);text-decoration:none;flex-shrink:0;transition:transform .1s}
-.icon-btn:hover{transform:translate(-1px,-1px)}
-.icon-btn svg{width:15px;height:15px}
-.back-link{font-family:'Bangers',cursive;font-size:.88rem;color:#fff;text-decoration:none;background:var(--ink);padding:3px 10px;border-radius:4px;letter-spacing:1px;box-shadow:2px 2px 0 rgba(0,0,0,.3);white-space:nowrap}
-.back-link:hover{opacity:.8}
+/* masthead injected by masthead.js */
 
 /* ── PAGE WRAP (centered, shows halftone bg) ── */
-.page-wrap{position:relative;z-index:1;max-width:1240px;margin:0 auto;padding:20px 32px 60px}
+.page-wrap{position:relative;z-index:1;max-width: 1240px;margin:0 auto;padding:20px 32px 60px}
 
 /* hero styles injected by hero-banner.js */
 
@@ -103,39 +88,17 @@ body{font-family:'Comic Neue',cursive;font-weight:400;color:var(--ink);backgroun
 
 /* ── MOBILE ── */
 @media(max-width:860px){
-  .masthead{grid-template-columns:1fr 1fr;height:auto;padding:10px 16px;gap:8px}
-  .issue-pill{display:none}
   /* hero mobile handled by hero-banner.js */
+  /* masthead mobile handled by masthead.js */
   .examples-grid{grid-template-columns:1fr}
   .page-wrap{padding:20px 16px 60px}
-  .by-label,.author-link{display:none}
 }
 </style>
 </head>
 <body>
 <div class="paper-overlay"></div>
 
-<!-- MASTHEAD -->
-<div class="masthead">
-  <div class="masthead-left">
-    <img src="../images/logo.png" alt="DevDunia">
-    <span class="brand">DEV<span>DUNIA</span> COMICS</span>
-  </div>
-  <div style="text-align:center;">
-    <span class="issue-pill">ISSUE #64 &middot; JUNE 2026</span>
-  </div>
-  <div class="masthead-right">
-    <span class="by-label">by</span>
-    <a href="https://echobash.com" target="_blank" rel="noopener" class="author-link">ECHOBASH.COM</a>
-    <a href="https://linkedin.com/in/echobash" target="_blank" rel="noopener" class="icon-btn" title="LinkedIn">
-      <svg viewBox="0 0 24 24" fill="#0077b5"><path d="M20.45 20.45h-3.55v-5.57c0-1.33-.03-3.04-1.85-3.04-1.85 0-2.14 1.45-2.14 2.94v5.67H9.36V9h3.41v1.56h.05c.47-.9 1.63-1.85 3.36-1.85 3.59 0 4.25 2.36 4.25 5.43v6.31zM5.34 7.43a2.06 2.06 0 110-4.12 2.06 2.06 0 010 4.12zM3.56 20.45h3.55V9H3.56v11.45zM22.22 0H1.77C.79 0 0 .77 0 1.72v20.56C0 23.23.79 24 1.77 24h20.45c.98 0 1.78-.77 1.78-1.72V1.72C24 .77 23.2 0 22.22 0z"/></svg>
-    </a>
-    <a href="https://github.com/echobash" target="_blank" rel="noopener" class="icon-btn" title="GitHub">
-      <svg viewBox="0 0 24 24" fill="#1a1410"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.3 3.44 9.8 8.2 11.38.6.1.82-.26.82-.58v-2.03c-3.34.72-4.04-1.61-4.04-1.61-.54-1.38-1.33-1.75-1.33-1.75-1.09-.74.08-.73.08-.73 1.2.08 1.84 1.24 1.84 1.24 1.07 1.83 2.8 1.3 3.49 1 .1-.78.42-1.3.76-1.6-2.67-.3-5.47-1.33-5.47-5.93 0-1.31.47-2.38 1.24-3.22-.13-.3-.54-1.52.12-3.18 0 0 1.01-.32 3.3 1.23a11.5 11.5 0 013-.4c1.02 0 2.04.13 3 .4 2.28-1.55 3.29-1.23 3.29-1.23.66 1.66.25 2.88.12 3.18.77.84 1.24 1.91 1.24 3.22 0 4.61-2.81 5.63-5.48 5.92.43.37.81 1.1.81 2.22v3.29c0 .32.22.69.83.57C20.57 21.8 24 17.3 24 12c0-6.63-5.37-12-12-12z"/></svg>
-    </a>
-    <a href="../index.html" class="back-link">&#9664; ALL TOOLS</a>
-  </div>
-</div>
+<div data-masthead></div>
 
 <div class="page-wrap">
 
@@ -243,6 +206,7 @@ body{font-family:'Comic Neue',cursive;font-weight:400;color:var(--ink);backgroun
 
 </div><!-- /page-wrap -->
 
+<script src="masthead.js"></script>
 <script src="hero-banner.js"></script>
 <script src="author-card.js"></script>
 <script>

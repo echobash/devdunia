@@ -50,36 +50,17 @@ body {
 .page-wrap {
   position: relative;
   z-index: 1;
-  max-width: 960px;
+  max-width: 1240px;
   margin: 0 auto;
-  padding: 0 16px 60px;
+  padding: 20px 32px 60px;
 }
 
-/* MASTHEAD */
-.masthead {
-  background: var(--blue);
-  border: 4px solid var(--ink);
-  border-radius: 6px;
-  box-shadow: 7px 7px 0 var(--ink);
-  margin: 18px 0 28px;
-  padding: 10px 20px;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  flex-wrap: wrap;
-  gap: 8px;
-}
 
-.masthead-logo {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-}
 
-.masthead-logo img {
-  height: 36px;
-  width: auto;
-}
+
+
+
+
 
 .masthead-logo-text {
   font-family: 'Bangers', cursive;
@@ -92,35 +73,12 @@ body {
 
 .masthead-logo-text span { color: var(--yellow); }
 
-.masthead-right {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
 
-.issue-tag {
-  font-family: 'Bangers', cursive;
-  font-size: .95rem;
-  background: var(--yellow);
-  color: var(--ink);
-  padding: 3px 10px;
-  border-radius: 4px;
-  border: 2px solid var(--ink);
-  letter-spacing: 1px;
-}
 
-.back-link {
-  font-family: 'Bangers', cursive;
-  font-size: .95rem;
-  color: #fff;
-  text-decoration: none;
-  background: var(--ink);
-  padding: 3px 10px;
-  border-radius: 4px;
-  letter-spacing: 1px;
-  transition: opacity .15s;
-}
-.back-link:hover { opacity: .75; }
+
+
+
+
 
 /* HERO */
 .hero {
@@ -634,35 +592,25 @@ body {
 </head>
 <body>
 <div class="paper-overlay"></div>
+<div data-masthead></div>
+
 <div class="page-wrap">
 
-  <!-- MASTHEAD -->
-  <div class="masthead">
-    <div class="masthead-logo">
-      <img src="../images/logo.png" alt="DevDunia">
-      <span class="masthead-logo-text">DEV<span>DUNIA</span> COMICS</span>
-    </div>
-    <div class="masthead-right">
-      <span class="issue-tag">BASH HERO</span>
-      <a href="../index.html" class="back-link">&#9664; ALL TOOLS</a>
-    </div>
+  <div data-tool-hero
+     data-title="Bash: Zero to Hero"
+     data-chapter="06"
+     data-category="Developer Tools"
+     data-icon="&#x1F4BB;"
+     data-desc="5 missions. Real challenges. XP system. Go from blinking cursor to Terminal Wizard — one mission at a time. Check off tasks to unlock the next level!"
+     data-color="blue"
+     data-badges="5 MISSIONS,XP SYSTEM,INTERACTIVE,BEGINNER FRIENDLY,REAL CHALLENGES"
+     data-badge-colors="green,blue,purple,yellow,orange">
   </div>
 
+  <!-- MASTHEAD -->
+
   <!-- HERO -->
-  <div class="hero">
-    <div class="hero-icon">&#x1F4BB;</div>
-    <div class="hero-text">
-      <h1>Bash: Zero to Hero</h1>
-      <p>5 missions. Real challenges. XP system. Go from blinking cursor to Terminal Wizard — one mission at a time. Check off tasks to unlock the next level!</p>
-      <div class="hero-badges">
-        <span class="badge badge-green">5 MISSIONS</span>
-        <span class="badge badge-blue">XP SYSTEM</span>
-        <span class="badge badge-purple">INTERACTIVE</span>
-        <span class="badge badge-yellow">BEGINNER FRIENDLY</span>
-        <span class="badge badge-orange">REAL CHALLENGES</span>
-      </div>
-    </div>
-  </div>
+  
 
   <!-- XP BAR -->
   <div class="xp-bar-panel">
@@ -1055,5 +1003,8 @@ load();
 render();
 })();
 </script>
+<script src="masthead.js"></script>
+<script src="hero-banner.js"></script>
+<script src="author-card.js"></script>
 </body>
 </html>
