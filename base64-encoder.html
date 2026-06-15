@@ -86,6 +86,41 @@ body{font-family:'Comic Neue',cursive;font-weight:400;color:var(--ink);backgroun
 .how-step p{font-size:.88rem;line-height:1.5;padding-top:2px}
 .how-step code{font-family:'Space Mono',monospace;font-size:.75rem;background:var(--ink);color:var(--yellow);padding:1px 5px;border-radius:3px}
 
+/* ── B64 COLLAPSIBLE EXAMPLE ── */
+.b64-example>summary{list-style:none;cursor:pointer;user-select:none;gap:8px}
+.b64-example>summary::-webkit-details-marker{display:none}
+.b64-chevron{transition:transform .2s;margin-left:auto;flex-shrink:0}
+.b64-example[open] .b64-chevron{transform:rotate(180deg)}
+.b64-step-title{font-family:'Bangers',cursive;font-size:1rem;letter-spacing:2px;color:var(--ink);margin:20px 0 10px;padding:4px 0 6px;border-bottom:3px dashed rgba(26,20,16,.22);display:flex;align-items:center;gap:8px}
+.b64-step-title:first-child{margin-top:0}
+.b64-ascii-table{width:100%;border-collapse:collapse;font-family:'Space Mono',monospace;font-size:.78rem;border:3px solid var(--ink);border-radius:4px;overflow:hidden;margin-bottom:4px}
+.b64-ascii-table th{background:var(--ink);color:var(--yellow);padding:6px 14px;text-align:center;font-family:'Bangers',cursive;letter-spacing:1px;font-size:.9rem}
+.b64-ascii-table td{padding:5px 14px;text-align:center;border-bottom:2px solid rgba(26,20,16,.12)}
+.b64-ascii-table tr:last-child td{border-bottom:none}
+.b64-ascii-table tr:nth-child(odd) td{background:var(--paper2)}
+.b64-chunk{border:3px solid var(--ink);border-radius:6px;overflow:hidden;box-shadow:5px 5px 0 var(--ink);margin-bottom:16px}
+.b64-chunk-hdr{background:var(--ink);color:var(--yellow);font-family:'Bangers',cursive;font-size:1rem;letter-spacing:2px;padding:6px 14px}
+.b64-chunk-body{padding:14px 16px;background:var(--paper)}
+.b64-char-row{display:flex;align-items:center;gap:5px;margin-bottom:6px;flex-wrap:wrap}
+.b64-char-name{font-family:'Bangers',cursive;font-size:1.1rem;width:20px;flex-shrink:0;color:var(--ink)}
+.b64-ascii-badge{background:var(--ink);color:var(--yellow);font-family:'Space Mono',monospace;font-size:.68rem;padding:1px 6px;border-radius:3px;margin-right:4px;flex-shrink:0}
+.b64-bg{font-family:'Space Mono',monospace;font-size:.78rem;letter-spacing:.5px;font-weight:700;color:#fff;padding:2px 5px;border-radius:3px}
+.b64-divider{font-family:'Bangers',cursive;font-size:.85rem;color:var(--ink);opacity:.55;margin:10px 0 10px;letter-spacing:1px}
+.b64-sixbit-row{display:flex;gap:12px;flex-wrap:wrap;align-items:flex-end}
+.b64-sixbit{display:flex;flex-direction:column;align-items:center;gap:3px}
+.b64-sixbits{font-family:'Space Mono',monospace;font-size:.76rem;font-weight:700;letter-spacing:1px;padding:4px 8px;border-radius:4px;border:2px solid var(--ink);color:#fff;white-space:nowrap}
+.b64-sixval{font-family:'Space Mono',monospace;font-size:.65rem;color:var(--ink);opacity:.7}
+.b64-sixeq{font-family:'Bangers',cursive;font-size:.75rem;color:var(--ink);opacity:.45}
+.b64-sixchar{font-family:'Bangers',cursive;font-size:2.2rem;color:var(--ink);line-height:1}
+.b64-pad-char{font-family:'Bangers',cursive;font-size:2.2rem;color:var(--red);line-height:1}
+.b64-chunk-result{display:flex;gap:10px;align-items:center;margin-top:12px;padding:10px 14px;background:rgba(255,210,63,.18);border:2px dashed rgba(255,210,63,.7);border-radius:6px}
+.b64-chunk-result-label{font-family:'Bangers',cursive;font-size:.88rem;color:var(--ink);opacity:.6;letter-spacing:1px;white-space:nowrap}
+.b64-chunk-result-chars{font-family:'Bangers',cursive;font-size:1.9rem;color:var(--ink);letter-spacing:5px}
+.b64-final{background:var(--ink);border-radius:8px;padding:22px;text-align:center;margin-top:8px}
+.b64-final-label{font-family:'Bangers',cursive;font-size:.85rem;letter-spacing:3px;color:rgba(255,255,255,.55);margin-bottom:4px}
+.b64-final-input{font-family:'Space Mono',monospace;font-size:1rem;color:rgba(255,255,255,.6);margin-bottom:6px}
+.b64-final-output{font-family:'Space Mono',monospace;font-size:1.7rem;color:var(--yellow);letter-spacing:4px;word-break:break-all;text-shadow:2px 2px 0 rgba(0,0,0,.3)}
+
 /* ── MOBILE ── */
 @media(max-width:860px){
   /* hero mobile handled by hero-banner.js */
@@ -203,6 +238,210 @@ body{font-family:'Comic Neue',cursive;font-weight:400;color:var(--ink);backgroun
       </div>
     </div>
   </div>
+
+  <!-- BASE64 STEP-BY-STEP COLLAPSIBLE -->
+  <details class="panel b64-example">
+    <summary class="panel-header">&#x1F52C; BASE64 WORKING EXAMPLE &mdash; "echobash" <span class="panel-tag">STEP BY STEP</span><span class="b64-chevron">&#x25BC;</span></summary>
+    <div class="panel-body">
+      <p style="font-size:.9rem;line-height:1.55;margin-bottom:4px">Watch <code style="font-family:'Space Mono',monospace;font-size:.78rem;background:var(--ink);color:var(--yellow);padding:2px 7px;border-radius:3px">echobash</code> become <code style="font-family:'Space Mono',monospace;font-size:.78rem;background:var(--ink);color:var(--yellow);padding:2px 7px;border-radius:3px">ZWNob2Jhc2g=</code> — every bit shown.</p>
+
+      <!-- STEP 1 -->
+      <div class="b64-step-title">&#x31;&#xFE0F;&#x20E3; STEP 1 &mdash; Characters &rarr; ASCII &rarr; 8-bit Binary</div>
+      <table class="b64-ascii-table">
+        <thead><tr><th>Char</th><th>ASCII</th><th>8-bit Binary</th></tr></thead>
+        <tbody>
+          <tr><td><strong>e</strong></td><td>101</td><td>01100101</td></tr>
+          <tr><td><strong>c</strong></td><td>99</td><td>01100011</td></tr>
+          <tr><td><strong>h</strong></td><td>104</td><td>01101000</td></tr>
+          <tr><td><strong>o</strong></td><td>111</td><td>01101111</td></tr>
+          <tr><td><strong>b</strong></td><td>98</td><td>01100010</td></tr>
+          <tr><td><strong>a</strong></td><td>97</td><td>01100001</td></tr>
+          <tr><td><strong>s</strong></td><td>115</td><td>01110011</td></tr>
+          <tr><td><strong>h</strong></td><td>104</td><td>01101000</td></tr>
+        </tbody>
+      </table>
+
+      <!-- STEP 2 -->
+      <div class="b64-step-title">&#x32;&#xFE0F;&#x20E3; STEP 2 &mdash; Group 3 bytes (24 bits) &rarr; 4 &times; 6-bit groups &rarr; 4 B64 chars</div>
+      <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:16px;align-items:center">
+        <span style="font-family:'Comic Neue',cursive;font-size:.82rem;font-weight:700">Color key:</span>
+        <span style="background:#e63946;color:#fff;font-family:'Space Mono',monospace;font-size:.7rem;font-weight:700;padding:2px 8px;border:2px solid var(--ink);border-radius:3px">6-bit A</span>
+        <span style="background:#1d6fb8;color:#fff;font-family:'Space Mono',monospace;font-size:.7rem;font-weight:700;padding:2px 8px;border:2px solid var(--ink);border-radius:3px">6-bit B</span>
+        <span style="background:#3fa34d;color:#fff;font-family:'Space Mono',monospace;font-size:.7rem;font-weight:700;padding:2px 8px;border:2px solid var(--ink);border-radius:3px">6-bit C</span>
+        <span style="background:#8a4fff;color:#fff;font-family:'Space Mono',monospace;font-size:.7rem;font-weight:700;padding:2px 8px;border:2px solid var(--ink);border-radius:3px">6-bit D</span>
+        <span style="font-family:'Comic Neue',cursive;font-size:.78rem;opacity:.65">&larr; each maps to one B64 char</span>
+      </div>
+
+      <!-- CHUNK 1 -->
+      <div class="b64-chunk">
+        <div class="b64-chunk-hdr">CHUNK 1 of 3 &mdash; "ech" &rarr; 24 bits</div>
+        <div class="b64-chunk-body">
+          <div class="b64-char-row">
+            <span class="b64-char-name">e</span>
+            <span class="b64-ascii-badge">101</span>
+            <span class="b64-bg" style="background:#e63946">011001</span><span class="b64-bg" style="background:#1d6fb8">01</span>
+          </div>
+          <div class="b64-char-row">
+            <span class="b64-char-name">c</span>
+            <span class="b64-ascii-badge">99</span>
+            <span class="b64-bg" style="background:#1d6fb8">0110</span><span class="b64-bg" style="background:#3fa34d">0011</span>
+          </div>
+          <div class="b64-char-row">
+            <span class="b64-char-name">h</span>
+            <span class="b64-ascii-badge">104</span>
+            <span class="b64-bg" style="background:#3fa34d">01</span><span class="b64-bg" style="background:#8a4fff">101000</span>
+          </div>
+          <div class="b64-divider">&#x2193; reassemble into four 6-bit groups, look up Base64 alphabet &#x2193;</div>
+          <div class="b64-sixbit-row">
+            <div class="b64-sixbit">
+              <div class="b64-sixbits" style="background:#e63946">011001</div>
+              <div class="b64-sixval">= 25</div>
+              <div class="b64-sixeq">&#x2193;</div>
+              <div class="b64-sixchar">Z</div>
+            </div>
+            <div class="b64-sixbit">
+              <div class="b64-sixbits" style="background:#1d6fb8">010110</div>
+              <div class="b64-sixval">= 22</div>
+              <div class="b64-sixeq">&#x2193;</div>
+              <div class="b64-sixchar">W</div>
+            </div>
+            <div class="b64-sixbit">
+              <div class="b64-sixbits" style="background:#3fa34d">001101</div>
+              <div class="b64-sixval">= 13</div>
+              <div class="b64-sixeq">&#x2193;</div>
+              <div class="b64-sixchar">N</div>
+            </div>
+            <div class="b64-sixbit">
+              <div class="b64-sixbits" style="background:#8a4fff">101000</div>
+              <div class="b64-sixval">= 40</div>
+              <div class="b64-sixeq">&#x2193;</div>
+              <div class="b64-sixchar">o</div>
+            </div>
+          </div>
+          <div class="b64-chunk-result">
+            <span class="b64-chunk-result-label">"ech" &rarr;</span>
+            <span class="b64-chunk-result-chars">ZWNo</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- CHUNK 2 -->
+      <div class="b64-chunk">
+        <div class="b64-chunk-hdr">CHUNK 2 of 3 &mdash; "oba" &rarr; 24 bits</div>
+        <div class="b64-chunk-body">
+          <div class="b64-char-row">
+            <span class="b64-char-name">o</span>
+            <span class="b64-ascii-badge">111</span>
+            <span class="b64-bg" style="background:#e63946">011011</span><span class="b64-bg" style="background:#1d6fb8">11</span>
+          </div>
+          <div class="b64-char-row">
+            <span class="b64-char-name">b</span>
+            <span class="b64-ascii-badge">98</span>
+            <span class="b64-bg" style="background:#1d6fb8">0110</span><span class="b64-bg" style="background:#3fa34d">0010</span>
+          </div>
+          <div class="b64-char-row">
+            <span class="b64-char-name">a</span>
+            <span class="b64-ascii-badge">97</span>
+            <span class="b64-bg" style="background:#3fa34d">01</span><span class="b64-bg" style="background:#8a4fff">100001</span>
+          </div>
+          <div class="b64-divider">&#x2193; reassemble into four 6-bit groups, look up Base64 alphabet &#x2193;</div>
+          <div class="b64-sixbit-row">
+            <div class="b64-sixbit">
+              <div class="b64-sixbits" style="background:#e63946">011011</div>
+              <div class="b64-sixval">= 27</div>
+              <div class="b64-sixeq">&#x2193;</div>
+              <div class="b64-sixchar">b</div>
+            </div>
+            <div class="b64-sixbit">
+              <div class="b64-sixbits" style="background:#1d6fb8">110110</div>
+              <div class="b64-sixval">= 54</div>
+              <div class="b64-sixeq">&#x2193;</div>
+              <div class="b64-sixchar">2</div>
+            </div>
+            <div class="b64-sixbit">
+              <div class="b64-sixbits" style="background:#3fa34d">001001</div>
+              <div class="b64-sixval">= 9</div>
+              <div class="b64-sixeq">&#x2193;</div>
+              <div class="b64-sixchar">J</div>
+            </div>
+            <div class="b64-sixbit">
+              <div class="b64-sixbits" style="background:#8a4fff">100001</div>
+              <div class="b64-sixval">= 33</div>
+              <div class="b64-sixeq">&#x2193;</div>
+              <div class="b64-sixchar">h</div>
+            </div>
+          </div>
+          <div class="b64-chunk-result">
+            <span class="b64-chunk-result-label">"oba" &rarr;</span>
+            <span class="b64-chunk-result-chars">b2Jh</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- CHUNK 3 (2 bytes + padding) -->
+      <div class="b64-chunk">
+        <div class="b64-chunk-hdr">CHUNK 3 of 3 &mdash; "sh" (only 2 bytes — padding needed!)</div>
+        <div class="b64-chunk-body">
+          <div class="b64-char-row">
+            <span class="b64-char-name">s</span>
+            <span class="b64-ascii-badge">115</span>
+            <span class="b64-bg" style="background:#e63946">011100</span><span class="b64-bg" style="background:#1d6fb8">11</span>
+          </div>
+          <div class="b64-char-row">
+            <span class="b64-char-name">h</span>
+            <span class="b64-ascii-badge">104</span>
+            <span class="b64-bg" style="background:#1d6fb8">0110</span><span class="b64-bg" style="background:#3fa34d">1000</span>
+          </div>
+          <div class="b64-char-row">
+            <span class="b64-char-name" style="opacity:.3">&#x2014;</span>
+            <span style="font-family:'Space Mono',monospace;font-size:.68rem;color:var(--red);font-weight:700;border:2px dashed var(--red);padding:1px 6px;border-radius:3px">MISSING</span>
+            <span class="b64-bg" style="background:#3fa34d;opacity:.45">00</span>
+            <span style="font-family:'Space Mono',monospace;font-size:.72rem;color:var(--red);font-weight:700">&#x2190; 2 padding zero bits to fill 6-bit group C</span>
+          </div>
+          <div class="b64-divider">&#x2193; 16 real bits + 2 pad zeros = 18 bits &rarr; 3 B64 chars + "=" padding &#x2193;</div>
+          <div class="b64-sixbit-row">
+            <div class="b64-sixbit">
+              <div class="b64-sixbits" style="background:#e63946">011100</div>
+              <div class="b64-sixval">= 28</div>
+              <div class="b64-sixeq">&#x2193;</div>
+              <div class="b64-sixchar">c</div>
+            </div>
+            <div class="b64-sixbit">
+              <div class="b64-sixbits" style="background:#1d6fb8">110110</div>
+              <div class="b64-sixval">= 54</div>
+              <div class="b64-sixeq">&#x2193;</div>
+              <div class="b64-sixchar">2</div>
+            </div>
+            <div class="b64-sixbit">
+              <div class="b64-sixbits" style="background:#3fa34d">1000<span style="opacity:.45">00</span></div>
+              <div class="b64-sixval">= 32 (+2 zeros)</div>
+              <div class="b64-sixeq">&#x2193;</div>
+              <div class="b64-sixchar">g</div>
+            </div>
+            <div class="b64-sixbit">
+              <div class="b64-sixbits" style="background:#888;letter-spacing:2px">&#xB7;&#xB7;&#xB7;&#xB7;&#xB7;&#xB7;</div>
+              <div class="b64-sixval">padding</div>
+              <div class="b64-sixeq">&#x2193;</div>
+              <div class="b64-pad-char">=</div>
+            </div>
+          </div>
+          <div class="b64-chunk-result">
+            <span class="b64-chunk-result-label">"sh" &rarr;</span>
+            <span class="b64-chunk-result-chars">c2g=</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- FINAL RESULT -->
+      <div class="b64-final">
+        <div class="b64-final-label">&#x1F3C6; FINAL RESULT</div>
+        <div class="b64-final-input">"echobash" &rarr;</div>
+        <div class="b64-final-output">ZWNob2Jhc2g=</div>
+        <div style="font-family:'Comic Neue',cursive;font-size:.8rem;color:rgba(255,255,255,.5);margin-top:10px">8 bytes &nbsp;&middot;&nbsp; 3 chunks (2 full + 1 padded) &nbsp;&middot;&nbsp; 12 output chars &nbsp;&middot;&nbsp; +33% size overhead</div>
+      </div>
+
+    </div>
+  </details>
 
 </div><!-- /page-wrap -->
 
