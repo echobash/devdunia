@@ -1,0 +1,1034 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>traceroute — Network Path Tracer — DevDunia Comics</title>
+<meta name="description" content="Learn to read traceroute output hop-by-hop. Understand * * * stars, RTT latency values, how TTL tricks reveal network paths, and platform commands for Linux, macOS and Windows (tracert).">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://devdunia.com/traceroute.html">
+<meta property="og:title" content="traceroute — Network Path Tracer — DevDunia Comics">
+<meta property="og:description" content="Learn to read traceroute output hop-by-hop. Understand * * * stars, RTT latency values, how TTL tricks reveal network paths, and platform commands for Linux, macOS and Windows (tracert).">
+<meta property="og:image" content="https://devdunia.com/images/logo.png">
+<link rel="icon" type="image/png" href="images/logo.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Bangers&family=Comic+Neue:wght@400;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --ink: #1a1410;
+  --paper: #fdf3e3;
+  --paper2: #fbe9cc;
+  --red: #e63946;
+  --blue: #1d6fb8;
+  --yellow: #ffd23f;
+  --green: #3fa34d;
+  --purple: #8a4fff;
+  --orange: #ff8c42;
+  --teal: #0d9488;
+  --pink: #ff6b9d;
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: 'Comic Neue', cursive;
+  font-weight: 400;
+  color: var(--ink);
+  background-color: var(--paper);
+  background-image: radial-gradient(var(--ink) 0.5px, transparent 0.6px);
+  background-size: 14px 14px;
+  background-attachment: fixed;
+  min-height: 100vh;
+}
+
+.paper-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(253,243,227,.78);
+  pointer-events: none;
+  z-index: 0;
+}
+
+.page-wrap {
+  position: relative;
+  z-index: 1;
+  max-width: 1240px;
+  margin: 0 auto;
+  padding: 20px 32px 60px;
+}
+
+/* PANEL */
+.panel {
+  background: var(--paper);
+  border: 4px solid var(--ink);
+  border-radius: 6px;
+  box-shadow: 7px 7px 0 var(--ink);
+  overflow: hidden;
+  margin-bottom: 22px;
+}
+
+.panel-header {
+  background: var(--ink);
+  color: var(--yellow);
+  font-family: 'Bangers', cursive;
+  font-size: 1.2rem;
+  letter-spacing: 2px;
+  padding: 8px 16px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.panel-header .panel-tag {
+  font-family: 'Space Mono', monospace;
+  font-size: .65rem;
+  font-weight: 700;
+  background: var(--yellow);
+  color: var(--ink);
+  padding: 2px 7px;
+  border-radius: 3px;
+  white-space: nowrap;
+}
+
+.panel-body { padding: 18px 20px; }
+
+.section-label {
+  font-family: 'Bangers', cursive;
+  font-size: .95rem;
+  letter-spacing: 1px;
+  color: var(--ink);
+  margin-bottom: 6px;
+  text-transform: uppercase;
+}
+
+.divider {
+  border: none;
+  border-top: 3px solid var(--ink);
+  margin: 16px 0;
+}
+
+/* SPEECH BUBBLE */
+.speech-bubble {
+  position: relative;
+  background: var(--yellow);
+  border: 3px solid var(--ink);
+  border-radius: 12px;
+  padding: 12px 16px;
+  margin: 14px 0;
+  font-size: .9rem;
+  line-height: 1.5;
+}
+.speech-bubble::before {
+  content: '';
+  position: absolute;
+  bottom: -18px; left: 24px;
+  border-width: 18px 10px 0;
+  border-style: solid;
+  border-color: var(--ink) transparent transparent;
+}
+.speech-bubble::after {
+  content: '';
+  position: absolute;
+  bottom: -12px; left: 26px;
+  border-width: 14px 8px 0;
+  border-style: solid;
+  border-color: var(--yellow) transparent transparent;
+}
+
+/* ANNOTATION */
+.annotation {
+  background: var(--paper2);
+  border-left: 4px solid var(--orange);
+  border-radius: 0 6px 6px 0;
+  padding: 8px 14px;
+  margin: 8px 0 10px 0;
+  font-size: .82rem;
+  line-height: 1.5;
+}
+.annotation strong { font-family: 'Bangers', cursive; letter-spacing: .5px; font-size: .9rem; }
+.annotation code {
+  font-family: 'Space Mono', monospace;
+  font-size: .72rem;
+  background: var(--ink);
+  color: var(--yellow);
+  padding: 1px 4px;
+  border-radius: 3px;
+}
+
+/* HOP TABLE */
+.hop-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-family: 'Space Mono', monospace;
+  font-size: .74rem;
+  margin-bottom: 18px;
+}
+
+.hop-table thead tr th {
+  background: var(--ink);
+  color: var(--yellow);
+  font-family: 'Bangers', cursive;
+  font-size: .95rem;
+  letter-spacing: 1px;
+  padding: 8px 10px;
+  text-align: left;
+  border: 2px solid var(--ink);
+  white-space: nowrap;
+}
+
+.hop-table tbody tr td {
+  padding: 7px 10px;
+  border: 2px solid rgba(26,20,16,.25);
+  vertical-align: middle;
+}
+
+.hop-num {
+  font-family: 'Bangers', cursive;
+  font-size: 1.1rem;
+  letter-spacing: 1px;
+  text-align: center;
+  min-width: 32px;
+}
+
+.hop-hostname { color: var(--ink); font-family:'Space Mono',monospace; font-size:.78rem; }
+.hop-ip       { color: rgba(26,20,16,.6); font-family:'Space Mono',monospace; font-size:.78rem; }
+.rtt-good     { color: #3fa34d; font-weight: 700; }
+.rtt-ok       { color: #b07d00; font-weight: 700; }
+.rtt-slow     { color: var(--orange); font-weight: 700; }
+.rtt-bad      { color: var(--red); font-weight: 700; }
+.rtt-star     { color: rgba(26,20,16,.4); font-family:'Space Mono',monospace; }
+
+.hop-badge {
+  display: inline-block;
+  font-family: 'Bangers', cursive;
+  font-size: .75rem;
+  letter-spacing: .5px;
+  padding: 2px 8px;
+  border: 2px solid var(--ink);
+  border-radius: 4px;
+  box-shadow: 1px 1px 0 rgba(0,0,0,.2);
+  white-space: nowrap;
+}
+
+/* PLATFORM CARD GRID */
+.platform-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+  margin-bottom: 16px;
+}
+
+.platform-card {
+  background: var(--paper2);
+  border: 3px solid var(--ink);
+  border-radius: 6px;
+  box-shadow: 4px 4px 0 var(--ink);
+  overflow: hidden;
+}
+
+.platform-card-header {
+  font-family: 'Bangers', cursive;
+  font-size: 1.05rem;
+  letter-spacing: 1px;
+  padding: 8px 14px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: #fff;
+}
+
+.platform-card-body { padding: 12px 14px; }
+
+.platform-cmd {
+  font-family: 'Space Mono', monospace;
+  font-size: .72rem;
+  background: var(--ink);
+  color: var(--yellow);
+  border-radius: 5px;
+  padding: 7px 44px 7px 10px;
+  margin-bottom: 7px;
+  position: relative;
+  display: block;
+  word-break: break-all;
+}
+
+.cmd-copy-btn {
+  position: absolute;
+  top: 4px;
+  right: 5px;
+  font-family: 'Bangers', cursive;
+  font-size: .7rem;
+  letter-spacing: 1px;
+  background: var(--yellow);
+  color: var(--ink);
+  border: 2px solid var(--ink);
+  border-radius: 4px;
+  padding: 2px 6px;
+  cursor: pointer;
+  box-shadow: 1px 1px 0 rgba(0,0,0,.3);
+  transition: transform .1s;
+  white-space: nowrap;
+}
+.cmd-copy-btn:active { transform: translate(1px,1px); }
+
+.platform-cmd-desc {
+  font-size: .78rem;
+  line-height: 1.4;
+  color: var(--ink);
+  margin-bottom: 4px;
+}
+
+/* HOW STEPS */
+.how-steps { display: flex; flex-direction: column; gap: 10px; }
+.how-step  { display: flex; align-items: flex-start; gap: 12px; }
+.step-dot {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  border: 3px solid var(--ink);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: 'Bangers', cursive;
+  font-size: 1rem;
+  color: #fff;
+  flex-shrink: 0;
+  box-shadow: 2px 2px 0 var(--ink);
+}
+.how-step p { font-size: .88rem; line-height: 1.5; padding-top: 2px; }
+.how-step code {
+  font-family: 'Space Mono', monospace;
+  font-size: .75rem;
+  background: var(--ink);
+  color: var(--yellow);
+  padding: 1px 5px;
+  border-radius: 3px;
+}
+.step-connector {
+  width: 3px;
+  height: 14px;
+  background: var(--ink);
+  margin-left: 12px;
+  border-radius: 2px;
+  opacity: .35;
+}
+
+/* RTT RATING BAR */
+.rtt-rating-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-bottom: 16px;
+}
+.rtt-bar-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.rtt-bar-label {
+  font-family: 'Space Mono', monospace;
+  font-size: .72rem;
+  min-width: 120px;
+  color: var(--ink);
+  font-weight: 700;
+}
+.rtt-bar-bg {
+  flex: 1;
+  height: 18px;
+  background: var(--paper2);
+  border: 2px solid var(--ink);
+  border-radius: 4px;
+  overflow: hidden;
+}
+.rtt-bar-fill {
+  height: 100%;
+  border-radius: 2px;
+  transition: width .4s;
+}
+.rtt-bar-desc {
+  font-size: .78rem;
+  min-width: 180px;
+  color: var(--ink);
+}
+
+/* STAR EXPLANATION BOX */
+.star-box {
+  background: var(--ink);
+  border-radius: 6px;
+  padding: 16px 20px;
+  margin-bottom: 14px;
+  font-family: 'Space Mono', monospace;
+  font-size: .82rem;
+  color: rgba(200,200,200,.5);
+  letter-spacing: 2px;
+  text-align: center;
+  font-weight: 700;
+}
+
+/* COMIC TABLE */
+.comic-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-bottom: 12px;
+}
+.comic-table th {
+  background: var(--ink);
+  color: var(--yellow);
+  font-family: 'Bangers', cursive;
+  font-size: 1rem;
+  letter-spacing: 1px;
+  padding: 8px 12px;
+  text-align: left;
+  border: 2px solid var(--ink);
+}
+.comic-table td {
+  padding: 7px 12px;
+  border: 2px solid var(--ink);
+  font-size: .83rem;
+  vertical-align: top;
+}
+.comic-table tr:nth-child(even) td { background: var(--paper2); }
+.comic-table tr:nth-child(odd)  td { background: var(--paper); }
+.comic-table code {
+  font-family: 'Space Mono', monospace;
+  font-size: .72rem;
+  background: var(--ink);
+  color: var(--yellow);
+  padding: 1px 5px;
+  border-radius: 3px;
+  white-space: nowrap;
+}
+
+/* DIG OUTPUT TERMINAL STYLE */
+.dig-output {
+  background: #1a1410;
+  border-radius: 6px;
+  padding: 18px 20px;
+  font-family: 'Space Mono', monospace;
+  font-size: .78rem;
+  line-height: 1.9;
+  overflow-x: auto;
+  white-space: pre;
+}
+
+/* MOBILE */
+@media (max-width: 760px) {
+  .page-wrap { padding: 16px 14px 48px; }
+  .platform-grid { grid-template-columns: 1fr; }
+  .hop-table { font-size: .65rem; }
+  .hop-table thead tr th, .hop-table tbody tr td { padding: 5px 6px; }
+  .rtt-bar-desc { display: none; }
+  .rtt-bar-label { min-width: 80px; font-size: .65rem; }
+  .dig-output { font-size: .7rem; }
+}
+</style>
+</head>
+<body>
+<div class="paper-overlay"></div>
+<div data-masthead></div>
+
+<div class="page-wrap">
+
+  <div data-tool-hero
+       data-title="traceroute"
+       data-chapter="09"
+       data-category="DNS Tools"
+       data-icon="&#x1F5FA;&#xFE0F;"
+       data-desc="traceroute maps the network path from your machine to any destination — revealing every router hop, latency, and where packets go. tracert on Windows."
+       data-color="orange"
+       data-badges="NETWORK DEBUG,HOP-BY-HOP,LATENCY,ROUTING"
+       data-badge-colors="red,yellow,green,blue">
+  </div>
+
+  <!-- ═══════════════════════════════════════════════════════ -->
+  <!-- PANEL 1: ANNOTATED TRACEROUTE OUTPUT                   -->
+  <!-- ═══════════════════════════════════════════════════════ -->
+  <div class="panel">
+    <div class="panel-header">
+      &#x1F4D6; ANNOTATED TRACEROUTE OUTPUT
+      <span class="panel-tag">MAIN FEATURE</span>
+    </div>
+    <div class="panel-body">
+      <p style="font-size:.9rem;line-height:1.5;margin-bottom:16px;">
+        This is a real-world traceroute to <strong>devdunia.com (185.199.108.153)</strong>. Each row is one router hop. The color tells you what kind of network segment you're crossing and whether latency is normal.
+      </p>
+
+      <!-- Raw terminal output -->
+      <div class="dig-output" style="margin-bottom:16px;white-space:pre;"><span style="color:var(--yellow);font-weight:700;">traceroute to devdunia.com (185.199.108.153), 30 hops max, 60 byte packets</span>
+<span style="color:var(--green)"> 1  _gateway (192.168.1.1)  1.823 ms  1.654 ms  1.892 ms</span>
+<span style="color:var(--blue)"> 2  10.20.0.1 (10.20.0.1)  8.432 ms  9.123 ms  8.654 ms</span>
+<span style="color:var(--red)"> 3  * * *</span>
+<span style="color:var(--purple)"> 4  203.0.113.10 (isp-core-01.example-isp.net)  18.234 ms  17.891 ms  18.445 ms</span>
+<span style="color:var(--teal)"> 5  72.14.215.1 (108.170.246.161)  22.109 ms  21.876 ms  22.345 ms</span>
+<span style="color:var(--red)"> 6  * * *</span>
+<span style="color:var(--orange)"> 7  209.85.240.1 (209.85.252.120)  25.678 ms  26.234 ms  25.987 ms</span>
+<span style="color:var(--green)"> 8  cdn-185-199-108-153.github.com (185.199.108.153)  31.456 ms  30.987 ms  31.123 ms</span></div>
+
+      <!-- Annotated hop table -->
+      <div style="overflow-x:auto;">
+        <table class="hop-table">
+          <thead>
+            <tr>
+              <th>HOP</th>
+              <th>HOSTNAME</th>
+              <th>IP ADDRESS</th>
+              <th>RTT 1</th>
+              <th>RTT 2</th>
+              <th>RTT 3</th>
+              <th>ANNOTATION</th>
+            </tr>
+          </thead>
+          <tbody>
+            <!-- Hop 1 -->
+            <tr style="background:rgba(63,163,77,.12);">
+              <td class="hop-num" style="color:var(--green);">1</td>
+              <td class="hop-hostname">_gateway</td>
+              <td class="hop-ip">192.168.1.1</td>
+              <td class="rtt-good">1.823ms</td>
+              <td class="rtt-good">1.654ms</td>
+              <td class="rtt-good">1.892ms</td>
+              <td><span class="hop-badge" style="background:var(--green);color:#fff;">&#x1F3E0; HOME ROUTER</span> Your WiFi/cable router. Always hop 1. &lt;5ms is perfect — anything over 10ms here suggests WiFi interference.</td>
+            </tr>
+            <!-- Hop 2 -->
+            <tr style="background:rgba(29,111,184,.10);">
+              <td class="hop-num" style="color:var(--blue);">2</td>
+              <td class="hop-hostname">10.20.0.1</td>
+              <td class="hop-ip">10.20.0.1</td>
+              <td class="rtt-good">8.432ms</td>
+              <td class="rtt-good">9.123ms</td>
+              <td class="rtt-good">8.654ms</td>
+              <td><span class="hop-badge" style="background:var(--blue);color:#fff;">&#x1F4E1; ISP FIRST HOP</span> CGNAT device or your ISP's local aggregation router. 10.x.x.x is a private IP — typical for ISP CGNAT infrastructure.</td>
+            </tr>
+            <!-- Hop 3 -->
+            <tr style="background:rgba(230,57,70,.10);">
+              <td class="hop-num" style="color:var(--red);">3</td>
+              <td class="hop-hostname" style="color:rgba(26,20,16,.38);font-style:italic;">(filtered)</td>
+              <td class="hop-ip" style="color:rgba(26,20,16,.38);font-style:italic;">—</td>
+              <td class="rtt-star">*</td>
+              <td class="rtt-star">*</td>
+              <td class="rtt-star">*</td>
+              <td><span class="hop-badge" style="background:var(--red);color:#fff;">&#x1F6AB; ICMP BLOCKED</span> Router exists but drops ICMP probes. <strong>NOT a problem</strong> — traffic is flowing (hop 4 responds). Firewalls block ICMP by design.</td>
+            </tr>
+            <!-- Hop 4 -->
+            <tr style="background:rgba(138,79,255,.10);">
+              <td class="hop-num" style="color:var(--purple);">4</td>
+              <td class="hop-hostname">isp-core-01.example-isp.net</td>
+              <td class="hop-ip">203.0.113.10</td>
+              <td class="rtt-ok">18.234ms</td>
+              <td class="rtt-ok">17.891ms</td>
+              <td class="rtt-ok">18.445ms</td>
+              <td><span class="hop-badge" style="background:var(--purple);color:#fff;">&#x1F5A7; ISP BACKBONE</span> ISP core/backbone router. The jump from ~8ms to ~18ms means we crossed an ISP backbone segment — normal for regional routing.</td>
+            </tr>
+            <!-- Hop 5 -->
+            <tr style="background:rgba(13,148,136,.10);">
+              <td class="hop-num" style="color:var(--teal);">5</td>
+              <td class="hop-hostname">108.170.246.161</td>
+              <td class="hop-ip">72.14.215.1</td>
+              <td class="rtt-ok">22.109ms</td>
+              <td class="rtt-ok">21.876ms</td>
+              <td class="rtt-ok">22.345ms</td>
+              <td><span class="hop-badge" style="background:var(--teal);color:#fff;">&#x1F310; PEERING POINT</span> Transit/peering router where ISPs exchange traffic. 72.14.x.x belongs to Google's AS15169 — we've entered Google's network. RTT increase is minimal: good peering!</td>
+            </tr>
+            <!-- Hop 6 -->
+            <tr style="background:rgba(230,57,70,.10);">
+              <td class="hop-num" style="color:var(--red);">6</td>
+              <td class="hop-hostname" style="color:rgba(26,20,16,.38);font-style:italic;">(filtered)</td>
+              <td class="hop-ip" style="color:rgba(26,20,16,.38);font-style:italic;">—</td>
+              <td class="rtt-star">*</td>
+              <td class="rtt-star">*</td>
+              <td class="rtt-star">*</td>
+              <td><span class="hop-badge" style="background:var(--red);color:#fff;">&#x1F6AB; ICMP BLOCKED</span> Another filtered hop — completely normal inside CDN/cloud networks. Hop 7 responds, so traffic IS flowing. These stars are <em>not</em> packet loss.</td>
+            </tr>
+            <!-- Hop 7 -->
+            <tr style="background:rgba(255,140,66,.10);">
+              <td class="hop-num" style="color:var(--orange);">7</td>
+              <td class="hop-hostname">209.85.252.120</td>
+              <td class="hop-ip">209.85.240.1</td>
+              <td class="rtt-ok">25.678ms</td>
+              <td class="rtt-ok">26.234ms</td>
+              <td class="rtt-ok">25.987ms</td>
+              <td><span class="hop-badge" style="background:var(--orange);color:var(--ink);">&#x2601;&#xFE0F; CDN EDGE</span> Google/CDN edge network router. 209.85.x.x is Google's backbone. We're close to the CDN PoP that serves the destination.</td>
+            </tr>
+            <!-- Hop 8 -->
+            <tr style="background:rgba(63,163,77,.15);">
+              <td class="hop-num" style="color:var(--green);">8</td>
+              <td class="hop-hostname" style="color:var(--green);">cdn-185-199-108-153.github.com</td>
+              <td class="hop-ip" style="color:var(--green);">185.199.108.153</td>
+              <td class="rtt-good">31.456ms</td>
+              <td class="rtt-good">30.987ms</td>
+              <td class="rtt-good">31.123ms</td>
+              <td><span class="hop-badge" style="background:var(--green);color:#fff;">&#x1F3C6; DESTINATION!</span> GitHub Pages CDN endpoint. Total 8 hops, ~31ms round-trip = <strong>EXCELLENT</strong>. Reverse DNS confirms it's GitHub's CDN serving your page.</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="annotation" style="border-left-color:var(--green);">
+        <strong style="color:var(--green);">&#x1F4CA; READING THE COLUMNS</strong><br>
+        <strong>Hop number</strong> — TTL value that was used for this probe (1, 2, 3...). Each router decrements TTL.<br>
+        <strong>Hostname</strong> — Reverse DNS of the router's interface IP (if available). Not always set — many routers skip rDNS.<br>
+        <strong>IP Address</strong> — The actual IP of the router's interface that sent back the ICMP Time Exceeded message.<br>
+        <strong>RTT 1/2/3</strong> — Three separate probe packets sent. Compare them: consistent values = stable path, big variation = congestion or route flapping.
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════════════ -->
+  <!-- PANEL 2: UNDERSTANDING * * * (THREE STARS)             -->
+  <!-- ═══════════════════════════════════════════════════════ -->
+  <div class="panel">
+    <div class="panel-header">
+      &#x1F534; UNDERSTANDING <span style="font-family:'Space Mono',monospace;font-size:.9rem;letter-spacing:1px;">* * *</span> (THREE STARS)
+      <span class="panel-tag">COMMON CONFUSION</span>
+    </div>
+    <div class="panel-body">
+      <div class="star-box">
+        * &nbsp;&nbsp;&nbsp; * &nbsp;&nbsp;&nbsp; *
+      </div>
+
+      <p style="font-size:.9rem;line-height:1.6;margin-bottom:16px;">
+        Three stars are the <strong>most misunderstood part</strong> of traceroute output. Here's the truth:
+      </p>
+
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:18px;">
+
+        <div style="background:#fff0f0;border:3px solid var(--red);border-radius:6px;padding:14px;box-shadow:3px 3px 0 var(--ink);">
+          <div style="font-family:'Bangers',cursive;font-size:1.1rem;letter-spacing:1px;color:var(--red);margin-bottom:8px;">&#x274C; COMMON MISCONCEPTION</div>
+          <p style="font-size:.85rem;line-height:1.5;">
+            "Stars mean the network is down or packets are being dropped. Something is broken!"
+          </p>
+          <p style="font-size:.82rem;line-height:1.4;margin-top:8px;color:#888;">
+            This is wrong. Stars by themselves tell you nothing about whether your connection works.
+          </p>
+        </div>
+
+        <div style="background:#f0fff4;border:3px solid var(--green);border-radius:6px;padding:14px;box-shadow:3px 3px 0 var(--ink);">
+          <div style="font-family:'Bangers',cursive;font-size:1.1rem;letter-spacing:1px;color:var(--green);margin-bottom:8px;">&#x2705; THE REAL MEANING</div>
+          <p style="font-size:.85rem;line-height:1.5;">
+            Stars mean that <strong>router didn't respond to the ICMP TTL-exceeded probe</strong> within the timeout. The router may have silently dropped the probe, or its firewall blocks ICMP responses entirely.
+          </p>
+        </div>
+
+      </div>
+
+      <div class="section-label">When do stars appear?</div>
+      <div style="overflow-x:auto;margin-bottom:16px;">
+        <table class="comic-table">
+          <thead>
+            <tr>
+              <th>Pattern</th>
+              <th>What it means</th>
+              <th>Action needed?</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><code>3  * * *<br>4  router (x.x.x.x) 20ms</code></td>
+              <td>Hop 3 blocks ICMP, but hop 4 responds — traffic IS flowing through hop 3</td>
+              <td><span style="color:var(--green);font-weight:700;">&#x2705; NO — completely normal</span></td>
+            </tr>
+            <tr>
+              <td><code>5  * * *<br>6  * * *<br>7  * * *<br>...(all remaining)</code></td>
+              <td>All hops from #5 onward show stars — the path stops here. Either a real outage or a strict firewall</td>
+              <td><span style="color:var(--orange);font-weight:700;">&#x26A0; INVESTIGATE — try TCP traceroute</span></td>
+            </tr>
+            <tr>
+              <td><code>1  router 1ms<br>2  * * *<br>3  * * *<br>4  destination 30ms</code></td>
+              <td>Multiple consecutive stars in the middle — but destination responds fine</td>
+              <td><span style="color:var(--green);font-weight:700;">&#x2705; NO — destination is reachable</span></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="section-label">Why do firewalls block ICMP?</div>
+      <p style="font-size:.88rem;line-height:1.5;margin-bottom:12px;">
+        ICMP Time Exceeded messages can be used for network reconnaissance — they reveal internal IP addresses of routers. Many enterprise firewalls, cloud providers, and CDNs block outbound ICMP Time Exceeded to prevent disclosing their internal network topology. Load balancers (like AWS ELB or Cloudflare) also commonly show stars.
+      </p>
+
+      <div class="speech-bubble">
+        <strong>&#x1F4A1; The golden rule:</strong> If the <em>next hop after the stars</em> responds, or if the <em>final destination</em> responds — your connection is fine. Stars in the <em>middle</em> of a working trace are normal. Only worry when stars appear at the <em>end</em> and the destination is unreachable.
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════════════ -->
+  <!-- PANEL 3: READING RTT VALUES                            -->
+  <!-- ═══════════════════════════════════════════════════════ -->
+  <div class="panel">
+    <div class="panel-header">
+      &#x23F1;&#xFE0F; READING RTT VALUES
+      <span class="panel-tag">LATENCY GUIDE</span>
+    </div>
+    <div class="panel-body">
+      <p style="font-size:.9rem;line-height:1.5;margin-bottom:16px;">
+        Each hop shows <strong>three RTT measurements</strong> (Round-Trip Time) — three separate UDP/ICMP probe packets sent one after another. Here's how to interpret them:
+      </p>
+
+      <!-- RTT rating bars -->
+      <div class="rtt-rating-grid">
+        <div class="rtt-bar-row">
+          <div class="rtt-bar-label" style="color:var(--green);">&lt; 5ms</div>
+          <div class="rtt-bar-bg">
+            <div class="rtt-bar-fill" style="width:5%;background:var(--green);"></div>
+          </div>
+          <div class="rtt-bar-desc"><span style="color:var(--green);font-weight:700;">EXCELLENT</span> — Same local network, your home router or nearby switch</div>
+        </div>
+        <div class="rtt-bar-row">
+          <div class="rtt-bar-label" style="color:#5bc4f5;">5 – 20ms</div>
+          <div class="rtt-bar-bg">
+            <div class="rtt-bar-fill" style="width:18%;background:#5bc4f5;"></div>
+          </div>
+          <div class="rtt-bar-desc"><span style="color:#1d6fb8;font-weight:700;">GREAT</span> — Within your ISP's local network, city-level routing</div>
+        </div>
+        <div class="rtt-bar-row">
+          <div class="rtt-bar-label" style="color:var(--yellow);">20 – 50ms</div>
+          <div class="rtt-bar-bg">
+            <div class="rtt-bar-fill" style="width:35%;background:var(--yellow);"></div>
+          </div>
+          <div class="rtt-bar-desc"><span style="color:#9a8000;font-weight:700;">GOOD</span> — Cross-city or cross-region within the same country</div>
+        </div>
+        <div class="rtt-bar-row">
+          <div class="rtt-bar-label" style="color:var(--orange);">50 – 100ms</div>
+          <div class="rtt-bar-bg">
+            <div class="rtt-bar-fill" style="width:55%;background:var(--orange);"></div>
+          </div>
+          <div class="rtt-bar-desc"><span style="color:var(--orange);font-weight:700;">ACCEPTABLE</span> — Cross-country routing, different ISP backbone</div>
+        </div>
+        <div class="rtt-bar-row">
+          <div class="rtt-bar-label" style="color:#e08040;">100 – 200ms</div>
+          <div class="rtt-bar-bg">
+            <div class="rtt-bar-fill" style="width:72%;background:#e08040;"></div>
+          </div>
+          <div class="rtt-bar-desc"><span style="color:#c06020;font-weight:700;">HIGH</span> — Cross-ocean (e.g. US → Europe). Expected for intercontinental.</div>
+        </div>
+        <div class="rtt-bar-row">
+          <div class="rtt-bar-label" style="color:var(--red);">&gt; 200ms</div>
+          <div class="rtt-bar-bg">
+            <div class="rtt-bar-fill" style="width:92%;background:var(--red);"></div>
+          </div>
+          <div class="rtt-bar-desc"><span style="color:var(--red);font-weight:700;">INVESTIGATE</span> — High latency, suboptimal routing, or congestion</div>
+        </div>
+      </div>
+
+      <hr class="divider">
+      <div class="section-label">The three RTT columns — what to look for</div>
+
+      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;margin-top:10px;">
+        <div style="background:var(--paper2);border:3px solid var(--ink);border-radius:6px;padding:12px 14px;box-shadow:3px 3px 0 var(--ink);">
+          <div style="font-family:'Bangers',cursive;font-size:1rem;letter-spacing:1px;color:var(--green);margin-bottom:6px;">&#x2705; CONSISTENT</div>
+          <div class="dig-output" style="font-size:.72rem;padding:8px 10px;margin-bottom:8px;white-space:pre;"><span style="color:var(--green)">18.234 ms  18.001 ms  18.445 ms</span></div>
+          <p style="font-size:.8rem;line-height:1.4;">All three values close together — stable, uncongested path. This is ideal.</p>
+        </div>
+        <div style="background:var(--paper2);border:3px solid var(--ink);border-radius:6px;padding:12px 14px;box-shadow:3px 3px 0 var(--ink);">
+          <div style="font-family:'Bangers',cursive;font-size:1rem;letter-spacing:1px;color:var(--orange);margin-bottom:6px;">&#x26A0; JITTER</div>
+          <div class="dig-output" style="font-size:.72rem;padding:8px 10px;margin-bottom:8px;white-space:pre;"><span style="color:var(--orange)">18.234 ms  42.001 ms  19.445 ms</span></div>
+          <p style="font-size:.8rem;line-height:1.4;">Middle value is much higher — jitter. Indicates congestion or QoS shaping on that hop.</p>
+        </div>
+        <div style="background:var(--paper2);border:3px solid var(--ink);border-radius:6px;padding:12px 14px;box-shadow:3px 3px 0 var(--ink);">
+          <div style="font-family:'Bangers',cursive;font-size:1rem;letter-spacing:1px;color:var(--red);margin-bottom:6px;">&#x1F6A8; HIGH JITTER</div>
+          <div class="dig-output" style="font-size:.72rem;padding:8px 10px;margin-bottom:8px;white-space:pre;"><span style="color:var(--red)">18.234 ms  *  155.445 ms</span></div>
+          <p style="font-size:.8rem;line-height:1.4;">One probe timed out, one very high — router rate-limits ICMP responses (lower priority traffic).</p>
+        </div>
+      </div>
+
+      <div class="annotation" style="margin-top:14px;">
+        <strong style="color:var(--orange);">&#x1F4A1; PRO TIP — RTT can appear to DECREASE</strong><br>
+        Sometimes a later hop shows <em>lower</em> RTT than an earlier one. This happens when intermediate routers deprioritize ICMP and reply slowly, while the next router responds promptly. The actual packet delivery time keeps increasing — the displayed RTT is just the ICMP response time for each router's management plane, not the data path latency.
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════════════ -->
+  <!-- PANEL 4: PLATFORM COMMANDS                             -->
+  <!-- ═══════════════════════════════════════════════════════ -->
+  <div class="panel">
+    <div class="panel-header">
+      &#x1F5A5;&#xFE0F; PLATFORM COMMANDS
+      <span class="panel-tag">CHEAT SHEET</span>
+    </div>
+    <div class="panel-body">
+      <p style="font-size:.9rem;line-height:1.5;margin-bottom:16px;">
+        The command is named differently on Windows (<code style="font-family:'Space Mono',monospace;font-size:.78rem;background:var(--ink);color:var(--yellow);padding:1px 5px;border-radius:3px;">tracert</code>) vs Linux/macOS (<code style="font-family:'Space Mono',monospace;font-size:.78rem;background:var(--ink);color:var(--yellow);padding:1px 5px;border-radius:3px;">traceroute</code>), but they do the same thing.
+      </p>
+
+      <div class="platform-grid">
+
+        <!-- Linux/macOS -->
+        <div class="platform-card">
+          <div class="platform-card-header" style="background:var(--orange);color:var(--ink);">
+            &#x1F427; Linux / &#x1F34E; macOS
+          </div>
+          <div class="platform-card-body">
+            <div class="platform-cmd-desc">Basic traceroute:</div>
+            <div class="platform-cmd">
+              traceroute devdunia.com
+              <button class="cmd-copy-btn" data-cmd="traceroute devdunia.com">COPY</button>
+            </div>
+            <div class="platform-cmd-desc">Limit to 15 hops (faster):</div>
+            <div class="platform-cmd">
+              traceroute -m 15 devdunia.com
+              <button class="cmd-copy-btn" data-cmd="traceroute -m 15 devdunia.com">COPY</button>
+            </div>
+            <div class="platform-cmd-desc">Use ICMP instead of UDP:</div>
+            <div class="platform-cmd">
+              traceroute -I devdunia.com
+              <button class="cmd-copy-btn" data-cmd="traceroute -I devdunia.com">COPY</button>
+            </div>
+            <div class="platform-cmd-desc">TCP traceroute (bypasses firewalls):</div>
+            <div class="platform-cmd">
+              traceroute -T -p 80 devdunia.com
+              <button class="cmd-copy-btn" data-cmd="traceroute -T -p 80 devdunia.com">COPY</button>
+            </div>
+            <div class="platform-cmd-desc">Don't resolve hostnames (faster):</div>
+            <div class="platform-cmd">
+              traceroute -n devdunia.com
+              <button class="cmd-copy-btn" data-cmd="traceroute -n devdunia.com">COPY</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Windows -->
+        <div class="platform-card">
+          <div class="platform-card-header" style="background:#0078d4;">
+            &#x1F5BC;&#xFE0F; Windows (tracert)
+          </div>
+          <div class="platform-card-body">
+            <div class="platform-cmd-desc">Basic traceroute (Windows name):</div>
+            <div class="platform-cmd">
+              tracert devdunia.com
+              <button class="cmd-copy-btn" data-cmd="tracert devdunia.com">COPY</button>
+            </div>
+            <div class="platform-cmd-desc">Limit to 15 hops:</div>
+            <div class="platform-cmd">
+              tracert -h 15 devdunia.com
+              <button class="cmd-copy-btn" data-cmd="tracert -h 15 devdunia.com">COPY</button>
+            </div>
+            <div class="platform-cmd-desc">Don't resolve hostnames (faster):</div>
+            <div class="platform-cmd">
+              tracert -d devdunia.com
+              <button class="cmd-copy-btn" data-cmd="tracert -d devdunia.com">COPY</button>
+            </div>
+            <div class="platform-cmd-desc">Set wait time (ms per probe):</div>
+            <div class="platform-cmd">
+              tracert -w 2000 devdunia.com
+              <button class="cmd-copy-btn" data-cmd="tracert -w 2000 devdunia.com">COPY</button>
+            </div>
+            <div class="platform-cmd-desc">Pathping (Windows hybrid tool):</div>
+            <div class="platform-cmd">
+              pathping devdunia.com
+              <button class="cmd-copy-btn" data-cmd="pathping devdunia.com">COPY</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- mtr -->
+        <div class="platform-card">
+          <div class="platform-card-header" style="background:var(--purple);">
+            &#x1F680; mtr — My TraceRoute (Advanced)
+          </div>
+          <div class="platform-card-body">
+            <div class="platform-cmd-desc">Install mtr (Linux):</div>
+            <div class="platform-cmd">
+              sudo apt install mtr
+              <button class="cmd-copy-btn" data-cmd="sudo apt install mtr">COPY</button>
+            </div>
+            <div class="platform-cmd-desc">Live continuous traceroute + stats:</div>
+            <div class="platform-cmd">
+              mtr devdunia.com
+              <button class="cmd-copy-btn" data-cmd="mtr devdunia.com">COPY</button>
+            </div>
+            <div class="platform-cmd-desc">Generate one-shot report:</div>
+            <div class="platform-cmd">
+              mtr --report devdunia.com
+              <button class="cmd-copy-btn" data-cmd="mtr --report devdunia.com">COPY</button>
+            </div>
+            <div class="platform-cmd-desc">TCP mode (bypass firewalls):</div>
+            <div class="platform-cmd">
+              mtr --tcp --port 443 devdunia.com
+              <button class="cmd-copy-btn" data-cmd="mtr --tcp --port 443 devdunia.com">COPY</button>
+            </div>
+            <p style="font-size:.75rem;color:var(--purple);margin-top:6px;">&#x2b50; mtr combines traceroute + ping into a live updating display showing packet loss % and average RTT per hop over time. Far superior for diagnosing intermittent issues.</p>
+          </div>
+        </div>
+
+        <!-- TCP Traceroute -->
+        <div class="platform-card">
+          <div class="platform-card-header" style="background:var(--teal);">
+            &#x1F512; TCP Traceroute — Bypass Firewalls
+          </div>
+          <div class="platform-card-body">
+            <div class="platform-cmd-desc">TCP on port 80 (HTTP):</div>
+            <div class="platform-cmd">
+              traceroute -T -p 80 devdunia.com
+              <button class="cmd-copy-btn" data-cmd="traceroute -T -p 80 devdunia.com">COPY</button>
+            </div>
+            <div class="platform-cmd-desc">TCP on port 443 (HTTPS):</div>
+            <div class="platform-cmd">
+              traceroute -T -p 443 devdunia.com
+              <button class="cmd-copy-btn" data-cmd="traceroute -T -p 443 devdunia.com">COPY</button>
+            </div>
+            <div class="platform-cmd-desc">Using tcptraceroute (if installed):</div>
+            <div class="platform-cmd">
+              tcptraceroute devdunia.com 443
+              <button class="cmd-copy-btn" data-cmd="tcptraceroute devdunia.com 443">COPY</button>
+            </div>
+            <div class="platform-cmd-desc">Install tcptraceroute:</div>
+            <div class="platform-cmd">
+              sudo apt install tcptraceroute
+              <button class="cmd-copy-btn" data-cmd="sudo apt install tcptraceroute">COPY</button>
+            </div>
+            <p style="font-size:.75rem;color:var(--teal);margin-top:6px;">&#x1F4A1; When UDP/ICMP traceroute shows all stars but the site loads fine, use TCP traceroute — firewalls often block UDP/ICMP but allow TCP on port 80/443.</p>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════════════ -->
+  <!-- PANEL 5: HOW TRACEROUTE WORKS — TTL TRICK              -->
+  <!-- ═══════════════════════════════════════════════════════ -->
+  <div class="panel">
+    <div class="panel-header">
+      &#x1F9E0; HOW TRACEROUTE WORKS — THE TTL TRICK
+      <span class="panel-tag">DEEP DIVE</span>
+    </div>
+    <div class="panel-body">
+      <p style="font-size:.9rem;line-height:1.5;margin-bottom:18px;">
+        traceroute is a clever hack. It exploits the IP <strong>TTL (Time To Live)</strong> field — a counter in every IP packet that prevents infinite routing loops. Here's the trick:
+      </p>
+
+      <div class="how-steps">
+
+        <div class="how-step">
+          <div class="step-dot" style="background:var(--blue);">1</div>
+          <p>
+            <strong>Send probe with TTL=1</strong> — traceroute sends a UDP packet (or ICMP/TCP depending on flags) to the destination with TTL set to <code>1</code>.
+            The very first router your packet hits (<em>your home gateway</em>) decrements TTL from 1 to 0.
+            When TTL hits zero, the router <strong>must discard the packet</strong> and send back an
+            <strong>ICMP Time Exceeded</strong> message to the sender.
+            That message comes from the router's own IP — so we've discovered hop 1's address and measured the round-trip time!
+          </p>
+        </div>
+        <div class="step-connector"></div>
+
+        <div class="how-step">
+          <div class="step-dot" style="background:var(--green);">2</div>
+          <p>
+            <strong>Send probe with TTL=2</strong> — next probe has TTL=2.
+            Router 1 decrements to 1 and forwards it. Router 2 decrements to 0 and sends back ICMP Time Exceeded — revealing hop 2's address and RTT.
+            traceroute increments TTL by 1 each time: <code>TTL=1, TTL=2, TTL=3 ...</code> until the destination is reached.
+          </p>
+        </div>
+        <div class="step-connector"></div>
+
+        <div class="how-step">
+          <div class="step-dot" style="background:var(--orange);">3</div>
+          <p>
+            <strong>Three probes per hop</strong> — traceroute sends <strong>3 probe packets at each TTL value</strong> (the three RTT columns you see). This gives you a better picture of latency consistency and packet loss. If one probe times out (no ICMP reply within the timeout), that position shows <code>*</code>.
+          </p>
+        </div>
+        <div class="step-connector"></div>
+
+        <div class="how-step">
+          <div class="step-dot" style="background:var(--purple);">4</div>
+          <p>
+            <strong>Destination finally responds</strong> — when the probe finally reaches the destination with TTL still &gt; 0:
+            UDP mode: the target sends back <strong>ICMP Port Unreachable</strong> (because the target UDP port is closed).
+            ICMP mode: target sends back <strong>ICMP Echo Reply</strong>.
+            TCP mode: target sends back <strong>TCP RST</strong> or <strong>SYN-ACK</strong>.
+            traceroute detects this "destination reached" response and stops.
+          </p>
+        </div>
+        <div class="step-connector"></div>
+
+        <div class="how-step">
+          <div class="step-dot" style="background:var(--green);">5</div>
+          <p>
+            <strong>Why does the output show the complete path?</strong> — by the time traceroute is done, it has collected one router IP per TTL value — forming a complete map of the network path from your machine to the destination. This is the "route" that traceroute draws. If traffic follows asymmetric routes (different path outbound vs inbound), you only see the <em>outbound</em> path — the ICMP replies may come back on a completely different route.
+          </p>
+        </div>
+
+      </div>
+
+      <hr class="divider">
+
+      <!-- Visual TTL diagram -->
+      <div class="section-label" style="margin-bottom:12px;">TTL in action — visual</div>
+      <div class="dig-output" style="white-space:pre-wrap;line-height:2;">
+<span style="color:var(--yellow);font-weight:700;">Your machine</span>  ─── TTL=1 ──▶  <span style="color:var(--green);">Router 1</span>  <span style="color:rgba(255,255,255,.4);">(TTL→0)</span>  <span style="color:var(--red);">◀── ICMP Time Exceeded ──</span>  <span style="color:#aaa;">Hop 1 discovered!</span>
+
+<span style="color:var(--yellow);font-weight:700;">Your machine</span>  ─── TTL=2 ──▶  <span style="color:var(--green);">Router 1</span>  <span style="color:rgba(255,255,255,.4);">(TTL→1)</span>  ──▶  <span style="color:var(--blue);">Router 2</span>  <span style="color:rgba(255,255,255,.4);">(TTL→0)</span>  <span style="color:var(--red);">◀── ICMP Time Exceeded ──</span>  <span style="color:#aaa;">Hop 2 discovered!</span>
+
+<span style="color:var(--yellow);font-weight:700;">Your machine</span>  ─── TTL=3 ──▶  <span style="color:var(--green);">Router 1</span>  ──▶  <span style="color:var(--blue);">Router 2</span>  ──▶  <span style="color:var(--orange);">Router 3</span>  <span style="color:rgba(255,255,255,.4);">(TTL→0)</span>  <span style="color:var(--red);">◀── ICMP Time Exceeded ──</span>  <span style="color:#aaa;">Hop 3!</span>
+
+<span style="color:var(--yellow);font-weight:700;">Your machine</span>  ─── TTL=8 ──▶  <span style="color:var(--green);">... hops 1–7 ...</span>  ──▶  <span style="color:var(--green);font-weight:700;">DESTINATION</span>  <span style="color:rgba(255,255,255,.4);">(TTL&gt;0)</span>  <span style="color:var(--green);">◀── Port Unreachable / RST ──</span>  <span style="color:#aaa;">Done!</span></div>
+
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:16px;">
+        <div style="background:var(--paper2);border:3px solid var(--ink);border-radius:6px;padding:12px 14px;box-shadow:3px 3px 0 var(--ink);">
+          <div style="font-family:'Bangers',cursive;font-size:1rem;letter-spacing:1px;color:var(--blue);margin-bottom:6px;">TTL vs Hop Count</div>
+          <p style="font-size:.83rem;line-height:1.45;">TTL starts at 64 (Linux), 128 (Windows), or 255 (some routers). Each router decrements by 1. The TTL you see in the destination's packets tells you roughly what OS the target runs: 64 - hops ≈ Linux/macOS, 128 - hops ≈ Windows.</p>
+        </div>
+        <div style="background:var(--paper2);border:3px solid var(--ink);border-radius:6px;padding:12px 14px;box-shadow:3px 3px 0 var(--ink);">
+          <div style="font-family:'Bangers',cursive;font-size:1rem;letter-spacing:1px;color:var(--orange);margin-bottom:6px;">Asymmetric Routing</div>
+          <p style="font-size:.83rem;line-height:1.45;">Network traffic often takes a <em>different path</em> from A→B versus B→A. traceroute only shows the forward path. RTT increases you see include the return path, which may cross different routers entirely.</p>
+        </div>
+        <div style="background:var(--paper2);border:3px solid var(--ink);border-radius:6px;padding:12px 14px;box-shadow:3px 3px 0 var(--ink);">
+          <div style="font-family:'Bangers',cursive;font-size:1rem;letter-spacing:1px;color:var(--purple);margin-bottom:6px;">Default Max Hops: 30</div>
+          <p style="font-size:.83rem;line-height:1.45;">traceroute stops after 30 hops by default. If the destination still hasn't responded, it gives up. Real internet paths rarely exceed 20 hops — 30 is plenty for almost all destinations.</p>
+        </div>
+        <div style="background:var(--paper2);border:3px solid var(--ink);border-radius:6px;padding:12px 14px;box-shadow:3px 3px 0 var(--ink);">
+          <div style="font-family:'Bangers',cursive;font-size:1rem;letter-spacing:1px;color:var(--teal);margin-bottom:6px;">UDP vs ICMP vs TCP</div>
+          <p style="font-size:.83rem;line-height:1.45;">Linux traceroute uses <strong>UDP</strong> by default (high port). macOS uses <strong>ICMP</strong>. Windows tracert uses <strong>ICMP</strong>. TCP mode (<code style="font-family:'Space Mono',monospace;font-size:.72rem;background:var(--ink);color:var(--yellow);padding:1px 4px;border-radius:3px;">-T</code>) is best for penetrating firewalls because TCP port 80/443 is almost always allowed.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div><!-- /page-wrap -->
+
+<script>
+// ── COPY BUTTONS ────────────────────────────────────────────────────────────
+document.addEventListener('click', function(e) {
+  if (!e.target.classList.contains('cmd-copy-btn')) return;
+  var cmd = e.target.getAttribute('data-cmd') || '';
+  var btn = e.target;
+  var orig = btn.textContent;
+
+  function copyDone() {
+    btn.textContent = '✓ COPIED';
+    btn.style.background = 'var(--green)';
+    btn.style.color = '#fff';
+    setTimeout(function() {
+      btn.textContent = orig;
+      btn.style.background = '';
+      btn.style.color = '';
+    }, 1800);
+  }
+
+  if (navigator.clipboard && navigator.clipboard.writeText) {
+    navigator.clipboard.writeText(cmd).then(copyDone).catch(function() { fallbackCopy(cmd, copyDone); });
+  } else {
+    fallbackCopy(cmd, copyDone);
+  }
+});
+
+function fallbackCopy(text, cb) {
+  var ta = document.createElement('textarea');
+  ta.value = text;
+  ta.style.cssText = 'position:fixed;top:-999px;left:-999px;opacity:0;';
+  document.body.appendChild(ta);
+  ta.focus(); ta.select();
+  try { document.execCommand('copy'); } catch(e) {}
+  document.body.removeChild(ta);
+  if (cb) cb();
+}
+</script>
+
+<script src="masthead.js"></script>
+<script src="hero-banner.js"></script>
+<script src="author-card.js"></script>
+</body>
+</html>

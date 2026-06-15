@@ -414,6 +414,7 @@ body{
     <a href="#generators" class="cat-pill" style="background:var(--green)">&#x26A1; Generators</a>
     <a href="#devtools"   class="cat-pill" style="background:var(--orange)">&#x1F6E0; Dev Tools</a>
     <a href="#network"    class="cat-pill" style="background:var(--purple)">&#x1F310; Network</a>
+    <a href="#dns"        class="cat-pill" style="background:var(--blue)">&#x1F50D; DNS Tools</a>
     <a href="#text"       class="cat-pill" style="background:var(--pink)">&#x1F4DD; Text</a>
     <a href="#database"   class="cat-pill" style="background:var(--teal)">&#x1F5C4; Database</a>
     <a href="#python"     class="cat-pill cat-pill-ink">&#x1F40D; Python</a>
@@ -978,7 +979,7 @@ body{
         <div class="chapter-title">Network <span style="color:var(--purple)">Protocols</span></div>
         <div class="chapter-sub">Deep-dive references for HTTP, TCP, UDP, OSI model, DNS and networking fundamentals.</div>
       </div>
-      <div class="chapter-count" style="color:var(--purple)">6<span>TOOLS</span></div>
+      <div class="chapter-count" style="color:var(--purple)">5<span>TOOLS</span></div>
     </div>
     <div class="tool-grid">
 
@@ -1032,7 +1033,71 @@ body{
         <div class="tc-arrow">&#x2192;</div>
       </a>
 
-      <a href="dns/" class="tool-card" data-keywords="dns museum domain name system records comics educational" style="--cc:var(--yellow)">
+    </div>
+  </section>
+
+  <div class="sfx-row">
+    <span class="sfx" style="font-size:2.4rem;transform:rotate(-8deg);color:var(--red);text-shadow:4px 4px 0 var(--ink)">KA-POW!</span>
+    <span class="sfx" style="font-size:1.4rem;transform:rotate(6deg);color:var(--green);text-shadow:3px 3px 0 var(--ink)">OPEN SOURCE!</span>
+    <span class="sfx" style="font-size:1.8rem;transform:rotate(-3deg);color:var(--blue);text-shadow:3px 3px 0 var(--ink)">ZZZAP!</span>
+  </div>
+
+  <!-- ═══════════════════════════════════════
+       CH 5b — DNS TOOLS
+  ═══════════════════════════════════════ -->
+  <section class="chapter-section" id="dns" data-chapter>
+    <div class="chapter-banner">
+      <div class="chapter-num-block" style="background:var(--blue)">DNS</div>
+      <div class="chapter-info">
+        <div class="chapter-kicker">&#x1F4DA; Chapter Five — Part II</div>
+        <div class="chapter-title">DNS <span style="color:var(--blue)">Tools</span></div>
+        <div class="chapter-sub">dig, nslookup and traceroute — query DNS records, inspect network paths and debug connectivity like a pro.</div>
+      </div>
+      <div class="chapter-count" style="color:var(--blue)">5<span>TOOLS</span></div>
+    </div>
+    <div class="tool-grid">
+
+      <a href="dns-resolver.html" class="tool-card" data-keywords="dns resolver resolution flow infographic echobash root tld authoritative nameserver" style="--cc:var(--purple)">
+        <div class="tc-stripe"></div>
+        <div class="tc-body">
+          <div class="tc-icon">🌐</div>
+          <div class="tc-name">DNS Resolver</div>
+          <div class="tc-desc">Full visual flow: how echobash.com resolves from root → TLD → authoritative NS → IP</div>
+        </div>
+        <div class="tc-arrow">&#x2192;</div>
+      </a>
+
+      <a href="dig.html" class="tool-card" data-keywords="dig dns lookup query records A AAAA MX NS TXT CNAME resolve" style="--cc:var(--blue)">
+        <div class="tc-stripe"></div>
+        <div class="tc-body">
+          <div class="tc-icon">&#x1F50D;</div>
+          <div class="tc-name">dig</div>
+          <div class="tc-desc">Live DNS lookups — query A, MX, NS, TXT and more via Cloudflare DoH</div>
+        </div>
+        <div class="tc-arrow">&#x2192;</div>
+      </a>
+
+      <a href="nslookup.html" class="tool-card" data-keywords="nslookup dns query name server lookup windows mac linux resolve" style="--cc:var(--green)">
+        <div class="tc-stripe"></div>
+        <div class="tc-body">
+          <div class="tc-icon">&#x1F50E;</div>
+          <div class="tc-name">nslookup</div>
+          <div class="tc-desc">Classic DNS query tool available built-in on Windows, macOS and Linux</div>
+        </div>
+        <div class="tc-arrow">&#x2192;</div>
+      </a>
+
+      <a href="traceroute.html" class="tool-card" data-keywords="traceroute tracert network path hops latency routing TTL ICMP debug" style="--cc:var(--orange)">
+        <div class="tc-stripe"></div>
+        <div class="tc-body">
+          <div class="tc-icon">&#x1F5FA;&#xFE0F;</div>
+          <div class="tc-name">traceroute</div>
+          <div class="tc-desc">Map every network hop to a destination — debug routing and latency</div>
+        </div>
+        <div class="tc-arrow">&#x2192;</div>
+      </a>
+
+      <a href="dns/index.html" class="tool-card" data-keywords="dns museum domain name system records comics educational interactive" style="--cc:var(--yellow)">
         <div class="tc-stripe"></div>
         <div class="tc-body">
           <div class="tc-icon">&#x1F3DB;&#xFE0F;</div>
@@ -1046,9 +1111,9 @@ body{
   </section>
 
   <div class="sfx-row">
-    <span class="sfx" style="font-size:2.4rem;transform:rotate(-8deg);color:var(--red);text-shadow:4px 4px 0 var(--ink)">KA-POW!</span>
-    <span class="sfx" style="font-size:1.4rem;transform:rotate(6deg);color:var(--green);text-shadow:3px 3px 0 var(--ink)">OPEN SOURCE!</span>
-    <span class="sfx" style="font-size:1.8rem;transform:rotate(-3deg);color:var(--blue);text-shadow:3px 3px 0 var(--ink)">ZZZAP!</span>
+    <span class="sfx" style="font-size:1.6rem;transform:rotate(5deg);color:var(--blue);text-shadow:3px 3px 0 var(--ink)">RESOLVED!</span>
+    <span class="sfx" style="font-size:2.2rem;transform:rotate(-4deg);color:var(--orange);text-shadow:4px 4px 0 var(--ink)">BOOM!</span>
+    <span class="sfx" style="font-size:1.4rem;transform:rotate(7deg);color:var(--green);text-shadow:3px 3px 0 var(--ink)">TTL=0!</span>
   </div>
 
   <!-- ═══════════════════════════════════════
@@ -1266,6 +1331,7 @@ body{
         <a href="#generators">03 — Generators</a>
         <a href="#devtools">04 — API &amp; Dev Tools</a>
         <a href="#network">05 — Network Protocols</a>
+        <a href="#dns">05b — DNS Tools</a>
         <a href="#text">06 — Text Tools</a>
         <a href="#database">07 — Database</a>
         <a href="#python">08 — Python Toolkit</a>

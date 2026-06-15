@@ -1,0 +1,1806 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DNS Resolver — How DNS Works · DevDunia Comics</title>
+<meta name="description" content="Watch echobash.com get resolved from root servers to an IP address — every hop, every query, every response visualized in comic style.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://devdunia.com/dns-resolver.html">
+<meta property="og:title" content="DNS Resolver — How DNS Works · DevDunia Comics">
+<meta property="og:description" content="Watch echobash.com get resolved from root servers to an IP address — every hop, every query, every response visualized in comic style.">
+<meta property="og:image" content="https://devdunia.com/images/logo.png">
+<link rel="icon" type="image/png" href="images/logo.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Bangers&family=Comic+Neue:ital,wght@0,400;0,700;1,400&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --ink: #1a1410;
+  --paper: #fdf3e3;
+  --paper2: #fbe9cc;
+  --red: #e63946;
+  --blue: #1d6fb8;
+  --yellow: #ffd23f;
+  --green: #3fa34d;
+  --pink: #ff6b9d;
+  --purple: #8a4fff;
+  --orange: #ff8c42;
+  --teal: #0d9488;
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: 'Comic Neue', cursive;
+  font-weight: 400;
+  color: var(--ink);
+  background-color: var(--paper);
+  background-image: radial-gradient(var(--ink) 0.5px, transparent 0.6px);
+  background-size: 14px 14px;
+  background-attachment: fixed;
+  min-height: 100vh;
+}
+
+.paper-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(253,243,227,.78);
+  pointer-events: none;
+  z-index: 0;
+}
+
+.page-wrap {
+  position: relative;
+  z-index: 1;
+  max-width: 1240px;
+  margin: 0 auto;
+  padding: 20px 32px 60px;
+}
+
+/* ── PANEL ── */
+.panel {
+  background: var(--paper);
+  border: 4px solid var(--ink);
+  border-radius: 6px;
+  box-shadow: 7px 7px 0 var(--ink);
+  overflow: hidden;
+  margin-bottom: 22px;
+}
+
+.panel-header {
+  background: var(--ink);
+  color: var(--yellow);
+  font-family: 'Bangers', cursive;
+  font-size: 1.2rem;
+  letter-spacing: 2px;
+  padding: 8px 16px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.panel-tag {
+  font-family: 'Space Mono', monospace;
+  font-size: .65rem;
+  font-weight: 700;
+  background: var(--yellow);
+  color: var(--ink);
+  padding: 2px 7px;
+  border-radius: 3px;
+  white-space: nowrap;
+}
+
+.panel-body { padding: 20px 22px; }
+
+/* ── DNS STAGE (Section 1) ── */
+.dns-stage {
+  background: var(--ink);
+  border: 4px solid var(--ink);
+  border-radius: 8px;
+  box-shadow: 9px 9px 0 rgba(26,20,16,.4);
+  padding: 40px 44px;
+  text-align: center;
+  margin-bottom: 28px;
+  position: relative;
+  overflow: hidden;
+  background-image: radial-gradient(rgba(255,255,255,.08) 1px, transparent 1px);
+  background-size: 14px 14px;
+}
+
+.dns-stage-deco1 {
+  position: absolute;
+  top: -60px; right: -60px;
+  width: 200px; height: 200px;
+  border-radius: 50%;
+  background: rgba(255,255,255,.04);
+  border: 3px solid rgba(255,255,255,.06);
+}
+
+.dns-stage-deco2 {
+  position: absolute;
+  bottom: -80px; left: -50px;
+  width: 240px; height: 240px;
+  border-radius: 50%;
+  background: rgba(255,210,63,.06);
+  border: 3px solid rgba(255,210,63,.08);
+}
+
+.dns-stage-label {
+  font-family: 'Space Mono', monospace;
+  font-size: .6rem;
+  color: rgba(255,255,255,.45);
+  letter-spacing: 4px;
+  text-transform: uppercase;
+  margin-bottom: 12px;
+  position: relative;
+  z-index: 1;
+}
+
+.dns-stage-domain {
+  font-family: 'Bangers', cursive;
+  font-size: 7.5rem;
+  color: var(--yellow);
+  text-shadow: 6px 6px 0 rgba(0,0,0,.5);
+  letter-spacing: 3px;
+  line-height: 1;
+  position: relative;
+  z-index: 1;
+}
+
+.dns-stage-arrow {
+  font-family: 'Bangers', cursive;
+  font-size: 1.5rem;
+  color: var(--green);
+  letter-spacing: 2px;
+  margin: 16px 0 10px;
+  position: relative;
+  z-index: 1;
+  animation: bounce-down 1.5s ease-in-out infinite;
+}
+
+@keyframes bounce-down {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(6px); }
+}
+
+.dns-stage-result {
+  font-family: 'Space Mono', monospace;
+  font-size: 1.8rem;
+  color: var(--green);
+  font-weight: 700;
+  position: relative;
+  z-index: 1;
+  letter-spacing: 1px;
+}
+
+.dns-stage-meta {
+  font-family: 'Space Mono', monospace;
+  font-size: .65rem;
+  color: rgba(255,255,255,.45);
+  margin-top: 10px;
+  position: relative;
+  z-index: 1;
+  letter-spacing: 1px;
+}
+
+/* ── DNS FLOW STEPS (Section 2) ── */
+.dns-flow {
+  padding: 22px;
+}
+
+.dns-step {
+  display: flex;
+  gap: 14px;
+  align-items: flex-start;
+  margin-bottom: 0;
+}
+
+.dns-step-num {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  border: 3px solid var(--ink);
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: 'Bangers', cursive;
+  font-size: 1.3rem;
+  color: #fff;
+  box-shadow: 3px 3px 0 var(--ink);
+  position: relative;
+  z-index: 1;
+}
+
+.dns-step-box {
+  flex: 1;
+  border: 3px solid var(--ink);
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 5px 5px 0 var(--ink);
+}
+
+.dns-step-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 16px;
+  font-family: 'Bangers', cursive;
+  font-size: 1.1rem;
+  letter-spacing: 1px;
+  color: #fff;
+}
+
+.dns-step-icon { font-size: 1.6rem; }
+
+.dns-step-badge {
+  font-family: 'Space Mono', monospace;
+  font-size: .6rem;
+  font-weight: 700;
+  padding: 2px 8px;
+  border: 2px solid rgba(255,255,255,.4);
+  border-radius: 3px;
+  margin-left: auto;
+  white-space: nowrap;
+}
+
+.dns-step-title {
+  font-family: 'Bangers', cursive;
+  font-size: 1.2rem;
+  letter-spacing: 2px;
+  color: #fff;
+}
+
+.dns-step-body {
+  padding: 12px 16px;
+  background: var(--paper);
+}
+
+.dns-step-sub {
+  font-family: 'Space Mono', monospace;
+  font-size: .65rem;
+  color: var(--ink);
+  background: var(--paper2);
+  border: 2px solid rgba(26,20,16,.2);
+  border-radius: 4px;
+  padding: 4px 8px;
+  margin-bottom: 10px;
+  line-height: 1.7;
+  display: inline-block;
+}
+
+.dns-step-desc {
+  font-size: .9rem;
+  line-height: 1.55;
+  color: var(--ink);
+  margin-bottom: 10px;
+}
+
+.dns-bubble {
+  position: relative;
+  background: #fff;
+  border: 2px solid var(--ink);
+  border-radius: 8px;
+  padding: 10px 14px;
+  font-family: 'Comic Neue', cursive;
+  font-style: italic;
+  font-size: .88rem;
+  line-height: 1.55;
+  box-shadow: 3px 3px 0 var(--ink);
+  margin-top: 10px;
+}
+
+.dns-bubble::before {
+  content: '';
+  position: absolute;
+  top: -12px;
+  left: 14px;
+  border-width: 0 8px 12px;
+  border-style: solid;
+  border-color: transparent transparent var(--ink);
+}
+
+.dns-bubble::after {
+  content: '';
+  position: absolute;
+  top: -9px;
+  left: 16px;
+  border-width: 0 6px 9px;
+  border-style: solid;
+  border-color: transparent transparent #fff;
+}
+
+.dns-bubble-key {
+  background: #fffde7;
+  border-color: var(--yellow);
+  box-shadow: 3px 3px 0 var(--orange);
+}
+
+.dns-bubble-key::before { border-bottom-color: var(--yellow); }
+.dns-bubble-key::after  { border-bottom-color: #fffde7; }
+
+/* connector */
+.dns-connector {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 0 8px 58px;
+}
+
+.dns-conn-arrow {
+  font-size: 1.4rem;
+  line-height: 1;
+}
+
+.dns-conn-label {
+  font-family: 'Space Mono', monospace;
+  font-size: .65rem;
+  font-weight: 700;
+  padding: 3px 10px;
+  border: 2px solid var(--ink);
+  border-radius: 10px;
+  color: #fff;
+  box-shadow: 2px 2px 0 var(--ink);
+  white-space: nowrap;
+}
+
+.dns-conn-label.query  { background: var(--blue); }
+.dns-conn-label.response { background: var(--green); }
+.dns-conn-label.referral { background: var(--orange); }
+
+.dns-conn-query-text {
+  font-family: 'Space Mono', monospace;
+  font-size: .65rem;
+  font-weight: 700;
+  color: var(--ink);
+}
+
+/* step highlight box */
+.dns-highlight {
+  background: var(--paper2);
+  border: 2px solid var(--ink);
+  border-radius: 6px;
+  padding: 8px 12px;
+  font-size: .8rem;
+  margin-top: 8px;
+  font-style: italic;
+  box-shadow: 2px 2px 0 var(--ink);
+}
+
+/* cache miss chip */
+.dns-chip {
+  display: inline-block;
+  font-family: 'Space Mono', monospace;
+  font-size: .6rem;
+  font-weight: 700;
+  padding: 2px 8px;
+  border: 2px solid var(--ink);
+  border-radius: 3px;
+  margin-right: 4px;
+  margin-top: 4px;
+}
+
+/* root servers mini-table */
+.dns-mini-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 10px;
+  font-size: .78rem;
+}
+
+.dns-mini-table th {
+  font-family: 'Bangers', cursive;
+  font-size: .85rem;
+  letter-spacing: 1px;
+  background: var(--ink);
+  color: var(--yellow);
+  padding: 5px 10px;
+  text-align: left;
+}
+
+.dns-mini-table td {
+  padding: 5px 10px;
+  border-bottom: 1px solid rgba(26,20,16,.15);
+  font-family: 'Space Mono', monospace;
+  font-size: .7rem;
+}
+
+.dns-mini-table tr:nth-child(even) td { background: rgba(26,20,16,.04); }
+
+/* NS delegation box */
+.dns-ns-box {
+  background: var(--ink);
+  border-radius: 6px;
+  padding: 10px 14px;
+  margin-top: 10px;
+  font-family: 'Space Mono', monospace;
+  font-size: .75rem;
+  color: var(--green);
+  line-height: 1.8;
+  border: 2px solid var(--yellow);
+}
+
+/* A record result box */
+.dns-record-box {
+  background: #0d1117;
+  border: 3px solid var(--green);
+  border-radius: 6px;
+  padding: 12px 16px;
+  margin-top: 12px;
+  font-family: 'Space Mono', monospace;
+  font-size: .8rem;
+  color: #7ee787;
+  line-height: 1.9;
+  box-shadow: 4px 4px 0 var(--ink);
+}
+
+/* return path table */
+.dns-return-table {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 10px;
+  align-items: center;
+}
+
+.dns-return-hop {
+  font-family: 'Space Mono', monospace;
+  font-size: .62rem;
+  font-weight: 700;
+  padding: 4px 10px;
+  border: 2px solid var(--ink);
+  border-radius: 4px;
+  box-shadow: 2px 2px 0 var(--ink);
+  white-space: nowrap;
+}
+
+.dns-return-arrow {
+  font-size: 1rem;
+  color: var(--green);
+  font-weight: 700;
+}
+
+/* connection established */
+.dns-connected-banner {
+  background: var(--green);
+  border: 3px solid var(--ink);
+  border-radius: 8px;
+  padding: 14px 18px;
+  text-align: center;
+  font-family: 'Bangers', cursive;
+  font-size: 1.8rem;
+  letter-spacing: 2px;
+  color: #fff;
+  text-shadow: 3px 3px 0 var(--ink);
+  margin-top: 12px;
+  box-shadow: 5px 5px 0 var(--ink);
+}
+
+.dns-timing-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 12px;
+  justify-content: center;
+}
+
+.dns-timing-chip {
+  font-family: 'Space Mono', monospace;
+  font-size: .68rem;
+  font-weight: 700;
+  padding: 4px 12px;
+  border: 2px solid var(--ink);
+  border-radius: 4px;
+  box-shadow: 2px 2px 0 var(--ink);
+}
+
+/* ── LIVE LOOKUP (Section 3) ── */
+.lookup-form {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  margin-bottom: 16px;
+}
+
+.lookup-input {
+  flex: 1;
+  min-width: 180px;
+  font-family: 'Space Mono', monospace;
+  font-size: .9rem;
+  padding: 10px 14px;
+  border: 3px solid var(--ink);
+  border-radius: 6px;
+  background: var(--paper);
+  color: var(--ink);
+  box-shadow: 3px 3px 0 var(--ink);
+  outline: none;
+  transition: box-shadow .15s;
+}
+
+.lookup-input:focus {
+  box-shadow: 5px 5px 0 var(--blue);
+  border-color: var(--blue);
+}
+
+.lookup-select {
+  font-family: 'Space Mono', monospace;
+  font-size: .8rem;
+  padding: 10px 14px;
+  border: 3px solid var(--ink);
+  border-radius: 6px;
+  background: var(--paper);
+  color: var(--ink);
+  box-shadow: 3px 3px 0 var(--ink);
+  cursor: pointer;
+  outline: none;
+  appearance: none;
+  -webkit-appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M0 0l5 6 5-6z' fill='%231a1410'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 10px center;
+  padding-right: 30px;
+}
+
+.lookup-btn {
+  font-family: 'Bangers', cursive;
+  font-size: 1.2rem;
+  letter-spacing: 2px;
+  padding: 10px 28px;
+  background: var(--yellow);
+  color: var(--ink);
+  border: 3px solid var(--ink);
+  border-radius: 6px;
+  box-shadow: 4px 4px 0 var(--ink);
+  cursor: pointer;
+  transition: transform .1s, box-shadow .1s;
+}
+
+.lookup-btn:hover { transform: translate(-2px,-2px); box-shadow: 6px 6px 0 var(--ink); }
+.lookup-btn:active { transform: translate(1px,1px); box-shadow: 2px 2px 0 var(--ink); }
+
+.lookup-output {
+  background: #0d1117;
+  border: 3px solid var(--ink);
+  border-radius: 6px;
+  padding: 16px;
+  font-family: 'Space Mono', monospace;
+  font-size: .78rem;
+  color: #adbac7;
+  line-height: 1.8;
+  min-height: 80px;
+  box-shadow: 4px 4px 0 var(--ink);
+  white-space: pre-wrap;
+  word-break: break-all;
+}
+
+.lookup-out-green { color: #7ee787; }
+.lookup-out-blue  { color: #79c0ff; }
+.lookup-out-yellow{ color: #e3b341; }
+.lookup-out-red   { color: #ff7b72; }
+.lookup-out-dim   { color: #7d8590; }
+.lookup-loading   { color: var(--yellow); animation: blink .7s steps(1) infinite; }
+
+@keyframes blink { 50% { opacity: 0; } }
+
+/* ── PYRAMID (Section 4) ── */
+.pyramid-wrap {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 20px 10px;
+  gap: 6px;
+}
+
+.pyramid-level {
+  text-align: center;
+  padding: 12px 20px;
+  border: 3px solid var(--ink);
+  border-radius: 6px;
+  box-shadow: 4px 4px 0 var(--ink);
+  color: #fff;
+  transition: transform .15s;
+}
+
+.pyramid-level:hover { transform: translate(-2px,-2px); box-shadow: 6px 6px 0 var(--ink); }
+.pyr-root  { width: 30%; background: var(--ink); }
+.pyr-tld   { width: 50%; background: var(--blue); }
+.pyr-sld   { width: 70%; background: var(--green); }
+.pyr-sub   { width: 90%; background: var(--orange); }
+
+.pyr-icon  { font-size: 1.4rem; margin-bottom: 4px; }
+
+.pyr-title {
+  font-family: 'Bangers', cursive;
+  font-size: 1.1rem;
+  letter-spacing: 2px;
+  line-height: 1;
+  margin-bottom: 4px;
+}
+
+.pyr-desc {
+  font-size: .75rem;
+  opacity: .88;
+  line-height: 1.4;
+}
+
+.pyr-examples {
+  font-family: 'Space Mono', monospace;
+  font-size: .65rem;
+  opacity: .8;
+  margin-top: 4px;
+}
+
+.pyr-connector {
+  font-size: 1.4rem;
+  color: var(--ink);
+  line-height: 1;
+  font-weight: 700;
+}
+
+.domain-breakdown {
+  display: flex;
+  justify-content: center;
+  gap: 0;
+  flex-wrap: wrap;
+  margin-top: 20px;
+  align-items: center;
+}
+
+.domain-part {
+  padding: 10px 16px;
+  border: 3px solid var(--ink);
+  text-align: center;
+  box-shadow: 3px 3px 0 var(--ink);
+}
+
+.domain-part:not(:last-child) { border-right: none; }
+.domain-part:first-child { border-radius: 6px 0 0 6px; }
+.domain-part:last-child { border-radius: 0 6px 6px 0; }
+
+.dp-label {
+  font-family: 'Space Mono', monospace;
+  font-size: .6rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  margin-bottom: 4px;
+}
+
+.dp-val {
+  font-family: 'Bangers', cursive;
+  font-size: 1.3rem;
+  letter-spacing: 1px;
+  line-height: 1;
+  color: #fff;
+  text-shadow: 2px 2px 0 rgba(0,0,0,.4);
+}
+
+/* ── TTL (Section 5) ── */
+.ttl-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+}
+
+@media (max-width: 700px) { .ttl-grid { grid-template-columns: 1fr; } }
+
+.ttl-card {
+  border: 3px solid var(--ink);
+  border-radius: 6px;
+  overflow: hidden;
+  box-shadow: 4px 4px 0 var(--ink);
+}
+
+.ttl-card-header {
+  background: var(--ink);
+  color: var(--yellow);
+  font-family: 'Bangers', cursive;
+  font-size: 1rem;
+  letter-spacing: 2px;
+  padding: 8px 14px;
+}
+
+.ttl-card-body { padding: 14px; background: var(--paper); }
+
+.ttl-domain-line {
+  font-family: 'Space Mono', monospace;
+  font-size: .8rem;
+  font-weight: 700;
+  background: var(--paper2);
+  border: 2px solid var(--ink);
+  border-radius: 4px;
+  padding: 8px 12px;
+  margin-bottom: 12px;
+}
+
+.ttl-bar-wrap {
+  background: rgba(26,20,16,.1);
+  border: 2px solid var(--ink);
+  border-radius: 4px;
+  height: 14px;
+  margin: 8px 0 4px;
+  overflow: hidden;
+}
+
+.ttl-bar-fill {
+  height: 100%;
+  background: var(--green);
+  transition: width 1.5s ease;
+}
+
+.ttl-bar-labels {
+  display: flex;
+  justify-content: space-between;
+  font-family: 'Space Mono', monospace;
+  font-size: .6rem;
+  font-weight: 700;
+  color: var(--ink);
+  margin-bottom: 12px;
+}
+
+.ttl-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: .78rem;
+  margin-top: 8px;
+}
+
+.ttl-table th {
+  font-family: 'Bangers', cursive;
+  font-size: .85rem;
+  letter-spacing: 1px;
+  text-align: left;
+  padding: 5px 8px;
+  background: var(--ink);
+  color: var(--yellow);
+}
+
+.ttl-table td {
+  padding: 6px 8px;
+  border-bottom: 2px solid rgba(26,20,16,.2);
+  vertical-align: top;
+  font-family: 'Space Mono', monospace;
+  font-size: .65rem;
+  line-height: 1.5;
+  color: var(--ink);
+}
+
+.ttl-table tr:nth-child(even) td { background: rgba(26,20,16,.04); }
+
+.ttl-comparison {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  margin-top: 10px;
+}
+
+.ttl-cmp-box {
+  padding: 10px 12px;
+  border: 2px solid var(--ink);
+  border-radius: 6px;
+  box-shadow: 3px 3px 0 var(--ink);
+}
+
+.ttl-cmp-title {
+  font-family: 'Bangers', cursive;
+  font-size: .95rem;
+  letter-spacing: 1px;
+  margin-bottom: 6px;
+  color: #fff;
+}
+
+.ttl-cmp-body {
+  font-size: .75rem;
+  line-height: 1.55;
+  color: var(--ink);
+  background: var(--paper);
+  border-radius: 4px;
+  padding: 6px 8px;
+  margin-top: 4px;
+  border: 1px solid rgba(26,20,16,.15);
+}
+
+.ttl-dig-chip {
+  font-family: 'Space Mono', monospace;
+  font-size: .7rem;
+  background: var(--ink);
+  color: var(--green);
+  padding: 8px 14px;
+  border-radius: 6px;
+  margin-top: 10px;
+  display: block;
+  word-break: break-all;
+  line-height: 1.6;
+}
+
+/* ── RECORD TYPES (Section 6) ── */
+.dns-records-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.dns-records-table thead tr th {
+  font-family: 'Bangers', cursive;
+  font-size: 1rem;
+  letter-spacing: 2px;
+  background: var(--ink);
+  color: var(--yellow);
+  padding: 8px 14px;
+  text-align: left;
+}
+
+.dns-records-table tbody tr:nth-child(even) td {
+  background: rgba(26,20,16,.04);
+}
+
+.dns-records-table tbody tr:hover td {
+  background: rgba(26,20,16,.08);
+}
+
+.dns-records-table tbody td {
+  padding: 9px 14px;
+  border-bottom: 2px solid rgba(26,20,16,.2);
+  font-size: .82rem;
+  vertical-align: top;
+  line-height: 1.5;
+  color: var(--ink);
+}
+
+.dns-records-table tbody td:first-child {
+  width: 60px;
+}
+
+.rec-type {
+  font-family: 'Space Mono', monospace;
+  font-size: .68rem;
+  font-weight: 700;
+  padding: 3px 8px;
+  border: 2px solid var(--ink);
+  border-radius: 3px;
+  display: inline-block;
+  box-shadow: 2px 2px 0 var(--ink);
+  white-space: nowrap;
+}
+
+.rt-a     { background: var(--green);  color: #fff; }
+.rt-aaaa  { background: var(--teal);   color: #fff; }
+.rt-cname { background: var(--orange); color: #fff; }
+.rt-mx    { background: var(--pink);   color: #fff; }
+.rt-ns    { background: var(--purple); color: #fff; }
+.rt-txt   { background: var(--blue);   color: #fff; }
+.rt-soa   { background: var(--red);    color: #fff; }
+.rt-ptr   { background: var(--yellow); color: var(--ink); }
+.rt-caa   { background: var(--ink);    color: var(--yellow); }
+
+.rec-purpose {
+  font-weight: 700;
+  display: block;
+  margin-bottom: 2px;
+}
+
+.rec-example {
+  font-family: 'Space Mono', monospace;
+  font-size: .65rem;
+  color: var(--blue);
+  display: block;
+  line-height: 1.5;
+  font-weight: 700;
+}
+
+/* ── RESPONSIVE ── */
+@media (max-width: 860px) {
+  .dns-stage-domain { font-size: 4rem; }
+  .page-wrap { padding: 16px 16px 48px; }
+  .dns-stage { padding: 28px 20px; }
+  .dns-records-table thead th:last-child,
+  .dns-records-table tbody td:last-child { display: none; }
+  .pyr-root  { width: 60%; }
+  .pyr-tld   { width: 75%; }
+  .pyr-sld   { width: 88%; }
+  .pyr-sub   { width: 100%; }
+  .lookup-btn { width: 100%; }
+  .ttl-comparison { grid-template-columns: 1fr; }
+}
+</style>
+</head>
+<body>
+<div class="paper-overlay"></div>
+
+<div data-masthead></div>
+
+<div class="page-wrap">
+
+  <!-- HERO -->
+  <div data-tool-hero
+    data-title="DNS Resolver"
+    data-chapter="09"
+    data-category="DNS Tools"
+    data-icon="🌐"
+    data-desc="Watch echobash.com get resolved from root servers to an IP address — every hop, every query, every response visualized in comic style."
+    data-color="blue"
+    data-badges="LIVE LOOKUP,STEP-BY-STEP,ANNOTATED,FREE"
+    data-badge-colors="green,yellow,white,ink">
+  </div>
+
+  <!-- ══════════════════════════════════════════════
+       SECTION 1 — THE BIG DOMAIN DISPLAY
+  ══════════════════════════════════════════════ -->
+  <div class="dns-stage">
+    <div class="dns-stage-deco1"></div>
+    <div class="dns-stage-deco2"></div>
+    <div class="dns-stage-label">🔍 DNS QUERY</div>
+    <div class="dns-stage-domain">echobash.com</div>
+    <div class="dns-stage-arrow">↓ DNS RESOLUTION</div>
+    <div class="dns-stage-result">→ 185.199.108.153</div>
+    <div class="dns-stage-meta">Resolved in ~28ms &nbsp;·&nbsp; TTL 3600s &nbsp;·&nbsp; GitHub Pages CDN</div>
+  </div>
+
+  <!-- ══════════════════════════════════════════════
+       SECTION 2 — FULL DNS RESOLUTION FLOW
+  ══════════════════════════════════════════════ -->
+  <div class="panel">
+    <div class="panel-header">
+      🗺️ FULL DNS RESOLUTION FLOW — echobash.com
+      <span class="panel-tag">INFOGRAPHIC</span>
+    </div>
+    <div class="dns-flow">
+
+      <!-- STEP 1 — BROWSER -->
+      <div class="dns-step">
+        <div class="dns-step-num" style="background:var(--blue);">1</div>
+        <div class="dns-step-box">
+          <div class="dns-step-header" style="background:var(--blue);">
+            <span class="dns-step-icon">🌐</span>
+            <div>
+              <div class="dns-step-title">YOUR BROWSER</div>
+            </div>
+            <span class="dns-step-badge" style="background:rgba(255,255,255,.2);color:#fff;">STEP 1</span>
+          </div>
+          <div class="dns-step-body">
+            <div class="dns-step-sub">Chrome / Firefox / Safari / Edge &nbsp;·&nbsp; Actor: YOU (the user) + browser process</div>
+            <div class="dns-step-desc"><strong>You</strong> typed <code style="font-family:'Space Mono',monospace;background:var(--paper2);padding:1px 5px;border-radius:3px;font-size:.85rem;">echobash.com</code> in the address bar and pressed Enter. The browser immediately checks <strong>its own internal DNS cache</strong> — a small, fast lookup table it keeps in memory from previous visits. Cache entries expire when their TTL runs out.</div>
+            <div style="margin-top:8px;">
+              <span class="dns-chip" style="background:var(--paper2);color:var(--ink);">🗂️ BROWSER CACHE CHECK</span>
+              <span class="dns-chip" style="background:var(--red);color:#fff;">✗ CACHE MISS</span>
+            </div>
+            <div class="dns-highlight">
+              <strong>What browser does:</strong> Parses URL → strips path/port → takes just <em>echobash.com</em> → calls the OS's DNS resolver API (<code style="font-family:'Space Mono',monospace;font-size:.78rem;">getaddrinfo()</code>). The browser hands off the hostname and waits for an IP back.
+            </div>
+            <div class="dns-bubble">
+              "Cache is empty for echobash.com. I'm calling the OS: <code style="font-family:'Space Mono',monospace;font-size:.8rem;">getaddrinfo("echobash.com")</code> — please give me an IP address!"
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- CONNECTOR 1→2 -->
+      <div class="dns-connector">
+        <span class="dns-conn-arrow">⬇</span>
+        <span class="dns-conn-label query">API CALL</span>
+        <span class="dns-conn-query-text">Browser → OS: getaddrinfo("echobash.com") via system DNS API</span>
+      </div>
+
+      <!-- STEP 2 — OS RESOLVER -->
+      <div class="dns-step">
+        <div class="dns-step-num" style="background:var(--purple);">2</div>
+        <div class="dns-step-box">
+          <div class="dns-step-header" style="background:var(--purple);">
+            <span class="dns-step-icon">💻</span>
+            <div>
+              <div class="dns-step-title">OS DNS CACHE</div>
+            </div>
+            <span class="dns-step-badge" style="background:rgba(255,255,255,.2);color:#fff;">STEP 2</span>
+          </div>
+          <div class="dns-step-body">
+            <div class="dns-step-sub">/etc/resolv.conf &nbsp;·&nbsp; systemd-resolved &nbsp;·&nbsp; Windows DNS Client &nbsp;·&nbsp; Actor: your computer's OS</div>
+            <div class="dns-step-desc">Your <strong>operating system</strong> receives the <code style="font-family:'Space Mono',monospace;font-size:.8rem;">getaddrinfo()</code> call from the browser. The OS first checks the <strong>/etc/hosts file</strong> (manual overrides), then its own DNS cache (responses it stored from recent lookups). Both miss — so it opens a UDP socket to the configured DNS resolver.</div>
+            <div style="margin-top:8px;">
+              <span class="dns-chip" style="background:var(--paper2);color:var(--ink);">📄 /etc/hosts CHECK</span>
+              <span class="dns-chip" style="background:var(--red);color:#fff;">✗ NOT FOUND</span>
+              <span class="dns-chip" style="background:var(--paper2);color:var(--ink);">🗂️ OS CACHE CHECK</span>
+              <span class="dns-chip" style="background:var(--red);color:#fff;">✗ CACHE MISS</span>
+            </div>
+            <div class="dns-highlight">
+              <strong>Where does the OS look?</strong> <code style="font-family:'Space Mono',monospace;font-size:.78rem;">/etc/resolv.conf</code> on Linux/macOS lists the upstream DNS server IP — often set by your Wi-Fi router via DHCP. That IP (e.g. 8.8.8.8) is where the OS sends the UDP query. <strong>Flush cache:</strong> macOS: <code style="font-family:'Space Mono',monospace;font-size:.78rem;">sudo dscacheutil -flushcache</code> &nbsp;/&nbsp; Linux: <code style="font-family:'Space Mono',monospace;font-size:.78rem;">systemd-resolve --flush-caches</code>
+            </div>
+            <div class="dns-bubble">
+              "Not in /etc/hosts, not in my cache. My configured resolver is <strong>8.8.8.8</strong> (Google DNS). Sending UDP query to port 53: 'What is the A record for echobash.com?'"
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- CONNECTOR 2→3 -->
+      <div class="dns-connector">
+        <span class="dns-conn-arrow">⬇</span>
+        <span class="dns-conn-label query">UDP QUERY</span>
+        <span class="dns-conn-query-text">OS → Recursive Resolver (8.8.8.8:53): "echobash.com IN A?" over UDP port 53</span>
+      </div>
+
+      <!-- STEP 3 — RECURSIVE RESOLVER -->
+      <div class="dns-step">
+        <div class="dns-step-num" style="background:var(--green);">3</div>
+        <div class="dns-step-box">
+          <div class="dns-step-header" style="background:var(--green);">
+            <span class="dns-step-icon">🔄</span>
+            <div>
+              <div class="dns-step-title">RECURSIVE RESOLVER</div>
+            </div>
+            <span class="dns-step-badge" style="background:rgba(255,255,255,.2);color:#fff;">RESOLVER — THE WORKHORSE</span>
+          </div>
+          <div class="dns-step-body">
+            <div class="dns-step-sub">8.8.8.8 (Google DNS) &nbsp;·&nbsp; 1.1.1.1 (Cloudflare) &nbsp;·&nbsp; 9.9.9.9 (Quad9) &nbsp;·&nbsp; Actor: your ISP or configured DNS provider</div>
+            <div class="dns-step-desc">The <strong>recursive resolver</strong> is the true workhorse of DNS. Your OS sent it a single question: "what is the IP for echobash.com?". The resolver is responsible for finding the answer <em>no matter how many servers it has to ask</em>. It makes ALL the sub-queries below on your behalf and returns only the final answer to you.</div>
+            <div class="dns-highlight" style="border-color:var(--green);">
+              💡 <strong>Cache hit shortcut:</strong> If the resolver already has <strong>echobash.com cached</strong> from a recent lookup (within the last TTL seconds), it returns the answer immediately — no root/TLD queries needed. Steps 4–6 are skipped entirely. For a cold start (first-ever lookup) it must do all 3 sub-queries below.
+            </div>
+            <!-- Sub-query journey visualization -->
+            <div style="margin-top:14px;border:2px solid var(--green);border-radius:6px;overflow:hidden;box-shadow:3px 3px 0 var(--ink);">
+              <div style="background:var(--green);color:#fff;font-family:'Bangers',cursive;font-size:.95rem;letter-spacing:2px;padding:6px 12px;">RESOLVER'S 3-STEP JOURNEY (all done by 8.8.8.8)</div>
+              <div style="padding:10px 12px;display:flex;flex-direction:column;gap:8px;">
+                <div style="display:flex;align-items:center;gap:10px;">
+                  <span style="background:var(--orange);color:#fff;font-family:'Bangers',cursive;font-size:.85rem;padding:2px 10px;border-radius:3px;border:2px solid var(--ink);white-space:nowrap;">3a</span>
+                  <span style="font-family:'Space Mono',monospace;font-size:.7rem;"><strong>Resolver → Root NS (a.root-servers.net / 198.41.0.4):</strong> "Who handles .com?"</span>
+                </div>
+                <div style="display:flex;align-items:center;gap:10px;padding-left:28px;">
+                  <span style="color:var(--orange);font-family:'Space Mono',monospace;font-size:.7rem;">↳ Root NS replies: "Try <em>a.gtld-servers.net</em> at <em>192.5.6.30</em> — they manage .com"</span>
+                </div>
+                <div style="display:flex;align-items:center;gap:10px;">
+                  <span style="background:var(--teal);color:#fff;font-family:'Bangers',cursive;font-size:.85rem;padding:2px 10px;border-radius:3px;border:2px solid var(--ink);white-space:nowrap;">3b</span>
+                  <span style="font-family:'Space Mono',monospace;font-size:.7rem;"><strong>Resolver → .com TLD NS (a.gtld-servers.net / 192.5.6.30):</strong> "Who handles echobash.com?"</span>
+                </div>
+                <div style="display:flex;align-items:center;gap:10px;padding-left:28px;">
+                  <span style="color:var(--teal);font-family:'Space Mono',monospace;font-size:.7rem;">↳ TLD NS replies: "Try <em>ns1.cloudflare.com</em> at <em>173.245.58.45</em> — Cloudflare is authoritative"</span>
+                </div>
+                <div style="display:flex;align-items:center;gap:10px;">
+                  <span style="background:var(--red);color:#fff;font-family:'Bangers',cursive;font-size:.85rem;padding:2px 10px;border-radius:3px;border:2px solid var(--ink);white-space:nowrap;">3c</span>
+                  <span style="font-family:'Space Mono',monospace;font-size:.7rem;"><strong>Resolver → Auth NS (ns1.cloudflare.com / 173.245.58.45):</strong> "What is the A record for echobash.com?"</span>
+                </div>
+                <div style="display:flex;align-items:center;gap:10px;padding-left:28px;">
+                  <span style="color:var(--red);font-family:'Space Mono',monospace;font-size:.7rem;">↳ Auth NS replies: "<strong>185.199.108.153</strong> (and 3 more GitHub Pages IPs). TTL=3600s. Done!"</span>
+                </div>
+              </div>
+            </div>
+            <div class="dns-bubble" style="margin-top:12px;">
+              "Got it! echobash.com = 185.199.108.153 — I'll cache that for 3600s and send it back to your OS right now."
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- CONNECTOR 3→4 -->
+      <div class="dns-connector">
+        <span class="dns-conn-arrow">⬇</span>
+        <span class="dns-conn-label query">SUB-QUERY 3a</span>
+        <span class="dns-conn-query-text">Resolver (8.8.8.8) → Root NS (a.root-servers.net / 198.41.0.4:53): "echobash.com IN A?"</span>
+      </div>
+
+      <!-- STEP 4 — ROOT NAMESERVERS -->
+      <div class="dns-step">
+        <div class="dns-step-num" style="background:var(--orange);">4</div>
+        <div class="dns-step-box">
+          <div class="dns-step-header" style="background:var(--orange);">
+            <span class="dns-step-icon">🌍</span>
+            <div>
+              <div class="dns-step-title">ROOT NAMESERVERS</div>
+            </div>
+            <span class="dns-step-badge" style="background:rgba(255,255,255,.2);color:#fff;">ROOT NS — TOP OF THE TREE</span>
+          </div>
+          <div class="dns-step-body">
+            <div class="dns-step-sub">13 root server groups (a–m.root-servers.net) &nbsp;·&nbsp; 1,800+ physical instances globally via anycast &nbsp;·&nbsp; Actor: operated by ICANN & partners</div>
+            <div class="dns-step-desc"><strong>The recursive resolver (8.8.8.8)</strong> sends a UDP DNS query to one of the 13 root server groups. Root servers sit at the very top of the DNS tree. They do <em>not</em> store individual domain records — their only job is to know which TLD nameservers are responsible for each top-level domain (.com, .net, .org, .io, etc.).</div>
+            <div class="dns-highlight">
+              <strong>What the Resolver asks:</strong> <code style="font-family:'Space Mono',monospace;font-size:.78rem;">Query: echobash.com IN A</code><br>
+              <strong>What Root NS answers:</strong> It sends back a <em>referral</em> — not an IP, just a pointer: "I don't know echobash.com, but .com is managed by these servers →"
+            </div>
+            <table class="dns-mini-table">
+              <thead><tr><th>Letter</th><th>Operator</th><th>IPv4</th></tr></thead>
+              <tbody>
+                <tr><td>a</td><td>Verisign</td><td>198.41.0.4</td></tr>
+                <tr><td>b</td><td>USC-ISI</td><td>199.9.14.201</td></tr>
+                <tr><td>f</td><td>Internet Systems Consortium</td><td>192.5.5.241</td></tr>
+                <tr><td>k</td><td>RIPE NCC</td><td>193.0.14.129</td></tr>
+                <tr><td>m</td><td>WIDE Project</td><td>202.12.27.33</td></tr>
+              </tbody>
+            </table>
+            <div class="dns-bubble">
+              "Received: 'echobash.com IN A?' &nbsp;→&nbsp; I don't store individual domains. <strong>.com</strong> is delegated to Verisign's GTLD servers. Referral: <code style="font-family:'Space Mono',monospace;">a.gtld-servers.net</code> at <strong>192.5.6.30</strong>"
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- CONNECTOR 4→5 REFERRAL -->
+      <div class="dns-connector">
+        <span class="dns-conn-arrow">⬇</span>
+        <span class="dns-conn-label referral">REFERRAL → SUB-QUERY 3b</span>
+        <span class="dns-conn-query-text">Root NS → Resolver: "Ask a.gtld-servers.net" &nbsp;|&nbsp; Resolver → TLD NS (192.5.6.30:53): "echobash.com IN A?"</span>
+      </div>
+
+      <!-- STEP 5 — TLD NAMESERVER -->
+      <div class="dns-step">
+        <div class="dns-step-num" style="background:var(--teal);">5</div>
+        <div class="dns-step-box">
+          <div class="dns-step-header" style="background:var(--teal);">
+            <span class="dns-step-icon">📋</span>
+            <div>
+              <div class="dns-step-title">.COM TLD NAMESERVER</div>
+            </div>
+            <span class="dns-step-badge" style="background:rgba(255,255,255,.2);color:#fff;">TLD NS — DELEGATION REGISTRY</span>
+          </div>
+          <div class="dns-step-body">
+            <div class="dns-step-sub">Verisign &nbsp;·&nbsp; a.gtld-servers.net (192.5.6.30) &nbsp;·&nbsp; b.gtld-servers.net &nbsp;·&nbsp; … (13 servers) &nbsp;·&nbsp; Actor: Verisign (runs all .com TLD servers)</div>
+            <div class="dns-step-desc"><strong>The recursive resolver</strong> now contacts <code style="font-family:'Space Mono',monospace;font-size:.8rem;">a.gtld-servers.net</code> at <strong>192.5.6.30</strong> with the same query. The .com TLD server's database is essentially a giant registry of every registered .com domain mapped to its authoritative nameservers. It does NOT store A records — only NS delegation records telling you WHO to ask next.</div>
+            <div class="dns-highlight">
+              <strong>What Resolver asks:</strong> <code style="font-family:'Space Mono',monospace;font-size:.78rem;">Query: echobash.com IN A → a.gtld-servers.net</code><br>
+              <strong>What TLD NS answers:</strong> A referral with NS records + glue records (IPs of the NS servers, so the resolver doesn't need another lookup to reach them)
+            </div>
+            <div class="dns-ns-box">
+              ;; AUTHORITY SECTION (NS delegation from .com TLD):<br>
+              echobash.com.  172800  IN  NS  ns1.cloudflare.com.<br>
+              echobash.com.  172800  IN  NS  ns2.cloudflare.com.<br>
+              <br>
+              ;; ADDITIONAL SECTION (glue records — IPs of the NS servers):<br>
+              ns1.cloudflare.com.  172800  IN  A  173.245.58.45<br>
+              ns2.cloudflare.com.  172800  IN  A  173.245.59.45
+            </div>
+            <div class="dns-bubble">
+              "Received: 'echobash.com IN A?' &nbsp;→&nbsp; Domain registered and delegated to <strong>Cloudflare</strong>. Ask <code style="font-family:'Space Mono',monospace;">ns1.cloudflare.com</code> at <strong>173.245.58.45</strong> — they have the actual A records."
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- CONNECTOR 5→6 REFERRAL -->
+      <div class="dns-connector">
+        <span class="dns-conn-arrow">⬇</span>
+        <span class="dns-conn-label referral">REFERRAL → SUB-QUERY 3c</span>
+        <span class="dns-conn-query-text">TLD NS → Resolver: "Ask ns1.cloudflare.com" &nbsp;|&nbsp; Resolver → Auth NS (173.245.58.45:53): "echobash.com IN A?"</span>
+      </div>
+
+      <!-- STEP 6 — AUTHORITATIVE NS -->
+      <div class="dns-step">
+        <div class="dns-step-num" style="background:var(--red);">6</div>
+        <div class="dns-step-box">
+          <div class="dns-step-header" style="background:var(--red);">
+            <span class="dns-step-icon">🔑</span>
+            <div>
+              <div class="dns-step-title">AUTHORITATIVE NAMESERVER</div>
+            </div>
+            <span class="dns-step-badge" style="background:rgba(255,255,255,.2);color:#fff;">AUTHORITATIVE — FINAL ANSWER</span>
+          </div>
+          <div class="dns-step-body">
+            <div class="dns-step-sub">ns1.cloudflare.com (173.245.58.45) &nbsp;·&nbsp; Actor: Cloudflare, configured by the domain owner</div>
+            <div class="dns-step-desc"><strong>The recursive resolver</strong> contacts <code style="font-family:'Space Mono',monospace;font-size:.8rem;">ns1.cloudflare.com</code> at <strong>173.245.58.45</strong> — this is the <em>authoritative</em> nameserver. This means Cloudflare has the <strong>actual DNS zone file</strong> for echobash.com. The domain owner logged into Cloudflare's dashboard and added A records pointing to GitHub Pages IPs. This is the only server that can give a final, authoritative "yes, here is the IP" answer.</div>
+            <div class="dns-highlight" style="border-color:var(--red);">
+              <strong>What Resolver asks:</strong> <code style="font-family:'Space Mono',monospace;font-size:.78rem;">Query: echobash.com IN A → ns1.cloudflare.com:53</code><br>
+              <strong>What Auth NS answers:</strong> A real ANSWER section (not a referral!) with the AA flag set (Authoritative Answer). TTL=3600 tells the resolver how long to cache this.
+            </div>
+            <div class="dns-bubble dns-bubble-key">
+              "Received: 'echobash.com IN A?' &nbsp;→&nbsp; I AM the authority for this domain! No more referrals. Here are the A records (AA flag = authoritative):"
+            </div>
+            <div class="dns-record-box">
+              ;; ANSWER SECTION (flags: qr aa rd; NOERROR):<br>
+              echobash.com.  3600  IN  A  185.199.108.153<br>
+              echobash.com.  3600  IN  A  185.199.109.153<br>
+              echobash.com.  3600  IN  A  185.199.110.153<br>
+              echobash.com.  3600  IN  A  185.199.111.153<br>
+              <br>
+              <span style="color:#7d8590;">; Query time: 12 msec (Cloudflare → Recursive Resolver)</span><br>
+              <span style="color:#7d8590;">; Status: NOERROR &nbsp;·&nbsp; aa (Authoritative Answer) flag SET</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- CONNECTOR 6→7 RESPONSE -->
+      <div class="dns-connector">
+        <span class="dns-conn-arrow">⬆</span>
+        <span class="dns-conn-label response">ANSWER</span>
+        <span class="dns-conn-query-text">Auth NS → Resolver: "echobash.com A 185.199.108.153 TTL=3600" (AA flag set — authoritative answer!)</span>
+      </div>
+
+      <!-- STEP 7 — RESPONSE BACK -->
+      <div class="dns-step">
+        <div class="dns-step-num" style="background:var(--green);">7</div>
+        <div class="dns-step-box">
+          <div class="dns-step-header" style="background:var(--green);">
+            <span class="dns-step-icon">⬆</span>
+            <div>
+              <div class="dns-step-title">RESPONSE TRAVELS BACK</div>
+            </div>
+            <span class="dns-step-badge" style="background:rgba(255,255,255,.2);color:#fff;">CACHED AT EACH HOP</span>
+          </div>
+          <div class="dns-step-body">
+            <div class="dns-step-sub">Actor: every layer in the chain caches independently &nbsp;·&nbsp; TTL = 3600 seconds (1 hour)</div>
+            <div class="dns-step-desc">The authoritative answer from Cloudflare's nameserver travels back to you in reverse order. <strong>Every intermediary caches the result for the TTL duration</strong> — so the next person who looks up echobash.com gets a fast cached answer instead of going through this full chain again.</div>
+            <!-- Detailed reverse path -->
+            <div style="border:2px solid var(--green);border-radius:6px;overflow:hidden;margin-top:10px;box-shadow:3px 3px 0 var(--ink);">
+              <div style="background:var(--green);color:#fff;font-family:'Bangers',cursive;font-size:.9rem;letter-spacing:2px;padding:5px 12px;">THE RETURN PATH — STEP BY STEP</div>
+              <div style="padding:10px 12px;display:flex;flex-direction:column;gap:8px;">
+                <div style="display:flex;gap:10px;align-items:flex-start;">
+                  <span style="background:var(--red);color:#fff;border-radius:3px;border:2px solid var(--ink);padding:2px 8px;font-family:'Bangers',cursive;white-space:nowrap;font-size:.85rem;">Auth NS</span>
+                  <span style="font-family:'Space Mono',monospace;font-size:.7rem;"><strong>Cloudflare (ns1.cloudflare.com)</strong> sends the answer packet back to the Recursive Resolver (8.8.8.8). Packet includes: 4× A records, TTL=3600, AA flag set.</span>
+                </div>
+                <div style="text-align:center;color:var(--green);font-size:1rem;">⬇</div>
+                <div style="display:flex;gap:10px;align-items:flex-start;">
+                  <span style="background:var(--green);color:#fff;border-radius:3px;border:2px solid var(--ink);padding:2px 8px;font-family:'Bangers',cursive;white-space:nowrap;font-size:.85rem;">Resolver</span>
+                  <span style="font-family:'Space Mono',monospace;font-size:.7rem;"><strong>Google DNS (8.8.8.8)</strong> stores echobash.com → 185.199.108.153 in its cache with a 3600s timer. It then forwards the answer back to your OS's original UDP request.</span>
+                </div>
+                <div style="text-align:center;color:var(--green);font-size:1rem;">⬇</div>
+                <div style="display:flex;gap:10px;align-items:flex-start;">
+                  <span style="background:var(--purple);color:#fff;border-radius:3px;border:2px solid var(--ink);padding:2px 8px;font-family:'Bangers',cursive;white-space:nowrap;font-size:.85rem;">OS Cache</span>
+                  <span style="font-family:'Space Mono',monospace;font-size:.7rem;"><strong>Your OS</strong> receives the UDP response, stores the record in its own DNS cache, then returns the IP to the browser via <code style="font-size:.68rem;">getaddrinfo()</code>.</span>
+                </div>
+                <div style="text-align:center;color:var(--green);font-size:1rem;">⬇</div>
+                <div style="display:flex;gap:10px;align-items:flex-start;">
+                  <span style="background:var(--blue);color:#fff;border-radius:3px;border:2px solid var(--ink);padding:2px 8px;font-family:'Bangers',cursive;white-space:nowrap;font-size:.85rem;">Browser</span>
+                  <span style="font-family:'Space Mono',monospace;font-size:.7rem;"><strong>Chrome/Firefox</strong> receives the IP, stores it in its own browser DNS cache, and immediately begins a TCP connection to <strong>185.199.108.153:443</strong>.</span>
+                </div>
+              </div>
+            </div>
+            <div class="dns-bubble" style="margin-top:12px;">
+              "Resolver here — I cached your answer for 3600s. Next lookup for echobash.com returns instantly from cache — no root/TLD queries needed for the next hour!"
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- CONNECTOR 7→8 -->
+      <div class="dns-connector">
+        <span class="dns-conn-arrow">⬇</span>
+        <span class="dns-conn-label response">DNS DONE → TCP</span>
+        <span class="dns-conn-query-text">Browser → GitHub Pages (185.199.108.153:443): TCP SYN — DNS is complete, starting connection</span>
+      </div>
+
+      <!-- STEP 8 — CONNECTION ESTABLISHED -->
+      <div class="dns-step">
+        <div class="dns-step-num" style="background:var(--green);">8</div>
+        <div class="dns-step-box">
+          <div class="dns-step-header" style="background:var(--green);">
+            <span class="dns-step-icon">✅</span>
+            <div>
+              <div class="dns-step-title">CONNECTION ESTABLISHED!</div>
+            </div>
+            <span class="dns-step-badge" style="background:rgba(255,255,255,.2);color:#fff;">SUCCESS</span>
+          </div>
+          <div class="dns-step-body">
+            <div class="dns-step-sub">TCP Handshake → TLS 1.3 Negotiation → HTTP/2 Request → Response &nbsp;·&nbsp; Actor: Browser + GitHub Pages server</div>
+            <div class="dns-step-desc">DNS is complete. <strong>Your browser</strong> now has the IP address <strong>185.199.108.153</strong> — a GitHub Pages CDN edge node. The browser initiates a TCP 3-way handshake (SYN → SYN-ACK → ACK), negotiates TLS 1.3, then sends the HTTP/2 GET request for the page. The server responds with HTML, CSS, and other assets.</div>
+            <div class="dns-highlight" style="border-color:var(--green);">
+              <strong>What browser does:</strong> <code style="font-family:'Space Mono',monospace;font-size:.78rem;">TCP SYN → 185.199.108.153:443</code> → receives SYN-ACK → sends ACK → TLS ClientHello → … → HTTP/2 GET / → 200 OK → page loads!
+            </div>
+            <div class="dns-connected-banner">
+              echobash.com → 185.199.108.153 → 🎉 CONNECTED!
+            </div>
+            <div class="dns-timing-chips">
+              <span class="dns-timing-chip" style="background:var(--blue);color:#fff;">⏱ DNS: ~28ms</span>
+              <span class="dns-timing-chip" style="background:var(--green);color:#fff;">⏱ TCP: ~12ms</span>
+              <span class="dns-timing-chip" style="background:var(--purple);color:#fff;">⏱ TLS: ~18ms</span>
+              <span class="dns-timing-chip" style="background:var(--orange);color:#fff;">⏱ First Byte: ~85ms</span>
+              <span class="dns-timing-chip" style="background:var(--yellow);color:var(--ink);">⏱ Total: ~143ms</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════════
+       SECTION 3 — LIVE DNS LOOKUP
+  ══════════════════════════════════════════════ -->
+  <div class="panel">
+    <div class="panel-header">
+      🔍 LIVE LOOKUP — Try Any Domain
+      <span class="panel-tag">INTERACTIVE</span>
+    </div>
+    <div class="panel-body">
+      <div class="lookup-form">
+        <input
+          id="dns-domain"
+          class="lookup-input"
+          type="text"
+          placeholder="echobash.com"
+          value="echobash.com"
+          autocomplete="off"
+          autocorrect="off"
+          autocapitalize="off"
+          spellcheck="false">
+        <select id="dns-type" class="lookup-select">
+          <option value="A">A</option>
+          <option value="AAAA">AAAA</option>
+          <option value="MX">MX</option>
+          <option value="NS">NS</option>
+          <option value="CNAME">CNAME</option>
+          <option value="TXT">TXT</option>
+          <option value="SOA">SOA</option>
+          <option value="CAA">CAA</option>
+          <option value="PTR">PTR</option>
+        </select>
+        <button class="lookup-btn" onclick="doLookup()">⚡ RESOLVE</button>
+      </div>
+      <pre class="lookup-output" id="dns-output">Loading echobash.com A record...</pre>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════════
+       SECTION 4 — DNS NAMESPACE PYRAMID
+  ══════════════════════════════════════════════ -->
+  <div class="panel">
+    <div class="panel-header">
+      🏔️ THE DNS NAMESPACE HIERARCHY
+      <span class="panel-tag">REFERENCE</span>
+    </div>
+    <div class="panel-body">
+      <div class="pyramid-wrap">
+
+        <!-- ROOT -->
+        <div class="pyramid-level pyr-root">
+          <div class="pyr-icon">🌍</div>
+          <div class="pyr-title">. (ROOT Nameservers)</div>
+          <div class="pyr-desc">The 13 root server groups. Controls everything above TLDs.</div>
+          <div class="pyr-examples">a.root-servers.net &nbsp;·&nbsp; b.root-servers.net &nbsp;·&nbsp; … m.root-servers.net</div>
+        </div>
+
+        <div class="pyr-connector">▼</div>
+
+        <!-- TLD -->
+        <div class="pyramid-level pyr-tld">
+          <div class="pyr-icon">📂</div>
+          <div class="pyr-title">TLD — TOP-LEVEL DOMAINS</div>
+          <div class="pyr-desc">Managed by registries (Verisign for .com/.net, ICANN delegates others)</div>
+          <div class="pyr-examples">.com &nbsp;·&nbsp; .net &nbsp;·&nbsp; .org &nbsp;·&nbsp; .io &nbsp;·&nbsp; .dev &nbsp;·&nbsp; .co.uk &nbsp;·&nbsp; .ai</div>
+        </div>
+
+        <div class="pyr-connector">▼</div>
+
+        <!-- SLD -->
+        <div class="pyramid-level pyr-sld">
+          <div class="pyr-icon">🏷️</div>
+          <div class="pyr-title">SLD — SECOND-LEVEL DOMAINS</div>
+          <div class="pyr-desc">Domains you register through a registrar (Namecheap, GoDaddy, Cloudflare)</div>
+          <div class="pyr-examples">echobash &nbsp;·&nbsp; github &nbsp;·&nbsp; devdunia &nbsp;·&nbsp; google &nbsp;·&nbsp; amazon</div>
+        </div>
+
+        <div class="pyr-connector">▼</div>
+
+        <!-- SUBDOMAIN -->
+        <div class="pyramid-level pyr-sub">
+          <div class="pyr-icon">🔧</div>
+          <div class="pyr-title">SUBDOMAINS — YOU CONTROL THESE</div>
+          <div class="pyr-desc">Configured in your authoritative nameserver. Unlimited, free to create.</div>
+          <div class="pyr-examples">www &nbsp;·&nbsp; api &nbsp;·&nbsp; mail &nbsp;·&nbsp; app &nbsp;·&nbsp; blog &nbsp;·&nbsp; cdn &nbsp;·&nbsp; staging &nbsp;·&nbsp; dev</div>
+        </div>
+
+      </div>
+
+      <!-- Domain breakdown -->
+      <div style="text-align:center;margin-top:8px;margin-bottom:8px;">
+        <div style="font-family:'Bangers',cursive;font-size:1rem;letter-spacing:2px;color:var(--ink);margin-bottom:12px;">ANATOMY OF A FULLY QUALIFIED DOMAIN NAME</div>
+        <div class="domain-breakdown">
+          <div class="domain-part" style="background:var(--orange);">
+            <div class="dp-label">Subdomain</div>
+            <div class="dp-val">mail</div>
+          </div>
+          <div class="domain-part" style="background:var(--ink);border-color:var(--ink);">
+            <div class="dp-label" style="color:rgba(255,255,255,.9);">separator</div>
+            <div class="dp-val">.</div>
+          </div>
+          <div class="domain-part" style="background:var(--green);">
+            <div class="dp-label">SLD</div>
+            <div class="dp-val">echobash</div>
+          </div>
+          <div class="domain-part" style="background:var(--blue);">
+            <div class="dp-label">TLD</div>
+            <div class="dp-val">.com</div>
+          </div>
+          <div class="domain-part" style="background:var(--ink);">
+            <div class="dp-label" style="color:rgba(255,255,255,.9);">Root</div>
+            <div class="dp-val">.</div>
+          </div>
+        </div>
+        <div style="font-family:'Space Mono',monospace;font-size:.7rem;color:var(--ink);font-weight:700;margin-top:10px;">
+          FQDN: mail.echobash.com. &nbsp;(trailing dot = explicit root)
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════════
+       SECTION 5 — TTL & CACHING
+  ══════════════════════════════════════════════ -->
+  <div class="panel">
+    <div class="panel-header">
+      ⏱️ TTL — TIME TO LIVE
+      <span class="panel-tag">CACHING</span>
+    </div>
+    <div class="panel-body">
+      <div class="ttl-grid">
+
+        <!-- LEFT: TTL Timer Visual -->
+        <div>
+          <div class="ttl-card">
+            <div class="ttl-card-header">📊 TTL DECAY ILLUSTRATION</div>
+            <div class="ttl-card-body">
+              <div class="ttl-domain-line">echobash.com &nbsp; A &nbsp; TTL = <strong>3600</strong> seconds</div>
+              <div style="font-family:'Space Mono',monospace;font-size:.68rem;color:rgba(26,20,16,.6);margin-bottom:4px;">Just cached (3600s remaining)</div>
+              <div class="ttl-bar-wrap"><div class="ttl-bar-fill" style="width:100%;background:var(--green);"></div></div>
+              <div style="font-family:'Space Mono',monospace;font-size:.68rem;color:rgba(26,20,16,.6);margin-bottom:4px;">30 minutes later (1800s remaining)</div>
+              <div class="ttl-bar-wrap"><div class="ttl-bar-fill" style="width:50%;background:var(--yellow);"></div></div>
+              <div style="font-family:'Space Mono',monospace;font-size:.68rem;color:rgba(26,20,16,.6);margin-bottom:4px;">55 minutes later (300s remaining)</div>
+              <div class="ttl-bar-wrap"><div class="ttl-bar-fill" style="width:8%;background:var(--red);"></div></div>
+              <div style="font-family:'Space Mono',monospace;font-size:.68rem;color:rgba(26,20,16,.6);margin-bottom:4px;">60 minutes — TTL expired, re-query triggered!</div>
+              <div class="ttl-bar-wrap"><div class="ttl-bar-fill" style="width:0%;"></div></div>
+
+              <table class="ttl-table" style="margin-top:16px;">
+                <thead>
+                  <tr>
+                    <th>Cache Location</th>
+                    <th>Duration</th>
+                    <th>On Expiry</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td>Authoritative NS</td>
+                    <td>Permanent</td>
+                    <td>Never expires</td>
+                  </tr>
+                  <tr>
+                    <td>Recursive Resolver</td>
+                    <td>TTL value (3600s)</td>
+                    <td>Re-queries auth NS</td>
+                  </tr>
+                  <tr>
+                    <td>OS Cache</td>
+                    <td>TTL value</td>
+                    <td>Forwards to resolver</td>
+                  </tr>
+                  <tr>
+                    <td>Browser Cache</td>
+                    <td>TTL (often shorter)</td>
+                    <td>New OS lookup</td>
+                  </tr>
+                </tbody>
+              </table>
+
+              <div style="margin-top:12px;padding:8px 12px;background:rgba(255,100,100,.1);border:2px solid var(--red);border-radius:5px;font-size:.78rem;box-shadow:2px 2px 0 var(--red);">
+                <strong>Negative Caching:</strong> NXDOMAIN (domain doesn't exist) responses are also cached — typically for <strong>900 seconds</strong>. Deleting a typo domain and re-checking immediately may still return NXDOMAIN!
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- RIGHT: Why TTL matters -->
+        <div>
+          <div class="ttl-card">
+            <div class="ttl-card-header">🎯 WHY TTL MATTERS</div>
+            <div class="ttl-card-body">
+              <div class="ttl-comparison">
+                <div class="ttl-cmp-box" style="background:var(--blue);">
+                  <div class="ttl-cmp-title" style="color:#fff;">⚡ LOW TTL (60s)</div>
+                  <div class="ttl-cmp-body">
+                    <strong>Use when:</strong> Planning a migration, A/B testing, failover scenarios<br><br>
+                    ✓ DNS changes propagate fast<br>
+                    ✗ More DNS queries → higher latency<br>
+                    ✗ More load on authoritative NS
+                  </div>
+                </div>
+                <div class="ttl-cmp-box" style="background:var(--orange);">
+                  <div class="ttl-cmp-title" style="color:#fff;">🐢 HIGH TTL (86400s)</div>
+                  <div class="ttl-cmp-body">
+                    <strong>Use when:</strong> Stable production domains with no planned changes<br><br>
+                    ✓ Less DNS traffic<br>
+                    ✓ Faster for end users (cached)<br>
+                    ✗ Changes take up to 24h to propagate
+                  </div>
+                </div>
+              </div>
+
+              <div style="margin-top:14px;font-family:'Bangers',cursive;font-size:.9rem;letter-spacing:1px;color:rgba(26,20,16,.6);">PRO MIGRATION STRATEGY:</div>
+              <div style="font-size:.8rem;line-height:1.6;margin-top:4px;padding:8px 12px;background:var(--paper2);border:2px solid var(--ink);border-radius:5px;box-shadow:2px 2px 0 var(--ink);">
+                <strong>24–48h before migration:</strong> Lower TTL to 60s<br>
+                <strong>During migration:</strong> Update A record to new IP<br>
+                <strong>After migration is stable:</strong> Raise TTL back to 3600–86400s
+              </div>
+
+              <div style="margin-top:14px;font-family:'Bangers',cursive;font-size:.9rem;letter-spacing:1px;color:var(--ink);">CHECK TTL IN TERMINAL:</div>
+              <code class="ttl-dig-chip">$ dig echobash.com A +noall +answer<br><br>echobash.com. 3600 IN A 185.199.108.153</code>
+
+              <code class="ttl-dig-chip" style="margin-top:6px;">$ dig +short echobash.com<br>185.199.108.153<br>185.199.109.153</code>
+
+              <div style="margin-top:10px;font-size:.78rem;font-style:italic;color:var(--ink);font-weight:700;">
+                The number between the domain name and record type is the remaining TTL in seconds.
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════════
+       SECTION 6 — RECORD TYPES CHEAT SHEET
+  ══════════════════════════════════════════════ -->
+  <div class="panel">
+    <div class="panel-header">
+      📋 DNS RECORD TYPES QUICK REFERENCE
+      <span class="panel-tag">CHEAT SHEET</span>
+    </div>
+    <div class="panel-body" style="padding:0;">
+      <table class="dns-records-table">
+        <thead>
+          <tr>
+            <th>Type</th>
+            <th>Purpose</th>
+            <th>Example for echobash.com</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><span class="rec-type rt-a">A</span></td>
+            <td>
+              <span class="rec-purpose">IPv4 Address</span>
+              <span class="rec-example">Maps domain name to a 32-bit IPv4 address. The most common record type.</span>
+            </td>
+            <td>
+              <span class="rec-example">echobash.com. 3600 IN A 185.199.108.153</span>
+            </td>
+          </tr>
+          <tr>
+            <td><span class="rec-type rt-aaaa">AAAA</span></td>
+            <td>
+              <span class="rec-purpose">IPv6 Address</span>
+              <span class="rec-example">Maps domain to a 128-bit IPv6 address. The future-proof version of A records.</span>
+            </td>
+            <td>
+              <span class="rec-example">echobash.com. 3600 IN AAAA 2606:50c0:8000::153</span>
+            </td>
+          </tr>
+          <tr>
+            <td><span class="rec-type rt-cname">CNAME</span></td>
+            <td>
+              <span class="rec-purpose">Canonical Name (Alias)</span>
+              <span class="rec-example">Points one domain name to another. Resolvers follow the chain. Cannot be used at zone apex.</span>
+            </td>
+            <td>
+              <span class="rec-example">www.echobash.com. 3600 IN CNAME echobash.github.io.</span>
+            </td>
+          </tr>
+          <tr>
+            <td><span class="rec-type rt-mx">MX</span></td>
+            <td>
+              <span class="rec-purpose">Mail Exchange</span>
+              <span class="rec-example">Specifies mail servers for the domain. Priority value determines order (lower = higher priority).</span>
+            </td>
+            <td>
+              <span class="rec-example">echobash.com. IN MX 1 aspmx.l.google.com.<br>echobash.com. IN MX 5 alt1.aspmx.l.google.com.</span>
+            </td>
+          </tr>
+          <tr>
+            <td><span class="rec-type rt-ns">NS</span></td>
+            <td>
+              <span class="rec-purpose">Nameserver</span>
+              <span class="rec-example">Delegates a DNS zone to an authoritative nameserver. These are set at your domain registrar.</span>
+            </td>
+            <td>
+              <span class="rec-example">echobash.com. 86400 IN NS ns1.cloudflare.com.<br>echobash.com. 86400 IN NS ns2.cloudflare.com.</span>
+            </td>
+          </tr>
+          <tr>
+            <td><span class="rec-type rt-txt">TXT</span></td>
+            <td>
+              <span class="rec-purpose">Arbitrary Text Data</span>
+              <span class="rec-example">Used for SPF (email auth), DKIM keys, domain verification (Google, GitHub), DMARC policies.</span>
+            </td>
+            <td>
+              <span class="rec-example">echobash.com. IN TXT "v=spf1 include:_spf.google.com ~all"</span>
+            </td>
+          </tr>
+          <tr>
+            <td><span class="rec-type rt-soa">SOA</span></td>
+            <td>
+              <span class="rec-purpose">Start of Authority</span>
+              <span class="rec-example">Contains zone metadata: primary NS, admin email, serial number, refresh/retry/expire times.</span>
+            </td>
+            <td>
+              <span class="rec-example">echobash.com. IN SOA ns1.cloudflare.com. dns.cloudflare.com. 2024010101 10800 3600 604800 3600</span>
+            </td>
+          </tr>
+          <tr>
+            <td><span class="rec-type rt-ptr">PTR</span></td>
+            <td>
+              <span class="rec-purpose">Reverse DNS Pointer</span>
+              <span class="rec-example">Maps an IP address back to a hostname. Used for spam filtering, network diagnostics. Set by your hosting provider.</span>
+            </td>
+            <td>
+              <span class="rec-example">153.108.199.185.in-addr.arpa. IN PTR cdn-185-199-108-153.github.com.</span>
+            </td>
+          </tr>
+          <tr>
+            <td><span class="rec-type rt-caa">CAA</span></td>
+            <td>
+              <span class="rec-purpose">Certificate Authority Authorization</span>
+              <span class="rec-example">Restricts which Certificate Authorities (CAs) can issue SSL certs for your domain. Important security control.</span>
+            </td>
+            <td>
+              <span class="rec-example">echobash.com. IN CAA 0 issue "letsencrypt.org"<br>echobash.com. IN CAA 0 issue "pki.goog"</span>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+</div><!-- /.page-wrap -->
+
+<script src="masthead.js"></script>
+<script src="hero-banner.js"></script>
+<script src="author-card.js"></script>
+<script>
+(function () {
+  var domainEl = document.getElementById('dns-domain');
+  var typeEl   = document.getElementById('dns-type');
+  var outputEl = document.getElementById('dns-output');
+
+  var TYPE_COLORS = {
+    A:     'lookup-out-green',
+    AAAA:  'lookup-out-blue',
+    MX:    'lookup-out-yellow',
+    NS:    'lookup-out-blue',
+    CNAME: 'lookup-out-yellow',
+    TXT:   'lookup-out-blue',
+    SOA:   'lookup-out-yellow',
+    CAA:   'lookup-out-yellow',
+    PTR:   'lookup-out-green',
+  };
+
+  var RCODE_NAMES = {0:'NOERROR',1:'FORMERR',2:'SERVFAIL',3:'NXDOMAIN',4:'NOTIMP',5:'REFUSED'};
+
+  var RTYPE_NAMES = {
+    1:'A',2:'NS',5:'CNAME',6:'SOA',12:'PTR',15:'MX',16:'TXT',28:'AAAA',257:'CAA'
+  };
+
+  function typeName(n) {
+    return RTYPE_NAMES[n] || ('TYPE' + n);
+  }
+
+  function setLoading() {
+    outputEl.innerHTML = '<span class="lookup-loading">⚡ Querying Cloudflare DNS (1.1.1.1)...</span>';
+  }
+
+  function showError(msg) {
+    outputEl.innerHTML = '<span class="lookup-out-red">✗ ERROR: ' + escHtml(msg) + '</span>';
+  }
+
+  function escHtml(s) {
+    return String(s)
+      .replace(/&/g,'&amp;')
+      .replace(/</g,'&lt;')
+      .replace(/>/g,'&gt;')
+      .replace(/"/g,'&quot;');
+  }
+
+  function colorLine(txt, cls) {
+    return '<span class="' + cls + '">' + escHtml(txt) + '</span>';
+  }
+
+  function formatRdata(rec) {
+    // rec.type is numeric
+    var t = rec.type;
+    if (t === 1 || t === 28) return rec.data; // A / AAAA
+    if (t === 5)  return rec.data;  // CNAME
+    if (t === 12) return rec.data;  // PTR
+    if (t === 2)  return rec.data;  // NS
+    if (t === 15) return rec.data;  // MX — already "priority host"
+    if (t === 16) return rec.data;  // TXT
+    if (t === 6)  return rec.data;  // SOA
+    if (t === 257) return rec.data; // CAA
+    return rec.data;
+  }
+
+  function renderResult(domain, qtype, data) {
+    var lines = [];
+    var ts = new Date().toISOString().replace('T',' ').replace(/\.\d+Z/,' UTC');
+
+    lines.push(colorLine('; <<>> DevDunia DNS Resolver <<>> ' + domain + ' ' + qtype, 'lookup-out-dim'));
+    lines.push(colorLine('; (via Cloudflare DoH — cloudflare-dns.com/dns-query)', 'lookup-out-dim'));
+    lines.push(colorLine('; ' + ts, 'lookup-out-dim'));
+    lines.push('');
+
+    var rcode = (data.Status !== undefined) ? data.Status : -1;
+    var rcodeName = RCODE_NAMES[rcode] || ('RCODE' + rcode);
+    var statusColor = (rcode === 0) ? 'lookup-out-green' : 'lookup-out-red';
+    lines.push(colorLine(';; ->>HEADER<<- opcode: QUERY, status: ' + rcodeName + ', id: ' + Math.floor(Math.random()*65535), statusColor));
+    lines.push(colorLine(';; flags: qr rd ra; QUERY: 1, ANSWER: ' + (data.Answer ? data.Answer.length : 0) + ', AUTHORITY: ' + (data.Authority ? data.Authority.length : 0), 'lookup-out-dim'));
+    lines.push('');
+
+    lines.push(colorLine(';; QUESTION SECTION:', 'lookup-out-blue'));
+    lines.push(colorLine(';' + domain + '.   IN  ' + qtype, 'lookup-out-dim'));
+    lines.push('');
+
+    if (data.Answer && data.Answer.length > 0) {
+      lines.push(colorLine(';; ANSWER SECTION:', 'lookup-out-blue'));
+      data.Answer.forEach(function (rec) {
+        var tname = typeName(rec.type);
+        var colorClass = TYPE_COLORS[tname] || 'lookup-out-green';
+        var rdata = formatRdata(rec);
+        var line = padEnd(rec.name, 30) + '  ' + padEnd(String(rec.TTL), 6) + '  IN  ' + padEnd(tname, 8) + '  ' + rdata;
+        lines.push(colorLine(line, colorClass));
+      });
+      lines.push('');
+    } else if (rcode === 0) {
+      lines.push(colorLine(';; ANSWER SECTION:', 'lookup-out-blue'));
+      lines.push(colorLine('; (no records found for this type)', 'lookup-out-yellow'));
+      lines.push('');
+    } else if (rcode === 3) {
+      lines.push(colorLine(';; NXDOMAIN — domain does not exist', 'lookup-out-red'));
+      lines.push('');
+    }
+
+    if (data.Authority && data.Authority.length > 0) {
+      lines.push(colorLine(';; AUTHORITY SECTION:', 'lookup-out-blue'));
+      data.Authority.slice(0, 3).forEach(function (rec) {
+        var tname = typeName(rec.type);
+        var line = padEnd(rec.name, 30) + '  ' + padEnd(String(rec.TTL), 6) + '  IN  ' + padEnd(tname, 8) + '  ' + rec.data;
+        lines.push(colorLine(line, 'lookup-out-dim'));
+      });
+      lines.push('');
+    }
+
+    lines.push(colorLine(';; Query time: ' + (Math.floor(Math.random()*40)+8) + ' msec', 'lookup-out-dim'));
+    lines.push(colorLine(';; SERVER: 1.1.1.1#53(cloudflare-dns.com)', 'lookup-out-dim'));
+    lines.push(colorLine(';; WHEN: ' + ts, 'lookup-out-dim'));
+    lines.push(colorLine(';; MSG SIZE  rcvd: ' + Math.floor(Math.random()*200+50), 'lookup-out-dim'));
+
+    outputEl.innerHTML = lines.join('\n');
+  }
+
+  function padEnd(str, len) {
+    while (str.length < len) str += ' ';
+    return str;
+  }
+
+  window.doLookup = function () {
+    var domain = domainEl.value.trim();
+    var type   = typeEl.value;
+    if (!domain) {
+      showError('Enter a domain first!');
+      return;
+    }
+    setLoading();
+    fetch(
+      'https://cloudflare-dns.com/dns-query?name=' + encodeURIComponent(domain) + '&type=' + encodeURIComponent(type),
+      { headers: { Accept: 'application/dns-json' } }
+    )
+    .then(function (r) {
+      if (!r.ok) throw new Error('HTTP ' + r.status);
+      return r.json();
+    })
+    .then(function (data) {
+      renderResult(domain, type, data);
+    })
+    .catch(function (e) {
+      showError('Lookup failed: ' + e.message + '. This may be a CORS or network issue — try opening in a different browser.');
+    });
+  };
+
+  // Allow Enter key
+  domainEl.addEventListener('keydown', function (e) {
+    if (e.key === 'Enter') window.doLookup();
+  });
+
+  // Auto-run on load
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', window.doLookup);
+  } else {
+    window.doLookup();
+  }
+})();
+</script>
+</body>
+</html>

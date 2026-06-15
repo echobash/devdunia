@@ -1,0 +1,1342 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>dig — DNS Lookup Tool — DevDunia Comics</title>
+<meta name="description" content="Live DNS lookup tool powered by Cloudflare DoH. Understand dig output, DNS record types, and how DNS resolution works. Free online dig alternative for developers.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://devdunia.com/dig.html">
+<meta property="og:title" content="dig — DNS Lookup Tool — DevDunia Comics">
+<meta property="og:description" content="Live DNS lookup tool powered by Cloudflare DoH. Understand dig output, DNS record types cheat sheet, common dig commands, and how DNS resolution works.">
+<meta property="og:image" content="https://devdunia.com/images/logo.png">
+<link rel="icon" type="image/png" href="images/logo.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Bangers&family=Comic+Neue:wght@400;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --ink: #1a1410;
+  --paper: #fdf3e3;
+  --paper2: #fbe9cc;
+  --red: #e63946;
+  --blue: #1d6fb8;
+  --yellow: #ffd23f;
+  --green: #3fa34d;
+  --pink: #ff6b9d;
+  --purple: #8a4fff;
+  --orange: #ff8c42;
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: 'Comic Neue', cursive;
+  font-weight: 400;
+  color: var(--ink);
+  background-color: var(--paper);
+  background-image: radial-gradient(var(--ink) 0.5px, transparent 0.6px);
+  background-size: 14px 14px;
+  background-attachment: fixed;
+  min-height: 100vh;
+}
+
+.paper-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(253,243,227,.78);
+  pointer-events: none;
+  z-index: 0;
+}
+
+.page-wrap {
+  position: relative;
+  z-index: 1;
+  max-width: 1240px;
+  margin: 0 auto;
+  padding: 20px 32px 60px;
+}
+
+/* PANEL */
+.panel {
+  background: var(--paper);
+  border: 4px solid var(--ink);
+  border-radius: 6px;
+  box-shadow: 7px 7px 0 var(--ink);
+  overflow: hidden;
+  margin-bottom: 22px;
+}
+
+.panel-header {
+  background: var(--ink);
+  color: var(--yellow);
+  font-family: 'Bangers', cursive;
+  font-size: 1.2rem;
+  letter-spacing: 2px;
+  padding: 8px 16px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.panel-header .panel-tag {
+  font-family: 'Space Mono', monospace;
+  font-size: .65rem;
+  font-weight: 700;
+  background: var(--yellow);
+  color: var(--ink);
+  padding: 2px 7px;
+  border-radius: 3px;
+  white-space: nowrap;
+}
+
+.panel-body { padding: 18px 20px; }
+
+/* SECTION LABEL */
+.section-label {
+  font-family: 'Bangers', cursive;
+  font-size: .95rem;
+  letter-spacing: 1px;
+  color: var(--ink);
+  margin-bottom: 6px;
+  text-transform: uppercase;
+}
+
+/* DIVIDER */
+.divider {
+  border: none;
+  border-top: 3px solid var(--ink);
+  margin: 16px 0;
+}
+
+/* BUTTONS */
+.btn {
+  font-family: 'Bangers', cursive;
+  font-size: 1.1rem;
+  letter-spacing: 1px;
+  border: 3px solid var(--ink);
+  border-radius: 6px;
+  padding: 8px 20px;
+  cursor: pointer;
+  box-shadow: 4px 4px 0 var(--ink);
+  transition: transform .1s, box-shadow .1s;
+  text-transform: uppercase;
+}
+.btn:active { transform: translate(2px,2px); box-shadow: 2px 2px 0 var(--ink); }
+.btn-blue    { background: var(--blue);   color: #fff; }
+.btn-danger  { background: var(--red);    color: #fff; }
+.btn-neutral { background: var(--paper2); color: var(--ink); }
+
+/* INPUT ROW */
+.input-row {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 14px;
+  flex-wrap: wrap;
+}
+
+.comic-input {
+  flex: 1;
+  min-width: 200px;
+  background: #fff;
+  border: 3px solid var(--ink);
+  border-radius: 6px;
+  padding: 10px 14px;
+  font-family: 'Space Mono', monospace;
+  font-size: .85rem;
+  color: var(--ink);
+  box-shadow: 3px 3px 0 var(--ink);
+  outline: none;
+}
+.comic-input:focus { border-color: var(--blue); }
+.comic-input::placeholder { color: #aaa; font-style: italic; }
+
+.comic-select {
+  background: #fff;
+  border: 3px solid var(--ink);
+  border-radius: 6px;
+  padding: 10px 14px;
+  font-family: 'Space Mono', monospace;
+  font-size: .85rem;
+  color: var(--ink);
+  box-shadow: 3px 3px 0 var(--ink);
+  outline: none;
+  cursor: pointer;
+}
+.comic-select:focus { border-color: var(--blue); }
+
+/* DNS OUTPUT BOX */
+.dns-output-wrap {
+  position: relative;
+  margin-top: 14px;
+}
+
+.dns-result-box {
+  background: var(--ink);
+  border-radius: 6px;
+  padding: 16px 18px;
+  font-family: 'Space Mono', monospace;
+  font-size: .78rem;
+  line-height: 1.85;
+  color: #ccc;
+  min-height: 80px;
+  overflow-x: auto;
+  white-space: pre-wrap;
+  word-break: break-all;
+}
+
+.dns-result-box .dns-status-ok   { color: var(--green); font-weight: 700; }
+.dns-result-box .dns-status-err  { color: var(--red);   font-weight: 700; }
+.dns-result-box .dns-section-hdr { color: var(--yellow); font-weight: 700; }
+.dns-result-box .dns-rec-a       { color: var(--green); }
+.dns-result-box .dns-rec-aaaa    { color: #5bc4f5; }
+.dns-result-box .dns-rec-mx      { color: var(--pink); }
+.dns-result-box .dns-rec-ns      { color: var(--purple); }
+.dns-result-box .dns-rec-cname   { color: var(--orange); }
+.dns-result-box .dns-rec-txt     { color: var(--blue); }
+.dns-result-box .dns-rec-soa     { color: #aaa; }
+.dns-result-box .dns-rec-ptr     { color: #c8a4ff; }
+.dns-result-box .dns-rec-other   { color: #ddd; }
+.dns-result-box .dns-ttl         { color: var(--yellow); }
+.dns-result-box .dns-comment     { color: #6a8a6a; }
+.dns-result-box .dns-loading     { color: var(--orange); }
+
+/* ERROR BUBBLE */
+.error-bubble {
+  display: none;
+  position: relative;
+  background: #fff0f0;
+  border: 3px solid var(--red);
+  border-radius: 14px;
+  padding: 10px 14px;
+  margin-top: 12px;
+  font-size: .9rem;
+  font-weight: 700;
+  color: var(--red);
+}
+.error-bubble::before {
+  content: '';
+  position: absolute;
+  top: -16px; left: 22px;
+  border-width: 0 10px 16px;
+  border-style: solid;
+  border-color: transparent transparent var(--red);
+}
+.error-bubble::after {
+  content: '';
+  position: absolute;
+  top: -11px; left: 24px;
+  border-width: 0 8px 12px;
+  border-style: solid;
+  border-color: transparent transparent #fff0f0;
+}
+.error-bubble.show { display: block; }
+
+/* ANNOTATED DIG OUTPUT */
+.dig-output {
+  background: #1a1410;
+  border-radius: 6px;
+  padding: 18px 20px;
+  font-family: 'Space Mono', monospace;
+  font-size: .78rem;
+  line-height: 1.9;
+  overflow-x: auto;
+  white-space: pre;
+}
+.do-comment   { color: #6a8a6a; }
+.do-section   { color: #ffd23f; font-weight: 700; }
+.do-flag      { color: #ff8c42; }
+.do-record-a  { color: #3fa34d; }
+.do-record-ns { color: #8a4fff; }
+.do-record-mx { color: #ff6b9d; }
+.do-record-txt{ color: #1d6fb8; }
+.do-ttl       { color: #ffd23f; }
+.do-stat      { color: rgba(255,255,255,.55); }
+
+/* ANNOTATION BLOCK */
+.annotation {
+  background: var(--paper2);
+  border-left: 4px solid var(--blue);
+  border-radius: 0 6px 6px 0;
+  padding: 8px 14px;
+  margin: 6px 0 14px 0;
+  font-size: .82rem;
+  line-height: 1.5;
+}
+.annotation strong { font-family: 'Bangers', cursive; letter-spacing: .5px; font-size: .9rem; }
+
+/* COLLAPSIBLE DETAILS */
+details {
+  border: 3px solid var(--ink);
+  border-radius: 6px;
+  overflow: hidden;
+  margin-bottom: 14px;
+  box-shadow: 4px 4px 0 var(--ink);
+}
+details summary {
+  background: var(--paper2);
+  padding: 10px 14px;
+  font-family: 'Bangers', cursive;
+  font-size: 1rem;
+  letter-spacing: 1px;
+  cursor: pointer;
+  list-style: none;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  user-select: none;
+}
+details summary::-webkit-details-marker { display: none; }
+details summary::before {
+  content: '▶';
+  font-size: .7rem;
+  transition: transform .2s;
+  color: var(--blue);
+}
+details[open] summary::before { transform: rotate(90deg); }
+details .details-body { padding: 14px 16px; }
+
+/* CHEAT SHEET TABLE */
+.comic-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-bottom: 12px;
+}
+.comic-table th {
+  background: var(--ink);
+  color: var(--yellow);
+  font-family: 'Bangers', cursive;
+  font-size: 1rem;
+  letter-spacing: 1px;
+  padding: 8px 12px;
+  text-align: left;
+  border: 2px solid var(--ink);
+}
+.comic-table td {
+  padding: 7px 12px;
+  border: 2px solid var(--ink);
+  font-size: .83rem;
+}
+.comic-table tr:nth-child(even) td { background: var(--paper2); }
+.comic-table tr:nth-child(odd)  td { background: var(--paper); }
+.comic-table code {
+  font-family: 'Space Mono', monospace;
+  font-size: .72rem;
+  background: var(--ink);
+  color: var(--yellow);
+  padding: 1px 5px;
+  border-radius: 3px;
+  white-space: nowrap;
+}
+
+/* TYPE BADGE */
+.type-badge {
+  display: inline-block;
+  font-family: 'Bangers', cursive;
+  font-size: .85rem;
+  letter-spacing: 1px;
+  padding: 1px 8px;
+  border: 2px solid var(--ink);
+  border-radius: 4px;
+  box-shadow: 1px 1px 0 var(--ink);
+  white-space: nowrap;
+}
+
+/* COMMAND CARDS GRID */
+.cmd-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+
+.cmd-card {
+  background: var(--paper2);
+  border: 3px solid var(--ink);
+  border-radius: 6px;
+  box-shadow: 4px 4px 0 var(--ink);
+  padding: 12px 14px;
+  position: relative;
+}
+
+.cmd-card-command {
+  font-family: 'Space Mono', monospace;
+  font-size: .75rem;
+  color: var(--yellow);
+  background: var(--ink);
+  border-radius: 5px;
+  padding: 8px 48px 8px 12px;
+  margin-bottom: 8px;
+  word-break: break-all;
+  position: relative;
+  min-height: 36px;
+  display: flex;
+  align-items: center;
+}
+
+.cmd-copy-btn {
+  position: absolute;
+  top: 6px;
+  right: 6px;
+  font-family: 'Bangers', cursive;
+  font-size: .75rem;
+  letter-spacing: 1px;
+  background: var(--yellow);
+  color: var(--ink);
+  border: 2px solid var(--ink);
+  border-radius: 4px;
+  padding: 2px 7px;
+  cursor: pointer;
+  box-shadow: 1px 1px 0 rgba(0,0,0,.3);
+  transition: transform .1s;
+  white-space: nowrap;
+}
+.cmd-copy-btn:active { transform: translate(1px,1px); }
+
+.cmd-card-desc {
+  font-size: .83rem;
+  line-height: 1.45;
+}
+
+.cmd-card-label {
+  font-family: 'Bangers', cursive;
+  font-size: .9rem;
+  letter-spacing: 1px;
+  margin-bottom: 6px;
+}
+
+/* HOW STEPS */
+.how-steps {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.how-step {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+}
+
+.step-dot {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  border: 3px solid var(--ink);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: 'Bangers', cursive;
+  font-size: 1rem;
+  color: #fff;
+  flex-shrink: 0;
+  box-shadow: 2px 2px 0 var(--ink);
+}
+
+.how-step p {
+  font-size: .88rem;
+  line-height: 1.5;
+  padding-top: 2px;
+}
+
+.how-step code {
+  font-family: 'Space Mono', monospace;
+  font-size: .75rem;
+  background: var(--ink);
+  color: var(--yellow);
+  padding: 1px 5px;
+  border-radius: 3px;
+}
+
+.step-connector {
+  width: 3px;
+  height: 14px;
+  background: var(--ink);
+  margin-left: 12px;
+  border-radius: 2px;
+  opacity: .35;
+}
+
+/* SPEECH BUBBLE */
+.speech-bubble {
+  position: relative;
+  background: var(--yellow);
+  border: 3px solid var(--ink);
+  border-radius: 12px;
+  padding: 12px 16px;
+  margin: 14px 0;
+  font-size: .9rem;
+  line-height: 1.5;
+}
+.speech-bubble::before {
+  content: '';
+  position: absolute;
+  bottom: -18px; left: 24px;
+  border-width: 18px 10px 0;
+  border-style: solid;
+  border-color: var(--ink) transparent transparent;
+}
+.speech-bubble::after {
+  content: '';
+  position: absolute;
+  bottom: -12px; left: 26px;
+  border-width: 14px 8px 0;
+  border-style: solid;
+  border-color: var(--yellow) transparent transparent;
+}
+
+/* STATS ROW */
+.result-meta {
+  display: flex;
+  gap: 14px;
+  flex-wrap: wrap;
+  margin-bottom: 10px;
+}
+.result-chip {
+  font-family: 'Space Mono', monospace;
+  font-size: .68rem;
+  padding: 3px 9px;
+  border: 2px solid var(--ink);
+  border-radius: 4px;
+  box-shadow: 2px 2px 0 var(--ink);
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+/* MOBILE */
+@media (max-width: 760px) {
+  .page-wrap { padding: 16px 14px 48px; }
+  .cmd-grid { grid-template-columns: 1fr; }
+  .input-row { flex-direction: column; }
+  .comic-select { width: 100%; }
+  .comic-table { font-size: .75rem; }
+  .comic-table th, .comic-table td { padding: 5px 8px; }
+  .dig-output { font-size: .7rem; }
+}
+</style>
+</head>
+<body>
+<div class="paper-overlay"></div>
+<div data-masthead></div>
+
+<div class="page-wrap">
+
+  <div data-tool-hero
+       data-title="dig"
+       data-chapter="09"
+       data-category="DNS Tools"
+       data-icon="&#x1F50D;"
+       data-desc="Live DNS lookups via Cloudflare DoH, annotated dig output, a full record-type cheat sheet, and a visual walk-through of recursive DNS resolution. No install needed — dig from your browser!"
+       data-color="blue"
+       data-badges="DNS,DoH,LIVE LOOKUP,FREE"
+       data-badge-colors="blue,green,purple,yellow">
+  </div>
+
+  <!-- ═══════════════════════════════════════════════════════ -->
+  <!-- PANEL 1: LIVE DNS LOOKUP                               -->
+  <!-- ═══════════════════════════════════════════════════════ -->
+  <div class="panel">
+    <div class="panel-header">
+      &#x1F50D; LIVE DNS LOOKUP
+      <span class="panel-tag">INTERACTIVE</span>
+    </div>
+    <div class="panel-body">
+      <div class="section-label">Domain &amp; Record Type</div>
+      <div class="input-row">
+        <input type="text" id="dns-domain" class="comic-input"
+               placeholder="e.g. devdunia.com" value="devdunia.com"
+               autocomplete="off" autocapitalize="none" spellcheck="false">
+        <select id="dns-type" class="comic-select">
+          <option value="A">A</option>
+          <option value="AAAA">AAAA</option>
+          <option value="MX">MX</option>
+          <option value="NS">NS</option>
+          <option value="CNAME">CNAME</option>
+          <option value="TXT">TXT</option>
+          <option value="SOA">SOA</option>
+          <option value="PTR">PTR</option>
+        </select>
+        <button id="dns-lookup-btn" class="btn btn-blue">&#x26A1; LOOKUP</button>
+        <button id="dns-clear-btn" class="btn btn-neutral">&#x1F5D1; CLEAR</button>
+      </div>
+
+      <div id="dns-error" class="error-bubble">
+        &#x1F4A5; <span id="dns-error-msg">Enter a domain name first!</span>
+      </div>
+
+      <div id="dns-result-area" style="display:none;">
+        <div class="result-meta" id="dns-meta"></div>
+        <div class="dns-output-wrap">
+          <div class="dns-result-box" id="dns-result-box"></div>
+        </div>
+      </div>
+
+      <div class="speech-bubble" style="margin-top:16px;">
+        <strong>&#x2139;&#xFE0F; Powered by Cloudflare DoH</strong> — queries go to
+        <code style="font-family:'Space Mono',monospace;background:var(--ink);color:var(--yellow);padding:1px 5px;border-radius:3px;font-size:.78rem;">cloudflare-dns.com/dns-query</code>
+        over HTTPS. No software needed — runs entirely in your browser!
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════════════ -->
+  <!-- PANEL 2: READING dig OUTPUT — ANNOTATED               -->
+  <!-- ═══════════════════════════════════════════════════════ -->
+  <div class="panel">
+    <div class="panel-header">
+      &#x1F4D6; READING DIG OUTPUT — ANNOTATED
+      <span class="panel-tag">REFERENCE</span>
+    </div>
+    <div class="panel-body">
+      <p style="font-size:.9rem;line-height:1.5;margin-bottom:16px;">
+        <code style="font-family:'Space Mono',monospace;background:var(--ink);color:var(--yellow);padding:1px 5px;border-radius:3px;">dig</code>
+        output has a consistent structure across all record types. Once you learn to read one, you can read them all.
+        Click each section below to expand the annotated example.
+      </p>
+
+      <!-- Sub-example 1: A record -->
+      <details open>
+        <summary>&#x1F7E2; Example 1 — <code style="font-family:'Space Mono',monospace;font-size:.8rem;">dig devdunia.com</code> (A record)</summary>
+        <div class="details-body">
+          <div class="dig-output"><span class="do-comment">; &lt;&lt;&gt;&gt; DiG 9.18.1 &lt;&lt;&gt;&gt; devdunia.com</span>
+<span class="do-comment">;; global options: +cmd</span>
+
+<span class="do-section">;; Got answer:</span>
+<span class="do-comment">;; -&gt;&gt;HEADER&lt;&lt;- opcode: QUERY, status: NOERROR, id: 31415</span>
+<span class="do-comment">;; flags: </span><span class="do-flag">qr rd ra</span><span class="do-comment">; QUERY: 1, ANSWER: 4, AUTHORITY: 0, ADDITIONAL: 1</span>
+
+<span class="do-section">;; QUESTION SECTION:</span>
+<span class="do-comment">;devdunia.com.                   IN      A</span>
+
+<span class="do-section">;; ANSWER SECTION:</span>
+<span class="do-record-a">devdunia.com.           <span class="do-ttl">3600</span>    IN      A       185.199.108.153</span>
+<span class="do-record-a">devdunia.com.           <span class="do-ttl">3600</span>    IN      A       185.199.109.153</span>
+<span class="do-record-a">devdunia.com.           <span class="do-ttl">3600</span>    IN      A       185.199.110.153</span>
+<span class="do-record-a">devdunia.com.           <span class="do-ttl">3600</span>    IN      A       185.199.111.153</span>
+
+<span class="do-stat">;; Query time: 18 msec</span>
+<span class="do-stat">;; SERVER: 1.1.1.1#53(1.1.1.1)</span>
+<span class="do-stat">;; WHEN: Sun Jun 15 10:00:00 UTC 2026</span>
+<span class="do-stat">;; MSG SIZE  rcvd: 105</span></div>
+
+          <div class="annotation">
+            <strong style="color:var(--orange);">&#x2460; HEADER LINE</strong><br>
+            <code style="font-family:'Space Mono',monospace;font-size:.72rem;background:var(--ink);color:var(--yellow);padding:1px 4px;border-radius:3px;">status: NOERROR</code> — the domain exists and DNS responded cleanly.
+            Other values: <strong>NXDOMAIN</strong> (domain doesn't exist), <strong>SERVFAIL</strong> (resolver problem), <strong>REFUSED</strong> (server declined).
+          </div>
+          <div class="annotation">
+            <strong style="color:var(--orange);">&#x2461; FLAGS</strong> —
+            <code style="font-family:'Space Mono',monospace;font-size:.72rem;background:var(--ink);color:var(--yellow);padding:1px 4px;border-radius:3px;">qr</code> = this is a Query Response,
+            <code style="font-family:'Space Mono',monospace;font-size:.72rem;background:var(--ink);color:var(--yellow);padding:1px 4px;border-radius:3px;">rd</code> = Recursion Desired (client asked for full recursion),
+            <code style="font-family:'Space Mono',monospace;font-size:.72rem;background:var(--ink);color:var(--yellow);padding:1px 4px;border-radius:3px;">ra</code> = Recursion Available (server supports it).
+          </div>
+          <div class="annotation">
+            <strong style="color:var(--green);">&#x2462; ANSWER SECTION</strong><br>
+            Format: <code style="font-family:'Space Mono',monospace;font-size:.72rem;background:var(--ink);color:var(--yellow);padding:1px 4px;border-radius:3px;">name  TTL  class  type  data</code><br>
+            TTL = <strong>Time To Live</strong> in seconds — how long resolvers may cache this record.
+            3600 = 1 hour. GitHub Pages uses 4 IPs for load distribution.
+          </div>
+          <div class="annotation">
+            <strong style="color:var(--purple);">&#x2463; STATS</strong><br>
+            Query time shows round-trip latency to your resolver. Low = cached answer, high = fresh recursive lookup.
+            The SERVER line tells you which resolver answered (here, Cloudflare 1.1.1.1).
+          </div>
+        </div>
+      </details>
+
+      <!-- Sub-example 2: MX record -->
+      <details>
+        <summary>&#x1F4E7; Example 2 — <code style="font-family:'Space Mono',monospace;font-size:.8rem;">dig devdunia.com MX</code> (mail servers)</summary>
+        <div class="details-body">
+          <div class="dig-output"><span class="do-comment">; &lt;&lt;&gt;&gt; DiG 9.18.1 &lt;&lt;&gt;&gt; devdunia.com MX</span>
+<span class="do-comment">;; global options: +cmd</span>
+
+<span class="do-section">;; Got answer:</span>
+<span class="do-comment">;; -&gt;&gt;HEADER&lt;&lt;- opcode: QUERY, status: NOERROR, id: 27183</span>
+<span class="do-comment">;; flags: </span><span class="do-flag">qr rd ra</span><span class="do-comment">; QUERY: 1, ANSWER: 5, AUTHORITY: 0, ADDITIONAL: 1</span>
+
+<span class="do-section">;; QUESTION SECTION:</span>
+<span class="do-comment">;devdunia.com.                   IN      MX</span>
+
+<span class="do-section">;; ANSWER SECTION:</span>
+<span class="do-record-mx">devdunia.com.           <span class="do-ttl">3600</span>    IN      MX      1 aspmx.l.google.com.</span>
+<span class="do-record-mx">devdunia.com.           <span class="do-ttl">3600</span>    IN      MX      5 alt1.aspmx.l.google.com.</span>
+<span class="do-record-mx">devdunia.com.           <span class="do-ttl">3600</span>    IN      MX      5 alt2.aspmx.l.google.com.</span>
+<span class="do-record-mx">devdunia.com.           <span class="do-ttl">3600</span>    IN      MX      10 alt3.aspmx.l.google.com.</span>
+<span class="do-record-mx">devdunia.com.           <span class="do-ttl">3600</span>    IN      MX      10 alt4.aspmx.l.google.com.</span>
+
+<span class="do-stat">;; Query time: 24 msec</span>
+<span class="do-stat">;; SERVER: 1.1.1.1#53(1.1.1.1)</span>
+<span class="do-stat">;; WHEN: Sun Jun 15 10:00:00 UTC 2026</span>
+<span class="do-stat">;; MSG SIZE  rcvd: 162</span></div>
+
+          <div class="annotation">
+            <strong style="color:var(--pink);">MX PRIORITY NUMBERS</strong><br>
+            The number before the mail server hostname is the <strong>priority</strong> — lower number = higher preference.
+            Sending servers try priority 1 (<code style="font-family:'Space Mono',monospace;font-size:.72rem;background:var(--ink);color:var(--yellow);padding:1px 4px;border-radius:3px;">aspmx.l.google.com</code>) first,
+            falling back to priority 5 and 10 servers only if the primary is unreachable.
+          </div>
+          <div class="annotation">
+            <strong style="color:var(--pink);">WHY MULTIPLE MX RECORDS?</strong><br>
+            Redundancy! If Google's primary mail server is down, email bounces to the next-priority servers.
+            Google Workspace (Gmail for business) always sets up multiple MX records for high availability.
+          </div>
+        </div>
+      </details>
+
+      <!-- Sub-example 3: NS record -->
+      <details>
+        <summary>&#x1F4CC; Example 3 — <code style="font-family:'Space Mono',monospace;font-size:.8rem;">dig devdunia.com NS</code> (nameservers)</summary>
+        <div class="details-body">
+          <div class="dig-output"><span class="do-comment">; &lt;&lt;&gt;&gt; DiG 9.18.1 &lt;&lt;&gt;&gt; devdunia.com NS</span>
+<span class="do-comment">;; global options: +cmd</span>
+
+<span class="do-section">;; Got answer:</span>
+<span class="do-comment">;; -&gt;&gt;HEADER&lt;&lt;- opcode: QUERY, status: NOERROR, id: 14142</span>
+<span class="do-comment">;; flags: </span><span class="do-flag">qr rd ra</span><span class="do-comment">; QUERY: 1, ANSWER: 2, AUTHORITY: 0, ADDITIONAL: 1</span>
+
+<span class="do-section">;; QUESTION SECTION:</span>
+<span class="do-comment">;devdunia.com.                   IN      NS</span>
+
+<span class="do-section">;; ANSWER SECTION:</span>
+<span class="do-record-ns">devdunia.com.           <span class="do-ttl">86400</span>   IN      NS      ns1.exampleregistrar.com.</span>
+<span class="do-record-ns">devdunia.com.           <span class="do-ttl">86400</span>   IN      NS      ns2.exampleregistrar.com.</span>
+
+<span class="do-section">;; AUTHORITY SECTION:</span>
+<span class="do-comment">; (omitted — shown when answer comes from a non-authoritative resolver)</span>
+
+<span class="do-stat">;; Query time: 12 msec</span>
+<span class="do-stat">;; SERVER: 1.1.1.1#53(1.1.1.1)</span>
+<span class="do-stat">;; WHEN: Sun Jun 15 10:00:00 UTC 2026</span>
+<span class="do-stat">;; MSG SIZE  rcvd: 90</span></div>
+
+          <div class="annotation">
+            <strong style="color:var(--purple);">NS RECORDS = WHO'S IN CHARGE?</strong><br>
+            Nameserver records tell the internet <strong>which servers hold the authoritative DNS records</strong> for this domain.
+            When you change your domain's nameservers (e.g. moving from GoDaddy to Cloudflare), you update these.
+            The TTL of 86400 = 24 hours — NS records are cached much longer than A records.
+          </div>
+          <div class="annotation">
+            <strong style="color:var(--purple);">AUTHORITY SECTION</strong><br>
+            When dig queries a non-authoritative resolver (like 1.1.1.1) and the answer is cached,
+            the AUTHORITY section is empty. If you query the authoritative server directly
+            (<code style="font-family:'Space Mono',monospace;font-size:.72rem;background:var(--ink);color:var(--yellow);padding:1px 4px;border-radius:3px;">dig @ns1.exampleregistrar.com devdunia.com NS</code>),
+            you'll see it populated with SOA records.
+          </div>
+        </div>
+      </details>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════════════ -->
+  <!-- PANEL 3: DNS RECORD TYPES CHEAT SHEET                 -->
+  <!-- ═══════════════════════════════════════════════════════ -->
+  <div class="panel">
+    <div class="panel-header">
+      &#x1F4CB; DNS RECORD TYPES CHEAT SHEET
+      <span class="panel-tag">REFERENCE</span>
+    </div>
+    <div class="panel-body">
+      <p style="font-size:.88rem;line-height:1.5;margin-bottom:14px;">
+        DNS has over 30 record types — here are the ones you'll encounter daily as a developer.
+      </p>
+      <div style="overflow-x:auto;">
+        <table class="comic-table">
+          <thead>
+            <tr>
+              <th>Type</th>
+              <th>What it stores</th>
+              <th>Example use</th>
+              <th>dig command</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><span class="type-badge" style="background:var(--green);color:#fff;">A</span></td>
+              <td>IPv4 address (32-bit)</td>
+              <td>Map domain → IP (e.g. 185.199.108.153)</td>
+              <td><code>dig example.com A</code></td>
+            </tr>
+            <tr>
+              <td><span class="type-badge" style="background:#5bc4f5;color:var(--ink);">AAAA</span></td>
+              <td>IPv6 address (128-bit)</td>
+              <td>Map domain → IPv6 (e.g. 2606:50c0::153)</td>
+              <td><code>dig example.com AAAA</code></td>
+            </tr>
+            <tr>
+              <td><span class="type-badge" style="background:var(--orange);color:var(--ink);">CNAME</span></td>
+              <td>Canonical name alias</td>
+              <td>www → example.com, CDN aliases</td>
+              <td><code>dig www.example.com CNAME</code></td>
+            </tr>
+            <tr>
+              <td><span class="type-badge" style="background:var(--pink);color:#fff;">MX</span></td>
+              <td>Mail server + priority</td>
+              <td>Email routing, Google Workspace setup</td>
+              <td><code>dig example.com MX</code></td>
+            </tr>
+            <tr>
+              <td><span class="type-badge" style="background:var(--purple);color:#fff;">NS</span></td>
+              <td>Authoritative nameservers</td>
+              <td>Who controls DNS for this domain</td>
+              <td><code>dig example.com NS</code></td>
+            </tr>
+            <tr>
+              <td><span class="type-badge" style="background:var(--blue);color:#fff;">TXT</span></td>
+              <td>Arbitrary text strings</td>
+              <td>SPF, DKIM, domain verification, DMARC</td>
+              <td><code>dig example.com TXT</code></td>
+            </tr>
+            <tr>
+              <td><span class="type-badge" style="background:#888;color:#fff;">SOA</span></td>
+              <td>Start of Authority metadata</td>
+              <td>Zone serial, refresh/retry times, admin email</td>
+              <td><code>dig example.com SOA</code></td>
+            </tr>
+            <tr>
+              <td><span class="type-badge" style="background:#c8a4ff;color:var(--ink);">PTR</span></td>
+              <td>Reverse DNS (IP → hostname)</td>
+              <td>Spam filtering, server identity checks</td>
+              <td><code>dig -x 8.8.8.8</code></td>
+            </tr>
+            <tr>
+              <td><span class="type-badge" style="background:var(--yellow);color:var(--ink);">SRV</span></td>
+              <td>Service location + port</td>
+              <td>VoIP, Minecraft, service discovery</td>
+              <td><code>dig _sip._tcp.example.com SRV</code></td>
+            </tr>
+            <tr>
+              <td><span class="type-badge" style="background:var(--red);color:#fff;">CAA</span></td>
+              <td>Allowed SSL/TLS CAs</td>
+              <td>Restrict which CAs can issue certs for domain</td>
+              <td><code>dig example.com CAA</code></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="speech-bubble">
+        <strong>&#x1F4A1; Pro Tip — TXT records are the Swiss army knife!</strong>
+        They're used for SPF (email auth), DKIM (signing keys), DMARC policies, Google Search Console verification,
+        GitHub Pages domain verification, and even some creative hacks like storing JSON config.
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════════════ -->
+  <!-- PANEL 4: COMMON dig COMMANDS                           -->
+  <!-- ═══════════════════════════════════════════════════════ -->
+  <div class="panel">
+    <div class="panel-header">
+      &#x1F6A9; COMMON DIG COMMANDS
+      <span class="panel-tag">CHEAT SHEET</span>
+    </div>
+    <div class="panel-body">
+      <p style="font-size:.88rem;line-height:1.5;margin-bottom:16px;">
+        Click <strong>COPY</strong> on any card to copy the command to your clipboard.
+        Replace <code style="font-family:'Space Mono',monospace;font-size:.75rem;background:var(--ink);color:var(--yellow);padding:1px 5px;border-radius:3px;">example.com</code> with your domain.
+      </p>
+
+      <div class="cmd-grid">
+
+        <div class="cmd-card">
+          <div class="cmd-card-label" style="color:var(--green);">Basic A Lookup</div>
+          <div class="cmd-card-command">
+            dig example.com
+            <button class="cmd-copy-btn" data-cmd="dig example.com">COPY</button>
+          </div>
+          <div class="cmd-card-desc">Default query — returns the A (IPv4) record. The most common dig command.</div>
+        </div>
+
+        <div class="cmd-card">
+          <div class="cmd-card-label" style="color:var(--pink);">Mail Servers</div>
+          <div class="cmd-card-command">
+            dig example.com MX
+            <button class="cmd-copy-btn" data-cmd="dig example.com MX">COPY</button>
+          </div>
+          <div class="cmd-card-desc">Lists all mail exchange servers and their priorities for the domain.</div>
+        </div>
+
+        <div class="cmd-card">
+          <div class="cmd-card-label" style="color:var(--purple);">Nameservers</div>
+          <div class="cmd-card-command">
+            dig example.com NS
+            <button class="cmd-copy-btn" data-cmd="dig example.com NS">COPY</button>
+          </div>
+          <div class="cmd-card-desc">Shows which nameservers are authoritative for this domain.</div>
+        </div>
+
+        <div class="cmd-card">
+          <div class="cmd-card-label" style="color:var(--blue);">TXT Records</div>
+          <div class="cmd-card-command">
+            dig example.com TXT
+            <button class="cmd-copy-btn" data-cmd="dig example.com TXT">COPY</button>
+          </div>
+          <div class="cmd-card-desc">Reveals SPF, DKIM, DMARC policies, domain verification tokens and more.</div>
+        </div>
+
+        <div class="cmd-card">
+          <div class="cmd-card-label" style="color:var(--green);">Use Google DNS</div>
+          <div class="cmd-card-command">
+            dig @8.8.8.8 example.com
+            <button class="cmd-copy-btn" data-cmd="dig @8.8.8.8 example.com">COPY</button>
+          </div>
+          <div class="cmd-card-desc">Force the query through Google's public resolver. Useful to bypass your ISP's DNS cache.</div>
+        </div>
+
+        <div class="cmd-card">
+          <div class="cmd-card-label" style="color:var(--orange);">Use Cloudflare DNS</div>
+          <div class="cmd-card-command">
+            dig @1.1.1.1 example.com
+            <button class="cmd-copy-btn" data-cmd="dig @1.1.1.1 example.com">COPY</button>
+          </div>
+          <div class="cmd-card-desc">Query via Cloudflare's ultra-fast resolver. Often faster and more privacy-respecting than ISP DNS.</div>
+        </div>
+
+        <div class="cmd-card">
+          <div class="cmd-card-label" style="color:var(--yellow);-webkit-text-stroke:.3px var(--ink);">Short Output</div>
+          <div class="cmd-card-command">
+            dig +short example.com
+            <button class="cmd-copy-btn" data-cmd="dig +short example.com">COPY</button>
+          </div>
+          <div class="cmd-card-desc">Strips all headers — just prints the bare record data. Great for scripting.</div>
+        </div>
+
+        <div class="cmd-card">
+          <div class="cmd-card-label" style="color:var(--green);">Answer Only</div>
+          <div class="cmd-card-command">
+            dig +noall +answer example.com
+            <button class="cmd-copy-btn" data-cmd="dig +noall +answer example.com">COPY</button>
+          </div>
+          <div class="cmd-card-desc">Suppresses all sections except ANSWER. Cleaner than <code style="font-family:'Space Mono',monospace;font-size:.72rem;background:var(--ink);color:var(--yellow);padding:1px 4px;border-radius:3px;">+short</code> — still shows TTL &amp; type.</div>
+        </div>
+
+        <div class="cmd-card">
+          <div class="cmd-card-label" style="color:var(--purple);">Reverse DNS (PTR)</div>
+          <div class="cmd-card-command">
+            dig -x 185.199.108.153
+            <button class="cmd-copy-btn" data-cmd="dig -x 185.199.108.153">COPY</button>
+          </div>
+          <div class="cmd-card-desc">Reverse lookup — find the hostname for an IP. The <code style="font-family:'Space Mono',monospace;font-size:.72rem;background:var(--ink);color:var(--yellow);padding:1px 4px;border-radius:3px;">-x</code> flag handles the in-addr.arpa conversion automatically.</div>
+        </div>
+
+        <div class="cmd-card">
+          <div class="cmd-card-label" style="color:var(--red);">All Record Types</div>
+          <div class="cmd-card-command">
+            dig example.com ANY
+            <button class="cmd-copy-btn" data-cmd="dig example.com ANY">COPY</button>
+          </div>
+          <div class="cmd-card-desc">Request all available record types in one query. Note: many resolvers now restrict ANY queries to prevent amplification attacks.</div>
+        </div>
+
+        <div class="cmd-card">
+          <div class="cmd-card-label" style="color:var(--orange);">Trace Resolution Path</div>
+          <div class="cmd-card-command">
+            dig +trace example.com
+            <button class="cmd-copy-btn" data-cmd="dig +trace example.com">COPY</button>
+          </div>
+          <div class="cmd-card-desc">Shows the full delegation chain: root → TLD → authoritative. Invaluable for debugging propagation issues.</div>
+        </div>
+
+        <div class="cmd-card">
+          <div class="cmd-card-label" style="color:var(--blue);">Check DNSSEC</div>
+          <div class="cmd-card-command">
+            dig example.com +dnssec
+            <button class="cmd-copy-btn" data-cmd="dig example.com +dnssec">COPY</button>
+          </div>
+          <div class="cmd-card-desc">Requests DNSSEC records (RRSIG, DNSKEY). Look for the <code style="font-family:'Space Mono',monospace;font-size:.72rem;background:var(--ink);color:var(--yellow);padding:1px 4px;border-radius:3px;">ad</code> flag in the response header to confirm validation.</div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════════════ -->
+  <!-- PANEL 5: HOW DNS RESOLUTION WORKS                     -->
+  <!-- ═══════════════════════════════════════════════════════ -->
+  <div class="panel">
+    <div class="panel-header">
+      &#x1F9E0; HOW DNS RESOLUTION WORKS
+      <span class="panel-tag">DEEP DIVE</span>
+    </div>
+    <div class="panel-body">
+      <p style="font-size:.9rem;line-height:1.5;margin-bottom:18px;">
+        When you type <code style="font-family:'Space Mono',monospace;font-size:.78rem;background:var(--ink);color:var(--yellow);padding:1px 5px;border-radius:3px;">devdunia.com</code> in your browser, up to 7 layers
+        of caching and delegation fire before you get the IP — all in under 50ms. Here's how:
+      </p>
+
+      <div class="how-steps">
+
+        <div class="how-step">
+          <div class="step-dot" style="background:var(--blue);">1</div>
+          <p>
+            <strong>Browser Cache</strong> — The browser checks its own DNS cache first.
+            If you visited devdunia.com recently and the TTL hasn't expired, you get the IP instantly.
+            Chrome: <code>chrome://net-internals/#dns</code> to inspect.
+          </p>
+        </div>
+        <div class="step-connector"></div>
+
+        <div class="how-step">
+          <div class="step-dot" style="background:var(--green);">2</div>
+          <p>
+            <strong>OS Cache</strong> — Cache miss? The OS checks its own resolver cache
+            (<code>/etc/hosts</code> on Linux/Mac, the hosts file on Windows, plus the system resolver cache).
+            This is why <code>sudo dscacheutil -flushcache</code> helps after a DNS change on Mac.
+          </p>
+        </div>
+        <div class="step-connector"></div>
+
+        <div class="how-step">
+          <div class="step-dot" style="background:var(--orange);">3</div>
+          <p>
+            <strong>Recursive Resolver</strong> — Still no cached answer? The OS sends the query to your
+            configured DNS resolver (e.g. 1.1.1.1, 8.8.8.8, or your ISP's resolver).
+            This server does the heavy lifting — it's called "recursive" because it recurses through the
+            DNS hierarchy on your behalf.
+          </p>
+        </div>
+        <div class="step-connector"></div>
+
+        <div class="how-step">
+          <div class="step-dot" style="background:var(--red);">4</div>
+          <p>
+            <strong>Root Nameservers</strong> — If the recursive resolver doesn't have the answer cached,
+            it queries one of the 13 root nameserver clusters (a.root-servers.net → m.root-servers.net).
+            The root servers don't know the IP — but they know who does: the TLD nameservers.
+          </p>
+        </div>
+        <div class="step-connector"></div>
+
+        <div class="how-step">
+          <div class="step-dot" style="background:var(--purple);">5</div>
+          <p>
+            <strong>TLD Nameservers</strong> — The root server replies: "I don't know, but ask the
+            <code>.com</code> TLD nameservers." The resolver queries Verisign's
+            <code>.com</code> nameservers which respond with the domain's authoritative nameservers
+            (e.g. <code>ns1.yourregistrar.com</code>).
+          </p>
+        </div>
+        <div class="step-connector"></div>
+
+        <div class="how-step">
+          <div class="step-dot" style="background:var(--pink);">6</div>
+          <p>
+            <strong>Authoritative Nameserver</strong> — The resolver now queries <em>your domain's</em>
+            nameservers — the ones configured at your registrar (Cloudflare, Route 53, GoDaddy, etc.).
+            These servers hold the actual DNS zone file and return the definitive answer.
+          </p>
+        </div>
+        <div class="step-connector"></div>
+
+        <div class="how-step">
+          <div class="step-dot" style="background:var(--green);">7</div>
+          <p>
+            <strong>Answer Returned &amp; Cached</strong> — The IP is returned all the way back up the
+            chain. The recursive resolver <strong>caches</strong> the answer for the record's TTL,
+            so future queries skip steps 4–6. Your browser renders the page. Total time: ~10–50ms for a
+            cached answer, ~100–400ms for a cold recursive lookup.
+          </p>
+        </div>
+
+      </div>
+
+      <div class="speech-bubble" style="margin-top:20px;">
+        <strong>&#x1F9EA; Test it yourself!</strong> Run
+        <code style="font-family:'Space Mono',monospace;font-size:.78rem;background:var(--ink);color:var(--yellow);padding:1px 5px;border-radius:3px;">dig +trace devdunia.com</code>
+        in your terminal to watch the full delegation chain live — root servers, TLD servers, and
+        the authoritative answer, all in one command.
+      </div>
+
+      <hr class="divider">
+
+      <div class="section-label">Key concepts at a glance</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:10px;">
+
+        <div style="background:var(--paper2);border:3px solid var(--ink);border-radius:6px;padding:12px 14px;box-shadow:3px 3px 0 var(--ink);">
+          <div style="font-family:'Bangers',cursive;font-size:1rem;letter-spacing:1px;color:var(--blue);margin-bottom:6px;">TTL (Time To Live)</div>
+          <p style="font-size:.83rem;line-height:1.45;">Seconds a record may be cached. Low TTL = faster propagation when you change records, but more DNS queries. Set TTL low before migration, raise it after.</p>
+        </div>
+
+        <div style="background:var(--paper2);border:3px solid var(--ink);border-radius:6px;padding:12px 14px;box-shadow:3px 3px 0 var(--ink);">
+          <div style="font-family:'Bangers',cursive;font-size:1rem;letter-spacing:1px;color:var(--orange);margin-bottom:6px;">DNS Propagation</div>
+          <p style="font-size:.83rem;line-height:1.45;">When you update a DNS record, old resolvers keep serving the cached version until TTL expires. "Propagation" just means waiting for caches worldwide to expire.</p>
+        </div>
+
+        <div style="background:var(--paper2);border:3px solid var(--ink);border-radius:6px;padding:12px 14px;box-shadow:3px 3px 0 var(--ink);">
+          <div style="font-family:'Bangers',cursive;font-size:1rem;letter-spacing:1px;color:var(--green);margin-bottom:6px;">DNSSEC</div>
+          <p style="font-size:.83rem;line-height:1.45;">DNS Security Extensions add cryptographic signatures to records, preventing cache poisoning attacks. Look for the <code style="font-family:'Space Mono',monospace;font-size:.72rem;background:var(--ink);color:var(--yellow);padding:1px 4px;border-radius:3px;">ad</code> (Authenticated Data) flag in dig output.</p>
+        </div>
+
+        <div style="background:var(--paper2);border:3px solid var(--ink);border-radius:6px;padding:12px 14px;box-shadow:3px 3px 0 var(--ink);">
+          <div style="font-family:'Bangers',cursive;font-size:1rem;letter-spacing:1px;color:var(--purple);margin-bottom:6px;">DoH / DoT</div>
+          <p style="font-size:.83rem;line-height:1.45;">DNS-over-HTTPS and DNS-over-TLS encrypt DNS queries so your ISP can't see what domains you're visiting. This tool uses Cloudflare DoH for all live lookups!</p>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+</div><!-- /page-wrap -->
+
+<script>
+// ── DNS LOOKUP (Cloudflare DoH) ──────────────────────────────────────────
+(function() {
+  var domainInput = document.getElementById('dns-domain');
+  var typeSelect  = document.getElementById('dns-type');
+  var lookupBtn   = document.getElementById('dns-lookup-btn');
+  var clearBtn    = document.getElementById('dns-clear-btn');
+  var errorBubble = document.getElementById('dns-error');
+  var errorMsg    = document.getElementById('dns-error-msg');
+  var resultArea  = document.getElementById('dns-result-area');
+  var resultBox   = document.getElementById('dns-result-box');
+  var metaRow     = document.getElementById('dns-meta');
+
+  var TYPE_COLORS = {
+    A:     'dns-rec-a',
+    AAAA:  'dns-rec-aaaa',
+    MX:    'dns-rec-mx',
+    NS:    'dns-rec-ns',
+    CNAME: 'dns-rec-cname',
+    TXT:   'dns-rec-txt',
+    SOA:   'dns-rec-soa',
+    PTR:   'dns-rec-ptr',
+  };
+
+  // RFC 1035 type numbers → names
+  var TYPE_NAMES = {
+    1:'A', 2:'NS', 5:'CNAME', 6:'SOA', 12:'PTR',
+    15:'MX', 16:'TXT', 28:'AAAA', 33:'SRV', 35:'NAPTR',
+    255:'ANY', 257:'CAA'
+  };
+
+  // DNS response status codes
+  var RCODES = {0:'NOERROR', 1:'FORMERR', 2:'SERVFAIL', 3:'NXDOMAIN',
+                4:'NOTIMP', 5:'REFUSED', 6:'YXDOMAIN', 8:'NXRRSet',
+                9:'NOTAUTH', 10:'NOTZONE'};
+
+  function esc(s) {
+    return String(s)
+      .replace(/&/g,'&amp;')
+      .replace(/</g,'&lt;')
+      .replace(/>/g,'&gt;');
+  }
+
+  function showError(msg) {
+    errorMsg.textContent = msg;
+    errorBubble.classList.add('show');
+    resultArea.style.display = 'none';
+  }
+  function hideError() { errorBubble.classList.remove('show'); }
+
+  function parseDNSData(answer) {
+    if (!answer) return '(no data)';
+    var d = answer.data;
+    if (!d) return '(no data)';
+    return d;
+  }
+
+  function getTypeName(num) {
+    return TYPE_NAMES[num] || ('TYPE' + num);
+  }
+
+  function renderRecord(rec) {
+    var typeName = typeof rec.type === 'string' ? rec.type : getTypeName(rec.type);
+    var cls = TYPE_COLORS[typeName] || 'dns-rec-other';
+    var data = esc(parseDNSData(rec));
+    var ttl  = rec.TTL != null ? rec.TTL : '?';
+    var name = esc(rec.name || '');
+
+    var ttlSpan = '<span class="dns-ttl">' + ttl + '</span>';
+
+    // Extra formatting for MX (priority + exchange)
+    if (typeName === 'MX' && rec.data) {
+      var parts = rec.data.split(' ');
+      if (parts.length >= 2) {
+        data = '<span class="dns-ttl">' + esc(parts[0]) + '</span> <span class="' + cls + '">' + esc(parts.slice(1).join(' ')) + '</span>';
+      } else {
+        data = '<span class="' + cls + '">' + data + '</span>';
+      }
+    } else {
+      data = '<span class="' + cls + '">' + data + '</span>';
+    }
+
+    return name + '  ' + ttlSpan + '  IN  ' + typeName + '  ' + data;
+  }
+
+  function setLoading() {
+    resultArea.style.display = '';
+    metaRow.innerHTML = '';
+    resultBox.innerHTML = '<span class="dns-loading">&#x23F3; Querying Cloudflare DoH...</span>';
+  }
+
+  function buildMetaChip(label, value, bg) {
+    var chip = document.createElement('div');
+    chip.className = 'result-chip';
+    chip.style.background = bg || 'var(--paper2)';
+    chip.innerHTML = '<strong>' + esc(label) + '</strong>&nbsp;' + esc(value);
+    return chip;
+  }
+
+  async function doLookup() {
+    var domain = domainInput.value.trim().replace(/^https?:\/\//i, '').replace(/\/.*$/, '');
+    var type   = typeSelect.value;
+
+    if (!domain) { showError('Please enter a domain name!'); return; }
+    // Basic domain format check
+    if (!/^[a-z0-9._-]{1,253}$/i.test(domain)) {
+      showError('That doesn\'t look like a valid domain name.');
+      return;
+    }
+
+    hideError();
+    setLoading();
+
+    var t0 = performance.now();
+    try {
+      var url = 'https://cloudflare-dns.com/dns-query?name=' +
+                encodeURIComponent(domain) + '&type=' + encodeURIComponent(type);
+      var resp = await fetch(url, { headers: { Accept: 'application/dns-json' } });
+      if (!resp.ok) throw new Error('HTTP ' + resp.status);
+      var data = await resp.json();
+      var elapsed = Math.round(performance.now() - t0);
+
+      renderResult(data, domain, type, elapsed);
+    } catch(e) {
+      resultBox.innerHTML = '<span class="dns-status-err">&#x26A0; Error: ' + esc(e.message) + '</span>\n\n' +
+        '<span class="dns-comment">; Could not reach Cloudflare DoH. Check your network or try again.</span>';
+    }
+  }
+
+  function renderResult(data, domain, type, elapsed) {
+    var rcode   = data.Status;
+    var rname   = RCODES[rcode] || ('RCODE' + rcode);
+    var answers = data.Answer || [];
+    var auth    = data.Authority || [];
+    var add     = data.Additional || [];
+    var flags   = [];
+    if (data.QR) flags.push('qr');
+    if (data.RD) flags.push('rd');
+    if (data.RA) flags.push('ra');
+    if (data.TC) flags.push('tc');
+    if (data.AD) flags.push('ad');
+    if (data.CD) flags.push('cd');
+
+    // Meta chips
+    metaRow.innerHTML = '';
+    var statusColor = (rcode === 0) ? '#c3f4c8' : '#ffd0d0';
+    metaRow.appendChild(buildMetaChip('STATUS', rname, statusColor));
+    metaRow.appendChild(buildMetaChip('ANSWERS', answers.length, 'var(--paper2)'));
+    metaRow.appendChild(buildMetaChip('QUERY TIME', elapsed + 'ms', 'var(--paper2)'));
+    if (flags.length) metaRow.appendChild(buildMetaChip('FLAGS', flags.join(' '), 'var(--paper2)'));
+
+    var lines = [];
+
+    lines.push('<span class="dns-comment">; &lt;&lt;&gt;&gt; dig (DevDunia DoH) &lt;&lt;&gt;&gt; ' + esc(domain) + ' ' + esc(type) + '</span>');
+    lines.push('<span class="dns-comment">; Resolved via cloudflare-dns.com (DNS-over-HTTPS)</span>');
+    lines.push('');
+    lines.push('<span class="dns-comment">;; -&gt;&gt;HEADER&lt;&lt;- opcode: QUERY, status: <span class="' +
+      (rcode === 0 ? 'dns-status-ok' : 'dns-status-err') + '">' + esc(rname) + '</span></span>');
+
+    if (flags.length) {
+      lines.push('<span class="dns-comment">;; flags: <span class="do-flag">' + esc(flags.join(' ')) +
+        '</span>; QUERY: 1, ANSWER: ' + answers.length + ', AUTHORITY: ' + auth.length + '</span>');
+    }
+
+    lines.push('');
+    lines.push('<span class="dns-section-hdr">;; QUESTION SECTION:</span>');
+    lines.push('<span class="dns-comment">; ' + esc(domain) + '.  IN  ' + esc(type) + '</span>');
+
+    if (answers.length > 0) {
+      lines.push('');
+      lines.push('<span class="dns-section-hdr">;; ANSWER SECTION:</span>');
+      answers.forEach(function(rec) {
+        lines.push(renderRecord(rec));
+      });
+    } else if (rcode === 0) {
+      lines.push('');
+      lines.push('<span class="dns-comment">;; (No records found for this type — empty answer)</span>');
+    } else {
+      lines.push('');
+      lines.push('<span class="dns-status-err">;; ' + esc(rname) + ' — ' +
+        (rcode === 3 ? 'Domain does not exist.' :
+         rcode === 2 ? 'Server failure — try again.' :
+         rcode === 5 ? 'Query refused by server.' : 'DNS error.') + '</span>');
+    }
+
+    if (auth.length > 0) {
+      lines.push('');
+      lines.push('<span class="dns-section-hdr">;; AUTHORITY SECTION:</span>');
+      auth.forEach(function(rec) {
+        lines.push(renderRecord(rec));
+      });
+    }
+
+    lines.push('');
+    lines.push('<span class="dns-stat">;; Query time: ' + esc(String(elapsed)) + ' msec</span>');
+    lines.push('<span class="dns-stat">;; SERVER: cloudflare-dns.com (DoH)</span>');
+    lines.push('<span class="dns-stat">;; MSG SIZE rcvd: ' + (data.Answer ? JSON.stringify(data).length : '-') + ' bytes (JSON)</span>');
+
+    resultBox.innerHTML = lines.join('\n');
+  }
+
+  lookupBtn.addEventListener('click', doLookup);
+
+  clearBtn.addEventListener('click', function() {
+    domainInput.value = '';
+    resultArea.style.display = 'none';
+    hideError();
+    domainInput.focus();
+  });
+
+  domainInput.addEventListener('keydown', function(e) {
+    if (e.key === 'Enter') doLookup();
+  });
+})();
+
+
+// ── COMMAND CARD COPY BUTTONS ────────────────────────────────────────────
+document.addEventListener('click', function(e) {
+  if (!e.target.classList.contains('cmd-copy-btn')) return;
+  var cmd = e.target.getAttribute('data-cmd') || '';
+  var btn = e.target;
+
+  function copyDone() {
+    var orig = btn.textContent;
+    btn.textContent = '✓ COPIED';
+    btn.style.background = 'var(--green)';
+    btn.style.color = '#fff';
+    setTimeout(function() {
+      btn.textContent = orig;
+      btn.style.background = '';
+      btn.style.color = '';
+    }, 1800);
+  }
+
+  if (navigator.clipboard && navigator.clipboard.writeText) {
+    navigator.clipboard.writeText(cmd).then(copyDone).catch(function() {
+      fallbackCopy(cmd, copyDone);
+    });
+  } else {
+    fallbackCopy(cmd, copyDone);
+  }
+});
+
+function fallbackCopy(text, cb) {
+  var ta = document.createElement('textarea');
+  ta.value = text;
+  ta.style.cssText = 'position:fixed;top:-999px;left:-999px;opacity:0;';
+  document.body.appendChild(ta);
+  ta.focus();
+  ta.select();
+  try { document.execCommand('copy'); } catch(e) {}
+  document.body.removeChild(ta);
+  if (cb) cb();
+}
+</script>
+
+<script src="masthead.js"></script>
+<script src="hero-banner.js"></script>
+<script src="author-card.js"></script>
+</body>
+</html>

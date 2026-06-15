@@ -1,0 +1,1241 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>nslookup — DNS Query Tool — DevDunia Comics</title>
+<meta name="description" content="Live nslookup queries in your browser via Cloudflare DoH. Annotated output, platform commands for Windows/macOS/Linux, nslookup vs dig comparison, and how DNS resolution works.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://devdunia.com/nslookup.html">
+<meta property="og:title" content="nslookup — DNS Query Tool — DevDunia Comics">
+<meta property="og:description" content="Live nslookup queries in your browser via Cloudflare DoH. Annotated output, platform commands for Windows/macOS/Linux, nslookup vs dig comparison, and how DNS resolution works.">
+<meta property="og:image" content="https://devdunia.com/images/logo.png">
+<link rel="icon" type="image/png" href="images/logo.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Bangers&family=Comic+Neue:wght@400;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --ink: #1a1410;
+  --paper: #fdf3e3;
+  --paper2: #fbe9cc;
+  --red: #e63946;
+  --blue: #1d6fb8;
+  --yellow: #ffd23f;
+  --green: #3fa34d;
+  --purple: #8a4fff;
+  --orange: #ff8c42;
+  --teal: #0d9488;
+  --pink: #ff6b9d;
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: 'Comic Neue', cursive;
+  font-weight: 400;
+  color: var(--ink);
+  background-color: var(--paper);
+  background-image: radial-gradient(var(--ink) 0.5px, transparent 0.6px);
+  background-size: 14px 14px;
+  background-attachment: fixed;
+  min-height: 100vh;
+}
+
+.paper-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(253,243,227,.78);
+  pointer-events: none;
+  z-index: 0;
+}
+
+.page-wrap {
+  position: relative;
+  z-index: 1;
+  max-width: 1240px;
+  margin: 0 auto;
+  padding: 20px 32px 60px;
+}
+
+/* PANEL */
+.panel {
+  background: var(--paper);
+  border: 4px solid var(--ink);
+  border-radius: 6px;
+  box-shadow: 7px 7px 0 var(--ink);
+  overflow: hidden;
+  margin-bottom: 22px;
+}
+
+.panel-header {
+  background: var(--ink);
+  color: var(--yellow);
+  font-family: 'Bangers', cursive;
+  font-size: 1.2rem;
+  letter-spacing: 2px;
+  padding: 8px 16px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.panel-header .panel-tag {
+  font-family: 'Space Mono', monospace;
+  font-size: .65rem;
+  font-weight: 700;
+  background: var(--yellow);
+  color: var(--ink);
+  padding: 2px 7px;
+  border-radius: 3px;
+  white-space: nowrap;
+}
+
+.panel-body { padding: 18px 20px; }
+
+.section-label {
+  font-family: 'Bangers', cursive;
+  font-size: .95rem;
+  letter-spacing: 1px;
+  color: var(--ink);
+  margin-bottom: 6px;
+  text-transform: uppercase;
+}
+
+.divider {
+  border: none;
+  border-top: 3px solid var(--ink);
+  margin: 16px 0;
+}
+
+/* BUTTONS */
+.btn {
+  font-family: 'Bangers', cursive;
+  font-size: 1.1rem;
+  letter-spacing: 1px;
+  border: 3px solid var(--ink);
+  border-radius: 6px;
+  padding: 8px 20px;
+  cursor: pointer;
+  box-shadow: 4px 4px 0 var(--ink);
+  transition: transform .1s, box-shadow .1s;
+  text-transform: uppercase;
+}
+.btn:active { transform: translate(2px,2px); box-shadow: 2px 2px 0 var(--ink); }
+.btn-green   { background: var(--green);  color: #fff; }
+.btn-neutral { background: var(--paper2); color: var(--ink); }
+
+/* INPUT ROW */
+.input-row {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 14px;
+  flex-wrap: wrap;
+}
+
+.comic-input {
+  flex: 1;
+  min-width: 200px;
+  background: #fff;
+  border: 3px solid var(--ink);
+  border-radius: 6px;
+  padding: 10px 14px;
+  font-family: 'Space Mono', monospace;
+  font-size: .85rem;
+  color: var(--ink);
+  box-shadow: 3px 3px 0 var(--ink);
+  outline: none;
+}
+.comic-input:focus { border-color: var(--green); }
+.comic-input::placeholder { color: #aaa; font-style: italic; }
+
+.comic-select {
+  background: #fff;
+  border: 3px solid var(--ink);
+  border-radius: 6px;
+  padding: 10px 14px;
+  font-family: 'Space Mono', monospace;
+  font-size: .85rem;
+  color: var(--ink);
+  box-shadow: 3px 3px 0 var(--ink);
+  outline: none;
+  cursor: pointer;
+}
+.comic-select:focus { border-color: var(--green); }
+
+/* NSLOOKUP OUTPUT BOX */
+.ns-output {
+  background: var(--ink);
+  border-radius: 6px;
+  padding: 16px 18px;
+  font-family: 'Space Mono', monospace;
+  font-size: .78rem;
+  line-height: 1.85;
+  color: #ccc;
+  min-height: 80px;
+  overflow-x: auto;
+  white-space: pre-wrap;
+  word-break: break-all;
+  margin-top: 14px;
+}
+
+.ns-server   { color: var(--green); }
+.ns-noauth   { color: rgba(200,200,200,.5); font-style: italic; }
+.ns-answer   { color: var(--yellow); font-weight: 700; }
+.ns-name     { color: #fff; }
+.ns-addr     { color: var(--green); }
+.ns-mx       { color: var(--pink); }
+.ns-ns       { color: var(--purple); }
+.ns-txt      { color: #5bc4f5; }
+.ns-loading  { color: var(--orange); }
+.ns-err      { color: var(--red); font-weight: 700; }
+
+/* ERROR BUBBLE */
+.error-bubble {
+  display: none;
+  position: relative;
+  background: #fff0f0;
+  border: 3px solid var(--red);
+  border-radius: 14px;
+  padding: 10px 14px;
+  margin-top: 12px;
+  font-size: .9rem;
+  font-weight: 700;
+  color: var(--red);
+}
+.error-bubble::before {
+  content: '';
+  position: absolute;
+  top: -16px; left: 22px;
+  border-width: 0 10px 16px;
+  border-style: solid;
+  border-color: transparent transparent var(--red);
+}
+.error-bubble::after {
+  content: '';
+  position: absolute;
+  top: -11px; left: 24px;
+  border-width: 0 8px 12px;
+  border-style: solid;
+  border-color: transparent transparent #fff0f0;
+}
+.error-bubble.show { display: block; }
+
+/* SPEECH BUBBLE */
+.speech-bubble {
+  position: relative;
+  background: var(--yellow);
+  border: 3px solid var(--ink);
+  border-radius: 12px;
+  padding: 12px 16px;
+  margin: 14px 0;
+  font-size: .9rem;
+  line-height: 1.5;
+}
+.speech-bubble::before {
+  content: '';
+  position: absolute;
+  bottom: -18px; left: 24px;
+  border-width: 18px 10px 0;
+  border-style: solid;
+  border-color: var(--ink) transparent transparent;
+}
+.speech-bubble::after {
+  content: '';
+  position: absolute;
+  bottom: -12px; left: 26px;
+  border-width: 14px 8px 0;
+  border-style: solid;
+  border-color: var(--yellow) transparent transparent;
+}
+
+/* ANNOTATED DIG/NS OUTPUT */
+.dig-output {
+  background: #1a1410;
+  border-radius: 6px;
+  padding: 18px 20px;
+  font-family: 'Space Mono', monospace;
+  font-size: .78rem;
+  line-height: 1.9;
+  overflow-x: auto;
+  white-space: pre;
+}
+.do-server  { color: var(--green); }
+.do-noauth  { color: rgba(200,200,200,.45); font-style: italic; }
+.do-answer  { color: var(--yellow); font-weight: 700; }
+.do-name    { color: #fff; }
+.do-addr    { color: var(--green); }
+.do-mx      { color: var(--pink); }
+.do-ns      { color: var(--purple); }
+.do-txt     { color: #5bc4f5; }
+.do-prio    { color: var(--orange); }
+
+/* ANNOTATION */
+.annotation {
+  background: var(--paper2);
+  border-left: 4px solid var(--green);
+  border-radius: 0 6px 6px 0;
+  padding: 8px 14px;
+  margin: 6px 0 14px 0;
+  font-size: .82rem;
+  line-height: 1.5;
+}
+.annotation strong { font-family: 'Bangers', cursive; letter-spacing: .5px; font-size: .9rem; }
+.annotation code {
+  font-family: 'Space Mono', monospace;
+  font-size: .72rem;
+  background: var(--ink);
+  color: var(--yellow);
+  padding: 1px 4px;
+  border-radius: 3px;
+}
+
+/* COLLAPSIBLE DETAILS */
+details {
+  border: 3px solid var(--ink);
+  border-radius: 6px;
+  overflow: hidden;
+  margin-bottom: 14px;
+  box-shadow: 4px 4px 0 var(--ink);
+}
+details summary {
+  background: var(--paper2);
+  padding: 10px 14px;
+  font-family: 'Bangers', cursive;
+  font-size: 1rem;
+  letter-spacing: 1px;
+  cursor: pointer;
+  list-style: none;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  user-select: none;
+}
+details summary::-webkit-details-marker { display: none; }
+details summary::before {
+  content: '▶';
+  font-size: .7rem;
+  transition: transform .2s;
+  color: var(--green);
+}
+details[open] summary::before { transform: rotate(90deg); }
+details .details-body { padding: 14px 16px; }
+
+/* COMIC TABLE */
+.comic-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-bottom: 12px;
+}
+.comic-table th {
+  background: var(--ink);
+  color: var(--yellow);
+  font-family: 'Bangers', cursive;
+  font-size: 1rem;
+  letter-spacing: 1px;
+  padding: 8px 12px;
+  text-align: left;
+  border: 2px solid var(--ink);
+}
+.comic-table td {
+  padding: 7px 12px;
+  border: 2px solid var(--ink);
+  font-size: .83rem;
+  vertical-align: top;
+}
+.comic-table tr:nth-child(even) td { background: var(--paper2); }
+.comic-table tr:nth-child(odd)  td { background: var(--paper); }
+.comic-table code {
+  font-family: 'Space Mono', monospace;
+  font-size: .72rem;
+  background: var(--ink);
+  color: var(--yellow);
+  padding: 1px 5px;
+  border-radius: 3px;
+  white-space: nowrap;
+}
+
+/* PLATFORM CARD GRID */
+.platform-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 14px;
+  margin-bottom: 16px;
+}
+
+.platform-card {
+  background: var(--paper2);
+  border: 3px solid var(--ink);
+  border-radius: 6px;
+  box-shadow: 4px 4px 0 var(--ink);
+  overflow: hidden;
+}
+
+.platform-card-header {
+  font-family: 'Bangers', cursive;
+  font-size: 1.1rem;
+  letter-spacing: 1px;
+  padding: 8px 14px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: #fff;
+}
+
+.platform-card-body { padding: 12px 14px; }
+
+.platform-cmd {
+  font-family: 'Space Mono', monospace;
+  font-size: .72rem;
+  background: var(--ink);
+  color: var(--yellow);
+  border-radius: 5px;
+  padding: 7px 44px 7px 10px;
+  margin-bottom: 7px;
+  position: relative;
+  display: block;
+  word-break: break-all;
+}
+
+.cmd-copy-btn {
+  position: absolute;
+  top: 4px;
+  right: 5px;
+  font-family: 'Bangers', cursive;
+  font-size: .7rem;
+  letter-spacing: 1px;
+  background: var(--yellow);
+  color: var(--ink);
+  border: 2px solid var(--ink);
+  border-radius: 4px;
+  padding: 2px 6px;
+  cursor: pointer;
+  box-shadow: 1px 1px 0 rgba(0,0,0,.3);
+  transition: transform .1s;
+  white-space: nowrap;
+}
+.cmd-copy-btn:active { transform: translate(1px,1px); }
+
+.platform-cmd-desc {
+  font-size: .78rem;
+  line-height: 1.4;
+  color: var(--ink);
+  margin-bottom: 4px;
+}
+
+/* HOW STEPS */
+.how-steps { display: flex; flex-direction: column; gap: 10px; }
+.how-step  { display: flex; align-items: flex-start; gap: 12px; }
+.step-dot {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  border: 3px solid var(--ink);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: 'Bangers', cursive;
+  font-size: 1rem;
+  color: #fff;
+  flex-shrink: 0;
+  box-shadow: 2px 2px 0 var(--ink);
+}
+.how-step p { font-size: .88rem; line-height: 1.5; padding-top: 2px; }
+.how-step code {
+  font-family: 'Space Mono', monospace;
+  font-size: .75rem;
+  background: var(--ink);
+  color: var(--yellow);
+  padding: 1px 5px;
+  border-radius: 3px;
+}
+.step-connector {
+  width: 3px;
+  height: 14px;
+  background: var(--ink);
+  margin-left: 12px;
+  border-radius: 2px;
+  opacity: .35;
+}
+
+/* COMPARISON TABLE BADGES */
+.badge-win  { background: #0078d4; color: #fff; }
+.badge-mac  { background: #555; color: #fff; }
+.badge-lnx  { background: var(--orange); color: var(--ink); }
+.badge-yes  { background: var(--green); color: #fff; }
+.badge-no   { background: var(--red); color: #fff; }
+.badge-ltd  { background: var(--yellow); color: var(--ink); }
+
+.comp-badge {
+  display: inline-block;
+  font-family: 'Bangers', cursive;
+  font-size: .78rem;
+  letter-spacing: .5px;
+  padding: 2px 8px;
+  border: 2px solid var(--ink);
+  border-radius: 4px;
+  box-shadow: 1px 1px 0 var(--ink);
+  white-space: nowrap;
+}
+
+/* RESULT META */
+.result-meta { display: flex; gap: 14px; flex-wrap: wrap; margin-bottom: 10px; }
+.result-chip {
+  font-family: 'Space Mono', monospace;
+  font-size: .68rem;
+  padding: 3px 9px;
+  border: 2px solid var(--ink);
+  border-radius: 4px;
+  box-shadow: 2px 2px 0 var(--ink);
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+/* MOBILE */
+@media (max-width: 760px) {
+  .page-wrap { padding: 16px 14px 48px; }
+  .platform-grid { grid-template-columns: 1fr; }
+  .input-row { flex-direction: column; }
+  .comic-select { width: 100%; }
+  .comic-table { font-size: .75rem; }
+  .comic-table th, .comic-table td { padding: 5px 8px; }
+  .dig-output { font-size: .7rem; }
+}
+</style>
+</head>
+<body>
+<div class="paper-overlay"></div>
+<div data-masthead></div>
+
+<div class="page-wrap">
+
+  <div data-tool-hero
+       data-title="nslookup"
+       data-chapter="09"
+       data-category="DNS Tools"
+       data-icon="&#x1F50E;"
+       data-desc="nslookup is the classic DNS query tool — available on Windows, macOS and Linux. Query A, MX, NS and more records instantly."
+       data-color="green"
+       data-badges="WINDOWS,MAC,LINUX,BUILT-IN"
+       data-badge-colors="blue,white,yellow,ink">
+  </div>
+
+  <!-- ═══════════════════════════════════════════════════════ -->
+  <!-- PANEL 1: LIVE NSLOOKUP QUERY                           -->
+  <!-- ═══════════════════════════════════════════════════════ -->
+  <div class="panel">
+    <div class="panel-header">
+      &#x1F50E; LIVE NSLOOKUP QUERY
+      <span class="panel-tag">INTERACTIVE</span>
+    </div>
+    <div class="panel-body">
+      <div class="section-label">Domain, Resolver &amp; Record Type</div>
+      <div class="input-row">
+        <input type="text" id="ns-domain" class="comic-input"
+               placeholder="e.g. devdunia.com" value="devdunia.com"
+               autocomplete="off" autocapitalize="none" spellcheck="false">
+        <input type="text" id="ns-server" class="comic-input"
+               placeholder="DNS server (default 8.8.8.8)" value="8.8.8.8"
+               autocomplete="off" spellcheck="false" style="max-width:240px;">
+        <select id="ns-type" class="comic-select">
+          <option value="A">A</option>
+          <option value="AAAA">AAAA</option>
+          <option value="MX">MX</option>
+          <option value="NS">NS</option>
+          <option value="CNAME">CNAME</option>
+          <option value="TXT">TXT</option>
+          <option value="SOA">SOA</option>
+          <option value="PTR">PTR</option>
+        </select>
+        <button id="ns-lookup-btn" class="btn btn-green">&#x26A1; QUERY</button>
+        <button id="ns-clear-btn" class="btn btn-neutral">&#x1F5D1; CLEAR</button>
+      </div>
+
+      <div id="ns-error" class="error-bubble">
+        &#x1F4A5; <span id="ns-error-msg">Enter a domain name first!</span>
+      </div>
+
+      <div id="ns-result-area" style="display:none;">
+        <div class="result-meta" id="ns-meta"></div>
+        <div class="ns-output" id="ns-output-box"></div>
+      </div>
+
+      <div class="speech-bubble" style="margin-top:16px;">
+        <strong>&#x2139;&#xFE0F; Powered by Cloudflare DoH</strong> — Queries use
+        <code style="font-family:'Space Mono',monospace;background:var(--ink);color:var(--yellow);padding:1px 5px;border-radius:3px;font-size:.78rem;">cloudflare-dns.com/dns-query</code>
+        and format results exactly like real nslookup terminal output. The DNS server field is shown in output (as nslookup would display it) — actual resolution uses DoH.
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════════════ -->
+  <!-- PANEL 2: ANNOTATED NSLOOKUP OUTPUT                     -->
+  <!-- ═══════════════════════════════════════════════════════ -->
+  <div class="panel">
+    <div class="panel-header">
+      &#x1F4D6; ANNOTATED NSLOOKUP OUTPUT
+      <span class="panel-tag">REFERENCE</span>
+    </div>
+    <div class="panel-body">
+      <p style="font-size:.9rem;line-height:1.5;margin-bottom:16px;">
+        nslookup output follows the same structure every time — once you learn to read it, DNS becomes obvious. Click each example to expand.
+      </p>
+
+      <!-- Example 1: A record -->
+      <details open>
+        <summary>&#x1F7E2; Example 1 — <code style="font-family:'Space Mono',monospace;font-size:.8rem;">nslookup devdunia.com</code> (A record)</summary>
+        <div class="details-body">
+          <div class="dig-output"><span class="do-server">Server:         8.8.8.8</span>
+<span class="do-server">Address:        8.8.8.8#53</span>
+
+<span class="do-noauth">Non-authoritative answer:</span>
+<span class="do-name">Name:    devdunia.com</span>
+<span class="do-addr">Address: 185.199.108.153</span>
+<span class="do-name">Name:    devdunia.com</span>
+<span class="do-addr">Address: 185.199.109.153</span>
+<span class="do-name">Name:    devdunia.com</span>
+<span class="do-addr">Address: 185.199.110.153</span>
+<span class="do-name">Name:    devdunia.com</span>
+<span class="do-addr">Address: 185.199.111.153</span></div>
+
+          <div class="annotation">
+            <strong style="color:var(--green);">&#x2460; SERVER LINES</strong><br>
+            <code>Server: 8.8.8.8</code> — the resolver you're querying (Google Public DNS).<br>
+            <code>Address: 8.8.8.8#53</code> — the <code>#53</code> suffix means port 53 (the standard DNS port, UDP by default).
+          </div>
+          <div class="annotation">
+            <strong style="color:var(--orange);">&#x2461; NON-AUTHORITATIVE ANSWER</strong><br>
+            This label appears when the resolver (8.8.8.8) is <em>not</em> the authoritative nameserver for devdunia.com — it fetched the answer on your behalf and may have returned a cached copy. This is <strong>completely normal</strong> for almost all lookups.
+          </div>
+          <div class="annotation">
+            <strong style="color:var(--green);">&#x2462; FOUR IP ADDRESSES</strong><br>
+            devdunia.com is hosted on GitHub Pages, which returns 4 IPs for load balancing. nslookup shows one <code>Name/Address</code> pair per record. Your browser will typically use the first IP that responds.
+          </div>
+        </div>
+      </details>
+
+      <!-- Example 2: MX record -->
+      <details>
+        <summary>&#x1F4E7; Example 2 — <code style="font-family:'Space Mono',monospace;font-size:.8rem;">nslookup -type=MX gmail.com</code> (mail servers)</summary>
+        <div class="details-body">
+          <div class="dig-output"><span class="do-server">Server:         8.8.8.8</span>
+<span class="do-server">Address:        8.8.8.8#53</span>
+
+<span class="do-noauth">Non-authoritative answer:</span>
+<span class="do-name">gmail.com       mail exchanger = <span class="do-prio">5</span>  <span class="do-mx">gmail-smtp-in.l.google.com</span></span>
+<span class="do-name">gmail.com       mail exchanger = <span class="do-prio">10</span> <span class="do-mx">alt1.gmail-smtp-in.l.google.com</span></span>
+<span class="do-name">gmail.com       mail exchanger = <span class="do-prio">20</span> <span class="do-mx">alt2.gmail-smtp-in.l.google.com</span></span>
+<span class="do-name">gmail.com       mail exchanger = <span class="do-prio">30</span> <span class="do-mx">alt3.gmail-smtp-in.l.google.com</span></span>
+<span class="do-name">gmail.com       mail exchanger = <span class="do-prio">40</span> <span class="do-mx">alt4.gmail-smtp-in.l.google.com</span></span></div>
+
+          <div class="annotation">
+            <strong style="color:var(--pink);">MX PRIORITY NUMBERS</strong><br>
+            The number after <code>mail exchanger =</code> is the <strong>priority</strong> — lower = higher preference. Sending mail servers try priority <code>5</code> first (gmail-smtp-in.l.google.com), then fall back to <code>10</code>, <code>20</code>, etc. if the primary is unreachable. This is how email stays reliable.
+          </div>
+          <div class="annotation">
+            <strong style="color:var(--pink);">-TYPE= FLAG</strong><br>
+            Unlike <code>dig</code>, nslookup uses <code>-type=MX</code> or <code>-query=MX</code> syntax (both work). On some systems you can also type <code>set type=MX</code> in interactive mode. Windows nslookup uses <code>-type</code>, Linux/macOS prefer <code>-query</code>.
+          </div>
+        </div>
+      </details>
+
+      <!-- Example 3: NS record -->
+      <details>
+        <summary>&#x1F4CC; Example 3 — <code style="font-family:'Space Mono',monospace;font-size:.8rem;">nslookup -type=NS devdunia.com</code> (nameservers)</summary>
+        <div class="details-body">
+          <div class="dig-output"><span class="do-server">Server:         8.8.8.8</span>
+<span class="do-server">Address:        8.8.8.8#53</span>
+
+<span class="do-noauth">Non-authoritative answer:</span>
+<span class="do-name">devdunia.com    nameserver = <span class="do-ns">ns1.digitalocean.com</span></span>
+<span class="do-name">devdunia.com    nameserver = <span class="do-ns">ns2.digitalocean.com</span></span>
+<span class="do-name">devdunia.com    nameserver = <span class="do-ns">ns3.digitalocean.com</span></span>
+
+<span class="do-noauth">Authoritative answers can be found from:</span>
+<span class="do-ns">ns1.digitalocean.com    internet address = 173.245.58.51</span>
+<span class="do-ns">ns2.digitalocean.com    internet address = 173.245.59.41</span>
+<span class="do-ns">ns3.digitalocean.com    internet address = 198.41.222.173</span></div>
+
+          <div class="annotation">
+            <strong style="color:var(--purple);">NS RECORDS = WHO'S IN CHARGE</strong><br>
+            Nameserver records tell the internet <em>which servers hold the authoritative DNS records</em> for this domain. When you move DNS from one provider to another (e.g. GoDaddy → Cloudflare), you update these NS records at your registrar.
+          </div>
+          <div class="annotation">
+            <strong style="color:var(--purple);">AUTHORITATIVE ANSWERS SECTION</strong><br>
+            nslookup also shows the IP addresses of the nameservers themselves — a handy bonus that <code>dig</code> puts in the ADDITIONAL section. You can verify the nameserver IPs are resolving correctly.
+          </div>
+        </div>
+      </details>
+
+      <!-- Example 4: TXT record -->
+      <details>
+        <summary>&#x1F4DD; Example 4 — <code style="font-family:'Space Mono',monospace;font-size:.8rem;">nslookup -type=TXT github.com</code> (TXT records)</summary>
+        <div class="details-body">
+          <div class="dig-output"><span class="do-server">Server:         8.8.8.8</span>
+<span class="do-server">Address:        8.8.8.8#53</span>
+
+<span class="do-noauth">Non-authoritative answer:</span>
+<span class="do-name">github.com      text = <span class="do-txt">"v=spf1 ip4:192.30.252.0/22 include:_netblocks.google.com include:_netblocks2.google.com ~all"</span></span>
+<span class="do-name">github.com      text = <span class="do-txt">"MS=ms44452932"</span></span>
+<span class="do-name">github.com      text = <span class="do-txt">"atlassian-domain-verification=jjgw98AKv2aeoYFxiL/VFaoyPkn3undEssTRuMg6C/3fp/iqhkV4HVV7WjYlVeF8"</span></span>
+<span class="do-name">github.com      text = <span class="do-txt">"apple-domain-verification=RyQhdzTl6Z6x8ZP4"</span></span>
+<span class="do-name">github.com      text = <span class="do-txt">"stripe-verification=f88ef17321660a01bab1660454192e014defa3d53779c5e1f7943cb4673e015b"</span></span></div>
+
+          <div class="annotation">
+            <strong style="color:#5bc4f5;">SPF RECORD (v=spf1 ...)</strong><br>
+            The first TXT record is the <strong>Sender Policy Framework</strong> — it tells email servers which IPs are authorized to send email on behalf of github.com. <code>~all</code> means "soft fail" (suspicious but accept), while <code>-all</code> means "hard fail" (reject unauthorized senders).
+          </div>
+          <div class="annotation">
+            <strong style="color:#5bc4f5;">VERIFICATION TOKENS</strong><br>
+            The other TXT records are domain ownership verifications for Microsoft 365 (<code>MS=</code>), Atlassian, Apple, and Stripe. These services make you add a TXT record to prove you control the domain before they activate their services for it.
+          </div>
+        </div>
+      </details>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════════════ -->
+  <!-- PANEL 3: PLATFORM COMMANDS                             -->
+  <!-- ═══════════════════════════════════════════════════════ -->
+  <div class="panel">
+    <div class="panel-header">
+      &#x1F5A5;&#xFE0F; PLATFORM COMMANDS
+      <span class="panel-tag">CHEAT SHEET</span>
+    </div>
+    <div class="panel-body">
+      <p style="font-size:.9rem;line-height:1.5;margin-bottom:16px;">
+        nslookup is pre-installed on <strong>all major platforms</strong> — no installation needed. The syntax is almost identical everywhere, with minor flag differences noted below.
+      </p>
+
+      <div class="platform-grid">
+
+        <!-- Windows -->
+        <div class="platform-card">
+          <div class="platform-card-header" style="background:#0078d4;">
+            &#x1F5BC;&#xFE0F; Windows (CMD / PowerShell)
+          </div>
+          <div class="platform-card-body">
+            <div class="platform-cmd-desc">Basic lookup (A record):</div>
+            <div class="platform-cmd">
+              nslookup devdunia.com
+              <button class="cmd-copy-btn" data-cmd="nslookup devdunia.com">COPY</button>
+            </div>
+            <div class="platform-cmd-desc">MX records:</div>
+            <div class="platform-cmd">
+              nslookup -type=MX gmail.com
+              <button class="cmd-copy-btn" data-cmd="nslookup -type=MX gmail.com">COPY</button>
+            </div>
+            <div class="platform-cmd-desc">Use Cloudflare DNS:</div>
+            <div class="platform-cmd">
+              nslookup devdunia.com 1.1.1.1
+              <button class="cmd-copy-btn" data-cmd="nslookup devdunia.com 1.1.1.1">COPY</button>
+            </div>
+            <div class="platform-cmd-desc">Enter interactive mode:</div>
+            <div class="platform-cmd">
+              nslookup
+              <button class="cmd-copy-btn" data-cmd="nslookup">COPY</button>
+            </div>
+            <p style="font-size:.75rem;color:var(--blue);margin-top:6px;">&#x2714; Ships with Windows since Windows 2000. Works in CMD, PowerShell, and Windows Terminal.</p>
+          </div>
+        </div>
+
+        <!-- macOS -->
+        <div class="platform-card">
+          <div class="platform-card-header" style="background:#555;">
+            &#x1F34E; macOS (Terminal)
+          </div>
+          <div class="platform-card-body">
+            <div class="platform-cmd-desc">Basic lookup (A record):</div>
+            <div class="platform-cmd">
+              nslookup devdunia.com
+              <button class="cmd-copy-btn" data-cmd="nslookup devdunia.com">COPY</button>
+            </div>
+            <div class="platform-cmd-desc">MX records (macOS syntax):</div>
+            <div class="platform-cmd">
+              nslookup -query=MX gmail.com
+              <button class="cmd-copy-btn" data-cmd="nslookup -query=MX gmail.com">COPY</button>
+            </div>
+            <div class="platform-cmd-desc">Use Google DNS:</div>
+            <div class="platform-cmd">
+              nslookup devdunia.com 8.8.8.8
+              <button class="cmd-copy-btn" data-cmd="nslookup devdunia.com 8.8.8.8">COPY</button>
+            </div>
+            <div class="platform-cmd-desc">Interactive mode:</div>
+            <div class="platform-cmd">
+              nslookup
+              <button class="cmd-copy-btn" data-cmd="nslookup">COPY</button>
+            </div>
+            <p style="font-size:.75rem;color:var(--purple);margin-top:6px;">&#x2714; Pre-installed on all macOS versions. Tip: macOS also has <code style="font-size:.7rem;background:var(--ink);color:var(--yellow);padding:1px 4px;border-radius:3px;">dig</code> and <code style="font-size:.7rem;background:var(--ink);color:var(--yellow);padding:1px 4px;border-radius:3px;">host</code> built in.</p>
+          </div>
+        </div>
+
+        <!-- Linux -->
+        <div class="platform-card">
+          <div class="platform-card-header" style="background:var(--orange);color:var(--ink);">
+            &#x1F427; Linux (bash)
+          </div>
+          <div class="platform-card-body">
+            <div class="platform-cmd-desc">Basic lookup (A record):</div>
+            <div class="platform-cmd">
+              nslookup devdunia.com
+              <button class="cmd-copy-btn" data-cmd="nslookup devdunia.com">COPY</button>
+            </div>
+            <div class="platform-cmd-desc">TXT records:</div>
+            <div class="platform-cmd">
+              nslookup -type=TXT github.com
+              <button class="cmd-copy-btn" data-cmd="nslookup -type=TXT github.com">COPY</button>
+            </div>
+            <div class="platform-cmd-desc">Use custom resolver:</div>
+            <div class="platform-cmd">
+              nslookup devdunia.com 9.9.9.9
+              <button class="cmd-copy-btn" data-cmd="nslookup devdunia.com 9.9.9.9">COPY</button>
+            </div>
+            <div class="platform-cmd-desc">Install if missing (Debian/Ubuntu):</div>
+            <div class="platform-cmd">
+              sudo apt install dnsutils
+              <button class="cmd-copy-btn" data-cmd="sudo apt install dnsutils">COPY</button>
+            </div>
+            <p style="font-size:.75rem;color:var(--green);margin-top:6px;">&#x2714; Part of <code style="font-size:.7rem;background:var(--ink);color:var(--yellow);padding:1px 4px;border-radius:3px;">bind-utils</code> (RHEL/CentOS) or <code style="font-size:.7rem;background:var(--ink);color:var(--yellow);padding:1px 4px;border-radius:3px;">dnsutils</code> (Debian/Ubuntu).</p>
+          </div>
+        </div>
+
+      </div>
+
+      <hr class="divider">
+      <div class="section-label">&#x1F4AC; Interactive Mode — The Hidden Power</div>
+      <p style="font-size:.88rem;margin-bottom:12px;line-height:1.5;">
+        Type <code style="font-family:'Space Mono',monospace;font-size:.78rem;background:var(--ink);color:var(--yellow);padding:1px 5px;border-radius:3px;">nslookup</code> with no arguments to enter interactive mode. A <code style="font-family:'Space Mono',monospace;font-size:.78rem;background:var(--ink);color:var(--yellow);padding:1px 5px;border-radius:3px;">&gt;</code> prompt appears. Then type commands:
+      </p>
+      <div class="dig-output"><span class="do-server">$ nslookup</span>
+<span class="do-answer">&gt;</span> <span class="do-name">set type=MX</span>          <span class="do-noauth">← change record type</span>
+<span class="do-answer">&gt;</span> <span class="do-name">gmail.com</span>            <span class="do-noauth">← query this domain</span>
+<span class="do-server">Server:  8.8.8.8</span>
+<span class="do-server">Address: 8.8.8.8#53</span>
+
+<span class="do-noauth">Non-authoritative answer:</span>
+<span class="do-name">gmail.com   mail exchanger = <span class="do-prio">5</span> <span class="do-mx">gmail-smtp-in.l.google.com</span></span>
+
+<span class="do-answer">&gt;</span> <span class="do-name">server 1.1.1.1</span>       <span class="do-noauth">← switch to Cloudflare DNS</span>
+<span class="do-server">Default server: 1.1.1.1</span>
+<span class="do-server">Address: 1.1.1.1#53</span>
+
+<span class="do-answer">&gt;</span> <span class="do-name">set type=A</span>           <span class="do-noauth">← switch back to A</span>
+<span class="do-answer">&gt;</span> <span class="do-name">devdunia.com</span>
+<span class="do-noauth">Non-authoritative answer:</span>
+<span class="do-name">Name:    devdunia.com</span>
+<span class="do-addr">Address: 185.199.108.153</span>
+
+<span class="do-answer">&gt;</span> <span class="do-name">exit</span>                 <span class="do-noauth">← quit</span></div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════════════ -->
+  <!-- PANEL 4: NSLOOKUP vs DIG COMPARISON                    -->
+  <!-- ═══════════════════════════════════════════════════════ -->
+  <div class="panel">
+    <div class="panel-header">
+      &#x26A1; NSLOOKUP vs DIG COMPARISON
+      <span class="panel-tag">REFERENCE</span>
+    </div>
+    <div class="panel-body">
+      <p style="font-size:.9rem;line-height:1.5;margin-bottom:16px;">
+        Both tools query DNS, but they have very different strengths. Here's when to reach for each one.
+      </p>
+      <div style="overflow-x:auto;">
+        <table class="comic-table">
+          <thead>
+            <tr>
+              <th>Feature</th>
+              <th>nslookup</th>
+              <th>dig</th>
+              <th>Winner</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>Windows availability</strong></td>
+              <td><span class="comp-badge badge-yes">BUILT-IN</span></td>
+              <td><span class="comp-badge badge-no">NEEDS INSTALL</span> <small>(WSL or third-party)</small></td>
+              <td><span class="comp-badge badge-win">nslookup &#x1F3C6;</span></td>
+            </tr>
+            <tr>
+              <td><strong>macOS availability</strong></td>
+              <td><span class="comp-badge badge-yes">BUILT-IN</span></td>
+              <td><span class="comp-badge badge-yes">BUILT-IN</span></td>
+              <td><span class="comp-badge" style="background:var(--paper2);color:var(--ink);border-color:var(--ink);">TIE</span></td>
+            </tr>
+            <tr>
+              <td><strong>Linux availability</strong></td>
+              <td><span class="comp-badge badge-ltd">NEEDS dnsutils</span></td>
+              <td><span class="comp-badge badge-ltd">NEEDS bind-utils</span></td>
+              <td><span class="comp-badge" style="background:var(--paper2);color:var(--ink);border-color:var(--ink);">TIE</span></td>
+            </tr>
+            <tr>
+              <td><strong>Output verbosity</strong></td>
+              <td>Simpler, human-friendly</td>
+              <td>Detailed, structured (flags, sections, TTL)</td>
+              <td><span class="comp-badge" style="background:var(--blue);color:#fff;">dig &#x1F916;</span> for debugging</td>
+            </tr>
+            <tr>
+              <td><strong>Scripting / automation</strong></td>
+              <td><span class="comp-badge badge-ltd">LIMITED</span> — inconsistent output format</td>
+              <td><span class="comp-badge badge-yes">EXCELLENT</span> — <code>+short</code>, <code>-f</code> batch flag</td>
+              <td><span class="comp-badge" style="background:var(--blue);color:#fff;">dig &#x1F3C6;</span></td>
+            </tr>
+            <tr>
+              <td><strong>Interactive mode</strong></td>
+              <td><span class="comp-badge badge-yes">YES</span> — <code>set type=</code>, <code>server</code> commands</td>
+              <td><span class="comp-badge badge-yes">YES</span> — but less used</td>
+              <td><span class="comp-badge badge-win">nslookup &#x1F3C6;</span></td>
+            </tr>
+            <tr>
+              <td><strong>Batch file queries</strong></td>
+              <td><span class="comp-badge badge-ltd">LIMITED</span> — shell loops only</td>
+              <td><span class="comp-badge badge-yes">YES</span> — <code>dig -f domains.txt</code></td>
+              <td><span class="comp-badge" style="background:var(--blue);color:#fff;">dig &#x1F3C6;</span></td>
+            </tr>
+            <tr>
+              <td><strong>DNSSEC info</strong></td>
+              <td><span class="comp-badge badge-no">NO</span></td>
+              <td><span class="comp-badge badge-yes">YES</span> — <code>+dnssec</code>, <code>ad</code> flag</td>
+              <td><span class="comp-badge" style="background:var(--blue);color:#fff;">dig &#x1F3C6;</span></td>
+            </tr>
+            <tr>
+              <td><strong>Reverse DNS lookup</strong></td>
+              <td><code>nslookup 8.8.8.8</code> — automatic</td>
+              <td><code>dig -x 8.8.8.8</code> — explicit flag</td>
+              <td><span class="comp-badge badge-win">nslookup &#x1F3C6;</span> (easier)</td>
+            </tr>
+            <tr>
+              <td><strong>Beginner friendly</strong></td>
+              <td><span class="comp-badge badge-yes">YES</span> — clean output, intuitive</td>
+              <td><span class="comp-badge badge-ltd">MEDIUM</span> — lots of output to parse</td>
+              <td><span class="comp-badge badge-win">nslookup &#x1F3C6;</span></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="speech-bubble">
+        <strong>&#x1F4A1; Rule of thumb:</strong> Use <strong>nslookup</strong> for quick checks on Windows, or when sharing commands with non-Linux folks. Use <strong>dig</strong> for scripting, debugging propagation, and DNSSEC verification. On Linux/macOS, pros reach for <code style="font-family:'Space Mono',monospace;background:var(--ink);color:var(--yellow);padding:1px 4px;border-radius:3px;font-size:.78rem;">dig +short</code> for fast one-liners.
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════════════ -->
+  <!-- PANEL 5: HOW NSLOOKUP WORKS                            -->
+  <!-- ═══════════════════════════════════════════════════════ -->
+  <div class="panel">
+    <div class="panel-header">
+      &#x1F9E0; HOW NSLOOKUP WORKS
+      <span class="panel-tag">DEEP DIVE</span>
+    </div>
+    <div class="panel-body">
+      <p style="font-size:.9rem;line-height:1.5;margin-bottom:18px;">
+        When you run <code style="font-family:'Space Mono',monospace;font-size:.78rem;background:var(--ink);color:var(--yellow);padding:1px 5px;border-radius:3px;">nslookup devdunia.com</code>, here's exactly what happens under the hood:
+      </p>
+
+      <div class="how-steps">
+
+        <div class="how-step">
+          <div class="step-dot" style="background:var(--blue);">1</div>
+          <p>
+            <strong>nslookup reads your system resolver</strong> — it looks up the DNS server configured on your machine (usually from <code>/etc/resolv.conf</code> on Linux/macOS, or network adapter settings on Windows). That's the server it shows in the <em>"Server: 8.8.8.8"</em> line. You can override it by passing a server as the second argument: <code>nslookup devdunia.com 1.1.1.1</code>.
+          </p>
+        </div>
+        <div class="step-connector"></div>
+
+        <div class="how-step">
+          <div class="step-dot" style="background:var(--green);">2</div>
+          <p>
+            <strong>UDP query sent to port 53</strong> — nslookup crafts a DNS query packet and sends it over UDP to your resolver on port 53 (shown as <code>#53</code> in the output). UDP is used because DNS queries are tiny and speed matters — TCP is only used as fallback when the response is too large for one UDP packet.
+          </p>
+        </div>
+        <div class="step-connector"></div>
+
+        <div class="how-step">
+          <div class="step-dot" style="background:var(--orange);">3</div>
+          <p>
+            <strong>Resolver checks its cache — or recurses</strong> — Your resolver (e.g. 8.8.8.8) either has the answer cached from a recent query, or it performs a full recursive lookup: Root servers → TLD nameservers → authoritative nameservers. Because 8.8.8.8 serves billions of queries, most popular domains are cached, giving you a fast response.
+          </p>
+        </div>
+        <div class="step-connector"></div>
+
+        <div class="how-step">
+          <div class="step-dot" style="background:var(--purple);">4</div>
+          <p>
+            <strong>Non-authoritative vs authoritative answer</strong> — If the resolver fetched the answer from the domain's own authoritative nameservers, the <em>authoritative nameserver</em> itself would respond directly (no "Non-authoritative answer" label). Since 8.8.8.8 is not the authoritative server for devdunia.com, it displays "Non-authoritative answer" — meaning it got the data from the authoritative server and cached it. To get an authoritative answer directly, you'd query the domain's own nameserver: <code>nslookup devdunia.com ns1.digitalocean.com</code>.
+          </p>
+        </div>
+        <div class="step-connector"></div>
+
+        <div class="how-step">
+          <div class="step-dot" style="background:var(--green);">5</div>
+          <p>
+            <strong>Result displayed and cached</strong> — nslookup displays the answer and exits (in non-interactive mode). The resolver caches the result for the record's <strong>TTL (Time To Live)</strong> — typically 300–86400 seconds. Until TTL expires, future queries hit the cache instantly. When you update DNS records, you may need to wait for TTL to expire before new values propagate worldwide.
+          </p>
+        </div>
+
+      </div>
+
+      <hr class="divider">
+
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:10px;">
+        <div style="background:var(--paper2);border:3px solid var(--ink);border-radius:6px;padding:12px 14px;box-shadow:3px 3px 0 var(--ink);">
+          <div style="font-family:'Bangers',cursive;font-size:1rem;letter-spacing:1px;color:var(--green);margin-bottom:6px;">Authoritative Answer</div>
+          <p style="font-size:.83rem;line-height:1.45;">Comes directly from the domain's own nameserver. No "Non-authoritative answer" label. Guaranteed to be the latest data. Query: <code style="font-family:'Space Mono',monospace;font-size:.72rem;background:var(--ink);color:var(--yellow);padding:1px 4px;border-radius:3px;">nslookup domain.com ns1.domain.com</code></p>
+        </div>
+        <div style="background:var(--paper2);border:3px solid var(--ink);border-radius:6px;padding:12px 14px;box-shadow:3px 3px 0 var(--ink);">
+          <div style="font-family:'Bangers',cursive;font-size:1rem;letter-spacing:1px;color:var(--orange);margin-bottom:6px;">Non-Authoritative Answer</div>
+          <p style="font-size:.83rem;line-height:1.45;">Comes from a recursive resolver's cache. May be seconds or hours old (up to TTL). Perfectly normal — this is how DNS works at scale. <strong>Not a problem!</strong></p>
+        </div>
+        <div style="background:var(--paper2);border:3px solid var(--ink);border-radius:6px;padding:12px 14px;box-shadow:3px 3px 0 var(--ink);">
+          <div style="font-family:'Bangers',cursive;font-size:1rem;letter-spacing:1px;color:var(--blue);margin-bottom:6px;">TTL (Time To Live)</div>
+          <p style="font-size:.83rem;line-height:1.45;">How many seconds resolvers may cache the record. Before migrating DNS: lower TTL to 300. After migration confirms working: raise back to 3600 or 86400.</p>
+        </div>
+        <div style="background:var(--paper2);border:3px solid var(--ink);border-radius:6px;padding:12px 14px;box-shadow:3px 3px 0 var(--ink);">
+          <div style="font-family:'Bangers',cursive;font-size:1rem;letter-spacing:1px;color:var(--red);margin-bottom:6px;">NXDOMAIN</div>
+          <p style="font-size:.83rem;line-height:1.45;">nslookup says "can't find domain: NXDOMAIN" — the domain doesn't exist in DNS. Check for typos, or verify the domain is registered and has DNS records configured.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div><!-- /page-wrap -->
+
+<script>
+// ── NSLOOKUP LIVE QUERY (Cloudflare DoH) ─────────────────────────────────
+(function() {
+  var domainInput = document.getElementById('ns-domain');
+  var serverInput = document.getElementById('ns-server');
+  var typeSelect  = document.getElementById('ns-type');
+  var lookupBtn   = document.getElementById('ns-lookup-btn');
+  var clearBtn    = document.getElementById('ns-clear-btn');
+  var errorBubble = document.getElementById('ns-error');
+  var errorMsg    = document.getElementById('ns-error-msg');
+  var resultArea  = document.getElementById('ns-result-area');
+  var outputBox   = document.getElementById('ns-output-box');
+  var metaRow     = document.getElementById('ns-meta');
+
+  var TYPE_NAMES = {
+    1:'A', 2:'NS', 5:'CNAME', 6:'SOA', 12:'PTR',
+    15:'MX', 16:'TXT', 28:'AAAA', 33:'SRV', 257:'CAA'
+  };
+  var RCODES = {0:'NOERROR', 1:'FORMERR', 2:'SERVFAIL', 3:'NXDOMAIN',
+                4:'NOTIMP', 5:'REFUSED'};
+
+  function esc(s) {
+    return String(s)
+      .replace(/&/g,'&amp;')
+      .replace(/</g,'&lt;')
+      .replace(/>/g,'&gt;');
+  }
+
+  function showError(msg) {
+    errorMsg.textContent = msg;
+    errorBubble.classList.add('show');
+    resultArea.style.display = 'none';
+  }
+  function hideError() { errorBubble.classList.remove('show'); }
+
+  function getTypeName(num) {
+    return TYPE_NAMES[num] || ('TYPE' + num);
+  }
+
+  function pad(str, len) {
+    str = String(str);
+    while (str.length < len) str += ' ';
+    return str;
+  }
+
+  function buildMetaChip(label, value, bg) {
+    var chip = document.createElement('div');
+    chip.className = 'result-chip';
+    chip.style.background = bg || 'var(--paper2)';
+    chip.innerHTML = '<strong>' + esc(label) + '</strong>&nbsp;' + esc(value);
+    return chip;
+  }
+
+  function setLoading() {
+    resultArea.style.display = '';
+    metaRow.innerHTML = '';
+    outputBox.innerHTML = '<span class="ns-loading">&#x23F3; Querying DNS via Cloudflare DoH...</span>';
+  }
+
+  // Format result to look like real nslookup terminal output
+  function formatNsOutput(data, domain, type, server) {
+    var rcode   = data.Status;
+    var rname   = RCODES[rcode] || ('RCODE' + rcode);
+    var answers = data.Answer || [];
+    var auth    = data.Authority || [];
+
+    var serverDisplay = server || '8.8.8.8';
+    var lines = [];
+
+    // Server header lines
+    lines.push('<span class="ns-server">Server:         ' + esc(serverDisplay) + '</span>');
+    lines.push('<span class="ns-server">Address:        ' + esc(serverDisplay) + '#53</span>');
+    lines.push('');
+
+    if (rcode === 3) {
+      // NXDOMAIN
+      lines.push('<span class="ns-err">** server can\'t find ' + esc(domain) + ': NXDOMAIN</span>');
+      return lines.join('\n');
+    }
+    if (rcode !== 0) {
+      lines.push('<span class="ns-err">** server can\'t find ' + esc(domain) + ': ' + esc(rname) + '</span>');
+      return lines.join('\n');
+    }
+
+    if (answers.length === 0 && auth.length === 0) {
+      lines.push('<span class="ns-err">** No records found for type ' + esc(type) + '</span>');
+      return lines.join('\n');
+    }
+
+    lines.push('<span class="ns-noauth">Non-authoritative answer:</span>');
+
+    answers.forEach(function(rec) {
+      var typeName = typeof rec.type === 'string' ? rec.type : getTypeName(rec.type);
+      var recName = rec.name || domain;
+      var data    = rec.data || '';
+
+      if (typeName === 'A' || typeName === 'AAAA') {
+        lines.push('<span class="ns-name">Name:    ' + esc(recName.replace(/\.$/, '')) + '</span>');
+        lines.push('<span class="ns-addr">Address: ' + esc(data) + '</span>');
+      } else if (typeName === 'MX') {
+        var parts = data.split(' ');
+        var prio  = parts[0] || '';
+        var host  = parts.slice(1).join(' ').replace(/\.$/, '');
+        lines.push('<span class="ns-name">' + esc(recName.replace(/\.$/, '')) +
+          '\t\tmail exchanger = <span class="ns-mx"><span style="color:var(--orange)">' + esc(prio) + '</span> ' + esc(host) + '</span></span>');
+      } else if (typeName === 'NS') {
+        lines.push('<span class="ns-name">' + esc(recName.replace(/\.$/, '')) +
+          '\t\tnameserver = <span class="ns-ns">' + esc(data.replace(/\.$/, '')) + '</span></span>');
+      } else if (typeName === 'CNAME') {
+        lines.push('<span class="ns-name">' + esc(recName.replace(/\.$/, '')) +
+          '\tcanonical name = <span style="color:var(--orange)">' + esc(data.replace(/\.$/, '')) + '</span></span>');
+      } else if (typeName === 'TXT') {
+        var txt = data;
+        if (!txt.startsWith('"')) txt = '"' + txt + '"';
+        lines.push('<span class="ns-name">' + esc(recName.replace(/\.$/, '')) +
+          '\t\ttext = <span class="ns-txt">' + esc(txt) + '</span></span>');
+      } else if (typeName === 'SOA') {
+        lines.push('<span class="ns-name">' + esc(recName.replace(/\.$/, '')) +
+          '\t\torigin = <span style="color:var(--green)">' + esc(data) + '</span></span>');
+      } else {
+        lines.push('<span class="ns-name">' + esc(typeName) + '\t' + esc(recName.replace(/\.$/, '')) + ' = ' + esc(data) + '</span>');
+      }
+    });
+
+    // Authority section (NS records from authority with glue)
+    if (auth.length > 0 && type === 'NS') {
+      lines.push('');
+      lines.push('<span class="ns-noauth">Authoritative answers can be found from:</span>');
+      auth.forEach(function(rec) {
+        var typeName = typeof rec.type === 'string' ? rec.type : getTypeName(rec.type);
+        var d = rec.data || '';
+        if (typeName === 'NS') {
+          lines.push('<span class="ns-ns">' + esc((rec.name || '').replace(/\.$/, '')) +
+            '\tnameserver = ' + esc(d.replace(/\.$/, '')) + '</span>');
+        }
+      });
+    }
+
+    return lines.join('\n');
+  }
+
+  async function doLookup() {
+    var domain = domainInput.value.trim().replace(/^https?:\/\//i, '').replace(/\/.*$/, '');
+    var server = serverInput.value.trim() || '8.8.8.8';
+    var type   = typeSelect.value;
+
+    if (!domain) { showError('Please enter a domain name!'); return; }
+    if (!/^[a-z0-9._-]{1,253}$/i.test(domain)) {
+      showError('That doesn\'t look like a valid domain name.');
+      return;
+    }
+
+    hideError();
+    setLoading();
+
+    var t0 = performance.now();
+    try {
+      var url = 'https://cloudflare-dns.com/dns-query?name=' +
+                encodeURIComponent(domain) + '&type=' + encodeURIComponent(type);
+      var resp = await fetch(url, { headers: { Accept: 'application/dns-json' } });
+      if (!resp.ok) throw new Error('HTTP ' + resp.status);
+      var data = await resp.json();
+      var elapsed = Math.round(performance.now() - t0);
+
+      var rcode  = data.Status;
+      var rname  = RCODES[rcode] || ('RCODE' + rcode);
+      var answers = data.Answer || [];
+
+      // Meta chips
+      metaRow.innerHTML = '';
+      var statusColor = (rcode === 0) ? '#c3f4c8' : '#ffd0d0';
+      metaRow.appendChild(buildMetaChip('STATUS', rname, statusColor));
+      metaRow.appendChild(buildMetaChip('ANSWERS', answers.length, 'var(--paper2)'));
+      metaRow.appendChild(buildMetaChip('QUERY TIME', elapsed + 'ms', 'var(--paper2)'));
+      metaRow.appendChild(buildMetaChip('VIA', 'Cloudflare DoH', 'var(--paper2)'));
+
+      outputBox.innerHTML = formatNsOutput(data, domain, type, server);
+    } catch(e) {
+      outputBox.innerHTML = '<span class="ns-err">&#x26A0; Error: ' + esc(e.message) + '\n\nCould not reach Cloudflare DoH. Check your network.</span>';
+    }
+  }
+
+  lookupBtn.addEventListener('click', doLookup);
+  clearBtn.addEventListener('click', function() {
+    domainInput.value = '';
+    serverInput.value = '8.8.8.8';
+    resultArea.style.display = 'none';
+    hideError();
+    domainInput.focus();
+  });
+  domainInput.addEventListener('keydown', function(e) { if (e.key === 'Enter') doLookup(); });
+  serverInput.addEventListener('keydown', function(e) { if (e.key === 'Enter') doLookup(); });
+})();
+
+// ── COPY BUTTONS ────────────────────────────────────────────────────────────
+document.addEventListener('click', function(e) {
+  if (!e.target.classList.contains('cmd-copy-btn')) return;
+  var cmd = e.target.getAttribute('data-cmd') || '';
+  var btn = e.target;
+  var orig = btn.textContent;
+
+  function copyDone() {
+    btn.textContent = '✓ COPIED';
+    btn.style.background = 'var(--green)';
+    btn.style.color = '#fff';
+    setTimeout(function() {
+      btn.textContent = orig;
+      btn.style.background = '';
+      btn.style.color = '';
+    }, 1800);
+  }
+
+  if (navigator.clipboard && navigator.clipboard.writeText) {
+    navigator.clipboard.writeText(cmd).then(copyDone).catch(function() { fallbackCopy(cmd, copyDone); });
+  } else {
+    fallbackCopy(cmd, copyDone);
+  }
+});
+
+function fallbackCopy(text, cb) {
+  var ta = document.createElement('textarea');
+  ta.value = text;
+  ta.style.cssText = 'position:fixed;top:-999px;left:-999px;opacity:0;';
+  document.body.appendChild(ta);
+  ta.focus(); ta.select();
+  try { document.execCommand('copy'); } catch(e) {}
+  document.body.removeChild(ta);
+  if (cb) cb();
+}
+</script>
+
+<script src="masthead.js"></script>
+<script src="hero-banner.js"></script>
+<script src="author-card.js"></script>
+</body>
+</html>
