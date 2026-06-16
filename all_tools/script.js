@@ -9,6 +9,7 @@ const toolsData = [
   { name: "URL Decoder", description: "Decode URL-encoded strings", category: "encoders", url: "../url-decoder.html", icon: "🔓" },
   { name: "Base64 Encoder", description: "Encode to Base64 format", category: "encoders", url: "../base64-encoder.html", icon: "📤" },
   { name: "Base64 Decoder", description: "Decode Base64 strings", category: "encoders", url: "../base64-decoder.html", icon: "📥" },
+  { name: "Base64 to Image", description: "Preview & download images from Base64", category: "encoders", url: "../base64-to-image.html", icon: "🖼️" },
   { name: "Base32 Encoder", description: "Encode to Base32 format", category: "encoders", url: "../base32encode/index.html", icon: "📤" },
   { name: "Base32 Decoder", description: "Decode Base32 strings", category: "encoders", url: "../base32decode/index.html", icon: "📥" },
   { name: "Hash Generator", description: "Generate secure hashes", category: "encoders", url: "../hash-generator.html", icon: "🔐" },
