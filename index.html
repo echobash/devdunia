@@ -415,6 +415,7 @@ body{
     <a href="#devtools"   class="cat-pill" style="background:var(--orange)">&#x1F6E0; Dev Tools</a>
     <a href="#network"    class="cat-pill" style="background:var(--purple)">&#x1F310; Network</a>
     <a href="#dns"        class="cat-pill" style="background:var(--blue)">&#x1F50D; DNS Tools</a>
+    <a href="#how"        class="cat-pill" style="background:var(--red)">&#x1F4A1; How X Works</a>
     <a href="#text"       class="cat-pill" style="background:var(--pink)">&#x1F4DD; Text</a>
     <a href="#database"   class="cat-pill" style="background:var(--teal)">&#x1F5C4; Database</a>
     <a href="#python"     class="cat-pill cat-pill-ink">&#x1F40D; Python</a>
@@ -1117,6 +1118,90 @@ body{
   </div>
 
   <!-- ═══════════════════════════════════════
+       HOW X WORKS — DEEP DIVE ARTICLES
+  ═══════════════════════════════════════ -->
+  <section class="chapter-section" id="how" data-chapter>
+    <div class="chapter-banner">
+      <div class="chapter-num-block" style="background:var(--red)">HOW</div>
+      <div class="chapter-info">
+        <div class="chapter-kicker">&#x1F4A1; Deep Dives — Backend Internals</div>
+        <div class="chapter-title">How <span style="color:var(--red)">X Works</span></div>
+        <div class="chapter-sub">Step-by-step visual explainers of what really happens under the hood — every actor, every packet, every decision.</div>
+      </div>
+      <div class="chapter-count" style="color:var(--red)">6<span>ARTICLES</span></div>
+    </div>
+    <div class="tool-grid">
+
+      <a href="how-url-works.html" class="tool-card" data-keywords="url browser dns tcp tls http request response load balancer backend server" style="--cc:var(--blue)">
+        <div class="tc-stripe"></div>
+        <div class="tc-body">
+          <div class="tc-icon">🌐</div>
+          <div class="tc-name">You Type a URL</div>
+          <div class="tc-desc">DNS → TCP → TLS → Load Balancer → App Server → DB → response — every hop visualized</div>
+        </div>
+        <div class="tc-arrow">&#x2192;</div>
+      </a>
+
+      <a href="how-rate-limiting-works.html" class="tool-card" data-keywords="rate limiting token bucket leaky bucket sliding window fixed counter throttle api" style="--cc:var(--orange)">
+        <div class="tc-stripe"></div>
+        <div class="tc-body">
+          <div class="tc-icon">🚦</div>
+          <div class="tc-name">Rate Limiting</div>
+          <div class="tc-desc">Token bucket, leaky bucket, sliding window — all 4 algorithms with live interactive demos</div>
+        </div>
+        <div class="tc-arrow">&#x2192;</div>
+      </a>
+
+      <a href="how-oauth2-works.html" class="tool-card" data-keywords="oauth2 oauth authorization code flow jwt token refresh access grant" style="--cc:var(--purple)">
+        <div class="tc-stripe"></div>
+        <div class="tc-body">
+          <div class="tc-icon">🔐</div>
+          <div class="tc-name">OAuth 2.0</div>
+          <div class="tc-desc">Authorization Code flow, tokens, refresh — who talks to whom and exactly what they say</div>
+        </div>
+        <div class="tc-arrow">&#x2192;</div>
+      </a>
+
+      <a href="how-db-query-works.html" class="tool-card" data-keywords="database query sql execution plan parser optimizer index scan buffer pool postgres mysql" style="--cc:var(--teal)">
+        <div class="tc-stripe"></div>
+        <div class="tc-body">
+          <div class="tc-icon">🗄️</div>
+          <div class="tc-name">Database Query</div>
+          <div class="tc-desc">SQL parser → query planner → optimizer → index scan → buffer pool → disk I/O</div>
+        </div>
+        <div class="tc-arrow">&#x2192;</div>
+      </a>
+
+      <a href="how-mac-boots.html" class="tool-card" data-keywords="macbook boot startup uefi firmware kernel launchd process init macos" style="--cc:var(--ink)">
+        <div class="tc-stripe"></div>
+        <div class="tc-body">
+          <div class="tc-icon">💻</div>
+          <div class="tc-name">MacBook Boot</div>
+          <div class="tc-desc">Power button → firmware → bootloader → kernel → launchd — every millisecond explained</div>
+        </div>
+        <div class="tc-arrow">&#x2192;</div>
+      </a>
+
+      <a href="how-docker-works.html" class="tool-card" data-keywords="docker container image layers build dockerfile namespaces cgroups overlay filesystem" style="--cc:var(--blue)">
+        <div class="tc-stripe"></div>
+        <div class="tc-body">
+          <div class="tc-icon">🐳</div>
+          <div class="tc-name">Docker</div>
+          <div class="tc-desc">Images, layers, containers, builds — namespaces and cgroups without the hand-waving</div>
+        </div>
+        <div class="tc-arrow">&#x2192;</div>
+      </a>
+
+    </div>
+  </section>
+
+  <div class="sfx-row">
+    <span class="sfx" style="font-size:2rem;transform:rotate(-3deg);color:var(--red);text-shadow:4px 4px 0 var(--ink)">BUT WHY?!</span>
+    <span class="sfx" style="font-size:1.5rem;transform:rotate(5deg);color:var(--orange);text-shadow:3px 3px 0 var(--ink)">DEEP DIVE!</span>
+    <span class="sfx" style="font-size:1.8rem;transform:rotate(-5deg);color:var(--purple);text-shadow:4px 4px 0 var(--ink)">AHA!</span>
+  </div>
+
+  <!-- ═══════════════════════════════════════
        CH 6 — TEXT TOOLS
   ═══════════════════════════════════════ -->
   <section class="chapter-section" id="text" data-chapter>
@@ -1332,6 +1417,7 @@ body{
         <a href="#devtools">04 — API &amp; Dev Tools</a>
         <a href="#network">05 — Network Protocols</a>
         <a href="#dns">05b — DNS Tools</a>
+        <a href="#how">HOW — How X Works</a>
         <a href="#text">06 — Text Tools</a>
         <a href="#database">07 — Database</a>
         <a href="#python">08 — Python Toolkit</a>
