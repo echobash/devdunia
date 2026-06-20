@@ -1,0 +1,907 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>How Rate Limiting Works — DevDunia Comics</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bangers&family=Comic+Neue:ital,wght@0,400;0,700;1,400&family=Space+Mono:wght@400;700&display=swap">
+<style>
+:root {
+  --ink: #1a1410; --paper: #fdf3e3; --paper2: #fbe9cc;
+  --red: #e63946; --blue: #1d6fb8; --yellow: #ffd23f;
+  --green: #3fa34d; --pink: #ff6b9d; --purple: #8a4fff;
+  --orange: #ff8c42; --teal: #0d9488;
+}
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  font-family: 'Comic Neue', cursive;
+  color: var(--ink);
+  background-color: var(--paper);
+  background-image: radial-gradient(var(--ink) 0.5px, transparent 0.6px);
+  background-size: 14px 14px;
+  background-attachment: fixed;
+  line-height: 1.65;
+}
+.page-wrap { position: relative; z-index: 1; max-width: 1240px; margin: 0 auto; padding: 20px 32px 60px; }
+.panel {
+  border: 4px solid var(--ink); border-radius: 6px;
+  box-shadow: 7px 7px 0 var(--ink);
+  background: var(--paper); padding: 28px 32px; margin-bottom: 32px;
+}
+h2 { font-family: 'Bangers', cursive; font-size: 2.4rem; letter-spacing: 2px; margin-bottom: 16px; line-height: 1; }
+h3 { font-family: 'Bangers', cursive; font-size: 1.6rem; letter-spacing: 1px; margin-bottom: 12px; }
+h4 { font-family: 'Bangers', cursive; font-size: 1.2rem; letter-spacing: 1px; margin-bottom: 8px; }
+p  { margin-bottom: 14px; font-size: 1.05rem; }
+p:last-child { margin-bottom: 0; }
+ul { padding-left: 22px; margin-bottom: 14px; }
+li { margin-bottom: 6px; font-size: 1rem; }
+code { font-family: 'Space Mono', monospace; font-size: .85em; background: var(--paper2); padding: 1px 5px; border-radius: 3px; }
+.section-head { display: flex; align-items: center; gap: 14px; margin-bottom: 22px; flex-wrap: wrap; }
+.section-num {
+  font-family: 'Bangers', cursive; font-size: 1.1rem; letter-spacing: 2px;
+  background: var(--orange); color: #fff; padding: 4px 14px;
+  border-radius: 4px; border: 2px solid var(--ink); box-shadow: 2px 2px 0 var(--ink);
+}
+.chip {
+  display: inline-block; font-family: 'Bangers', cursive; font-size: .85rem;
+  letter-spacing: 1.5px; padding: 3px 12px; border-radius: 4px;
+  border: 2px solid var(--ink); margin-right: 6px; margin-bottom: 6px; vertical-align: middle;
+}
+.chip-green  { background: var(--green);  color: #fff; }
+.chip-red    { background: var(--red);    color: #fff; }
+.chip-blue   { background: var(--blue);   color: #fff; }
+.chip-yellow { background: var(--yellow); color: var(--ink); }
+.chip-orange { background: var(--orange); color: #fff; }
+.terminal {
+  background: #0d1117; border: 3px solid #30363d; border-radius: 8px;
+  overflow: hidden; margin: 16px 0;
+}
+.terminal-bar {
+  background: #161b22; border-bottom: 2px solid #30363d;
+  padding: 8px 14px; display: flex; align-items: center; gap: 8px;
+}
+.tbar-dot { width: 12px; height: 12px; border-radius: 50%; display: inline-block; }
+.tbar-dot.red   { background: #ff5f56; }
+.tbar-dot.yellow{ background: #ffbd2e; }
+.tbar-dot.green { background: #27c93f; }
+.tbar-label { font-family: 'Space Mono', monospace; font-size: .75rem; color: #8b949e; margin-left: 8px; }
+.terminal-body { padding: 20px 22px; font-family: 'Space Mono', monospace; font-size: .82rem; line-height: 1.7; overflow-x: auto; white-space: pre-wrap; }
+.t-kw  { color: #ff7b72; }
+.t-str { color: #a5d6ff; }
+.t-val { color: #79c0ff; }
+.t-key { color: #7ee787; }
+.t-num { color: #e3b341; }
+.t-cmt { color: #7d8590; font-style: italic; }
+.t-hdr { color: #d2a8ff; }
+.hbox {
+  border: 3px solid var(--ink); border-radius: 5px; padding: 18px 22px;
+  margin: 16px 0; position: relative;
+}
+.hbox-label {
+  font-family: 'Bangers', cursive; font-size: .9rem; letter-spacing: 2px;
+  position: absolute; top: -14px; left: 16px; padding: 2px 12px;
+  border: 2px solid var(--ink); border-radius: 4px;
+}
+.hbox-orange { background: rgba(255,140,66,.1); border-color: var(--orange); }
+.hbox-orange .hbox-label { background: var(--orange); color: #fff; }
+.hbox-red { background: rgba(230,57,70,.08); border-color: var(--red); }
+.hbox-red .hbox-label { background: var(--red); color: #fff; }
+.hbox-green { background: rgba(63,163,77,.1); border-color: var(--green); }
+.hbox-green .hbox-label { background: var(--green); color: #fff; }
+.hbox-blue { background: rgba(29,111,184,.1); border-color: var(--blue); }
+.hbox-blue .hbox-label { background: var(--blue); color: #fff; }
+.hbox-yellow { background: rgba(255,210,63,.15); border-color: var(--yellow); }
+.hbox-yellow .hbox-label { background: var(--yellow); color: var(--ink); }
+.data-table { width: 100%; border-collapse: collapse; margin: 16px 0; font-size: .93rem; }
+.data-table th {
+  font-family: 'Bangers', cursive; font-size: 1rem; letter-spacing: 1px;
+  background: var(--ink); color: #fff; padding: 10px 14px; text-align: left; border: 2px solid var(--ink);
+}
+.data-table td { padding: 10px 14px; border: 2px solid var(--ink); vertical-align: top; }
+.data-table tr:nth-child(odd) td  { background: var(--paper2); }
+.data-table tr:nth-child(even) td { background: var(--paper); }
+.grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin: 16px 0; }
+.grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 16px; margin: 16px 0; }
+@media (max-width: 640px) { .grid-2, .grid-3 { grid-template-columns: 1fr; } }
+.card {
+  border: 3px solid var(--ink); border-radius: 5px;
+  box-shadow: 4px 4px 0 var(--ink); padding: 18px; background: var(--paper);
+}
+.card-head { font-family: 'Bangers', cursive; font-size: 1.1rem; letter-spacing: 1px; margin-bottom: 10px; padding-bottom: 8px; border-bottom: 2px solid var(--ink); }
+.step-flow { display: flex; flex-direction: column; gap: 0; }
+.step-item { display: grid; grid-template-columns: 52px 1fr; gap: 0 18px; position: relative; }
+.step-item:not(:last-child)::after { content: ''; position: absolute; left: 25px; top: 52px; bottom: -16px; width: 2px; background: var(--ink); }
+.step-num {
+  width: 52px; height: 52px; border-radius: 50%;
+  border: 3px solid var(--ink); display: flex; align-items: center; justify-content: center;
+  font-family: 'Bangers', cursive; font-size: 1.3rem;
+  box-shadow: 3px 3px 0 var(--ink); flex-shrink: 0; position: relative; z-index: 1;
+}
+.step-body { padding: 8px 0 28px; }
+.sfx-row { display: flex; gap: 16px; flex-wrap: wrap; margin: 20px 0; }
+.sfx {
+  font-family: 'Bangers', cursive; font-size: 1.8rem; letter-spacing: 3px;
+  color: var(--ink); text-shadow: 3px 3px 0 var(--yellow); transform: rotate(-2deg); display: inline-block;
+}
+.sfx:nth-child(even) { transform: rotate(2deg); text-shadow: 3px 3px 0 var(--orange); }
+.chapter-divider { text-align: center; margin: 40px 0 28px; position: relative; }
+.chapter-divider::before { content: ''; position: absolute; top: 50%; left: 0; right: 0; height: 3px; background: var(--ink); }
+.chapter-divider span { position: relative; background: var(--paper); font-family: 'Bangers', cursive; font-size: 1rem; letter-spacing: 3px; padding: 0 16px; }
+
+/* HERO */
+.hero-panel {
+  background: var(--ink); border: 4px solid var(--ink); border-radius: 8px;
+  box-shadow: 8px 8px 0 var(--orange); padding: 48px 40px 40px; margin-bottom: 32px;
+  text-align: center; position: relative; overflow: hidden;
+}
+.hero-panel::before {
+  content: ''; position: absolute; inset: 0;
+  background: repeating-linear-gradient(45deg, transparent, transparent 20px, rgba(255,140,66,.04) 20px, rgba(255,140,66,.04) 40px);
+}
+.hero-title { font-family: 'Bangers', cursive; font-size: clamp(3.5rem,11vw,7rem); letter-spacing: 4px; color: #fff; text-shadow: 4px 4px 0 var(--orange), 8px 8px 0 rgba(0,0,0,.4); line-height: 0.95; position: relative; }
+.hero-sub   { font-family: 'Space Mono', monospace; font-size: 1.3rem; color: var(--green); margin-top: 16px; letter-spacing: 1px; position: relative; }
+.hero-desc  { font-family: 'Comic Neue', cursive; font-size: 1.05rem; color: rgba(255,255,255,.75); margin-top: 14px; max-width: 600px; margin-left: auto; margin-right: auto; position: relative; }
+.hero-badges { display: flex; gap: 10px; justify-content: center; margin-top: 20px; flex-wrap: wrap; position: relative; }
+.hero-badge { font-family: 'Bangers', cursive; font-size: .9rem; letter-spacing: 2px; padding: 5px 16px; border-radius: 20px; border: 2px solid rgba(255,255,255,.3); }
+
+/* INTERACTIVE TOKEN BUCKET */
+.bucket-wrap {
+  background: #0d1117; border: 4px solid var(--ink); border-radius: 8px;
+  box-shadow: 7px 7px 0 var(--ink); overflow: hidden; margin: 24px 0;
+}
+.bucket-bar {
+  background: #161b22; border-bottom: 2px solid #30363d; padding: 10px 16px;
+  font-family: 'Bangers', cursive; font-size: 1rem; letter-spacing: 2px;
+  color: #e6edf3; display: flex; align-items: center; gap: 12px; flex-wrap: wrap;
+}
+.bucket-body { padding: 24px; display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
+@media (max-width: 620px) { .bucket-body { grid-template-columns: 1fr; } }
+.bucket-visual { display: flex; flex-direction: column; align-items: center; gap: 14px; }
+.bucket-svg-wrap { position: relative; }
+.bucket-controls { display: flex; flex-direction: column; gap: 12px; }
+.bc-btn {
+  font-family: 'Bangers', cursive; font-size: 1rem; letter-spacing: 1.5px;
+  padding: 10px 20px; border: 2px solid #30363d; border-radius: 5px;
+  background: #161b22; color: #e6edf3; cursor: pointer; width: 100%;
+  transition: background .15s, border-color .15s;
+}
+.bc-btn:hover { background: #21262d; border-color: #8b949e; }
+.bc-btn.primary { border-color: var(--orange); color: var(--orange); }
+.bc-btn.success { border-color: var(--green); color: var(--green); }
+.bc-btn.danger  { border-color: var(--red);   color: var(--red); }
+.bc-status {
+  font-family: 'Space Mono', monospace; font-size: .85rem;
+  padding: 10px 14px; border-radius: 5px; border: 1px solid #30363d;
+  background: #161b22; color: #adbac7; min-height: 44px; display: flex; align-items: center;
+}
+.bc-stats { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.bc-stat { background: #161b22; border: 1px solid #30363d; border-radius: 5px; padding: 10px; text-align: center; }
+.bc-stat-num { font-family: 'Bangers', cursive; font-size: 1.6rem; letter-spacing: 1px; }
+.bc-stat-label { font-family: 'Space Mono', monospace; font-size: .7rem; color: #7d8590; }
+
+/* FIXED WINDOW DEMO */
+.fw-wrap {
+  background: #0d1117; border: 4px solid var(--ink); border-radius: 8px;
+  box-shadow: 7px 7px 0 var(--ink); overflow: hidden; margin: 24px 0;
+}
+.fw-bar { background: #161b22; border-bottom: 2px solid #30363d; padding: 10px 16px; font-family: 'Bangers', cursive; font-size: 1rem; letter-spacing: 2px; color: #e6edf3; display: flex; align-items: center; gap: 12px; }
+.fw-body { padding: 20px; }
+.fw-row { display: flex; gap: 6px; margin-bottom: 16px; flex-wrap: wrap; }
+.fw-cell {
+  width: 36px; height: 36px; border-radius: 4px; border: 2px solid #30363d;
+  display: flex; align-items: center; justify-content: center;
+  font-family: 'Space Mono', monospace; font-size: .75rem; color: #adbac7;
+  transition: background .3s, border-color .3s;
+}
+.fw-cell.filled { background: var(--blue); border-color: #79c0ff; color: #fff; }
+.fw-cell.rejected { background: var(--red); border-color: #ff7b72; color: #fff; }
+.fw-cell.boundary { border: 2px solid var(--orange); }
+.fw-info { font-family: 'Space Mono', monospace; font-size: .82rem; color: #adbac7; padding: 10px 14px; background: #161b22; border-radius: 5px; border: 1px solid #30363d; margin-bottom: 12px; min-height: 42px; }
+.fw-controls { display: flex; gap: 10px; flex-wrap: wrap; }
+.fw-btn {
+  font-family: 'Bangers', cursive; font-size: .95rem; letter-spacing: 1.5px;
+  padding: 8px 18px; border: 2px solid #30363d; border-radius: 5px;
+  background: #161b22; color: #e6edf3; cursor: pointer; transition: background .15s;
+}
+.fw-btn:hover { background: #21262d; border-color: #8b949e; }
+.pros-cons { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin: 14px 0; }
+.pros, .cons { border: 3px solid var(--ink); border-radius: 5px; padding: 14px 16px; }
+.pros { background: rgba(63,163,77,.1); }
+.cons { background: rgba(230,57,70,.08); }
+.pros h5 { font-family: 'Bangers', cursive; font-size: 1rem; letter-spacing: 1px; margin-bottom: 8px; color: var(--green); }
+.cons h5 { font-family: 'Bangers', cursive; font-size: 1rem; letter-spacing: 1px; margin-bottom: 8px; color: var(--red); }
+.pros ul, .cons ul { padding-left: 18px; font-size: .9rem; }
+.pros li, .cons li { margin-bottom: 5px; }
+@media (max-width: 560px) { .pros-cons { grid-template-columns: 1fr; } }
+</style>
+</head>
+<body>
+<div data-masthead></div>
+<div class="page-wrap">
+
+<div data-tool-hero
+  data-title="How Rate Limiting Works"
+  data-chapter="HOW-02"
+  data-category="How X Works"
+  data-icon="🚦"
+  data-desc="Token bucket, leaky bucket, sliding window, fixed window — every algorithm visualized with animated interactive demos."
+  data-color="orange"
+  data-badges="4 ALGORITHMS,ANIMATED,BACKEND,FREE"
+  data-badge-colors="blue,green,yellow,white">
+</div>
+
+
+<!-- SECTION 1: What & Why -->
+<div class="panel">
+  <div class="section-head">
+    <span class="section-num">01</span>
+    <h2>So, What Actually is Rate Limiting?</h2>
+  </div>
+  <p>Imagine GitHub's API with no limits. One developer's runaway script hammers every public endpoint. Suddenly GitHub crawls to a halt for everyone on the planet. That's exactly why rate limiting exists — it's the server politely (and firmly) saying: <em>you get X requests per window, that's your share, try again later.</em> Blow past that and you get the infamous <strong>HTTP 429 Too Many Requests</strong>.</p>
+
+  <div class="hbox hbox-orange"><div class="hbox-label">THE REAL REASONS YOUR API NEEDS THIS</div>
+    <ul style="margin-top:12px;">
+      <li><strong>DoS protection</strong> — one runaway script shouldn't melt your API for every other paying customer</li>
+      <li><strong>Fair play</strong> — the user hammering you at 10,000 req/s doesn't get to ruin the experience for someone making 3</li>
+      <li><strong>Your AWS bill</strong> — a missing <code>await</code> inside a <code>while(true)</code> loop can cost thousands. Rate limits are a circuit breaker.</li>
+      <li><strong>Brute-force defense</strong> — cracking passwords is a lot less fun when you're limited to 5 attempts per minute per IP</li>
+      <li><strong>Monetization</strong> — free tier gets 100/hr, paid gets 10,000/hr. The rate limit <em>is</em> the product differentiation.</li>
+    </ul>
+  </div>
+
+  <h3>What You Actually Get When You're Throttled</h3>
+  <div class="terminal">
+    <div class="terminal-bar"><span class="tbar-dot red"></span><span class="tbar-dot yellow"></span><span class="tbar-dot green"></span><span class="tbar-label">HTTP 429 Too Many Requests</span></div>
+    <div class="terminal-body"><span class="t-kw">HTTP/1.1 429</span> <span class="t-val">Too Many Requests</span>
+<span class="t-hdr">Content-Type:</span> application/json
+<span class="t-hdr">X-RateLimit-Limit:</span> <span class="t-num">100</span>          <span class="t-cmt">← total requests allowed per window</span>
+<span class="t-hdr">X-RateLimit-Remaining:</span> <span class="t-num">0</span>       <span class="t-cmt">← requests left in current window</span>
+<span class="t-hdr">X-RateLimit-Reset:</span> <span class="t-num">1750001200</span>  <span class="t-cmt">← Unix timestamp when window resets</span>
+<span class="t-hdr">Retry-After:</span> <span class="t-num">47</span>                <span class="t-cmt">← seconds until client can retry</span>
+
+{
+  <span class="t-key">"error"</span>: <span class="t-str">"rate_limit_exceeded"</span>,
+  <span class="t-key">"message"</span>: <span class="t-str">"Too many requests. Retry after 47 seconds."</span>,
+  <span class="t-key">"limit"</span>: <span class="t-num">100</span>,
+  <span class="t-key">"window"</span>: <span class="t-str">"1 minute"</span>
+}</div>
+  </div>
+
+  <h3>Where Rate Limiting Actually Lives</h3>
+  <div style="display:flex;flex-direction:column;gap:0;margin:16px 0;">
+    <div style="padding:14px 18px;background:var(--paper2);border:3px solid var(--ink);border-radius:6px 6px 0 0;font-weight:700;">Client SDK <span style="font-weight:400;font-size:.9rem;"> — your own SDK self-throttles with backoff. Polite, but you're trusting the client to behave. Good luck with that.</span></div>
+    <div style="padding:14px 18px;background:var(--paper);border:3px solid var(--ink);border-top:0;"><strong>CDN / WAF</strong> (Cloudflare, AWS WAF) — sees the request before your servers even wake up. Blocks bad IPs, rate-limits entire ASNs. Most garbage never reaches your origin at all. Cheapest protection per bad request stopped.</div>
+    <div style="padding:14px 18px;background:var(--paper2);border:3px solid var(--ink);border-top:0;"><strong>API Gateway</strong> (Kong, AWS API GW, nginx) — <em>where most teams actually enforce limits.</em> Per-API-key quotas, tiered plans, burst configs. If you only protect one layer, make it this one.</div>
+    <div style="padding:14px 18px;background:var(--paper);border:3px solid var(--ink);border-top:0;"><strong>App Middleware</strong> (express-rate-limit, Django REST throttle) — where things get smart. Your CDN doesn't know what a phone number is. Your middleware does: "max 3 failed OTP attempts per number per hour, max 5 password resets per email per day."</div>
+    <div style="padding:14px 18px;background:var(--paper2);border:3px solid var(--ink);border-top:0;border-radius:0 0 6px 6px;"><strong>Database Layer</strong> — PgBouncer's <code>max_client_conn</code>. Your last line of defense and, honestly, an admission that every layer above it failed.</div>
+  </div>
+</div>
+
+<!-- SECTION 2: Fixed Window -->
+<div class="panel">
+  <div class="section-head">
+    <span class="section-num">02</span>
+    <h2>Algorithm 1: Fixed Window Counter</h2>
+  </div>
+  <p>Start simple. Chop time into equal buckets — say, 1-minute chunks. Every request bumps a counter. Counter hits 100? You're blocked until the next bucket starts. Counter resets, everyone gets a fresh slate. Simple enough to implement in 15 minutes, which also means simple enough to exploit in 15 minutes.</p>
+
+  <h3>The Redis Implementation</h3>
+  <div class="terminal">
+    <div class="terminal-bar"><span class="tbar-dot red"></span><span class="tbar-dot yellow"></span><span class="tbar-dot green"></span><span class="tbar-label">Redis Implementation</span></div>
+    <div class="terminal-body"><span class="t-cmt">-- Atomic INCR + EXPIRE (set TTL only if key is new)</span>
+<span class="t-kw">local</span> key   = <span class="t-str">"ratelimit:user:u_12345:"</span> .. math.floor(tonumber(redis.call(<span class="t-str">'TIME'</span>)[1]) / <span class="t-num">60</span>)
+<span class="t-kw">local</span> count  = redis.call(<span class="t-str">'INCR'</span>, key)
+<span class="t-kw">if</span> count == <span class="t-num">1</span> <span class="t-kw">then</span>
+  redis.call(<span class="t-str">'EXPIRE'</span>, key, <span class="t-num">60</span>)  <span class="t-cmt">-- only set TTL when key is brand new</span>
+<span class="t-kw">end</span>
+<span class="t-kw">if</span> count > <span class="t-num">100</span> <span class="t-kw">then</span>
+  <span class="t-kw">return</span> <span class="t-num">0</span>  <span class="t-cmt">-- rejected</span>
+<span class="t-kw">end</span>
+<span class="t-kw">return</span> <span class="t-num">1</span>  <span class="t-cmt">-- allowed</span></div>
+  </div>
+
+  <div class="hbox hbox-red"><div class="hbox-label">THE EXPLOIT BAKED INTO THE DESIGN</div>
+    <p style="margin-top:12px;">Here's the dirty secret. An attacker sends 100 requests at 11:59:59 — all allowed, window isn't full yet. One second later at 12:00:01, window resets, they fire 100 more — also allowed, fresh window. That's <strong>200 requests in 2 seconds</strong> against a "100 per minute" limit. Free doubling, every single minute. Any system using naive fixed window is vulnerable to this — forever.</p>
+  </div>
+
+  <!-- Fixed Window Animation -->
+  <h3>Interactive: Fixed Window Demo</h3>
+  <p>Fill up Window 1, then hit <strong>Boundary Burst Attack</strong> — watch 20 requests slip through a 10-request limit by straddling the window edge.</p>
+  <div class="fw-wrap">
+    <div class="fw-bar">
+      <span class="tbar-dot red"></span><span class="tbar-dot yellow"></span><span class="tbar-dot green"></span>
+      <span>FIXED WINDOW COUNTER — limit: 10 requests/window</span>
+    </div>
+    <div class="fw-body">
+      <div style="margin-bottom:8px;font-family:'Space Mono',monospace;font-size:.8rem;color:#7d8590;">Window 1 (0–9s) &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;│&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Window 2 (10–19s)</div>
+      <div id="fw-grid" class="fw-row"></div>
+      <div class="fw-info" id="fw-info">Click "Send Request" — each slot represents one request. Limit = 10 per window.</div>
+      <div class="fw-controls">
+        <button class="fw-btn" onclick="fwSend()">Send Request</button>
+        <button class="fw-btn" onclick="fwBurst()">⚡ Boundary Burst Attack</button>
+        <button class="fw-btn" onclick="fwReset()">↺ Reset</button>
+        <span id="fw-counter" style="font-family:'Space Mono',monospace;font-size:.85rem;color:#adbac7;margin-left:auto;align-self:center;">Window 1: 0/10</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="pros-cons">
+    <div class="pros"><h5>Pros</h5><ul>
+      <li>So simple a junior dev can ship it before lunch</li>
+      <li>One Redis key, one INCR — basically free</li>
+      <li>Works at massive scale with near-zero overhead</li>
+    </ul></div>
+    <div class="cons"><h5>Cons</h5><ul>
+      <li>Boundary burst exploit — double your traffic for free, every minute</li>
+      <li>Users who hit the limit at 11:59:50 wait longer than users who hit it at 11:59:00</li>
+      <li>Hard reset at window edge feels arbitrary and punishing</li>
+    </ul></div>
+  </div>
+</div>
+
+<!-- SECTION 3: Sliding Window Log -->
+<div class="panel">
+  <div class="section-head">
+    <span class="section-num">03</span>
+    <h2>Algorithm 2: Sliding Window Log</h2>
+  </div>
+  <p>Instead of a hard window, log the exact timestamp of every request. When a new one arrives, look back exactly 60 seconds — count how many timestamps are in that rolling range. Under the limit? Let it through, add the timestamp. Over the limit? 429. No hard reset. No window edge to exploit. Just a clean, rolling 60-second view of what the user has actually been doing.</p>
+
+  <div class="terminal">
+    <div class="terminal-bar"><span class="tbar-dot red"></span><span class="tbar-dot yellow"></span><span class="tbar-dot green"></span><span class="tbar-label">Redis Sorted Set Implementation</span></div>
+    <div class="terminal-body"><span class="t-cmt">-- Redis sorted set: score = timestamp, member = request_id</span>
+<span class="t-kw">local</span> key     = <span class="t-str">"swlog:user:u_12345"</span>
+<span class="t-kw">local</span> now      = tonumber(redis.call(<span class="t-str">'TIME'</span>)[1]) * <span class="t-num">1000</span> + tonumber(redis.call(<span class="t-str">'TIME'</span>)[2]) / <span class="t-num">1000</span>
+<span class="t-kw">local</span> window   = <span class="t-num">60000</span>   <span class="t-cmt">-- 60 seconds in ms</span>
+<span class="t-kw">local</span> cutoff   = now - window
+
+<span class="t-cmt">-- Remove expired timestamps</span>
+redis.call(<span class="t-str">'ZREMRANGEBYSCORE'</span>, key, <span class="t-num">0</span>, cutoff)
+
+<span class="t-cmt">-- Count remaining (all within the window)</span>
+<span class="t-kw">local</span> count = redis.call(<span class="t-str">'ZCARD'</span>, key)
+
+<span class="t-kw">if</span> count >= <span class="t-num">100</span> <span class="t-kw">then</span>
+  <span class="t-kw">return</span> <span class="t-num">0</span>  <span class="t-cmt">-- rejected</span>
+<span class="t-kw">end</span>
+
+<span class="t-cmt">-- Add current request timestamp</span>
+redis.call(<span class="t-str">'ZADD'</span>, key, now, now .. <span class="t-str">":req"</span>)
+redis.call(<span class="t-str">'EXPIRE'</span>, key, <span class="t-num">60</span>)
+<span class="t-kw">return</span> <span class="t-num">1</span>  <span class="t-cmt">-- allowed</span></div>
+  </div>
+
+  <div class="hbox hbox-blue"><div class="hbox-label">WHY THE BOUNDARY EXPLOIT DIES HERE</div>
+    <p style="margin-top:12px;">The window is always <em>the last 60 seconds relative to right now</em> — not a calendar minute. Send 100 requests at 11:59:59? They're still in the sorted set at 12:00:01. You're blocked until each one ages out. There's no midnight to exploit. No free doubling. The math simply doesn't have a seam to attack.</p>
+  </div>
+
+  <div class="hbox hbox-orange"><div class="hbox-label">THE CATCH: MEMORY GETS EXPENSIVE FAST</div>
+    <p style="margin-top:12px;">Here's where reality bites. You're storing every single timestamp — not just a counter. Scale that up: 1M users × 100 requests/min = 100M sorted set entries in Redis. At ~80 bytes each, that's <strong>8GB just for rate limit tracking</strong>. Most startups never hit this ceiling. When you do, it's time to switch algorithms.</p>
+  </div>
+
+  <div class="pros-cons">
+    <div class="pros"><h5>Pros</h5><ul>
+      <li>Mathematically accurate — boundary exploit is impossible</li>
+      <li>Fair and smooth — no sudden resets that feel arbitrary</li>
+      <li>You can tell users exactly when their oldest request ages out</li>
+    </ul></div>
+    <div class="cons"><h5>Cons</h5><ul>
+      <li>Memory scales with traffic, not user count — 8GB at 1M users × 100 req/min</li>
+      <li>ZREMRANGEBYSCORE on huge sets has a real cost</li>
+      <li>At serious scale, this is the wrong algorithm — use token bucket</li>
+    </ul></div>
+  </div>
+</div>
+
+<!-- SECTION 4: Leaky Bucket -->
+<div class="panel">
+  <div class="section-head">
+    <span class="section-num">04</span>
+    <h2>Algorithm 3: Leaky Bucket</h2>
+  </div>
+  <p>Picture your API as a bucket with a hole in the bottom. Requests pour in from the top at whatever rate they want. The hole drains at a fixed, constant rate — doesn't matter if a tsunami arrives, outflow stays steady. Bucket fills past capacity? New requests immediately overflow with a 429. Queued ones wait their turn at the drain rate.</p>
+
+  <p>The superpower here is <strong>traffic shaping, not just limiting</strong>. A payment processor doesn't care that you had a burst moment — it'll process your requests, just at its own steady pace. Downstream services see perfectly smooth traffic regardless of what hits the top of the bucket.</p>
+
+  <div class="grid-2">
+    <div class="card">
+      <div class="card-head">Parameters</div>
+      <ul style="font-size:.95rem;line-height:1.9;">
+        <li><strong>Bucket capacity</strong> = max queue size</li>
+        <li><strong>Leak rate</strong> = requests processed/second</li>
+        <li>Requests queue in bucket (FIFO)</li>
+        <li>Overflow = immediate 429</li>
+        <li>Queued requests = delayed, not rejected</li>
+      </ul>
+    </div>
+    <div class="card">
+      <div class="card-head">Use Cases</div>
+      <ul style="font-size:.95rem;line-height:1.9;">
+        <li>Payment processors (smooth throughput)</li>
+        <li>Video encoding pipelines</li>
+        <li>Email sending services (SMTP limits)</li>
+        <li>Anywhere downstream is rate-sensitive</li>
+        <li>CDN request smoothing</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="hbox hbox-orange"><div class="hbox-label">THE DOWNSIDE: LEGIT BURSTS GET PUNISHED TOO</div>
+    <p style="margin-top:12px;">A user opens a dashboard that fires 10 API calls at once. Your leak rate is 2/second. All 10 go into the queue — first 2 come back fast, next 2 in 1 second, last few take 5 seconds. Your server <em>could have handled all 10 in parallel</em> — but leaky bucket didn't let it. The next algorithm fixes exactly this.</p>
+  </div>
+
+  <div class="pros-cons">
+    <div class="pros"><h5>Pros</h5><ul>
+      <li>Downstream sees perfectly flat traffic — never a spike</li>
+      <li>Great for payment processors, email queues, video encoding</li>
+      <li>Naturally absorbs client-side bursts without crashing backends</li>
+    </ul></div>
+    <div class="cons"><h5>Cons</h5><ul>
+      <li>Punishes legitimate bursts — a dashboard load feels slow</li>
+      <li>Queued requests accumulate latency the user can see</li>
+      <li>Queue can grow unbounded if the drain rate is too slow</li>
+    </ul></div>
+  </div>
+</div>
+
+<!-- SECTION 5: Token Bucket -->
+<div class="panel">
+  <div class="section-head">
+    <span class="section-num">05</span>
+    <h2>Algorithm 4: Token Bucket</h2>
+  </div>
+  <p>This is the one everyone actually uses — AWS, GitHub, Stripe. Think of it as a prepaid card that refills itself. The bucket fills up with tokens at a steady rate. Each request spends one token. Got tokens? You're through. No tokens? 429. The twist that makes it better than everything else: <strong>if you've been idle and tokens stacked up, you can spend them all at once.</strong> Bursts are the feature, not a bug.</p>
+
+  <div class="hbox hbox-green"><div class="hbox-label">WHY EVERY MAJOR API USES THIS</div>
+    <p style="margin-top:12px;">With capacity=10 and refill_rate=2/second: your dashboard loads and fires 10 API calls at once — all allowed, you had 10 tokens saved up from being idle. Then you click around at human speed (1-2 actions/minute) and tokens slowly refill. Token bucket matches how users <em>actually behave</em> instead of penalizing the natural way apps batch requests.</p>
+  </div>
+
+  <h3>Real-World Usage</h3>
+  <div class="grid-3">
+    <div class="card" style="border-color:var(--orange);">
+      <div class="card-head" style="color:var(--orange);">AWS API Gateway</div>
+      <p style="font-size:.9rem;">Token bucket per account. Default: <strong>10,000 RPS burst</strong> + <strong>5,000 RPS steady state</strong>. Burst tokens refill at 5,000/second.</p>
+    </div>
+    <div class="card" style="border-color:var(--green);">
+      <div class="card-head" style="color:var(--green);">GitHub API</div>
+      <p style="font-size:.9rem;"><strong>5,000 requests/hour</strong> per token. Roughly 1.38 req/s steady state. Burst to 5,000 if bucket is full.</p>
+    </div>
+    <div class="card" style="border-color:var(--blue);">
+      <div class="card-head" style="color:var(--blue);">Stripe API</div>
+      <p style="font-size:.9rem;"><strong>100 requests/second</strong> for most endpoints. Payment endpoints lower. Uses sliding window + token bucket hybrid.</p>
+    </div>
+  </div>
+
+  <h3>Redis + Lua Atomic Implementation</h3>
+  <div class="terminal">
+    <div class="terminal-bar"><span class="tbar-dot red"></span><span class="tbar-dot yellow"></span><span class="tbar-dot green"></span><span class="tbar-label">Token Bucket — Redis Lua Script (atomic)</span></div>
+    <div class="terminal-body"><span class="t-cmt">-- Token Bucket in Redis. Atomic via Lua (no race condition)</span>
+<span class="t-kw">local</span> key          = KEYS[<span class="t-num">1</span>]          <span class="t-cmt">-- "tb:user:u_12345"</span>
+<span class="t-kw">local</span> capacity     = tonumber(ARGV[<span class="t-num">1</span>])  <span class="t-cmt">-- max tokens (e.g. 100)</span>
+<span class="t-kw">local</span> refill_rate  = tonumber(ARGV[<span class="t-num">2</span>])  <span class="t-cmt">-- tokens/second (e.g. 10)</span>
+<span class="t-kw">local</span> now          = tonumber(ARGV[<span class="t-num">3</span>])  <span class="t-cmt">-- current Unix ms timestamp</span>
+<span class="t-kw">local</span> tokens_requested = tonumber(ARGV[<span class="t-num">4</span>]) <span class="t-cmt">-- usually 1</span>
+
+<span class="t-cmt">-- Get current state: [tokens, last_refill_time]</span>
+<span class="t-kw">local</span> state = redis.call(<span class="t-str">'HMGET'</span>, key, <span class="t-str">'tokens'</span>, <span class="t-str">'ts'</span>)
+<span class="t-kw">local</span> tokens = tonumber(state[<span class="t-num">1</span>]) <span class="t-kw">or</span> capacity
+<span class="t-kw">local</span> ts     = tonumber(state[<span class="t-num">2</span>]) <span class="t-kw">or</span> now
+
+<span class="t-cmt">-- Refill: add tokens based on elapsed time</span>
+<span class="t-kw">local</span> elapsed = math.max(<span class="t-num">0</span>, now - ts) / <span class="t-num">1000</span>  <span class="t-cmt">-- seconds</span>
+tokens = math.min(capacity, tokens + elapsed * refill_rate)
+
+<span class="t-kw">if</span> tokens < tokens_requested <span class="t-kw">then</span>
+  <span class="t-cmt">-- Not enough tokens — save updated count and reject</span>
+  redis.call(<span class="t-str">'HMSET'</span>, key, <span class="t-str">'tokens'</span>, tokens, <span class="t-str">'ts'</span>, now)
+  redis.call(<span class="t-str">'EXPIRE'</span>, key, math.ceil(capacity / refill_rate) + <span class="t-num">1</span>)
+  <span class="t-kw">return</span> {<span class="t-num">0</span>, math.floor(tokens)}  <span class="t-cmt">-- {allowed, tokens_remaining}</span>
+<span class="t-kw">end</span>
+
+<span class="t-cmt">-- Consume tokens and allow</span>
+tokens = tokens - tokens_requested
+redis.call(<span class="t-str">'HMSET'</span>, key, <span class="t-str">'tokens'</span>, tokens, <span class="t-str">'ts'</span>, now)
+redis.call(<span class="t-str">'EXPIRE'</span>, key, math.ceil(capacity / refill_rate) + <span class="t-num">1</span>)
+<span class="t-kw">return</span> {<span class="t-num">1</span>, math.floor(tokens)}  <span class="t-cmt">-- allowed</span></div>
+  </div>
+
+  <!-- Token Bucket Animation -->
+  <h3>Interactive Token Bucket Demo</h3>
+  <p>Let the bucket fill up, then burn all 10 tokens at once with a burst. Watch tokens slowly refill. Try overwhelming it — see exactly what a real 429 scenario looks like.</p>
+  <div class="bucket-wrap">
+    <div class="bucket-bar">
+      <span class="tbar-dot red"></span><span class="tbar-dot yellow"></span><span class="tbar-dot green"></span>
+      <span>TOKEN BUCKET — capacity: 10 · refill: 1 token / 2s</span>
+      <select id="refill-speed" style="margin-left:auto;font-family:'Bangers',cursive;font-size:.9rem;letter-spacing:1px;background:#161b22;color:#e6edf3;border:1px solid #30363d;border-radius:4px;padding:4px 10px;cursor:pointer;">
+        <option value="2000">SLOW (2s/token)</option>
+        <option value="1000">NORMAL (1s/token)</option>
+        <option value="500">FAST (0.5s/token)</option>
+      </select>
+    </div>
+    <div class="bucket-body">
+      <div class="bucket-visual">
+        <svg id="bucket-svg" viewBox="0 0 180 220" width="180" height="220">
+          <defs>
+            <clipPath id="bucketClip">
+              <rect x="30" y="60" width="120" height="140"/>
+            </clipPath>
+          </defs>
+          <!-- Bucket body -->
+          <rect x="28" y="58" width="124" height="144" rx="6" fill="#161b22" stroke="#30363d" stroke-width="3"/>
+          <!-- Water fill (token level) -->
+          <rect id="token-fill" x="31" y="61" width="118" height="0" rx="4" fill="#ff8c42" opacity="0.85" clip-path="url(#bucketClip)"/>
+          <!-- Token circles drawn on top -->
+          <g id="token-circles"></g>
+          <!-- Bucket outline on top -->
+          <rect x="28" y="58" width="124" height="144" rx="6" fill="none" stroke="#e6edf3" stroke-width="3"/>
+          <!-- Level label -->
+          <text id="token-count-svg" x="90" y="145" text-anchor="middle" font-family="Bangers,cursive" font-size="36" fill="#fff" opacity="0.9">10</text>
+          <text x="90" y="168" text-anchor="middle" font-family="Space Mono,monospace" font-size="11" fill="rgba(255,255,255,.6)">tokens</text>
+          <!-- Drain hole -->
+          <rect x="78" y="202" width="24" height="8" rx="4" fill="#30363d"/>
+          <!-- Drip animation placeholder -->
+          <circle id="drip" cx="90" cy="215" r="4" fill="#ff8c42" opacity="0"/>
+        </svg>
+        <div class="bc-stats">
+          <div class="bc-stat">
+            <div class="bc-stat-num" id="stat-tokens" style="color:var(--orange);">10</div>
+            <div class="bc-stat-label">TOKENS LEFT</div>
+          </div>
+          <div class="bc-stat">
+            <div class="bc-stat-num" id="stat-total" style="color:var(--blue);">0</div>
+            <div class="bc-stat-label">TOTAL SENT</div>
+          </div>
+          <div class="bc-stat">
+            <div class="bc-stat-num" id="stat-ok" style="color:var(--green);">0</div>
+            <div class="bc-stat-label">ALLOWED</div>
+          </div>
+          <div class="bc-stat">
+            <div class="bc-stat-num" id="stat-rej" style="color:var(--red);">0</div>
+            <div class="bc-stat-label">REJECTED</div>
+          </div>
+        </div>
+      </div>
+      <div class="bucket-controls">
+        <button class="bc-btn primary" onclick="tbSend(1)">🔵 Send 1 Request</button>
+        <button class="bc-btn" onclick="tbSend(5)" style="border-color:var(--yellow);color:var(--yellow);">⚡ Burst: Send 5</button>
+        <button class="bc-btn" onclick="tbSend(15)" style="border-color:var(--red);color:var(--red);">💥 Overwhelm: Send 15</button>
+        <button class="bc-btn" onclick="tbReset()">↺ Reset</button>
+        <div class="bc-status" id="bc-status">Send requests and watch the token level drop — then wait for refill.</div>
+        <div style="font-family:'Space Mono',monospace;font-size:.75rem;color:#7d8590;padding:8px 0;">
+          Tokens refill automatically every interval. Watch the bucket fill back up!
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="pros-cons">
+    <div class="pros"><h5>Pros</h5><ul>
+      <li>Bursts are allowed — dashboards, app loads feel instant</li>
+      <li>Average rate is still enforced — no free ride</li>
+      <li>O(1) per request — Lua script, two Redis keys, done</li>
+      <li>Industry standard: AWS, GitHub, Stripe all use it</li>
+    </ul></div>
+    <div class="cons"><h5>Cons</h5><ul>
+      <li>Slightly more code than fixed window (but not much)</li>
+      <li>Needs atomic execution — Redis Lua or a compare-and-swap loop</li>
+      <li>Clock drift across distributed nodes can cause subtle inconsistencies</li>
+    </ul></div>
+  </div>
+</div>
+
+<!-- SECTION 6: Sliding Window Counter -->
+<div class="panel">
+  <div class="section-head">
+    <span class="section-num">06</span>
+    <h2>Bonus: Sliding Window Counter — The Best of Both</h2>
+  </div>
+  <p>You want sliding window accuracy but you can't afford to store every timestamp. Here's the trick: you don't have to. Cloudflare and most large-scale rate limiters use this hybrid. Keep two counters — current window and previous window. Apply a weighted formula to estimate where you fall in the sliding window. Two Redis keys per user instead of potentially thousands of sorted set entries. Nearly as accurate, fraction of the cost.</p>
+
+  <div class="hbox hbox-blue"><div class="hbox-label">THE FORMULA</div>
+    <div style="margin-top:14px;text-align:center;font-family:'Space Mono',monospace;font-size:.95rem;background:#161b22;color:#e6edf3;padding:16px;border-radius:6px;border:2px solid #30363d;">
+      count ≈ prev_window_count × (1 − elapsed/window_size) + current_window_count
+    </div>
+    <p style="margin-top:12px;"><strong>Example:</strong> Limit=100/min. Current time is 75% into the window. Previous window had 60 requests. Current window has 40 requests.</p>
+    <div style="font-family:'Space Mono',monospace;font-size:.9rem;background:#161b22;color:#7ee787;padding:12px;border-radius:5px;border:2px solid #30363d;margin-top:8px;">
+      estimated = 60 × (1 − 0.75) + 40 = 60 × 0.25 + 40 = 15 + 40 = <strong>55 requests</strong>
+    </div>
+    <p style="margin-top:10px;">This approximation is off by at most ~0.1% on real traffic patterns. In practice, indistinguishable from exact sliding window — but costs 2 Redis keys instead of up to <em>N</em> sorted set entries where N = your request limit.</p>
+  </div>
+</div>
+
+<!-- SECTION 7: Rate Limiting Keys -->
+<div class="panel">
+  <div class="section-head">
+    <span class="section-num">07</span>
+    <h2>What Do You Actually Limit On?</h2>
+  </div>
+
+  <table class="data-table">
+    <thead>
+      <tr><th>Key Type</th><th>Redis Key Example</th><th>Use When</th><th>Weakness</th></tr>
+    </thead>
+    <tbody>
+      <tr><td><strong>Per IP</strong></td><td><code>rl:ip:203.0.113.1:1750001</code></td><td>Unauthenticated endpoints, public APIs</td><td>Shared IPs (NAT, corporate), VPNs</td></tr>
+      <tr><td><strong>Per User</strong></td><td><code>rl:user:u_12345:1750001</code></td><td>Authenticated APIs, fair usage</td><td>Doesn't stop multi-account abuse</td></tr>
+      <tr><td><strong>Per API Key</strong></td><td><code>rl:key:sk_live_abc:1750001</code></td><td>Developer APIs, SaaS tiering</td><td>Leaked keys used to hit limits</td></tr>
+      <tr><td><strong>Per Endpoint</strong></td><td><code>rl:ep:POST:/checkout:1750001</code></td><td>Sensitive endpoints (login, OTP)</td><td>Attacker spreads across endpoints</td></tr>
+      <tr><td><strong>Composite</strong></td><td><code>rl:u_12345:POST:/checkout:1750001</code></td><td>Most accurate, fine-grained</td><td>More Redis keys, more memory</td></tr>
+    </tbody>
+  </table>
+</div>
+
+<!-- SECTION 8: Distributed -->
+<div class="panel">
+  <div class="section-head">
+    <span class="section-num">08</span>
+    <h2>Distributed Rate Limiting</h2>
+  </div>
+  <p>Here's a nasty surprise waiting for teams that don't think this through. You've got 3 app servers, each doing their own in-memory rate limiting. A smart client discovers the round-robin pattern and distributes requests across all three: 100 to server A, 100 to B, 100 to C. Every one of them allowed. That's <strong>300 requests against your "100 per minute" limit</strong>. Per-process rate limiting is theater. You need one central counter that every server talks to.</p>
+
+  <div class="grid-2">
+    <div class="card" style="border-color:var(--red);">
+      <div class="card-head" style="color:var(--red);">❌ The Problem</div>
+      <p style="font-size:.9rem;">App Server A sees 100 requests → allows all.<br>App Server B sees 100 requests → allows all.<br>App Server C sees 100 requests → allows all.<br><strong>Result: 300 requests through against a 100 limit.</strong></p>
+    </div>
+    <div class="card" style="border-color:var(--green);">
+      <div class="card-head" style="color:var(--green);">✅ The Solution</div>
+      <p style="font-size:.9rem;">All servers share one Redis counter. <code>INCR rl:user:u_12345:1750001</code> is atomic — no race condition. Every server checks the same counter.</p>
+    </div>
+  </div>
+
+  <div class="hbox hbox-orange"><div class="hbox-label">WHY YOU CAN'T SKIP THE LUA SCRIPT</div>
+    <p style="margin-top:12px;">Check-then-increment as two separate Redis commands has a race condition. Server A checks (count=99, allow). Server B checks (count=99, allow). Server A increments to 100. Server B increments to 101. Both let the request through. Classic TOCTOU. Redis Lua scripts are atomic — nothing touches the key while your script runs. This is non-negotiable if you care about correctness under load.</p>
+  </div>
+</div>
+
+<!-- SECTION 9: Algorithm Comparison Cheat Sheet -->
+<div class="panel">
+  <div class="section-head">
+    <span class="section-num">09</span>
+    <h2>Which Algorithm Should You Actually Use?</h2>
+  </div>
+
+  <table class="data-table">
+    <thead>
+      <tr><th>Algorithm</th><th>Memory</th><th>Accuracy</th><th>Allows Burst</th><th>Complexity</th><th>Best For</th></tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>Fixed Window</strong></td>
+        <td><span class="chip chip-green">O(1)</span></td>
+        <td><span class="chip chip-red">Low</span></td>
+        <td>2× at boundary</td>
+        <td>Trivial</td>
+        <td>Simple counters, internal APIs</td>
+      </tr>
+      <tr>
+        <td><strong>Sliding Window Log</strong></td>
+        <td><span class="chip chip-red">O(limit)</span></td>
+        <td><span class="chip chip-green">Exact</span></td>
+        <td>Smooth</td>
+        <td>Medium</td>
+        <td>Low-volume precision APIs</td>
+      </tr>
+      <tr>
+        <td><strong>Sliding Window Counter</strong></td>
+        <td><span class="chip chip-green">O(1)</span></td>
+        <td><span class="chip chip-blue">~99.9%</span></td>
+        <td>Smooth</td>
+        <td>Low</td>
+        <td>Most web APIs</td>
+      </tr>
+      <tr>
+        <td><strong>Leaky Bucket</strong></td>
+        <td><span class="chip chip-yellow">O(queue)</span></td>
+        <td><span class="chip chip-green">Exact</span></td>
+        <td>No (queued)</td>
+        <td>Medium</td>
+        <td>Traffic shaping, downstream protection</td>
+      </tr>
+      <tr>
+        <td><strong>Token Bucket</strong></td>
+        <td><span class="chip chip-green">O(1)</span></td>
+        <td><span class="chip chip-green">Exact</span></td>
+        <td>Yes (capacity)</td>
+        <td>Medium</td>
+        <td>Public APIs, AWS, Stripe — the standard</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div class="grid-3" style="margin-top:24px;">
+    <div class="card">
+      <div class="card-head">GitHub Headers</div>
+      <div class="terminal" style="margin:0;">
+        <div class="terminal-body" style="font-size:.78rem;"><span class="t-hdr">X-RateLimit-Limit:</span> <span class="t-num">5000</span>
+<span class="t-hdr">X-RateLimit-Remaining:</span> <span class="t-num">4823</span>
+<span class="t-hdr">X-RateLimit-Reset:</span> <span class="t-num">1750001200</span>
+<span class="t-hdr">X-RateLimit-Used:</span> <span class="t-num">177</span>
+<span class="t-hdr">X-RateLimit-Resource:</span> core</div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-head">Stripe Headers</div>
+      <div class="terminal" style="margin:0;">
+        <div class="terminal-body" style="font-size:.78rem;"><span class="t-hdr">Stripe-Ratelimit-Limit:</span> <span class="t-num">100</span>
+<span class="t-hdr">Stripe-Ratelimit-Remaining:</span> <span class="t-num">99</span>
+<span class="t-hdr">Retry-After:</span> <span class="t-num">1</span>
+<span class="t-cmt"># 100 requests/second</span>
+<span class="t-cmt"># sliding window</span></div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-head">AWS API GW</div>
+      <div class="terminal" style="margin:0;">
+        <div class="terminal-body" style="font-size:.78rem;"><span class="t-cmt"># AWS uses token bucket</span>
+<span class="t-cmt"># Default limits:</span>
+Burst limit: <span class="t-num">10,000</span> RPS
+Steady state: <span class="t-num">5,000</span> RPS
+<span class="t-cmt"># Per-account, per-region</span>
+<span class="t-cmt"># Adjustable via Support</span></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="chapter-divider"><span>END OF HOW-02</span></div>
+</div><!-- /page-wrap -->
+
+<script src="hero-banner.js"></script>
+<script src="masthead.js"></script>
+<script src="author-card.js"></script>
+<script>
+/* ===== FIXED WINDOW DEMO ===== */
+var fwWindow1 = 0, fwWindow2 = 0, fwLimit = 10;
+var fwCells = [];
+
+function fwBuildGrid() {
+  var grid = document.getElementById('fw-grid');
+  grid.innerHTML = '';
+  fwCells = [];
+  for (var i = 0; i < 20; i++) {
+    var cell = document.createElement('div');
+    cell.className = 'fw-cell' + (i === 9 ? ' boundary' : '');
+    cell.textContent = i < 10 ? 'W1' : 'W2';
+    grid.appendChild(cell);
+    fwCells.push(cell);
+  }
+}
+
+function fwUpdateCounter() {
+  document.getElementById('fw-counter').textContent =
+    'W1: ' + fwWindow1 + '/10 · W2: ' + fwWindow2 + '/10';
+}
+
+function fwSend() {
+  var w = fwWindow1 < 10 ? 0 : 1;
+  if (w === 0) {
+    fwWindow1++;
+    var idx = fwWindow1 - 1;
+    if (fwWindow1 <= fwLimit) {
+      fwCells[idx].classList.add('filled');
+      document.getElementById('fw-info').textContent =
+        'Window 1: Request #' + fwWindow1 + ' → ✅ 200 OK (count=' + fwWindow1 + ')';
+    } else {
+      fwCells[idx < 10 ? idx : 9].classList.add('rejected');
+      document.getElementById('fw-info').textContent =
+        'Window 1: Request #' + fwWindow1 + ' → ❌ 429 Too Many Requests (limit=' + fwLimit + ')';
+    }
+  } else {
+    fwWindow2++;
+    var idx2 = 10 + (fwWindow2 - 1);
+    if (fwWindow2 <= fwLimit) {
+      if (idx2 < 20) fwCells[idx2].classList.add('filled');
+      document.getElementById('fw-info').textContent =
+        'Window 2: Request #' + fwWindow2 + ' → ✅ 200 OK (window reset! new counter)';
+    } else {
+      if (idx2 < 20) fwCells[idx2].classList.add('rejected');
+      document.getElementById('fw-info').textContent =
+        'Window 2: Request #' + fwWindow2 + ' → ❌ 429 Too Many Requests';
+    }
+  }
+  fwUpdateCounter();
+}
+
+function fwBurst() {
+  // Fill end of window 1 + start of window 2 to show boundary burst
+  fwReset();
+  for (var i = 0; i < 8; i++) {
+    fwWindow1++;
+    fwCells[i].classList.add('filled');
+  }
+  for (var j = 0; j < 2; j++) {
+    fwWindow1++;
+    fwCells[8 + j].classList.add('filled');
+  }
+  for (var k = 0; k < 8; k++) {
+    fwWindow2++;
+    fwCells[10 + k].classList.add('filled');
+  }
+  for (var m = 8; m < 10; m++) {
+    fwWindow2++;
+    if (10 + m < 20) fwCells[10 + m].classList.add('rejected');
+  }
+  document.getElementById('fw-info').textContent =
+    '⚠️ BOUNDARY BURST: 10 requests at end of Window 1 + 10 at start of Window 2 = 20 requests in 2 seconds! Both windows show limit=10, but 18 requests got through!';
+  fwUpdateCounter();
+}
+
+function fwReset() {
+  fwWindow1 = 0; fwWindow2 = 0;
+  fwCells.forEach(function(c) { c.classList.remove('filled','rejected'); });
+  document.getElementById('fw-info').textContent = 'Click "Send Request" — each slot represents one request. Limit = 10 per window.';
+  fwUpdateCounter();
+}
+
+fwBuildGrid();
+
+/* ===== TOKEN BUCKET DEMO ===== */
+var tbTokens = 10, tbCapacity = 10, tbRefillRate = 1;
+var tbTotal = 0, tbAllowed = 0, tbRejected = 0;
+var tbTimer = null;
+
+function tbUpdateSVG() {
+  var fillHeight = Math.round((tbTokens / tbCapacity) * 138);
+  var fillY = 199 - fillHeight;
+  document.getElementById('token-fill').setAttribute('y', fillY);
+  document.getElementById('token-fill').setAttribute('height', fillHeight);
+  document.getElementById('token-count-svg').textContent = Math.floor(tbTokens);
+  document.getElementById('stat-tokens').textContent = Math.floor(tbTokens);
+  document.getElementById('stat-total').textContent = tbTotal;
+  document.getElementById('stat-ok').textContent = tbAllowed;
+  document.getElementById('stat-rej').textContent = tbRejected;
+}
+
+function tbSend(n) {
+  var msgs = [];
+  for (var i = 0; i < n; i++) {
+    tbTotal++;
+    if (tbTokens >= 1) {
+      tbTokens -= 1;
+      tbAllowed++;
+      msgs.push('✅ 200 OK');
+    } else {
+      tbRejected++;
+      msgs.push('❌ 429');
+    }
+  }
+  var ok = msgs.filter(function(m){ return m.includes('200'); }).length;
+  var rej = msgs.filter(function(m){ return m.includes('429'); }).length;
+  var msg = '';
+  if (n === 1) {
+    msg = msgs[0] + ' — ' + (ok ? 'Token consumed. Remaining: ' + Math.floor(tbTokens) : 'Bucket empty! Retry-After: ~' + Math.ceil((1 - tbTokens) / tbRefillRate) + 's');
+  } else {
+    msg = 'Burst of ' + n + ': ' + ok + ' allowed, ' + rej + ' rejected (429). Tokens left: ' + Math.floor(tbTokens);
+  }
+  var statusEl = document.getElementById('bc-status');
+  statusEl.textContent = msg;
+  statusEl.style.color = rej > 0 ? '#ff7b72' : '#7ee787';
+  tbUpdateSVG();
+}
+
+function tbReset() {
+  tbTokens = tbCapacity; tbTotal = 0; tbAllowed = 0; tbRejected = 0;
+  document.getElementById('bc-status').textContent = 'Click a button to send requests!';
+  document.getElementById('bc-status').style.color = '#adbac7';
+  tbUpdateSVG();
+}
+
+function tbStartRefill() {
+  if (tbTimer) clearInterval(tbTimer);
+  var speed = parseInt(document.getElementById('refill-speed').value, 10);
+  tbTimer = setInterval(function() {
+    if (tbTokens < tbCapacity) {
+      tbTokens = Math.min(tbCapacity, tbTokens + tbRefillRate);
+      tbUpdateSVG();
+    }
+  }, speed);
+}
+
+document.getElementById('refill-speed').addEventListener('change', tbStartRefill);
+tbUpdateSVG();
+tbStartRefill();
+</script>
+</body>
+</html>
