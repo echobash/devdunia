@@ -1,0 +1,1593 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>How OAuth 2.0 Works — DevDunia Comics</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bangers&family=Comic+Neue:ital,wght@0,400;0,700;1,400&family=Space+Mono:wght@400;700&display=swap">
+<style>
+:root {
+  --ink: #1a1410; --paper: #fdf3e3; --paper2: #fbe9cc;
+  --red: #e63946; --blue: #1d6fb8; --yellow: #ffd23f;
+  --green: #3fa34d; --pink: #ff6b9d; --purple: #8a4fff;
+  --orange: #ff8c42; --teal: #0d9488;
+}
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  font-family: 'Comic Neue', cursive;
+  color: var(--ink);
+  background-color: var(--paper);
+  background-image: radial-gradient(var(--ink) 0.5px, transparent 0.6px);
+  background-size: 14px 14px;
+  background-attachment: fixed;
+  line-height: 1.65;
+}
+.page-wrap { position: relative; z-index: 1; max-width: 1240px; margin: 0 auto; padding: 20px 32px 60px; }
+
+/* PANELS */
+.panel {
+  border: 4px solid var(--ink);
+  border-radius: 6px;
+  box-shadow: 7px 7px 0 var(--ink);
+  background: var(--paper);
+  padding: 28px 32px;
+  margin-bottom: 32px;
+}
+.panel-dark {
+  background: #0d1117;
+  border: 4px solid var(--ink);
+  border-radius: 6px;
+  box-shadow: 7px 7px 0 var(--ink);
+  padding: 24px 28px;
+  margin-bottom: 32px;
+  color: #adbac7;
+}
+.panel-purple { background: var(--purple); }
+.panel-blue   { background: var(--blue); }
+.panel-green  { background: var(--green); }
+
+/* HERO */
+.hero-panel {
+  background: var(--ink);
+  border: 4px solid var(--ink);
+  border-radius: 8px;
+  box-shadow: 8px 8px 0 var(--purple);
+  padding: 48px 40px 40px;
+  margin-bottom: 32px;
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+}
+.hero-panel::before {
+  content: '';
+  position: absolute; inset: 0;
+  background: repeating-linear-gradient(45deg, transparent, transparent 20px, rgba(138,79,255,.04) 20px, rgba(138,79,255,.04) 40px);
+}
+.hero-main-title {
+  font-family: 'Bangers', cursive;
+  font-size: clamp(4rem, 12vw, 7.5rem);
+  letter-spacing: 4px;
+  color: #fff;
+  text-shadow: 4px 4px 0 var(--purple), 8px 8px 0 rgba(0,0,0,.4);
+  line-height: 0.95;
+  position: relative;
+}
+.hero-sub {
+  font-family: 'Space Mono', monospace;
+  font-size: 1.35rem;
+  color: var(--yellow);
+  margin-top: 18px;
+  letter-spacing: 1px;
+  position: relative;
+}
+.hero-desc {
+  font-family: 'Comic Neue', cursive;
+  font-size: 1.05rem;
+  color: rgba(255,255,255,.75);
+  margin-top: 14px;
+  max-width: 600px;
+  margin-left: auto;
+  margin-right: auto;
+  position: relative;
+}
+.hero-badges { display: flex; gap: 10px; justify-content: center; margin-top: 22px; flex-wrap: wrap; position: relative; }
+.hero-badge {
+  font-family: 'Bangers', cursive;
+  font-size: .9rem;
+  letter-spacing: 2px;
+  padding: 5px 16px;
+  border-radius: 20px;
+  border: 2px solid rgba(255,255,255,.3);
+}
+
+/* TYPOGRAPHY */
+h2 {
+  font-family: 'Bangers', cursive;
+  font-size: 2.4rem;
+  letter-spacing: 2px;
+  color: var(--ink);
+  margin-bottom: 18px;
+  line-height: 1;
+}
+h3 {
+  font-family: 'Bangers', cursive;
+  font-size: 1.6rem;
+  letter-spacing: 1px;
+  margin-bottom: 12px;
+}
+p { margin-bottom: 14px; font-size: 1.05rem; }
+p:last-child { margin-bottom: 0; }
+strong { font-weight: 700; }
+
+/* CHIPS & LABELS */
+.chip {
+  display: inline-block;
+  font-family: 'Bangers', cursive;
+  font-size: .85rem;
+  letter-spacing: 1.5px;
+  padding: 3px 12px;
+  border-radius: 4px;
+  border: 2px solid var(--ink);
+  margin-right: 6px;
+  margin-bottom: 6px;
+  vertical-align: middle;
+}
+.chip-purple { background: var(--purple); color: #fff; }
+.chip-blue   { background: var(--blue);   color: #fff; }
+.chip-green  { background: var(--green);  color: #fff; }
+.chip-yellow { background: var(--yellow); color: var(--ink); }
+.chip-red    { background: var(--red);    color: #fff; }
+.chip-orange { background: var(--orange); color: #fff; }
+
+/* SECTION HEADER */
+.section-head {
+  display: flex; align-items: center; gap: 14px; margin-bottom: 22px; flex-wrap: wrap;
+}
+.section-num {
+  font-family: 'Bangers', cursive;
+  font-size: 1.1rem;
+  letter-spacing: 2px;
+  background: var(--purple);
+  color: #fff;
+  padding: 4px 14px;
+  border-radius: 4px;
+  border: 2px solid var(--ink);
+  box-shadow: 2px 2px 0 var(--ink);
+  white-space: nowrap;
+}
+
+/* HIGHLIGHT BOXES */
+.highlight-box {
+  border: 3px solid var(--ink);
+  border-radius: 5px;
+  padding: 18px 22px;
+  margin: 18px 0;
+  position: relative;
+}
+.highlight-box .hb-label {
+  font-family: 'Bangers', cursive;
+  font-size: .9rem;
+  letter-spacing: 2px;
+  position: absolute;
+  top: -14px; left: 16px;
+  padding: 2px 12px;
+  border: 2px solid var(--ink);
+  border-radius: 4px;
+}
+.hb-purple { background: rgba(138,79,255,.12); border-color: var(--purple); }
+.hb-purple .hb-label { background: var(--purple); color: #fff; }
+.hb-blue { background: rgba(29,111,184,.1); border-color: var(--blue); }
+.hb-blue .hb-label { background: var(--blue); color: #fff; }
+.hb-green { background: rgba(63,163,77,.1); border-color: var(--green); }
+.hb-green .hb-label { background: var(--green); color: #fff; }
+.hb-red { background: rgba(230,57,70,.08); border-color: var(--red); }
+.hb-red .hb-label { background: var(--red); color: #fff; }
+.hb-yellow { background: rgba(255,210,63,.18); border-color: var(--yellow); }
+.hb-yellow .hb-label { background: var(--yellow); color: var(--ink); }
+
+/* TERMINAL */
+.terminal {
+  background: #0d1117;
+  border: 3px solid #30363d;
+  border-radius: 8px;
+  padding: 0;
+  margin: 18px 0;
+  overflow: hidden;
+  font-family: 'Space Mono', monospace;
+}
+.terminal-bar {
+  background: #161b22;
+  border-bottom: 2px solid #30363d;
+  padding: 8px 14px;
+  display: flex; align-items: center; gap: 8px;
+}
+.tbar-dot { width: 12px; height: 12px; border-radius: 50%; display: inline-block; }
+.tbar-dot.red   { background: #ff5f56; }
+.tbar-dot.yellow{ background: #ffbd2e; }
+.tbar-dot.green { background: #27c93f; }
+.tbar-label { font-family: 'Space Mono', monospace; font-size: .75rem; color: #8b949e; margin-left: 8px; }
+.terminal-body { padding: 20px 22px; font-size: .85rem; line-height: 1.7; overflow-x: auto; white-space: pre-wrap; }
+.t-kw  { color: #ff7b72; }   /* keyword / HTTP method */
+.t-str { color: #a5d6ff; }   /* string / URL */
+.t-val { color: #79c0ff; }   /* value */
+.t-key { color: #7ee787; }   /* JSON key / header name */
+.t-num { color: #e3b341; }   /* number */
+.t-cmt { color: #7d8590; font-style: italic; }   /* comment */
+.t-hdr { color: #d2a8ff; }   /* header */
+.t-purple { color: #cba6f7; }
+.t-orange { color: #ffb86c; }
+
+/* STEP FLOW */
+.step-flow { display: flex; flex-direction: column; gap: 0; }
+.step-item {
+  display: grid;
+  grid-template-columns: 52px 1fr;
+  gap: 0 18px;
+  position: relative;
+}
+.step-item:not(:last-child)::after {
+  content: '';
+  position: absolute;
+  left: 25px; top: 52px; bottom: -16px; width: 2px;
+  background: var(--ink);
+}
+.step-num {
+  width: 52px; height: 52px;
+  border-radius: 50%;
+  border: 3px solid var(--ink);
+  display: flex; align-items: center; justify-content: center;
+  font-family: 'Bangers', cursive;
+  font-size: 1.4rem;
+  background: var(--purple);
+  color: #fff;
+  box-shadow: 3px 3px 0 var(--ink);
+  flex-shrink: 0;
+  position: relative; z-index: 1;
+}
+.step-body {
+  padding: 8px 0 28px;
+}
+.step-body h4 {
+  font-family: 'Bangers', cursive;
+  font-size: 1.25rem;
+  letter-spacing: 1px;
+  margin-bottom: 8px;
+}
+
+/* FROM-TO CONNECTOR */
+.from-to {
+  display: flex; align-items: center; gap: 0; margin: 12px 0;
+  flex-wrap: wrap;
+}
+.ft-actor {
+  font-family: 'Bangers', cursive;
+  font-size: .95rem;
+  letter-spacing: 1.5px;
+  padding: 6px 14px;
+  border: 2px solid var(--ink);
+  border-radius: 4px;
+  box-shadow: 2px 2px 0 var(--ink);
+  white-space: nowrap;
+}
+.ft-arrow {
+  font-size: 1.2rem;
+  padding: 0 8px;
+  color: var(--ink);
+  font-weight: 700;
+}
+.ft-msg {
+  font-family: 'Space Mono', monospace;
+  font-size: .78rem;
+  padding: 4px 10px;
+  background: var(--paper2);
+  border: 2px solid var(--ink);
+  border-radius: 4px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 300px;
+}
+
+/* TABLE */
+.data-table { width: 100%; border-collapse: collapse; margin: 18px 0; font-size: .95rem; }
+.data-table th {
+  font-family: 'Bangers', cursive;
+  font-size: 1rem;
+  letter-spacing: 1px;
+  background: var(--ink);
+  color: #fff;
+  padding: 10px 14px;
+  text-align: left;
+  border: 2px solid var(--ink);
+}
+.data-table td {
+  padding: 10px 14px;
+  border: 2px solid var(--ink);
+  vertical-align: top;
+}
+.data-table tr:nth-child(odd) td { background: var(--paper2); }
+.data-table tr:nth-child(even) td { background: var(--paper); }
+
+/* GRID */
+.grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin: 18px 0; }
+.grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 18px; margin: 18px 0; }
+@media (max-width: 680px) { .grid-2, .grid-3 { grid-template-columns: 1fr; } }
+
+/* CARD */
+.card {
+  border: 3px solid var(--ink);
+  border-radius: 5px;
+  box-shadow: 4px 4px 0 var(--ink);
+  padding: 18px;
+  background: var(--paper);
+}
+.card-head {
+  font-family: 'Bangers', cursive;
+  font-size: 1.1rem;
+  letter-spacing: 1px;
+  margin-bottom: 10px;
+  padding-bottom: 8px;
+  border-bottom: 2px solid var(--ink);
+}
+
+/* JWT DISPLAY */
+.jwt-part { border-radius: 4px; padding: 2px 6px; font-family: 'Space Mono', monospace; font-size: .82rem; word-break: break-all; }
+.jwt-header-color  { background: #1d6fb8; color: #fff; }
+.jwt-payload-color { background: #8a4fff; color: #fff; }
+.jwt-sig-color     { background: #e63946; color: #fff; }
+
+/* SEQUENCE DIAGRAM */
+.seq-wrap {
+  background: #0a0f1e;
+  border: 4px solid var(--ink);
+  border-radius: 8px;
+  box-shadow: 7px 7px 0 var(--ink);
+  padding: 20px;
+  margin: 24px 0;
+  overflow: hidden;
+}
+.seq-controls {
+  display: flex; align-items: center; gap: 12px; flex-wrap: wrap; margin-bottom: 16px;
+}
+.seq-btn {
+  font-family: 'Bangers', cursive;
+  font-size: .95rem;
+  letter-spacing: 1px;
+  padding: 8px 18px;
+  border: 2px solid #30363d;
+  border-radius: 5px;
+  background: #161b22;
+  color: #e6edf3;
+  cursor: pointer;
+  transition: background .15s, border-color .15s;
+}
+.seq-btn:hover { background: #21262d; border-color: #8b949e; }
+.seq-counter {
+  font-family: 'Space Mono', monospace;
+  font-size: .85rem;
+  color: #adbac7;
+  margin-left: auto;
+}
+.seq-phase {
+  font-family: 'Bangers', cursive;
+  font-size: .95rem;
+  letter-spacing: 2px;
+  padding: 4px 14px;
+  border-radius: 12px;
+  background: #161b22;
+  color: #7ee787;
+  border: 1px solid #30363d;
+}
+.seq-desc {
+  font-family: 'Comic Neue', cursive;
+  font-size: .9rem;
+  color: #adbac7;
+  background: #161b22;
+  border-radius: 5px;
+  padding: 10px 14px;
+  margin-top: 12px;
+  border-left: 3px solid var(--purple);
+  min-height: 44px;
+}
+
+/* COLLAPSIBLE */
+.collapsible { margin: 12px 0; }
+.coll-trigger {
+  font-family: 'Bangers', cursive;
+  font-size: 1.05rem;
+  letter-spacing: 1px;
+  padding: 12px 18px;
+  background: var(--paper2);
+  border: 3px solid var(--ink);
+  border-radius: 5px;
+  cursor: pointer;
+  width: 100%;
+  text-align: left;
+  display: flex; align-items: center; gap: 10px;
+}
+.coll-trigger::after { content: '▼'; margin-left: auto; font-size: .8rem; transition: transform .2s; }
+.coll-trigger.open::after { transform: rotate(180deg); }
+.coll-body { display: none; border: 3px solid var(--ink); border-top: 0; border-radius: 0 0 5px 5px; padding: 20px; background: var(--paper); }
+.coll-body.open { display: block; }
+
+/* INTERACTIVE DECODER */
+.decoder-wrap {
+  background: #0d1117;
+  border: 4px solid var(--ink);
+  border-radius: 8px;
+  box-shadow: 7px 7px 0 var(--ink);
+  overflow: hidden;
+  margin: 24px 0;
+}
+.decoder-bar {
+  background: #161b22;
+  border-bottom: 2px solid #30363d;
+  padding: 10px 16px;
+  font-family: 'Bangers', cursive;
+  font-size: 1rem;
+  letter-spacing: 2px;
+  color: #e6edf3;
+  display: flex; align-items: center; gap: 12px;
+}
+.decoder-body { padding: 20px; }
+.decoder-input {
+  width: 100%;
+  font-family: 'Space Mono', monospace;
+  font-size: .78rem;
+  background: #0d1117;
+  border: 2px solid #30363d;
+  border-radius: 5px;
+  color: #adbac7;
+  padding: 12px;
+  resize: vertical;
+  min-height: 80px;
+  margin-bottom: 16px;
+}
+.decoder-input:focus { outline: none; border-color: var(--purple); }
+.decoder-output { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+@media (max-width: 640px) { .decoder-output { grid-template-columns: 1fr; } }
+.decoder-col { }
+.decoder-col-head {
+  font-family: 'Bangers', cursive;
+  font-size: .9rem;
+  letter-spacing: 2px;
+  padding: 5px 12px;
+  border-radius: 4px 4px 0 0;
+  border: 2px solid #30363d;
+  border-bottom: 0;
+}
+.decoder-col-body {
+  background: #0d1117;
+  border: 2px solid #30363d;
+  border-radius: 0 0 4px 4px;
+  padding: 12px;
+  font-family: 'Space Mono', monospace;
+  font-size: .78rem;
+  color: #adbac7;
+  min-height: 80px;
+  white-space: pre-wrap;
+  word-break: break-all;
+}
+.dec-expiry { margin-top: 10px; font-family: 'Space Mono', monospace; font-size: .8rem; padding: 8px 12px; border-radius: 4px; border: 1px solid #30363d; background: #161b22; }
+
+/* SPEECH BUBBLE */
+.bubble {
+  position: relative;
+  background: var(--yellow);
+  border: 3px solid var(--ink);
+  border-radius: 12px;
+  padding: 12px 18px;
+  margin: 14px 0 24px 24px;
+  font-weight: 700;
+  display: inline-block;
+  box-shadow: 3px 3px 0 var(--ink);
+}
+.bubble::before {
+  content: '';
+  position: absolute;
+  top: 100%; left: 24px;
+  border: 10px solid transparent;
+  border-top-color: var(--ink);
+}
+.bubble::after {
+  content: '';
+  position: absolute;
+  top: calc(100% - 3px); left: 26px;
+  border: 8px solid transparent;
+  border-top-color: var(--yellow);
+}
+
+/* ACTOR CARDS */
+.actor-row { display: flex; flex-direction: column; gap: 0; margin: 18px 0; }
+.actor-card {
+  border: 3px solid var(--ink);
+  border-radius: 0;
+  padding: 18px 22px;
+  display: flex; align-items: flex-start; gap: 18px;
+  background: var(--paper);
+}
+.actor-card:first-child { border-radius: 6px 6px 0 0; }
+.actor-card:last-child  { border-radius: 0 0 6px 6px; }
+.actor-card:not(:last-child) { border-bottom: 0; }
+.actor-icon {
+  font-size: 2rem;
+  width: 52px; height: 52px;
+  border: 3px solid var(--ink);
+  border-radius: 6px;
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0;
+  box-shadow: 3px 3px 0 var(--ink);
+}
+.actor-info h4 {
+  font-family: 'Bangers', cursive;
+  font-size: 1.25rem;
+  letter-spacing: 1px;
+  margin-bottom: 4px;
+}
+.actor-info p { font-size: .95rem; margin: 0; }
+.connector-pill {
+  text-align: center;
+  padding: 6px;
+  background: var(--ink);
+  color: var(--yellow);
+  font-family: 'Bangers', cursive;
+  font-size: .85rem;
+  letter-spacing: 2px;
+}
+
+/* SFX */
+.sfx-row { display: flex; gap: 16px; flex-wrap: wrap; margin: 20px 0; }
+.sfx {
+  font-family: 'Bangers', cursive;
+  font-size: 1.8rem;
+  letter-spacing: 3px;
+  color: var(--ink);
+  text-shadow: 3px 3px 0 var(--yellow);
+  transform: rotate(-2deg);
+  display: inline-block;
+}
+.sfx:nth-child(even) { transform: rotate(2deg); text-shadow: 3px 3px 0 var(--purple); }
+
+/* DIVIDER */
+.chapter-divider {
+  text-align: center;
+  margin: 40px 0 28px;
+  position: relative;
+}
+.chapter-divider::before {
+  content: '';
+  position: absolute;
+  top: 50%; left: 0; right: 0;
+  height: 3px;
+  background: var(--ink);
+}
+.chapter-divider span {
+  position: relative;
+  background: var(--paper);
+  font-family: 'Bangers', cursive;
+  font-size: 1rem;
+  letter-spacing: 3px;
+  padding: 0 16px;
+  color: var(--ink);
+}
+
+/* PROS CONS */
+.pros-cons { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin: 14px 0; }
+.pros, .cons {
+  border: 3px solid var(--ink);
+  border-radius: 5px;
+  padding: 14px 16px;
+}
+.pros { background: rgba(63,163,77,.1); }
+.cons { background: rgba(230,57,70,.08); }
+.pros h5, .cons h5 {
+  font-family: 'Bangers', cursive;
+  font-size: 1rem;
+  letter-spacing: 1px;
+  margin-bottom: 8px;
+}
+.pros h5 { color: var(--green); }
+.cons h5 { color: var(--red); }
+.pros ul, .cons ul { padding-left: 18px; font-size: .9rem; }
+.pros ul li, .cons ul li { margin-bottom: 5px; }
+@media (max-width: 640px) { .pros-cons { grid-template-columns: 1fr; } }
+</style>
+</head>
+<body>
+
+<div data-masthead></div>
+<div class="page-wrap">
+
+<div data-tool-hero
+  data-title="How OAuth 2.0 Works"
+  data-chapter="HOW-03"
+  data-category="How X Works"
+  data-icon="🔐"
+  data-desc="Authorization Code flow, PKCE, JWT tokens, refresh tokens — who talks to whom and exactly what they exchange."
+  data-color="purple"
+  data-badges="AUTH CODE FLOW,JWT,PKCE,FREE"
+  data-badge-colors="blue,green,yellow,white">
+</div>
+
+
+<!-- SECTION 1: The Problem -->
+<div class="panel">
+  <div class="section-head">
+    <span class="section-num">01</span>
+    <h2>The Problem OAuth 2.0 Solves</h2>
+  </div>
+
+  <p>Imagine you're building a travel app. You want to let users import their Google Calendar events. The old way: ask users for their Google username and password, store those credentials, and use them to call the Google API on their behalf.</p>
+
+  <div class="highlight-box hb-red">
+    <div class="hb-label">DANGER</div>
+    <p style="margin-top:10px"><strong>Why storing passwords is catastrophic:</strong> If your database gets breached, attackers get full access to all your users' Google accounts — not just your app. Users have no way to revoke access without changing their entire password. Google has no way to know if it's really you or an attacker.</p>
+  </div>
+
+  <p>OAuth 2.0 solves this with <strong>delegated authorization</strong>: instead of sharing passwords, users grant your app a limited, revocable permission token. The password never leaves Google.</p>
+
+  <div class="highlight-box hb-purple">
+    <div class="hb-label">KEY DISTINCTION</div>
+    <p style="margin-top:10px"><strong>OAuth 2.0 is AUTHORIZATION, not AUTHENTICATION.</strong> It answers "what can this app do?" — not "who is this user?" For identity (authentication), you use OpenID Connect (OIDC), which is a thin layer on top of OAuth 2.0. "Login with Google" actually uses both.</p>
+  </div>
+
+  <h3 style="margin-top:20px">The Four Roles</h3>
+  <div class="actor-row">
+    <div class="actor-card" style="background:rgba(138,79,255,.08);">
+      <div class="actor-icon" style="background:var(--purple);color:#fff;">👤</div>
+      <div class="actor-info">
+        <h4>Resource Owner (You)</h4>
+        <p>The human who owns the data. You own your Google Calendar. You decide what apps can access it. Without your explicit approval at the consent screen, nothing happens.</p>
+      </div>
+    </div>
+    <div class="actor-card" style="background:rgba(29,111,184,.08);">
+      <div class="actor-icon" style="background:var(--blue);color:#fff;">📱</div>
+      <div class="actor-info">
+        <h4>Client (The App)</h4>
+        <p>The application requesting access to your data. Could be a web app, mobile app, or CLI tool. Registered with the Authorization Server and has a <code>client_id</code> and optionally a <code>client_secret</code>.</p>
+      </div>
+    </div>
+    <div class="actor-card" style="background:rgba(63,163,77,.08);">
+      <div class="actor-icon" style="background:var(--green);color:#fff;">🏛️</div>
+      <div class="actor-info">
+        <h4>Authorization Server (Google)</h4>
+        <p>Authenticates the user, shows the consent screen, issues tokens. This is <code>accounts.google.com</code> for Google. It's the only party that ever sees your password.</p>
+      </div>
+    </div>
+    <div class="actor-card" style="background:rgba(255,140,66,.08);">
+      <div class="actor-icon" style="background:var(--orange);color:#fff;">🗄️</div>
+      <div class="actor-info">
+        <h4>Resource Server (Google API)</h4>
+        <p>The API that holds your data — <code>calendar.googleapis.com</code>, <code>gmail.googleapis.com</code>, etc. Accepts access tokens and returns data. Validates tokens against the Authorization Server's public keys.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- SECTION 2: The 4 Flows -->
+<div class="panel">
+  <div class="section-head">
+    <span class="section-num">02</span>
+    <h2>The 4 OAuth 2.0 Grant Types</h2>
+  </div>
+
+  <p>OAuth 2.0 defines four ways to obtain tokens, called <strong>grant types</strong>. Each is designed for a different client type and security model.</p>
+
+  <table class="data-table">
+    <thead>
+      <tr>
+        <th>Grant Type</th>
+        <th>Use When</th>
+        <th>Client Secret?</th>
+        <th>Status</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>Authorization Code</strong></td>
+        <td>Web app with backend server</td>
+        <td>Yes</td>
+        <td><span class="chip chip-green">RECOMMENDED</span></td>
+      </tr>
+      <tr>
+        <td><strong>Auth Code + PKCE</strong></td>
+        <td>SPA, mobile app, CLI</td>
+        <td>No</td>
+        <td><span class="chip chip-green">RECOMMENDED</span></td>
+      </tr>
+      <tr>
+        <td><strong>Client Credentials</strong></td>
+        <td>Machine-to-machine (no user)</td>
+        <td>Yes</td>
+        <td><span class="chip chip-blue">USE FOR M2M</span></td>
+      </tr>
+      <tr>
+        <td><strong>Implicit</strong></td>
+        <td>Older SPAs (pre-PKCE)</td>
+        <td>No</td>
+        <td><span class="chip chip-red">DEPRECATED</span></td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div class="highlight-box hb-yellow">
+    <div class="hb-label">WHY IMPLICIT WAS DEPRECATED</div>
+    <p style="margin-top:10px">Implicit flow returned the access token directly in the URL fragment (<code>#access_token=ya29...</code>). This leaks the token into browser history, server logs, and the <code>Referer</code> header. PKCE solves the same problem (public client, no secret) without the URL exposure.</p>
+  </div>
+</div>
+
+<!-- SECTION 3: Auth Code Flow -->
+<div class="panel">
+  <div class="section-head">
+    <span class="section-num">03</span>
+    <h2>Authorization Code Flow — Every HTTP Request</h2>
+  </div>
+
+  <p>This is the main event. A web app with a backend server wants to access the user's Google Calendar. Here's every single HTTP request that happens — nothing hidden.</p>
+
+  <div class="step-flow">
+    <!-- Step 1 -->
+    <div class="step-item">
+      <div class="step-num" style="background:var(--purple);">1</div>
+      <div class="step-body">
+        <h4>App Redirects User to Authorization Server</h4>
+        <p>User clicks "Sign in with Google". Your backend constructs a URL and sends an HTTP 302 redirect to the browser.</p>
+        <div class="terminal">
+          <div class="terminal-bar"><span class="tbar-dot red"></span><span class="tbar-dot yellow"></span><span class="tbar-dot green"></span><span class="tbar-label">HTTP Request — Step 1</span></div>
+          <div class="terminal-body"><span class="t-kw">GET</span> <span class="t-str">https://accounts.google.com/o/oauth2/v2/auth</span>
+  <span class="t-key">?response_type</span>=<span class="t-val">code</span>
+  <span class="t-key">&amp;client_id</span>=<span class="t-val">123456789.apps.googleusercontent.com</span>
+  <span class="t-key">&amp;redirect_uri</span>=<span class="t-val">https://myapp.com/auth/callback</span>
+  <span class="t-key">&amp;scope</span>=<span class="t-val">openid email profile https://www.googleapis.com/auth/calendar.readonly</span>
+  <span class="t-key">&amp;state</span>=<span class="t-val">xK9mN2pQrL7wZ3aY</span>   <span class="t-cmt">← random CSRF token</span>
+  <span class="t-key">&amp;code_challenge</span>=<span class="t-val">E9Melhoa2OwvFrEMTJguCHaoeK1t8URWbuGJSstw-cM</span>
+  <span class="t-key">&amp;code_challenge_method</span>=<span class="t-val">S256</span>   <span class="t-cmt">← PKCE</span>
+  <span class="t-key">&amp;access_type</span>=<span class="t-val">offline</span>   <span class="t-cmt">← request refresh token</span></div>
+        </div>
+        <div class="highlight-box hb-blue">
+          <div class="hb-label">STATE PARAM</div>
+          <p style="margin-top:10px">The <code>state</code> value is a random string your server generates and stores in the session. When Google redirects back, you verify it matches. This prevents CSRF attacks where an attacker tricks the user into completing an OAuth flow that the attacker initiates.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Step 2 -->
+    <div class="step-item">
+      <div class="step-num" style="background:var(--blue);">2</div>
+      <div class="step-body">
+        <h4>User Logs In + Sees Consent Screen</h4>
+        <p>Google's server renders its own login page and consent screen. Your app never sees the user's password — it all happens inside Google's domain. The user sees exactly which permissions they're granting.</p>
+        <div class="highlight-box hb-green">
+          <div class="hb-label">CONSENT SCREEN</div>
+          <p style="margin-top:10px">Google shows: "MyApp wants access to: Read your calendar events" with Allow/Deny buttons. The <code>scope</code> parameter controls what's shown. Users can revoke this at any time from their Google Account settings.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Step 3 -->
+    <div class="step-item">
+      <div class="step-num" style="background:var(--green);">3</div>
+      <div class="step-body">
+        <h4>Google Redirects Back With Authorization Code</h4>
+        <p>After consent, Google's server redirects the browser back to your <code>redirect_uri</code> with a short-lived authorization code. This code is single-use and expires in ~10 minutes.</p>
+        <div class="terminal">
+          <div class="terminal-bar"><span class="tbar-dot red"></span><span class="tbar-dot yellow"></span><span class="tbar-dot green"></span><span class="tbar-label">HTTP Response — Step 3</span></div>
+          <div class="terminal-body"><span class="t-kw">HTTP/1.1 302</span> <span class="t-val">Found</span>
+<span class="t-hdr">Location:</span> <span class="t-str">https://myapp.com/auth/callback</span>
+  <span class="t-key">?code</span>=<span class="t-val">4/0AVG7fiRnX2kbD9pMm-tzHe9fFRkOqnZ5_example_code</span>
+  <span class="t-key">&amp;state</span>=<span class="t-val">xK9mN2pQrL7wZ3aY</span>   <span class="t-cmt">← verify this matches!</span>
+  <span class="t-key">&amp;scope</span>=<span class="t-val">email profile openid https://www.googleapis.com/auth/calendar.readonly</span></div>
+        </div>
+        <div class="highlight-box hb-red">
+          <div class="hb-label">WHY A CODE INSTEAD OF TOKEN?</div>
+          <p style="margin-top:10px">The code travels through the browser (URL bar, browser history, Referer header). It's single-use and expires fast. The real tokens are fetched server-to-server in the next step — never touching the browser. This is the key security advantage over Implicit flow.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Step 4 -->
+    <div class="step-item">
+      <div class="step-num" style="background:var(--orange);">4</div>
+      <div class="step-body">
+        <h4>Backend Exchanges Code for Tokens</h4>
+        <p>Your server (not the browser) makes a direct POST request to Google's token endpoint. This is a server-to-server call — the user's browser is not involved.</p>
+        <div class="terminal">
+          <div class="terminal-bar"><span class="tbar-dot red"></span><span class="tbar-dot yellow"></span><span class="tbar-dot green"></span><span class="tbar-label">HTTP Request — Step 4</span></div>
+          <div class="terminal-body"><span class="t-kw">POST</span> <span class="t-str">https://oauth2.googleapis.com/token</span>
+<span class="t-hdr">Content-Type:</span> application/x-www-form-urlencoded
+
+<span class="t-key">grant_type</span>=<span class="t-val">authorization_code</span>
+<span class="t-key">&amp;code</span>=<span class="t-val">4/0AVG7fiRnX2kbD9pMm-tzHe9fFRkOqnZ5_example_code</span>
+<span class="t-key">&amp;redirect_uri</span>=<span class="t-val">https://myapp.com/auth/callback</span>
+<span class="t-key">&amp;client_id</span>=<span class="t-val">123456789.apps.googleusercontent.com</span>
+<span class="t-key">&amp;client_secret</span>=<span class="t-val">GOCSPX-your_client_secret_here</span>   <span class="t-cmt">← only server has this</span>
+<span class="t-key">&amp;code_verifier</span>=<span class="t-val">dBjftJeZ4CVP-mB92K27uhbUJU1p1r_wW1gFWFOEjXk</span>   <span class="t-cmt">← PKCE verifier</span></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Step 5 -->
+    <div class="step-item">
+      <div class="step-num" style="background:var(--teal);">5</div>
+      <div class="step-body">
+        <h4>Google Returns the Tokens</h4>
+        <p>Google validates the code, client credentials, and PKCE verifier, then returns three tokens.</p>
+        <div class="terminal">
+          <div class="terminal-bar"><span class="tbar-dot red"></span><span class="tbar-dot yellow"></span><span class="tbar-dot green"></span><span class="tbar-label">HTTP Response — Step 5</span></div>
+          <div class="terminal-body"><span class="t-kw">HTTP/1.1 200</span> OK
+<span class="t-hdr">Content-Type:</span> application/json
+
+{
+  <span class="t-key">"access_token"</span>: <span class="t-str">"ya29.a0AfH6SMBxL2ZjQVT8a..."</span>,   <span class="t-cmt">← use for API calls</span>
+  <span class="t-key">"token_type"</span>: <span class="t-str">"Bearer"</span>,
+  <span class="t-key">"expires_in"</span>: <span class="t-num">3599</span>,   <span class="t-cmt">← 1 hour</span>
+  <span class="t-key">"refresh_token"</span>: <span class="t-str">"1//0gLk9mVOz7kX2KgBCT..."</span>,   <span class="t-cmt">← long-lived</span>
+  <span class="t-key">"scope"</span>: <span class="t-str">"openid email profile https://www.googleapis.com/auth/calendar.readonly"</span>,
+  <span class="t-key">"id_token"</span>: <span class="t-str">"eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9..."</span>   <span class="t-cmt">← identity JWT (OIDC)</span>
+}</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Step 6 -->
+    <div class="step-item">
+      <div class="step-num" style="background:var(--pink);">6</div>
+      <div class="step-body">
+        <h4>Use Access Token to Call the API</h4>
+        <p>Every subsequent API call includes the access token in the <code>Authorization</code> header. Google's Resource Server validates the token signature and checks scopes before returning data.</p>
+        <div class="terminal">
+          <div class="terminal-bar"><span class="tbar-dot red"></span><span class="tbar-dot yellow"></span><span class="tbar-dot green"></span><span class="tbar-label">HTTP Request — Step 6</span></div>
+          <div class="terminal-body"><span class="t-kw">GET</span> <span class="t-str">https://www.googleapis.com/calendar/v3/calendars/primary/events</span>
+<span class="t-hdr">Authorization:</span> <span class="t-val">Bearer ya29.a0AfH6SMBxL2ZjQVT8a...</span>
+<span class="t-hdr">Accept:</span> application/json</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- SECTION 4: ANIMATED SEQUENCE DIAGRAM -->
+<div class="panel">
+  <div class="section-head">
+    <span class="section-num">04</span>
+    <h2>Animated Flow Diagram</h2>
+  </div>
+  <p>Step through the entire OAuth 2.0 Authorization Code flow as an animated sequence diagram. Watch exactly who sends what to whom.</p>
+
+  <div class="seq-wrap">
+    <div class="seq-controls">
+      <button class="seq-btn" onclick="oauthStep()">step →</button>
+      <button class="seq-btn" onclick="oauthPlay()">▶ play all</button>
+      <button class="seq-btn" onclick="oauthReset()">↺ reset</button>
+      <span class="seq-counter" id="oauth-counter">Step 0 / 7</span>
+      <span class="seq-phase" id="oauth-phase">READY</span>
+    </div>
+    <svg id="oauth-svg" viewBox="0 0 800 480" width="100%" style="display:block;max-height:480px;">
+      <!-- Background -->
+      <rect width="800" height="480" fill="#0a0f1e"/>
+      <!-- Mac dots -->
+      <circle cx="18" cy="14" r="5" fill="#ff5f56"/>
+      <circle cx="34" cy="14" r="5" fill="#ffbd2e"/>
+      <circle cx="50" cy="14" r="5" fill="#27c93f"/>
+
+      <!-- Actor boxes -->
+      <!-- USER x=60 -->
+      <rect x="20" y="36" width="100" height="44" rx="6" fill="#1d2433" stroke="#8a4fff" stroke-width="2"/>
+      <text x="70" y="63" text-anchor="middle" font-family="Bangers,cursive" font-size="14" fill="#e6edf3" letter-spacing="1">👤 USER</text>
+      <!-- APP x=220 -->
+      <rect x="170" y="36" width="120" height="44" rx="6" fill="#1d2433" stroke="#1d6fb8" stroke-width="2"/>
+      <text x="230" y="63" text-anchor="middle" font-family="Bangers,cursive" font-size="14" fill="#e6edf3" letter-spacing="1">📱 YOUR APP</text>
+      <!-- AUTH x=440 -->
+      <rect x="370" y="36" width="140" height="44" rx="6" fill="#1d2433" stroke="#3fa34d" stroke-width="2"/>
+      <text x="440" y="63" text-anchor="middle" font-family="Bangers,cursive" font-size="14" fill="#e6edf3" letter-spacing="1">🏛️ AUTH SERVER</text>
+      <!-- API x=660 -->
+      <rect x="620" y="36" width="140" height="44" rx="6" fill="#1d2433" stroke="#ff8c42" stroke-width="2"/>
+      <text x="690" y="63" text-anchor="middle" font-family="Bangers,cursive" font-size="14" fill="#e6edf3" letter-spacing="1">🗄️ RESOURCE API</text>
+
+      <!-- Lifelines -->
+      <line x1="70" y1="80" x2="70" y2="460" stroke="#8a4fff" stroke-width="1.5" stroke-dasharray="6,4" opacity="0.4"/>
+      <line x1="230" y1="80" x2="230" y2="460" stroke="#1d6fb8" stroke-width="1.5" stroke-dasharray="6,4" opacity="0.4"/>
+      <line x1="440" y1="80" x2="440" y2="460" stroke="#3fa34d" stroke-width="1.5" stroke-dasharray="6,4" opacity="0.4"/>
+      <line x1="690" y1="80" x2="690" y2="460" stroke="#ff8c42" stroke-width="1.5" stroke-dasharray="6,4" opacity="0.4"/>
+
+      <!-- Arrows (initially hidden) -->
+      <!-- Arrow 1: User → App (click login) y=115 -->
+      <g id="oa-g1" opacity="0">
+        <line id="oa-l1" x1="70" y1="115" x2="230" y2="115" stroke="#8a4fff" stroke-width="2.5" stroke-dasharray="160" stroke-dashoffset="160"/>
+        <polygon id="oa-ah1" points="230,109 244,115 230,121" fill="#8a4fff" opacity="0"/>
+        <text x="150" y="109" text-anchor="middle" font-family="Space Mono,monospace" font-size="9.5" fill="#cba6f7">Click "Login with Google"</text>
+      </g>
+      <!-- Arrow 2: App → Auth Server (redirect) y=165 -->
+      <g id="oa-g2" opacity="0">
+        <line id="oa-l2" x1="230" y1="165" x2="440" y2="165" stroke="#1d6fb8" stroke-width="2.5" stroke-dasharray="210" stroke-dashoffset="210"/>
+        <polygon id="oa-ah2" points="440,159 454,165 440,171" fill="#1d6fb8" opacity="0"/>
+        <text x="335" y="158" text-anchor="middle" font-family="Space Mono,monospace" font-size="9" fill="#79c0ff">GET /auth?response_type=code</text>
+        <text x="335" y="173" text-anchor="middle" font-family="Space Mono,monospace" font-size="8.5" fill="#7d8590">&amp;scope=openid email &amp;state=xyz &amp;code_challenge=...</text>
+      </g>
+      <!-- Arrow 3: Auth Server → User (consent) y=215 -->
+      <g id="oa-g3" opacity="0">
+        <line id="oa-l3" x1="440" y1="215" x2="70" y2="215" stroke="#3fa34d" stroke-width="2.5" stroke-dasharray="370" stroke-dashoffset="370"/>
+        <polygon id="oa-ah3" points="70,209 56,215 70,221" fill="#3fa34d" opacity="0"/>
+        <text x="255" y="209" text-anchor="middle" font-family="Space Mono,monospace" font-size="9.5" fill="#7ee787">Show Login + Consent Screen</text>
+      </g>
+      <!-- Arrow 4: User → Auth Server (approve) y=258 -->
+      <g id="oa-g4" opacity="0">
+        <line id="oa-l4" x1="70" y1="258" x2="440" y2="258" stroke="#ffd23f" stroke-width="2.5" stroke-dasharray="370" stroke-dashoffset="370"/>
+        <polygon id="oa-ah4" points="440,252 454,258 440,264" fill="#ffd23f" opacity="0"/>
+        <text x="255" y="252" text-anchor="middle" font-family="Space Mono,monospace" font-size="9.5" fill="#e3b341">User Approves Consent</text>
+      </g>
+      <!-- Arrow 5: Auth → App redirect with code y=305 -->
+      <g id="oa-g5" opacity="0">
+        <line id="oa-l5" x1="440" y1="305" x2="230" y2="305" stroke="#ff8c42" stroke-width="2.5" stroke-dasharray="210" stroke-dashoffset="210"/>
+        <polygon id="oa-ah5" points="230,299 216,305 230,311" fill="#ff8c42" opacity="0"/>
+        <text x="335" y="299" text-anchor="middle" font-family="Space Mono,monospace" font-size="9" fill="#ffb86c">302 → /callback?code=4/0AVG...</text>
+      </g>
+      <!-- Arrow 6: App → Auth exchange code y=355 -->
+      <g id="oa-g6" opacity="0">
+        <line id="oa-l6" x1="230" y1="355" x2="440" y2="355" stroke="#ff6b9d" stroke-width="2.5" stroke-dasharray="210" stroke-dashoffset="210"/>
+        <polygon id="oa-ah6" points="440,349 454,355 440,361" fill="#ff6b9d" opacity="0"/>
+        <text x="335" y="349" text-anchor="middle" font-family="Space Mono,monospace" font-size="9" fill="#ff9aba">POST /token grant_type=auth_code</text>
+        <text x="335" y="366" text-anchor="middle" font-family="Space Mono,monospace" font-size="8.5" fill="#7d8590">&amp;client_secret &amp;code_verifier</text>
+      </g>
+      <!-- Arrow 7: App → API with token y=415 -->
+      <g id="oa-g7" opacity="0">
+        <line id="oa-l7" x1="230" y1="415" x2="690" y2="415" stroke="#7ee787" stroke-width="2.5" stroke-dasharray="460" stroke-dashoffset="460"/>
+        <polygon id="oa-ah7" points="690,409 704,415 690,421" fill="#7ee787" opacity="0"/>
+        <text x="460" y="408" text-anchor="middle" font-family="Space Mono,monospace" font-size="9" fill="#7ee787">GET /calendar/events</text>
+        <text x="460" y="424" text-anchor="middle" font-family="Space Mono,monospace" font-size="9" fill="#7d8590">Authorization: Bearer ya29.a0...</text>
+      </g>
+
+      <!-- Established badge -->
+      <g id="oa-done" opacity="0">
+        <rect x="280" y="440" width="240" height="28" rx="5" fill="#3fa34d" stroke="#7ee787" stroke-width="1.5"/>
+        <text x="400" y="458" text-anchor="middle" font-family="Bangers,cursive" font-size="14" fill="#fff" letter-spacing="2">AUTHENTICATED ✓</text>
+      </g>
+    </svg>
+    <div class="seq-desc" id="oauth-desc">Press "step →" to walk through each exchange, or "▶ play all" to watch the full OAuth 2.0 flow.</div>
+  </div>
+</div>
+
+<!-- SECTION 5: PKCE -->
+<div class="panel">
+  <div class="section-head">
+    <span class="section-num">05</span>
+    <h2>PKCE — Proof Key for Code Exchange</h2>
+  </div>
+
+  <p>PKCE (pronounced "pixy") extends Authorization Code flow for public clients — apps that can't keep a client_secret confidential. That means: single-page apps, mobile apps, and CLI tools.</p>
+
+  <div class="highlight-box hb-purple">
+    <div class="hb-label">THE ATTACK PKCE PREVENTS</div>
+    <p style="margin-top:10px">On mobile, multiple apps can register the same URL scheme (e.g. <code>myapp://callback</code>). A malicious app could intercept the auth code redirect. Without PKCE, the attacker can use that code to get tokens. With PKCE, the code is worthless without the original <code>code_verifier</code> — which never left the legitimate app.</p>
+  </div>
+
+  <h3>How PKCE Works (3 steps)</h3>
+  <div class="step-flow">
+    <div class="step-item">
+      <div class="step-num" style="background:var(--blue);font-size:1rem;">GEN</div>
+      <div class="step-body">
+        <h4>Generate code_verifier + code_challenge</h4>
+        <div class="terminal">
+          <div class="terminal-bar"><span class="tbar-dot red"></span><span class="tbar-dot yellow"></span><span class="tbar-dot green"></span></div>
+          <div class="terminal-body"><span class="t-cmt">// Before redirecting to Auth Server:</span>
+<span class="t-key">code_verifier</span> = <span class="t-str">random_string(43-128 chars, URL-safe)</span>
+<span class="t-cmt">// e.g.: "dBjftJeZ4CVP-mB92K27uhbUJU1p1r_wW1gFWFOEjXk"</span>
+
+<span class="t-key">code_challenge</span> = base64url(SHA256(<span class="t-val">code_verifier</span>))
+<span class="t-cmt">// e.g.: "E9Melhoa2OwvFrEMTJguCHaoeK1t8URWbuGJSstw-cM"</span>
+
+<span class="t-cmt">// Store code_verifier locally (never sent until token exchange)</span>
+<span class="t-cmt">// Send code_challenge in the authorization URL</span></div>
+        </div>
+      </div>
+    </div>
+    <div class="step-item">
+      <div class="step-num" style="background:var(--green);font-size:1rem;">REQ</div>
+      <div class="step-body">
+        <h4>Include code_challenge in authorization request</h4>
+        <p>Add <code>&amp;code_challenge=E9Melhoa...&amp;code_challenge_method=S256</code> to the authorization URL. Auth Server stores this hash.</p>
+      </div>
+    </div>
+    <div class="step-item">
+      <div class="step-num" style="background:var(--orange);font-size:1rem;">VFY</div>
+      <div class="step-body">
+        <h4>Send code_verifier when exchanging code for tokens</h4>
+        <p>Add <code>&amp;code_verifier=dBjftJeZ...</code> to the token exchange POST. Auth Server computes SHA256 of this verifier and checks it matches the stored challenge. If an attacker intercepted the code, they don't have the verifier — exchange fails.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- SECTION 6: JWT -->
+<div class="panel">
+  <div class="section-head">
+    <span class="section-num">06</span>
+    <h2>JWT Deep Dive</h2>
+  </div>
+
+  <p>JSON Web Tokens (JWTs) are the most common format for OAuth 2.0 access tokens and OIDC id_tokens. They're self-contained — the Resource Server can validate them without calling the Auth Server.</p>
+
+  <h3>Structure: Three Base64url-Encoded Parts</h3>
+  <div style="margin: 16px 0; line-height:2; word-break:break-all; font-family:'Space Mono',monospace; font-size:.82rem;">
+    <span class="jwt-part jwt-header-color">eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCIsImtpZCI6ImFiYzEyMyJ9</span>.<span class="jwt-part jwt-payload-color">eyJpc3MiOiJodHRwczovL2FjY291bnRzLmdvb2dsZS5jb20iLCJzdWIiOiIxMjM0NTY3ODkwIiwiYXVkIjoiMTIzLmFwcHMuZ29vZ2xldXNlcmNvbnRlbnQuY29tIiwiZXhwIjoxNzUwMDAwMDAwLCJpYXQiOjE3NDk5OTY0MDAsImVtYWlsIjoiYWxpQGV4YW1wbGUuY29tIiwibmFtZSI6IkFsaSBBbndhciJ9</span>.<span class="jwt-part jwt-sig-color">SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c</span>
+  </div>
+  <div style="display:flex;gap:12px;margin-bottom:18px;flex-wrap:wrap;">
+    <span class="chip" style="background:#1d6fb8;color:#fff;border-color:#1d6fb8;">■ HEADER</span>
+    <span class="chip" style="background:#8a4fff;color:#fff;border-color:#8a4fff;">■ PAYLOAD</span>
+    <span class="chip" style="background:#e63946;color:#fff;border-color:#e63946;">■ SIGNATURE</span>
+  </div>
+
+  <div class="grid-2">
+    <div class="card">
+      <div class="card-head" style="color:var(--blue);">Header (blue)</div>
+      <div class="terminal" style="margin:0;">
+        <div class="terminal-body" style="font-size:.8rem;">{
+  <span class="t-key">"alg"</span>: <span class="t-str">"RS256"</span>,   <span class="t-cmt">← RSA + SHA256</span>
+  <span class="t-key">"typ"</span>: <span class="t-str">"JWT"</span>,
+  <span class="t-key">"kid"</span>: <span class="t-str">"abc123"</span>   <span class="t-cmt">← key ID for rotation</span>
+}</div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-head" style="color:var(--purple);">Payload / Claims (purple)</div>
+      <div class="terminal" style="margin:0;">
+        <div class="terminal-body" style="font-size:.8rem;">{
+  <span class="t-key">"iss"</span>: <span class="t-str">"https://accounts.google.com"</span>,
+  <span class="t-key">"sub"</span>: <span class="t-str">"1234567890"</span>,  <span class="t-cmt">← user ID</span>
+  <span class="t-key">"aud"</span>: <span class="t-str">"123.apps.googleusercontent.com"</span>,
+  <span class="t-key">"exp"</span>: <span class="t-num">1750000000</span>,  <span class="t-cmt">← expiry (Unix ts)</span>
+  <span class="t-key">"iat"</span>: <span class="t-num">1749996400</span>,  <span class="t-cmt">← issued at</span>
+  <span class="t-key">"email"</span>: <span class="t-str">"ali@example.com"</span>,
+  <span class="t-key">"name"</span>: <span class="t-str">"Ali Anwar"</span>
+}</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="highlight-box hb-red">
+    <div class="hb-label">JWT IS NOT ENCRYPTED</div>
+    <p style="margin-top:10px">The payload is <strong>base64url encoded</strong>, not encrypted. Anyone can decode it and read the claims. <strong>Never put sensitive data in a JWT payload</strong> — passwords, credit card numbers, PII that shouldn't be shared. The signature only prevents tampering, not reading.</p>
+  </div>
+
+  <h3 style="margin-top:20px;">Signature Verification (RS256)</h3>
+  <div class="terminal">
+    <div class="terminal-bar"><span class="tbar-dot red"></span><span class="tbar-dot yellow"></span><span class="tbar-dot green"></span><span class="tbar-label">RS256 Signature Verification</span></div>
+    <div class="terminal-body"><span class="t-cmt">// Authorization Server (Google) signs with PRIVATE key:</span>
+signature = <span class="t-kw">RSA_Sign</span>(
+  privateKey,
+  SHA256(<span class="t-val">base64url(header)</span> + <span class="t-str">"."</span> + <span class="t-val">base64url(payload)</span>)
+)
+
+<span class="t-cmt">// Resource Server validates with PUBLIC key (fetched from JWKS endpoint):</span>
+isValid = <span class="t-kw">RSA_Verify</span>(
+  publicKey,  <span class="t-cmt">← from https://accounts.google.com/.well-known/openid-configuration</span>
+  signature,
+  SHA256(<span class="t-val">base64url(header)</span> + <span class="t-str">"."</span> + <span class="t-val">base64url(payload)</span>)
+)
+
+<span class="t-cmt">// Also check: exp > now, aud == your client_id, iss == expected issuer</span></div>
+  </div>
+</div>
+
+<!-- SECTION 7: JWT DECODER -->
+<div class="panel">
+  <div class="section-head">
+    <span class="section-num">07</span>
+    <h2>Interactive JWT Decoder</h2>
+  </div>
+  <p>Paste any JWT below to decode and inspect it in real time. The decoder runs entirely in your browser — nothing is sent to a server.</p>
+
+  <div class="decoder-wrap">
+    <div class="decoder-bar">
+      <span>🔍 JWT DECODER</span>
+      <span style="font-family:'Comic Neue',cursive;font-size:.8rem;color:#7d8590;font-weight:400;letter-spacing:0;">client-side only · never leaves browser</span>
+    </div>
+    <div class="decoder-body">
+      <textarea class="decoder-input" id="jwt-input" rows="4" placeholder="Paste a JWT here...">eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCIsImtpZCI6ImFiYzEyMyJ9.eyJpc3MiOiJodHRwczovL2FjY291bnRzLmdvb2dsZS5jb20iLCJzdWIiOiIxMTIzNDU2Nzg5MCIsImF1ZCI6IjEyMzQ1Njc4OS5hcHBzLmdvb2dsZXVzZXJjb250ZW50LmNvbSIsImV4cCI6MTc5OTk5OTk5OSwiaWF0IjoxNzQ5OTk2NDAwLCJlbWFpbCI6ImFsaUBleGFtcGxlLmNvbSIsIm5hbWUiOiJBbGkgQW53YXIiLCJlbWFpbF92ZXJpZmllZCI6dHJ1ZX0.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c</textarea>
+      <div class="decoder-output">
+        <div class="decoder-col">
+          <div class="decoder-col-head" style="background:#1d4a73;color:#79c0ff;border-color:#1d6fb8;">HEADER</div>
+          <div class="decoder-col-body" id="jwt-header-out">—</div>
+        </div>
+        <div class="decoder-col">
+          <div class="decoder-col-head" style="background:#3d1f7a;color:#cba6f7;border-color:#8a4fff;">PAYLOAD</div>
+          <div class="decoder-col-body" id="jwt-payload-out">—</div>
+        </div>
+      </div>
+      <div class="dec-expiry" id="jwt-expiry"></div>
+    </div>
+  </div>
+</div>
+
+<!-- SECTION 8: Access vs Refresh Tokens -->
+<div class="panel">
+  <div class="section-head">
+    <span class="section-num">08</span>
+    <h2>Access Tokens vs Refresh Tokens</h2>
+  </div>
+
+  <div class="grid-2">
+    <div class="card" style="border-color:var(--blue);box-shadow:4px 4px 0 var(--blue);">
+      <div class="card-head" style="color:var(--blue);">Access Token</div>
+      <ul style="padding-left:20px;font-size:.95rem;line-height:1.8;">
+        <li>Short-lived: 1 hour (3600s)</li>
+        <li>JWT format (self-contained)</li>
+        <li>Sent in <code>Authorization: Bearer</code> header on every API call</li>
+        <li>Resource Server validates locally (no Auth Server call)</li>
+        <li>Stateless: revocation takes up to 1 hour to take effect</li>
+      </ul>
+    </div>
+    <div class="card" style="border-color:var(--green);box-shadow:4px 4px 0 var(--green);">
+      <div class="card-head" style="color:var(--green);">Refresh Token</div>
+      <ul style="padding-left:20px;font-size:.95rem;line-height:1.8;">
+        <li>Long-lived: days to months</li>
+        <li>Opaque string (not a JWT)</li>
+        <li>Stored securely server-side (or HttpOnly cookie)</li>
+        <li>Only sent to Auth Server's <code>/token</code> endpoint</li>
+        <li>Token rotation: each use invalidates old token</li>
+      </ul>
+    </div>
+  </div>
+
+  <h3 style="margin-top:20px;">Token Refresh Flow</h3>
+  <div class="terminal">
+    <div class="terminal-bar"><span class="tbar-dot red"></span><span class="tbar-dot yellow"></span><span class="tbar-dot green"></span><span class="tbar-label">Refreshing an Expired Access Token</span></div>
+    <div class="terminal-body"><span class="t-kw">POST</span> <span class="t-str">https://oauth2.googleapis.com/token</span>
+<span class="t-hdr">Content-Type:</span> application/x-www-form-urlencoded
+
+<span class="t-key">grant_type</span>=<span class="t-val">refresh_token</span>
+<span class="t-key">&amp;refresh_token</span>=<span class="t-val">1//0gLk9mVOz7kX2KgBCT...</span>
+<span class="t-key">&amp;client_id</span>=<span class="t-val">123456789.apps.googleusercontent.com</span>
+<span class="t-key">&amp;client_secret</span>=<span class="t-val">GOCSPX-your_secret</span>
+
+<span class="t-cmt">// Response:</span>
+{
+  <span class="t-key">"access_token"</span>: <span class="t-str">"ya29.a0NEW_TOKEN..."</span>,
+  <span class="t-key">"expires_in"</span>: <span class="t-num">3599</span>,
+  <span class="t-key">"refresh_token"</span>: <span class="t-str">"1//0gNEW_REFRESH..."</span>  <span class="t-cmt">← old one is now revoked (rotation)</span>
+}</div>
+  </div>
+
+  <h3 style="margin-top:20px;">Where to Store Tokens</h3>
+  <table class="data-table">
+    <thead><tr><th>Storage</th><th>XSS Risk</th><th>CSRF Risk</th><th>Recommendation</th></tr></thead>
+    <tbody>
+      <tr><td><code>HttpOnly Cookie</code></td><td>None (JS can't read)</td><td>Yes (need SameSite=Strict)</td><td><span class="chip chip-green">BEST</span></td></tr>
+      <tr><td><code>localStorage</code></td><td>High (XSS reads it)</td><td>None</td><td><span class="chip chip-red">AVOID</span></td></tr>
+      <tr><td><code>sessionStorage</code></td><td>High (XSS reads it)</td><td>None</td><td><span class="chip chip-orange">MEDIUM</span></td></tr>
+      <tr><td>In-memory (JS variable)</td><td>Medium (loses on refresh)</td><td>None</td><td><span class="chip chip-blue">ACCEPTABLE</span> for SPAs</td></tr>
+    </tbody>
+  </table>
+</div>
+
+<!-- SECTION 9: OpenID Connect -->
+<div class="panel">
+  <div class="section-head">
+    <span class="section-num">09</span>
+    <h2>OpenID Connect (OIDC)</h2>
+  </div>
+
+  <p>OAuth 2.0 handles <em>authorization</em> (what can this app do). But "Login with Google" also needs <em>authentication</em> (who is this user). That's OpenID Connect — a thin identity layer built on top of OAuth 2.0.</p>
+
+  <div class="grid-2">
+    <div class="highlight-box hb-blue" style="margin:0;">
+      <div class="hb-label">OAUTH 2.0</div>
+      <p style="margin-top:10px;">Answers: <strong>"What can this app access?"</strong><br>Returns: access_token (for API calls)<br>Example: "This app can read your calendar."</p>
+    </div>
+    <div class="highlight-box hb-purple" style="margin:0;">
+      <div class="hb-label">OIDC</div>
+      <p style="margin-top:10px;">Answers: <strong>"Who is this user?"</strong><br>Returns: id_token (identity JWT)<br>Example: "This user is ali@example.com, Google user ID 112345."</p>
+    </div>
+  </div>
+
+  <p style="margin-top:18px;">To trigger OIDC, include <code>openid</code> in the scope. The token response then includes an <code>id_token</code> — a JWT containing identity claims (<code>sub</code>, <code>email</code>, <code>name</code>, etc.).</p>
+
+  <div class="highlight-box hb-yellow">
+    <div class="hb-label">LOGIN WITH GOOGLE = OAUTH 2.0 + OIDC</div>
+    <p style="margin-top:10px;">Scope: <code>openid email profile</code><br>
+    Returns: access_token (to call Google APIs) + id_token (to know who logged in)<br>
+    Your backend: verifies id_token signature, extracts <code>sub</code> (stable user ID) + <code>email</code>, creates/updates your user record.</p>
+  </div>
+</div>
+
+<!-- SECTION 10: Security Mistakes -->
+<div class="panel">
+  <div class="section-head">
+    <span class="section-num">10</span>
+    <h2>Common Security Mistakes</h2>
+  </div>
+
+  <div class="step-flow">
+    <div class="step-item">
+      <div class="step-num" style="background:var(--red);font-size:.9rem;">CSRF</div>
+      <div class="step-body">
+        <h4>Not Validating the <code>state</code> Parameter</h4>
+        <p>If you don't check that <code>state</code> matches what you sent, an attacker can craft an authorization URL, trick a victim into clicking it, and then inject their own callback URL with a legitimate code. Always validate <code>state</code> as a CSRF token.</p>
+      </div>
+    </div>
+    <div class="step-item">
+      <div class="step-num" style="background:var(--red);font-size:.9rem;">REDIR</div>
+      <div class="step-body">
+        <h4>Not Validating <code>redirect_uri</code> Exactly</h4>
+        <p>If the Auth Server does prefix matching (e.g. allows any <code>https://myapp.com/...</code>), an attacker can register a subdomain and steal codes. Auth Servers must do exact matching of pre-registered redirect URIs. Register only specific full URIs, not wildcards.</p>
+      </div>
+    </div>
+    <div class="step-item">
+      <div class="step-num" style="background:var(--red);font-size:.9rem;">AUD</div>
+      <div class="step-body">
+        <h4>Not Checking the <code>aud</code> Claim</h4>
+        <p>A JWT issued for Client A has <code>"aud": "client_a_id"</code>. If Client B accepts tokens without verifying <code>aud</code>, an attacker with a token from Client A can use it at Client B. Always verify the <code>aud</code> claim equals your own client_id.</p>
+      </div>
+    </div>
+    <div class="step-item">
+      <div class="step-num" style="background:var(--red);font-size:.9rem;">PKCE</div>
+      <div class="step-body">
+        <h4>Not Using PKCE for Public Clients</h4>
+        <p>SPAs and mobile apps that use Authorization Code flow without PKCE are vulnerable to authorization code interception. Always use PKCE for any client that can't keep a secret. Some Auth Servers now require it for all clients.</p>
+      </div>
+    </div>
+    <div class="step-item">
+      <div class="step-num" style="background:var(--red);font-size:.9rem;">LOG</div>
+      <div class="step-body">
+        <h4>Tokens Leaking into Logs</h4>
+        <p>If you log all HTTP requests (common in debugging), access tokens in Authorization headers end up in logs. Sanitize or redact Authorization headers before logging. Never put tokens in URL query parameters in production.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- SECTION 11: Client Credentials -->
+<div class="panel">
+  <div class="section-head">
+    <span class="section-num">11</span>
+    <h2>Client Credentials Flow (Machine-to-Machine)</h2>
+  </div>
+
+  <p>When a backend service needs to call another backend service — no user involved — use Client Credentials flow. A cron job calling an internal API, a microservice calling another microservice, a CI/CD pipeline uploading artifacts.</p>
+
+  <div class="terminal">
+    <div class="terminal-bar"><span class="tbar-dot red"></span><span class="tbar-dot yellow"></span><span class="tbar-dot green"></span><span class="tbar-label">Client Credentials Token Request</span></div>
+    <div class="terminal-body"><span class="t-kw">POST</span> <span class="t-str">https://auth.example.com/token</span>
+<span class="t-hdr">Content-Type:</span> application/x-www-form-urlencoded
+<span class="t-hdr">Authorization:</span> Basic <span class="t-val">base64(client_id:client_secret)</span>
+
+<span class="t-key">grant_type</span>=<span class="t-val">client_credentials</span>
+<span class="t-key">&amp;scope</span>=<span class="t-val">api:read api:write</span>
+
+<span class="t-cmt">// Response:</span>
+{
+  <span class="t-key">"access_token"</span>: <span class="t-str">"eyJhbGci..."</span>,
+  <span class="t-key">"token_type"</span>: <span class="t-str">"Bearer"</span>,
+  <span class="t-key">"expires_in"</span>: <span class="t-num">3600</span>
+}
+<span class="t-cmt">// No refresh_token — just request a new access_token when it expires</span></div>
+  </div>
+</div>
+
+<!-- SECTION 12: Cheat Sheet -->
+<div class="panel">
+  <div class="section-head">
+    <span class="section-num">12</span>
+    <h2>Cheat Sheet</h2>
+  </div>
+
+  <h3>Grant Type Comparison</h3>
+  <table class="data-table">
+    <thead>
+      <tr><th>Flow</th><th>Client Type</th><th>Secret?</th><th>User Involved?</th><th>Returns</th><th>Use Case</th></tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>Auth Code</strong></td>
+        <td>Web (backend)</td>
+        <td>Yes</td>
+        <td>Yes</td>
+        <td>access + refresh + id</td>
+        <td>Traditional web apps</td>
+      </tr>
+      <tr>
+        <td><strong>Auth Code + PKCE</strong></td>
+        <td>SPA / Mobile</td>
+        <td>No</td>
+        <td>Yes</td>
+        <td>access + refresh + id</td>
+        <td>React, React Native, iOS</td>
+      </tr>
+      <tr>
+        <td><strong>Client Credentials</strong></td>
+        <td>Backend service</td>
+        <td>Yes</td>
+        <td>No</td>
+        <td>access only</td>
+        <td>Microservices, cron jobs</td>
+      </tr>
+      <tr>
+        <td><strong>Implicit (deprecated)</strong></td>
+        <td>SPA (old)</td>
+        <td>No</td>
+        <td>Yes</td>
+        <td>access only (in URL)</td>
+        <td>Don't use</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <h3 style="margin-top:24px;">Important JWT Claims</h3>
+  <table class="data-table">
+    <thead><tr><th>Claim</th><th>Full Name</th><th>Type</th><th>What to Check</th></tr></thead>
+    <tbody>
+      <tr><td><code>iss</code></td><td>Issuer</td><td>string (URL)</td><td>Must match expected Auth Server URL</td></tr>
+      <tr><td><code>sub</code></td><td>Subject</td><td>string (user ID)</td><td>Stable unique user identifier</td></tr>
+      <tr><td><code>aud</code></td><td>Audience</td><td>string or array</td><td>Must include your client_id</td></tr>
+      <tr><td><code>exp</code></td><td>Expiration</td><td>Unix timestamp</td><td>Must be in the future</td></tr>
+      <tr><td><code>iat</code></td><td>Issued At</td><td>Unix timestamp</td><td>Should be recent (clock skew)</td></tr>
+      <tr><td><code>jti</code></td><td>JWT ID</td><td>string</td><td>Check for token replay attacks</td></tr>
+    </tbody>
+  </table>
+
+  <div class="grid-3" style="margin-top:24px;">
+    <div class="card">
+      <div class="card-head">Security Checklist</div>
+      <ul style="padding-left:18px;font-size:.9rem;line-height:1.9;">
+        <li>✅ Validate <code>state</code> (CSRF)</li>
+        <li>✅ Exact redirect_uri match</li>
+        <li>✅ Verify <code>aud</code> claim</li>
+        <li>✅ Check <code>exp</code> claim</li>
+        <li>✅ Use PKCE for public clients</li>
+        <li>✅ Store tokens in HttpOnly cookie</li>
+        <li>✅ Rotate refresh tokens</li>
+        <li>✅ Use HTTPS everywhere</li>
+      </ul>
+    </div>
+    <div class="card">
+      <div class="card-head">JWKS Endpoint</div>
+      <p style="font-size:.9rem;">Auth Servers publish public keys at:</p>
+      <div class="terminal" style="margin:8px 0 0;">
+        <div class="terminal-body" style="font-size:.76rem;"><span class="t-cmt"># Google OIDC config:</span>
+<span class="t-str">https://accounts.google.com/.well-known/openid-configuration</span>
+
+<span class="t-cmt"># JWKS endpoint:</span>
+<span class="t-str">https://www.googleapis.com/oauth2/v3/certs</span></div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-head">Useful Headers</div>
+      <div class="terminal" style="margin:8px 0 0;">
+        <div class="terminal-body" style="font-size:.76rem;"><span class="t-cmt"># Revoke a token:</span>
+<span class="t-kw">POST</span> /revoke
+<span class="t-key">token</span>=<span class="t-val">ACCESS_OR_REFRESH</span>
+
+<span class="t-cmt"># Introspect a token:</span>
+<span class="t-kw">POST</span> /introspect
+<span class="t-key">token</span>=<span class="t-val">ACCESS_TOKEN</span>
+<span class="t-cmt"># → {"active":true,...}</span></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="chapter-divider"><span>END OF HOW-03</span></div>
+
+</div><!-- /page-wrap -->
+
+<script src="hero-banner.js"></script>
+<script src="masthead.js"></script>
+<script src="author-card.js"></script>
+<script>
+/* ======= OAuth Sequence Diagram ======= */
+var oauthCurrentStep = 0;
+var oauthPlaying = false;
+
+var oauthSteps = [
+  {
+    desc: "User clicks 'Sign in with Google'. Your app constructs the authorization URL with client_id, scope, state (CSRF token), and PKCE code_challenge.",
+    phase: "INITIATING"
+  },
+  {
+    desc: "Browser is redirected to Google's authorization endpoint. Your app sends: response_type=code, scope=openid email profile, state=random, code_challenge for PKCE.",
+    phase: "REDIRECTING"
+  },
+  {
+    desc: "Google's server renders its own login page and consent screen. Your app never sees the user's password. The user sees exactly which permissions they're granting.",
+    phase: "AUTHORIZING"
+  },
+  {
+    desc: "User approves the consent screen. Google records the authorization and prepares to issue an authorization code.",
+    phase: "APPROVED"
+  },
+  {
+    desc: "Google redirects the browser back to your redirect_uri with a short-lived authorization code (expires ~10 min, single-use). Your server verifies the state parameter.",
+    phase: "CODE RECEIVED"
+  },
+  {
+    desc: "Your server (not the browser) POSTs the authorization code + client_secret + code_verifier to Google's token endpoint. Google validates all three and returns access_token + refresh_token + id_token.",
+    phase: "EXCHANGING"
+  },
+  {
+    desc: "Your app now has tokens! API calls include the access_token in Authorization: Bearer header. When it expires (1hr), use the refresh_token to get a new one without user interaction.",
+    phase: "AUTHENTICATED ✓"
+  }
+];
+
+function oauthAnimateArrow(groupId, lineId, arrowId, length, delay) {
+  return new Promise(function(resolve) {
+    setTimeout(function() {
+      var g = document.getElementById(groupId);
+      var line = document.getElementById(lineId);
+      var arrow = document.getElementById(arrowId);
+      if (!g || !line) { resolve(); return; }
+      g.setAttribute('opacity', '1');
+      line.getBoundingClientRect();
+      line.style.transition = 'stroke-dashoffset 0.7s ease';
+      line.setAttribute('stroke-dashoffset', '0');
+      setTimeout(function() {
+        if (arrow) arrow.setAttribute('opacity', '1');
+        resolve();
+      }, 750);
+    }, delay || 0);
+  });
+}
+
+function oauthStep() {
+  if (oauthCurrentStep >= 7) return;
+  oauthCurrentStep++;
+
+  var stepData = oauthSteps[oauthCurrentStep - 1];
+  document.getElementById('oauth-counter').textContent = 'Step ' + oauthCurrentStep + ' / 7';
+  document.getElementById('oauth-phase').textContent = stepData.phase;
+  document.getElementById('oauth-desc').textContent = stepData.desc;
+
+  var groups = ['oa-g1','oa-g2','oa-g3','oa-g4','oa-g5','oa-g6','oa-g7'];
+  var lines = ['oa-l1','oa-l2','oa-l3','oa-l4','oa-l5','oa-l6','oa-l7'];
+  var arrows = ['oa-ah1','oa-ah2','oa-ah3','oa-ah4','oa-ah5','oa-ah6','oa-ah7'];
+  var lengths = [160, 210, 370, 370, 210, 210, 460];
+
+  var idx = oauthCurrentStep - 1;
+  var g = document.getElementById(groups[idx]);
+  var line = document.getElementById(lines[idx]);
+  var arrow = document.getElementById(arrows[idx]);
+
+  if (g) g.setAttribute('opacity', '1');
+  if (line) {
+    line.setAttribute('stroke-dasharray', lengths[idx]);
+    line.setAttribute('stroke-dashoffset', lengths[idx]);
+    line.getBoundingClientRect();
+    line.style.transition = 'stroke-dashoffset 0.7s ease';
+    line.setAttribute('stroke-dashoffset', '0');
+    setTimeout(function() {
+      if (arrow) arrow.setAttribute('opacity', '1');
+    }, 750);
+  }
+
+  if (oauthCurrentStep === 7) {
+    setTimeout(function() {
+      var done = document.getElementById('oa-done');
+      if (done) done.setAttribute('opacity', '1');
+    }, 900);
+  }
+}
+
+function oauthPlay() {
+  if (oauthPlaying) return;
+  oauthPlaying = true;
+  var remaining = 7 - oauthCurrentStep;
+  var delay = 0;
+  for (var i = 0; i < remaining; i++) {
+    (function(step) {
+      setTimeout(function() {
+        oauthStep();
+        if (step === remaining - 1) oauthPlaying = false;
+      }, delay);
+    })(i);
+    delay += 1200;
+  }
+  if (remaining === 0) oauthPlaying = false;
+}
+
+function oauthReset() {
+  oauthPlaying = false;
+  oauthCurrentStep = 0;
+  document.getElementById('oauth-counter').textContent = 'Step 0 / 7';
+  document.getElementById('oauth-phase').textContent = 'READY';
+  document.getElementById('oauth-desc').textContent = "Press \"step →\" to walk through each exchange, or \"▶ play all\" to watch the full OAuth 2.0 flow.";
+
+  var groups = ['oa-g1','oa-g2','oa-g3','oa-g4','oa-g5','oa-g6','oa-g7','oa-done'];
+  var lines = ['oa-l1','oa-l2','oa-l3','oa-l4','oa-l5','oa-l6','oa-l7'];
+  var arrows = ['oa-ah1','oa-ah2','oa-ah3','oa-ah4','oa-ah5','oa-ah6','oa-ah7'];
+  var lengths = [160, 210, 370, 370, 210, 210, 460];
+
+  groups.forEach(function(id) {
+    var el = document.getElementById(id);
+    if (el) el.setAttribute('opacity', '0');
+  });
+  lines.forEach(function(id, idx) {
+    var el = document.getElementById(id);
+    if (el) {
+      el.style.transition = 'none';
+      el.setAttribute('stroke-dashoffset', lengths[idx]);
+    }
+  });
+  arrows.forEach(function(id) {
+    var el = document.getElementById(id);
+    if (el) el.setAttribute('opacity', '0');
+  });
+}
+
+/* ======= JWT Decoder ======= */
+function b64urlDecode(str) {
+  var padded = str + '==='.slice((str.length + 3) % 4);
+  var base64 = padded.replace(/-/g, '+').replace(/_/g, '/');
+  try {
+    return decodeURIComponent(
+      atob(base64).split('').map(function(c) {
+        return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
+      }).join('')
+    );
+  } catch(e) {
+    return atob(base64);
+  }
+}
+
+function syntaxHighlight(obj) {
+  var json = JSON.stringify(obj, null, 2);
+  return json
+    .replace(/("(\\u[a-zA-Z0-9]{4}|\\[^u]|[^\\"])*"(?:\s*:)?|\b(true|false|null)\b|-?\d+(?:\.\d*)?(?:[eE][+\-]?\d+)?)/g, function(match) {
+      var cls = 'color:#e3b341'; // number
+      if (/^"/.test(match)) {
+        if (/:$/.test(match)) cls = 'color:#7ee787'; // key
+        else cls = 'color:#a5d6ff'; // string
+      } else if (/true|false/.test(match)) cls = 'color:#ff7b72'; // bool
+      else if (/null/.test(match)) cls = 'color:#ff7b72';
+      return '<span style="' + cls + '">' + match + '</span>';
+    });
+}
+
+function decodeJwt() {
+  var raw = document.getElementById('jwt-input').value.trim();
+  var headerOut = document.getElementById('jwt-header-out');
+  var payloadOut = document.getElementById('jwt-payload-out');
+  var expiryEl = document.getElementById('jwt-expiry');
+
+  if (!raw || raw.split('.').length !== 3) {
+    headerOut.textContent = 'Invalid JWT format';
+    payloadOut.textContent = 'Expected 3 parts separated by dots';
+    expiryEl.textContent = '';
+    return;
+  }
+
+  var parts = raw.split('.');
+  try {
+    var header = JSON.parse(b64urlDecode(parts[0]));
+    var payload = JSON.parse(b64urlDecode(parts[1]));
+
+    headerOut.innerHTML = syntaxHighlight(header);
+    payloadOut.innerHTML = syntaxHighlight(payload);
+
+    if (payload.exp) {
+      var now = Math.floor(Date.now() / 1000);
+      var diff = payload.exp - now;
+      if (diff > 0) {
+        var mins = Math.floor(diff / 60);
+        var secs = diff % 60;
+        expiryEl.style.color = '#7ee787';
+        expiryEl.textContent = '✓ Token valid — expires in ' + mins + 'm ' + secs + 's (exp: ' + new Date(payload.exp * 1000).toLocaleString() + ')';
+      } else {
+        expiryEl.style.color = '#ff7b72';
+        expiryEl.textContent = '✗ Token EXPIRED ' + Math.abs(Math.floor(diff / 60)) + ' minutes ago (exp: ' + new Date(payload.exp * 1000).toLocaleString() + ')';
+      }
+    } else {
+      expiryEl.textContent = 'No exp claim found';
+    }
+  } catch(e) {
+    headerOut.textContent = 'Decode error: ' + e.message;
+    payloadOut.textContent = '';
+    expiryEl.textContent = '';
+  }
+}
+
+document.getElementById('jwt-input').addEventListener('input', decodeJwt);
+decodeJwt();
+</script>
+</body>
+</html>

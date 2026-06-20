@@ -1,0 +1,2583 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>How a Database Query Executes — How X Works · DevDunia</title>
+<meta name="description" content="SQL parser, query planner, optimizer, index scan, buffer pool, WAL — every microsecond of a PostgreSQL query visualized. Deep dive into how SELECT really works.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://devdunia.com/how-db-query-works.html">
+<meta property="og:title" content="How a Database Query Executes — DevDunia">
+<meta property="og:description" content="SQL parser, query planner, optimizer, index scan, buffer pool, WAL — every microsecond of a PostgreSQL query visualized.">
+<meta property="og:image" content="https://devdunia.com/images/logo.png">
+<link rel="icon" type="image/png" href="images/logo.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Bangers&family=Comic+Neue:ital,wght@0,400;0,700;1,400&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --ink: #1a1410;
+  --paper: #fdf3e3;
+  --paper2: #fbe9cc;
+  --red: #e63946;
+  --blue: #1d6fb8;
+  --yellow: #ffd23f;
+  --green: #3fa34d;
+  --pink: #ff6b9d;
+  --purple: #8a4fff;
+  --orange: #ff8c42;
+  --teal: #0d9488;
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: 'Comic Neue', cursive;
+  font-weight: 400;
+  color: var(--ink);
+  background-color: var(--paper);
+  background-image: radial-gradient(var(--ink) 0.5px, transparent 0.6px);
+  background-size: 14px 14px;
+  background-attachment: fixed;
+  min-height: 100vh;
+}
+
+.paper-overlay {
+  position: fixed; inset: 0;
+  background: rgba(253,243,227,.78);
+  pointer-events: none; z-index: 0;
+}
+
+.page-wrap {
+  position: relative; z-index: 1;
+  max-width: 1240px;
+  margin: 0 auto;
+  padding: 20px 32px 80px;
+}
+
+/* ── PANEL ── */
+.panel {
+  background: var(--paper);
+  border: 4px solid var(--ink);
+  border-radius: 6px;
+  box-shadow: 7px 7px 0 var(--ink);
+  overflow: hidden;
+  margin-bottom: 26px;
+}
+.panel-header {
+  background: var(--ink);
+  color: var(--yellow);
+  font-family: 'Bangers', cursive;
+  font-size: 1.2rem;
+  letter-spacing: 2px;
+  padding: 10px 18px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+.panel-tag {
+  font-family: 'Space Mono', monospace;
+  font-size: .65rem;
+  font-weight: 700;
+  background: var(--yellow);
+  color: var(--ink);
+  padding: 2px 7px;
+  border-radius: 3px;
+  white-space: nowrap;
+}
+.panel-body { padding: 20px 24px; }
+
+/* ── HERO ── */
+.db-hero {
+  background: var(--ink);
+  border: 4px solid var(--ink);
+  border-radius: 8px;
+  box-shadow: 9px 9px 0 rgba(26,20,16,.45);
+  padding: 56px 44px 48px;
+  text-align: center;
+  margin-bottom: 28px;
+  position: relative;
+  overflow: hidden;
+}
+.db-hero::before {
+  content: '';
+  position: absolute; inset: 0;
+  background-image: radial-gradient(rgba(255,255,255,.04) 1px, transparent 1px);
+  background-size: 14px 14px;
+}
+.db-hero-deco1 {
+  position: absolute; top: -80px; right: -80px;
+  width: 300px; height: 300px; border-radius: 50%;
+  background: rgba(13,148,136,.07);
+  border: 3px solid rgba(13,148,136,.1);
+}
+.db-hero-deco2 {
+  position: absolute; bottom: -100px; left: -60px;
+  width: 320px; height: 320px; border-radius: 50%;
+  background: rgba(138,79,255,.05);
+  border: 3px solid rgba(138,79,255,.07);
+}
+.db-hero-kicker {
+  font-family: 'Space Mono', monospace;
+  font-size: .6rem;
+  color: rgba(255,255,255,.45);
+  letter-spacing: 4px;
+  text-transform: uppercase;
+  margin-bottom: 16px;
+  position: relative; z-index: 1;
+}
+.db-hero-select {
+  font-family: 'Bangers', cursive;
+  font-size: clamp(3rem, 8vw, 6.5rem);
+  color: var(--purple);
+  letter-spacing: 4px;
+  line-height: 1;
+  position: relative; z-index: 1;
+  text-shadow: 6px 6px 0 rgba(0,0,0,.4);
+}
+.db-hero-where {
+  font-family: 'Bangers', cursive;
+  font-size: clamp(2rem, 5vw, 4rem);
+  color: var(--green);
+  letter-spacing: 3px;
+  line-height: 1.2;
+  position: relative; z-index: 1;
+  margin-top: 6px;
+  text-shadow: 4px 4px 0 rgba(0,0,0,.4);
+}
+.db-hero-sub {
+  font-family: 'Space Mono', monospace;
+  font-size: .8rem;
+  color: rgba(255,255,255,.55);
+  position: relative; z-index: 1;
+  margin-top: 18px;
+  letter-spacing: 1px;
+}
+.db-hero-chips {
+  display: flex; flex-wrap: wrap; gap: 8px;
+  justify-content: center;
+  margin-top: 20px;
+  position: relative; z-index: 1;
+}
+.db-hero-chip {
+  font-family: 'Space Mono', monospace;
+  font-size: .6rem;
+  font-weight: 700;
+  padding: 4px 12px;
+  border: 2px solid rgba(255,255,255,.25);
+  border-radius: 3px;
+  color: rgba(255,255,255,.8);
+  letter-spacing: 1px;
+}
+.db-hero-chip.teal  { border-color: var(--teal);   color: var(--teal); }
+.db-hero-chip.green { border-color: var(--green);  color: var(--green); }
+.db-hero-chip.purple{ border-color: var(--purple); color: var(--purple); }
+.db-hero-chip.yellow{ border-color: var(--yellow); color: var(--yellow); }
+
+/* ── CHAPTER HEADER ── */
+.ch-header {
+  display: flex; align-items: center; gap: 14px;
+  margin-bottom: 16px;
+}
+.ch-badge {
+  width: 52px; height: 52px;
+  border-radius: 50%;
+  background: var(--ink);
+  color: var(--yellow);
+  font-family: 'Bangers', cursive;
+  font-size: 1.6rem;
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0;
+  box-shadow: 3px 3px 0 rgba(0,0,0,.3);
+}
+.ch-title {
+  font-family: 'Bangers', cursive;
+  font-size: 1.6rem;
+  letter-spacing: 2px;
+}
+.ch-sub {
+  font-size: .82rem;
+  color: #666;
+  margin-top: 2px;
+}
+
+/* ── LAYOUT HELPERS ── */
+.two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+.three-col { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px; }
+.four-col { display: grid; grid-template-columns: 1fr 1fr 1fr 1fr; gap: 10px; }
+
+/* ── FEATURE BOX ── */
+.fbox {
+  border: 3px solid var(--ink);
+  border-radius: 6px;
+  padding: 14px 16px;
+  background: var(--paper2);
+  box-shadow: 4px 4px 0 var(--ink);
+}
+.fbox h4 {
+  font-family: 'Bangers', cursive;
+  letter-spacing: 1px;
+  font-size: 1.1rem;
+  margin-bottom: 8px;
+}
+.fbox ul { list-style: none; }
+.fbox li { font-size: .84rem; padding: 3px 0; line-height: 1.5; }
+.fbox p  { font-size: .84rem; line-height: 1.6; }
+
+/* ── CODE BLOCKS ── */
+code {
+  background: var(--ink);
+  color: var(--yellow);
+  font-family: 'Space Mono', monospace;
+  font-size: .75rem;
+  border-radius: 3px;
+  padding: 1px 5px;
+}
+.codeblock {
+  background: #0d1117;
+  color: #adbac7;
+  font-family: 'Space Mono', monospace;
+  font-size: .75rem;
+  border-radius: 6px;
+  padding: 16px 18px;
+  margin: 12px 0;
+  line-height: 1.8;
+  overflow-x: auto;
+  border: 3px solid var(--ink);
+  white-space: pre;
+}
+.codeblock .kw  { color: #ff7b72; }
+.codeblock .str { color: #a5d6ff; }
+.codeblock .fn  { color: #d2a8ff; }
+.codeblock .num { color: #79c0ff; }
+.codeblock .cmt { color: #8b949e; font-style: italic; }
+.codeblock .op  { color: #ffd23f; }
+.codeblock .tbl { color: #7ee787; }
+.codeblock .col { color: #e3b341; }
+.codeblock .cost{ color: var(--orange); }
+.codeblock .time{ color: var(--green); }
+.codeblock .rows{ color: var(--blue); }
+.codeblock .node{ color: var(--yellow); }
+
+/* ── SPEECH BUBBLES ── */
+.speech {
+  position: relative;
+  background: var(--yellow);
+  border: 3px solid var(--ink);
+  border-radius: 12px;
+  padding: 12px 16px;
+  margin: 14px 0;
+  font-size: .9rem;
+  line-height: 1.55;
+  box-shadow: 4px 4px 0 var(--ink);
+}
+.speech::before {
+  content: '';
+  position: absolute;
+  bottom: -18px; left: 24px;
+  border-width: 18px 10px 0;
+  border-style: solid;
+  border-color: var(--ink) transparent transparent;
+}
+.speech::after {
+  content: '';
+  position: absolute;
+  bottom: -12px; left: 26px;
+  border-width: 14px 8px 0;
+  border-style: solid;
+  border-color: var(--yellow) transparent transparent;
+}
+.speech.teal { background: #ccfbf1; border-color: var(--teal); box-shadow: 4px 4px 0 var(--teal); }
+.speech.teal::before { border-color: var(--teal) transparent transparent; }
+.speech.teal::after  { border-color: #ccfbf1 transparent transparent; }
+.speech.blue { background: #dbeafe; border-color: var(--blue); box-shadow: 4px 4px 0 var(--blue); }
+.speech.blue::before { border-color: var(--blue) transparent transparent; }
+.speech.blue::after  { border-color: #dbeafe transparent transparent; }
+.speech.red  { background: #ffe4e4; border-color: var(--red); box-shadow: 4px 4px 0 var(--red); }
+.speech.red::before  { border-color: var(--red) transparent transparent; }
+.speech.red::after   { border-color: #ffe4e4 transparent transparent; }
+.speech.purple { background: #ede9fe; border-color: var(--purple); box-shadow: 4px 4px 0 var(--purple); }
+.speech.purple::before { border-color: var(--purple) transparent transparent; }
+.speech.purple::after  { border-color: #ede9fe transparent transparent; }
+
+/* ── HIGHLIGHT BOXES ── */
+.hbox {
+  border: 3px solid var(--ink);
+  border-radius: 6px;
+  padding: 10px 14px;
+  margin: 10px 0;
+  font-size: .85rem;
+  line-height: 1.55;
+  box-shadow: 3px 3px 0 var(--ink);
+}
+.hbox.warn  { background: #fff3cd; border-color: var(--orange); box-shadow: 3px 3px 0 var(--orange); }
+.hbox.tip   { background: #d1fae5; border-color: var(--green);  box-shadow: 3px 3px 0 var(--green); }
+.hbox.info  { background: #dbeafe; border-color: var(--blue);   box-shadow: 3px 3px 0 var(--blue); }
+.hbox.danger{ background: #ffe4e4; border-color: var(--red);    box-shadow: 3px 3px 0 var(--red); }
+.hbox strong { font-weight: 700; }
+
+/* ── TABLES ── */
+.comic-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 12px 0;
+}
+.comic-table th {
+  background: var(--ink);
+  color: var(--yellow);
+  font-family: 'Bangers', cursive;
+  font-size: .95rem;
+  letter-spacing: 1px;
+  padding: 8px 12px;
+  text-align: left;
+  border: 2px solid var(--ink);
+}
+.comic-table td {
+  padding: 7px 12px;
+  border: 2px solid var(--ink);
+  font-size: .83rem;
+  vertical-align: top;
+}
+.comic-table tr:nth-child(even) td { background: var(--paper2); }
+.comic-table tr:nth-child(odd)  td { background: var(--paper); }
+
+/* ── STEP FLOW ── */
+.step-flow { display: flex; flex-direction: column; gap: 0; margin: 14px 0; }
+.sf-step {
+  display: flex; align-items: flex-start; gap: 14px;
+  padding: 12px 0;
+  border-bottom: 2px dashed rgba(26,20,16,.15);
+}
+.sf-step:last-child { border-bottom: none; }
+.sf-num {
+  width: 38px; height: 38px; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-family: 'Bangers', cursive; font-size: 1.2rem;
+  color: #fff; flex-shrink: 0;
+  border: 3px solid var(--ink);
+  box-shadow: 2px 2px 0 var(--ink);
+}
+.sf-content { flex: 1; }
+.sf-title {
+  font-family: 'Bangers', cursive;
+  font-size: 1.05rem;
+  letter-spacing: 1px;
+  margin-bottom: 4px;
+}
+.sf-desc { font-size: .85rem; line-height: 1.55; color: #333; }
+
+/* ── PIPELINE ANIMATION ── */
+#pipeline-svg-wrap {
+  background: #0d1117;
+  border: 3px solid var(--ink);
+  border-radius: 8px;
+  padding: 24px;
+  margin: 14px 0;
+  overflow-x: auto;
+}
+.pipeline-controls {
+  display: flex; gap: 10px; margin-top: 14px; flex-wrap: wrap; align-items: center;
+}
+.pipeline-controls button {
+  font-family: 'Bangers', cursive;
+  font-size: .95rem;
+  letter-spacing: 1px;
+  padding: 6px 18px;
+  border: 3px solid var(--ink);
+  border-radius: 4px;
+  cursor: pointer;
+  box-shadow: 3px 3px 0 var(--ink);
+  transition: transform .1s, box-shadow .1s;
+}
+.pipeline-controls button:active {
+  transform: translate(2px,2px);
+  box-shadow: 1px 1px 0 var(--ink);
+}
+.pipeline-controls .btn-play  { background: var(--green);  color: #fff; }
+.pipeline-controls .btn-step  { background: var(--blue);   color: #fff; }
+.pipeline-controls .btn-reset { background: var(--red);    color: #fff; }
+.pipeline-status {
+  font-family: 'Space Mono', monospace;
+  font-size: .75rem;
+  color: var(--teal);
+  padding: 6px 14px;
+  background: #0d1117;
+  border: 2px solid var(--teal);
+  border-radius: 4px;
+  min-width: 200px;
+}
+
+/* ── PLAN COMPARISON ── */
+#plan-svg-wrap {
+  background: var(--paper2);
+  border: 3px solid var(--ink);
+  border-radius: 8px;
+  padding: 20px;
+  margin: 14px 0;
+  overflow-x: auto;
+}
+
+/* ── BUFFER POOL DEMO ── */
+#buffer-demo {
+  background: #0d1117;
+  border: 3px solid var(--ink);
+  border-radius: 8px;
+  padding: 20px;
+  margin: 14px 0;
+}
+.buf-slots {
+  display: flex; gap: 8px; flex-wrap: wrap; margin: 14px 0;
+}
+.buf-slot {
+  width: 72px; height: 72px;
+  border: 3px solid #444;
+  border-radius: 6px;
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
+  font-family: 'Space Mono', monospace;
+  font-size: .6rem;
+  color: #adbac7;
+  position: relative;
+  transition: all .3s;
+}
+.buf-slot.hit  { background: rgba(63,163,77,.25); border-color: #3fa34d; color: #7ee787; }
+.buf-slot.miss { background: rgba(230,57,70,.2);  border-color: #e63946; color: #ff8080; }
+.buf-slot.idle { background: #161b22; border-color: #30363d; }
+.buf-slot .slot-page { font-size: .75rem; font-weight: 700; margin-bottom: 4px; }
+.buf-slot .slot-status { font-size: .55rem; }
+.buf-stats {
+  display: flex; gap: 20px; margin-top: 10px; flex-wrap: wrap;
+}
+.buf-stat {
+  font-family: 'Space Mono', monospace;
+  font-size: .75rem;
+  padding: 6px 12px;
+  border-radius: 4px;
+  border: 2px solid #30363d;
+}
+.buf-stat.hits  { color: #7ee787; border-color: #3fa34d; }
+.buf-stat.miss  { color: #ff8080; border-color: #e63946; }
+.buf-stat.ratio { color: #79c0ff; border-color: #388bfd; }
+.buf-controls {
+  display: flex; gap: 10px; margin-top: 12px; flex-wrap: wrap;
+}
+.buf-controls button {
+  font-family: 'Bangers', cursive;
+  font-size: .9rem;
+  letter-spacing: 1px;
+  padding: 5px 14px;
+  border: 2px solid #555;
+  border-radius: 4px;
+  cursor: pointer;
+  background: #161b22;
+  color: #adbac7;
+  transition: all .15s;
+}
+.buf-controls button:hover { background: #21262d; border-color: var(--teal); color: var(--teal); }
+
+/* ── EXPLAIN PANEL ── */
+.explain-line {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 10px 14px;
+  border-bottom: 1px solid rgba(255,255,255,.05);
+  font-family: 'Space Mono', monospace;
+  font-size: .72rem;
+  line-height: 1.6;
+  background: #0d1117;
+}
+.explain-line:last-child { border-bottom: none; }
+.explain-line .el-indent { flex-shrink: 0; color: #444; min-width: 20px; }
+.explain-line .el-node { color: #ffd23f; font-weight: 700; }
+.explain-line .el-cost { color: #ff8c42; }
+.explain-line .el-actual { color: #3fa34d; }
+.explain-line .el-rows { color: #79c0ff; }
+.explain-line .el-note {
+  font-style: italic;
+  color: #8b949e;
+  font-family: 'Comic Neue', cursive;
+  font-size: .8rem;
+  margin-top: 4px;
+  display: block;
+  padding-left: 20px;
+}
+
+/* ── INDEX DIAGRAM ── */
+.btree-wrap {
+  background: var(--paper2);
+  border: 3px solid var(--ink);
+  border-radius: 8px;
+  padding: 16px;
+  margin: 14px 0;
+  overflow-x: auto;
+}
+
+/* ── TAG CHIPS ── */
+.tag {
+  display: inline-block;
+  font-family: 'Space Mono', monospace;
+  font-size: .6rem;
+  font-weight: 700;
+  padding: 2px 8px;
+  border-radius: 3px;
+  border: 2px solid var(--ink);
+  margin: 2px 3px;
+}
+.tag.teal   { background: #ccfbf1; border-color: var(--teal);   color: var(--teal); }
+.tag.blue   { background: #dbeafe; border-color: var(--blue);   color: var(--blue); }
+.tag.green  { background: #d1fae5; border-color: var(--green);  color: var(--green); }
+.tag.orange { background: #fff0d9; border-color: var(--orange); color: var(--orange); }
+.tag.red    { background: #ffe4e4; border-color: var(--red);    color: var(--red); }
+.tag.purple { background: #ede9fe; border-color: var(--purple); color: var(--purple); }
+.tag.yellow { background: var(--yellow); border-color: var(--ink); color: var(--ink); }
+
+/* ── BODY TEXT ── */
+p { font-size: .93rem; line-height: 1.65; margin-bottom: 12px; }
+h3 {
+  font-family: 'Bangers', cursive;
+  font-size: 1.25rem;
+  letter-spacing: 2px;
+  margin: 18px 0 10px;
+}
+h4 {
+  font-family: 'Comic Neue', cursive;
+  font-weight: 700;
+  font-size: 1rem;
+  margin: 14px 0 6px;
+}
+ul.body-list { padding-left: 20px; margin-bottom: 12px; }
+ul.body-list li { font-size: .9rem; line-height: 1.6; margin-bottom: 4px; }
+
+/* ── CONNECTOR ── */
+.connector {
+  display: flex; align-items: center; justify-content: center;
+  padding: 4px 0;
+  font-size: 1.4rem;
+  color: var(--teal);
+  font-family: 'Bangers', cursive;
+  letter-spacing: 2px;
+}
+
+/* ── ARCH FLOW ── */
+.arch-flow {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0;
+  margin: 14px 0;
+  padding: 16px;
+  background: var(--paper2);
+  border: 3px solid var(--ink);
+  border-radius: 8px;
+}
+.arch-box {
+  font-family: 'Bangers', cursive;
+  font-size: .85rem;
+  letter-spacing: 1px;
+  padding: 8px 14px;
+  border: 3px solid var(--ink);
+  border-radius: 6px;
+  color: #fff;
+  text-align: center;
+  white-space: nowrap;
+  box-shadow: 3px 3px 0 var(--ink);
+  margin: 4px 0;
+}
+.arch-arrow {
+  font-size: .9rem;
+  padding: 0 6px;
+  color: var(--ink);
+  flex-shrink: 0;
+}
+
+/* ── CHEAT SHEET GRID ── */
+.cheat-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+}
+.cheat-card {
+  border: 3px solid var(--ink);
+  border-radius: 6px;
+  overflow: hidden;
+  box-shadow: 4px 4px 0 var(--ink);
+}
+.cheat-card-head {
+  padding: 8px 14px;
+  font-family: 'Bangers', cursive;
+  font-size: 1rem;
+  letter-spacing: 2px;
+  color: #fff;
+}
+.cheat-card-body {
+  padding: 12px 14px;
+  background: var(--paper2);
+}
+.cheat-card-body li {
+  list-style: none;
+  font-size: .82rem;
+  padding: 4px 0;
+  border-bottom: 1px dashed rgba(26,20,16,.15);
+  line-height: 1.5;
+}
+.cheat-card-body li:last-child { border-bottom: none; }
+
+/* ── RESPONSIVE ── */
+@media (max-width: 760px) {
+  .two-col, .three-col, .four-col { grid-template-columns: 1fr; }
+  .cheat-grid { grid-template-columns: 1fr; }
+  .arch-flow { flex-direction: column; }
+  .page-wrap { padding: 12px 14px 60px; }
+}
+</style>
+</head>
+<body>
+<div class="paper-overlay"></div>
+<div data-masthead></div>
+
+<div class="page-wrap">
+
+  <div data-tool-hero
+       data-title="How a Database Query Executes"
+       data-chapter="HOW-04"
+       data-category="How X Works"
+       data-icon="🗄️"
+       data-desc="SQL parser, query planner, optimizer, index scan, buffer pool, WAL — every microsecond of a PostgreSQL query visualized."
+       data-color="teal"
+       data-badges="POSTGRESQL,EXPLAIN ANALYZE,INDEXES,FREE"
+       data-badge-colors="blue,green,yellow,white">
+  </div>
+
+  <!-- ═══════════════════════════════════════════════════════ -->
+  <!-- HERO PANEL                                             -->
+  <!-- ═══════════════════════════════════════════════════════ -->
+  <div class="db-hero">
+    <div class="db-hero-deco1"></div>
+    <div class="db-hero-deco2"></div>
+    <div class="db-hero-kicker">&#x25BA; QUERY EXECUTION &nbsp;&#x2022;&nbsp; DEEP DIVE &nbsp;&#x2022;&nbsp; HOW-04</div>
+    <div class="db-hero-select">SELECT *</div>
+    <div class="db-hero-where">WHERE magic = true</div>
+    <div class="db-hero-sub">↓ &nbsp;6 stages, ~0.4 ms, a million moving parts &nbsp;↓</div>
+    <div class="db-hero-chips">
+      <span class="db-hero-chip teal">PARSER</span>
+      <span class="db-hero-chip purple">AST</span>
+      <span class="db-hero-chip yellow">PLANNER</span>
+      <span class="db-hero-chip teal">OPTIMIZER</span>
+      <span class="db-hero-chip green">EXECUTOR</span>
+      <span class="db-hero-chip teal">BUFFER POOL</span>
+      <span class="db-hero-chip purple">WAL</span>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════════════ -->
+  <!-- SECTION 1: OVERVIEW                                    -->
+  <!-- ═══════════════════════════════════════════════════════ -->
+  <div class="panel">
+    <div class="panel-header">🗺️ THE JOURNEY OF A SQL QUERY<span class="panel-tag">CH.1 · OVERVIEW</span></div>
+    <div class="panel-body">
+      <div class="ch-header">
+        <div class="ch-badge">1</div>
+        <div>
+          <div class="ch-title" style="color:var(--teal);">Six Stages Before You See a Row</div>
+          <div class="ch-sub">From string of characters to actual data on your screen</div>
+        </div>
+      </div>
+
+      <p>You type <code>SELECT name FROM users WHERE id = 42</code> and half a millisecond later, you have a row. That half-millisecond contains more engineering ingenuity than most programs run in an entire request. PostgreSQL — and most relational databases — route your query through <strong>six internal stages</strong>, each with its own data structures, algorithms, and failure modes.</p>
+
+      <p>Understanding these stages is not just academic trivia. It is the difference between an application that handles 10,000 queries per second and one that struggles at 100. It is why adding a single index can drop a query from 4 seconds to 0.2 ms. It is why <code>WHERE LOWER(email) = $1</code> is a silent performance disaster.</p>
+
+      <div class="speech teal">
+        <strong>Every SELECT you've ever run took this exact path.</strong> The query engine never shortcuts, never skips stages. Parser, Rewriter, Planner, Optimizer, Executor — every time.
+      </div>
+
+      <h3>The Full Architecture</h3>
+      <p>When your application sends a query, here is the full chain of custody:</p>
+
+      <div class="arch-flow">
+        <div class="arch-box" style="background:var(--teal);">Application</div>
+        <span class="arch-arrow">→</span>
+        <div class="arch-box" style="background:#555;">libpq / Driver</div>
+        <span class="arch-arrow">→</span>
+        <div class="arch-box" style="background:var(--blue);">Connection Pool<br><span style="font-size:.65rem;opacity:.8;">PgBouncer</span></div>
+        <span class="arch-arrow">→</span>
+        <div class="arch-box" style="background:var(--purple);">Backend Process<br><span style="font-size:.65rem;opacity:.8;">postmaster fork</span></div>
+        <span class="arch-arrow">→</span>
+        <div class="arch-box" style="background:var(--orange);">Parser</div>
+        <span class="arch-arrow">→</span>
+        <div class="arch-box" style="background:#777;">Rewriter</div>
+        <span class="arch-arrow">→</span>
+        <div class="arch-box" style="background:var(--green);">Planner</div>
+        <span class="arch-arrow">→</span>
+        <div class="arch-box" style="background:var(--red);">Optimizer</div>
+        <span class="arch-arrow">→</span>
+        <div class="arch-box" style="background:var(--teal);">Executor</div>
+        <span class="arch-arrow">→</span>
+        <div class="arch-box" style="background:#333;">Storage<br><span style="font-size:.65rem;opacity:.8;">Heap + Indexes</span></div>
+      </div>
+
+      <h3>The Six Stages at a Glance</h3>
+      <div class="step-flow">
+        <div class="sf-step">
+          <div class="sf-num" style="background:var(--orange);">1</div>
+          <div class="sf-content">
+            <div class="sf-title" style="color:var(--orange);">PARSER — Tokenize &amp; Build AST</div>
+            <div class="sf-desc">Turns the raw SQL string into an <strong>Abstract Syntax Tree</strong>. Catches syntax errors. Identifies tables, columns, operators. Produces a structured parse tree that the rest of the engine can work with.</div>
+          </div>
+        </div>
+        <div class="sf-step">
+          <div class="sf-num" style="background:#777;">2</div>
+          <div class="sf-content">
+            <div class="sf-title">REWRITER — Apply Rules &amp; Expand Views</div>
+            <div class="sf-desc">Rewrites the AST according to rules. Most importantly: <strong>expands view definitions</strong> into their underlying queries. Also injects Row-Level Security policies. Produces a potentially-transformed AST.</div>
+          </div>
+        </div>
+        <div class="sf-step">
+          <div class="sf-num" style="background:var(--blue);">3</div>
+          <div class="sf-content">
+            <div class="sf-title" style="color:var(--blue);">PLANNER — Generate Candidate Plans</div>
+            <div class="sf-desc">Uses <strong>table statistics</strong> (row counts, value distributions) to estimate the cost of different execution strategies. Considers all possible join orders, join methods, and scan types.</div>
+          </div>
+        </div>
+        <div class="sf-step">
+          <div class="sf-num" style="background:var(--green);">4</div>
+          <div class="sf-content">
+            <div class="sf-title" style="color:var(--green);">OPTIMIZER — Pick the Cheapest Plan</div>
+            <div class="sf-desc">Computes a <strong>cost estimate</strong> for each candidate plan using a mathematical cost model. Selects the plan with the lowest estimated total cost. For complex queries with many tables, uses a genetic algorithm.</div>
+          </div>
+        </div>
+        <div class="sf-step">
+          <div class="sf-num" style="background:var(--purple);">5</div>
+          <div class="sf-content">
+            <div class="sf-title" style="color:var(--purple);">EXECUTOR — Run the Plan</div>
+            <div class="sf-desc">Executes the chosen plan using the <strong>Volcano/iterator model</strong>. Each node in the plan tree implements Init/GetNext/End. The root node pulls rows from children, which pull from their children recursively.</div>
+          </div>
+        </div>
+        <div class="sf-step">
+          <div class="sf-num" style="background:var(--teal);">6</div>
+          <div class="sf-content">
+            <div class="sf-title" style="color:var(--teal);">STORAGE — Read Pages &amp; WAL</div>
+            <div class="sf-desc">The executor reads 8KB pages from the <strong>buffer pool</strong> (shared_buffers). Cache hits return in microseconds; cache misses go to disk in milliseconds. All writes first go to the <strong>Write-Ahead Log</strong>.</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="hbox tip">
+        <strong>Reading time:</strong> ~12 minutes. You'll come out understanding EXPLAIN ANALYZE output, why your queries are slow, and what to do about it.
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════════════ -->
+  <!-- QUERY PIPELINE ANIMATION                               -->
+  <!-- ═══════════════════════════════════════════════════════ -->
+  <div class="panel">
+    <div class="panel-header">⚡ QUERY EXECUTION PIPELINE — ANIMATED<span class="panel-tag">INTERACTIVE</span></div>
+    <div class="panel-body">
+      <p style="margin-bottom:14px;">Watch your query flow through each stage. Press <strong>Step</strong> to advance one stage, <strong>Play</strong> to auto-run, <strong>Reset</strong> to start over.</p>
+      <div id="pipeline-svg-wrap">
+        <svg id="pipeline-svg" viewBox="0 0 820 300" width="100%" style="max-width:820px;display:block;margin:0 auto;">
+          <!-- Query text at top -->
+          <text x="410" y="22" font-family="Space Mono,monospace" font-size="11" fill="#8b949e" text-anchor="middle">SELECT name FROM users WHERE id = 42</text>
+          <!-- Arrow down -->
+          <line x1="410" y1="28" x2="410" y2="48" stroke="#30363d" stroke-width="2" stroke-dasharray="4,3"/>
+          <polygon points="406,44 410,52 414,44" fill="#30363d"/>
+
+          <!-- Stage boxes -->
+          <!-- 1: Parser -->
+          <g id="pl-1">
+            <rect x="14" y="60" width="110" height="64" rx="8" fill="#161b22" stroke="#30363d" stroke-width="2.5"/>
+            <text x="69" y="84" font-family="Bangers,cursive" font-size="16" fill="#adbac7" text-anchor="middle" letter-spacing="1">PARSER</text>
+            <text x="69" y="98" font-family="Space Mono,monospace" font-size="8" fill="#6e7681" text-anchor="middle">Tokenize → AST</text>
+            <text x="69" y="111" font-family="Space Mono,monospace" font-size="7" fill="#6e7681" text-anchor="middle">pg_parse_query()</text>
+          </g>
+          <!-- Arrow -->
+          <line id="arr-1" x1="124" y1="92" x2="148" y2="92" stroke="#30363d" stroke-width="2.5"/>
+          <polygon id="arh-1" points="144,88 152,92 144,96" fill="#30363d"/>
+          <!-- 2: Rewriter -->
+          <g id="pl-2">
+            <rect x="152" y="60" width="110" height="64" rx="8" fill="#161b22" stroke="#30363d" stroke-width="2.5"/>
+            <text x="207" y="84" font-family="Bangers,cursive" font-size="16" fill="#adbac7" text-anchor="middle" letter-spacing="1">REWRITER</text>
+            <text x="207" y="98" font-family="Space Mono,monospace" font-size="8" fill="#6e7681" text-anchor="middle">Expand Views</text>
+            <text x="207" y="111" font-family="Space Mono,monospace" font-size="7" fill="#6e7681" text-anchor="middle">QueryRewrite()</text>
+          </g>
+          <!-- Arrow -->
+          <line id="arr-2" x1="262" y1="92" x2="286" y2="92" stroke="#30363d" stroke-width="2.5"/>
+          <polygon id="arh-2" points="282,88 290,92 282,96" fill="#30363d"/>
+          <!-- 3: Planner -->
+          <g id="pl-3">
+            <rect x="290" y="60" width="110" height="64" rx="8" fill="#161b22" stroke="#30363d" stroke-width="2.5"/>
+            <text x="345" y="84" font-family="Bangers,cursive" font-size="16" fill="#adbac7" text-anchor="middle" letter-spacing="1">PLANNER</text>
+            <text x="345" y="98" font-family="Space Mono,monospace" font-size="8" fill="#6e7681" text-anchor="middle">Statistics + Plans</text>
+            <text x="345" y="111" font-family="Space Mono,monospace" font-size="7" fill="#6e7681" text-anchor="middle">pg_plan_queries()</text>
+          </g>
+          <!-- Arrow -->
+          <line id="arr-3" x1="400" y1="92" x2="424" y2="92" stroke="#30363d" stroke-width="2.5"/>
+          <polygon id="arh-3" points="420,88 428,92 420,96" fill="#30363d"/>
+          <!-- 4: Optimizer -->
+          <g id="pl-4">
+            <rect x="428" y="60" width="116" height="64" rx="8" fill="#161b22" stroke="#30363d" stroke-width="2.5"/>
+            <text x="486" y="84" font-family="Bangers,cursive" font-size="15" fill="#adbac7" text-anchor="middle" letter-spacing="1">OPTIMIZER</text>
+            <text x="486" y="98" font-family="Space Mono,monospace" font-size="8" fill="#6e7681" text-anchor="middle">Cost Model</text>
+            <text x="486" y="111" font-family="Space Mono,monospace" font-size="7" fill="#6e7681" text-anchor="middle">make_one_rel()</text>
+          </g>
+          <!-- Arrow -->
+          <line id="arr-4" x1="544" y1="92" x2="568" y2="92" stroke="#30363d" stroke-width="2.5"/>
+          <polygon id="arh-4" points="564,88 572,92 564,96" fill="#30363d"/>
+          <!-- 5: Executor -->
+          <g id="pl-5">
+            <rect x="572" y="60" width="110" height="64" rx="8" fill="#161b22" stroke="#30363d" stroke-width="2.5"/>
+            <text x="627" y="84" font-family="Bangers,cursive" font-size="16" fill="#adbac7" text-anchor="middle" letter-spacing="1">EXECUTOR</text>
+            <text x="627" y="98" font-family="Space Mono,monospace" font-size="8" fill="#6e7681" text-anchor="middle">Volcano Model</text>
+            <text x="627" y="111" font-family="Space Mono,monospace" font-size="7" fill="#6e7681" text-anchor="middle">ExecutorRun()</text>
+          </g>
+          <!-- Arrow -->
+          <line id="arr-5" x1="682" y1="92" x2="706" y2="92" stroke="#30363d" stroke-width="2.5"/>
+          <polygon id="arh-5" points="702,88 710,92 702,96" fill="#30363d"/>
+          <!-- 6: Results -->
+          <g id="pl-6">
+            <rect x="710" y="60" width="96" height="64" rx="8" fill="#161b22" stroke="#30363d" stroke-width="2.5"/>
+            <text x="758" y="84" font-family="Bangers,cursive" font-size="16" fill="#adbac7" text-anchor="middle" letter-spacing="1">RESULTS</text>
+            <text x="758" y="98" font-family="Space Mono,monospace" font-size="8" fill="#6e7681" text-anchor="middle">Rows to client</text>
+            <text x="758" y="111" font-family="Space Mono,monospace" font-size="7" fill="#6e7681" text-anchor="middle">protocol wire</text>
+          </g>
+
+          <!-- Details area -->
+          <rect x="14" y="148" width="792" height="130" rx="8" fill="#0d1117" stroke="#30363d" stroke-width="2"/>
+          <text id="pl-detail-title" x="28" y="172" font-family="Bangers,cursive" font-size="16" fill="#ffd23f" letter-spacing="2">PRESS STEP OR PLAY TO BEGIN</text>
+          <text id="pl-detail-l1"   x="28" y="196" font-family="Space Mono,monospace" font-size="10" fill="#8b949e"></text>
+          <text id="pl-detail-l2"   x="28" y="214" font-family="Space Mono,monospace" font-size="10" fill="#8b949e"></text>
+          <text id="pl-detail-l3"   x="28" y="232" font-family="Space Mono,monospace" font-size="10" fill="#8b949e"></text>
+          <text id="pl-detail-l4"   x="28" y="250" font-family="Space Mono,monospace" font-size="10" fill="#8b949e"></text>
+          <text id="pl-detail-l5"   x="28" y="268" font-family="Space Mono,monospace" font-size="10" fill="#8b949e"></text>
+        </svg>
+      </div>
+      <div class="pipeline-controls">
+        <button class="btn-step" onclick="pipelineStep()">▶ STEP</button>
+        <button class="btn-play" id="btn-play-pause" onclick="pipelinePlayPause()">⏵ PLAY</button>
+        <button class="btn-reset" onclick="pipelineReset()">↺ RESET</button>
+        <div class="pipeline-status" id="pipeline-status">Stage 0 / 6 — Ready</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════════════ -->
+  <!-- SECTION 2: PARSER                                      -->
+  <!-- ═══════════════════════════════════════════════════════ -->
+  <div class="panel">
+    <div class="panel-header">🔤 STAGE 1 — THE PARSER<span class="panel-tag">CH.2</span></div>
+    <div class="panel-body">
+      <div class="ch-header">
+        <div class="ch-badge" style="background:var(--orange);">2</div>
+        <div>
+          <div class="ch-title" style="color:var(--orange);">From String to Tree</div>
+          <div class="ch-sub">Lexer → Tokens → Abstract Syntax Tree</div>
+        </div>
+      </div>
+
+      <p>The SQL query arrives at the backend process as a plain text string — a sequence of bytes over a TCP socket. Before PostgreSQL can do anything useful, it must <strong>parse</strong> that string into a structured data structure it can reason about. This is exactly the same job that a C compiler or a JavaScript engine does when parsing source code.</p>
+
+      <h3>Step 1: Lexical Analysis (Tokenizing)</h3>
+      <p>The <strong>lexer</strong> (also called a scanner or tokenizer) reads the query character by character and groups them into tokens — the atomic units of SQL syntax.</p>
+
+      <div class="codeblock"><span class="cmt">-- Input query:</span>
+<span class="kw">SELECT</span> name <span class="kw">FROM</span> users <span class="kw">WHERE</span> id = <span class="num">42</span>
+
+<span class="cmt">-- Tokens produced by the lexer:</span>
+<span class="op">Token[0]</span>:  <span class="kw">SELECT</span>         type=KEYWORD
+<span class="op">Token[1]</span>:  name           type=IDENT
+<span class="op">Token[2]</span>:  <span class="kw">FROM</span>           type=KEYWORD
+<span class="op">Token[3]</span>:  users          type=IDENT
+<span class="op">Token[4]</span>:  <span class="kw">WHERE</span>          type=KEYWORD
+<span class="op">Token[5]</span>:  id             type=IDENT
+<span class="op">Token[6]</span>:  =              type=OP
+<span class="op">Token[7]</span>:  <span class="num">42</span>             type=INTEGER_CONST</div>
+
+      <p>The lexer is defined in <code>src/backend/parser/scan.l</code> — a flex file with hundreds of regex rules. It strips whitespace, handles quoted identifiers, recognizes string literals, and normalizes keywords to uppercase internally.</p>
+
+      <h3>Step 2: Syntax Analysis — Building the AST</h3>
+      <p>The <strong>parser</strong> takes the token stream and applies grammar rules to build an <strong>Abstract Syntax Tree (AST)</strong>. In PostgreSQL, this AST is called a <em>parse tree</em> and is made up of C structs. The grammar is defined in <code>gram.y</code> — a 17,000-line bison file.</p>
+
+      <div class="btree-wrap" style="text-align:center;">
+        <svg viewBox="0 0 700 320" width="100%" style="max-width:700px;display:block;margin:0 auto;">
+          <!-- Title -->
+          <text x="350" y="22" font-family="Bangers,cursive" font-size="16" fill="#1a1410" text-anchor="middle" letter-spacing="2">AST FOR: SELECT name FROM users WHERE id = 42</text>
+
+          <!-- Root: SelectStmt -->
+          <rect x="270" y="36" width="160" height="38" rx="6" fill="#8a4fff" stroke="#1a1410" stroke-width="2.5"/>
+          <text x="350" y="60" font-family="Bangers,cursive" font-size="14" fill="#fff" text-anchor="middle" letter-spacing="1">SelectStmt</text>
+
+          <!-- Lines from root -->
+          <line x1="290" y1="74" x2="130" y2="120" stroke="#1a1410" stroke-width="2"/>
+          <line x1="350" y1="74" x2="350" y2="120" stroke="#1a1410" stroke-width="2"/>
+          <line x1="410" y1="74" x2="570" y2="120" stroke="#1a1410" stroke-width="2"/>
+
+          <!-- targetList -->
+          <rect x="60" y="120" width="140" height="34" rx="5" fill="#1d6fb8" stroke="#1a1410" stroke-width="2"/>
+          <text x="130" y="142" font-family="Space Mono,monospace" font-size="10" fill="#fff" text-anchor="middle">targetList</text>
+
+          <!-- fromClause -->
+          <rect x="270" y="120" width="160" height="34" rx="5" fill="#0d9488" stroke="#1a1410" stroke-width="2"/>
+          <text x="350" y="142" font-family="Space Mono,monospace" font-size="10" fill="#fff" text-anchor="middle">fromClause</text>
+
+          <!-- whereClause -->
+          <rect x="492" y="120" width="160" height="34" rx="5" fill="#ff8c42" stroke="#1a1410" stroke-width="2"/>
+          <text x="572" y="142" font-family="Space Mono,monospace" font-size="10" fill="#fff" text-anchor="middle">whereClause</text>
+
+          <!-- Lines from targetList -->
+          <line x1="130" y1="154" x2="130" y2="194" stroke="#1a1410" stroke-width="2"/>
+
+          <!-- ColumnRef: name -->
+          <rect x="65" y="194" width="130" height="34" rx="5" fill="#3fa34d" stroke="#1a1410" stroke-width="2"/>
+          <text x="130" y="214" font-family="Space Mono,monospace" font-size="10" fill="#fff" text-anchor="middle">ColumnRef</text>
+          <text x="130" y="227" font-family="Space Mono,monospace" font-size="9" fill="#d1fae5" text-anchor="middle">"name"</text>
+
+          <!-- Lines from fromClause -->
+          <line x1="350" y1="154" x2="350" y2="194" stroke="#1a1410" stroke-width="2"/>
+
+          <!-- RangeVar: users -->
+          <rect x="285" y="194" width="130" height="34" rx="5" fill="#3fa34d" stroke="#1a1410" stroke-width="2"/>
+          <text x="350" y="214" font-family="Space Mono,monospace" font-size="10" fill="#fff" text-anchor="middle">RangeVar</text>
+          <text x="350" y="227" font-family="Space Mono,monospace" font-size="9" fill="#d1fae5" text-anchor="middle">"users"</text>
+
+          <!-- Lines from whereClause -->
+          <line x1="572" y1="154" x2="572" y2="194" stroke="#1a1410" stroke-width="2"/>
+
+          <!-- OpExpr: = -->
+          <rect x="507" y="194" width="130" height="34" rx="5" fill="#e63946" stroke="#1a1410" stroke-width="2"/>
+          <text x="572" y="214" font-family="Space Mono,monospace" font-size="10" fill="#fff" text-anchor="middle">OpExpr ( = )</text>
+
+          <!-- Lines from OpExpr -->
+          <line x1="540" y1="228" x2="490" y2="266" stroke="#1a1410" stroke-width="2"/>
+          <line x1="604" y1="228" x2="640" y2="266" stroke="#1a1410" stroke-width="2"/>
+
+          <!-- ColumnRef: id -->
+          <rect x="426" y="266" width="120" height="34" rx="5" fill="#555" stroke="#1a1410" stroke-width="2"/>
+          <text x="486" y="286" font-family="Space Mono,monospace" font-size="10" fill="#fff" text-anchor="middle">ColumnRef</text>
+          <text x="486" y="299" font-family="Space Mono,monospace" font-size="9" fill="#adbac7" text-anchor="middle">"id"</text>
+
+          <!-- Integer: 42 -->
+          <rect x="578" y="266" width="120" height="34" rx="5" fill="#555" stroke="#1a1410" stroke-width="2"/>
+          <text x="638" y="286" font-family="Space Mono,monospace" font-size="10" fill="#fff" text-anchor="middle">Integer</text>
+          <text x="638" y="299" font-family="Space Mono,monospace" font-size="9" fill="#79c0ff" text-anchor="middle">42</text>
+        </svg>
+      </div>
+
+      <p>The internal C function <code>pg_parse_query()</code> takes the query string and returns a <code>List*</code> of parse trees (one per SQL statement in a batch). Each node in the tree is a tagged C struct — the tag tells downstream code what kind of node it is.</p>
+
+      <h3>Syntax Errors Caught Here</h3>
+      <p>If the parser encounters a token that doesn't fit the grammar rules, it throws a syntax error immediately — before any planning or execution happens. These are the errors you see with the telltale "at or near" phrasing:</p>
+
+      <div class="codeblock"><span class="cmt">-- Missing table name:</span>
+<span class="kw">SELECT</span> * <span class="kw">FROM</span> <span class="kw">WHERE</span> id = <span class="num">42</span>;
+
+<span class="op">ERROR</span>:  syntax error at or near <span class="str">"WHERE"</span>
+LINE 1: SELECT * FROM WHERE id = 42;
+                      ^
+
+<span class="cmt">-- Missing closing parenthesis:</span>
+<span class="kw">SELECT</span> * <span class="kw">FROM</span> users <span class="kw">WHERE</span> (id = <span class="num">42</span>;
+
+<span class="op">ERROR</span>:  syntax error at or near <span class="str">";"</span>
+LINE 1: SELECT * FROM users WHERE (id = 42;
+                                           ^</div>
+
+      <h3>What the Parser Does NOT Do</h3>
+      <p>The parser only checks <em>syntax</em> — grammar rules. It does not check whether the table <code>users</code> actually exists, whether the column <code>name</code> is in that table, or whether the data types are compatible. Those are semantic checks done during the planning phase.</p>
+
+      <div class="hbox warn">
+        <strong>Important:</strong> <code>SELECT * FROM nonexistent_table WHERE id = 42</code> passes the parser successfully. The "relation does not exist" error only appears later when the planner tries to look up table metadata.
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════════════ -->
+  <!-- SECTION 3: REWRITER                                    -->
+  <!-- ═══════════════════════════════════════════════════════ -->
+  <div class="panel">
+    <div class="panel-header">🔄 STAGE 2 — THE REWRITER<span class="panel-tag">CH.3</span></div>
+    <div class="panel-body">
+      <div class="ch-header">
+        <div class="ch-badge" style="background:#666;">3</div>
+        <div>
+          <div class="ch-title">Rules, Views &amp; Row Security</div>
+          <div class="ch-sub">Transforming the AST before planning begins</div>
+        </div>
+      </div>
+
+      <p>The rewriter takes the parse tree from the parser and potentially transforms it. For most simple queries, the rewriter passes the AST straight through untouched. But it plays a critical role for <strong>views</strong>, <strong>row-level security</strong>, and <strong>rule-based rewrites</strong>.</p>
+
+      <h3>View Expansion — The Big One</h3>
+      <p>When you define a view in PostgreSQL, you are storing a query. When you query that view, the rewriter <em>replaces</em> the view reference in your parse tree with the view's underlying query definition. This is transparent to the planner.</p>
+
+      <div class="codeblock"><span class="cmt">-- You defined this view:</span>
+<span class="kw">CREATE VIEW</span> <span class="tbl">active_users</span> <span class="kw">AS</span>
+  <span class="kw">SELECT</span> id, name, email
+  <span class="kw">FROM</span>   <span class="tbl">users</span>
+  <span class="kw">WHERE</span>  is_active = <span class="kw">true</span>;
+
+<span class="cmt">-- You query:</span>
+<span class="kw">SELECT</span> name <span class="kw">FROM</span> <span class="tbl">active_users</span> <span class="kw">WHERE</span> id = <span class="num">42</span>;
+
+<span class="cmt">-- Rewriter expands it to:</span>
+<span class="kw">SELECT</span> name
+<span class="kw">FROM</span>   (<span class="kw">SELECT</span> id, name, email
+        <span class="kw">FROM</span>   <span class="tbl">users</span>
+        <span class="kw">WHERE</span>  is_active = <span class="kw">true</span>) v
+<span class="kw">WHERE</span>  v.id = <span class="num">42</span>;</div>
+
+      <p>The planner then sees the fully-expanded query. Because PostgreSQL's optimizer is smart, it will often push the <code>WHERE id = 42</code> predicate down into the subquery and use an index on the <code>users</code> table directly — a technique called <strong>predicate pushdown</strong>.</p>
+
+      <h3>Row-Level Security (RLS)</h3>
+      <p>Row-Level Security is one of PostgreSQL's most powerful — and most misunderstood — features. When RLS is enabled on a table, the rewriter automatically injects the applicable security policies into the query as additional <code>WHERE</code> clauses or <code>WITH CHECK</code> constraints.</p>
+
+      <div class="codeblock"><span class="cmt">-- RLS policy defined as:</span>
+<span class="kw">CREATE POLICY</span> user_isolation <span class="kw">ON</span> <span class="tbl">orders</span>
+  <span class="kw">USING</span> (user_id = current_setting(<span class="str">'app.current_user_id'</span>)::int);
+
+<span class="cmt">-- Your app runs:</span>
+<span class="kw">SELECT</span> * <span class="kw">FROM</span> <span class="tbl">orders</span>;
+
+<span class="cmt">-- Rewriter produces:</span>
+<span class="kw">SELECT</span> * <span class="kw">FROM</span> <span class="tbl">orders</span>
+<span class="kw">WHERE</span>  user_id = current_setting(<span class="str">'app.current_user_id'</span>)::int;</div>
+
+      <div class="two-col">
+        <div class="fbox">
+          <h4 style="color:var(--green);">RLS Use Cases</h4>
+          <ul>
+            <li>&#x2705; Multi-tenant SaaS applications</li>
+            <li>&#x2705; Healthcare: patients see only their records</li>
+            <li>&#x2705; Financial: users see only their transactions</li>
+            <li>&#x2705; Team isolation in shared databases</li>
+          </ul>
+        </div>
+        <div class="fbox">
+          <h4 style="color:var(--orange);">RLS Performance Notes</h4>
+          <ul>
+            <li>&#x26A0;&#xFE0F; Policy conditions must be indexable</li>
+            <li>&#x26A0;&#xFE0F; Complex policies can hurt performance</li>
+            <li>&#x26A0;&#xFE0F; BYPASSRLS role skips all policies</li>
+            <li>&#x26A0;&#xFE0F; EXPLAIN shows the injected predicates</li>
+          </ul>
+        </div>
+      </div>
+
+      <h3>The Rule System</h3>
+      <p>PostgreSQL has an older rule system (<code>CREATE RULE</code>) that also operates at this stage. Rules can replace or augment queries with arbitrary SQL. They predate triggers and are generally considered legacy — views are implemented using rules internally, but for application code, triggers are almost always preferred over explicit rules.</p>
+
+      <div class="hbox info">
+        <strong>Semantic Analysis:</strong> The rewriter also calls into the <em>semantic analyzer</em> (<code>parse_analyze()</code>) which resolves table and column names against the system catalogs, assigns OIDs to relation references, and checks type compatibility. This is where "column does not exist" errors are thrown.
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════════════ -->
+  <!-- SECTION 4: PLANNER                                     -->
+  <!-- ═══════════════════════════════════════════════════════ -->
+  <div class="panel">
+    <div class="panel-header">📊 STAGE 3 — THE QUERY PLANNER<span class="panel-tag">CH.4</span></div>
+    <div class="panel-body">
+      <div class="ch-header">
+        <div class="ch-badge" style="background:var(--blue);">4</div>
+        <div>
+          <div class="ch-title" style="color:var(--blue);">Generating Candidate Plans</div>
+          <div class="ch-sub">Statistics, join strategies, and scan types</div>
+        </div>
+      </div>
+
+      <p>The planner is where PostgreSQL earns its reputation. Given a rewritten query, the planner's job is to enumerate all <em>possible</em> ways to execute it and select the best one. For a query joining 3 tables, there might be dozens of candidate plans. For a query joining 8 tables, there could be thousands.</p>
+
+      <h3>Table Statistics: The Planner's Input</h3>
+      <p>The planner doesn't look at your actual data to make decisions — that would be too slow. Instead it uses <strong>statistics</strong> collected by the <code>ANALYZE</code> command and stored in the <code>pg_statistic</code> system catalog (exposed via the friendlier <code>pg_stats</code> view).</p>
+
+      <div class="codeblock"><span class="cmt">-- Check stats for a table column:</span>
+<span class="kw">SELECT</span>
+  attname,
+  n_distinct,
+  correlation,
+  most_common_vals,
+  most_common_freqs
+<span class="kw">FROM</span>   pg_stats
+<span class="kw">WHERE</span>  tablename = <span class="str">'orders'</span>
+  <span class="kw">AND</span>  attname   = <span class="str">'status'</span>;
+
+<span class="cmt">-- Example output:</span>
+attname     | status
+n_distinct  | 4                    <span class="cmt">-- 4 unique values</span>
+correlation | 0.12                 <span class="cmt">-- physical ordering</span>
+mcv         | {pending,shipped,completed,cancelled}
+mcf         | {0.45, 0.30, 0.20, 0.05}</div>
+
+      <div class="three-col" style="margin-top:14px;">
+        <div class="fbox">
+          <h4 style="color:var(--blue);">n_distinct</h4>
+          <p>Number of distinct values in the column. If positive, it's the actual count. If negative (e.g. -0.95), it's the fraction of rows with distinct values. Critical for estimating cardinality after a GROUP BY.</p>
+        </div>
+        <div class="fbox">
+          <h4 style="color:var(--orange);">correlation</h4>
+          <p>Statistical correlation between physical row order and logical column order. 1.0 = perfect correlation (sorted). 0 = random. High correlation means an index scan will be very efficient (few random I/O jumps).</p>
+        </div>
+        <div class="fbox">
+          <h4 style="color:var(--green);">most_common_vals</h4>
+          <p>The N most common values and their frequencies. Lets the planner know "50% of orders have status='pending'" so it can accurately estimate how many rows <code>WHERE status = 'pending'</code> will return.</p>
+        </div>
+      </div>
+
+      <h3>Scan Types the Planner Considers</h3>
+      <table class="comic-table">
+        <thead>
+          <tr><th>Scan Type</th><th>When Used</th><th>Cost Profile</th></tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>Sequential Scan</strong></td>
+            <td>No usable index, or when fetching most of the table (&gt;~10-20% of rows)</td>
+            <td>Low per-page cost, predictable, benefits from OS read-ahead</td>
+          </tr>
+          <tr>
+            <td><strong>Index Scan</strong></td>
+            <td>Selective filter (&lt;10% of rows), good index available</td>
+            <td>Random I/O per row — expensive for many rows, fast for few</td>
+          </tr>
+          <tr>
+            <td><strong>Index-Only Scan</strong></td>
+            <td>All needed columns in the index (covering index), visibility map is clean</td>
+            <td>Cheapest for covered queries — avoids heap entirely</td>
+          </tr>
+          <tr>
+            <td><strong>Bitmap Index Scan</strong></td>
+            <td>Moderate selectivity, especially with multiple indexes to combine (OR conditions)</td>
+            <td>Builds a bitmap in memory, then reads heap pages in order</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <h3>Join Strategies</h3>
+      <table class="comic-table">
+        <thead>
+          <tr><th>Join Type</th><th>Algorithm</th><th>Best For</th></tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>Nested Loop Join</strong></td>
+            <td>For each row in outer, scan inner for matches. O(n×m).</td>
+            <td>Small inner relation, or inner has index on join column</td>
+          </tr>
+          <tr>
+            <td><strong>Hash Join</strong></td>
+            <td>Build hash table from smaller relation, probe with larger. O(n+m).</td>
+            <td>Large equi-joins, no useful index. Needs work_mem.</td>
+          </tr>
+          <tr>
+            <td><strong>Merge Join</strong></td>
+            <td>Sort both sides, merge in-order. O(n log n + m log m).</td>
+            <td>Both sides already sorted (e.g. indexed), or large equi-joins</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <!-- PLAN COMPARISON ANIMATION -->
+      <h3>Animated Plan Comparison</h3>
+      <p>For the query <code>SELECT * FROM users WHERE id = 42</code>, the planner generates (at least) two candidate plans. Watch the optimizer compare their costs:</p>
+      <div id="plan-svg-wrap">
+        <svg id="plan-svg" viewBox="0 0 760 260" width="100%" style="max-width:760px;display:block;margin:0 auto;">
+          <!-- Plan A -->
+          <rect x="20" y="20" width="320" height="220" rx="8" fill="#fff8f0" stroke="#ff8c42" stroke-width="3"/>
+          <text x="180" y="46" font-family="Bangers,cursive" font-size="16" fill="#ff8c42" text-anchor="middle" letter-spacing="2">PLAN A — SEQ SCAN</text>
+          <rect x="50" y="58" width="260" height="50" rx="5" fill="#1a1410" stroke="#ff8c42" stroke-width="2"/>
+          <text x="180" y="79" font-family="Space Mono,monospace" font-size="9" fill="#ff8c42" text-anchor="middle">Sequential Scan on users</text>
+          <text x="180" y="96" font-family="Space Mono,monospace" font-size="8" fill="#adbac7" text-anchor="middle">Filter: (id = 42)</text>
+
+          <text x="50" y="134" font-family="Space Mono,monospace" font-size="9" fill="#555">Startup cost: 0.00</text>
+          <text x="50" y="150" font-family="Space Mono,monospace" font-size="9" fill="#555">Total cost:   450.00</text>
+          <text x="50" y="166" font-family="Space Mono,monospace" font-size="9" fill="#555">Est. rows:    1</text>
+          <text x="50" y="182" font-family="Space Mono,monospace" font-size="9" fill="#555">Width:        48 bytes</text>
+
+          <!-- Cost bar A -->
+          <rect x="50" y="198" width="260" height="18" rx="3" fill="#e0e0e0" stroke="#ccc" stroke-width="1"/>
+          <rect id="bar-a" x="50" y="198" width="0" height="18" rx="3" fill="#ff8c42"/>
+          <text x="180" y="211" font-family="Space Mono,monospace" font-size="8" fill="#fff" text-anchor="middle" font-weight="bold" id="bar-a-label"></text>
+
+          <!-- Plan B -->
+          <rect x="420" y="20" width="320" height="220" rx="8" fill="#f0fff4" stroke="#3fa34d" stroke-width="3"/>
+          <text x="580" y="46" font-family="Bangers,cursive" font-size="16" fill="#3fa34d" text-anchor="middle" letter-spacing="2">PLAN B — INDEX SCAN</text>
+          <rect x="450" y="58" width="260" height="50" rx="5" fill="#1a1410" stroke="#3fa34d" stroke-width="2"/>
+          <text x="580" y="79" font-family="Space Mono,monospace" font-size="9" fill="#3fa34d" text-anchor="middle">Index Scan using users_pkey</text>
+          <text x="580" y="96" font-family="Space Mono,monospace" font-size="8" fill="#adbac7" text-anchor="middle">Index Cond: (id = 42)</text>
+
+          <text x="450" y="134" font-family="Space Mono,monospace" font-size="9" fill="#555">Startup cost: 0.42</text>
+          <text x="450" y="150" font-family="Space Mono,monospace" font-size="9" fill="#555">Total cost:   8.44</text>
+          <text x="450" y="166" font-family="Space Mono,monospace" font-size="9" fill="#555">Est. rows:    1</text>
+          <text x="450" y="182" font-family="Space Mono,monospace" font-size="9" fill="#555">Width:        48 bytes</text>
+
+          <!-- Cost bar B -->
+          <rect x="450" y="198" width="260" height="18" rx="3" fill="#e0e0e0" stroke="#ccc" stroke-width="1"/>
+          <rect id="bar-b" x="450" y="198" width="0" height="18" rx="3" fill="#3fa34d"/>
+          <text x="580" y="211" font-family="Space Mono,monospace" font-size="8" fill="#fff" text-anchor="middle" font-weight="bold" id="bar-b-label"></text>
+
+          <!-- Winner banner -->
+          <rect id="winner-banner" x="310" y="100" width="140" height="60" rx="8" fill="#ffd23f" stroke="#1a1410" stroke-width="3" opacity="0"/>
+          <text id="winner-text1" x="380" y="126" font-family="Bangers,cursive" font-size="14" fill="#1a1410" text-anchor="middle" letter-spacing="1" opacity="0">OPTIMIZER</text>
+          <text id="winner-text2" x="380" y="146" font-family="Bangers,cursive" font-size="14" fill="#1a1410" text-anchor="middle" letter-spacing="1" opacity="0">PICKS B!</text>
+        </svg>
+        <div style="text-align:center;margin-top:8px;">
+          <button onclick="animatePlanComparison()" style="font-family:'Bangers',cursive;font-size:.95rem;letter-spacing:1px;padding:7px 20px;border:3px solid var(--ink);border-radius:4px;background:var(--blue);color:#fff;cursor:pointer;box-shadow:3px 3px 0 var(--ink);">▶ ANIMATE COMPARISON</button>
+        </div>
+      </div>
+
+      <div class="hbox warn">
+        <strong>Stale Statistics = Bad Plans!</strong> If you <code>TRUNCATE</code> a table and insert 10 million new rows without running <code>ANALYZE</code>, the planner still thinks the table has the old row count. It may choose a sequential scan when an index scan would be 1000× faster. Always run <code>ANALYZE</code> after bulk loads. <code>autovacuum</code> handles routine cases.
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════════════ -->
+  <!-- SECTION 5: OPTIMIZER COST MODEL                        -->
+  <!-- ═══════════════════════════════════════════════════════ -->
+  <div class="panel">
+    <div class="panel-header">💰 STAGE 4 — THE COST MODEL<span class="panel-tag">CH.5</span></div>
+    <div class="panel-body">
+      <div class="ch-header">
+        <div class="ch-badge" style="background:var(--green);">5</div>
+        <div>
+          <div class="ch-title" style="color:var(--green);">How the Optimizer Thinks in Numbers</div>
+          <div class="ch-sub">seq_page_cost, random_page_cost, cpu_tuple_cost</div>
+        </div>
+      </div>
+
+      <p>The optimizer doesn't time actual query execution to pick a plan. Instead, it assigns a <strong>cost</strong> — an abstract dimensionless number — to each candidate plan using a mathematical model. The plan with the lowest cost wins. Costs are calibrated relative to reading a single 8KB page sequentially from disk, which is assigned the cost of <strong>1.0</strong>.</p>
+
+      <h3>The Cost Formula</h3>
+      <p>Total cost is the sum of I/O costs and CPU costs:</p>
+
+      <div class="codeblock"><span class="cmt">-- Core cost formula:</span>
+total_cost = (pages_read_seq  × seq_page_cost)
+           + (pages_read_rand × random_page_cost)
+           + (rows_processed  × cpu_tuple_cost)
+           + (rows_filtered   × cpu_operator_cost)
+
+<span class="cmt">-- Default PostgreSQL values (postgresql.conf):</span>
+seq_page_cost    = 1.0    <span class="cmt">-- reading next page in sequence</span>
+random_page_cost = 4.0    <span class="cmt">-- jumping to a random page (HDD)</span>
+cpu_tuple_cost   = 0.01   <span class="cmt">-- processing one row</span>
+cpu_index_tuple  = 0.005  <span class="cmt">-- processing one index entry</span>
+cpu_operator_cost= 0.0025 <span class="cmt">-- evaluating one operator (=, &lt;, etc.)</span>
+parallel_tuple_cost = 0.1 <span class="cmt">-- cost of passing row between workers</span></div>
+
+      <h3>Why random_page_cost = 4.0?</h3>
+      <p>On a spinning hard disk, a random read requires a physical seek — the disk arm moves to a new track, then waits for the disk to rotate to the right sector. This takes ~5-10ms on average. A sequential read just continues from where it left off: no seek, no rotational wait. The 4× ratio approximates this difference for HDDs.</p>
+      <p>On SSDs, the random I/O penalty is much smaller — there's no mechanical seek. A well-tuned PostgreSQL on SSD should use <code>random_page_cost = 1.1</code> or even <code>1.0</code>. Using the default 4.0 on an SSD causes the optimizer to avoid index scans when it shouldn't, forcing unnecessary sequential scans.</p>
+
+      <div class="speech blue">
+        <strong>Tuning tip:</strong> If your database is on SSD, set <code>random_page_cost = 1.1</code>. If it's on NVMe, set <code>random_page_cost = 1.0</code>. This single change can dramatically improve query plan quality.
+      </div>
+
+      <h3>A Worked Example: Cost Calculation</h3>
+      <div class="codeblock"><span class="cmt">-- Table: 10,000 rows, 100 pages (100 × 80 rows per 8KB page)</span>
+<span class="cmt">-- Query: SELECT * FROM users WHERE id = 42</span>
+<span class="cmt">-- Index on id (B-tree), 3 levels deep</span>
+
+<span class="cmt">-- Plan A: Sequential Scan</span>
+cost = 100 pages × 1.0 (seq) + 10000 rows × 0.01 (cpu)
+     = 100 + 100 = <span class="cost">200.00</span>
+
+<span class="cmt">-- Plan B: Index Scan (finds 1 row)</span>
+cost = 0.42 (startup: index traversal, 3 levels)
+     + 1 page × 4.0 (random: heap fetch)
+     + 1 row × 0.01 (cpu)
+     = 0.42 + 4.0 + 0.01 = <span class="time">4.43</span>
+
+<span class="cmt">-- Optimizer picks Plan B (cost 4.43 vs 200.00)</span></div>
+
+      <h3>Join Reordering and the Geqo Algorithm</h3>
+      <p>For queries joining <strong>N tables</strong>, there are N! possible join orderings (left-deep trees alone give N! permutations). PostgreSQL exhaustively tests all orderings for N ≤ 8 tables (controlled by <code>join_collapse_limit</code>). For N &gt; 8, it switches to the <strong>Genetic Query Optimizer (GEQO)</strong>.</p>
+
+      <div class="two-col">
+        <div class="fbox">
+          <h4 style="color:var(--blue);">Dynamic Programming (≤8 tables)</h4>
+          <p>Tests all possible join orderings and all possible access methods for each table. Optimal result guaranteed — the globally cheapest plan is always found.</p>
+          <p style="margin-top:8px;"><code>geqo_threshold = 12</code> (switch to GEQO at 12+ tables)</p>
+        </div>
+        <div class="fbox">
+          <h4 style="color:var(--orange);">GEQO (8+ tables)</h4>
+          <p>Genetic algorithm: represents each join order as a "genome", performs crossover and mutation. Finds a <em>good</em> plan, not necessarily optimal. Fast for large numbers of tables.</p>
+          <p style="margin-top:8px;"><code>geqo_effort = 5</code> (1-10 scale, 5 is default)</p>
+        </div>
+      </div>
+
+      <h3>Statistics and Danger of Stale Stats</h3>
+      <p>The planner's row estimates are only as good as the statistics. When <code>ANALYZE</code> runs, it samples a random subset of the table (default 300 × <code>default_statistics_target</code> = 30,000 rows) and computes histograms, MCV lists, and correlation values.</p>
+
+      <div class="codeblock"><span class="cmt">-- Force analyze on a specific table:</span>
+<span class="kw">ANALYZE</span> <span class="tbl">orders</span>;
+
+<span class="cmt">-- Check when statistics were last collected:</span>
+<span class="kw">SELECT</span> schemaname, tablename, last_analyze, last_autoanalyze
+<span class="kw">FROM</span>   pg_stat_user_tables
+<span class="kw">WHERE</span>  tablename = <span class="str">'orders'</span>;
+
+<span class="cmt">-- Increase stats target for a column with skewed distribution:</span>
+<span class="kw">ALTER TABLE</span> <span class="tbl">orders</span>
+  <span class="kw">ALTER COLUMN</span> status
+  <span class="kw">SET STATISTICS</span> <span class="num">1000</span>; <span class="cmt">-- default is 100</span></div>
+
+      <div class="hbox danger">
+        <strong>Classic disaster scenario:</strong> You do a one-time bulk insert of 50 million rows into a table that normally has 100,000. Autovacuum hasn't run yet. The planner still estimates 100,000 rows. It chooses a Nested Loop join that would be fine for 100K rows — but with 50M rows it runs for hours. Always <code>ANALYZE</code> after bulk loads.
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════════════ -->
+  <!-- SECTION 6: EXECUTOR                                    -->
+  <!-- ═══════════════════════════════════════════════════════ -->
+  <div class="panel">
+    <div class="panel-header">⚙️ STAGE 5 — THE EXECUTOR<span class="panel-tag">CH.6</span></div>
+    <div class="panel-body">
+      <div class="ch-header">
+        <div class="ch-badge" style="background:var(--purple);">6</div>
+        <div>
+          <div class="ch-title" style="color:var(--purple);">The Volcano Model — Pull-Based Execution</div>
+          <div class="ch-sub">Iterator trees, work_mem, and parallel workers</div>
+        </div>
+      </div>
+
+      <p>The executor takes the plan produced by the optimizer and actually <em>executes</em> it. PostgreSQL uses the <strong>Volcano iterator model</strong> (also called the iterator model or pipeline model), a design from a 1994 paper by Goetz Graefe that has become the standard for relational query engines.</p>
+
+      <h3>The Volcano Model: How It Works</h3>
+      <p>Every node in the plan tree implements three operations:</p>
+
+      <div class="three-col">
+        <div class="fbox" style="text-align:center;">
+          <div style="font-family:'Bangers',cursive;font-size:2rem;color:var(--blue);">Init()</div>
+          <p>Called once. Allocates memory, opens relations, initializes child nodes. Like a constructor.</p>
+        </div>
+        <div class="fbox" style="text-align:center;">
+          <div style="font-family:'Bangers',cursive;font-size:2rem;color:var(--green);">GetNext()</div>
+          <p>Called repeatedly. Returns one tuple (row) each time, or NULL when done. The core of the model — <em>pull semantics</em>.</p>
+        </div>
+        <div class="fbox" style="text-align:center;">
+          <div style="font-family:'Bangers',cursive;font-size:2rem;color:var(--red);">End()</div>
+          <p>Called once at completion. Releases resources, closes files, frees memory. Like a destructor.</p>
+        </div>
+      </div>
+
+      <p style="margin-top:14px;">The <strong>root node</strong> of the plan tree is called by the executor driver. It calls <code>GetNext()</code> on its child, which calls <code>GetNext()</code> on its child, and so on down to the storage layer. Data <em>flows upward</em> through the tree one tuple at a time.</p>
+
+      <div class="codeblock"><span class="cmt">-- Example plan tree for:</span>
+<span class="cmt">-- SELECT * FROM users u JOIN orders o ON u.id=o.user_id WHERE u.active LIMIT 10</span>
+
+Limit (rows=10)
+  └── Hash Join (u.id = o.user_id)
+        ├── Seq Scan on users u        <span class="cmt">← Filter: active = true</span>
+        └── Hash
+              └── Seq Scan on orders o
+
+<span class="cmt">-- Execution flow (pull-based):</span>
+Limit.GetNext()
+  → HashJoin.GetNext()
+      → (probe hash table with next user row)
+  → HashJoin.GetNext()
+      → SeqScan_users.GetNext()  <span class="cmt">← returns next active user</span>
+  → ... repeat until 10 rows found</div>
+
+      <h3>Plan Node Types</h3>
+      <table class="comic-table">
+        <thead>
+          <tr><th>Node Type</th><th>What It Does</th><th>Key Parameter</th></tr>
+        </thead>
+        <tbody>
+          <tr><td><strong>SeqScan</strong></td><td>Read all pages of a heap table sequentially</td><td>relation OID</td></tr>
+          <tr><td><strong>IndexScan</strong></td><td>Traverse B-tree index, fetch heap pages per entry</td><td>index OID, scan keys</td></tr>
+          <tr><td><strong>IndexOnlyScan</strong></td><td>Traverse B-tree index, return from index leaf (no heap)</td><td>visibility map must be clean</td></tr>
+          <tr><td><strong>BitmapIndexScan</strong></td><td>Build in-memory bitmap of matching TIDs from index</td><td>Used with BitmapHeapScan</td></tr>
+          <tr><td><strong>BitmapHeapScan</strong></td><td>Read heap pages in order per the bitmap</td><td>recheck_cond if lossy</td></tr>
+          <tr><td><strong>NestLoop</strong></td><td>Nested loop join: outer × inner</td><td>join_filter</td></tr>
+          <tr><td><strong>HashJoin</strong></td><td>Build hash table, probe it</td><td>work_mem budget</td></tr>
+          <tr><td><strong>MergeJoin</strong></td><td>Merge-sort join of two sorted streams</td><td>merge keys</td></tr>
+          <tr><td><strong>Sort</strong></td><td>Sort tuples by key columns</td><td>work_mem, sort keys</td></tr>
+          <tr><td><strong>HashAggregate</strong></td><td>GROUP BY using a hash table</td><td>work_mem</td></tr>
+          <tr><td><strong>Limit</strong></td><td>Pass through N rows, then stop</td><td>count, offset</td></tr>
+          <tr><td><strong>Gather</strong></td><td>Merge results from parallel workers</td><td>num_workers</td></tr>
+        </tbody>
+      </table>
+
+      <h3>work_mem: The Hidden Bottleneck</h3>
+      <p>The <code>work_mem</code> parameter controls how much memory each <em>sort operation</em> and each <em>hash table</em> can use before spilling to disk. The default is a shockingly low <strong>4MB</strong>. A query with a sort, a hash join, and a group by uses up to 3 × work_mem = 12MB. With 100 concurrent connections each running such a query, that's 1.2GB just for these operations.</p>
+
+      <div class="codeblock"><span class="cmt">-- Check current work_mem:</span>
+<span class="kw">SHOW</span> work_mem;  <span class="cmt">-- probably 4MB</span>
+
+<span class="cmt">-- Increase for a specific session/query:</span>
+<span class="kw">SET</span> work_mem = <span class="str">'64MB'</span>;
+<span class="kw">EXPLAIN ANALYZE</span> <span class="kw">SELECT</span> ...;  <span class="cmt">-- re-run your expensive query</span>
+
+<span class="cmt">-- When you see this in EXPLAIN ANALYZE output:</span>
+Sort Method: external merge  Disk: 24576kB
+<span class="cmt">-- It means work_mem was too small — sort spilled to disk</span>
+<span class="cmt">-- Increasing work_mem eliminates the disk spill</span></div>
+
+      <h3>Parallel Query Execution</h3>
+      <p>Since PostgreSQL 9.6, the executor can spawn <strong>parallel worker processes</strong> to split large sequential scans, joins, and aggregates across multiple CPU cores. The planner decides how many workers to use based on the estimated size of the work and the <code>max_parallel_workers_per_gather</code> setting.</p>
+
+      <div class="codeblock"><span class="cmt">-- Example plan with parallel workers:</span>
+Gather (cost=1000.00..25000.00 rows=1000000)
+  Workers Planned: 4
+  → Parallel Seq Scan on huge_table
+      Filter: (created_at > '2024-01-01')
+
+<span class="cmt">-- Key settings:</span>
+max_parallel_workers_per_gather = 4  <span class="cmt">-- workers per query</span>
+max_parallel_workers             = 8  <span class="cmt">-- global worker pool</span>
+parallel_tuple_cost              = 0.1 <span class="cmt">-- cost of moving tuple between workers</span>
+min_parallel_table_scan_size    = 8MB  <span class="cmt">-- min size to consider parallelism</span></div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════════════ -->
+  <!-- SECTION 7: INDEXES DEEP DIVE                           -->
+  <!-- ═══════════════════════════════════════════════════════ -->
+  <div class="panel">
+    <div class="panel-header">🌳 INDEXES DEEP DIVE<span class="panel-tag">CH.7</span></div>
+    <div class="panel-body">
+      <div class="ch-header">
+        <div class="ch-badge" style="background:var(--orange);">7</div>
+        <div>
+          <div class="ch-title" style="color:var(--orange);">B-Tree, Hash, GiST, GIN, BRIN</div>
+          <div class="ch-sub">Every index type, when to use it, and the hidden costs</div>
+        </div>
+      </div>
+
+      <p>An index is a separate data structure that trades write overhead and storage for faster reads. Without indexes, every query that filters rows must scan the entire table — O(n). With the right index, the same query runs in O(log n) or even O(1). Choosing the wrong index type — or putting an index on the wrong column — can actually make things worse.</p>
+
+      <h3>B-Tree Index (The Default)</h3>
+      <p>When you run <code>CREATE INDEX</code> without specifying a type, you get a B-tree. It is the workhorse of relational databases, invented by Rudolf Bayer and Edward McCreight in 1972 and still the best general-purpose index structure available.</p>
+
+      <div class="btree-wrap">
+        <svg viewBox="0 0 700 280" width="100%" style="max-width:700px;display:block;margin:0 auto;">
+          <text x="350" y="20" font-family="Bangers,cursive" font-size="14" fill="#1a1410" text-anchor="middle" letter-spacing="2">B-TREE INDEX — FINDING id = 42</text>
+          <!-- Root node -->
+          <rect x="270" y="30" width="160" height="36" rx="5" fill="#8a4fff" stroke="#1a1410" stroke-width="2.5"/>
+          <text x="350" y="53" font-family="Space Mono,monospace" font-size="10" fill="#fff" text-anchor="middle">[ 25 | 50 | 75 ]</text>
+          <text x="350" y="64" font-family="Space Mono,monospace" font-size="7" fill="rgba(255,255,255,.7)" text-anchor="middle">ROOT NODE (internal)</text>
+
+          <!-- Search path highlight -->
+          <line x1="310" y1="66" x2="220" y2="116" stroke="#ffd23f" stroke-width="3" stroke-dasharray="5,3"/>
+          <polygon points="215,112 220,122 225,112" fill="#ffd23f"/>
+
+          <!-- Level 2 left node (path taken) -->
+          <rect x="150" y="120" width="140" height="36" rx="5" fill="#ffd23f" stroke="#1a1410" stroke-width="3"/>
+          <text x="220" y="143" font-family="Space Mono,monospace" font-size="10" fill="#1a1410" text-anchor="middle">[ 10 | 20 | 42 ]</text>
+
+          <!-- Level 2 middle node -->
+          <rect x="305" y="120" width="90" height="36" rx="5" fill="#e0e0e0" stroke="#999" stroke-width="1.5"/>
+          <text x="350" y="143" font-family="Space Mono,monospace" font-size="9" fill="#999" text-anchor="middle">[ 50 | 60 ]</text>
+
+          <!-- Level 2 right node -->
+          <rect x="440" y="120" width="130" height="36" rx="5" fill="#e0e0e0" stroke="#999" stroke-width="1.5"/>
+          <text x="505" y="143" font-family="Space Mono,monospace" font-size="9" fill="#999" text-anchor="middle">[ 75 | 85 | 95 ]</text>
+
+          <!-- Lines from level 2 left (path taken) -->
+          <line x1="260" y1="156" x2="260" y2="196" stroke="#ffd23f" stroke-width="3" stroke-dasharray="5,3"/>
+          <polygon points="255,192 260,202 265,192" fill="#ffd23f"/>
+
+          <!-- Leaf nodes -->
+          <!-- Left-left leaf -->
+          <rect x="20" y="200" width="100" height="56" rx="5" fill="#e0e0e0" stroke="#999" stroke-width="1.5"/>
+          <text x="70" y="220" font-family="Space Mono,monospace" font-size="8" fill="#999" text-anchor="middle">id=10 → p1</text>
+          <text x="70" y="234" font-family="Space Mono,monospace" font-size="8" fill="#999" text-anchor="middle">id=20 → p2</text>
+
+          <!-- Left-right leaf (highlighted — contains id=42) -->
+          <rect x="140" y="200" width="120" height="56" rx="5" fill="#3fa34d" stroke="#1a1410" stroke-width="3"/>
+          <text x="200" y="220" font-family="Space Mono,monospace" font-size="8" fill="#fff" text-anchor="middle" font-weight="bold">id=42 → page 17</text>
+          <text x="200" y="234" font-family="Space Mono,monospace" font-size="8" fill="#d1fae5" text-anchor="middle">id=43 → page 17</text>
+          <text x="200" y="247" font-family="Space Mono,monospace" font-size="7" fill="#d1fae5" text-anchor="middle">← next leaf →</text>
+          <text x="200" y="258" font-family="Space Mono,monospace" font-size="7.5" fill="#ffd23f" text-anchor="middle">FOUND! Heap fetch p17</text>
+
+          <!-- Greyed out leaves -->
+          <rect x="275" y="200" width="100" height="56" rx="5" fill="#e0e0e0" stroke="#999" stroke-width="1.5"/>
+          <text x="325" y="224" font-family="Space Mono,monospace" font-size="8" fill="#999" text-anchor="middle">id=50 → p8</text>
+
+          <rect x="390" y="200" width="100" height="56" rx="5" fill="#e0e0e0" stroke="#999" stroke-width="1.5"/>
+          <text x="440" y="224" font-family="Space Mono,monospace" font-size="8" fill="#999" text-anchor="middle">id=75 → p11</text>
+
+          <rect x="505" y="200" width="100" height="56" rx="5" fill="#e0e0e0" stroke="#999" stroke-width="1.5"/>
+          <text x="555" y="224" font-family="Space Mono,monospace" font-size="8" fill="#999" text-anchor="middle">id=95 → p14</text>
+
+          <!-- Labels -->
+          <text x="18" y="194" font-family="Space Mono,monospace" font-size="7" fill="#888">LEAF LEVEL (pointers to heap TIDs)</text>
+        </svg>
+      </div>
+
+      <div class="two-col">
+        <div class="fbox">
+          <h4 style="color:var(--purple);">B-Tree: Best For</h4>
+          <ul>
+            <li>&#x2705; Equality: <code>WHERE id = 42</code></li>
+            <li>&#x2705; Range: <code>WHERE price BETWEEN 10 AND 50</code></li>
+            <li>&#x2705; Sort: <code>ORDER BY created_at</code></li>
+            <li>&#x2705; LIKE prefix: <code>WHERE name LIKE 'Ali%'</code></li>
+            <li>&#x2705; Composite indexes: <code>(user_id, created_at)</code></li>
+            <li>&#x274C; NOT GOOD for: full-text, arrays, JSON</li>
+          </ul>
+        </div>
+        <div class="fbox">
+          <h4 style="color:var(--orange);">Composite Index Column Order</h4>
+          <p>Index on <code>(user_id, created_at)</code> can answer:</p>
+          <ul>
+            <li>&#x2705; <code>WHERE user_id = 5</code></li>
+            <li>&#x2705; <code>WHERE user_id = 5 AND created_at &gt; now() - '7d'</code></li>
+            <li>&#x274C; <code>WHERE created_at &gt; now() - '7d'</code> (can't use index — leading column missing)</li>
+          </ul>
+          <p style="margin-top:8px;font-size:.8rem;">Leading column must appear in WHERE or the index can't be used for filtering.</p>
+        </div>
+      </div>
+
+      <h3>Hash Index</h3>
+      <p>Hash indexes use a hash function to map each indexed value to a bucket. This gives O(1) lookup for exact equality matches — theoretically faster than O(log n) B-tree for equality. However, hash indexes <strong>cannot</strong> do range scans (there's no ordering among hash buckets), cannot support <code>ORDER BY</code>, and were not WAL-logged until PostgreSQL 10 (making them unsafe on older versions).</p>
+      <p>In practice, B-tree indexes are so fast for equality (just 3-4 levels for millions of rows) that hash indexes are rarely worth the limitation. Use them only when you have a specific high-throughput equality-only workload and have benchmarked the improvement.</p>
+
+      <h3>GiST — Generalized Search Tree</h3>
+      <p>GiST is a <em>framework</em> for building custom index structures. It's used for:</p>
+      <ul class="body-list">
+        <li><strong>Geometric types:</strong> <code>point</code>, <code>polygon</code>, <code>circle</code> — spatial queries like "find all locations within 10km"</li>
+        <li><strong>Full-text search:</strong> <code>tsvector</code> with <code>@@</code> operator</li>
+        <li><strong>Range types:</strong> <code>daterange</code>, <code>int4range</code> — overlap and containment queries</li>
+        <li><strong>PostGIS:</strong> the geospatial extension uses GiST heavily for geometry indexing</li>
+      </ul>
+
+      <h3>GIN — Generalized Inverted Index</h3>
+      <p>GIN is an <em>inverted index</em> — like the index at the back of a book, it maps each element (token, key) to the set of rows containing it. GIN is used for:</p>
+      <ul class="body-list">
+        <li><strong>Full-text search:</strong> maps each lexeme to the set of document TIDs containing it</li>
+        <li><strong>JSONB:</strong> indexes every key-value pair in a JSON document (<code>@&gt;</code>, <code>?</code> operators)</li>
+        <li><strong>Arrays:</strong> <code>WHERE tags @&gt; ARRAY['postgres', 'performance']</code></li>
+      </ul>
+
+      <div class="codeblock"><span class="cmt">-- Full-text search with GIN:</span>
+<span class="kw">CREATE INDEX</span> idx_articles_fts
+  <span class="kw">ON</span> <span class="tbl">articles</span>
+  <span class="kw">USING</span> gin(to_tsvector(<span class="str">'english'</span>, title || <span class="str">' '</span> || body));
+
+<span class="kw">SELECT</span> title
+<span class="kw">FROM</span>   <span class="tbl">articles</span>
+<span class="kw">WHERE</span>  to_tsvector(<span class="str">'english'</span>, title || <span class="str">' '</span> || body)
+       @@ to_tsquery(<span class="str">'postgresql &amp; performance'</span>);
+
+<span class="cmt">-- JSONB with GIN:</span>
+<span class="kw">CREATE INDEX</span> idx_orders_meta <span class="kw">ON</span> <span class="tbl">orders</span> <span class="kw">USING</span> gin(metadata);
+<span class="kw">SELECT</span> * <span class="kw">FROM</span> <span class="tbl">orders</span> <span class="kw">WHERE</span> metadata @&gt; <span class="str">'{"status": "vip"}'</span>;</div>
+
+      <h3>BRIN — Block Range Index</h3>
+      <p>BRIN (Block Range Index) is a <strong>tiny index</strong> designed for massive tables with natural physical ordering — think time-series data, sensor readings, log entries. Instead of storing individual values like B-tree, BRIN stores the <em>min and max value</em> for each range of consecutive disk pages.</p>
+
+      <div class="codeblock"><span class="cmt">-- Perfect use case: 10 billion row sensor table ordered by time</span>
+<span class="kw">CREATE INDEX</span> idx_sensor_time
+  <span class="kw">ON</span> <span class="tbl">sensor_readings</span>
+  <span class="kw">USING</span> brin(recorded_at)
+  <span class="kw">WITH</span> (pages_per_range = <span class="num">128</span>);
+
+<span class="cmt">-- BRIN index stores: [page 0-127: min=2024-01-01, max=2024-01-15]</span>
+<span class="cmt">--                   [page 128-255: min=2024-01-15, max=2024-01-31]</span>
+<span class="cmt">--                   ...</span>
+
+<span class="cmt">-- For WHERE recorded_at = '2024-06-15':</span>
+<span class="cmt">-- BRIN skips all page ranges where max &lt; target or min &gt; target</span>
+<span class="cmt">-- A 10B row table with 1MB BRIN vs 20GB B-tree!</span></div>
+
+      <div class="hbox warn">
+        <strong>BRIN Caveat:</strong> BRIN only works if your data has <em>physical locality</em> — rows with similar values are physically near each other on disk. For a table with random inserts across all time periods, BRIN provides zero benefit and the optimizer can't skip any ranges.
+      </div>
+
+      <h3>Index Bloat and VACUUM</h3>
+      <p>Every <code>UPDATE</code> and <code>DELETE</code> in PostgreSQL is <strong>non-destructive</strong>. The old row version is marked as "dead" but the space is not immediately reclaimed. Dead tuples accumulate in both the heap (table data) and in all indexes pointing to those tuples. This is called <strong>index bloat</strong>.</p>
+
+      <div class="codeblock"><span class="cmt">-- Check index bloat:</span>
+<span class="kw">SELECT</span>
+  schemaname,
+  tablename,
+  indexname,
+  idx_scan,
+  idx_tup_read,
+  idx_tup_fetch
+<span class="kw">FROM</span>   pg_stat_user_indexes
+<span class="kw">ORDER BY</span> idx_scan <span class="kw">DESC</span>;
+
+<span class="cmt">-- An idx_scan of 0 means the index is never used!</span>
+<span class="cmt">-- Unused indexes still slow down every INSERT/UPDATE/DELETE.</span>
+
+<span class="cmt">-- Manual VACUUM on a specific table:</span>
+<span class="kw">VACUUM</span> (<span class="kw">ANALYZE</span>, VERBOSE) <span class="tbl">orders</span>;
+
+<span class="cmt">-- VACUUM FULL reclaims disk space (requires full table lock):</span>
+<span class="kw">VACUUM FULL</span> <span class="tbl">orders</span>;  <span class="cmt">-- WARNING: takes ExclusiveLock!</span></div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════════════ -->
+  <!-- SECTION 8: BUFFER POOL                                 -->
+  <!-- ═══════════════════════════════════════════════════════ -->
+  <div class="panel">
+    <div class="panel-header">🗂️ THE BUFFER POOL (SHARED BUFFERS)<span class="panel-tag">CH.8</span></div>
+    <div class="panel-body">
+      <div class="ch-header">
+        <div class="ch-badge" style="background:var(--teal);">8</div>
+        <div>
+          <div class="ch-title" style="color:var(--teal);">PostgreSQL's In-Memory Cache</div>
+          <div class="ch-sub">Cache hits in microseconds, cache misses in milliseconds</div>
+        </div>
+      </div>
+
+      <p>Every page of data that PostgreSQL reads from disk is stored in the <strong>buffer pool</strong> (called <code>shared_buffers</code> in postgresql.conf). The buffer pool is a region of shared memory divided into 8KB slots — one slot per page. When the executor needs a page, it first checks the buffer pool. A <strong>cache hit</strong> returns the data in ~1 microsecond. A <strong>cache miss</strong> requires a disk read: 0.1ms on NVMe, 0.5ms on SSD, 5-10ms on HDD — up to 10,000× slower.</p>
+
+      <div class="two-col">
+        <div class="fbox">
+          <h4 style="color:var(--green);">Cache Hit (In Buffer Pool)</h4>
+          <ul>
+            <li>&#x26A1; ~1 microsecond access time</li>
+            <li>&#x26A1; Just a pointer lookup in shared memory</li>
+            <li>&#x26A1; No system call required</li>
+            <li>&#x26A1; ~1000 MB/s effective throughput</li>
+            <li>&#x26A1; The fast path for all hot data</li>
+          </ul>
+        </div>
+        <div class="fbox">
+          <h4 style="color:var(--red);">Cache Miss (Disk Read Required)</h4>
+          <ul>
+            <li>&#x1F4BE; NVMe SSD: ~0.1ms (100 microseconds)</li>
+            <li>&#x1F4BE; SATA SSD: ~0.5ms (500 microseconds)</li>
+            <li>&#x1F4BE; HDD: 5-10ms (seek + rotational latency)</li>
+            <li>&#x1F4BE; Requires OS system call</li>
+            <li>&#x1F4BE; Context switch, scheduler involvement</li>
+          </ul>
+        </div>
+      </div>
+
+      <h3>LRU Eviction Policy</h3>
+      <p>When the buffer pool is full and a new page needs to be loaded, PostgreSQL must evict an existing page. It uses a variant of the <strong>Least-Recently-Used (LRU)</strong> algorithm called the <em>clock sweep</em>. Each buffer has a "usage count" that increments when accessed and decrements during the clock sweep. Buffers with usage count of 0 are candidates for eviction.</p>
+      <p>Dirty pages (pages modified but not yet flushed to disk) must be written to disk before eviction. This is handled by the <strong>bgwriter</strong> (background writer) process, which proactively flushes dirty pages to reduce I/O pressure during eviction.</p>
+
+      <h3>Interactive Buffer Pool Demo</h3>
+      <p>Watch cache hits (green) and misses (red/orange) in action. The cache hit ratio should be &gt;99% in a healthy production database.</p>
+      <div id="buffer-demo">
+        <div style="font-family:'Bangers',cursive;font-size:1.1rem;color:var(--teal);letter-spacing:2px;margin-bottom:12px;">BUFFER POOL — 8 SLOTS</div>
+        <div class="buf-slots" id="buf-slots">
+          <div class="buf-slot idle" id="bslot-0"><span class="slot-page">EMPTY</span><span class="slot-status">—</span></div>
+          <div class="buf-slot idle" id="bslot-1"><span class="slot-page">EMPTY</span><span class="slot-status">—</span></div>
+          <div class="buf-slot idle" id="bslot-2"><span class="slot-page">EMPTY</span><span class="slot-status">—</span></div>
+          <div class="buf-slot idle" id="bslot-3"><span class="slot-page">EMPTY</span><span class="slot-status">—</span></div>
+          <div class="buf-slot idle" id="bslot-4"><span class="slot-page">EMPTY</span><span class="slot-status">—</span></div>
+          <div class="buf-slot idle" id="bslot-5"><span class="slot-page">EMPTY</span><span class="slot-status">—</span></div>
+          <div class="buf-slot idle" id="bslot-6"><span class="slot-page">EMPTY</span><span class="slot-status">—</span></div>
+          <div class="buf-slot idle" id="bslot-7"><span class="slot-page">EMPTY</span><span class="slot-status">—</span></div>
+        </div>
+        <div class="buf-stats">
+          <div class="buf-stat hits">HITS: <span id="buf-hits">0</span></div>
+          <div class="buf-stat miss">MISSES: <span id="buf-miss">0</span></div>
+          <div class="buf-stat ratio">HIT RATIO: <span id="buf-ratio">—</span></div>
+        </div>
+        <div style="font-family:'Space Mono',monospace;font-size:.7rem;color:#8b949e;margin-top:8px;" id="buf-log">Ready. Click a button to simulate queries.</div>
+        <div class="buf-controls">
+          <button onclick="bufQuery('random')">RANDOM QUERY</button>
+          <button onclick="bufQuery('hot')">HOT ROW QUERY</button>
+          <button onclick="bufQuery('cold')">COLD SCAN</button>
+          <button onclick="bufReset()">RESET</button>
+        </div>
+      </div>
+
+      <h3>Sizing shared_buffers</h3>
+      <p>The default <code>shared_buffers = 128MB</code> is absurdly small for any production workload. The standard recommendation is <strong>25% of total system RAM</strong>. On a 32GB server, set <code>shared_buffers = 8GB</code>. On a 128GB server, 32GB. PostgreSQL also relies on the OS page cache for the other 75% of RAM, so it's a two-layer cache.</p>
+
+      <div class="codeblock"><span class="cmt">-- Check what's currently in the buffer pool (requires pg_buffercache extension):</span>
+<span class="kw">CREATE EXTENSION IF NOT EXISTS</span> pg_buffercache;
+
+<span class="kw">SELECT</span>
+  c.relname,
+  count(*) <span class="kw">AS</span> buffers,
+  round(count(*) * <span class="num">8</span> / <span class="num">1024.0</span>, <span class="num">1</span>) <span class="kw">AS</span> buffer_mb,
+  round(<span class="num">100.0</span> * count(*) /
+    (SELECT setting::int FROM pg_settings WHERE name = <span class="str">'shared_buffers'</span>), <span class="num">1</span>) <span class="kw">AS</span> pct_of_cache
+<span class="kw">FROM</span>   pg_buffercache b
+<span class="kw">JOIN</span>   pg_class c <span class="kw">ON</span> c.relfilenode = b.relfilenode
+<span class="kw">WHERE</span>  b.reldatabase = (SELECT oid FROM pg_database WHERE datname = current_database())
+<span class="kw">GROUP BY</span> c.relname
+<span class="kw">ORDER BY</span> buffers <span class="kw">DESC</span>
+<span class="kw">LIMIT</span> <span class="num">10</span>;</div>
+
+      <h3>Effective Cache Size</h3>
+      <p>The optimizer uses <code>effective_cache_size</code> (NOT <code>shared_buffers</code>) as its estimate of total memory available for caching. This includes both shared_buffers and the OS page cache. Set it to 75% of total RAM. This helps the optimizer correctly judge whether an index-only scan will have its pages in cache.</p>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════════════ -->
+  <!-- SECTION 9: WAL                                         -->
+  <!-- ═══════════════════════════════════════════════════════ -->
+  <div class="panel">
+    <div class="panel-header">📜 WRITE-AHEAD LOG (WAL)<span class="panel-tag">CH.9</span></div>
+    <div class="panel-body">
+      <div class="ch-header">
+        <div class="ch-badge" style="background:var(--red);">9</div>
+        <div>
+          <div class="ch-title" style="color:var(--red);">Durability Without Slowness</div>
+          <div class="ch-sub">Sequential writes, crash recovery, and replication</div>
+        </div>
+      </div>
+
+      <p>The Write-Ahead Log is PostgreSQL's durability engine. The fundamental rule: <strong>before any data page is modified, the change must first be written to the WAL</strong>. This is not a backup — it's an append-only sequential log of every change that enables crash recovery, point-in-time recovery, and streaming replication.</p>
+
+      <h3>Why WAL Makes Writes Fast</h3>
+      <p>Without WAL, making a write durable would require doing a <code>fsync()</code> on every data page you modified — potentially many random writes spread across many data files. With WAL, you only need to <code>fsync()</code> the WAL file, which receives all changes as <strong>sequential appends</strong>. Sequential I/O is 10-100× faster than random I/O on both HDDs and SSDs.</p>
+
+      <div class="codeblock"><span class="cmt">-- What happens during a single UPDATE:</span>
+
+<span class="num">1.</span> Transaction begins
+<span class="num">2.</span> Copy old row → UNDO log (for MVCC visibility)
+<span class="num">3.</span> Modify page in buffer pool (in-memory only)
+<span class="num">4.</span> Write WAL record: <span class="str">"UPDATE users SET name='Bob' WHERE id=42"</span>
+<span class="num">5.</span> COMMIT is written to WAL
+<span class="num">6.</span> WAL is fsync()'d to disk  <span class="cmt">← durability guaranteed here</span>
+<span class="num">7.</span> Return success to client
+<span class="num">8.</span> Modified buffer page is written to data file later (async)</span>
+
+<span class="cmt">-- If the server crashes between steps 7 and 8:</span>
+<span class="cmt">-- WAL replay on startup re-applies the change to the data file</span>
+<span class="cmt">-- Zero data loss for committed transactions</span></div>
+
+      <h3>WAL LSN (Log Sequence Number)</h3>
+      <p>Every WAL record has a unique <strong>Log Sequence Number (LSN)</strong> — a 64-bit byte offset into the WAL stream. LSNs are monotonically increasing. Every data page in PostgreSQL stores the LSN of the last WAL record that modified it, enabling precise crash recovery — replaying from the last checkpoint's LSN is sufficient.</p>
+
+      <div class="codeblock"><span class="cmt">-- Check current WAL position:</span>
+<span class="kw">SELECT</span> pg_current_wal_lsn();
+<span class="cmt">-- Returns: 0/3FA20B0 (hex format: segment/offset)</span>
+
+<span class="cmt">-- Check WAL lag on a standby server:</span>
+<span class="kw">SELECT</span>
+  application_name,
+  sent_lsn,
+  write_lsn,
+  flush_lsn,
+  replay_lsn,
+  (sent_lsn - replay_lsn) <span class="kw">AS</span> lag_bytes
+<span class="kw">FROM</span>   pg_stat_replication;</div>
+
+      <h3>WAL Levels</h3>
+      <table class="comic-table">
+        <thead>
+          <tr><th>wal_level</th><th>What's Logged</th><th>Use Case</th></tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>minimal</strong></td>
+            <td>Only enough for crash recovery. No replication possible.</td>
+            <td>Single-server, maximum write performance (rarely appropriate)</td>
+          </tr>
+          <tr>
+            <td><strong>replica</strong></td>
+            <td>Full change data. Enables physical/streaming replication.</td>
+            <td>Default for production. Use for standby servers, PITR.</td>
+          </tr>
+          <tr>
+            <td><strong>logical</strong></td>
+            <td>Everything in replica + enough for logical decoding.</td>
+            <td>Logical replication, Change Data Capture (CDC), Debezium.</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <h3>Checkpoints</h3>
+      <p>A <strong>checkpoint</strong> is when PostgreSQL writes all dirty pages (modified in-memory buffers) to the actual data files on disk and records the checkpoint LSN in the control file. After a checkpoint, WAL replay on crash recovery only needs to start from the checkpoint LSN — earlier WAL can be recycled.</p>
+
+      <div class="two-col">
+        <div class="fbox">
+          <h4 style="color:var(--blue);">Checkpoint Triggers</h4>
+          <ul>
+            <li>Time-based: every <code>checkpoint_timeout</code> (default 5 min)</li>
+            <li>WAL-size-based: when WAL fills <code>max_wal_size</code> (default 1GB)</li>
+            <li>Manual: <code>CHECKPOINT</code> command</li>
+            <li>On shutdown (smart/fast)</li>
+          </ul>
+        </div>
+        <div class="fbox">
+          <h4 style="color:var(--orange);">Checkpoint Spread</h4>
+          <p><code>checkpoint_completion_target = 0.9</code> means PostgreSQL aims to write dirty pages over 90% of the checkpoint interval (not all at once), smoothing out I/O spikes. Set this to 0.9 in production.</p>
+        </div>
+      </div>
+
+      <h3>WAL as the Foundation of Everything</h3>
+      <div class="step-flow">
+        <div class="sf-step">
+          <div class="sf-num" style="background:var(--blue);">★</div>
+          <div class="sf-content">
+            <div class="sf-title" style="color:var(--blue);">Streaming Replication</div>
+            <div class="sf-desc">Standby servers connect to the primary and receive WAL records in real time. They replay WAL to stay in sync. When the primary fails, a standby can be promoted in seconds.</div>
+          </div>
+        </div>
+        <div class="sf-step">
+          <div class="sf-num" style="background:var(--green);">★</div>
+          <div class="sf-content">
+            <div class="sf-title" style="color:var(--green);">Point-in-Time Recovery (PITR)</div>
+            <div class="sf-desc">Archive WAL files continuously. To recover to "yesterday at 3:47pm", restore a base backup, then replay archived WAL up to that LSN. Can recover from accidental data deletion.</div>
+          </div>
+        </div>
+        <div class="sf-step">
+          <div class="sf-num" style="background:var(--purple);">★</div>
+          <div class="sf-content">
+            <div class="sf-title" style="color:var(--purple);">Logical Replication &amp; CDC</div>
+            <div class="sf-desc">With <code>wal_level=logical</code>, the WAL decoder can produce row-level change events (INSERT/UPDATE/DELETE with old and new values). Tools like Debezium, pglogical, and Postgres logical replication slots consume this stream.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════════════ -->
+  <!-- SECTION 10: EXPLAIN ANALYZE                            -->
+  <!-- ═══════════════════════════════════════════════════════ -->
+  <div class="panel">
+    <div class="panel-header">🔍 EXPLAIN ANALYZE — READING THE OUTPUT<span class="panel-tag">CH.10</span></div>
+    <div class="panel-body">
+      <div class="ch-header">
+        <div class="ch-badge" style="background:var(--teal);">10</div>
+        <div>
+          <div class="ch-title" style="color:var(--teal);">X-Ray Vision for Your Queries</div>
+          <div class="ch-sub">Every number annotated, every node explained</div>
+        </div>
+      </div>
+
+      <p><code>EXPLAIN</code> shows the query plan the optimizer chose. <code>EXPLAIN ANALYZE</code> actually executes the query and shows both the optimizer's estimates and the real execution numbers. The gap between estimated and actual rows is the first thing to look for — big gaps mean stale statistics.</p>
+
+      <h3>The Three Commands</h3>
+      <div class="three-col">
+        <div class="fbox">
+          <h4><code>EXPLAIN</code></h4>
+          <p>Shows the plan the optimizer picked. Estimated costs and row counts only. Does NOT execute the query. Safe to run on any query including destructive ones.</p>
+        </div>
+        <div class="fbox">
+          <h4><code>EXPLAIN ANALYZE</code></h4>
+          <p>Executes the query AND shows the plan. Shows both estimated and actual rows/time. Running on UPDATE/DELETE actually makes the changes! Use in a transaction and ROLLBACK if needed.</p>
+        </div>
+        <div class="fbox">
+          <h4><code>EXPLAIN (BUFFERS, ANALYZE)</code></h4>
+          <p>The most detailed output. Shows buffer hits (shared_buffers), reads (disk/OS cache), and dirty/written counts. Essential for diagnosing cache performance.</p>
+        </div>
+      </div>
+
+      <h3>Full Annotated EXPLAIN ANALYZE Output</h3>
+      <div class="codeblock"><span class="kw">EXPLAIN ANALYZE</span>
+<span class="kw">SELECT</span> u.name, <span class="fn">COUNT</span>(o.id) <span class="kw">AS</span> order_count
+<span class="kw">FROM</span>   <span class="tbl">users</span>    u
+<span class="kw">JOIN</span>   <span class="tbl">orders</span>   o <span class="kw">ON</span> u.id = o.user_id
+<span class="kw">WHERE</span>  u.created_at &gt; <span class="str">'2024-01-01'</span>
+<span class="kw">GROUP BY</span> u.name
+<span class="kw">ORDER BY</span> order_count <span class="kw">DESC</span>
+<span class="kw">LIMIT</span>  <span class="num">10</span>;</div>
+
+      <p style="margin-bottom:8px;">Output (color-coded: <span style="color:var(--orange);font-weight:700;">costs</span>, <span style="color:var(--green);font-weight:700;">actual times</span>, <span style="color:var(--blue);font-weight:700;">row counts</span>):</p>
+
+      <div style="border:3px solid var(--ink);border-radius:8px;overflow:hidden;">
+        <div class="explain-line">
+          <span class="el-indent"></span>
+          <div>
+            <span class="el-node">Limit</span>
+            <span class="el-cost"> (cost=234.50..234.53 rows=10 width=40)</span>
+            <span class="el-actual"> (actual time=5.234..5.237 rows=10 loops=1)</span>
+            <span class="el-note">↑ Top node. Optimizer estimated cost 234.50 to start returning, 234.53 when all 10 rows done. Actual: 5.234ms start, 5.237ms done. Perfect estimate here.</span>
+          </div>
+        </div>
+        <div class="explain-line">
+          <span class="el-indent">  →</span>
+          <div>
+            <span class="el-node">Sort</span>
+            <span class="el-cost"> (cost=234.47..234.50 rows=10 width=40)</span>
+            <span class="el-actual"> (actual time=5.230..5.232 rows=10 loops=1)</span>
+            <span class="el-note">↑ Sort Key: count(o.id) DESC — sorting the aggregated results. Sort Method: quicksort  Memory: 25kB (all fit in work_mem, no disk spill).</span>
+          </div>
+        </div>
+        <div class="explain-line">
+          <span class="el-indent">    →</span>
+          <div>
+            <span class="el-node">HashAggregate</span>
+            <span class="el-cost"> (cost=233.70..233.80 rows=10 width=40)</span>
+            <span class="el-actual"> (actual time=5.180..5.210 rows=247 loops=1)</span>
+            <span class="el-note">↑ GROUP BY u.name. Optimizer estimated 10 groups (off!), actual was 247. This estimate mismatch means stats for the name column may be stale. Batches: 1, Memory Usage: 40kB.</span>
+          </div>
+        </div>
+        <div class="explain-line">
+          <span class="el-indent">      →</span>
+          <div>
+            <span class="el-node">Hash Join</span>
+            <span class="el-cost"> (cost=32.50..220.40 rows=2660 width=28)</span>
+            <span class="el-actual"> (actual time=0.540..4.820 rows=2718 loops=1)</span>
+            <span class="el-note">↑ Hash Cond: (o.user_id = u.id). Estimated 2660 rows, got 2718 — close! Hash Batches: 1, Original Hash Batches: 1, Memory Usage: 128kB. Hash table fit in work_mem.</span>
+          </div>
+        </div>
+        <div class="explain-line">
+          <span class="el-indent">      ├─→</span>
+          <div>
+            <span class="el-node">Seq Scan on orders</span>
+            <span class="el-cost"> (cost=0.00..185.00 rows=9500 width=8)</span>
+            <span class="el-actual"> (actual time=0.010..1.840 rows=9500 loops=1)</span>
+            <span class="el-note">↑ Full sequential scan of orders table (9500 rows). No filter applied here — all order rows are fetched for the join. If orders were larger, an index on user_id would help.</span>
+          </div>
+        </div>
+        <div class="explain-line">
+          <span class="el-indent">      └─→</span>
+          <div>
+            <span class="el-node">Index Scan using idx_users_created_at on users</span>
+            <span class="el-cost"> (cost=0.28..32.20 rows=280 width=24)</span>
+            <span class="el-actual"> (actual time=0.030..0.450 rows=312 loops=1)</span>
+            <span class="el-note">↑ Index Cond: (created_at &gt; '2024-01-01'::date). Estimated 280, got 312 (slightly off but acceptable). The index on created_at is being used effectively here.</span>
+          </div>
+        </div>
+        <div class="explain-line">
+          <span class="el-indent"></span>
+          <div>
+            <span style="color:#8b949e;font-family:'Space Mono',monospace;font-size:.7rem;">Planning Time: 0.842 ms</span>
+            <span class="el-note">↑ Time spent in the parser + planner + optimizer. Usually &lt;1ms for simple queries. Can be 50ms+ for very complex plans. If planning time dominates, consider prepared statements.</span>
+          </div>
+        </div>
+        <div class="explain-line">
+          <span class="el-indent"></span>
+          <div>
+            <span style="color:#7ee787;font-family:'Space Mono',monospace;font-size:.7rem;font-weight:700;">Execution Time: 5.492 ms</span>
+            <span class="el-note">↑ Total execution time including all nodes. This is wall-clock time. Note: does NOT include the time for the client to receive results over the network.</span>
+          </div>
+        </div>
+      </div>
+
+      <h3>Key Things to Look For</h3>
+      <div class="two-col" style="margin-top:14px;">
+        <div class="fbox">
+          <h4 style="color:var(--red);">🚨 Red Flags</h4>
+          <ul>
+            <li>&#x274C; <strong>Rows estimate vs actual: 100× off</strong> — stale statistics, run ANALYZE</li>
+            <li>&#x274C; <strong>"Sort Method: external merge  Disk:"</strong> — increase work_mem</li>
+            <li>&#x274C; <strong>"Hash Batches: 8"</strong> — hash table spilled to disk, increase work_mem</li>
+            <li>&#x274C; <strong>"Seq Scan on large_table"</strong> with Filter — missing index</li>
+            <li>&#x274C; <strong>"loops=10000"</strong> on inner side of Nested Loop — N+1 problem</li>
+            <li>&#x274C; <strong>Planning Time &gt; Execution Time</strong> — overly complex query or pg_stat_statements overloaded</li>
+          </ul>
+        </div>
+        <div class="fbox">
+          <h4 style="color:var(--green);">✅ Green Flags</h4>
+          <ul>
+            <li>&#x2705; <strong>Index Scan / Index Only Scan</strong> — selective filter using index</li>
+            <li>&#x2705; <strong>Sort Method: quicksort  Memory: NkB</strong> — sort in memory</li>
+            <li>&#x2705; <strong>Hash Batches: 1</strong> — hash join fully in memory</li>
+            <li>&#x2705; <strong>Estimated rows ≈ Actual rows</strong> — good statistics</li>
+            <li>&#x2705; <strong>Execution Time &lt; 10ms</strong> for OLTP queries</li>
+            <li>&#x2705; <strong>Parallel workers active</strong> for analytical queries</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════════════ -->
+  <!-- SECTION 11: COMMON PERFORMANCE MISTAKES                -->
+  <!-- ═══════════════════════════════════════════════════════ -->
+  <div class="panel">
+    <div class="panel-header">💥 COMMON PERFORMANCE MISTAKES<span class="panel-tag">CH.11</span></div>
+    <div class="panel-body">
+      <div class="ch-header">
+        <div class="ch-badge" style="background:var(--red);">11</div>
+        <div>
+          <div class="ch-title" style="color:var(--red);">The Hall of Shame</div>
+          <div class="ch-sub">Mistakes that kill database performance in production</div>
+        </div>
+      </div>
+
+      <h3>1. The N+1 Query Problem</h3>
+      <p>The single most common database performance disaster. You fetch a list of 1000 users with one query, then for <em>each user</em> you issue a separate query to fetch their orders. Result: 1001 round trips to the database.</p>
+
+      <div class="codeblock"><span class="cmt">-- ❌ WRONG: N+1 problem (1001 queries for 1000 users)</span>
+users = db.query(<span class="str">"SELECT * FROM users LIMIT 1000"</span>)
+<span class="kw">for</span> user in users:
+    orders = db.query(<span class="str">f"SELECT * FROM orders WHERE user_id = {user.id}"</span>)
+    <span class="cmt"># 1000 queries for 1000 users = 1000 round trips!</span>
+
+<span class="cmt">-- ✅ CORRECT: Single JOIN (1 query)</span>
+<span class="kw">SELECT</span> u.*, o.*
+<span class="kw">FROM</span>   <span class="tbl">users</span> u
+<span class="kw">LEFT JOIN</span> <span class="tbl">orders</span> o <span class="kw">ON</span> o.user_id = u.id
+<span class="kw">LIMIT</span>  <span class="num">1000</span>;
+
+<span class="cmt">-- ✅ OR: Use IN/ANY with a subquery:</span>
+<span class="kw">SELECT</span> * <span class="kw">FROM</span> <span class="tbl">orders</span>
+<span class="kw">WHERE</span>  user_id = <span class="kw">ANY</span>(<span class="kw">SELECT</span> id <span class="kw">FROM</span> <span class="tbl">users</span> <span class="kw">LIMIT</span> <span class="num">1000</span>);</div>
+
+      <h3>2. Missing Index on Foreign Key Columns</h3>
+      <p>PostgreSQL does NOT automatically create indexes on foreign key columns (only on primary keys and unique constraints). A JOIN on <code>orders.user_id = users.id</code> will do a sequential scan of the orders table for every user if there's no index on <code>orders.user_id</code>.</p>
+
+      <div class="codeblock"><span class="cmt">-- ❌ Missing index: this JOIN does Seq Scan on orders</span>
+<span class="kw">SELECT</span> * <span class="kw">FROM</span> <span class="tbl">users</span> u
+<span class="kw">JOIN</span>   <span class="tbl">orders</span> o <span class="kw">ON</span> u.id = o.user_id  <span class="cmt">-- no index on orders.user_id!</span>
+
+<span class="cmt">-- ✅ Add the index:</span>
+<span class="kw">CREATE INDEX</span> CONCURRENTLY idx_orders_user_id <span class="kw">ON</span> <span class="tbl">orders</span>(user_id);
+<span class="cmt">-- CONCURRENTLY lets you create the index without locking the table!</span></div>
+
+      <h3>3. SELECT * Fetching Unused Columns</h3>
+      <p><code>SELECT *</code> forces PostgreSQL to read and return every column of every row, including large <code>TEXT</code>, <code>JSONB</code>, and <code>BYTEA</code> columns. This increases I/O, network bandwidth, and memory usage. It also prevents <strong>Index-Only Scans</strong> since the executor must fetch the full row from the heap even when all needed data is in the index.</p>
+
+      <div class="codeblock"><span class="cmt">-- ❌ Fetches 50 columns, most unused</span>
+<span class="kw">SELECT</span> * <span class="kw">FROM</span> <span class="tbl">products</span>;
+
+<span class="cmt">-- ✅ Fetch only what you need</span>
+<span class="kw">SELECT</span> id, name, price <span class="kw">FROM</span> <span class="tbl">products</span>;
+
+<span class="cmt">-- ✅ AND create a covering index for the hottest queries:</span>
+<span class="kw">CREATE INDEX</span> idx_products_id_name_price <span class="kw">ON</span> <span class="tbl">products</span>(id) INCLUDE (name, price);
+<span class="cmt">-- Now SELECT id,name,price FROM products WHERE id=42 is Index-Only Scan!</span></div>
+
+      <h3>4. OFFSET Pagination on Large Tables</h3>
+      <p><code>OFFSET 50000 LIMIT 10</code> does NOT magically skip 50,000 rows at the storage level. PostgreSQL must read and discard the first 50,000 rows before returning the 10 you want. For page 5000 of search results, you're reading 50,000 rows to return 10. This gets worse with every page.</p>
+
+      <div class="codeblock"><span class="cmt">-- ❌ OFFSET pagination: O(n) for page n</span>
+<span class="kw">SELECT</span> * <span class="kw">FROM</span> <span class="tbl">products</span> <span class="kw">ORDER BY</span> id <span class="kw">OFFSET</span> <span class="num">50000</span> <span class="kw">LIMIT</span> <span class="num">10</span>;
+<span class="cmt">-- Must read 50010 rows to return 10!</span>
+
+<span class="cmt">-- ✅ Cursor / keyset pagination: O(log n) always</span>
+<span class="cmt">-- Page 1:</span>
+<span class="kw">SELECT</span> * <span class="kw">FROM</span> <span class="tbl">products</span> <span class="kw">ORDER BY</span> id <span class="kw">LIMIT</span> <span class="num">10</span>;
+<span class="cmt">-- Returns last id = 1042. Next page:</span>
+<span class="kw">SELECT</span> * <span class="kw">FROM</span> <span class="tbl">products</span> <span class="kw">WHERE</span> id &gt; <span class="num">1042</span> <span class="kw">ORDER BY</span> id <span class="kw">LIMIT</span> <span class="num">10</span>;
+<span class="cmt">-- Uses index on id, always O(log n) regardless of page number!</span></div>
+
+      <h3>5. Function Calls in WHERE Clauses</h3>
+      <p>Wrapping a column in a function call prevents PostgreSQL from using an index on that column. The index stores the raw column values, not the result of the function. PostgreSQL cannot efficiently find <code>LOWER(email) = 'ali@example.com'</code> using an index on <code>email</code> because the index stores mixed-case values.</p>
+
+      <div class="codeblock"><span class="cmt">-- ❌ Kills index on email column:</span>
+<span class="kw">WHERE</span> <span class="fn">LOWER</span>(email) = <span class="str">'ali@example.com'</span>
+<span class="cmt">-- PostgreSQL must compute LOWER() for every row → Seq Scan</span>
+
+<span class="cmt">-- ✅ Use a functional index:</span>
+<span class="kw">CREATE INDEX</span> idx_users_email_lower
+  <span class="kw">ON</span> <span class="tbl">users</span> (<span class="fn">LOWER</span>(email));
+<span class="cmt">-- Now WHERE LOWER(email) = '...' uses the index!</span>
+
+<span class="cmt">-- ❌ Type cast on column kills index:</span>
+<span class="kw">WHERE</span> created_at::<span class="fn">date</span> = <span class="str">'2024-01-01'</span>
+<span class="cmt">-- Casts every timestamp to date → Seq Scan</span>
+
+<span class="cmt">-- ✅ Use a range condition instead:</span>
+<span class="kw">WHERE</span> created_at &gt;= <span class="str">'2024-01-01'</span>
+  <span class="kw">AND</span> created_at &lt;  <span class="str">'2024-01-02'</span>
+<span class="cmt">-- Uses the index on created_at!</span></div>
+
+      <h3>6. Implicit Type Coercion</h3>
+      <p>When your application sends a string <code>'42'</code> but the column is <code>integer</code>, PostgreSQL casts the string to integer for each comparison. This usually works but can be catastrophic with indexes — if the column is <code>text</code> and your parameter is <code>integer</code>, the cast goes the wrong direction and kills the index.</p>
+
+      <div class="codeblock"><span class="cmt">-- ❌ Column is TEXT, value is integer — bad cast direction:</span>
+<span class="kw">SELECT</span> * <span class="kw">FROM</span> <span class="tbl">products</span> <span class="kw">WHERE</span> sku = <span class="num">12345</span>;
+<span class="cmt">-- PostgreSQL must cast sku::integer for every row → Seq Scan!</span>
+
+<span class="cmt">-- ✅ Always match parameter type to column type:</span>
+<span class="kw">SELECT</span> * <span class="kw">FROM</span> <span class="tbl">products</span> <span class="kw">WHERE</span> sku = <span class="str">'12345'</span>; <span class="cmt">-- string = string ✓</span>
+
+<span class="cmt">-- In application code: always use typed bind parameters</span>
+db.query(<span class="str">"SELECT * FROM products WHERE sku = $1"</span>, [<span class="str">"12345"</span>]);
+<span class="cmt">-- Not: db.query("... WHERE sku = $1", [12345])  ← integer vs text</span></div>
+
+      <div class="hbox danger">
+        <strong>The missing index diagnosis checklist:</strong> (1) Check EXPLAIN ANALYZE for "Seq Scan" with "Filter" — this means a full table scan with a filter applied row-by-row. (2) Check pg_stat_user_indexes for idx_scan=0 — that's a dead index wasting write overhead. (3) Check pg_stat_user_tables for n_live_tup vs n_dead_tup — high dead tuple ratio means VACUUM hasn't run enough.
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════════════ -->
+  <!-- SECTION 12: CHEAT SHEET                                -->
+  <!-- ═══════════════════════════════════════════════════════ -->
+  <div class="panel">
+    <div class="panel-header">📋 CHEAT SHEET<span class="panel-tag">CH.12</span></div>
+    <div class="panel-body">
+      <div class="ch-header">
+        <div class="ch-badge" style="background:var(--yellow);color:var(--ink);">12</div>
+        <div>
+          <div class="ch-title" style="color:var(--teal);">Quick Reference — Save This</div>
+          <div class="ch-sub">EXPLAIN commands, monitoring views, index types, memory settings</div>
+        </div>
+      </div>
+
+      <div class="cheat-grid">
+
+        <div class="cheat-card">
+          <div class="cheat-card-head" style="background:var(--teal);">EXPLAIN COMMANDS</div>
+          <div class="cheat-card-body">
+            <ul>
+              <li><code>EXPLAIN SELECT ...</code><br>Show plan only, no execution</li>
+              <li><code>EXPLAIN ANALYZE SELECT ...</code><br>Execute and show actual stats</li>
+              <li><code>EXPLAIN (ANALYZE, BUFFERS) ...</code><br>+cache hit/miss counts</li>
+              <li><code>EXPLAIN (ANALYZE, FORMAT JSON) ...</code><br>Machine-readable output for explain.depesz.com</li>
+              <li><code>EXPLAIN (ANALYZE, TIMING OFF) ...</code><br>Faster: skip per-node timing</li>
+              <li><code>BEGIN; EXPLAIN ANALYZE DELETE ...; ROLLBACK;</code><br>Safe explain on destructive queries</li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="cheat-card">
+          <div class="cheat-card-head" style="background:var(--purple);">KEY MONITORING VIEWS</div>
+          <div class="cheat-card-body">
+            <ul>
+              <li><code>pg_stat_user_tables</code><br>Seq/idx scans, dead tuples, last vacuum</li>
+              <li><code>pg_stat_user_indexes</code><br>Index scans, rows read/fetched</li>
+              <li><code>pg_stat_activity</code><br>Active queries, wait events, PIDs</li>
+              <li><code>pg_stat_statements</code><br>Aggregate stats per query fingerprint (must enable extension)</li>
+              <li><code>pg_locks</code><br>Current lock holders and waiters</li>
+              <li><code>pg_stat_bgwriter</code><br>Checkpoint stats, buffer writes</li>
+              <li><code>pg_stat_replication</code><br>Standby lag, WAL LSN positions</li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="cheat-card">
+          <div class="cheat-card-head" style="background:var(--orange);">INDEX TYPES QUICK REF</div>
+          <div class="cheat-card-body">
+            <ul>
+              <li><strong>B-tree</strong> — Default. Equality, range, ORDER BY, LIKE prefix</li>
+              <li><strong>Hash</strong> — Equality only. Rarely worth it over B-tree</li>
+              <li><strong>GIN</strong> — Arrays, JSONB, full-text search (<code>@@</code>)</li>
+              <li><strong>GiST</strong> — Geometry, ranges, full-text. Lossy lookups possible</li>
+              <li><strong>BRIN</strong> — Huge sorted tables (time-series). Min/max per block range</li>
+              <li><strong>Partial index</strong> — <code>CREATE INDEX ON t(col) WHERE active=true</code> — tiny index for subset of rows</li>
+              <li><strong>Covering index</strong> — <code>CREATE INDEX ON t(id) INCLUDE (name, email)</code> — enables Index-Only Scan</li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="cheat-card">
+          <div class="cheat-card-head" style="background:var(--blue);">MEMORY SETTINGS TO TUNE</div>
+          <div class="cheat-card-body">
+            <ul>
+              <li><code>shared_buffers</code> = 25% of RAM<br><em>Default 128MB is too small</em></li>
+              <li><code>effective_cache_size</code> = 75% of RAM<br><em>Planner estimate of total cache</em></li>
+              <li><code>work_mem</code> = 64–256MB per session<br><em>Default 4MB causes disk sort spills</em></li>
+              <li><code>maintenance_work_mem</code> = 1–2GB<br><em>For VACUUM, CREATE INDEX, ALTER TABLE</em></li>
+              <li><code>wal_buffers</code> = 64MB<br><em>Default -1 = auto, usually fine</em></li>
+              <li><code>random_page_cost</code> = 1.1 (SSD) or 4.0 (HDD)<br><em>Critical for plan quality on SSD!</em></li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="cheat-card">
+          <div class="cheat-card-head" style="background:var(--red);">DANGEROUS ANTI-PATTERNS</div>
+          <div class="cheat-card-body">
+            <ul>
+              <li><code>WHERE LOWER(col) = $1</code> — use functional index</li>
+              <li><code>WHERE col::date = $1</code> — use range instead</li>
+              <li><code>OFFSET n LIMIT 10</code> large n — use keyset pagination</li>
+              <li><code>SELECT *</code> on wide tables — select needed columns</li>
+              <li>No index on FK columns — always index FK columns</li>
+              <li>N+1 queries — use JOIN or batch fetch</li>
+              <li>VACUUM FULL in production — causes full table lock</li>
+              <li>Default work_mem on analytical queries — set higher</li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="cheat-card">
+          <div class="cheat-card-head" style="background:var(--green);">QUERY PIPELINE SUMMARY</div>
+          <div class="cheat-card-body">
+            <ul>
+              <li><strong>1. Parser</strong> — SQL string → AST. Catches syntax errors.</li>
+              <li><strong>2. Rewriter</strong> — Expand views, inject RLS policies.</li>
+              <li><strong>3. Planner</strong> — Generate candidate plans using pg_statistics.</li>
+              <li><strong>4. Optimizer</strong> — Cost model selects cheapest plan.</li>
+              <li><strong>5. Executor</strong> — Volcano/iterator model, pulls rows from tree.</li>
+              <li><strong>6. Buffer Pool</strong> — 8KB page cache. Hit = µs, Miss = ms.</li>
+              <li><strong>7. WAL</strong> — Sequential writes for durability + replication.</li>
+            </ul>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Final speech bubble -->
+      <div class="speech teal" style="margin-top:24px;">
+        <strong>You now understand what happens in those 0.4 milliseconds between sending <code>SELECT</code> and receiving your rows.</strong> Parser turns your characters into a tree. Rewriter expands views. Planner considers every possible strategy using table statistics. Optimizer assigns costs and picks the winner. Executor pulls rows through the plan tree. Buffer pool serves pages from RAM. WAL ensures no committed data is ever lost. Every single time.
+      </div>
+    </div>
+  </div>
+
+  <!-- Author card -->
+  <div data-author-card></div>
+
+</div><!-- .page-wrap -->
+
+<script>
+/* ═══════════════════════════════════════════════════
+   PIPELINE ANIMATION
+═══════════════════════════════════════════════════ */
+const pipelineStages = [
+  {
+    title: "STAGE 1 — PARSER",
+    color: "#ff8c42",
+    lines: [
+      "pg_parse_query() called with raw SQL string",
+      "Lexer tokenizes: SELECT · name · FROM · users · WHERE · id · = · 42",
+      "Parser builds Abstract Syntax Tree (SelectStmt node)",
+      "Semantic analysis resolves table/column OIDs from system catalog",
+      "Output: List* of parsed query trees — ready for rewriter"
+    ]
+  },
+  {
+    title: "STAGE 2 — REWRITER",
+    color: "#adbac7",
+    lines: [
+      "QueryRewrite() processes the parse tree",
+      "Checks pg_rewrite system catalog for applicable rules",
+      "Expands any view references → inlines the view's query",
+      "Injects Row-Level Security policy predicates if RLS enabled",
+      "Output: possibly-rewritten parse tree — ready for planner"
+    ]
+  },
+  {
+    title: "STAGE 3 — PLANNER",
+    color: "#79c0ff",
+    lines: [
+      "pg_plan_queries() called on the rewritten query tree",
+      "Reads pg_statistic for each table: n_distinct, correlation, MCVs",
+      "Generates all candidate access paths: SeqScan, IndexScan, etc.",
+      "Generates all candidate join strategies: NestedLoop, HashJoin, MergeJoin",
+      "Output: list of possible plan paths with estimated row counts"
+    ]
+  },
+  {
+    title: "STAGE 4 — OPTIMIZER",
+    color: "#3fa34d",
+    lines: [
+      "make_one_rel() applies cost model to each candidate path",
+      "Cost = seq_page_cost × pages + random_page_cost × random_pages",
+      "       + cpu_tuple_cost × rows + cpu_operator_cost × operators",
+      "Picks the path with the lowest estimated total cost",
+      "Output: PlannedStmt — the single chosen execution plan"
+    ]
+  },
+  {
+    title: "STAGE 5 — EXECUTOR",
+    color: "#d2a8ff",
+    lines: [
+      "ExecutorStart() initializes all plan nodes (Init phase)",
+      "ExecutorRun() calls GetNext() on the root node repeatedly",
+      "Each node pulls rows from children — Volcano/iterator model",
+      "Rows flow up through the plan tree: scan → filter → join → sort",
+      "Output: TupleTableSlots sent to the PostgreSQL wire protocol"
+    ]
+  },
+  {
+    title: "STAGE 6 — RESULTS",
+    color: "#7ee787",
+    lines: [
+      "Rows encoded into PostgreSQL wire protocol format",
+      "Sent over the TCP connection to the client (libpq/driver)",
+      "Client library decodes into language-native data structures",
+      "Buffer pool updated: accessed pages get usage count bump",
+      "Query complete. Total time: ~0.4ms. 6 stages, zero shortcuts."
+    ]
+  }
+];
+
+let pipelineStep = 0;
+let pipelineTimer = null;
+const stageIds = ['pl-1','pl-2','pl-3','pl-4','pl-5','pl-6'];
+const stageColors = ['#ff8c42','#888888','#1d6fb8','#3fa34d','#8a4fff','#0d9488'];
+const arrowIds = ['arr-1','arr-2','arr-3','arr-4','arr-5'];
+
+function pipelineSetStage(n) {
+  // Reset all
+  stageIds.forEach((id, i) => {
+    const g = document.getElementById(id);
+    if (!g) return;
+    const rect = g.querySelector('rect');
+    const texts = g.querySelectorAll('text');
+    if (i < n) {
+      rect.setAttribute('fill', stageColors[i]);
+      rect.setAttribute('stroke', stageColors[i]);
+      texts.forEach(t => t.setAttribute('fill', '#ffffff'));
+    } else if (i === n) {
+      rect.setAttribute('fill', stageColors[i]);
+      rect.setAttribute('stroke', '#ffd23f');
+      rect.setAttribute('stroke-width', '4');
+      texts.forEach(t => t.setAttribute('fill', '#ffffff'));
+    } else {
+      rect.setAttribute('fill', '#161b22');
+      rect.setAttribute('stroke', '#30363d');
+      rect.setAttribute('stroke-width', '2.5');
+      texts.forEach(t => {
+        t.setAttribute('fill', i < 2 ? '#adbac7' : '#adbac7');
+      });
+    }
+  });
+  // Arrows
+  arrowIds.forEach((id, i) => {
+    const line = document.getElementById(id);
+    const head = document.getElementById('arh-'+(i+1));
+    const active = i < n;
+    const color = active ? '#ffd23f' : '#30363d';
+    if (line) { line.setAttribute('stroke', color); line.setAttribute('stroke-width', active ? '3' : '2.5'); }
+    if (head) head.setAttribute('fill', color);
+  });
+
+  // Detail box
+  const title = document.getElementById('pl-detail-title');
+  if (n < 6) {
+    const s = pipelineStages[n];
+    title.textContent = s.title;
+    title.setAttribute('fill', s.color);
+    s.lines.forEach((line, i) => {
+      const el = document.getElementById('pl-detail-l'+(i+1));
+      if (el) { el.textContent = '› ' + line; el.setAttribute('fill', '#adbac7'); }
+    });
+  } else {
+    title.textContent = '✓ QUERY COMPLETE — ALL 6 STAGES EXECUTED';
+    title.setAttribute('fill', '#7ee787');
+    ['l1','l2','l3','l4','l5'].forEach(k => {
+      const el = document.getElementById('pl-detail-'+k);
+      if (el) { el.textContent = ''; }
+    });
+    document.getElementById('pl-detail-l1').textContent = '› Total path: ~10–50 µs planning + execution time for a simple query';
+    document.getElementById('pl-detail-l2').textContent = '› Complex analytical query: planning 1–5ms, execution 5ms–5min';
+    document.getElementById('pl-detail-l3').textContent = '› Prepared statements skip parser + planner on repeat executions';
+  }
+  document.getElementById('pipeline-status').textContent = 'Stage ' + Math.min(n+1,6) + ' / 6 — ' + (n < 6 ? pipelineStages[n].title : 'COMPLETE');
+}
+
+function pipelineStep_fn() {
+  if (pipelineStep < 6) {
+    pipelineSetStage(pipelineStep);
+    pipelineStep++;
+  }
+}
+window.pipelineStep = pipelineStep_fn;
+
+function pipelinePlayPause() {
+  if (pipelineTimer) {
+    clearInterval(pipelineTimer);
+    pipelineTimer = null;
+    document.getElementById('btn-play-pause').textContent = '⏵ PLAY';
+  } else {
+    document.getElementById('btn-play-pause').textContent = '⏸ PAUSE';
+    pipelineTimer = setInterval(() => {
+      if (pipelineStep >= 6) {
+        clearInterval(pipelineTimer);
+        pipelineTimer = null;
+        document.getElementById('btn-play-pause').textContent = '⏵ PLAY';
+        return;
+      }
+      pipelineStep_fn();
+    }, 1400);
+  }
+}
+window.pipelinePlayPause = pipelinePlayPause;
+
+function pipelineReset() {
+  if (pipelineTimer) { clearInterval(pipelineTimer); pipelineTimer = null; }
+  document.getElementById('btn-play-pause').textContent = '⏵ PLAY';
+  pipelineStep = 0;
+  stageIds.forEach((id) => {
+    const g = document.getElementById(id);
+    if (!g) return;
+    const rect = g.querySelector('rect');
+    const texts = g.querySelectorAll('text');
+    rect.setAttribute('fill', '#161b22');
+    rect.setAttribute('stroke', '#30363d');
+    rect.setAttribute('stroke-width', '2.5');
+    texts.forEach(t => t.setAttribute('fill', '#adbac7'));
+  });
+  arrowIds.forEach(id => {
+    const line = document.getElementById(id);
+    const i = parseInt(id.split('-')[1]) - 1;
+    const head = document.getElementById('arh-'+(i+1));
+    if (line) { line.setAttribute('stroke', '#30363d'); line.setAttribute('stroke-width', '2.5'); }
+    if (head) head.setAttribute('fill', '#30363d');
+  });
+  const title = document.getElementById('pl-detail-title');
+  title.textContent = 'PRESS STEP OR PLAY TO BEGIN';
+  title.setAttribute('fill', '#ffd23f');
+  ['l1','l2','l3','l4','l5'].forEach(k => {
+    const el = document.getElementById('pl-detail-'+k);
+    if (el) el.textContent = '';
+  });
+  document.getElementById('pipeline-status').textContent = 'Stage 0 / 6 — Ready';
+}
+window.pipelineReset = pipelineReset;
+
+/* ═══════════════════════════════════════════════════
+   PLAN COMPARISON ANIMATION
+═══════════════════════════════════════════════════ */
+function animatePlanComparison() {
+  const barA = document.getElementById('bar-a');
+  const barB = document.getElementById('bar-b');
+  const labelA = document.getElementById('bar-a-label');
+  const labelB = document.getElementById('bar-b-label');
+  const banner = document.getElementById('winner-banner');
+  const wt1 = document.getElementById('winner-text1');
+  const wt2 = document.getElementById('winner-text2');
+
+  // Reset
+  barA.setAttribute('width', '0');
+  barB.setAttribute('width', '0');
+  labelA.textContent = '';
+  labelB.textContent = '';
+  banner.setAttribute('opacity', '0');
+  wt1.setAttribute('opacity', '0');
+  wt2.setAttribute('opacity', '0');
+
+  // Animate bar A first (large cost)
+  let wA = 0;
+  const targA = 260; // full width
+  const timerA = setInterval(() => {
+    wA = Math.min(wA + 6, targA);
+    barA.setAttribute('width', wA);
+    const costLabel = Math.round(wA / targA * 450);
+    labelA.textContent = 'COST: ' + costLabel;
+    if (wA >= targA) {
+      clearInterval(timerA);
+      labelA.textContent = 'COST: 450.00';
+      // Now animate bar B (small cost)
+      let wB = 0;
+      const targB = Math.round(260 * 8.44 / 450); // proportional
+      const timerB = setInterval(() => {
+        wB = Math.min(wB + 3, targB);
+        barB.setAttribute('width', wB);
+        const costLabel2 = (wB / 260 * 450).toFixed(2);
+        labelB.textContent = 'COST: ' + costLabel2;
+        if (wB >= targB) {
+          clearInterval(timerB);
+          labelB.textContent = 'COST: 8.44';
+          // Show winner banner
+          setTimeout(() => {
+            banner.setAttribute('opacity', '1');
+            wt1.setAttribute('opacity', '1');
+            wt2.setAttribute('opacity', '1');
+          }, 300);
+        }
+      }, 16);
+    }
+  }, 16);
+}
+window.animatePlanComparison = animatePlanComparison;
+
+/* ═══════════════════════════════════════════════════
+   BUFFER POOL DEMO
+═══════════════════════════════════════════════════ */
+const bufState = {
+  slots: Array(8).fill(null), // null = empty, string = page id
+  lru: Array(8).fill(0),      // access timestamps
+  clock: 0,
+  hits: 0,
+  misses: 0,
+  counter: 0
+};
+
+const pageNames = ['users_p1','users_p2','users_p3','orders_p1','orders_p2','orders_p3','idx_p1','idx_p2','idx_p3','users_p4','orders_p4','idx_p3'];
+
+function bufUpdateUI() {
+  bufState.slots.forEach((page, i) => {
+    const el = document.getElementById('bslot-'+i);
+    if (!el) return;
+    const pg = el.querySelector('.slot-page');
+    const st = el.querySelector('.slot-status');
+    el.className = 'buf-slot ' + (page ? 'hit' : 'idle');
+    if (page) {
+      pg.textContent = page;
+      st.textContent = 'cached';
+    } else {
+      pg.textContent = 'EMPTY';
+      st.textContent = '—';
+    }
+  });
+  const total = bufState.hits + bufState.misses;
+  document.getElementById('buf-hits').textContent = bufState.hits;
+  document.getElementById('buf-miss').textContent = bufState.misses;
+  document.getElementById('buf-ratio').textContent = total > 0 ? (bufState.hits / total * 100).toFixed(1) + '%' : '—';
+}
+
+function bufFindEvict() {
+  // Find empty slot first
+  const empty = bufState.slots.indexOf(null);
+  if (empty !== -1) return empty;
+  // LRU eviction
+  let oldest = 0;
+  for (let i = 1; i < 8; i++) {
+    if (bufState.lru[i] < bufState.lru[oldest]) oldest = i;
+  }
+  return oldest;
+}
+
+function bufAccessPage(page, log) {
+  bufState.clock++;
+  const idx = bufState.slots.indexOf(page);
+  if (idx !== -1) {
+    bufState.hits++;
+    bufState.lru[idx] = bufState.clock;
+    document.getElementById('bslot-'+idx).className = 'buf-slot hit';
+    document.getElementById('buf-log').textContent = '✓ CACHE HIT: ' + page + ' · ~1 µs · ' + log;
+  } else {
+    bufState.misses++;
+    const evict = bufFindEvict();
+    const old = bufState.slots[evict];
+    bufState.slots[evict] = page;
+    bufState.lru[evict] = bufState.clock;
+    // Flash miss
+    document.getElementById('bslot-'+evict).className = 'buf-slot miss';
+    const el = document.getElementById('bslot-'+evict);
+    el.querySelector('.slot-page').textContent = page;
+    el.querySelector('.slot-status').textContent = 'DISK READ';
+    const msg = old ? ('✗ CACHE MISS: ' + page + ' · ~0.5ms (evicted ' + old + ') · ' + log)
+                    : ('✗ CACHE MISS: ' + page + ' · ~0.5ms disk read · ' + log);
+    document.getElementById('buf-log').textContent = msg;
+    setTimeout(() => {
+      if (document.getElementById('bslot-'+evict)) {
+        document.getElementById('bslot-'+evict).className = 'buf-slot hit';
+        document.getElementById('bslot-'+evict).querySelector('.slot-status').textContent = 'cached';
+      }
+    }, 600);
+  }
+  bufUpdateUI();
+}
+
+window.bufQuery = function(type) {
+  bufState.counter++;
+  if (type === 'random') {
+    const page = pageNames[Math.floor(Math.random() * pageNames.length)];
+    bufAccessPage(page, 'random page access');
+  } else if (type === 'hot') {
+    // Access the same 3 pages repeatedly — should get hits
+    const hotPages = ['users_p1','users_p2','idx_p1'];
+    const page = hotPages[bufState.counter % 3];
+    bufAccessPage(page, 'hot row — repeated access pattern');
+  } else {
+    // Cold scan: sequential new pages
+    const page = 'scan_p' + (bufState.counter % 12);
+    bufAccessPage(page, 'full table scan — cold pages');
+  }
+};
+
+window.bufReset = function() {
+  bufState.slots.fill(null);
+  bufState.lru.fill(0);
+  bufState.clock = 0;
+  bufState.hits = 0;
+  bufState.misses = 0;
+  bufState.counter = 0;
+  for (let i = 0; i < 8; i++) {
+    const el = document.getElementById('bslot-'+i);
+    if (el) {
+      el.className = 'buf-slot idle';
+      el.querySelector('.slot-page').textContent = 'EMPTY';
+      el.querySelector('.slot-status').textContent = '—';
+    }
+  }
+  document.getElementById('buf-hits').textContent = '0';
+  document.getElementById('buf-miss').textContent = '0';
+  document.getElementById('buf-ratio').textContent = '—';
+  document.getElementById('buf-log').textContent = 'Reset. Click a button to simulate queries.';
+};
+</script>
+
+<script src="/masthead.js"></script>
+<script src="/author-card.js"></script>
+</body>
+</html>

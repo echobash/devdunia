@@ -1,0 +1,747 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>How Docker Works — DevDunia Comics</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bangers&family=Comic+Neue:ital,wght@0,400;0,700;1,400&family=Space+Mono:wght@400;700&display=swap">
+<style>
+:root {
+  --ink: #1a1410; --paper: #fdf3e3; --paper2: #fbe9cc;
+  --red: #e63946; --blue: #1d6fb8; --yellow: #ffd23f;
+  --green: #3fa34d; --pink: #ff6b9d; --purple: #8a4fff;
+  --orange: #ff8c42; --teal: #0d9488;
+}
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  font-family: 'Comic Neue', cursive; color: var(--ink);
+  background-color: var(--paper);
+  background-image: radial-gradient(var(--ink) 0.5px, transparent 0.6px);
+  background-size: 14px 14px; background-attachment: fixed; line-height: 1.65;
+}
+.page-wrap { position: relative; z-index: 1; max-width: 1240px; margin: 0 auto; padding: 20px 32px 60px; }
+.panel { border: 4px solid var(--ink); border-radius: 6px; box-shadow: 7px 7px 0 var(--ink); background: var(--paper); padding: 28px 32px; margin-bottom: 32px; }
+h2 { font-family: 'Bangers', cursive; font-size: 2.4rem; letter-spacing: 2px; margin-bottom: 16px; line-height: 1; }
+h3 { font-family: 'Bangers', cursive; font-size: 1.6rem; letter-spacing: 1px; margin-bottom: 12px; }
+h4 { font-family: 'Bangers', cursive; font-size: 1.2rem; letter-spacing: 1px; margin-bottom: 8px; }
+p  { margin-bottom: 14px; font-size: 1.05rem; }
+p:last-child { margin-bottom: 0; }
+ul { padding-left: 22px; margin-bottom: 14px; }
+li { margin-bottom: 6px; font-size: 1rem; }
+code { font-family: 'Space Mono', monospace; font-size: .85em; background: var(--paper2); padding: 1px 5px; border-radius: 3px; }
+.section-head { display: flex; align-items: center; gap: 14px; margin-bottom: 22px; flex-wrap: wrap; }
+.section-num { font-family: 'Bangers', cursive; font-size: 1.1rem; letter-spacing: 2px; background: var(--blue); color: #fff; padding: 4px 14px; border-radius: 4px; border: 2px solid var(--ink); box-shadow: 2px 2px 0 var(--ink); }
+.chip { display: inline-block; font-family: 'Bangers', cursive; font-size: .85rem; letter-spacing: 1.5px; padding: 3px 12px; border-radius: 4px; border: 2px solid var(--ink); margin-right: 6px; margin-bottom: 6px; vertical-align: middle; }
+.chip-green  { background: var(--green);  color: #fff; }
+.chip-red    { background: var(--red);    color: #fff; }
+.chip-blue   { background: var(--blue);   color: #fff; }
+.chip-yellow { background: var(--yellow); color: var(--ink); }
+.chip-orange { background: var(--orange); color: #fff; }
+.terminal { background: #0d1117; border: 3px solid #30363d; border-radius: 8px; overflow: hidden; margin: 16px 0; }
+.terminal-bar { background: #161b22; border-bottom: 2px solid #30363d; padding: 8px 14px; display: flex; align-items: center; gap: 8px; }
+.tbar-dot { width: 12px; height: 12px; border-radius: 50%; display: inline-block; }
+.tbar-dot.red   { background: #ff5f56; }
+.tbar-dot.yellow{ background: #ffbd2e; }
+.tbar-dot.green { background: #27c93f; }
+.tbar-label { font-family: 'Space Mono', monospace; font-size: .75rem; color: #8b949e; margin-left: 8px; }
+.terminal-body { padding: 20px 22px; font-family: 'Space Mono', monospace; font-size: .82rem; line-height: 1.75; overflow-x: auto; white-space: pre-wrap; color: #adbac7; }
+.t-kw  { color: #ff7b72; }
+.t-str { color: #a5d6ff; }
+.t-val { color: #79c0ff; }
+.t-key { color: #7ee787; }
+.t-num { color: #e3b341; }
+.t-cmt { color: #7d8590; font-style: italic; }
+.t-hdr { color: #d2a8ff; }
+.hbox { border: 3px solid var(--ink); border-radius: 5px; padding: 18px 22px; margin: 16px 0; position: relative; }
+.hbox-label { font-family: 'Bangers', cursive; font-size: .9rem; letter-spacing: 2px; position: absolute; top: -14px; left: 16px; padding: 2px 12px; border: 2px solid var(--ink); border-radius: 4px; }
+.hbox-blue { background: rgba(29,111,184,.1); border-color: var(--blue); }
+.hbox-blue .hbox-label { background: var(--blue); color: #fff; }
+.hbox-green { background: rgba(63,163,77,.1); border-color: var(--green); }
+.hbox-green .hbox-label { background: var(--green); color: #fff; }
+.hbox-red { background: rgba(230,57,70,.08); border-color: var(--red); }
+.hbox-red .hbox-label { background: var(--red); color: #fff; }
+.hbox-yellow { background: rgba(255,210,63,.15); border-color: var(--yellow); }
+.hbox-yellow .hbox-label { background: var(--yellow); color: var(--ink); }
+.hbox-orange { background: rgba(255,140,66,.1); border-color: var(--orange); }
+.hbox-orange .hbox-label { background: var(--orange); color: #fff; }
+.data-table { width: 100%; border-collapse: collapse; margin: 16px 0; font-size: .93rem; }
+.data-table th { font-family: 'Bangers', cursive; font-size: 1rem; letter-spacing: 1px; background: var(--ink); color: #fff; padding: 10px 14px; text-align: left; border: 2px solid var(--ink); }
+.data-table td { padding: 10px 14px; border: 2px solid var(--ink); vertical-align: top; }
+.data-table tr:nth-child(odd) td  { background: var(--paper2); }
+.data-table tr:nth-child(even) td { background: var(--paper); }
+.grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin: 16px 0; }
+.grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 16px; margin: 16px 0; }
+@media (max-width: 640px) { .grid-2, .grid-3 { grid-template-columns: 1fr; } }
+.card { border: 3px solid var(--ink); border-radius: 5px; box-shadow: 4px 4px 0 var(--ink); padding: 18px; background: var(--paper); }
+.card-head { font-family: 'Bangers', cursive; font-size: 1.1rem; letter-spacing: 1px; margin-bottom: 10px; padding-bottom: 8px; border-bottom: 2px solid var(--ink); }
+.step-flow { display: flex; flex-direction: column; gap: 0; }
+.step-item { display: grid; grid-template-columns: 52px 1fr; gap: 0 18px; position: relative; }
+.step-item:not(:last-child)::after { content: ''; position: absolute; left: 25px; top: 52px; bottom: -16px; width: 2px; background: var(--ink); }
+.step-num { width: 52px; height: 52px; border-radius: 50%; border: 3px solid var(--ink); display: flex; align-items: center; justify-content: center; font-family: 'Bangers', cursive; font-size: 1.1rem; box-shadow: 3px 3px 0 var(--ink); flex-shrink: 0; position: relative; z-index: 1; }
+.step-body { padding: 8px 0 28px; }
+.sfx-row { display: flex; gap: 16px; flex-wrap: wrap; margin: 20px 0; }
+.sfx { font-family: 'Bangers', cursive; font-size: 1.8rem; letter-spacing: 3px; color: var(--ink); text-shadow: 3px 3px 0 var(--yellow); transform: rotate(-2deg); display: inline-block; }
+.sfx:nth-child(even) { transform: rotate(2deg); text-shadow: 3px 3px 0 var(--blue); }
+.chapter-divider { text-align: center; margin: 40px 0 28px; position: relative; }
+.chapter-divider::before { content: ''; position: absolute; top: 50%; left: 0; right: 0; height: 3px; background: var(--ink); }
+.chapter-divider span { position: relative; background: var(--paper); font-family: 'Bangers', cursive; font-size: 1rem; letter-spacing: 3px; padding: 0 16px; }
+
+/* HERO */
+.hero-panel {
+  background: var(--ink); border: 4px solid var(--ink); border-radius: 8px;
+  box-shadow: 8px 8px 0 var(--blue); padding: 48px 40px 40px; margin-bottom: 32px;
+  text-align: center; position: relative; overflow: hidden;
+}
+.hero-title { font-family: 'Bangers', cursive; font-size: clamp(3.5rem,11vw,7rem); letter-spacing: 4px; color: #fff; text-shadow: 4px 4px 0 var(--blue), 8px 8px 0 rgba(0,0,0,.4); line-height: 0.95; position: relative; }
+.hero-sub   { font-family: 'Space Mono', monospace; font-size: 1.2rem; color: var(--green); margin-top: 16px; letter-spacing: 1px; position: relative; }
+.hero-desc  { font-family: 'Comic Neue', cursive; font-size: 1.05rem; color: rgba(255,255,255,.75); margin-top: 14px; max-width: 600px; margin-left: auto; margin-right: auto; position: relative; }
+.hero-badges { display: flex; gap: 10px; justify-content: center; margin-top: 20px; flex-wrap: wrap; position: relative; }
+.hero-badge { font-family: 'Bangers', cursive; font-size: .9rem; letter-spacing: 2px; padding: 5px 16px; border-radius: 20px; border: 2px solid rgba(255,255,255,.3); }
+/* Animated terminal in hero */
+.hero-terminal { margin: 24px auto 0; max-width: 500px; background: #0d1117; border: 3px solid #30363d; border-radius: 8px; padding: 16px 18px; text-align: left; font-family: 'Space Mono', monospace; font-size: .8rem; position: relative; }
+.hero-terminal-output { color: #7ee787; min-height: 120px; }
+.cursor { display: inline-block; width: 8px; height: 14px; background: #7ee787; animation: blink 1s step-end infinite; vertical-align: middle; margin-left: 2px; }
+@keyframes blink { 50% { opacity: 0; } }
+
+/* LAYER STACK */
+.layer-wrap {
+  background: #0d1117; border: 4px solid var(--ink); border-radius: 8px;
+  box-shadow: 7px 7px 0 var(--ink); overflow: hidden; margin: 24px 0;
+}
+.layer-bar { background: #161b22; border-bottom: 2px solid #30363d; padding: 10px 16px; font-family: 'Bangers', cursive; font-size: 1rem; letter-spacing: 2px; color: #e6edf3; display: flex; align-items: center; gap: 8px; }
+.layer-body { padding: 20px; display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+@media (max-width: 600px) { .layer-body { grid-template-columns: 1fr; } }
+.layer-stack { display: flex; flex-direction: column-reverse; gap: 6px; }
+.layer-card {
+  padding: 10px 14px; border-radius: 5px; border: 2px solid #30363d; cursor: pointer;
+  transition: border-color .2s, transform .1s; background: #161b22;
+}
+.layer-card:hover { transform: translateX(4px); border-color: #8b949e; }
+.layer-card.selected { border-color: var(--blue); background: #0d2444; }
+.layer-card.container-layer { border-color: var(--green); background: #0d2016; }
+.lc-title { font-family: 'Bangers', cursive; font-size: .95rem; letter-spacing: 1px; color: #e6edf3; }
+.lc-size  { font-family: 'Space Mono', monospace; font-size: .75rem; color: #7d8590; }
+.lc-hash  { font-family: 'Space Mono', monospace; font-size: .7rem; color: #444d56; margin-top: 2px; }
+.layer-detail { background: #0d1117; border: 1px solid #30363d; border-radius: 5px; padding: 14px; }
+.ld-head { font-family: 'Bangers', cursive; font-size: 1rem; letter-spacing: 1px; color: var(--yellow); margin-bottom: 8px; }
+.ld-body { font-family: 'Space Mono', monospace; font-size: .78rem; color: #adbac7; line-height: 1.75; }
+.overlayfs-diagram { margin-top: 16px; border: 2px solid #30363d; border-radius: 5px; padding: 12px; font-family: 'Space Mono', monospace; font-size: .75rem; color: #adbac7; }
+
+/* SEQUENCE DIAGRAM */
+.seq-wrap {
+  background: #0a0f1e; border: 4px solid var(--ink); border-radius: 8px;
+  box-shadow: 7px 7px 0 var(--ink); padding: 20px; margin: 24px 0; overflow: hidden;
+}
+.seq-controls { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; margin-bottom: 16px; }
+.seq-btn { font-family: 'Bangers', cursive; font-size: .95rem; letter-spacing: 1px; padding: 8px 18px; border: 2px solid #30363d; border-radius: 5px; background: #161b22; color: #e6edf3; cursor: pointer; transition: background .15s; }
+.seq-btn:hover { background: #21262d; border-color: #8b949e; }
+.seq-counter { font-family: 'Space Mono', monospace; font-size: .85rem; color: #adbac7; margin-left: auto; }
+.seq-phase { font-family: 'Bangers', cursive; font-size: .95rem; letter-spacing: 2px; padding: 4px 14px; border-radius: 12px; background: #161b22; color: #7ee787; border: 1px solid #30363d; }
+.seq-desc { font-family: 'Comic Neue', cursive; font-size: .9rem; color: #adbac7; background: #161b22; border-radius: 5px; padding: 10px 14px; margin-top: 12px; border-left: 3px solid var(--blue); min-height: 44px; }
+</style>
+</head>
+<body>
+<div data-masthead></div>
+<div class="page-wrap">
+
+<div data-tool-hero
+  data-title="How Docker Works"
+  data-chapter="HOW-06"
+  data-category="How X Works"
+  data-icon="🐳"
+  data-desc="Images, layers, containers, builds — namespaces, cgroups, OverlayFS and the Linux kernel magic that makes containers possible."
+  data-color="blue"
+  data-badges="CONTAINERS,NAMESPACES,OVERLAYFS,FREE"
+  data-badge-colors="blue,green,yellow,white">
+</div>
+
+
+<!-- SECTION 1: Containers vs VMs -->
+<div class="panel">
+  <div class="section-head">
+    <span class="section-num">01</span>
+    <h2>Containers vs Virtual Machines</h2>
+  </div>
+
+  <div class="grid-2">
+    <div class="card" style="border-color:var(--red);">
+      <div class="card-head" style="color:var(--red);">Virtual Machine</div>
+      <div style="display:flex;flex-direction:column;gap:0;margin-bottom:12px;">
+        <div style="padding:8px 12px;background:rgba(230,57,70,.1);border:2px solid var(--ink);border-radius:4px 4px 0 0;font-size:.9rem;text-align:center;font-weight:700;">App A</div>
+        <div style="padding:8px 12px;background:var(--paper2);border:2px solid var(--ink);border-top:0;font-size:.85rem;text-align:center;">Guest OS (Ubuntu 22.04)</div>
+        <div style="padding:8px 12px;background:rgba(230,57,70,.08);border:2px solid var(--ink);border-top:0;font-size:.85rem;text-align:center;">Hypervisor (VMware/VBox)</div>
+        <div style="padding:8px 12px;background:var(--paper2);border:2px solid var(--ink);border-top:0;border-radius:0 0 4px 4px;font-size:.85rem;text-align:center;">Host OS + Hardware</div>
+      </div>
+      <ul style="font-size:.9rem;line-height:1.8;color:var(--red);">
+        <li>Full OS per VM (1–10 GB each)</li>
+        <li>Minutes to start (BIOS + OS boot)</li>
+        <li>Hypervisor overhead on CPU/RAM</li>
+        <li>Strong isolation (separate kernel)</li>
+      </ul>
+    </div>
+    <div class="card" style="border-color:var(--green);">
+      <div class="card-head" style="color:var(--green);">Container</div>
+      <div style="display:flex;flex-direction:column;gap:0;margin-bottom:12px;">
+        <div style="padding:8px 12px;background:rgba(63,163,77,.15);border:2px solid var(--ink);border-radius:4px 4px 0 0;font-size:.9rem;text-align:center;font-weight:700;">App A</div>
+        <div style="padding:8px 12px;background:rgba(29,111,184,.1);border:2px solid var(--ink);border-top:0;font-size:.85rem;text-align:center;">Docker / OCI Runtime (runc)</div>
+        <div style="padding:8px 12px;background:var(--paper2);border:2px solid var(--ink);border-top:0;border-radius:0 0 4px 4px;font-size:.85rem;text-align:center;">Host OS Kernel (shared)</div>
+      </div>
+      <ul style="font-size:.9rem;line-height:1.8;color:var(--green);">
+        <li>Shared host kernel (MB per image)</li>
+        <li>Milliseconds to start (just a process)</li>
+        <li>Near-zero overhead</li>
+        <li>Isolation via namespaces + cgroups</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="hbox hbox-orange"><div class="hbox-label">DOCKER ON MAC AND WINDOWS</div>
+    <p style="margin-top:12px;">Linux containers need a Linux kernel. Docker Desktop on Mac or Windows secretly runs a lightweight Linux VM (LinuxKit on Mac using the Virtualization framework). <strong>Your containers run inside this hidden VM</strong>, not directly on macOS. This is why Docker Desktop on Mac is slightly slower than Docker on Linux — there's a VM boundary. Docker Desktop handles this transparently.</p>
+  </div>
+</div>
+
+<!-- SECTION 2: Linux Primitives -->
+<div class="panel">
+  <div class="section-head">
+    <span class="section-num">02</span>
+    <h2>The Linux Kernel Primitives</h2>
+  </div>
+  <p>Containers aren't a kernel feature — they're an orchestration of existing kernel features. Docker uses two Linux mechanisms: <strong>namespaces</strong> for isolation and <strong>cgroups</strong> for resource limits.</p>
+
+  <h3>Namespaces — Isolation</h3>
+  <p>A namespace wraps a global system resource so that processes inside the namespace see their own isolated instance. Docker creates a new set of namespaces for each container.</p>
+
+  <table class="data-table">
+    <thead><tr><th>Namespace</th><th>What It Isolates</th><th>Container Sees</th></tr></thead>
+    <tbody>
+      <tr><td><strong>PID</strong></td><td>Process IDs</td><td>Its own PID 1, host sees different PID</td></tr>
+      <tr><td><strong>NET</strong></td><td>Network stack</td><td>Own eth0, routing table, iptables</td></tr>
+      <tr><td><strong>MNT</strong></td><td>Filesystem mounts</td><td>Own /, /proc, /sys view</td></tr>
+      <tr><td><strong>UTS</strong></td><td>Hostname + domain</td><td>Can set own hostname</td></tr>
+      <tr><td><strong>IPC</strong></td><td>POSIX message queues, SysV IPC</td><td>Isolated IPC resources</td></tr>
+      <tr><td><strong>USER</strong></td><td>UID/GID mapping</td><td>Container root → host unprivileged UID</td></tr>
+      <tr><td><strong>TIME</strong></td><td>System clock (Linux 5.6+)</td><td>Can have different system time</td></tr>
+    </tbody>
+  </table>
+
+  <div class="terminal">
+    <div class="terminal-bar"><span class="tbar-dot red"></span><span class="tbar-dot yellow"></span><span class="tbar-dot green"></span><span class="tbar-label">Inspect a container's namespaces</span></div>
+    <div class="terminal-body"><span class="t-cmt"># Get the PID of a running container on the host</span>
+<span class="t-key">$</span> docker inspect nginx_container --format '{{.State.Pid}}'
+<span class="t-val">12345</span>
+
+<span class="t-cmt"># See its namespace file descriptors</span>
+<span class="t-key">$</span> ls -la /proc/12345/ns/
+lrwxrwxrwx ipc  -> ipc:[4026532205]
+lrwxrwxrwx mnt  -> mnt:[4026532203]
+lrwxrwxrwx net  -> net:[4026532208]
+lrwxrwxrwx pid  -> pid:[4026532206]
+lrwxrwxrwx user -> user:[4026531837]  <span class="t-cmt">← same as host (not isolated)</span>
+lrwxrwxrwx uts  -> uts:[4026532204]
+
+<span class="t-cmt"># Enter the container's network namespace from the host</span>
+<span class="t-key">$</span> sudo nsenter -t 12345 -n ip addr</div>
+  </div>
+
+  <h3>cgroups — Resource Limits</h3>
+  <p>Control Groups limit how much CPU, memory, disk I/O, and network bandwidth a container can use. Without cgroups, a container could starve other containers or the host.</p>
+
+  <div class="terminal">
+    <div class="terminal-bar"><span class="tbar-dot red"></span><span class="tbar-dot yellow"></span><span class="tbar-dot green"></span><span class="tbar-label">Docker → cgroup mapping</span></div>
+    <div class="terminal-body"><span class="t-cmt"># What Docker flags become under the hood:</span>
+<span class="t-kw">docker run</span> --memory=256m --cpus=0.5 nginx
+
+<span class="t-cmt"># Creates cgroup at:</span>
+/sys/fs/cgroup/docker/<span class="t-val">abc123...</span>/
+  memory.limit_in_bytes = <span class="t-num">268435456</span>    <span class="t-cmt">← 256MB</span>
+  cpu.cfs_quota_us      = <span class="t-num">50000</span>         <span class="t-cmt">← 50ms per 100ms period = 0.5 CPU</span>
+  cpu.cfs_period_us     = <span class="t-num">100000</span>
+
+<span class="t-cmt"># Check live memory usage:</span>
+<span class="t-key">$</span> cat /sys/fs/cgroup/docker/<span class="t-val">abc123</span>/memory.usage_in_bytes
+<span class="t-num">134217728</span>   <span class="t-cmt">← 128MB currently used</span></div>
+  </div>
+</div>
+
+<!-- SECTION 3: Images and Layers -->
+<div class="panel">
+  <div class="section-head">
+    <span class="section-num">03</span>
+    <h2>Docker Images and OverlayFS</h2>
+  </div>
+  <p>A Docker image is a stack of read-only <strong>layers</strong>. Each layer is a tar archive of filesystem changes — added, modified, or deleted files — from one Dockerfile instruction. Layers are content-addressed by SHA256 hash and shared across images.</p>
+
+  <h3>OverlayFS: How Layers Merge</h3>
+  <div class="terminal">
+    <div class="terminal-bar"><span class="tbar-dot red"></span><span class="tbar-dot yellow"></span><span class="tbar-dot green"></span><span class="tbar-label">OverlayFS Mount</span></div>
+    <div class="terminal-body"><span class="t-cmt"># OverlayFS combines multiple directories into one view</span>
+mount -t overlay overlay \
+  -o <span class="t-key">lowerdir</span>=<span class="t-val">/var/lib/docker/overlay2/layer3:/var/lib/docker/overlay2/layer2:/var/lib/docker/overlay2/layer1</span>, \
+     <span class="t-key">upperdir</span>=<span class="t-val">/var/lib/docker/overlay2/CONTAINER_ID/diff</span>, \
+     <span class="t-key">workdir</span>=<span class="t-val">/var/lib/docker/overlay2/CONTAINER_ID/work</span> \
+  /var/lib/docker/overlay2/CONTAINER_ID/merged
+
+<span class="t-cmt">╔═══════════════════════════════════════════════════╗</span>
+<span class="t-cmt">║  upperdir  (read-write container layer)           ║  ← writes go here</span>
+<span class="t-cmt">╠═══════════════════════════════════════════════════╣</span>
+<span class="t-cmt">║  layer3    /etc/nginx/nginx.conf (COPY)  [RO]     ║</span>
+<span class="t-cmt">╠═══════════════════════════════════════════════════╣</span>
+<span class="t-cmt">║  layer2    /usr/sbin/nginx (RUN apt install) [RO] ║</span>
+<span class="t-cmt">╠═══════════════════════════════════════════════════╣</span>
+<span class="t-cmt">║  layer1    ubuntu:22.04 base OS           [RO]    ║</span>
+<span class="t-cmt">╚═══════════════════════════════════════════════════╝</span>
+              ↓ merged view (what container sees)
+<span class="t-cmt">     / ← looks like a normal Linux filesystem</span></div>
+  </div>
+
+  <div class="hbox hbox-blue"><div class="hbox-label">COPY-ON-WRITE (CoW)</div>
+    <p style="margin-top:12px;">When a container reads a file, it reads from whatever layer contains the file — fast, no copying. When a container <em>writes</em> to a file that exists in a lower layer (read-only), the kernel copies the file up to the upperdir first, then modifies the copy. Subsequent reads of that file hit the upperdir. This is transparent to the process inside the container.</p>
+  </div>
+
+  <!-- Layer Stack Interactive -->
+  <h3>Interactive Layer Stack</h3>
+  <p>Click each layer to see what Dockerfile instruction created it and which files it contains.</p>
+  <div class="layer-wrap">
+    <div class="layer-bar">
+      <span class="tbar-dot red"></span><span class="tbar-dot yellow"></span><span class="tbar-dot green"></span>
+      <span>IMAGE LAYER EXPLORER — nginx:alpine example</span>
+    </div>
+    <div class="layer-body">
+      <div>
+        <div style="font-family:'Space Mono',monospace;font-size:.75rem;color:#7d8590;margin-bottom:10px;">Top = newest layer. Bottom = base image.</div>
+        <div class="layer-stack" id="layer-stack"></div>
+        <div class="overlayfs-diagram" id="overlayfs-view">
+          <div style="color:#7d8590;font-size:.75rem;">OverlayFS merge</div>
+          <div id="overlay-visual" style="margin-top:6px;"></div>
+        </div>
+      </div>
+      <div class="layer-detail" id="layer-detail">
+        <div class="ld-head">SELECT A LAYER</div>
+        <div class="ld-body">Click any layer on the left to inspect it.</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- SECTION 4: docker build -->
+<div class="panel">
+  <div class="section-head">
+    <span class="section-num">04</span>
+    <h2>docker build — What Happens for Each Instruction</h2>
+  </div>
+
+  <div class="step-flow">
+    <div class="step-item">
+      <div class="step-num" style="background:var(--blue);color:#fff;font-size:.8rem;">FROM</div>
+      <div class="step-body">
+        <h4>FROM ubuntu:22.04</h4>
+        <p>Docker pulls the base image from the registry (if not cached locally). Unpacks all its layers into the overlay lowerdir stack. This becomes the starting point for the new image.</p>
+        <div class="terminal" style="margin:8px 0 0;">
+          <div class="terminal-body" style="font-size:.78rem;"><span class="t-cmt"># Pulls and unpacks layers to:</span>
+/var/lib/docker/overlay2/sha256:e3a6... /   <span class="t-cmt">(77MB)</span></div>
+        </div>
+      </div>
+    </div>
+    <div class="step-item">
+      <div class="step-num" style="background:var(--orange);color:#fff;font-size:.8rem;">RUN</div>
+      <div class="step-body">
+        <h4>RUN apt-get update &amp;&amp; apt-get install nginx</h4>
+        <p>Docker creates a <em>temporary container</em> from the current layers, executes the command inside it, then takes a snapshot of the filesystem diff. That diff becomes a new read-only layer. The temporary container is discarded. This layer records every file apt-get added or modified.</p>
+      </div>
+    </div>
+    <div class="step-item">
+      <div class="step-num" style="background:var(--green);color:#fff;font-size:.85rem;">COPY</div>
+      <div class="step-body">
+        <h4>COPY nginx.conf /etc/nginx/</h4>
+        <p>Files are copied from the build context (your local filesystem) into a new layer. The layer is a tar with just those files at their target paths. If the source files haven't changed since the last build, the cache hit is used — no new layer needed.</p>
+      </div>
+    </div>
+    <div class="step-item">
+      <div class="step-num" style="background:var(--purple);color:#fff;font-size:.8rem;">META</div>
+      <div class="step-body">
+        <h4>ENV, EXPOSE, CMD, ENTRYPOINT</h4>
+        <p>These instructions don't create filesystem layers. They're stored in the image's <strong>config.json</strong> — a JSON file describing environment variables, exposed ports, the command to run on <code>docker run</code>. No bytes added to the union filesystem.</p>
+      </div>
+    </div>
+  </div>
+
+  <h3 style="margin-top:8px;">Build Cache Strategy</h3>
+  <div class="hbox hbox-yellow"><div class="hbox-label">CACHE INVALIDATION RULE</div>
+    <p style="margin-top:12px;">Cache is invalidated at the first instruction that changes — and every subsequent instruction rebuilds from scratch. This is why Dockerfile ordering matters for build speed:</p>
+    <div class="grid-2" style="margin-top:12px;">
+      <div>
+        <div style="font-family:'Bangers',cursive;font-size:.95rem;color:var(--red);margin-bottom:6px;">❌ SLOW (cache miss on COPY)</div>
+        <div class="terminal" style="margin:0;"><div class="terminal-body" style="font-size:.76rem;">COPY . .           <span class="t-cmt">← copies ALL files</span>
+RUN npm install    <span class="t-cmt">← rebuilds every time</span></div></div>
+      </div>
+      <div>
+        <div style="font-family:'Bangers',cursive;font-size:.95rem;color:var(--green);margin-bottom:6px;">✅ FAST (cache hits npm install)</div>
+        <div class="terminal" style="margin:0;"><div class="terminal-body" style="font-size:.76rem;">COPY package*.json . <span class="t-cmt">← only package.json</span>
+RUN npm install      <span class="t-cmt">← cached unless deps change</span>
+COPY . .             <span class="t-cmt">← rest of source</span></div></div>
+      </div>
+    </div>
+  </div>
+
+  <h3>Multi-Stage Builds</h3>
+  <div class="terminal">
+    <div class="terminal-bar"><span class="tbar-dot red"></span><span class="tbar-dot yellow"></span><span class="tbar-dot green"></span><span class="tbar-label">Multi-stage: 800MB → 25MB</span></div>
+    <div class="terminal-body"><span class="t-cmt"># Stage 1: Build (full Node.js toolchain)</span>
+<span class="t-kw">FROM</span> <span class="t-val">node:18</span> <span class="t-kw">AS</span> builder        <span class="t-cmt">← ~800MB</span>
+<span class="t-key">WORKDIR</span> /app
+<span class="t-key">COPY</span> package*.json ./
+<span class="t-key">RUN</span> npm ci
+<span class="t-key">COPY</span> . .
+<span class="t-key">RUN</span> npm run build
+
+<span class="t-cmt"># Stage 2: Production (tiny nginx image)</span>
+<span class="t-kw">FROM</span> <span class="t-val">nginx:alpine</span>               <span class="t-cmt">← ~7MB</span>
+<span class="t-key">COPY</span> --from=builder /app/dist /usr/share/nginx/html
+<span class="t-cmt">                                  ← Final image: ~25MB</span>
+<span class="t-cmt">                                  ← node_modules never shipped!</span></div>
+  </div>
+</div>
+
+<!-- SECTION 5: docker run sequence diagram -->
+<div class="panel">
+  <div class="section-head">
+    <span class="section-num">05</span>
+    <h2>docker run — Animated Sequence</h2>
+  </div>
+  <p>Step through exactly what happens internally when you type <code>docker run nginx</code>. From CLI to running process in ~200ms.</p>
+
+  <div class="seq-wrap">
+    <div class="seq-controls">
+      <button class="seq-btn" onclick="drStep()">step →</button>
+      <button class="seq-btn" onclick="drPlay()">▶ play all</button>
+      <button class="seq-btn" onclick="drReset()">↺ reset</button>
+      <span class="seq-counter" id="dr-counter">Step 0 / 9</span>
+      <span class="seq-phase" id="dr-phase">READY</span>
+    </div>
+    <svg id="dr-svg" viewBox="0 0 800 400" width="100%" style="display:block;max-height:400px;">
+      <rect width="800" height="400" fill="#0a0f1e"/>
+      <circle cx="18" cy="14" r="5" fill="#ff5f56"/>
+      <circle cx="34" cy="14" r="5" fill="#ffbd2e"/>
+      <circle cx="50" cy="14" r="5" fill="#27c93f"/>
+      <!-- Actor boxes -->
+      <rect x="10"  y="30" width="100" height="40" rx="5" fill="#1d2433" stroke="#1d6fb8" stroke-width="2"/>
+      <text x="60"  y="55" text-anchor="middle" font-family="Bangers,cursive" font-size="13" fill="#e6edf3">CLI</text>
+      <rect x="150" y="30" width="120" height="40" rx="5" fill="#1d2433" stroke="#3fa34d" stroke-width="2"/>
+      <text x="210" y="55" text-anchor="middle" font-family="Bangers,cursive" font-size="13" fill="#e6edf3">DOCKERD</text>
+      <rect x="310" y="30" width="130" height="40" rx="5" fill="#1d2433" stroke="#ff8c42" stroke-width="2"/>
+      <text x="375" y="55" text-anchor="middle" font-family="Bangers,cursive" font-size="13" fill="#e6edf3">CONTAINERD</text>
+      <rect x="480" y="30" width="100" height="40" rx="5" fill="#1d2433" stroke="#8a4fff" stroke-width="2"/>
+      <text x="530" y="55" text-anchor="middle" font-family="Bangers,cursive" font-size="13" fill="#e6edf3">RUNC</text>
+      <rect x="620" y="30" width="160" height="40" rx="5" fill="#1d2433" stroke="#ff6b9d" stroke-width="2"/>
+      <text x="700" y="55" text-anchor="middle" font-family="Bangers,cursive" font-size="13" fill="#e6edf3">CONTAINER</text>
+      <!-- Lifelines -->
+      <line x1="60"  y1="70" x2="60"  y2="390" stroke="#1d6fb8" stroke-width="1.5" stroke-dasharray="5,4" opacity="0.35"/>
+      <line x1="210" y1="70" x2="210" y2="390" stroke="#3fa34d" stroke-width="1.5" stroke-dasharray="5,4" opacity="0.35"/>
+      <line x1="375" y1="70" x2="375" y2="390" stroke="#ff8c42" stroke-width="1.5" stroke-dasharray="5,4" opacity="0.35"/>
+      <line x1="530" y1="70" x2="530" y2="390" stroke="#8a4fff" stroke-width="1.5" stroke-dasharray="5,4" opacity="0.35"/>
+      <line x1="700" y1="70" x2="700" y2="390" stroke="#ff6b9d" stroke-width="1.5" stroke-dasharray="5,4" opacity="0.35"/>
+      <!-- Arrows -->
+      <g id="dr-g1" opacity="0"><line id="dr-l1" x1="60" y1="100" x2="210" y2="100" stroke="#79c0ff" stroke-width="2.5" stroke-dasharray="150" stroke-dashoffset="150"/><polygon id="dr-a1" points="210,94 224,100 210,106" fill="#79c0ff" opacity="0"/><text x="135" y="94" text-anchor="middle" font-family="Space Mono,monospace" font-size="9" fill="#79c0ff">docker run nginx</text><text x="135" y="113" text-anchor="middle" font-family="Space Mono,monospace" font-size="8" fill="#7d8590">via /var/run/docker.sock</text></g>
+      <g id="dr-g2" opacity="0"><line id="dr-l2" x1="210" y1="148" x2="375" y2="148" stroke="#7ee787" stroke-width="2.5" stroke-dasharray="165" stroke-dashoffset="165"/><polygon id="dr-a2" points="375,142 389,148 375,154" fill="#7ee787" opacity="0"/><text x="292" y="142" text-anchor="middle" font-family="Space Mono,monospace" font-size="9" fill="#7ee787">gRPC: CreateContainer</text></g>
+      <g id="dr-g3" opacity="0"><line id="dr-l3" x1="375" y1="195" x2="530" y2="195" stroke="#ffb86c" stroke-width="2.5" stroke-dasharray="155" stroke-dashoffset="155"/><polygon id="dr-a3" points="530,189 544,195 530,201" fill="#ffb86c" opacity="0"/><text x="452" y="189" text-anchor="middle" font-family="Space Mono,monospace" font-size="9" fill="#ffb86c">run container bundle</text></g>
+      <g id="dr-g4" opacity="0"><line id="dr-l4" x1="530" y1="235" x2="700" y2="235" stroke="#cba6f7" stroke-width="2.5" stroke-dasharray="170" stroke-dashoffset="170"/><polygon id="dr-a4" points="700,229 714,235 700,241" fill="#cba6f7" opacity="0"/><text x="615" y="229" text-anchor="middle" font-family="Space Mono,monospace" font-size="9" fill="#cba6f7">unshare() namespaces</text><text x="615" y="246" text-anchor="middle" font-family="Space Mono,monospace" font-size="8.5" fill="#7d8590">PID+NET+MNT+UTS+IPC</text></g>
+      <g id="dr-g5" opacity="0"><line id="dr-l5" x1="530" y1="280" x2="700" y2="280" stroke="#ff9aba" stroke-width="2.5" stroke-dasharray="170" stroke-dashoffset="170"/><polygon id="dr-a5" points="700,274 714,280 700,286" fill="#ff9aba" opacity="0"/><text x="615" y="274" text-anchor="middle" font-family="Space Mono,monospace" font-size="9" fill="#ff9aba">mount OverlayFS + cgroups</text></g>
+      <g id="dr-g6" opacity="0"><line id="dr-l6" x1="530" y1="320" x2="700" y2="320" stroke="#40d158" stroke-width="2.5" stroke-dasharray="170" stroke-dashoffset="170"/><polygon id="dr-a6" points="700,314 714,320 700,326" fill="#40d158" opacity="0"/><text x="615" y="314" text-anchor="middle" font-family="Space Mono,monospace" font-size="9" fill="#40d158">exec nginx (PID 1 in container)</text></g>
+      <g id="dr-g7" opacity="0"><line id="dr-l7" x1="700" y1="360" x2="60" y2="360" stroke="#e3b341" stroke-width="2.5" stroke-dasharray="640" stroke-dashoffset="640"/><polygon id="dr-a7" points="60,354 46,360 60,366" fill="#e3b341" opacity="0"/><text x="380" y="354" text-anchor="middle" font-family="Space Mono,monospace" font-size="9" fill="#e3b341">Container running! Port 80 available</text></g>
+      <!-- Done badge -->
+      <g id="dr-done" opacity="0"><rect x="290" y="378" width="220" height="20" rx="4" fill="#3fa34d" stroke="#7ee787" stroke-width="1"/><text x="400" y="392" text-anchor="middle" font-family="Bangers,cursive" font-size="11" fill="#fff" letter-spacing="2">CONTAINER RUNNING ✓</text></g>
+    </svg>
+    <div class="seq-desc" id="dr-desc">Press "step →" to walk through docker run internals, or "▶ play all" to see the full sequence.</div>
+  </div>
+
+  <h3>The Architecture Stack</h3>
+  <div class="terminal">
+    <div class="terminal-bar"><span class="tbar-dot red"></span><span class="tbar-dot yellow"></span><span class="tbar-dot green"></span><span class="tbar-label">Docker component hierarchy</span></div>
+    <div class="terminal-body">Docker CLI
+    ↓ HTTP/REST via Unix socket  <span class="t-cmt">(/var/run/docker.sock)</span>
+dockerd  <span class="t-cmt">(Docker Daemon)</span>
+    ↓ gRPC
+containerd  <span class="t-cmt">(runtime supervisor)</span>
+    ↓ protobuf
+containerd-shim-runc-v2  <span class="t-cmt">(process supervisor, survives dockerd restart)</span>
+    ↓
+runc  <span class="t-cmt">(OCI runtime — creates namespaces, mounts, execs)</span>
+    ↓
+Your Process  <span class="t-cmt">(nginx, node, python — PID 1 inside container)</span>
+
+<span class="t-cmt"># Kubernetes uses containerd directly (dockershim removed in k8s 1.24)</span></div>
+  </div>
+</div>
+
+<!-- SECTION 6: Networking -->
+<div class="panel">
+  <div class="section-head">
+    <span class="section-num">06</span>
+    <h2>Docker Networking</h2>
+  </div>
+
+  <h3>Bridge Network (Default)</h3>
+  <div class="terminal">
+    <div class="terminal-bar"><span class="tbar-dot red"></span><span class="tbar-dot yellow"></span><span class="tbar-dot green"></span><span class="tbar-label">How -p 8080:80 actually works</span></div>
+    <div class="terminal-body"><span class="t-cmt"># docker run -p 8080:80 nginx</span>
+<span class="t-cmt"># Docker creates:</span>
+
+<span class="t-cmt">1. Virtual ethernet pair (veth):</span>
+   eth0 (inside container) <span class="t-cmt">← one end</span>
+   veth3b2d1c (on host)    <span class="t-cmt">← other end, attached to docker0 bridge</span>
+
+<span class="t-cmt">2. docker0 bridge interface on host (172.17.0.1/16)</span>
+   Container gets 172.17.0.2
+
+<span class="t-cmt">3. iptables rule for port mapping:</span>
+<span class="t-key">$</span> iptables -t nat -L DOCKER
+DNAT  tcp  --  anywhere  anywhere  tcp dpt:8080
+      to:172.17.0.2:80  <span class="t-cmt">← forward host:8080 to container:80</span>
+
+<span class="t-cmt">4. MASQUERADE rule for outbound (container → internet):</span>
+MASQUERADE  all  --  172.17.0.0/16  anywhere</div>
+  </div>
+
+  <table class="data-table">
+    <thead><tr><th>Mode</th><th>How</th><th>Performance</th><th>Use Case</th></tr></thead>
+    <tbody>
+      <tr><td><strong>bridge</strong></td><td>Virtual veth + docker0 bridge</td><td>~5% overhead</td><td>Default — most containers</td></tr>
+      <tr><td><strong>host</strong></td><td>Shares host network stack</td><td>Zero overhead</td><td>High-performance, trusted workloads</td></tr>
+      <tr><td><strong>none</strong></td><td>No networking</td><td>—</td><td>Batch jobs, no network needed</td></tr>
+      <tr><td><strong>overlay</strong></td><td>VXLAN tunnel between hosts</td><td>~10% overhead</td><td>Multi-host (Swarm, Kubernetes)</td></tr>
+    </tbody>
+  </table>
+</div>
+
+<!-- SECTION 7: Security -->
+<div class="panel">
+  <div class="section-head">
+    <span class="section-num">07</span>
+    <h2>Container Security</h2>
+  </div>
+
+  <div class="hbox hbox-red"><div class="hbox-label">SHARED KERNEL = SHARED RISK</div>
+    <p style="margin-top:12px;">All containers share the host Linux kernel. A kernel vulnerability (privilege escalation exploit) affects all containers. This is fundamentally different from VMs where a hypervisor escape is needed. Use gVisor or Kata Containers for stronger isolation in high-security environments.</p>
+  </div>
+
+  <div class="grid-2">
+    <div class="card">
+      <div class="card-head">Run as Non-Root</div>
+      <div class="terminal" style="margin:0;"><div class="terminal-body" style="font-size:.78rem;"><span class="t-cmt"># In Dockerfile:</span>
+<span class="t-key">RUN</span> addgroup -S appgroup && adduser -S appuser -G appgroup
+<span class="t-key">USER</span> appuser   <span class="t-cmt">← never run as root</span>
+
+<span class="t-cmt"># Or at runtime:</span>
+docker run --user 1000:1000 nginx</div></div>
+    </div>
+    <div class="card">
+      <div class="card-head">Capabilities</div>
+      <div class="terminal" style="margin:0;"><div class="terminal-body" style="font-size:.78rem;"><span class="t-cmt"># Drop ALL, add only what's needed</span>
+docker run --cap-drop=ALL \
+  --cap-add=NET_BIND_SERVICE \
+  nginx
+
+<span class="t-cmt"># Never use --privileged in prod!</span>
+<span class="t-cmt"># It gives container near-root host access</span></div></div>
+    </div>
+  </div>
+</div>
+
+<!-- SECTION 8: Cheat Sheet -->
+<div class="panel">
+  <div class="section-head">
+    <span class="section-num">08</span>
+    <h2>Commands Cheat Sheet — What They Actually Do</h2>
+  </div>
+
+  <table class="data-table">
+    <thead><tr><th>Command</th><th>What Happens Internally</th></tr></thead>
+    <tbody>
+      <tr><td><code>docker build</code></td><td>Each instruction: spawn temp container → run command → snapshot diff → new layer. Metadata instructions update config.json only.</td></tr>
+      <tr><td><code>docker pull</code></td><td>Downloads image manifest JSON from registry. Checks which layer SHAs are missing locally. Downloads only missing layer tarballs in parallel.</td></tr>
+      <tr><td><code>docker push</code></td><td>Uploads manifest + any layers registry doesn't already have (checked by SHA256). Shared layers across images are never duplicated.</td></tr>
+      <tr><td><code>docker run</code></td><td>CLI → dockerd (socket) → containerd (gRPC) → runc: create namespaces, mount OverlayFS, setup cgroups, setup veth, exec entrypoint.</td></tr>
+      <tr><td><code>docker exec</code></td><td>Creates a NEW process in the container's EXISTING namespaces. Uses nsenter internally. Container PID 1 is not affected.</td></tr>
+      <tr><td><code>docker stop</code></td><td>Sends SIGTERM to PID 1 inside container. Waits 10s (configurable). If still running, sends SIGKILL. runc waits for process exit, then tears down namespaces.</td></tr>
+      <tr><td><code>docker rm</code></td><td>Removes container metadata. Deletes the upperdir (writable layer). Lower image layers are untouched and still shared.</td></tr>
+      <tr><td><code>docker rmi</code></td><td>Removes image layers from /var/lib/docker/overlay2/ — but ONLY if no container (running or stopped) references them.</td></tr>
+    </tbody>
+  </table>
+</div>
+
+<div class="chapter-divider"><span>END OF HOW-06</span></div>
+</div><!-- /page-wrap -->
+
+<script src="hero-banner.js"></script>
+<script src="masthead.js"></script>
+<script src="author-card.js"></script>
+<script>
+/* ===== HERO TERMINAL ANIMATION ===== */
+var heroLines = [
+  { text: '$ docker run hello-world', color: '#7d8590', delay: 0 },
+  { text: 'Unable to find image \'hello-world:latest\' locally', color: '#e3b341', delay: 600 },
+  { text: 'latest: Pulling from library/hello-world', color: '#adbac7', delay: 1000 },
+  { text: 'c1ec31eb5944: Pull complete', color: '#7ee787', delay: 1400 },
+  { text: 'Digest: sha256:5b3cc85e16e3...', color: '#7d8590', delay: 1800 },
+  { text: '', color: '', delay: 2100 },
+  { text: 'Hello from Docker!', color: '#7ee787', delay: 2400 },
+  { text: 'This message shows your installation appears to be working correctly.', color: '#adbac7', delay: 2800 }
+];
+var heroOutput = document.getElementById('hero-output');
+heroLines.forEach(function(line, i) {
+  setTimeout(function() {
+    if (line.text === '') { heroOutput.innerHTML += '<br>'; return; }
+    var span = document.createElement('div');
+    span.style.color = line.color;
+    span.textContent = line.text;
+    heroOutput.appendChild(span);
+  }, line.delay);
+});
+
+/* ===== LAYER STACK ===== */
+var layers = [
+  { id: 'container', title: 'Container Layer (upperdir)', size: 'writable', hash: 'ephemeral — lost on docker rm', instruction: 'Runtime writes', files: '/var/log/nginx/access.log\n/run/nginx.pid\n(any file written at runtime)', type: 'container', desc: 'This is the read-write layer unique to this container instance. When the container writes any file, it\'s copy-on-write\'d here. This layer is deleted when you run docker rm.' },
+  { id: 'layer4', title: 'CMD ["nginx", "-g", "daemon off;"]', size: '0 B', hash: 'sha256:ef6aa23...', instruction: 'CMD', files: '(no filesystem changes)\nStored in image config.json only', type: 'meta', desc: 'CMD and ENTRYPOINT are metadata only — they don\'t create filesystem layers. They\'re stored in the image\'s config.json as the default command to run.' },
+  { id: 'layer3', title: 'COPY nginx.conf /etc/nginx/', size: '1.2 KB', hash: 'sha256:d4e8bb1...', instruction: 'COPY', files: '/etc/nginx/nginx.conf', type: 'normal', desc: 'COPY instruction creates a new layer containing just the copied files. This layer is tiny (1.2KB) and is cached unless nginx.conf changes.' },
+  { id: 'layer2', title: 'RUN apt-get install -y nginx', size: '52 MB', hash: 'sha256:9c3a17e...', instruction: 'RUN', files: '/usr/sbin/nginx\n/etc/nginx/ (default configs)\n/var/www/html/\n/lib/x86_64-linux-gnu/libssl.so\n(+ hundreds of dependency files)', type: 'normal', desc: 'This RUN instruction created a 52MB layer containing nginx binary and all its dependencies. The layer stores only the diff — files added/modified by apt-get install.' },
+  { id: 'layer1', title: 'RUN apt-get update', size: '30 MB', hash: 'sha256:4a2b9f6...', instruction: 'RUN', files: '/var/lib/apt/lists/*\n(package index files)', type: 'normal', desc: 'Running apt-get update downloads package lists and creates a 30MB layer. Note: best practice is to combine apt-get update + install in one RUN to avoid stale cache issues.' },
+  { id: 'layer0', title: 'FROM ubuntu:22.04', size: '77 MB', hash: 'sha256:1e6b99f...', instruction: 'FROM', files: '/bin/, /usr/bin/, /etc/, /lib/\n(full Ubuntu 22.04 base filesystem)', type: 'base', desc: 'The base image layer. Contains a minimal Ubuntu 22.04 filesystem. This layer is shared across ALL images that use ubuntu:22.04 — Docker only stores one copy on disk.' }
+];
+
+var layerColors = { container: '#3fa34d', meta: '#7d8590', normal: '#1d6fb8', base: '#8a4fff' };
+
+function buildLayerStack() {
+  var stack = document.getElementById('layer-stack');
+  var overlayVis = document.getElementById('overlay-visual');
+  stack.innerHTML = '';
+  overlayVis.innerHTML = '';
+
+  layers.forEach(function(layer, i) {
+    var el = document.createElement('div');
+    el.className = 'layer-card' + (layer.type === 'container' ? ' container-layer' : '');
+    el.style.borderLeftWidth = '4px';
+    el.style.borderLeftColor = layerColors[layer.type] || '#30363d';
+    el.innerHTML =
+      '<div class="lc-title" style="color:' + (layerColors[layer.type] || '#adbac7') + ';">' + layer.title + '</div>' +
+      '<div class="lc-size">' + layer.size + '</div>' +
+      '<div class="lc-hash">' + layer.hash + '</div>';
+    el.addEventListener('click', function() {
+      document.querySelectorAll('.layer-card').forEach(function(c) { c.classList.remove('selected'); });
+      el.classList.add('selected');
+      document.getElementById('layer-detail').innerHTML =
+        '<div class="ld-head" style="color:' + (layerColors[layer.type] || '#e3b341') + ';">' + layer.instruction + ': ' + layer.title.substring(0,40) + '</div>' +
+        '<div class="ld-body">' + layer.desc + '<br><br><strong style="color:#7ee787;">Files in this layer:</strong><br>' +
+        '<pre style="color:#a5d6ff;margin-top:6px;">' + layer.files + '</pre></div>';
+    });
+    stack.appendChild(el);
+
+    // OverlayFS visual
+    var ov = document.createElement('div');
+    ov.style.cssText = 'padding:4px 8px;border-radius:3px;font-size:.72rem;margin-bottom:3px;color:#e6edf3;background:' + (layerColors[layer.type] || '#161b22') + '22;border-left:3px solid ' + (layerColors[layer.type] || '#30363d');
+    ov.textContent = (layer.type === 'container' ? '▶ upperdir (RW): ' : '  lowerdir[' + (layers.length - 1 - i) + '] (RO): ') + layer.title.substring(0,35);
+    overlayVis.appendChild(ov);
+  });
+}
+buildLayerStack();
+
+/* ===== DOCKER RUN SEQUENCE ===== */
+var drStep_current = 0, drPlaying = false;
+var drStepData = [
+  { desc: 'Docker CLI parses `docker run nginx`. Connects to Docker daemon via Unix socket /var/run/docker.sock using HTTP/REST protocol.', phase: 'PARSING' },
+  { desc: 'dockerd receives the request. Checks if nginx:latest image exists locally. If not found, initiates a pull from Docker Hub registry.', phase: 'IMAGE CHECK' },
+  { desc: 'dockerd calls containerd via gRPC: CreateContainer. Containerd is the container lifecycle manager — it handles snapshots, OCI bundles, and process supervision.', phase: 'CONTAINERD' },
+  { desc: 'containerd calls runc (the OCI runtime). runc reads the container spec bundle (config.json + rootfs). Creates new Linux namespaces: PID, NET, MNT, UTS, IPC.', phase: 'NAMESPACES' },
+  { desc: 'runc mounts OverlayFS (image layers as lowerdir, new writable layer as upperdir). Creates cgroup hierarchy. Sets resource limits (CPU, memory).', phase: 'FILESYSTEMS' },
+  { desc: 'runc sets up networking: creates veth pair, attaches one end to docker0 bridge, sets up iptables rules for port mapping. Container gets its IP address.', phase: 'NETWORK' },
+  { desc: 'runc execs the container entrypoint (nginx) as PID 1 inside the new namespaces. The process starts. From here, runc exits — containerd-shim supervises the process.', phase: 'RUNNING' },
+  { desc: 'containerd-shim notifies dockerd that the container is running. dockerd responds to the CLI with the container ID. nginx is now serving on port 80.', phase: 'RUNNING' },
+  { desc: 'Container is fully running! nginx is accessible via the host port mapping. The entire process took ~100-300ms on a warm system with image already cached.', phase: '✓ RUNNING' }
+];
+var drArrows = [
+  {g:'dr-g1',l:'dr-l1',a:'dr-a1',len:150},
+  {g:'dr-g2',l:'dr-l2',a:'dr-a2',len:165},
+  {g:'dr-g3',l:'dr-l3',a:'dr-a3',len:155},
+  {g:'dr-g4',l:'dr-l4',a:'dr-a4',len:170},
+  {g:'dr-g5',l:'dr-l5',a:'dr-a5',len:170},
+  {g:'dr-g5b',l:'dr-l5b',a:'dr-a5b',len:170}, // reuse for step 6
+  {g:'dr-g6',l:'dr-l6',a:'dr-a6',len:170},
+  {g:'dr-g7',l:'dr-l7',a:'dr-a7',len:640},
+  {g:'dr-g7',l:'dr-l7',a:'dr-a7',len:640}
+];
+
+function drAnimateArrow(idx) {
+  var arrowIds = [
+    {g:'dr-g1',l:'dr-l1',a:'dr-a1',len:150},
+    {g:'dr-g2',l:'dr-l2',a:'dr-a2',len:165},
+    {g:'dr-g3',l:'dr-l3',a:'dr-a3',len:155},
+    {g:'dr-g4',l:'dr-l4',a:'dr-a4',len:170},
+    {g:'dr-g5',l:'dr-l5',a:'dr-a5',len:170},
+    {g:'dr-g5',l:'dr-l5',a:'dr-a5',len:170},
+    {g:'dr-g6',l:'dr-l6',a:'dr-a6',len:170},
+    {g:'dr-g7',l:'dr-l7',a:'dr-a7',len:640},
+    {g:'dr-g7',l:'dr-l7',a:'dr-a7',len:640}
+  ];
+  if (idx >= arrowIds.length) return;
+  var ar = arrowIds[idx];
+  var g = document.getElementById(ar.g);
+  var line = document.getElementById(ar.l);
+  var arrowHead = document.getElementById(ar.a);
+  if (g && g.getAttribute('opacity') === '0') {
+    g.setAttribute('opacity', '1');
+    if (line) {
+      line.setAttribute('stroke-dasharray', ar.len);
+      line.setAttribute('stroke-dashoffset', ar.len);
+      line.getBoundingClientRect();
+      line.style.transition = 'stroke-dashoffset 0.6s ease';
+      line.setAttribute('stroke-dashoffset', '0');
+      setTimeout(function() {
+        if (arrowHead) arrowHead.setAttribute('opacity', '1');
+      }, 650);
+    }
+  }
+}
+
+function drStep() {
+  if (drStep_current >= drStepData.length) return;
+  var sd = drStepData[drStep_current];
+  document.getElementById('dr-counter').textContent = 'Step ' + (drStep_current + 1) + ' / ' + drStepData.length;
+  document.getElementById('dr-phase').textContent = sd.phase;
+  document.getElementById('dr-desc').textContent = sd.desc;
+  drAnimateArrow(drStep_current);
+  drStep_current++;
+  if (drStep_current === drStepData.length) {
+    setTimeout(function() { var d = document.getElementById('dr-done'); if (d) d.setAttribute('opacity','1'); }, 800);
+  }
+}
+
+function drPlay() {
+  if (drPlaying) return;
+  drPlaying = true;
+  var remaining = drStepData.length - drStep_current;
+  for (var i = 0; i < remaining; i++) {
+    (function(idx) { setTimeout(function() { drStep(); if (idx === remaining - 1) drPlaying = false; }, idx * 1100); })(i);
+  }
+  if (remaining === 0) drPlaying = false;
+}
+
+function drReset() {
+  drPlaying = false; drStep_current = 0;
+  document.getElementById('dr-counter').textContent = 'Step 0 / 9';
+  document.getElementById('dr-phase').textContent = 'READY';
+  document.getElementById('dr-desc').textContent = 'Press "step →" to walk through docker run internals, or "▶ play all" to see the full sequence.';
+  ['dr-g1','dr-g2','dr-g3','dr-g4','dr-g5','dr-g6','dr-g7','dr-done'].forEach(function(id) {
+    var el = document.getElementById(id); if (el) el.setAttribute('opacity', '0');
+  });
+  ['dr-a1','dr-a2','dr-a3','dr-a4','dr-a5','dr-a6','dr-a7'].forEach(function(id) {
+    var el = document.getElementById(id); if (el) el.setAttribute('opacity', '0');
+  });
+  var lineLengths = {l1:150,l2:165,l3:155,l4:170,l5:170,l6:170,l7:640};
+  Object.keys(lineLengths).forEach(function(key) {
+    var el = document.getElementById('dr-' + key);
+    if (el) { el.style.transition = 'none'; el.setAttribute('stroke-dashoffset', lineLengths[key]); }
+  });
+}
+</script>
+</body>
+</html>

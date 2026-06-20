@@ -1,0 +1,778 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>How Your MacBook Boots — DevDunia Comics</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bangers&family=Comic+Neue:ital,wght@0,400;0,700;1,400&family=Space+Mono:wght@400;700&display=swap">
+<style>
+:root {
+  --ink: #1a1410; --paper: #fdf3e3; --paper2: #fbe9cc;
+  --red: #e63946; --blue: #1d6fb8; --yellow: #ffd23f;
+  --green: #3fa34d; --pink: #ff6b9d; --purple: #8a4fff;
+  --orange: #ff8c42; --teal: #0d9488;
+}
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  font-family: 'Comic Neue', cursive; color: var(--ink);
+  background-color: var(--paper);
+  background-image: radial-gradient(var(--ink) 0.5px, transparent 0.6px);
+  background-size: 14px 14px; background-attachment: fixed; line-height: 1.65;
+}
+.page-wrap { position: relative; z-index: 1; max-width: 1240px; margin: 0 auto; padding: 20px 32px 60px; }
+.panel {
+  border: 4px solid var(--ink); border-radius: 6px;
+  box-shadow: 7px 7px 0 var(--ink); background: var(--paper); padding: 28px 32px; margin-bottom: 32px;
+}
+h2 { font-family: 'Bangers', cursive; font-size: 2.4rem; letter-spacing: 2px; margin-bottom: 16px; line-height: 1; }
+h3 { font-family: 'Bangers', cursive; font-size: 1.6rem; letter-spacing: 1px; margin-bottom: 12px; }
+h4 { font-family: 'Bangers', cursive; font-size: 1.2rem; letter-spacing: 1px; margin-bottom: 8px; }
+p  { margin-bottom: 14px; font-size: 1.05rem; }
+p:last-child { margin-bottom: 0; }
+ul { padding-left: 22px; margin-bottom: 14px; }
+li { margin-bottom: 6px; font-size: 1rem; }
+code { font-family: 'Space Mono', monospace; font-size: .85em; background: var(--paper2); padding: 1px 5px; border-radius: 3px; }
+.section-head { display: flex; align-items: center; gap: 14px; margin-bottom: 22px; flex-wrap: wrap; }
+.section-num {
+  font-family: 'Bangers', cursive; font-size: 1.1rem; letter-spacing: 2px;
+  background: var(--ink); color: var(--yellow); padding: 4px 14px;
+  border-radius: 4px; border: 2px solid var(--ink); box-shadow: 2px 2px 0 var(--yellow);
+}
+.chip {
+  display: inline-block; font-family: 'Bangers', cursive; font-size: .85rem;
+  letter-spacing: 1.5px; padding: 3px 12px; border-radius: 4px;
+  border: 2px solid var(--ink); margin-right: 6px; margin-bottom: 6px; vertical-align: middle;
+}
+.chip-green  { background: var(--green);  color: #fff; }
+.chip-red    { background: var(--red);    color: #fff; }
+.chip-blue   { background: var(--blue);   color: #fff; }
+.chip-yellow { background: var(--yellow); color: var(--ink); }
+.chip-purple { background: var(--purple); color: #fff; }
+.terminal {
+  background: #0d1117; border: 3px solid #30363d; border-radius: 8px; overflow: hidden; margin: 16px 0;
+}
+.terminal-bar {
+  background: #161b22; border-bottom: 2px solid #30363d;
+  padding: 8px 14px; display: flex; align-items: center; gap: 8px;
+}
+.tbar-dot { width: 12px; height: 12px; border-radius: 50%; display: inline-block; }
+.tbar-dot.red   { background: #ff5f56; }
+.tbar-dot.yellow{ background: #ffbd2e; }
+.tbar-dot.green { background: #27c93f; }
+.tbar-label { font-family: 'Space Mono', monospace; font-size: .75rem; color: #8b949e; margin-left: 8px; }
+.terminal-body { padding: 20px 22px; font-family: 'Space Mono', monospace; font-size: .82rem; line-height: 1.75; overflow-x: auto; white-space: pre-wrap; color: #adbac7; }
+.t-kw  { color: #ff7b72; }
+.t-str { color: #a5d6ff; }
+.t-val { color: #79c0ff; }
+.t-key { color: #7ee787; }
+.t-num { color: #e3b341; }
+.t-cmt { color: #7d8590; font-style: italic; }
+.t-hdr { color: #d2a8ff; }
+.hbox {
+  border: 3px solid var(--ink); border-radius: 5px; padding: 18px 22px; margin: 16px 0; position: relative;
+}
+.hbox-label {
+  font-family: 'Bangers', cursive; font-size: .9rem; letter-spacing: 2px;
+  position: absolute; top: -14px; left: 16px; padding: 2px 12px;
+  border: 2px solid var(--ink); border-radius: 4px;
+}
+.hbox-red { background: rgba(230,57,70,.08); border-color: var(--red); }
+.hbox-red .hbox-label { background: var(--red); color: #fff; }
+.hbox-green { background: rgba(63,163,77,.1); border-color: var(--green); }
+.hbox-green .hbox-label { background: var(--green); color: #fff; }
+.hbox-blue { background: rgba(29,111,184,.1); border-color: var(--blue); }
+.hbox-blue .hbox-label { background: var(--blue); color: #fff; }
+.hbox-yellow { background: rgba(255,210,63,.15); border-color: var(--yellow); }
+.hbox-yellow .hbox-label { background: var(--yellow); color: var(--ink); }
+.hbox-purple { background: rgba(138,79,255,.1); border-color: var(--purple); }
+.hbox-purple .hbox-label { background: var(--purple); color: #fff; }
+.data-table { width: 100%; border-collapse: collapse; margin: 16px 0; font-size: .93rem; }
+.data-table th { font-family: 'Bangers', cursive; font-size: 1rem; letter-spacing: 1px; background: var(--ink); color: #fff; padding: 10px 14px; text-align: left; border: 2px solid var(--ink); }
+.data-table td { padding: 10px 14px; border: 2px solid var(--ink); vertical-align: top; }
+.data-table tr:nth-child(odd) td  { background: var(--paper2); }
+.data-table tr:nth-child(even) td { background: var(--paper); }
+.grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin: 16px 0; }
+.grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 16px; margin: 16px 0; }
+@media (max-width: 640px) { .grid-2, .grid-3 { grid-template-columns: 1fr; } }
+.card {
+  border: 3px solid var(--ink); border-radius: 5px; box-shadow: 4px 4px 0 var(--ink); padding: 18px; background: var(--paper);
+}
+.card-head { font-family: 'Bangers', cursive; font-size: 1.1rem; letter-spacing: 1px; margin-bottom: 10px; padding-bottom: 8px; border-bottom: 2px solid var(--ink); }
+.step-flow { display: flex; flex-direction: column; gap: 0; }
+.step-item { display: grid; grid-template-columns: 52px 1fr; gap: 0 18px; position: relative; }
+.step-item:not(:last-child)::after { content: ''; position: absolute; left: 25px; top: 52px; bottom: -16px; width: 2px; background: var(--ink); }
+.step-num { width: 52px; height: 52px; border-radius: 50%; border: 3px solid var(--ink); display: flex; align-items: center; justify-content: center; font-family: 'Bangers', cursive; font-size: 1.1rem; box-shadow: 3px 3px 0 var(--ink); flex-shrink: 0; position: relative; z-index: 1; }
+.step-body { padding: 8px 0 28px; }
+.sfx-row { display: flex; gap: 16px; flex-wrap: wrap; margin: 20px 0; }
+.sfx { font-family: 'Bangers', cursive; font-size: 1.8rem; letter-spacing: 3px; color: var(--ink); text-shadow: 3px 3px 0 var(--yellow); transform: rotate(-2deg); display: inline-block; }
+.sfx:nth-child(even) { transform: rotate(2deg); text-shadow: 3px 3px 0 var(--blue); }
+.chapter-divider { text-align: center; margin: 40px 0 28px; position: relative; }
+.chapter-divider::before { content: ''; position: absolute; top: 50%; left: 0; right: 0; height: 3px; background: var(--ink); }
+.chapter-divider span { position: relative; background: var(--paper); font-family: 'Bangers', cursive; font-size: 1rem; letter-spacing: 3px; padding: 0 16px; }
+
+/* HERO */
+.hero-panel {
+  background: var(--ink); border: 4px solid var(--ink); border-radius: 8px;
+  box-shadow: 8px 8px 0 var(--blue); padding: 48px 40px 40px; margin-bottom: 32px;
+  text-align: center; position: relative; overflow: hidden;
+}
+.hero-panel::before {
+  content: ''; position: absolute; inset: 0;
+  background: repeating-linear-gradient(45deg, transparent, transparent 20px, rgba(29,111,184,.04) 20px, rgba(29,111,184,.04) 40px);
+}
+.hero-title { font-family: 'Bangers', cursive; font-size: clamp(3rem,10vw,6.5rem); letter-spacing: 4px; color: #fff; text-shadow: 4px 4px 0 var(--blue), 8px 8px 0 rgba(0,0,0,.4); line-height: 0.95; position: relative; }
+.hero-sub   { font-family: 'Space Mono', monospace; font-size: 1.2rem; color: var(--green); margin-top: 16px; letter-spacing: 1px; position: relative; }
+.hero-desc  { font-family: 'Comic Neue', cursive; font-size: 1.05rem; color: rgba(255,255,255,.75); margin-top: 14px; max-width: 600px; margin-left: auto; margin-right: auto; position: relative; }
+.hero-badges { display: flex; gap: 10px; justify-content: center; margin-top: 20px; flex-wrap: wrap; position: relative; }
+.hero-badge { font-family: 'Bangers', cursive; font-size: .9rem; letter-spacing: 2px; padding: 5px 16px; border-radius: 20px; border: 2px solid rgba(255,255,255,.3); }
+
+/* BOOT TIMELINE */
+.timeline-wrap {
+  background: #0d1117; border: 4px solid var(--ink); border-radius: 8px;
+  box-shadow: 7px 7px 0 var(--ink); overflow: hidden; margin: 24px 0;
+}
+.timeline-bar {
+  background: #161b22; border-bottom: 2px solid #30363d; padding: 10px 16px;
+  font-family: 'Bangers', cursive; font-size: 1rem; letter-spacing: 2px;
+  color: #e6edf3; display: flex; align-items: center; gap: 12px; flex-wrap: wrap;
+}
+.tl-btn {
+  font-family: 'Bangers', cursive; font-size: .95rem; letter-spacing: 1px;
+  padding: 7px 16px; border: 2px solid #30363d; border-radius: 5px;
+  background: #161b22; color: #e6edf3; cursor: pointer; transition: background .15s;
+}
+.tl-btn:hover { background: #21262d; border-color: #8b949e; }
+.timeline-body { padding: 24px; }
+.tl-track { position: relative; height: 8px; background: #21262d; border-radius: 4px; margin-bottom: 32px; }
+.tl-progress { position: absolute; left: 0; top: 0; height: 100%; border-radius: 4px; background: linear-gradient(90deg, var(--red), var(--orange), var(--yellow), var(--green)); transition: width 0.7s ease; width: 0%; }
+.tl-stages { display: flex; flex-direction: column; gap: 12px; }
+.tl-stage {
+  display: grid; grid-template-columns: 110px 1fr; gap: 16px; align-items: start;
+  padding: 14px; border-radius: 6px; border: 2px solid #30363d; background: #161b22;
+  transition: border-color .3s, background .3s; opacity: 0.4;
+}
+.tl-stage.active { opacity: 1; border-color: var(--green); background: #0d2016; }
+.tl-stage.done   { opacity: 1; border-color: #30363d; background: #161b22; }
+.tl-time { font-family: 'Bangers', cursive; font-size: 1rem; letter-spacing: 1px; color: var(--yellow); }
+.tl-name { font-family: 'Bangers', cursive; font-size: 1.1rem; letter-spacing: 1px; color: #e6edf3; margin-bottom: 4px; }
+.tl-desc { font-family: 'Space Mono', monospace; font-size: .78rem; color: #7d8590; line-height: 1.6; }
+.tl-stage.active .tl-name { color: var(--green); }
+.tl-stage.active .tl-desc { color: #adbac7; }
+.tl-elapsed { font-family: 'Space Mono', monospace; font-size: .85rem; color: #adbac7; margin-top: 16px; padding: 8px 14px; background: #0d1117; border-radius: 4px; border: 1px solid #30363d; }
+
+/* PROCESS TREE */
+.ptree-wrap {
+  background: #0d1117; border: 4px solid var(--ink); border-radius: 8px;
+  box-shadow: 7px 7px 0 var(--ink); overflow: hidden; margin: 24px 0;
+}
+.ptree-bar { background: #161b22; border-bottom: 2px solid #30363d; padding: 10px 16px; font-family: 'Bangers', cursive; font-size: 1rem; letter-spacing: 2px; color: #e6edf3; display: flex; align-items: center; gap: 8px; }
+.ptree-body { padding: 20px; font-family: 'Space Mono', monospace; font-size: .82rem; line-height: 1.9; }
+.ptree-node { display: flex; align-items: baseline; gap: 0; cursor: pointer; }
+.ptree-node:hover .ptree-label { color: var(--yellow); }
+.ptree-indent { color: #30363d; white-space: pre; }
+.ptree-pid { color: #7d8590; font-size: .75rem; min-width: 48px; }
+.ptree-label { color: #7ee787; font-weight: 700; }
+.ptree-desc { color: #7d8590; font-style: italic; }
+.ptree-children { padding-left: 20px; display: none; }
+.ptree-children.open { display: block; }
+.ptree-toggle { color: #ff8c42; font-size: .8rem; width: 14px; display: inline-block; }
+.ptree-info {
+  margin-top: 14px; padding: 12px 14px; background: #161b22; border: 1px solid #30363d;
+  border-radius: 5px; font-family: 'Space Mono', monospace; font-size: .8rem; color: #adbac7; min-height: 44px;
+}
+</style>
+</head>
+<body>
+<div data-masthead></div>
+<div class="page-wrap">
+
+<div data-tool-hero
+  data-title="How Your MacBook Boots"
+  data-chapter="HOW-05"
+  data-category="How X Works"
+  data-icon="💻"
+  data-desc="Power button to login screen — every millisecond of the Apple Silicon boot process. SecureROM, iBoot, XNU kernel, launchd, and beyond."
+  data-color="ink"
+  data-badges="APPLE SILICON,XNU KERNEL,SECURE BOOT,FREE"
+  data-badge-colors="blue,green,yellow,white">
+</div>
+
+
+<!-- SECTION 1: Overview -->
+<div class="panel">
+  <div class="section-head">
+    <span class="section-num">01</span>
+    <h2>The Boot Chain Overview</h2>
+  </div>
+  <p>Your MacBook boots through a <strong>chain of trust</strong>: each stage is cryptographically signed, and each stage verifies the next before handing over control. Compromise any link and the chain breaks — the Mac refuses to boot.</p>
+
+  <div style="display:flex;flex-direction:column;gap:0;margin:16px 0;">
+    <div style="display:grid;grid-template-columns:120px 1fr;gap:0;border:3px solid var(--ink);border-radius:6px 6px 0 0;overflow:hidden;">
+      <div style="background:var(--red);color:#fff;padding:14px 16px;font-family:'Bangers',cursive;font-size:1rem;letter-spacing:1px;display:flex;align-items:center;">SecureROM<br><span style="font-size:.75rem;opacity:.8;">0–5ms</span></div>
+      <div style="padding:14px 18px;background:rgba(230,57,70,.08);"><strong>Immutable mask ROM on silicon</strong>. Cannot be patched, updated, or replaced. Apple's root of trust. Verifies iBoot signature using Apple Root CA. If verification fails: DFU mode only.</div>
+    </div>
+    <div style="display:grid;grid-template-columns:120px 1fr;gap:0;border:3px solid var(--ink);border-top:0;overflow:hidden;">
+      <div style="background:var(--orange);color:#fff;padding:14px 16px;font-family:'Bangers',cursive;font-size:1rem;letter-spacing:1px;display:flex;align-items:center;">iBoot<br><span style="font-size:.75rem;opacity:.8;">5–800ms</span></div>
+      <div style="padding:14px 18px;background:rgba(255,140,66,.08);">Apple's bootloader in NAND flash (updatable via firmware). Initializes DRAM, sets up MMU, loads and verifies the XNU kernel from the APFS Sealed System Volume.</div>
+    </div>
+    <div style="display:grid;grid-template-columns:120px 1fr;gap:0;border:3px solid var(--ink);border-top:0;overflow:hidden;">
+      <div style="background:var(--purple);color:#fff;padding:14px 16px;font-family:'Bangers',cursive;font-size:1rem;letter-spacing:1px;display:flex;align-items:center;">XNU Kernel<br><span style="font-size:.75rem;opacity:.8;">800ms–2.5s</span></div>
+      <div style="padding:14px 18px;background:rgba(138,79,255,.08);">Hybrid kernel: Mach microkernel + BSD + I/O Kit. Initializes virtual memory, scheduler, IPC, mounts filesystems, starts the BSD subsystem, then executes PID 1.</div>
+    </div>
+    <div style="display:grid;grid-template-columns:120px 1fr;gap:0;border:3px solid var(--ink);border-top:0;overflow:hidden;">
+      <div style="background:var(--blue);color:#fff;padding:14px 16px;font-family:'Bangers',cursive;font-size:1rem;letter-spacing:1px;display:flex;align-items:center;">launchd<br><span style="font-size:.75rem;opacity:.8;">2.5s–8s</span></div>
+      <div style="padding:14px 18px;background:rgba(29,111,184,.08);">PID 1. Replaces init, inetd, cron, and rc scripts. Starts all system services from plist files. On-demand launching: services start when first needed. Manages the entire service graph.</div>
+    </div>
+    <div style="display:grid;grid-template-columns:120px 1fr;gap:0;border:3px solid var(--ink);border-top:0;overflow:hidden;border-radius:0 0 6px 6px;">
+      <div style="background:var(--green);color:#fff;padding:14px 16px;font-family:'Bangers',cursive;font-size:1rem;letter-spacing:1px;display:flex;align-items:center;">Login<br><span style="font-size:.75rem;opacity:.8;">8s–15s</span></div>
+      <div style="padding:14px 18px;background:rgba(63,163,77,.08);">WindowServer already running. loginwindow shows UI. Authentication via opendirectoryd. User session spawns Dock, Finder, SystemUIServer. Previous windows restored (Resume).</div>
+    </div>
+  </div>
+</div>
+
+<!-- SECTION 2: SecureROM -->
+<div class="panel">
+  <div class="section-head">
+    <span class="section-num">02</span>
+    <h2>SecureROM — The Immutable Root (0ms–5ms)</h2>
+  </div>
+  <p>When you press the power button, the Power Management IC (PMU) sequences the power rails in a specific order — VCORE, VDDR, IO — to prevent damage from voltage spikes. Once stable, the Apple Silicon SoC's CPU cores come out of reset at a hardcoded address in the <strong>SecureROM</strong>.</p>
+
+  <div class="hbox hbox-red"><div class="hbox-label">WHAT MAKES IT "SECURE"</div>
+    <p style="margin-top:12px;">SecureROM is mask-programmed ROM — written once during chip fabrication. It is physically impossible to modify without destroying the chip. Apple bakes roughly <strong>32KB of code</strong> into the silicon at the factory. No firmware update, no exploit, no DFU mode can change it. This is the unconditional trust anchor.</p>
+  </div>
+
+  <h3>What SecureROM Does</h3>
+  <div class="step-flow">
+    <div class="step-item">
+      <div class="step-num" style="background:var(--red);color:#fff;font-size:.9rem;">VFY</div>
+      <div class="step-body">
+        <h4>Verifies iBoot signature</h4>
+        <p>SecureROM reads iBoot from NAND flash and verifies its ECDSA/RSA signature against Apple's Root CA certificate. The certificate is also stored in ROM. Any bit flip in iBoot's code changes the signature hash — verification fails.</p>
+      </div>
+    </div>
+    <div class="step-item">
+      <div class="step-num" style="background:var(--red);color:#fff;font-size:.9rem;">DFU</div>
+      <div class="step-body">
+        <h4>Falls back to DFU mode if verification fails</h4>
+        <p>If iBoot is corrupted or modified, SecureROM enters <strong>Device Firmware Update (DFU) mode</strong>. The Mac appears dead but is actually waiting for a USB-C connection to a Mac running Apple Configurator or Finder's Recovery mode. This is how you restore a brick.</p>
+      </div>
+    </div>
+    <div class="step-item">
+      <div class="step-num" style="background:var(--red);color:#fff;font-size:.9rem;">↗</div>
+      <div class="step-body">
+        <h4>Hands control to iBoot</h4>
+        <p>If all checks pass, SecureROM jumps to iBoot's entry point. From this moment, SecureROM's job is done — it doesn't run again until the next power cycle.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="hbox hbox-blue"><div class="hbox-label">SECURE ENCLAVE</div>
+    <p style="margin-top:12px;">The Secure Enclave (SEP) is a <strong>separate processor</strong> on the Apple Silicon die. It has its own ROM, RAM, and runs its own OS (sepOS). It boots independently and holds long-term cryptographic keys — Touch ID templates, Face ID models, your disk encryption key. The main CPU never has direct access to these keys. Even if an attacker fully compromises macOS, Secure Enclave secrets remain protected.</p>
+  </div>
+</div>
+
+<!-- SECTION 3: iBoot -->
+<div class="panel">
+  <div class="section-head">
+    <span class="section-num">03</span>
+    <h2>iBoot — The Bootloader (5ms–800ms)</h2>
+  </div>
+  <p>iBoot is Apple's bootloader — software stored in NAND flash that can be updated via firmware updates (but always signed and verified). It bridges the hardware initialization phase and the OS loading phase.</p>
+
+  <h3>What iBoot Does</h3>
+  <div class="step-flow">
+    <div class="step-item">
+      <div class="step-num" style="background:var(--orange);color:#fff;font-size:.85rem;">DRAM</div>
+      <div class="step-body">
+        <h4>DRAM Initialization (Memory Training)</h4>
+        <p>Before any data can be stored in RAM, the memory controller must calibrate timing parameters — signal delays, voltage levels, timing margins — for the specific DRAM modules on this exact logic board. This "memory training" takes ~200–400ms and is the single slowest hardware initialization step.</p>
+      </div>
+    </div>
+    <div class="step-item">
+      <div class="step-num" style="background:var(--orange);color:#fff;font-size:.85rem;">MMU</div>
+      <div class="step-body">
+        <h4>Sets Up the Memory Management Unit</h4>
+        <p>iBoot configures initial page tables so the CPU can use virtual addresses. This allows later code to run at fixed addresses regardless of physical memory layout. The real page tables will be rebuilt by the XNU kernel.</p>
+      </div>
+    </div>
+    <div class="step-item">
+      <div class="step-num" style="background:var(--orange);color:#fff;font-size:.85rem;">SSV</div>
+      <div class="step-body">
+        <h4>Verifies the Sealed System Volume</h4>
+        <p>macOS lives on an APFS <strong>Sealed System Volume (SSV)</strong>. The entire contents are hashed into a Merkle tree. iBoot computes the root hash and compares it against the expected value. Any modification to any system file — a single byte in any dylib — changes the root hash, and the Mac refuses to boot.</p>
+        <div class="hbox hbox-yellow"><div class="hbox-label">WHY /SYSTEM IS READ-ONLY</div>
+          <p style="margin-top:10px;">The SSV seal is why <code>/System/Library</code> and <code>/usr/bin</code> are mounted read-only. Even root can't write to them without disabling SIP and breaking the seal. On production Macs, this means the entire OS is tamper-evident.</p>
+        </div>
+      </div>
+    </div>
+    <div class="step-item">
+      <div class="step-num" style="background:var(--orange);color:#fff;font-size:.85rem;">KRNL</div>
+      <div class="step-body">
+        <h4>Loads and Launches XNU</h4>
+        <p>iBoot reads the XNU kernel from the APFS volume into RAM, verifies its signature, builds a <strong>device tree</strong> (a data structure describing all hardware: CPU cores, memory map, I/O controllers, peripherals), and jumps to the kernel's entry point with the device tree pointer in a register.</p>
+      </div>
+    </div>
+  </div>
+
+  <h3>Secure Boot Policies</h3>
+  <table class="data-table">
+    <thead><tr><th>Policy</th><th>What's Allowed</th><th>Use Case</th></tr></thead>
+    <tbody>
+      <tr><td><strong>Full Security</strong> (default)</td><td>Only Apple-signed OS matching current macOS</td><td>All normal Macs</td></tr>
+      <tr><td><strong>Reduced Security</strong></td><td>Older macOS, developer kexts with notarization</td><td>Development, older software</td></tr>
+      <tr><td><strong>Permissive Security</strong></td><td>Any OS, unsigned code, custom kernels</td><td>Security research, Linux on Mac</td></tr>
+    </tbody>
+  </table>
+</div>
+
+<!-- SECTION 4: XNU Kernel -->
+<div class="panel">
+  <div class="section-head">
+    <span class="section-num">04</span>
+    <h2>XNU Kernel — X is Not Unix (800ms–2.5s)</h2>
+  </div>
+  <p>XNU is a <strong>hybrid kernel</strong>: it combines the Mach microkernel, the BSD UNIX subsystem, and the I/O Kit driver framework into a single kernel image. This architecture gives Apple performance (monolithic kernel — everything runs in kernel space) and flexibility (Mach IPC allows modular-like communication).</p>
+
+  <div class="grid-3">
+    <div class="card" style="border-color:var(--purple);">
+      <div class="card-head" style="color:var(--purple);">Mach Layer</div>
+      <ul style="font-size:.9rem;line-height:1.8;">
+        <li>Mach ports (IPC)</li>
+        <li>Virtual memory (VM maps)</li>
+        <li>Threads &amp; scheduling</li>
+        <li>Real-time scheduling</li>
+        <li>Exception handling</li>
+      </ul>
+    </div>
+    <div class="card" style="border-color:var(--blue);">
+      <div class="card-head" style="color:var(--blue);">BSD Layer</div>
+      <ul style="font-size:.9rem;line-height:1.8;">
+        <li>POSIX syscall API</li>
+        <li>VFS (filesystem)</li>
+        <li>Networking stack</li>
+        <li>Process model (fork/exec)</li>
+        <li>Signals</li>
+      </ul>
+    </div>
+    <div class="card" style="border-color:var(--orange);">
+      <div class="card-head" style="color:var(--orange);">I/O Kit</div>
+      <ul style="font-size:.9rem;line-height:1.8;">
+        <li>C++ driver framework</li>
+        <li>Device tree parsing</li>
+        <li>USB, Thunderbolt, PCIe</li>
+        <li>DriverKit (user-space)</li>
+        <li>Power management</li>
+      </ul>
+    </div>
+  </div>
+
+  <h3 style="margin-top:20px;">Kernel Boot Sequence (Simplified)</h3>
+  <div class="terminal">
+    <div class="terminal-bar"><span class="tbar-dot red"></span><span class="tbar-dot yellow"></span><span class="tbar-dot green"></span><span class="tbar-label">XNU Kernel Initialization Order</span></div>
+    <div class="terminal-body">1. <span class="t-key">start_common()</span>       <span class="t-cmt">← per-CPU setup: TLS, exception vectors, VBAR</span>
+2. <span class="t-key">machine_startup()</span>    <span class="t-cmt">← ARM64 MMU, CPACR, debug registers</span>
+3. <span class="t-key">vm_mem_bootstrap()</span>  <span class="t-cmt">← virtual memory subsystem, page tables</span>
+4. <span class="t-key">zone_init()</span>          <span class="t-cmt">← slab allocator (zalloc) init</span>
+5. <span class="t-key">ipc_init()</span>           <span class="t-cmt">← Mach IPC ports, messaging queues</span>
+6. <span class="t-key">sched_init()</span>         <span class="t-cmt">← scheduler, run queues, P/E cores</span>
+7. <span class="t-key">bsd_init()</span>           <span class="t-cmt">← BSD subsystem: VFS, socket layer, proc table</span>
+8. <span class="t-key">IOKitBSDInit()</span>       <span class="t-cmt">← I/O Kit registry, device tree parse, driver probe</span>
+9. <span class="t-key">vfs_mountroot()</span>      <span class="t-cmt">← mount root APFS volume read-only</span>
+10. <span class="t-key">load_init_program()</span>  <span class="t-cmt">← exec /sbin/launchd as PID 1</span></div>
+  </div>
+
+  <h3>Apple Silicon Architecture</h3>
+  <div class="grid-2">
+    <div class="card">
+      <div class="card-head">CPU Topology</div>
+      <ul style="font-size:.9rem;line-height:1.8;">
+        <li><strong>P-cores</strong> (Avalanche): high performance, large caches, out-of-order</li>
+        <li><strong>E-cores</strong> (Blizzard): energy efficient, smaller, simpler pipeline</li>
+        <li>Scheduler automatically migrates threads between P/E cores based on QoS</li>
+        <li>M3 Pro: 6P + 6E cores = 12 total</li>
+      </ul>
+    </div>
+    <div class="card">
+      <div class="card-head">Unified Memory</div>
+      <ul style="font-size:.9rem;line-height:1.8;">
+        <li>CPU, GPU, Neural Engine share the same physical RAM</li>
+        <li>No discrete VRAM — GPU can use all system memory</li>
+        <li>Metal uses zero-copy: CPU writes, GPU reads, no DMA transfer</li>
+        <li>Memory bandwidth: ~200 GB/s on M3 Pro</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<!-- SECTION 5: launchd -->
+<div class="panel">
+  <div class="section-head">
+    <span class="section-num">05</span>
+    <h2>launchd — PID 1 (2.5s–8s)</h2>
+  </div>
+  <p>After the kernel finishes bootstrapping, it executes <code>/sbin/launchd</code> as PID 1. launchd is Apple's universal service manager — it replaced BSD init, inetd (network services), cron, and rc scripts all in one process.</p>
+
+  <div class="hbox hbox-green"><div class="hbox-label">ON-DEMAND LAUNCHING</div>
+    <p style="margin-top:12px;">launchd's key innovation: services don't start at boot — they start when first <em>needed</em>. <code>com.apple.mDNSResponder</code> starts when your first DNS-SD query arrives. <code>com.apple.bluetoothd</code> starts when Bluetooth is enabled. This is why macOS boots faster than it appears: fewer services actually run at startup than you think.</p>
+  </div>
+
+  <h3>Plist File Locations</h3>
+  <table class="data-table">
+    <thead><tr><th>Location</th><th>Type</th><th>Runs As</th><th>Purpose</th></tr></thead>
+    <tbody>
+      <tr><td><code>/System/Library/LaunchDaemons/</code></td><td>Daemon</td><td>root</td><td>Apple system services</td></tr>
+      <tr><td><code>/Library/LaunchDaemons/</code></td><td>Daemon</td><td>root</td><td>Third-party system services</td></tr>
+      <tr><td><code>/System/Library/LaunchAgents/</code></td><td>Agent</td><td>user</td><td>Apple per-user agents</td></tr>
+      <tr><td><code>/Library/LaunchAgents/</code></td><td>Agent</td><td>user</td><td>Third-party per-user agents</td></tr>
+      <tr><td><code>~/Library/LaunchAgents/</code></td><td>Agent</td><td>user</td><td>Your personal agents</td></tr>
+    </tbody>
+  </table>
+
+  <h3>A Real Plist Explained</h3>
+  <div class="terminal">
+    <div class="terminal-bar"><span class="tbar-dot red"></span><span class="tbar-dot yellow"></span><span class="tbar-dot green"></span><span class="tbar-label">com.apple.mDNSResponder.plist (simplified)</span></div>
+    <div class="terminal-body"><span class="t-hdr">&lt;?xml version="1.0" encoding="UTF-8"?&gt;</span>
+<span class="t-hdr">&lt;!DOCTYPE plist ...&gt;</span>
+<span class="t-hdr">&lt;plist version="1.0"&gt;</span>
+<span class="t-hdr">&lt;dict&gt;</span>
+  <span class="t-key">&lt;key&gt;Label&lt;/key&gt;</span>
+  <span class="t-str">&lt;string&gt;com.apple.mDNSResponder&lt;/string&gt;</span>  <span class="t-cmt">← unique service ID</span>
+
+  <span class="t-key">&lt;key&gt;ProgramArguments&lt;/key&gt;</span>
+  <span class="t-str">&lt;array&gt;&lt;string&gt;/usr/sbin/mDNSResponder&lt;/string&gt;&lt;/array&gt;</span>
+
+  <span class="t-key">&lt;key&gt;MachServices&lt;/key&gt;</span>  <span class="t-cmt">← on-demand: start when port is looked up</span>
+  <span class="t-str">&lt;dict&gt;&lt;key&gt;com.apple.mDNSResponder&lt;/key&gt;&lt;true/&gt;&lt;/dict&gt;</span>
+
+  <span class="t-key">&lt;key&gt;KeepAlive&lt;/key&gt;</span>
+  <span class="t-str">&lt;true/&gt;</span>  <span class="t-cmt">← restart automatically if it crashes</span>
+
+  <span class="t-key">&lt;key&gt;POSIXSpawnType&lt;/key&gt;</span>
+  <span class="t-str">&lt;string&gt;Interactive&lt;/string&gt;</span>  <span class="t-cmt">← P-core, not E-core</span>
+<span class="t-hdr">&lt;/dict&gt;&lt;/plist&gt;</span></div>
+  </div>
+</div>
+
+<!-- SECTION 6: ANIMATED BOOT TIMELINE -->
+<div class="panel">
+  <div class="section-head">
+    <span class="section-num">06</span>
+    <h2>Animated Boot Timeline</h2>
+  </div>
+  <p>Step through each boot stage, or play the full boot sequence. Watch how early WindowServer starts — the Apple logo appears way before the kernel is done initializing everything!</p>
+
+  <div class="timeline-wrap">
+    <div class="timeline-bar">
+      <span class="tbar-dot red"></span><span class="tbar-dot yellow"></span><span class="tbar-dot green"></span>
+      <span>BOOT SEQUENCE VISUALIZER</span>
+      <div style="margin-left:auto;display:flex;gap:8px;">
+        <button class="tl-btn" onclick="tlStep()">step →</button>
+        <button class="tl-btn" onclick="tlPlay()">▶ play</button>
+        <button class="tl-btn" onclick="tlReset()">↺ reset</button>
+      </div>
+    </div>
+    <div class="timeline-body">
+      <div class="tl-track"><div class="tl-progress" id="tl-progress"></div></div>
+      <div class="tl-stages" id="tl-stages"></div>
+      <div class="tl-elapsed" id="tl-elapsed">Press play or step to boot your virtual Mac.</div>
+    </div>
+  </div>
+</div>
+
+<!-- SECTION 7: Process Tree -->
+<div class="panel">
+  <div class="section-head">
+    <span class="section-num">07</span>
+    <h2>Interactive Process Tree</h2>
+  </div>
+  <p>After login, <code>launchd</code> (PID 1) has spawned hundreds of processes. Click any node to expand its children and see what each process does.</p>
+
+  <div class="ptree-wrap">
+    <div class="ptree-bar">
+      <span class="tbar-dot red"></span><span class="tbar-dot yellow"></span><span class="tbar-dot green"></span>
+      <span>PROCESS TREE — click to expand</span>
+    </div>
+    <div class="ptree-body" id="ptree">
+    </div>
+    <div class="ptree-info" id="ptree-info">Click any process to see what it does.</div>
+  </div>
+</div>
+
+<!-- SECTION 8: Secure Boot Deep Dive -->
+<div class="panel">
+  <div class="section-head">
+    <span class="section-num">08</span>
+    <h2>Apple Silicon vs Intel Boot</h2>
+  </div>
+
+  <table class="data-table">
+    <thead><tr><th>Stage</th><th>Intel Mac (2017–2020)</th><th>Apple Silicon (M1+)</th></tr></thead>
+    <tbody>
+      <tr><td>Root of trust</td><td>T2 chip (separate from CPU)</td><td>SecureROM on the SoC itself</td></tr>
+      <tr><td>Boot ROM</td><td>EFI firmware (~16MB, updateable)</td><td>SecureROM (~32KB, immutable)</td></tr>
+      <tr><td>Bootloader</td><td>UEFI + macOS BootPicker</td><td>iBoot (Apple custom)</td></tr>
+      <tr><td>OS seal</td><td>SIP + code signing</td><td>Sealed System Volume (SSV)</td></tr>
+      <tr><td>Boot time</td><td>20–40s (UEFI POST)</td><td>8–15s (no BIOS POST)</td></tr>
+      <tr><td>DRAM training</td><td>SPD-based, fast</td><td>Custom, longer (200–400ms)</td></tr>
+    </tbody>
+  </table>
+</div>
+
+<!-- SECTION 9: What Slows Boot -->
+<div class="panel">
+  <div class="section-head">
+    <span class="section-num">09</span>
+    <h2>What Slows Boot Down</h2>
+  </div>
+
+  <div class="grid-2">
+    <div class="card" style="border-color:var(--red);">
+      <div class="card-head" style="color:var(--red);">Slow Boot Causes</div>
+      <ul style="font-size:.9rem;line-height:1.8;">
+        <li>Too many <code>~/Library/LaunchAgents</code> (Zoom, Dropbox, etc.)</li>
+        <li>Spotlight re-indexing after hard crash</li>
+        <li>FileVault key derivation (+500ms cold boot)</li>
+        <li>Memory pressure → paging during early boot</li>
+        <li>Near-full SSD (fragmentation, less trim)</li>
+        <li>Backup software intercepting file opens</li>
+      </ul>
+    </div>
+    <div class="card" style="border-color:var(--green);">
+      <div class="card-head" style="color:var(--green);">How to Diagnose</div>
+      <ul style="font-size:.9rem;line-height:1.8;">
+        <li><code>launchctl list | grep -v apple</code> — third-party services</li>
+        <li>Console.app → filter "bootlog" for verbose boot</li>
+        <li><code>sudo fs_usage -e -f filesys /sbin/launchd</code></li>
+        <li>System Settings → Login Items — remove what you don't need</li>
+        <li><code>log show --last boot | grep error</code></li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<!-- SECTION 10: Cheat Sheet -->
+<div class="panel">
+  <div class="section-head">
+    <span class="section-num">10</span>
+    <h2>Commands Cheat Sheet</h2>
+  </div>
+  <div class="grid-2">
+    <div>
+      <div class="terminal">
+        <div class="terminal-bar"><span class="tbar-dot red"></span><span class="tbar-dot yellow"></span><span class="tbar-dot green"></span><span class="tbar-label">launchd commands</span></div>
+        <div class="terminal-body"><span class="t-cmt"># List all services</span>
+<span class="t-kw">launchctl</span> list
+
+<span class="t-cmt"># Start / stop a service</span>
+<span class="t-kw">launchctl</span> start com.example.service
+<span class="t-kw">launchctl</span> stop com.example.service
+
+<span class="t-cmt"># Load/unload a plist</span>
+<span class="t-kw">launchctl</span> load ~/Library/LaunchAgents/com.foo.plist
+<span class="t-kw">launchctl</span> unload ~/Library/LaunchAgents/com.foo.plist
+
+<span class="t-cmt"># Check SIP status</span>
+<span class="t-kw">csrutil</span> status
+
+<span class="t-cmt"># Print all NVRAM variables</span>
+<span class="t-kw">nvram</span> -p</div>
+      </div>
+    </div>
+    <div>
+      <div class="terminal">
+        <div class="terminal-bar"><span class="tbar-dot red"></span><span class="tbar-dot yellow"></span><span class="tbar-dot green"></span><span class="tbar-label">boot diagnostics</span></div>
+        <div class="terminal-body"><span class="t-cmt"># Boot log from last boot</span>
+<span class="t-kw">log</span> show --last boot \
+  --predicate <span class="t-str">'eventMessage contains "boot"'</span>
+
+<span class="t-cmt"># List APFS snapshots (SSV seal)</span>
+<span class="t-kw">diskutil</span> apfs listSnapshots /
+
+<span class="t-cmt"># Startup items</span>
+<span class="t-kw">system_profiler</span> SPStartupItemDataType
+
+<span class="t-cmt"># Processes at login</span>
+<span class="t-kw">launchctl</span> print-disabled user/$(id -u)
+
+<span class="t-cmt"># Verbose boot mode</span>
+<span class="t-kw">nvram</span> boot-args=<span class="t-str">"-v"</span></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="chapter-divider"><span>END OF HOW-05</span></div>
+</div><!-- /page-wrap -->
+
+<script src="hero-banner.js"></script>
+<script src="masthead.js"></script>
+<script src="author-card.js"></script>
+<script>
+/* ===== BOOT TIMELINE ===== */
+var tlStages = [
+  { time: '0ms',    name: 'Power Button',   color: '#e63946', desc: 'PMU receives signal. Sequences power rails: VCORE → VDDR → IO. CPU comes out of reset at SecureROM entry point.' },
+  { time: '1ms',    name: 'SecureROM',      color: '#ff5f56', desc: 'Immutable ~32KB ROM baked into silicon. Verifies iBoot signature using Apple Root CA. Cannot be patched or exploited. Falls back to DFU if verification fails.' },
+  { time: '5ms',    name: 'iBoot Starts',   color: '#ff8c42', desc: 'Apple\'s bootloader loads from NAND flash. Begins DRAM training — calibrates timing for this exact machine\'s memory (takes 200–400ms).' },
+  { time: '400ms',  name: 'DRAM Ready',     color: '#ffd23f', desc: 'Memory training complete. iBoot sets up the MMU (memory management unit), creating initial page tables for virtual addressing.' },
+  { time: '600ms',  name: 'SSV Verified',   color: '#e3b341', desc: 'iBoot computes Merkle tree root hash of the Sealed System Volume. Verifies it matches expected value. Any modified system file would fail this check.' },
+  { time: '800ms',  name: 'XNU Kernel',     color: '#8a4fff', desc: 'iBoot loads XNU kernel into RAM, verifies its signature, builds device tree (hardware description), and jumps to kernel entry point.' },
+  { time: '1200ms', name: 'VM + IPC Init',  color: '#7b68ee', desc: 'XNU initializes virtual memory subsystem (pmap), zone allocator (slab), and Mach IPC (ports and message queues).' },
+  { time: '1600ms', name: 'Scheduler',      color: '#6495ed', desc: 'Real-time scheduler starts. P-cores and E-cores become available. First thread: the idle thread on each core.' },
+  { time: '1900ms', name: 'BSD + VFS',      color: '#1d6fb8', desc: 'BSD subsystem initializes: VFS (virtual filesystem), BSD socket layer, process table, signal handling, POSIX APIs.' },
+  { time: '2100ms', name: 'I/O Kit',        color: '#0d9488', desc: 'I/O Kit parses the device tree from iBoot. Probes for matching drivers. USB, NVMe, display, keyboard all initialize here.' },
+  { time: '2500ms', name: 'launchd PID 1',  color: '#3fa34d', desc: 'Kernel execs /sbin/launchd as PID 1. launchd reads plists from /System/Library/LaunchDaemons/. Starts securityd, configd, diskarbitrationd.' },
+  { time: '3500ms', name: 'WindowServer',   color: '#27c93f', desc: 'com.apple.WindowServer starts. The Quartz compositor initializes. The display gets its first frame — the Apple logo on boot screen.' },
+  { time: '5000ms', name: 'Network Stack',  color: '#56c96a', desc: 'configd, mDNSResponder, airportd start. Wifi association begins. DHCP or static IP configured. DNS resolvers set up.' },
+  { time: '7000ms', name: 'loginwindow',    color: '#7ee787', desc: 'loginwindow process starts. Presents authentication UI. FileVault decryption key derived if enabled. Waiting for user credentials.' },
+  { time: '15000ms','name': 'Desktop Ready', color: '#40d158', desc: 'Authentication complete. User session launchd starts. Dock, Finder, SystemUIServer launch. Previous windows restored. Mac is fully usable.' }
+];
+
+var tlCurrent = 0;
+var tlTimer = null;
+
+function tlBuild() {
+  var container = document.getElementById('tl-stages');
+  container.innerHTML = '';
+  tlStages.forEach(function(stage, i) {
+    var el = document.createElement('div');
+    el.className = 'tl-stage';
+    el.id = 'tl-stage-' + i;
+    el.innerHTML =
+      '<div class="tl-time">' + stage.time + '</div>' +
+      '<div>' +
+        '<div class="tl-name">' + stage.name + '</div>' +
+        '<div class="tl-desc">' + stage.desc + '</div>' +
+      '</div>';
+    container.appendChild(el);
+  });
+}
+
+function tlActivate(i) {
+  document.querySelectorAll('.tl-stage').forEach(function(el, idx) {
+    el.classList.remove('active', 'done');
+    if (idx < i) el.classList.add('done');
+    else if (idx === i) el.classList.add('active');
+  });
+  var pct = Math.round((i / (tlStages.length - 1)) * 100);
+  document.getElementById('tl-progress').style.width = pct + '%';
+  document.getElementById('tl-elapsed').textContent =
+    '⏱️ ' + tlStages[i].time + ' — ' + tlStages[i].name;
+  // scroll into view
+  var el = document.getElementById('tl-stage-' + i);
+  if (el) el.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+}
+
+function tlStep() {
+  if (tlCurrent < tlStages.length) {
+    tlActivate(tlCurrent);
+    tlCurrent++;
+  }
+}
+
+function tlPlay() {
+  if (tlTimer) return;
+  var delays = [0, 100, 200, 300, 400, 500, 600, 700, 800, 900, 1000, 1200, 1400, 1700, 2200];
+  tlReset();
+  tlStages.forEach(function(_, i) {
+    setTimeout(function() {
+      tlActivate(i);
+      tlCurrent = i + 1;
+      if (i === tlStages.length - 1) tlTimer = null;
+    }, delays[i] || i * 200);
+  });
+  tlTimer = setTimeout(function(){ tlTimer = null; }, 4000);
+}
+
+function tlReset() {
+  if (tlTimer) { clearTimeout(tlTimer); tlTimer = null; }
+  tlCurrent = 0;
+  document.querySelectorAll('.tl-stage').forEach(function(el) { el.classList.remove('active','done'); });
+  document.getElementById('tl-progress').style.width = '0%';
+  document.getElementById('tl-elapsed').textContent = 'Press play or step to boot your virtual Mac.';
+}
+
+tlBuild();
+
+/* ===== PROCESS TREE ===== */
+var ptreeData = {
+  pid: 1, name: 'launchd', desc: 'PID 1 — universal service manager. Replaced init, cron, inetd. Manages all system and user services via plist configurations.',
+  children: [
+    { pid: 0, name: 'kernel_task', desc: 'Virtual process representing the kernel itself. Accounts for CPU time spent in kernel mode. Always PID 0.', children: [] },
+    { pid: 68, name: 'syslogd', desc: 'System log daemon. Collects log messages from all processes and writes to /var/log/system.log and the unified logging system (os_log).', children: [] },
+    { pid: 71, name: 'configd', desc: 'System Configuration daemon. Manages network configuration: IP addresses, DNS servers, proxy settings. Notifies apps when network changes.', children: [] },
+    { pid: 74, name: 'securityd', desc: 'Security daemon. Manages the Keychain, code signing enforcement, TrustD policies. Every Keychain access goes through this process.', children: [] },
+    { pid: 89, name: 'WindowServer', desc: 'Quartz Compositor. Manages all windows, composites them into the final display frame, handles HiDPI scaling, GPU acceleration. If this crashes, all GUI apps die.', children: [] },
+    { pid: 134, name: 'mDNSResponder', desc: 'Multicast DNS Responder. Powers Bonjour (service discovery), AirDrop, AirPlay. Answers .local hostname queries and advertises your services on the local network.', children: [] },
+    { pid: 156, name: 'bluetoothd', desc: 'Bluetooth daemon. Manages Bluetooth hardware, pairing, HID profiles (keyboard/mouse), BLE advertisement scanning.', children: [] },
+    { pid: 201, name: 'airportd', desc: 'Wi-Fi daemon. Manages 802.11 hardware, network scanning, association, 802.1X authentication, roaming decisions.', children: [] },
+    { pid: 312, name: 'loginwindow', desc: 'Login window process. Presents the macOS login UI. Handles authentication via opendirectoryd. After login, spawns the user session and becomes the session leader.',
+      children: [
+        { pid: 501, name: 'launchd (user)', desc: 'User-specific launchd instance. Manages all LaunchAgents for the logged-in user. Child of loginwindow, parent of Dock/Finder/etc.', children: [
+          { pid: 612, name: 'Dock', desc: 'The macOS Dock. Manages app icons, Mission Control, Exposé, Hot Corners. Also handles app launching when you click dock icons.', children: [] },
+          { pid: 613, name: 'Finder', desc: 'File manager and desktop. Handles file operations, the desktop, Spotlight results UI, Quick Look previews, iCloud Drive sync UI.', children: [] },
+          { pid: 614, name: 'SystemUIServer', desc: 'Menu bar host. Manages all menu bar extras (clock, Wifi indicator, battery, Spotlight icon, Notification Center). Plugins are NSMenuExtra bundles.', children: [] },
+          { pid: 789, name: 'ControlStrip', desc: 'Manages the Touch Bar control strip (if present). Also handles macOS Sequoia control center widgets.', children: [] }
+        ]}
+      ]
+    }
+  ]
+};
+
+function ptreeRender(node, depth) {
+  var html = '';
+  var hasChildren = node.children && node.children.length > 0;
+  var indent = '  '.repeat(depth);
+  var connector = depth === 0 ? '' : (node === ptreeData ? '' : '├── ');
+
+  html += '<div class="ptree-node" data-pid="' + node.pid + '" onclick="ptreeClick(this, \'' + node.pid + '\')" data-has-children="' + hasChildren + '">';
+  html += '<span class="ptree-indent">' + indent + connector + '</span>';
+  html += '<span class="ptree-toggle">' + (hasChildren ? '▶' : '  ') + '</span>';
+  html += '<span class="ptree-pid">[' + node.pid + ']</span> ';
+  html += '<span class="ptree-label">' + node.name + '</span>';
+  html += '</div>';
+
+  if (hasChildren) {
+    html += '<div class="ptree-children" id="ptree-children-' + node.pid + '">';
+    node.children.forEach(function(child) {
+      html += ptreeRender(child, depth + 1);
+    });
+    html += '</div>';
+  }
+  return html;
+}
+
+var ptreeDescs = {};
+function buildDescs(node) {
+  ptreeDescs[node.pid] = { name: node.name, desc: node.desc };
+  if (node.children) node.children.forEach(buildDescs);
+}
+buildDescs(ptreeData);
+
+function ptreeClick(el, pid) {
+  var childDiv = document.getElementById('ptree-children-' + pid);
+  var toggle = el.querySelector('.ptree-toggle');
+  if (childDiv) {
+    childDiv.classList.toggle('open');
+    if (toggle) toggle.textContent = childDiv.classList.contains('open') ? '▼' : '▶';
+  }
+  var info = ptreeDescs[parseInt(pid)];
+  if (info) {
+    document.getElementById('ptree-info').innerHTML =
+      '<span style="color:#7ee787;font-family:Bangers,cursive;font-size:1rem;letter-spacing:1px;">' + info.name + '</span>' +
+      '<span style="color:#7d8590;"> [PID ' + pid + '] — </span>' + info.desc;
+  }
+}
+
+document.getElementById('ptree').innerHTML = ptreeRender(ptreeData, 0);
+// Auto-expand root
+var rootChildren = document.getElementById('ptree-children-1');
+if (rootChildren) {
+  rootChildren.classList.add('open');
+  var rootToggle = document.querySelector('[data-pid="1"] .ptree-toggle');
+  if (rootToggle) rootToggle.textContent = '▼';
+}
+</script>
+</body>
+</html>
