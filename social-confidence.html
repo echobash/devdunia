@@ -1,0 +1,1657 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Social Confidence for Engineers & Introverts — DevDunia</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bangers&family=Comic+Neue:ital,wght@0,400;0,700;1,400&family=Space+Mono:wght@400;700&display=swap">
+<style>
+:root {
+  --ink: #1a1410; --paper: #fdf3e3; --paper2: #fbe9cc;
+  --red: #e63946; --blue: #1d6fb8; --yellow: #ffd23f;
+  --green: #3fa34d; --pink: #ff6b9d; --purple: #8a4fff;
+  --orange: #ff8c42; --teal: #0d9488;
+}
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  font-family: 'Comic Neue', cursive;
+  color: var(--ink);
+  background-color: var(--paper);
+  background-image: radial-gradient(var(--ink) 0.5px, transparent 0.6px);
+  background-size: 14px 14px;
+  background-attachment: fixed;
+  line-height: 1.65;
+}
+.page-wrap { position: relative; z-index: 1; max-width: 1240px; margin: 0 auto; padding: 20px 32px 60px; }
+.panel {
+  border: 4px solid var(--ink); border-radius: 6px;
+  box-shadow: 7px 7px 0 var(--ink);
+  background: var(--paper); padding: 28px 32px; margin-bottom: 32px;
+}
+h2 { font-family: 'Bangers', cursive; font-size: 2.4rem; letter-spacing: 2px; margin-bottom: 16px; line-height: 1; }
+h3 { font-family: 'Bangers', cursive; font-size: 1.6rem; letter-spacing: 1px; margin-bottom: 12px; }
+h4 { font-family: 'Bangers', cursive; font-size: 1.2rem; letter-spacing: 1px; margin-bottom: 8px; }
+p  { margin-bottom: 14px; font-size: 1.05rem; }
+p:last-child { margin-bottom: 0; }
+ul { padding-left: 22px; margin-bottom: 14px; }
+li { margin-bottom: 6px; font-size: 1rem; }
+code { font-family: 'Space Mono', monospace; font-size: .85em; background: var(--paper2); padding: 1px 5px; border-radius: 3px; }
+.section-head { display: flex; align-items: center; gap: 14px; margin-bottom: 22px; flex-wrap: wrap; }
+.section-num {
+  font-family: 'Bangers', cursive; font-size: 1.1rem; letter-spacing: 2px;
+  background: var(--purple); color: #fff; padding: 4px 14px;
+  border-radius: 4px; border: 2px solid var(--ink); box-shadow: 2px 2px 0 var(--ink);
+}
+.chip {
+  display: inline-block; font-family: 'Bangers', cursive; font-size: .85rem;
+  letter-spacing: 1.5px; padding: 3px 12px; border-radius: 4px;
+  border: 2px solid var(--ink); margin-right: 6px; margin-bottom: 6px; vertical-align: middle;
+}
+.chip-green  { background: var(--green);  color: #fff; }
+.chip-red    { background: var(--red);    color: #fff; }
+.chip-blue   { background: var(--blue);   color: #fff; }
+.chip-yellow { background: var(--yellow); color: var(--ink); }
+.chip-orange { background: var(--orange); color: #fff; }
+.chip-purple { background: var(--purple); color: #fff; }
+.chip-pink   { background: var(--pink);   color: #fff; }
+.hbox {
+  border: 3px solid var(--ink); border-radius: 5px; padding: 18px 22px;
+  margin: 16px 0; position: relative;
+}
+.hbox-label {
+  font-family: 'Bangers', cursive; font-size: .9rem; letter-spacing: 2px;
+  position: absolute; top: -14px; left: 16px; padding: 2px 12px;
+  border: 2px solid var(--ink); border-radius: 4px;
+}
+.hbox-orange { background: rgba(255,140,66,.1); border-color: var(--orange); }
+.hbox-orange .hbox-label { background: var(--orange); color: #fff; }
+.hbox-red { background: rgba(230,57,70,.08); border-color: var(--red); }
+.hbox-red .hbox-label { background: var(--red); color: #fff; }
+.hbox-green { background: rgba(63,163,77,.1); border-color: var(--green); }
+.hbox-green .hbox-label { background: var(--green); color: #fff; }
+.hbox-blue { background: rgba(29,111,184,.1); border-color: var(--blue); }
+.hbox-blue .hbox-label { background: var(--blue); color: #fff; }
+.hbox-yellow { background: rgba(255,210,63,.15); border-color: var(--yellow); }
+.hbox-yellow .hbox-label { background: var(--yellow); color: var(--ink); }
+.hbox-purple { background: rgba(138,79,255,.08); border-color: var(--purple); }
+.hbox-purple .hbox-label { background: var(--purple); color: #fff; }
+.grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin: 16px 0; }
+.grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 16px; margin: 16px 0; }
+@media (max-width: 700px) { .grid-2, .grid-3 { grid-template-columns: 1fr; } }
+.card {
+  border: 3px solid var(--ink); border-radius: 5px;
+  box-shadow: 4px 4px 0 var(--ink); padding: 18px; background: var(--paper);
+}
+.card-head { font-family: 'Bangers', cursive; font-size: 1.1rem; letter-spacing: 1px; margin-bottom: 10px; padding-bottom: 8px; border-bottom: 2px solid var(--ink); }
+.step-flow { display: flex; flex-direction: column; gap: 0; }
+.step-item { display: grid; grid-template-columns: 52px 1fr; gap: 0 18px; position: relative; }
+.step-item:not(:last-child)::after { content: ''; position: absolute; left: 25px; top: 52px; bottom: -16px; width: 2px; background: var(--ink); }
+.step-num {
+  width: 52px; height: 52px; border-radius: 50%;
+  border: 3px solid var(--ink); display: flex; align-items: center; justify-content: center;
+  font-family: 'Bangers', cursive; font-size: 1.3rem;
+  box-shadow: 3px 3px 0 var(--ink); flex-shrink: 0; position: relative; z-index: 1;
+}
+.step-body { padding: 8px 0 28px; }
+.sfx-row { display: flex; gap: 16px; flex-wrap: wrap; margin: 20px 0; }
+.sfx {
+  font-family: 'Bangers', cursive; font-size: 1.8rem; letter-spacing: 3px;
+  color: var(--ink); text-shadow: 3px 3px 0 var(--yellow); transform: rotate(-2deg); display: inline-block;
+}
+
+/* ── SPEECH BUBBLE ───────── */
+.bubble-wrap { display: flex; gap: 14px; margin: 12px 0; align-items: flex-start; }
+.bubble-wrap.right { flex-direction: row-reverse; }
+.bubble-avatar {
+  width: 44px; height: 44px; border-radius: 50%;
+  border: 3px solid var(--ink); display: flex; align-items: center; justify-content: center;
+  font-size: 1.3rem; flex-shrink: 0; box-shadow: 2px 2px 0 var(--ink);
+}
+.bubble {
+  position: relative; padding: 12px 16px; border-radius: 12px;
+  border: 2.5px solid var(--ink); box-shadow: 3px 3px 0 var(--ink);
+  max-width: 78%; font-size: .98rem; line-height: 1.55;
+}
+.bubble::before {
+  content: ''; position: absolute; top: 14px;
+  width: 0; height: 0;
+}
+.bubble-wrap:not(.right) .bubble::before {
+  left: -12px; border-top: 7px solid transparent; border-bottom: 7px solid transparent; border-right: 12px solid var(--ink);
+}
+.bubble-wrap.right .bubble::before {
+  right: -12px; border-top: 7px solid transparent; border-bottom: 7px solid transparent; border-left: 12px solid var(--ink);
+}
+.bubble.you { background: #e8f4fd; }
+.bubble.them { background: var(--paper2); }
+.bubble.bad { background: #fdecea; border-color: var(--red); box-shadow: 3px 3px 0 var(--red); }
+.bubble.good { background: #edfaea; border-color: var(--green); box-shadow: 3px 3px 0 var(--green); }
+.bubble-label { font-family: 'Space Mono', monospace; font-size: .68rem; color: #888; margin-bottom: 4px; display: block; }
+
+/* ── PRINCIPLE CARDS ───── */
+.principle-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 14px; margin: 20px 0; }
+.principle-card {
+  border: 3px solid var(--ink); border-radius: 6px; padding: 16px;
+  box-shadow: 4px 4px 0 var(--ink); cursor: default;
+  transition: transform .15s, box-shadow .15s; background: var(--paper);
+}
+.principle-card:hover { transform: translateY(-3px) translateX(-2px); box-shadow: 6px 7px 0 var(--ink); }
+.principle-num {
+  font-family: 'Bangers', cursive; font-size: 2rem; display: block;
+  line-height: 1; margin-bottom: 6px;
+}
+.principle-text { font-size: .95rem; line-height: 1.5; font-style: italic; color: #333; }
+
+/* ── MODE TOGGLE ─────── */
+.mode-toggle-wrap { display: flex; gap: 0; border: 3px solid var(--ink); border-radius: 6px; overflow: hidden; margin-bottom: 20px; }
+.mode-btn {
+  flex: 1; padding: 12px 20px; font-family: 'Bangers', cursive; font-size: 1.1rem; letter-spacing: 2px;
+  border: none; cursor: pointer; transition: background .2s, color .2s;
+}
+.mode-btn.interview { background: #fdecea; color: var(--red); border-right: 3px solid var(--ink); }
+.mode-btn.friend    { background: #edfaea; color: var(--green); }
+.mode-btn.active.interview { background: var(--red); color: #fff; }
+.mode-btn.active.friend    { background: var(--green); color: #fff; }
+
+/* ── VENUE SELECTOR ──── */
+.venue-grid { display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 20px; }
+.venue-btn {
+  font-family: 'Bangers', cursive; font-size: .95rem; letter-spacing: 1.5px;
+  padding: 8px 18px; border: 2.5px solid var(--ink); border-radius: 5px;
+  background: var(--paper2); cursor: pointer; box-shadow: 3px 3px 0 var(--ink);
+  transition: transform .12s, box-shadow .12s;
+}
+.venue-btn:hover { transform: translateY(-2px); box-shadow: 4px 5px 0 var(--ink); }
+.venue-btn.active { background: var(--purple); color: #fff; border-color: var(--purple); }
+
+/* ── OPENER CARDS ──────── */
+.opener-card {
+  border: 3px solid var(--ink); border-radius: 6px; padding: 20px 24px;
+  margin: 12px 0; box-shadow: 4px 4px 0 var(--ink); background: var(--paper);
+  opacity: 0; transform: translateY(10px);
+  transition: opacity .3s, transform .3s;
+}
+.opener-card.visible { opacity: 1; transform: translateY(0); }
+.opener-quote {
+  font-family: 'Comic Neue', cursive; font-size: 1.15rem; font-weight: 700;
+  font-style: italic; color: #222; margin-bottom: 12px; line-height: 1.5;
+  border-left: 4px solid var(--purple); padding-left: 14px;
+}
+.opener-why {
+  font-size: .9rem; color: #555; background: rgba(138,79,255,.08);
+  border-radius: 4px; padding: 8px 12px; border-left: 3px solid var(--purple);
+}
+.opener-why strong { color: var(--purple); }
+
+/* ── ROLEPLAY COMIC ───── */
+.comic-scenario-select { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 24px; }
+.comic-scen-btn {
+  font-family: 'Bangers', cursive; font-size: .9rem; letter-spacing: 1.5px;
+  padding: 7px 16px; border: 2.5px solid var(--ink); border-radius: 5px;
+  background: var(--paper2); cursor: pointer; box-shadow: 3px 3px 0 var(--ink);
+}
+.comic-scen-btn.active { background: var(--ink); color: var(--yellow); }
+
+.comic-stage {
+  border: 4px solid var(--ink); border-radius: 8px; overflow: hidden;
+  box-shadow: 7px 7px 0 var(--ink); background: var(--paper);
+}
+.comic-header {
+  background: var(--ink); color: var(--yellow);
+  font-family: 'Bangers', cursive; font-size: 1rem; letter-spacing: 3px;
+  padding: 10px 20px; display: flex; justify-content: space-between; align-items: center;
+}
+.comic-body { padding: 24px; min-height: 320px; }
+.comic-nav {
+  display: flex; justify-content: space-between; align-items: center;
+  padding: 14px 20px; border-top: 3px solid var(--ink); background: var(--paper2);
+}
+.comic-nav-btn {
+  font-family: 'Bangers', cursive; font-size: 1rem; letter-spacing: 2px;
+  padding: 8px 22px; border: 2.5px solid var(--ink); border-radius: 5px;
+  background: var(--paper); cursor: pointer; box-shadow: 3px 3px 0 var(--ink);
+  transition: background .12s;
+}
+.comic-nav-btn:hover { background: var(--paper2); }
+.comic-nav-btn:disabled { opacity: .4; cursor: not-allowed; box-shadow: none; }
+.comic-progress {
+  font-family: 'Space Mono', monospace; font-size: .78rem; color: #666;
+}
+.comic-scene-label {
+  font-family: 'Bangers', cursive; font-size: .85rem; letter-spacing: 2px;
+  display: inline-block; padding: 3px 12px; border-radius: 4px; margin-bottom: 16px;
+  border: 2px solid var(--ink); box-shadow: 2px 2px 0 var(--ink);
+}
+.insight-box {
+  background: #fffbea; border: 2.5px solid var(--yellow); border-radius: 6px;
+  padding: 14px 18px; margin-top: 16px;
+  font-size: .93rem; line-height: 1.6;
+}
+.insight-box strong { font-family: 'Bangers', cursive; font-size: 1rem; letter-spacing: 1px; color: #9a6000; }
+
+/* ── CHALLENGE CARDS ──── */
+.challenge-cards { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 16px; margin: 20px 0; }
+.challenge-card {
+  border: 3px solid var(--ink); border-radius: 6px; padding: 18px;
+  box-shadow: 5px 5px 0 var(--ink); background: var(--paper);
+}
+.challenge-day {
+  font-family: 'Bangers', cursive; font-size: .85rem; letter-spacing: 2px;
+  padding: 3px 10px; border-radius: 4px; border: 2px solid var(--ink);
+  display: inline-block; margin-bottom: 10px;
+}
+.challenge-task { font-size: 1.05rem; font-weight: 700; margin-bottom: 8px; }
+.challenge-why { font-size: .88rem; color: #555; font-style: italic; }
+
+/* ── ANXIETY METER ─────── */
+.anxiety-compare { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin: 20px 0; }
+@media (max-width: 600px) { .anxiety-compare { grid-template-columns: 1fr; } }
+.anxiety-side { border: 3px solid var(--ink); border-radius: 6px; padding: 18px; box-shadow: 4px 4px 0 var(--ink); }
+.anxiety-head { font-family: 'Bangers', cursive; font-size: 1.1rem; letter-spacing: 1.5px; margin-bottom: 12px; padding-bottom: 8px; border-bottom: 2.5px solid var(--ink); }
+.anxiety-thought { font-size: .93rem; margin-bottom: 8px; padding: 8px 12px; border-radius: 4px; border-left: 3px solid; }
+
+/* ── DAILY PRACTICE ─────── */
+.micro-opp-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(230px, 1fr)); gap: 14px; margin: 20px 0; }
+.micro-opp-card {
+  border: 3px solid var(--ink); border-radius: 6px; padding: 16px 18px;
+  box-shadow: 4px 4px 0 var(--ink); background: var(--paper);
+  transition: transform .12s, box-shadow .12s;
+}
+.micro-opp-card:hover { transform: translateY(-3px); box-shadow: 6px 7px 0 var(--ink); }
+.micro-opp-icon { font-size: 1.6rem; margin-bottom: 8px; display: block; }
+.micro-opp-title { font-family: 'Bangers', cursive; font-size: 1.05rem; letter-spacing: 1px; margin-bottom: 6px; }
+.micro-opp-what { font-size: .9rem; color: #444; margin-bottom: 6px; }
+.micro-opp-say { font-size: .88rem; font-style: italic; color: var(--purple); border-left: 3px solid var(--purple); padding-left: 10px; margin-top: 8px; }
+
+/* ── OBSERVATIONS LIBRARY ── */
+.obs-tabs { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 20px; }
+.obs-tab {
+  font-family: 'Bangers', cursive; font-size: .92rem; letter-spacing: 1.5px;
+  padding: 7px 16px; border: 2.5px solid var(--ink); border-radius: 5px;
+  background: var(--paper2); cursor: pointer; box-shadow: 3px 3px 0 var(--ink);
+  transition: transform .1s;
+}
+.obs-tab:hover { transform: translateY(-1px); }
+.obs-tab.active { background: var(--ink); color: var(--yellow); }
+.obs-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+@media (max-width: 640px) { .obs-grid { grid-template-columns: 1fr; } }
+.obs-card {
+  border: 2.5px solid var(--ink); border-radius: 6px; padding: 14px 16px;
+  background: var(--paper); cursor: pointer; box-shadow: 3px 3px 0 var(--ink);
+  transition: transform .12s, box-shadow .12s, background .12s;
+  position: relative;
+}
+.obs-card:hover { transform: translateY(-2px); box-shadow: 5px 5px 0 var(--ink); background: var(--paper2); }
+.obs-num { font-family: 'Space Mono', monospace; font-size: .7rem; color: #aaa; margin-bottom: 6px; display: block; }
+.obs-text { font-size: 1rem; font-style: italic; line-height: 1.5; color: #222; }
+.obs-reaction { display: none; margin-top: 10px; font-size: .88rem; color: var(--purple); border-top: 1.5px dashed #ccc; padding-top: 8px; }
+.obs-card.expanded .obs-reaction { display: block; }
+.obs-secret-box {
+  background: var(--ink); color: var(--yellow); border-radius: 6px; padding: 20px 24px;
+  margin-top: 20px; font-family: 'Comic Neue', cursive; font-size: 1rem; line-height: 1.8;
+}
+.obs-secret-box h4 { font-family: 'Bangers', cursive; font-size: 1.3rem; letter-spacing: 2px; margin-bottom: 10px; color: var(--yellow); }
+
+/* ── ADVANCED MOVES ─────── */
+.move-block {
+  border: 3px solid var(--ink); border-radius: 6px; padding: 20px 24px;
+  margin: 16px 0; box-shadow: 4px 4px 0 var(--ink); background: var(--paper);
+}
+.move-block-title { font-family: 'Bangers', cursive; font-size: 1.2rem; letter-spacing: 1.5px; margin-bottom: 14px; }
+.swap-row { display: grid; grid-template-columns: 1fr auto 1fr; gap: 12px; align-items: center; margin: 12px 0; }
+@media (max-width: 600px) { .swap-row { grid-template-columns: 1fr; } }
+.swap-bad { background: #fdecea; border: 2px solid var(--red); border-radius: 5px; padding: 12px 16px; font-size: .95rem; }
+.swap-good { background: #edfaea; border: 2px solid var(--green); border-radius: 5px; padding: 12px 16px; font-size: .95rem; }
+.swap-arrow { font-family: 'Bangers', cursive; font-size: 1.4rem; color: var(--ink); text-align: center; }
+.reaction-demo { background: var(--paper2); border: 2.5px solid var(--ink); border-radius: 6px; padding: 16px 20px; margin: 12px 0; }
+.reaction-label { font-family: 'Bangers', cursive; font-size: .9rem; letter-spacing: 2px; margin-bottom: 8px; }
+</style>
+</head>
+<body>
+<div data-masthead></div>
+<div class="page-wrap">
+
+<div data-tool-hero
+  data-title="Social Confidence for Engineers"
+  data-chapter="SOFT-01"
+  data-category="Human Skills"
+  data-icon="🤝"
+  data-desc="Why smart, analytical people freeze in social situations — and the mindset shift that makes conversation feel natural again."
+  data-color="purple"
+  data-badges="COMMUNICATION,MINDSET,SOCIAL SKILLS,INTROVERT GUIDE"
+  data-badge-colors="purple,blue,green,orange">
+</div>
+
+<!-- ── SECTION 01: Root Cause ─────────────────────────────── -->
+<div class="panel">
+  <div class="section-head">
+    <span class="section-num">01</span>
+    <h2>Root Cause: You're Running the Wrong Algorithm</h2>
+  </div>
+
+  <p>Engineers, developers, and analytical people aren't bad at socializing. They're applying a <strong>logic framework to a situation that doesn't run on logic.</strong> The result is the mental equivalent of running SQL on a REST API.</p>
+
+  <div class="grid-2">
+    <div class="card">
+      <div class="card-head" style="color:var(--red);">🧠 The Engineering Brain in a Social Situation</div>
+      <ul>
+        <li>"I need to have a reason to talk to this person."</li>
+        <li>"I should ask about their work/background/interests."</li>
+        <li>"I need to find common ground before the conversation can proceed."</li>
+        <li>"I must not say something stupid or awkward."</li>
+        <li>"I'll wait until I have the perfect thing to say."</li>
+      </ul>
+      <p style="margin-top:10px;font-size:.9rem;color:var(--red);">This is called <strong>evaluation mode</strong> — and it creates anxiety in everyone, including you.</p>
+    </div>
+    <div class="card">
+      <div class="card-head" style="color:var(--green);">💬 How Socially Fluent People Actually Think</div>
+      <ul>
+        <li>"Something interesting is happening. I'll react to it."</li>
+        <li>"This person is here. So am I. That's enough of a reason."</li>
+        <li>"I'll say what I'm noticing right now."</li>
+        <li>"If it goes nowhere, that's fine. No stakes."</li>
+        <li>"They're a normal human. Same as me."</li>
+      </ul>
+      <p style="margin-top:10px;font-size:.9rem;color:var(--green);">This is <strong>curiosity mode</strong> — it generates zero anxiety because there's nothing to evaluate.</p>
+    </div>
+  </div>
+
+  <div class="hbox hbox-yellow" style="margin-top:20px;">
+    <div class="hbox-label">THE CORE INSIGHT</div>
+    <p style="margin-top:8px;">Anxiety in social situations is almost always caused by <strong>treating conversation as a performance to be evaluated</strong> rather than a shared experience to be had. The moment you shift from "am I doing well?" to "what's interesting here?" — the anxiety disappears.</p>
+  </div>
+
+  <h3 style="margin-top:24px;">The Three Thinking Errors</h3>
+  <div class="step-flow" style="margin-top:12px;">
+    <div class="step-item">
+      <div class="step-num" style="background:#fdecea;">❌</div>
+      <div class="step-body">
+        <h4>Error 1: "I need a reason to talk to them"</h4>
+        <p>You don't need a reason. You're both in the same place at the same time. That's the reason. Friends don't need agendas to talk. They just react to what's around them.</p>
+      </div>
+    </div>
+    <div class="step-item">
+      <div class="step-num" style="background:#fdecea;">❌</div>
+      <div class="step-body">
+        <h4>Error 2: "This person is special / intimidating / out of my league"</h4>
+        <p>Whether they're a CEO, an attractive stranger, or a celebrity — they still struggle to find parking, get bad Wi-Fi, and feel awkward waiting for an elevator alone. <strong>Nobody is on a pedestal. People put themselves there.</strong></p>
+      </div>
+    </div>
+    <div class="step-item">
+      <div class="step-num" style="background:#fdecea;">❌</div>
+      <div class="step-body">
+        <h4>Error 3: "I need to find the perfect topic"</h4>
+        <p>Topic hunting is a symptom of interview mode. Natural conversation doesn't start with a topic — it starts with a <em>reaction</em>. Something happens. Someone notices it. They say so. Connection happens.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ── SECTION 02: The 10 Principles ──────────────────────── -->
+<div class="panel">
+  <div class="section-head">
+    <span class="section-num">02</span>
+    <h2>10 Principles That Change Everything</h2>
+  </div>
+  <p>These aren't tips. They're a complete mental reframe for how you see social interaction. Read them slowly. The ones that feel uncomfortable are the ones you need most.</p>
+
+  <div class="principle-grid" id="principles-grid"></div>
+</div>
+
+<!-- ── SECTION 03: Interview vs Friend Mode ────────────────── -->
+<div class="panel">
+  <div class="section-head">
+    <span class="section-num">03</span>
+    <h2>Interview Mode vs Friend Mode</h2>
+  </div>
+
+  <p>The same situation. The same person. Two completely different outcomes — determined entirely by which internal mode you're in. Click to see the difference.</p>
+
+  <div class="mode-toggle-wrap">
+    <button class="mode-btn interview active" onclick="setMode('interview', this)">❌ INTERVIEW MODE</button>
+    <button class="mode-btn friend" onclick="setMode('friend', this)">✅ FRIEND MODE</button>
+  </div>
+
+  <!-- SCENARIO: Conference Networking -->
+  <div style="margin-bottom:28px;">
+    <div style="font-family:'Bangers',cursive;font-size:1rem;letter-spacing:2px;color:#888;margin-bottom:14px;">📍 SCENARIO: Tech Conference — Waiting for the Next Talk</div>
+
+    <div id="mode-convo-conference"></div>
+
+    <div id="mode-insight-conference" class="insight-box">
+      <strong>WHY THIS FEELS AWKWARD:</strong> Interview mode forces the other person to explain themselves. It's exhausting. After 2 questions they feel like they're at an HR meeting. Friend mode makes them feel seen and creates a shared reaction — neither person is under pressure to perform.
+    </div>
+  </div>
+
+  <!-- SCENARIO: Coffee Shop -->
+  <div style="margin-bottom:28px;">
+    <div style="font-family:'Bangers',cursive;font-size:1rem;letter-spacing:2px;color:#888;margin-bottom:14px;">📍 SCENARIO: Coffee Shop — Someone Working Next to You</div>
+    <div id="mode-convo-coffee"></div>
+    <div id="mode-insight-coffee" class="insight-box">
+      <strong>WHY IT WORKS:</strong> The observation ("I always feel guilty...") is relatable and honest. It gives them an easy entry point without pressure. They can agree, disagree, or joke — any response continues the conversation naturally.
+    </div>
+  </div>
+
+  <!-- SCENARIO: Attractive Stranger -->
+  <div>
+    <div style="font-family:'Bangers',cursive;font-size:1rem;letter-spacing:2px;color:#888;margin-bottom:14px;">📍 SCENARIO: Meeting Someone Attractive or High-Status</div>
+    <div id="mode-convo-attractive"></div>
+    <div id="mode-insight-attractive" class="insight-box">
+      <strong>THE PEDESTAL PROBLEM:</strong> When you treat someone as special or intimidating, you signal that you believe they are above you. Attractive and successful people can feel this immediately — and it makes them feel like they can't be themselves around you. Equal-status communication is more attractive than any "technique."
+    </div>
+  </div>
+</div>
+
+<!-- ── SECTION 04: Observation Framework ─────────────────── -->
+<div class="panel">
+  <div class="section-head">
+    <span class="section-num">04</span>
+    <h2>The Observation Framework</h2>
+  </div>
+
+  <p>Observations are almost always better than questions as conversation starters. Here's why: a question puts the other person on the spot. An observation gives them something to react to. Reactions create connection. Questions create interrogations.</p>
+
+  <div class="grid-3" style="margin: 20px 0;">
+    <div class="card" style="background:#fdecea;border-color:var(--red);">
+      <div class="card-head" style="color:var(--red);border-color:var(--red);">🔴 Questions (Puts Them on Spot)</div>
+      <ul>
+        <li>"What do you do?"</li>
+        <li>"Where are you from?"</li>
+        <li>"Do you come here often?"</li>
+        <li>"How long have you been coding?"</li>
+        <li>"What are you working on?"</li>
+      </ul>
+      <p style="font-size:.88rem;margin-top:10px;color:#aa2222;">Forces them to answer. Creates an interrogation dynamic. Zero warmth.</p>
+    </div>
+    <div class="card" style="background:#edfaea;border-color:var(--green);">
+      <div class="card-head" style="color:var(--green);border-color:var(--green);">🟢 Observations (Invites Them In)</div>
+      <ul>
+        <li>"That queue moved suspiciously fast."</li>
+        <li>"I always underestimate how loud it gets here after 5pm."</li>
+        <li>"That talk was either brilliant or completely over my head."</li>
+        <li>"I've been fighting this editor for 20 minutes."</li>
+        <li>"This airport looks exactly the same as the last one."</li>
+      </ul>
+      <p style="font-size:.88rem;margin-top:10px;color:#226622;">Gives them something to react to. Feels like talking to a friend.</p>
+    </div>
+    <div class="card" style="background:#fffbea;border-color:var(--yellow);">
+      <div class="card-head" style="border-color:var(--yellow);">⭐ The Hybrid (Best of Both)</div>
+      <ul>
+        <li>"That queue moved suspiciously fast. Did you notice they opened a second counter?"</li>
+        <li>"I always underestimate how loud it gets after 5. Is it always like this?"</li>
+        <li>"That talk was over my head. You looked like you were following it though."</li>
+      </ul>
+      <p style="font-size:.88rem;margin-top:10px;color:#8a6000;">Observation first, then a light question. You share something before asking anything.</p>
+    </div>
+  </div>
+
+  <div class="hbox hbox-purple">
+    <div class="hbox-label">THE FORMULA</div>
+    <p style="margin-top:8px;">
+      <strong>Notice something → React to it honestly → Let them respond.</strong><br>
+      You don't need a topic. You don't need a clever line. You just need to say what you're actually noticing in the moment. That's it. That's the whole framework.
+    </p>
+  </div>
+
+  <h3 style="margin-top:24px;">The Four Observation Types</h3>
+  <div class="grid-2" style="margin-top:14px;">
+    <div class="card">
+      <div class="card-head">🌍 Environmental</div>
+      <p>Comment on the shared physical reality. The place, the event, the situation you're both in.</p>
+      <p style="font-size:.9rem;color:#555;">"This coffee shop has somehow gotten louder every time I come back."</p>
+    </div>
+    <div class="card">
+      <div class="card-head">😂 Shared Frustration</div>
+      <p>Notice something mildly annoying or absurd that you both experience.</p>
+      <p style="font-size:.9rem;color:#555;">"They really put the wifi password in a 20-character font. Helpful."</p>
+    </div>
+    <div class="card">
+      <div class="card-head">🤔 Honest Reaction</div>
+      <p>Share your genuine response to something that just happened.</p>
+      <p style="font-size:.9rem;color:#555;">"I've read that conference schedule three times and I still can't decide."</p>
+    </div>
+    <div class="card">
+      <div class="card-head">😄 Self-Aware Humor</div>
+      <p>Something slightly self-deprecating or honest about your own experience right now.</p>
+      <p style="font-size:.9rem;color:#555;">"I came here to work but I've spent 40 minutes choosing a seat."</p>
+    </div>
+  </div>
+</div>
+
+<!-- ── SECTION 05: Venue Observation Generator ────────────── -->
+<div class="panel">
+  <div class="section-head">
+    <span class="section-num">05</span>
+    <h2>Observation Generator — By Venue</h2>
+  </div>
+
+  <p>Select where you are. Get natural, warm, non-creepy observations you can actually use. Each one is explained so you understand <em>why</em> it works — not just what to say.</p>
+
+  <div class="venue-grid" id="venue-buttons"></div>
+
+  <div id="openers-output" style="margin-top:8px;min-height:60px;">
+    <p style="color:#aaa;font-style:italic;font-size:.95rem;">👆 Select a venue above to see natural openers</p>
+  </div>
+</div>
+
+<!-- ── SECTION 06: Roleplay Comic ─────────────────────────── -->
+<div class="panel">
+  <div class="section-head">
+    <span class="section-num">06</span>
+    <h2>Roleplay Comic — See It In Action</h2>
+  </div>
+
+  <p>Watch how Friend Mode conversations actually unfold, step by step. Each panel shows what's being said — and a note on the psychology behind it.</p>
+
+  <div class="comic-scenario-select" id="comic-scenario-select"></div>
+
+  <div class="comic-stage">
+    <div class="comic-header">
+      <span id="comic-title">SELECT A SCENARIO ABOVE</span>
+      <span style="font-size:.8rem;opacity:.7;" id="comic-mode-label">FRIEND MODE</span>
+    </div>
+    <div class="comic-body" id="comic-body">
+      <p style="color:#aaa;font-style:italic;">Select a scenario to start the roleplay.</p>
+    </div>
+    <div class="comic-nav">
+      <button class="comic-nav-btn" id="comic-prev" onclick="comicPrev()" disabled>← PREV</button>
+      <span class="comic-progress" id="comic-progress"></span>
+      <button class="comic-nav-btn" id="comic-next" onclick="comicNext()" disabled>NEXT →</button>
+    </div>
+  </div>
+</div>
+
+<!-- ── SECTION 07: Stop Pedestalizing ────────────────────── -->
+<div class="panel">
+  <div class="section-head">
+    <span class="section-num">07</span>
+    <h2>Stop Pedestalizing People</h2>
+  </div>
+
+  <p>The single most common reason technically skilled people freeze around attractive, successful, or famous people is <strong>pedestalizing</strong> — mentally elevating them to a status above normal humans.</p>
+
+  <div class="hbox hbox-red">
+    <div class="hbox-label">WHAT PEDESTALIZING LOOKS LIKE</div>
+    <div class="grid-2" style="margin-top:12px;">
+      <div>
+        <p><strong>In your head:</strong></p>
+        <ul>
+          <li>"I need to impress them."</li>
+          <li>"They talk to interesting people all the time — I need to be interesting."</li>
+          <li>"What if I say something stupid?"</li>
+          <li>"I should wait until I have something smart to say."</li>
+          <li>"They probably don't want to talk to someone like me."</li>
+        </ul>
+      </div>
+      <div>
+        <p><strong>In their experience of you:</strong></p>
+        <ul>
+          <li>You seem tense and uncomfortable.</li>
+          <li>Your words feel rehearsed.</li>
+          <li>You ask flattering questions about their work/achievements.</li>
+          <li>You laugh a little too hard at their jokes.</li>
+          <li>They feel like they can't be themselves around you.</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <h3 style="margin-top:24px;">The Reality Check</h3>
+
+  <div class="anxiety-compare">
+    <div class="anxiety-side" style="background:#fffbea;">
+      <div class="anxiety-head">What You Imagine Their Life Is Like</div>
+      <div class="anxiety-thought" style="border-color:var(--yellow);background:#fffbea;">Always confident, never awkward</div>
+      <div class="anxiety-thought" style="border-color:var(--yellow);background:#fffbea;">Surrounded by amazing people</div>
+      <div class="anxiety-thought" style="border-color:var(--yellow);background:#fffbea;">Never has small talk problems</div>
+      <div class="anxiety-thought" style="border-color:var(--yellow);background:#fffbea;">Judges people quickly and harshly</div>
+      <div class="anxiety-thought" style="border-color:var(--yellow);background:#fffbea;">Has high standards for who they talk to</div>
+    </div>
+    <div class="anxiety-side" style="background:#edfaea;">
+      <div class="anxiety-head">What Is Actually True</div>
+      <div class="anxiety-thought" style="border-color:var(--green);background:#edfaea;">Has their own anxieties and insecurities</div>
+      <div class="anxiety-thought" style="border-color:var(--green);background:#edfaea;">Often bored at events, looking for real conversation</div>
+      <div class="anxiety-thought" style="border-color:var(--green);background:#edfaea;">Struggles with awkward silences too</div>
+      <div class="anxiety-thought" style="border-color:var(--green);background:#edfaea;">Responds well to people who treat them normally</div>
+      <div class="anxiety-thought" style="border-color:var(--green);background:#edfaea;">Rarely thinks about you as much as you think about them</div>
+    </div>
+  </div>
+
+  <div class="hbox hbox-blue" style="margin-top:20px;">
+    <div class="hbox-label">THE EQUAL-STATUS PRINCIPLE</div>
+    <p style="margin-top:8px;">
+      Attractive, successful, and high-status people are surrounded by people who treat them like they're on a pedestal. <strong>The most refreshing thing you can do is treat them like a normal human.</strong> Not rudely — just as an equal. Talk to a CEO the same way you'd talk to a friend. Talk to an attractive person the same way you'd talk to a colleague. That calm, equal-status presence is rare — and it's magnetic.
+    </p>
+  </div>
+</div>
+
+<!-- ── SECTION 08: Practical Challenges ──────────────────── -->
+<div class="panel">
+  <div class="section-head">
+    <span class="section-num">08</span>
+    <h2>7-Day Practical Challenges</h2>
+  </div>
+
+  <p>Knowledge without practice is just theory. Each challenge below is low-stakes, specific, and designed to build one skill. Do them in order. Don't skip Day 1 because it seems too easy.</p>
+
+  <div class="challenge-cards" id="challenge-cards"></div>
+
+  <div class="hbox hbox-green" style="margin-top:24px;">
+    <div class="hbox-label">THE GOLDEN RULE</div>
+    <p style="margin-top:8px;">
+      <strong>The goal of every interaction is not to impress them. It's to make them feel comfortable.</strong> If they walked away feeling at ease, you succeeded — regardless of whether anything "happened." That shift in goal eliminates 90% of social anxiety.
+    </p>
+  </div>
+</div>
+
+<!-- ── SECTION 09: Daily Practice ─────────────────────────── -->
+<div class="panel">
+  <div class="section-head">
+    <span class="section-num">09</span>
+    <h2>Build the Muscle — Micro-Practice Every Day</h2>
+  </div>
+
+  <p>Social confidence is a skill. Skills are built through <strong>repetitions, not theory</strong>. The problem is most people wait for the "right" situation to practice. The trick is turning ordinary daily moments into low-stakes reps — whether or not anything interesting happens.</p>
+
+  <div class="hbox hbox-orange" style="margin-bottom:24px;">
+    <div class="hbox-label">REAL EXAMPLE</div>
+    <p style="margin-top:8px;">An uncle was trying to take a photo of his wife at a monument. He was struggling to frame them both. Instead of waiting to be asked — just jumped in: <em>"Should I take one of you both together?"</em> He didn't ask for permission to help. He just found a way to be useful. They smiled, said yes, spent 2 minutes talking. That's it. That's a rep. <strong>Nobody asked. Nobody needed to. The opportunity was there and he took it.</strong></p>
+  </div>
+
+  <p>That's the practice mindset: <strong>don't wait for permission to be human.</strong> You're not approaching people. You're just reacting to what's in front of you — and letting them respond however they want.</p>
+
+  <h3 style="margin-top:20px;">Daily Micro-Interaction Opportunities</h3>
+  <p>These happen every day. You don't need to go anywhere special. You just need to stop filtering yourself out of the moment.</p>
+
+  <div class="micro-opp-grid" id="micro-opp-grid"></div>
+
+  <div class="hbox hbox-blue" style="margin-top:8px;">
+    <div class="hbox-label">THE RULE</div>
+    <p style="margin-top:8px;">One micro-interaction per day. Doesn't matter if it goes nowhere. Doesn't matter if they barely respond. <strong>The rep counts the moment you open your mouth.</strong> Over 30 days, you will notice the anxiety is completely gone — not because you learned a script, but because you built the neural pathway.</p>
+  </div>
+
+  <h3 style="margin-top:24px;">The "Jump In" Framework</h3>
+  <div class="step-flow" style="margin-top:14px;">
+    <div class="step-item">
+      <div class="step-num" style="background:var(--orange);color:#fff;">1</div>
+      <div class="step-body">
+        <h4>Notice something real</h4>
+        <p>Not something flattering. Not something clever. Just something genuinely happening right now in front of you. A situation. An inconvenience. Something funny or slightly absurd. Anything.</p>
+      </div>
+    </div>
+    <div class="step-item">
+      <div class="step-num" style="background:var(--orange);color:#fff;">2</div>
+      <div class="step-body">
+        <h4>Find a small way to be useful or react</h4>
+        <p>Help someone carry something. Ask if they need a photo taken. Hold a door an extra second. Comment on what's right in front of you both. The interaction doesn't need to be long. It needs to be <em>real</em>.</p>
+      </div>
+    </div>
+    <div class="step-item">
+      <div class="step-num" style="background:var(--orange);color:#fff;">3</div>
+      <div class="step-body">
+        <h4>Don't engineer the outcome</h4>
+        <p>Some people will respond warmly. Some will smile and move on. Some won't even look up. All of these are acceptable outcomes. You're not trying to make a friend every time. You're training yourself to stop filtering.</p>
+      </div>
+    </div>
+    <div class="step-item">
+      <div class="step-num" style="background:var(--orange);color:#fff;">4</div>
+      <div class="step-body">
+        <h4>Count the rep, not the result</h4>
+        <p>A gym rep is a rep whether the weight was heavy or light. A social rep is a rep whether the conversation lasted 10 seconds or 10 minutes. What you're building is the muscle of <strong>not censoring yourself</strong> before you act.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ── SECTION 10: Observations Library ──────────────────── -->
+<div class="panel">
+  <div class="section-head">
+    <span class="section-num">10</span>
+    <h2>Observations Library — Real Lines, Real Venues</h2>
+  </div>
+
+  <p>These are not scripts. They're examples of what it sounds like when you react to reality instead of hunting for topics. Pick a venue. Read the observations. Notice how none of them are pickup lines, and none of them require the other person to say anything specific back.</p>
+  <p style="font-size:.9rem;color:#666;">Click any observation to see what a natural follow-up response might look like.</p>
+
+  <div class="obs-tabs" id="obs-tabs"></div>
+  <div class="obs-grid" id="obs-grid"></div>
+
+  <div class="obs-secret-box">
+    <h4>THE SECRET</h4>
+    <p>Notice that none of these are pickup lines. They're not even really conversation starters. They're just <strong>observations that say: "Hey, we're both humans experiencing the same reality right now."</strong><br><br>
+    And that's exactly how you'd talk if the person was already your friend. A friend doesn't think <em>"What's the perfect topic?"</em> — a friend notices <em>"This queue is ridiculous"</em> and says it out loud.</p>
+  </div>
+</div>
+
+<!-- ── SECTION 11: Advanced Conversational Moves ─────────── -->
+<div class="panel">
+  <div class="section-head">
+    <span class="section-num">11</span>
+    <h2>Advanced Moves — For When You're Already in the Conversation</h2>
+  </div>
+
+  <p>Starting a conversation is only half the skill. The other half is knowing how to <em>play</em> with a topic once it's open — not interrogate it, not perform for it, just play with it like a friend would.</p>
+
+  <!-- SWAP: How's work vs What's been keeping you busy -->
+  <div class="move-block">
+    <div class="move-block-title">🔄 The Question Upgrade</div>
+    <p style="margin-bottom:14px;">The words you choose signal whether you're in manager mode or friend mode. These sound similar but land very differently:</p>
+    <div id="swaps-container"></div>
+  </div>
+
+  <!-- REACTION FIRST -->
+  <div class="move-block">
+    <div class="move-block-title">⚡ Reaction First, Question Second</div>
+    <p style="margin-bottom:16px;">When someone says something interesting, most people immediately ask a new question. That creates an interrogation rhythm. The better move: <strong>react first, then ask.</strong></p>
+    <div id="reaction-demos"></div>
+    <div class="hbox hbox-purple" style="margin-top:16px;">
+      <div class="hbox-label">WHY THIS WORKS</div>
+      <p style="margin-top:8px;">The reaction shows you actually heard them. It makes them feel seen. The question that follows feels like genuine curiosity — not a checklist. This single shift makes you seem dramatically more engaged and interesting.</p>
+    </div>
+  </div>
+
+  <!-- THE BILLIARDS SCENARIO -->
+  <div class="move-block">
+    <div class="move-block-title">🎱 The Billiards Scenario — In-Group Conversation</div>
+    <p style="margin-bottom:16px;">This applies to any activity you're doing <em>with</em> someone: billiards, chess, a walk, cooking, gaming, waiting in the same line. The shared activity is the conversation starter. What you do with it is the skill.</p>
+    <div id="billiards-container"></div>
+  </div>
+
+  <!-- PERSONALITY SPECIFIC OBSERVATIONS -->
+  <div class="move-block">
+    <div class="move-block-title">🎯 Personality-Specific Observations</div>
+    <p style="margin-bottom:14px;">Instead of generic questions, use observations about <em>that specific person</em> based on what you've noticed. These feel personal without being invasive — and they almost always land.</p>
+    <div id="personality-obs-container"></div>
+    <div class="hbox hbox-green" style="margin-top:16px;">
+      <div class="hbox-label">THE PRINCIPLE</div>
+      <p style="margin-top:8px;">People enjoy talking about observations that feel accurate about them. It signals that you've actually been paying attention — which is rare, and deeply flattering without being flattery.</p>
+    </div>
+  </div>
+
+  <!-- THE REAL GOAL -->
+  <div style="border: 4px solid var(--ink); border-radius: 8px; padding: 28px 32px; background: var(--ink); color: #fff; margin-top: 20px; box-shadow: 7px 7px 0 var(--purple);">
+    <div style="font-family:'Bangers',cursive;font-size:1.4rem;letter-spacing:3px;color:var(--yellow);margin-bottom:16px;">THE REAL GOAL</div>
+    <p style="font-size:1.1rem;line-height:1.8;margin-bottom:14px;">Your goal should <strong style="color:var(--yellow);">not</strong> be: <em>"How do I keep the conversation going?"</em></p>
+    <p style="font-size:1.15rem;line-height:1.8;font-weight:700;">A better goal is: <span style="color:var(--yellow);">"How do I make the other person feel like we're already on the same team?"</span></p>
+    <p style="font-size:.95rem;margin-top:14px;opacity:.8;line-height:1.7;">Same team means: no hierarchy, no performance, no evaluation. Just two people reacting to the same reality together. When someone feels like you're on their team, they open up naturally — and the conversation takes care of itself.</p>
+  </div>
+</div>
+
+</div><!-- /page-wrap -->
+
+<script src="hero-banner.js"></script>
+<script src="masthead.js"></script>
+<script src="author-card.js"></script>
+<script>
+/* ─────────────────────────────────────────────────────────
+   DATA
+───────────────────────────────────────────────────────── */
+var PRINCIPLES = [
+  { num: '1', color: '#e63946', bg: '#fdecea', text: 'People are not interviews.' },
+  { num: '2', color: '#1d6fb8', bg: '#e8f0fd', text: 'Conversations are not information-gathering sessions.' },
+  { num: '3', color: '#3fa34d', bg: '#edfaea', text: 'Friends don\'t hunt for topics. Friends react to reality together.' },
+  { num: '4', color: '#ff8c42', bg: '#fff3ea', text: 'Attractive, successful, or high-status people are still normal humans.' },
+  { num: '5', color: '#8a4fff', bg: '#f3eeff', text: 'Curiosity creates connection. Evaluation creates anxiety.' },
+  { num: '6', color: '#0d9488', bg: '#e6f7f6', text: 'The goal is not to impress people. The goal is to understand them.' },
+  { num: '7', color: '#ff6b9d', bg: '#ffeef5', text: 'Observations are often better than questions.' },
+  { num: '8', color: '#ffd23f', bg: '#fffbea', text: 'Share thoughts, opinions, and reactions before asking questions.' },
+  { num: '9', color: '#1d6fb8', bg: '#e8f0fd', text: 'Talk as if the other person is a friend you haven\'t met yet.' },
+  { num: '10', color: '#e63946', bg: '#fdecea', text: 'Help yourself stop pedestalizing attractive or successful people.' }
+];
+
+var VENUES = {
+  'coffee-shop': {
+    label: '☕ Coffee Shop',
+    openers: [
+      {
+        quote: '"I always feel guilty when I\'ve been here more than an hour. They\'re so patient."',
+        why: '<strong>Why it works:</strong> Self-aware + relatable + not directed at them. They can laugh, agree, or say "same." Low-stakes entry that feels like thinking out loud.'
+      },
+      {
+        quote: '"That playlist just shifted genres about four times in five minutes."',
+        why: '<strong>Why it works:</strong> Environmental observation. You\'re both experiencing the same thing. Commenting on it creates instant shared experience with zero pressure.'
+      },
+      {
+        quote: '"I come in here for one thing and always end up with three. I have no idea how that happens."',
+        why: '<strong>Why it works:</strong> Self-deprecating, honest, and common enough that most people relate immediately. It\'s not about them at all — which paradoxically makes them want to respond.'
+      }
+    ]
+  },
+  'conference': {
+    label: '🎤 Conference',
+    openers: [
+      {
+        quote: '"That last talk was either brilliant or completely over my head. I\'m still deciding."',
+        why: '<strong>Why it works:</strong> Honest and funny. It creates an opening for them to share their take — which is what people actually want to do. You\'re not asking them to evaluate themselves, you\'re inviting them to evaluate a thing.'
+      },
+      {
+        quote: '"I\'ve read the schedule three times and I still can\'t tell which track I\'m supposed to be in."',
+        why: '<strong>Why it works:</strong> Shared confusion at conferences is universal. This observation signals you\'re approachable and that the conversation will be effortless.'
+      },
+      {
+        quote: '"The free coffee here is surprisingly good. I was fully prepared to suffer through it."',
+        why: '<strong>Why it works:</strong> Unexpected specificity. Low stakes. The bar was low, the result surprised you. This kind of micro-observation is what real conversations are made of.'
+      }
+    ]
+  },
+  'gym': {
+    label: '🏋️ Gym',
+    openers: [
+      {
+        quote: '"That machine always makes me feel like I\'m doing it wrong even when I\'m definitely doing it right."',
+        why: '<strong>Why it works:</strong> Self-aware and relatable. At the gym everyone has equipment they feel uncertain about. Shared vulnerability is connection.'
+      },
+      {
+        quote: '"I don\'t know how people listen to podcasts while doing this. My brain goes completely blank."',
+        why: '<strong>Why it works:</strong> You\'re sharing something true about your experience. It\'s not flattery. It\'s not a question. It\'s just an honest observation that invites their take.'
+      },
+      {
+        quote: '"This place gets completely different on Monday evenings. I always forget."',
+        why: '<strong>Why it works:</strong> Environmental + slight self-deprecation. It implies you\'re a regular (social proof) without bragging. You\'re observing a pattern you share.'
+      }
+    ]
+  },
+  'coworking': {
+    label: '💻 Coworking',
+    openers: [
+      {
+        quote: '"I came here to focus and have somehow spent 30 minutes figuring out where to sit."',
+        why: '<strong>Why it works:</strong> The "overthinking workspace" experience is deeply relatable to anyone who works independently. It\'s honest, a little self-deprecating, and needs zero context.'
+      },
+      {
+        quote: '"The wifi here is either really fast or really slow and I can never predict which one it will be."',
+        why: '<strong>Why it works:</strong> Universal shared frustration. Technical people especially relate to unreliable internet as a minor daily nemesis. Instant bond over shared suffering.'
+      },
+      {
+        quote: '"I think they changed something about the A/C. It\'s either colder than before or I\'m just more aware of it now."',
+        why: '<strong>Why it works:</strong> Hyperspecific environmental observation. It signals that you\'re present and paying attention — and it gives them something amusing and concrete to respond to.'
+      }
+    ]
+  },
+  'airport': {
+    label: '✈️ Airport',
+    openers: [
+      {
+        quote: '"I\'ve been staring at that departure board for 15 minutes hoping my gate would change. It hasn\'t."',
+        why: '<strong>Why it works:</strong> Everyone in an airport knows this feeling. Shared waiting + mild frustration + self-awareness = instant relatable opener. No explanation needed.'
+      },
+      {
+        quote: '"Every airport looks the same to me after a while. Same shops, different city."',
+        why: '<strong>Why it works:</strong> A genuine observation that many frequent travellers share. It opens space for them to agree, disagree, or share their own airport observation.'
+      },
+      {
+        quote: '"I can never decide whether to eat before or after security and I always regret whatever I choose."',
+        why: '<strong>Why it works:</strong> The micro-indecision of airport eating is a genuinely universal experience. It\'s specific enough to feel real and funny enough to invite a reaction.'
+      }
+    ]
+  },
+  'bookstore': {
+    label: '📚 Bookstore',
+    openers: [
+      {
+        quote: '"I came in for one specific thing and now I\'m holding four books and reconsidering my entire reading list."',
+        why: '<strong>Why it works:</strong> Anyone who loves bookstores has experienced this exact gravitational pull. Honest + relatable + no pressure on them whatsoever.'
+      },
+      {
+        quote: '"I always think I\'ll remember which books I wanted. I never remember which books I wanted."',
+        why: '<strong>Why it works:</strong> The gap between intention and reality is funny and universal. It\'s completely about you — which makes it easy for them to chime in with their own version.'
+      },
+      {
+        quote: '"That display is doing a surprisingly good job. I walked in with a plan and now I have no plan."',
+        why: '<strong>Why it works:</strong> You\'re reacting to your immediate environment. It\'s honest and slightly amused. The phrase "now I have no plan" is an implicit invitation to connect over shared chaos.'
+      }
+    ]
+  },
+  'language-exchange': {
+    label: '🌍 Language Exchange',
+    openers: [
+      {
+        quote: '"I just spent 10 minutes trying to explain the word \'anyway\' and I still don\'t know what it actually means."',
+        why: '<strong>Why it works:</strong> Language learners bond instantly over the gaps in their own understanding. Self-aware humor about learning is disarming and relatable to everyone in the room.'
+      },
+      {
+        quote: '"I\'ve realised I know words in this language that I don\'t even know the English equivalent of."',
+        why: '<strong>Why it works:</strong> This is a genuine linguistic phenomenon many language learners experience. It opens a fascinating conversation without forcing anything.'
+      },
+      {
+        quote: '"My vocabulary is great until someone actually wants to have a conversation. Then everything disappears."',
+        why: '<strong>Why it works:</strong> This is the most relatable language learning experience on the planet. Zero stakes. Instant connection. The laughter that follows is the conversation.'
+      }
+    ]
+  }
+};
+
+var ROLEPLAY_SCENARIOS = {
+  'conference': {
+    label: '🎤 Conference',
+    title: 'TECH CONFERENCE — COFFEE BREAK',
+    steps: [
+      {
+        type: 'scene',
+        label: 'THE SITUATION',
+        content: 'You\'re at a tech conference coffee break. Someone is standing near you, also waiting for coffee, also looking at their phone. They just came out of the same talk as you.'
+      },
+      {
+        type: 'dialogue',
+        bubbles: [
+          { side: 'you', text: '"That last talk was either brilliant or completely over my head. I\'m still deciding."', tone: 'good' }
+        ],
+        insight: '✅ You\'re reacting to a shared experience. No question, no pressure. You\'re just thinking out loud. They can agree, laugh, or share their take.'
+      },
+      {
+        type: 'dialogue',
+        bubbles: [
+          { side: 'them', text: '"Ha — same. I felt confident for the first 10 minutes and then he started talking about Bloom filters and I mentally checked out."', tone: 'good' }
+        ],
+        insight: '🎯 They opened up. Now you know something about them (they know what Bloom filters are), their sense of humor, and their level. No interrogation needed.'
+      },
+      {
+        type: 'dialogue',
+        bubbles: [
+          { side: 'you', text: '"That\'s exactly the point where it happened to me too. I was like — okay, I\'m just here for the snacks now."', tone: 'good' },
+          { side: 'them', text: '"The snacks are honestly the best part. I saw them setting up samosas in the next room."', tone: 'good' }
+        ],
+        insight: '🔥 The conversation now has genuine momentum. You both feel comfortable. Neither person is performing. This is friend mode — it happened in under 60 seconds.'
+      },
+      {
+        type: 'dialogue',
+        bubbles: [
+          { side: 'you', text: '"Wait — are we skipping the next session for samosas? Because I think we should be honest with ourselves here."', tone: 'good' },
+          { side: 'them', text: '"I came to this conference for the networking. This counts as networking."', tone: 'good' }
+        ],
+        insight: '✨ Notice: you still don\'t know their name, their company, or their role. You might ask those things eventually — but they\'ll feel natural now, not interrogational. The connection came first.'
+      }
+    ]
+  },
+  'coffee-shop': {
+    label: '☕ Coffee Shop',
+    title: 'COFFEE SHOP — SOMEONE WORKING NEARBY',
+    steps: [
+      {
+        type: 'scene',
+        label: 'THE SITUATION',
+        content: 'You\'re at a coffee shop. Someone attractive is sitting at the table next to you, working on a laptop. You\'ve been here an hour and the place has gotten very loud.'
+      },
+      {
+        type: 'dialogue',
+        bubbles: [
+          { side: 'you', text: '"It got loud really fast in here. I always underestimate how much this place fills up after 5."', tone: 'good' }
+        ],
+        insight: '✅ Environmental observation. Not directed at them specifically — just someone nearby. Zero threat. Zero pressure. They can choose to respond or not.'
+      },
+      {
+        type: 'dialogue',
+        bubbles: [
+          { side: 'them', text: '"Right? I come here specifically because mornings are quiet and then I always stay too long."', tone: 'good' }
+        ],
+        insight: '🎯 They responded with something real about themselves. You now know they\'re a regular, a morning person, and they also struggle to leave. Natural, honest, no agenda.'
+      },
+      {
+        type: 'dialogue',
+        bubbles: [
+          { side: 'you', text: '"I do the same thing. I tell myself I\'ll leave by 3 and then it\'s 6 and I\'ve ordered three coffees."', tone: 'good' },
+          { side: 'them', text: '"Three is my record too. I feel like that\'s the unofficial limit before it becomes a problem."', tone: 'good' }
+        ],
+        insight: '🔥 Shared experience + light humor. Neither person is performing. They feel completely comfortable because you\'re talking about you — not interrogating them about them.'
+      },
+      {
+        type: 'dialogue',
+        bubbles: [
+          { side: 'you', text: '"At that point it\'s basically a medical decision. I\'m Ali, by the way."', tone: 'good' },
+          { side: 'them', text: '"Ha — I\'m Sara. Finally reaching the point where we introduce ourselves like normal people."', tone: 'good' }
+        ],
+        insight: '✨ You introduced yourself only after the connection was already made. The name is just a formality now — not the opening move. This is exactly how it should feel.'
+      }
+    ]
+  },
+  'status': {
+    label: '💼 CEO / High Status',
+    title: 'NETWORKING EVENT — MEETING A CEO',
+    steps: [
+      {
+        type: 'scene',
+        label: 'THE SITUATION',
+        content: 'You\'re at a networking dinner. You\'re standing near someone who was introduced as the CEO of a well-known startup. Everyone else is slightly nervous around them. You decide to just be normal.'
+      },
+      {
+        type: 'dialogue',
+        bubbles: [
+          { side: 'you', text: '"The name badges at these things are always too small. I\'ve been squinting at everyone for an hour."', tone: 'good' }
+        ],
+        insight: '✅ You\'re treating them like a normal person in a shared situation. No flattery. No referencing their status. No "I\'ve heard so much about you." Just a human talking to a human.'
+      },
+      {
+        type: 'dialogue',
+        bubbles: [
+          { side: 'them', text: '"Ha — I know. I stopped trying to read names and just started assuming everyone was called Dave."', tone: 'good' }
+        ],
+        insight: '🎯 They relaxed. People in high-status positions are rarely treated this way. Equal-status conversation is rare for them — and it\'s a relief. You\'re already ahead of everyone else in the room.'
+      },
+      {
+        type: 'dialogue',
+        bubbles: [
+          { side: 'you', text: '"Statistically that\'s probably right at these events. What brings you here? I\'m Ali."', tone: 'good' },
+          { side: 'them', text: '"Investor I like invited me. I\'m Ravi. And you?"', tone: 'good' }
+        ],
+        insight: '🔥 You asked a natural question only after breaking the ice. And you introduced yourself first — equal exchange, not flattery. The conversation now flows normally.'
+      },
+      {
+        type: 'dialogue',
+        bubbles: [
+          { side: 'you', text: '"Product side at a B2B company. We\'re still in the chaotic middle section of figuring out what we are."', tone: 'good' },
+          { side: 'them', text: '"Ha — that phase is actually the best one, even when it doesn\'t feel like it."', tone: 'good' }
+        ],
+        insight: '✨ They engaged genuinely because you gave a real, honest answer instead of a polished pitch. The conversation is now peer-to-peer — not fan meeting celebrity. That\'s what equal status looks like.'
+      }
+    ]
+  },
+  'gym': {
+    label: '🏋️ Gym',
+    title: 'GYM — WAITING FOR EQUIPMENT',
+    steps: [
+      {
+        type: 'scene',
+        label: 'THE SITUATION',
+        content: 'You\'re waiting for a cable machine someone is using. They finish and you realise you\'re both about to do similar exercises. This is a natural social moment — but most people treat it like surgery.'
+      },
+      {
+        type: 'dialogue',
+        bubbles: [
+          { side: 'you', text: '"That machine always makes me feel like I\'m doing it wrong even when I\'m fairly confident I\'m doing it right."', tone: 'good' }
+        ],
+        insight: '✅ You\'re being honest about a relatable experience. Not asking for help (which can seem needy) or complimenting them (which can seem performative). Just a genuine observation about the equipment.'
+      },
+      {
+        type: 'dialogue',
+        bubbles: [
+          { side: 'them', text: '"Ha — it\'s the angle. The pulley is slightly off vertical so it always feels weird on one side."', tone: 'good' }
+        ],
+        insight: '🎯 They shared useful information. That\'s social bonding. They chose to help you — which makes them feel good. You\'re now connected through a shared experience, not a forced opener.'
+      },
+      {
+        type: 'dialogue',
+        bubbles: [
+          { side: 'you', text: '"That explains everything. I\'ve been second-guessing myself for months."', tone: 'good' },
+          { side: 'them', text: '"Same. Someone here finally told me and I felt vindicated."', tone: 'good' }
+        ],
+        insight: '🔥 Shared relief. The conversation is now about a shared discovery — not about impressing each other. This is what natural connection feels like: two people relating to the same experience.'
+      }
+    ]
+  }
+};
+
+var CHALLENGES = [
+  {
+    day: 'DAY 1', color: 'var(--green)',
+    task: 'Make one observation out loud to a stranger — not a question.',
+    what: 'Comment on the environment, the wait, the weather, anything. Just say what you\'re noticing. No agenda. No follow-up required.',
+    why: 'Builds the habit of reacting instead of performing. Low risk, high reward.'
+  },
+  {
+    day: 'DAY 2', color: 'var(--blue)',
+    task: 'Have a conversation without asking "what do you do?" first.',
+    what: 'Talk to someone and let that question come up naturally — or not at all. See what else you learn about them.',
+    why: 'Breaks the interview reflex. Forces you to find other entry points — which are usually more interesting.'
+  },
+  {
+    day: 'DAY 3', color: 'var(--orange)',
+    task: 'Talk to someone you find intimidating — as if they were completely normal.',
+    what: 'No extra preparation. No mental rehearsal. Just approach them exactly as you would anyone else. Notice how they respond.',
+    why: 'Dismantles the pedestal. Most people find that "intimidating" people are just relieved someone treated them normally.'
+  },
+  {
+    day: 'DAY 4', color: 'var(--purple)',
+    task: 'Share an opinion before the other person shares theirs.',
+    what: 'In conversation, give your take on something first — then ask for theirs. Resist the urge to ask their view before committing to your own.',
+    why: 'People who share opinions are perceived as confident. People who only ask questions seem like they\'re hiding.'
+  },
+  {
+    day: 'DAY 5', color: 'var(--teal)',
+    task: 'Stay in a conversation 30% longer than feels comfortable.',
+    what: 'When you get the urge to exit — because of a pause, awkward moment, or anxiety — stay one more exchange. See what happens.',
+    why: 'Most good conversations happen just after the point where nervous people escape. Discomfort is the gateway to connection.'
+  },
+  {
+    day: 'DAY 6', color: 'var(--pink)',
+    task: 'Ask exactly one follow-up question on something they said — and actually listen to the answer.',
+    what: 'Resist the urge to plan what you\'ll say next while they\'re talking. Let their answer genuinely surprise you.',
+    why: 'Most people think listening means waiting to speak. Actually listening changes how you respond — and the other person can feel it.'
+  },
+  {
+    day: 'DAY 7', color: 'var(--red)',
+    task: 'Have a conversation with no goal other than enjoying it.',
+    what: 'No outcome you\'re trying to achieve. No number you\'re trying to get. No impression you\'re trying to make. Just be there.',
+    why: 'When you remove all goals, the anxiety disappears. Ironically, this is when people find you most attractive and interesting.'
+  }
+];
+
+/* ─────────────────────────────────────────────────────────
+   RENDER PRINCIPLES
+───────────────────────────────────────────────────────── */
+(function renderPrinciples() {
+  var grid = document.getElementById('principles-grid');
+  if (!grid) return;
+  grid.innerHTML = PRINCIPLES.map(function(p) {
+    return '<div class="principle-card" style="background:' + p.bg + ';border-color:' + p.color + ';box-shadow:4px 4px 0 ' + p.color + ';">' +
+      '<span class="principle-num" style="color:' + p.color + ';">' + p.num + '</span>' +
+      '<div class="principle-text">' + p.text + '</div>' +
+      '</div>';
+  }).join('');
+})();
+
+/* ─────────────────────────────────────────────────────────
+   MODE TOGGLE
+───────────────────────────────────────────────────────── */
+var CONVO_DATA = {
+  conference: {
+    interview: [
+      { side: 'you',  text: '"Hi — what company are you from?"', tone: 'bad' },
+      { side: 'them', text: '"Oh, I\'m at Razorpay. You?"', tone: '' },
+      { side: 'you',  text: '"Cool. What do you do there?"', tone: 'bad' },
+      { side: 'them', text: '"Backend engineering mostly."', tone: '' },
+      { side: 'you',  text: '"Nice. How long have you been there?"', tone: 'bad' },
+      { side: 'them', text: '"About two years." [checks phone]', tone: '' }
+    ],
+    friend: [
+      { side: 'you',  text: '"That last talk was either brilliant or completely over my head. Still deciding."', tone: 'good' },
+      { side: 'them', text: '"Ha — same. First 10 minutes I was following, then he mentioned Bloom filters and I was gone."', tone: 'good' },
+      { side: 'you',  text: '"That\'s exactly where it happened to me. After that I was just there for the snacks."', tone: 'good' },
+      { side: 'them', text: '"They\'re setting up samosas in the next room. I already scoped it."', tone: 'good' }
+    ]
+  },
+  coffee: {
+    interview: [
+      { side: 'you',  text: '"Hey — do you come here a lot?"', tone: 'bad' },
+      { side: 'them', text: '"Yeah, sometimes."', tone: '' },
+      { side: 'you',  text: '"What are you working on?"', tone: 'bad' },
+      { side: 'them', text: '"Just some work stuff."', tone: '' },
+      { side: 'you',  text: '"Cool, cool."', tone: 'bad' },
+      { side: 'them', text: '[puts headphones back in]', tone: '' }
+    ],
+    friend: [
+      { side: 'you',  text: '"It got loud really fast in here. I always underestimate how much it fills up after 5."', tone: 'good' },
+      { side: 'them', text: '"Right? I come here for the quiet mornings and then always stay too long."', tone: 'good' },
+      { side: 'you',  text: '"Same. I tell myself I\'ll leave at 3 and it\'s 6 and I\'ve had three coffees."', tone: 'good' },
+      { side: 'them', text: '"Three is basically the unofficial limit before it becomes a medical situation."', tone: 'good' }
+    ]
+  },
+  attractive: {
+    interview: [
+      { side: 'you',  text: '"Hey, I just wanted to say you have really great style."', tone: 'bad' },
+      { side: 'them', text: '"Oh... thanks."', tone: '' },
+      { side: 'you',  text: '"So what do you do?"', tone: 'bad' },
+      { side: 'them', text: '"I\'m a designer."', tone: '' },
+      { side: 'you',  text: '"Wow, that\'s so cool. Do you freelance or...?"', tone: 'bad' },
+      { side: 'them', text: '[polite smile] "Both, actually. I should go find my friend."', tone: '' }
+    ],
+    friend: [
+      { side: 'you',  text: '"They ran out of oat milk again. I feel like this happens specifically to me."', tone: 'good' },
+      { side: 'them', text: '"Ha — same. I think they underorder on purpose to see who breaks first."', tone: 'good' },
+      { side: 'you',  text: '"It\'s definitely a test. I\'m Ali."', tone: 'good' },
+      { side: 'them', text: '"I\'m Priya. I feel like we just bonded over dairy-free milk, which is very 2024."', tone: 'good' }
+    ]
+  }
+};
+
+var currentMode = 'interview';
+
+function renderBubbles(convos, containerId) {
+  var el = document.getElementById(containerId);
+  if (!el) return;
+  el.innerHTML = convos.map(function(b) {
+    var isRight = b.side === 'you';
+    var avatarEmoji = b.side === 'you' ? '🧑‍💻' : '👤';
+    var bubbleClass = 'bubble ' + (b.tone || (b.side === 'them' ? 'them' : 'you'));
+    return '<div class="bubble-wrap' + (isRight ? ' right' : '') + '">' +
+      '<div class="bubble-avatar" style="background:' + (isRight ? '#e8f4fd' : '#fbe9cc') + ';">' + avatarEmoji + '</div>' +
+      '<div class="' + bubbleClass + '">' +
+        '<span class="bubble-label">' + (isRight ? 'YOU' : 'THEM') + '</span>' +
+        b.text +
+      '</div></div>';
+  }).join('');
+}
+
+function setMode(mode, btn) {
+  currentMode = mode;
+  document.querySelectorAll('.mode-btn').forEach(function(b) { b.classList.remove('active'); });
+  btn.classList.add('active');
+  renderBubbles(CONVO_DATA.conference[mode], 'mode-convo-conference');
+  renderBubbles(CONVO_DATA.coffee[mode], 'mode-convo-coffee');
+  renderBubbles(CONVO_DATA.attractive[mode], 'mode-convo-attractive');
+}
+
+setMode('interview', document.querySelector('.mode-btn.interview'));
+
+/* ─────────────────────────────────────────────────────────
+   VENUE SELECTOR
+───────────────────────────────────────────────────────── */
+(function renderVenueButtons() {
+  var wrap = document.getElementById('venue-buttons');
+  if (!wrap) return;
+  Object.keys(VENUES).forEach(function(key, i) {
+    var btn = document.createElement('button');
+    btn.className = 'venue-btn' + (i === 0 ? ' active' : '');
+    btn.textContent = VENUES[key].label;
+    btn.onclick = function() {
+      document.querySelectorAll('.venue-btn').forEach(function(b) { b.classList.remove('active'); });
+      btn.classList.add('active');
+      renderOpeners(key);
+    };
+    wrap.appendChild(btn);
+  });
+  renderOpeners(Object.keys(VENUES)[0]);
+})();
+
+function renderOpeners(key) {
+  var venue = VENUES[key];
+  if (!venue) return;
+  var out = document.getElementById('openers-output');
+  out.innerHTML = '';
+  venue.openers.forEach(function(op, i) {
+    var card = document.createElement('div');
+    card.className = 'opener-card';
+    card.innerHTML = '<div class="opener-quote">' + op.quote + '</div><div class="opener-why">' + op.why + '</div>';
+    out.appendChild(card);
+    setTimeout(function() { card.classList.add('visible'); }, i * 80);
+  });
+}
+
+/* ─────────────────────────────────────────────────────────
+   ROLEPLAY COMIC
+───────────────────────────────────────────────────────── */
+var comicKey = null;
+var comicStep = 0;
+
+(function renderComicButtons() {
+  var wrap = document.getElementById('comic-scenario-select');
+  if (!wrap) return;
+  Object.keys(ROLEPLAY_SCENARIOS).forEach(function(key, i) {
+    var btn = document.createElement('button');
+    btn.className = 'comic-scen-btn' + (i === 0 ? ' active' : '');
+    btn.textContent = ROLEPLAY_SCENARIOS[key].label;
+    btn.id = 'csb-' + key;
+    btn.onclick = function() {
+      document.querySelectorAll('.comic-scen-btn').forEach(function(b) { b.classList.remove('active'); });
+      btn.classList.add('active');
+      comicLoad(key);
+    };
+    wrap.appendChild(btn);
+  });
+  comicLoad(Object.keys(ROLEPLAY_SCENARIOS)[0]);
+})();
+
+function comicLoad(key) {
+  comicKey = key;
+  comicStep = 0;
+  document.getElementById('comic-title').textContent = ROLEPLAY_SCENARIOS[key].title;
+  comicRender();
+}
+
+function comicRender() {
+  var scenario = ROLEPLAY_SCENARIOS[comicKey];
+  var step = scenario.steps[comicStep];
+  var body = document.getElementById('comic-body');
+  var prog = document.getElementById('comic-progress');
+  var prev = document.getElementById('comic-prev');
+  var next = document.getElementById('comic-next');
+
+  prog.textContent = 'Step ' + (comicStep + 1) + ' / ' + scenario.steps.length;
+  prev.disabled = comicStep === 0;
+  next.disabled = comicStep === scenario.steps.length - 1;
+
+  if (step.type === 'scene') {
+    body.innerHTML = '<span class="comic-scene-label" style="background:var(--ink);color:var(--yellow);">' + step.label + '</span>' +
+      '<p style="font-size:1.05rem;line-height:1.7;color:#333;font-style:italic;">' + step.content + '</p>';
+  } else {
+    var html = '';
+    if (step.bubbles) {
+      html += step.bubbles.map(function(b) {
+        var isRight = b.side === 'you';
+        var avatarEmoji = b.side === 'you' ? '🧑‍💻' : '👤';
+        var bubbleClass = 'bubble good';
+        return '<div class="bubble-wrap' + (isRight ? ' right' : '') + '">' +
+          '<div class="bubble-avatar" style="background:' + (isRight ? '#e8f4fd' : '#fbe9cc') + ';">' + avatarEmoji + '</div>' +
+          '<div class="' + bubbleClass + '">' +
+            '<span class="bubble-label">' + (isRight ? 'YOU' : 'THEM') + '</span>' +
+            b.text +
+          '</div></div>';
+      }).join('');
+    }
+    if (step.insight) {
+      html += '<div class="insight-box" style="margin-top:16px;"><strong>💡 WHAT\'S HAPPENING:</strong> ' + step.insight + '</div>';
+    }
+    body.innerHTML = html;
+  }
+}
+
+window.comicNext = function() {
+  var scenario = ROLEPLAY_SCENARIOS[comicKey];
+  if (comicStep < scenario.steps.length - 1) { comicStep++; comicRender(); }
+};
+
+window.comicPrev = function() {
+  if (comicStep > 0) { comicStep--; comicRender(); }
+};
+
+/* ─────────────────────────────────────────────────────────
+   CHALLENGE CARDS
+───────────────────────────────────────────────────────── */
+(function renderChallenges() {
+  var wrap = document.getElementById('challenge-cards');
+  if (!wrap) return;
+  CHALLENGES.forEach(function(c) {
+    var card = document.createElement('div');
+    card.className = 'challenge-card';
+    card.innerHTML =
+      '<span class="challenge-day" style="background:' + c.color + ';color:#fff;border-color:' + c.color + ';">' + c.day + '</span>' +
+      '<div class="challenge-task">' + c.task + '</div>' +
+      '<div style="font-size:.93rem;margin-bottom:8px;"><strong>What to do:</strong> ' + c.what + '</div>' +
+      '<div class="challenge-why"><strong>Why it works:</strong> ' + c.why + '</div>';
+    wrap.appendChild(card);
+  });
+})();
+
+/* ─────────────────────────────────────────────────────────
+   DAILY MICRO-PRACTICE CARDS
+───────────────────────────────────────────────────────── */
+var MICRO_OPPS = [
+  { icon: '📸', title: 'Someone struggling with a photo', what: 'They\'re trying to photograph a moment but can\'t fit everyone in.', say: '"Should I take one of all of you together?"' },
+  { icon: '🧳', title: 'Carrying heavy bags or a pram', what: 'Someone at stairs, escalator, or a door with both hands full.', say: '"I\'ve got the door — take your time."' },
+  { icon: '🗺️', title: 'Someone looking confused at a map or sign', what: 'They\'re checking their phone, squinting at signage, clearly lost.', say: '"Are you looking for something? I know this area."' },
+  { icon: '🐕', title: 'A dog in public', what: 'Someone with a dog anywhere — café, park, street, coworking.', say: '"What\'s their name?" (then react to the name, not just nod)' },
+  { icon: '☕', title: 'Waiting in the same queue', what: 'Any queue: coffee, checkout, security, elevator.', say: 'Comment on the wait, the menu, the system. Anything real about what you\'re both experiencing.' },
+  { icon: '🌧️', title: 'Sudden weather change', what: 'Rain starts, sun disappears, it gets unexpectedly hot.', say: '"Nobody warned me about this. I should have checked before leaving."' },
+  { icon: '🎧', title: 'Someone\'s headphones come out', what: 'In a shared space, someone removes headphones — brief open window.', say: 'Comment on whatever is around you. This is a 10-second window. Use it or let it go.' },
+  { icon: '🍕', title: 'Shared food situation', what: 'Office lunch, conference food, potluck, street food stall.', say: '"That looked good — is it? I was about to go back for more."' },
+  { icon: '💻', title: 'Recognise their setup or sticker', what: 'A laptop sticker, a book, a headphone brand, a tote bag.', say: '"That sticker / that book / that setup — is that [thing]?"' },
+  { icon: '😤', title: 'Shared mild inconvenience', what: 'Slow Wi-Fi, a system that\'s down, a lift that\'s broken, a long wait.', say: '"I think this place specifically waits until I need the internet."' },
+  { icon: '🏃', title: 'Running for the same transport', what: 'You both just sprinted for a bus, auto, or metro that you caught (or missed).', say: '"We made it. I wasn\'t sure we were going to make it."' },
+  { icon: '📦', title: 'Delivery or parcel situation', what: 'Someone waiting for, receiving, or arguing about a delivery.', say: '"I have that exact same relationship with Swiggy/Zomato/Blinkit right now."' }
+];
+
+(function renderMicroOpps() {
+  var wrap = document.getElementById('micro-opp-grid');
+  if (!wrap) return;
+  MICRO_OPPS.forEach(function(o) {
+    var card = document.createElement('div');
+    card.className = 'micro-opp-card';
+    card.innerHTML =
+      '<span class="micro-opp-icon">' + o.icon + '</span>' +
+      '<div class="micro-opp-title">' + o.title + '</div>' +
+      '<div class="micro-opp-what">' + o.what + '</div>' +
+      '<div class="micro-opp-say">' + o.say + '</div>';
+    wrap.appendChild(card);
+  });
+})();
+
+/* ─────────────────────────────────────────────────────────
+   OBSERVATIONS LIBRARY
+───────────────────────────────────────────────────────── */
+var OBS_DATA = {
+  'coffee': {
+    label: '☕ Coffee Shop',
+    color: 'var(--orange)',
+    items: [
+      { text: 'I think half the people here came to work and the other half came to pretend to work.', reaction: 'Them: "Ha — honestly, which half are you?"' },
+      { text: 'That guy has been staring at Excel for 20 minutes. I respect the dedication.', reaction: 'Them: "He hasn\'t clicked anything. He\'s just... looking."' },
+      { text: 'This place somehow manages to be noisy and quiet at the same time.', reaction: 'Them: "It\'s the headphones. Everyone\'s in their own world."' },
+      { text: 'The queue is so long that by the time I get coffee I\'ll need another coffee.', reaction: 'Them: "This is how they keep you coming back."' },
+      { text: 'I always order the same thing and then spend five minutes looking at the menu.', reaction: 'Them: "Same. Every time. Like something new will appear."' },
+      { text: 'The smell of coffee is honestly better than coffee itself.', reaction: 'Them: "The smell never disappoints. The coffee has bad days."' },
+      { text: 'Everybody here looks like they\'re building a startup.', reaction: 'Them: "Or recovering from one."' },
+      { text: 'That laptop sticker collection tells a whole life story.', reaction: 'Them: "I\'ve been meaning to add some but I\'m scared of committing."' },
+      { text: 'This is one of those places where people come for the vibe and accidentally buy coffee.', reaction: 'Them: "That\'s the business model."' },
+      { text: 'I came here to focus. The universe clearly had other plans.', reaction: 'Them: "What happened?" (and now you\'re in a conversation)' }
+    ]
+  },
+  'metro': {
+    label: '🚇 Metro / Train',
+    color: 'var(--blue)',
+    items: [
+      { text: 'Everybody looks like they\'re speed-running adulthood this morning.', reaction: 'Them: "Including me. I\'m on three hours of sleep."' },
+      { text: 'It\'s funny how nobody makes eye contact and we\'re all pretending that\'s normal.', reaction: 'Them: "This is the agreement. We respect the agreement."' },
+      { text: 'I wonder how many life stories are packed into this coach right now.', reaction: 'Them: "That\'s a nice way to look at it. Usually I just feel squashed."' },
+      { text: 'This train is more punctual than most people I know.', reaction: 'Them: "Don\'t tell them that, they don\'t need the ego boost."' },
+      { text: 'Some people can sleep standing up. That\'s a superpower.', reaction: 'Them: "I\'ve been trying to learn. I\'m not there yet."' },
+      { text: 'The person who invented noise-cancelling headphones deserves an award.', reaction: 'Them: "Specifically for commuters. A Nobel Prize category."' },
+      { text: 'Every morning feels like a sequel of the previous morning.', reaction: 'Them: "Except slightly worse lighting."' },
+      { text: 'Everyone here has somewhere important to be and somehow we\'re all stuck together.', reaction: 'Them: "Very important. In my case, a very important meeting I\'m now late for."' },
+      { text: 'Gurugram traffic is so bad that this train feels like teleportation.', reaction: 'Them: "I did the math once. The train is 3x faster. I still drive sometimes."' },
+      { text: 'If commuting counted as cardio I\'d be in amazing shape.', reaction: 'Them: "I\'d have a six-pack by now."' }
+    ]
+  },
+  'bookstore': {
+    label: '📚 Bookstore',
+    color: 'var(--green)',
+    items: [
+      { text: 'There are more books here than I could finish in ten lifetimes.', reaction: 'Them: "And somehow I\'m buying more."' },
+      { text: 'Buying books and reading books are apparently two different hobbies.', reaction: 'Them: "I am extremely good at the first one."' },
+      { text: 'This section is dangerous for my bank account.', reaction: 'Them: "Which section? I need to know which ones to avoid."' },
+      { text: 'Every book here is somebody\'s attempt to explain life.', reaction: 'Them: "Some of them are right. Most of them are wrong. It\'s a gamble."' },
+      { text: 'I always judge books by their covers and regret it later.', reaction: 'Them: "Or you don\'t regret it and the system is working."' },
+      { text: 'Some books feel like they found you rather than the other way around.', reaction: 'Them: "Yes — do you have one like that right now?"' },
+      { text: 'The self-help section keeps getting bigger. Humanity must be struggling.', reaction: 'Them: "It\'s the most optimistic section. Everyone thinks they\'re one book away."' },
+      { text: 'It\'s impossible to leave a bookstore with just one book.', reaction: 'Them: "I came in for one. I\'m holding four. This is fine."' },
+      { text: 'Imagine writing something that strangers read years later.', reaction: 'Them: "That\'s why I could never write. Too much pressure."' },
+      { text: 'This place smells smarter than the outside world.', reaction: 'Them: "It is. It\'s the only place where I feel like things make sense."' }
+    ]
+  },
+  'language': {
+    label: '🌍 Language Exchange',
+    color: 'var(--teal)',
+    items: [
+      { text: 'It\'s comforting to know I\'m not the only person embarrassing myself in multiple languages.', reaction: 'Them: "I said the wrong word for months. People were too polite to correct me."' },
+      { text: 'Learning a language is basically agreeing to sound stupid for a year.', reaction: 'Them: "A year is optimistic. Some of us are on year three."' },
+      { text: 'Every language has a personality.', reaction: 'Them: "Which one do you think matches yours?"' },
+      { text: 'The confidence required to speak a language badly is underrated.', reaction: 'Them: "It should be on the CV. Comfortable with humiliation."' },
+      { text: 'Duolingo definitely oversold how easy this would be.', reaction: 'Them: "The owl is a liar."' },
+      { text: 'One day you understand nothing. Then suddenly you understand one sentence and feel invincible.', reaction: 'Them: "That first sentence is addictive. You spend weeks chasing it."' },
+      { text: 'My vocabulary is advanced until someone asks me a simple question.', reaction: 'Them: "I know the word for photosynthesis but not for umbrella."' },
+      { text: 'Languages make you realize how many different ways humans think.', reaction: 'Them: "Some things just don\'t translate. The concept disappears."' },
+      { text: 'I started learning for fun and somehow it became a personality trait.', reaction: 'Them: "At what point did it stop being a hobby?"' },
+      { text: 'Every language learner has at least one embarrassing story.', reaction: 'Them: "Mine involves ordering food in a restaurant and asking for something completely different." (now they\'re telling a story)' }
+    ]
+  },
+  'mall': {
+    label: '🛍️ Mall',
+    color: 'var(--pink)',
+    items: [
+      { text: 'Nobody comes here intending to walk 10,000 steps but somehow it happens.', reaction: 'Them: "I\'ve been here two hours. I\'ve seen the same shop three times."' },
+      { text: 'Everything looks affordable until you look at the price tag.', reaction: 'Them: "The lighting in here is specifically designed to make you not think about money."' },
+      { text: 'Malls are basically indoor cities.', reaction: 'Them: "With a food court instead of restaurants. And no sky."' },
+      { text: 'Half the people here are shopping. Half are just wandering.', reaction: 'Them: "I started as shopping. I\'m now wandering."' },
+      { text: 'Every store somehow claims to have a sale.', reaction: 'Them: "If everything is on sale, nothing is."' },
+      { text: 'Window shopping is a surprisingly serious hobby.', reaction: 'Them: "I\'ve window-shopped the same store for two years. Never bought anything. I just like it."' },
+      { text: 'Whoever designed this place wanted us to get lost.', reaction: 'Them: "You have to pass 12 stores to find the exit. That\'s not an accident."' },
+      { text: 'Food courts have a strange ability to make everyone hungry.', reaction: 'Them: "I wasn\'t even thinking about food. Now I want everything."' },
+      { text: 'Some people shop to buy things. Some people shop for entertainment.', reaction: 'Them: "My partner is one type. I\'m the other. It\'s a source of conflict."' },
+      { text: 'The confidence of luxury stores is inspiring.', reaction: 'Them: "They put one bag in the window and act like they\'re doing you a favour by letting you look."' }
+    ]
+  },
+  'billiards': {
+    label: '🎱 Billiards / Activity',
+    color: 'var(--purple)',
+    items: [
+      { text: 'I swear this table has a personal grudge against me.', reaction: 'Them: "It\'s not the table. But also... it might be the table."' },
+      { text: 'Every game starts with confidence and ends with me inventing excuses.', reaction: 'Them: "The excuses get more elaborate as the game goes on."' },
+      { text: 'I\'ve noticed everyone becomes a statistician after missing a shot.', reaction: 'Them: "The angle was wrong. The lighting was off. The cue has a bend."' },
+      { text: 'Billiards is basically chess for people who like hitting things.', reaction: 'Them: "That\'s the most accurate description I\'ve heard."' },
+      { text: 'In my head that shot looked amazing.', reaction: 'Them: "What happened in reality?"' },
+      { text: 'I have a theory that I\'m exactly as good as I think I am until I start playing.', reaction: 'Them: "Confidence collapses on contact with the real world."' },
+      { text: 'Every time I get the white ball exactly where I want it, I have no idea what to do next.', reaction: 'Them: "The planning horizon in this game is one shot."' },
+      { text: 'I\'ve watched people play this for years and I still can\'t predict where anything is going.', reaction: 'Them: "Physics degree would help. I don\'t have one either."' },
+      { text: 'There\'s always someone in any pool hall who plays way too seriously.', reaction: 'Them: "And then there\'s us, inventing excuses together."' },
+      { text: 'I play better when I stop thinking. The thinking is the problem.', reaction: 'Them: "That\'s true for most things, honestly."' }
+    ]
+  }
+};
+
+var currentObsKey = 'coffee';
+
+(function renderObsTabs() {
+  var tabsWrap = document.getElementById('obs-tabs');
+  if (!tabsWrap) return;
+  Object.keys(OBS_DATA).forEach(function(key, i) {
+    var btn = document.createElement('button');
+    btn.className = 'obs-tab' + (i === 0 ? ' active' : '');
+    btn.textContent = OBS_DATA[key].label;
+    btn.onclick = function() {
+      document.querySelectorAll('.obs-tab').forEach(function(b) { b.classList.remove('active'); });
+      btn.classList.add('active');
+      currentObsKey = key;
+      renderObsGrid(key);
+    };
+    tabsWrap.appendChild(btn);
+  });
+  renderObsGrid('coffee');
+})();
+
+function renderObsGrid(key) {
+  var data = OBS_DATA[key];
+  var grid = document.getElementById('obs-grid');
+  if (!grid) return;
+  grid.innerHTML = '';
+  data.items.forEach(function(item, i) {
+    var card = document.createElement('div');
+    card.className = 'obs-card';
+    card.style.borderColor = data.color;
+    card.style.boxShadow = '3px 3px 0 ' + data.color;
+    card.innerHTML =
+      '<span class="obs-num">' + (i + 1) + ' / ' + data.items.length + ' — ' + data.label + '</span>' +
+      '<div class="obs-text">&#8220;' + item.text + '&#8221;</div>' +
+      '<div class="obs-reaction">💬 <em>' + item.reaction + '</em></div>';
+    card.onclick = function() { card.classList.toggle('expanded'); };
+    grid.appendChild(card);
+  });
+}
+
+/* ─────────────────────────────────────────────────────────
+   ADVANCED MOVES DATA
+───────────────────────────────────────────────────────── */
+var SWAPS = [
+  {
+    bad: '"How\'s work?"',
+    good: '"What\'s been keeping you busy lately?"',
+    why: 'One sounds like a manager checking in. One sounds like a friend catching up. Same information, completely different feel.'
+  },
+  {
+    bad: '"What do you do?"',
+    good: '"What are you working on these days?"',
+    why: 'The first asks for a job title. The second asks for what actually excites them right now.'
+  },
+  {
+    bad: '"Where are you from?"',
+    good: '"Have you always been in [city] or did you move here?"',
+    why: 'One is a form field. The other opens a story — which is what people actually want to tell.'
+  },
+  {
+    bad: '"How long have you been doing this?"',
+    good: '"What got you into it originally?"',
+    why: 'A number is not interesting. The origin story always is.'
+  }
+];
+
+var REACTION_DEMOS = [
+  {
+    them: 'I\'m learning Korean.',
+    bad_resp: 'Oh nice. Why?',
+    bad_label: '❌ Question-First (Interrogation)',
+    good_resp: 'That\'s commitment. → Then: What got you into it?',
+    good_label: '✅ Reaction-First (Friend Mode)',
+    why: '"That\'s commitment" is a reaction. It shows you heard them. The question that follows feels like genuine curiosity, not a checklist.'
+  },
+  {
+    them: 'I\'ve been preparing for an AWS certification.',
+    bad_resp: 'Oh nice.',
+    bad_label: '❌ Empty Acknowledgement (Conversation dies)',
+    good_resp: 'That\'s a dangerous rabbit hole. How deep are you into it now? → Or: Was this your idea or did your company "strongly encourage" it?',
+    good_label: '✅ React + Play with the topic',
+    why: 'You\'re not just acknowledging — you\'re playing with the topic. "Strongly encourage" is a joke that only lands if you actually understood what they said.'
+  },
+  {
+    them: 'I quit my job last month.',
+    bad_resp: 'Oh wow. What are you doing now?',
+    bad_label: '❌ Immediately moving to the next data point',
+    good_resp: 'That\'s a feeling I imagine lasted about 48 hours before it got complicated. → Then: What\'s the plan?',
+    good_label: '✅ Acknowledge the experience before asking',
+    why: 'Big life events have an emotional texture. Acknowledging that before asking "what next" makes people feel actually heard — not interviewed.'
+  }
+];
+
+var PERSONALITY_OBS = [
+  '"You always seem to be working on something. What\'s the current obsession?"',
+  '"Every time I see you, you\'re reading something different. What\'s in your hand right now?"',
+  '"You have the calmest reaction to deadlines I\'ve ever seen. Is that real or is it a strategy?"',
+  '"You seem to know everyone in this room. How long have you been coming to these?"',
+  '"I have a theory that half the people here are secretly building startups. You have that energy."',
+  '"You look like someone who actually reads the books they buy. That\'s rarer than it sounds."',
+  '"I\'ve noticed you always ask the question nobody else asks in these meetings."'
+];
+
+(function renderAdvancedMoves() {
+  // Swaps
+  var swapWrap = document.getElementById('swaps-container');
+  if (swapWrap) {
+    SWAPS.forEach(function(s) {
+      swapWrap.innerHTML +=
+        '<div class="swap-row">' +
+          '<div class="swap-bad"><strong style="color:var(--red);">❌ Instead of:</strong><br>' + s.bad + '</div>' +
+          '<div class="swap-arrow">→</div>' +
+          '<div class="swap-good"><strong style="color:var(--green);">✅ Try:</strong><br>' + s.good + '</div>' +
+        '</div>' +
+        '<div style="font-size:.88rem;color:#555;margin-bottom:14px;padding:0 4px;">' + s.why + '</div>';
+    });
+  }
+
+  // Reaction demos
+  var rdWrap = document.getElementById('reaction-demos');
+  if (rdWrap) {
+    REACTION_DEMOS.forEach(function(r) {
+      rdWrap.innerHTML +=
+        '<div class="reaction-demo">' +
+          '<div style="font-family:\'Space Mono\',monospace;font-size:.78rem;color:#888;margin-bottom:6px;">THEY SAY:</div>' +
+          '<div style="font-size:1rem;font-style:italic;font-weight:700;margin-bottom:14px;">"' + r.them + '"</div>' +
+          '<div class="grid-2">' +
+            '<div><div class="reaction-label" style="color:var(--red);">' + r.bad_label + '</div><div style="background:#fdecea;border-radius:4px;padding:10px 12px;font-size:.93rem;">' + r.bad_resp + '</div></div>' +
+            '<div><div class="reaction-label" style="color:var(--green);">' + r.good_label + '</div><div style="background:#edfaea;border-radius:4px;padding:10px 12px;font-size:.93rem;">' + r.good_resp + '</div></div>' +
+          '</div>' +
+          '<div style="font-size:.88rem;color:#555;margin-top:10px;font-style:italic;">💡 ' + r.why + '</div>' +
+        '</div>';
+    });
+  }
+
+  // Billiards
+  var bWrap = document.getElementById('billiards-container');
+  if (bWrap) {
+    var billiards = OBS_DATA['billiards'];
+    var html = '<div class="obs-grid">';
+    billiards.items.slice(0, 6).forEach(function(item, i) {
+      html += '<div class="obs-card" style="border-color:var(--purple);box-shadow:3px 3px 0 var(--purple);" onclick="this.classList.toggle(\'expanded\')">' +
+        '<span class="obs-num">' + (i+1) + ' — While playing</span>' +
+        '<div class="obs-text">&#8220;' + item.text + '&#8221;</div>' +
+        '<div class="obs-reaction">💬 <em>' + item.reaction + '</em></div>' +
+        '</div>';
+    });
+    html += '</div>';
+    bWrap.innerHTML = html;
+  }
+
+  // Personality obs
+  var poWrap = document.getElementById('personality-obs-container');
+  if (poWrap) {
+    poWrap.innerHTML = '<div style="display:flex;flex-direction:column;gap:10px;">' +
+      PERSONALITY_OBS.map(function(obs) {
+        return '<div style="border:2.5px solid var(--ink);border-radius:5px;padding:14px 18px;background:var(--paper2);font-style:italic;font-size:1rem;box-shadow:3px 3px 0 var(--ink);">' + obs + '</div>';
+      }).join('') +
+    '</div>';
+  }
+})();
+
+/* ─────────────────────────────────────────────────────────
+   MODE TOGGLE EXPOSE
+───────────────────────────────────────────────────────── */
+window.setMode = setMode;
+</script>
+</body>
+</html>
