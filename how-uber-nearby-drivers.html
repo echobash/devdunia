@@ -1,0 +1,1269 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>How Uber Finds Nearby Drivers — DevDunia Comics</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bangers&family=Comic+Neue:ital,wght@0,400;0,700;1,400&family=Space+Mono:wght@400;700&display=swap">
+<style>
+:root {
+  --ink: #1a1410; --paper: #fdf3e3; --paper2: #fbe9cc;
+  --red: #e63946; --blue: #1d6fb8; --yellow: #ffd23f;
+  --green: #3fa34d; --pink: #ff6b9d; --purple: #8a4fff;
+  --orange: #ff8c42; --teal: #0d9488;
+}
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  font-family: 'Comic Neue', cursive;
+  color: var(--ink);
+  background-color: var(--paper);
+  background-image: radial-gradient(var(--ink) 0.5px, transparent 0.6px);
+  background-size: 14px 14px;
+  background-attachment: fixed;
+  line-height: 1.65;
+}
+.page-wrap { position: relative; z-index: 1; max-width: 1240px; margin: 0 auto; padding: 20px 32px 60px; }
+.panel {
+  border: 4px solid var(--ink); border-radius: 6px;
+  box-shadow: 7px 7px 0 var(--ink);
+  background: var(--paper); padding: 28px 32px; margin-bottom: 32px;
+}
+h2 { font-family: 'Bangers', cursive; font-size: 2.4rem; letter-spacing: 2px; margin-bottom: 16px; line-height: 1; }
+h3 { font-family: 'Bangers', cursive; font-size: 1.6rem; letter-spacing: 1px; margin-bottom: 12px; }
+h4 { font-family: 'Bangers', cursive; font-size: 1.2rem; letter-spacing: 1px; margin-bottom: 8px; }
+p  { margin-bottom: 14px; font-size: 1.05rem; }
+p:last-child { margin-bottom: 0; }
+ul { padding-left: 22px; margin-bottom: 14px; }
+li { margin-bottom: 6px; font-size: 1rem; }
+code { font-family: 'Space Mono', monospace; font-size: .85em; background: var(--paper2); padding: 1px 5px; border-radius: 3px; }
+.section-head { display: flex; align-items: center; gap: 14px; margin-bottom: 22px; flex-wrap: wrap; }
+.section-num {
+  font-family: 'Bangers', cursive; font-size: 1.1rem; letter-spacing: 2px;
+  background: var(--green); color: #fff; padding: 4px 14px;
+  border-radius: 4px; border: 2px solid var(--ink); box-shadow: 2px 2px 0 var(--ink);
+}
+.chip {
+  display: inline-block; font-family: 'Bangers', cursive; font-size: .85rem;
+  letter-spacing: 1.5px; padding: 3px 12px; border-radius: 4px;
+  border: 2px solid var(--ink); margin-right: 6px; margin-bottom: 6px; vertical-align: middle;
+}
+.chip-green  { background: var(--green);  color: #fff; }
+.chip-red    { background: var(--red);    color: #fff; }
+.chip-blue   { background: var(--blue);   color: #fff; }
+.chip-yellow { background: var(--yellow); color: var(--ink); }
+.chip-orange { background: var(--orange); color: #fff; }
+.chip-teal   { background: var(--teal);   color: #fff; }
+.terminal {
+  background: #0d1117; border: 3px solid #30363d; border-radius: 8px;
+  overflow: hidden; margin: 16px 0;
+}
+.terminal-bar {
+  background: #161b22; border-bottom: 2px solid #30363d;
+  padding: 8px 14px; display: flex; align-items: center; gap: 8px;
+}
+.tbar-dot { width: 12px; height: 12px; border-radius: 50%; display: inline-block; }
+.tbar-dot.red   { background: #ff5f56; }
+.tbar-dot.yellow{ background: #ffbd2e; }
+.tbar-dot.green { background: #27c93f; }
+.tbar-label { font-family: 'Space Mono', monospace; font-size: .75rem; color: #8b949e; margin-left: 8px; }
+.terminal-body { padding: 20px 22px; font-family: 'Space Mono', monospace; font-size: .82rem; line-height: 1.7; overflow-x: auto; white-space: pre-wrap; }
+.t-kw  { color: #ff7b72; }
+.t-str { color: #a5d6ff; }
+.t-val { color: #79c0ff; }
+.t-key { color: #7ee787; }
+.t-num { color: #e3b341; }
+.t-cmt { color: #7d8590; font-style: italic; }
+.t-hdr { color: #d2a8ff; }
+.t-op  { color: #ff8c42; }
+.hbox {
+  border: 3px solid var(--ink); border-radius: 5px; padding: 18px 22px;
+  margin: 16px 0; position: relative;
+}
+.hbox-label {
+  font-family: 'Bangers', cursive; font-size: .9rem; letter-spacing: 2px;
+  position: absolute; top: -14px; left: 16px; padding: 2px 12px;
+  border: 2px solid var(--ink); border-radius: 4px;
+}
+.hbox-orange { background: rgba(255,140,66,.1); border-color: var(--orange); }
+.hbox-orange .hbox-label { background: var(--orange); color: #fff; }
+.hbox-red { background: rgba(230,57,70,.08); border-color: var(--red); }
+.hbox-red .hbox-label { background: var(--red); color: #fff; }
+.hbox-green { background: rgba(63,163,77,.1); border-color: var(--green); }
+.hbox-green .hbox-label { background: var(--green); color: #fff; }
+.hbox-blue { background: rgba(29,111,184,.1); border-color: var(--blue); }
+.hbox-blue .hbox-label { background: var(--blue); color: #fff; }
+.hbox-yellow { background: rgba(255,210,63,.15); border-color: var(--yellow); }
+.hbox-yellow .hbox-label { background: var(--yellow); color: var(--ink); }
+.hbox-teal { background: rgba(13,148,136,.1); border-color: var(--teal); }
+.hbox-teal .hbox-label { background: var(--teal); color: #fff; }
+.data-table { width: 100%; border-collapse: collapse; margin: 16px 0; font-size: .93rem; }
+.data-table th {
+  font-family: 'Bangers', cursive; font-size: 1rem; letter-spacing: 1px;
+  background: var(--ink); color: #fff; padding: 10px 14px; text-align: left; border: 2px solid var(--ink);
+}
+.data-table td { padding: 10px 14px; border: 2px solid var(--ink); vertical-align: top; }
+.data-table tr:nth-child(odd)  td { background: var(--paper2); }
+.data-table tr:nth-child(even) td { background: var(--paper); }
+.grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin: 16px 0; }
+.grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 16px; margin: 16px 0; }
+@media (max-width: 640px) { .grid-2, .grid-3 { grid-template-columns: 1fr; } }
+.card {
+  border: 3px solid var(--ink); border-radius: 5px;
+  box-shadow: 4px 4px 0 var(--ink); padding: 18px; background: var(--paper);
+}
+.card-head { font-family: 'Bangers', cursive; font-size: 1.1rem; letter-spacing: 1px; margin-bottom: 10px; padding-bottom: 8px; border-bottom: 2px solid var(--ink); }
+.step-flow { display: flex; flex-direction: column; gap: 0; }
+.step-item { display: grid; grid-template-columns: 52px 1fr; gap: 0 18px; position: relative; }
+.step-item:not(:last-child)::after { content: ''; position: absolute; left: 25px; top: 52px; bottom: -16px; width: 2px; background: var(--ink); }
+.step-num {
+  width: 52px; height: 52px; border-radius: 50%;
+  border: 3px solid var(--ink); display: flex; align-items: center; justify-content: center;
+  font-family: 'Bangers', cursive; font-size: 1.3rem;
+  box-shadow: 3px 3px 0 var(--ink); flex-shrink: 0; position: relative; z-index: 1;
+}
+.step-body { padding: 8px 0 28px; }
+.sfx-row { display: flex; gap: 16px; flex-wrap: wrap; margin: 20px 0; }
+.sfx {
+  font-family: 'Bangers', cursive; font-size: 1.8rem; letter-spacing: 3px;
+  color: var(--ink); text-shadow: 3px 3px 0 var(--yellow); transform: rotate(-2deg); display: inline-block;
+}
+.sfx:nth-child(even) { transform: rotate(2deg); text-shadow: 3px 3px 0 var(--orange); }
+.chapter-divider { text-align: center; margin: 40px 0 28px; position: relative; }
+.chapter-divider::before { content: ''; position: absolute; top: 50%; left: 0; right: 0; height: 3px; background: var(--ink); }
+.chapter-divider span { position: relative; background: var(--paper); font-family: 'Bangers', cursive; font-size: 1rem; letter-spacing: 3px; padding: 0 16px; }
+.pros-cons { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin: 14px 0; }
+.pros, .cons { border: 3px solid var(--ink); border-radius: 5px; padding: 14px 16px; }
+.pros { background: rgba(63,163,77,.1); }
+.cons { background: rgba(230,57,70,.08); }
+.pros h5 { font-family: 'Bangers', cursive; font-size: 1rem; letter-spacing: 1px; margin-bottom: 8px; color: var(--green); }
+.cons h5 { font-family: 'Bangers', cursive; font-size: 1rem; letter-spacing: 1px; margin-bottom: 8px; color: var(--red); }
+.pros ul, .cons ul { padding-left: 18px; font-size: .9rem; }
+.pros li, .cons li { margin-bottom: 5px; }
+@media (max-width: 560px) { .pros-cons { grid-template-columns: 1fr; } }
+
+/* ── GEOHASH GRID DEMO ──────────────────────── */
+.geo-wrap {
+  background: #0d1117; border: 4px solid var(--ink); border-radius: 8px;
+  box-shadow: 7px 7px 0 var(--ink); overflow: hidden; margin: 24px 0;
+}
+.geo-bar {
+  background: #161b22; border-bottom: 2px solid #30363d; padding: 10px 16px;
+  font-family: 'Bangers', cursive; font-size: 1rem; letter-spacing: 2px;
+  color: #e6edf3; display: flex; align-items: center; gap: 12px; flex-wrap: wrap;
+}
+.geo-body { padding: 20px; display: grid; grid-template-columns: 1fr auto; gap: 20px; }
+@media (max-width: 700px) { .geo-body { grid-template-columns: 1fr; } }
+.geo-canvas-wrap { position: relative; }
+#geo-canvas { display: block; border: 2px solid #30363d; border-radius: 4px; cursor: crosshair; width: 100%; max-width: 520px; }
+.geo-info-panel { min-width: 200px; display: flex; flex-direction: column; gap: 10px; }
+.geo-info-box {
+  background: #161b22; border: 1px solid #30363d; border-radius: 6px;
+  padding: 12px; font-family: 'Space Mono', monospace; font-size: .78rem; color: #adbac7; line-height: 1.6;
+}
+.geo-info-box .label { font-family: 'Bangers', cursive; font-size: .9rem; letter-spacing: 2px; color: #7d8590; display: block; margin-bottom: 4px; }
+.geo-info-box .value { color: #7ee787; font-size: .85rem; word-break: break-all; }
+.geo-btn {
+  font-family: 'Bangers', cursive; font-size: .95rem; letter-spacing: 1.5px;
+  padding: 8px 16px; border: 2px solid #30363d; border-radius: 5px;
+  background: #161b22; color: #e6edf3; cursor: pointer; transition: background .15s;
+  width: 100%;
+}
+.geo-btn:hover { background: #21262d; border-color: #8b949e; }
+.geo-btn.active { border-color: var(--green); color: var(--green); }
+
+/* ── DRIVER SIMULATION DEMO ─────────────────── */
+.sim-wrap {
+  background: #0d1117; border: 4px solid var(--ink); border-radius: 8px;
+  box-shadow: 7px 7px 0 var(--ink); overflow: hidden; margin: 24px 0;
+}
+.sim-bar {
+  background: #161b22; border-bottom: 2px solid #30363d; padding: 10px 16px;
+  font-family: 'Bangers', cursive; font-size: 1rem; letter-spacing: 2px;
+  color: #e6edf3; display: flex; align-items: center; gap: 12px; flex-wrap: wrap;
+}
+.sim-body { padding: 20px; display: grid; grid-template-columns: 1fr 260px; gap: 20px; }
+@media (max-width: 700px) { .sim-body { grid-template-columns: 1fr; } }
+#sim-canvas { display: block; border: 2px solid #30363d; border-radius: 4px; width: 100%; }
+.sim-panel { display: flex; flex-direction: column; gap: 10px; }
+.sim-terminal {
+  background: #161b22; border: 1px solid #30363d; border-radius: 6px;
+  padding: 12px; font-family: 'Space Mono', monospace; font-size: .72rem;
+  color: #7d8590; line-height: 1.6; min-height: 160px; flex: 1;
+  overflow-y: auto;
+}
+.sim-terminal .cmd { color: #7ee787; }
+.sim-terminal .result { color: #79c0ff; }
+.sim-terminal .comment { color: #7d8590; font-style: italic; }
+.sim-stats { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+.sim-stat { background: #161b22; border: 1px solid #30363d; border-radius: 5px; padding: 8px; text-align: center; }
+.sim-stat-num { font-family: 'Bangers', cursive; font-size: 1.5rem; letter-spacing: 1px; }
+.sim-stat-label { font-family: 'Space Mono', monospace; font-size: .65rem; color: #7d8590; }
+.sim-btn {
+  font-family: 'Bangers', cursive; font-size: .95rem; letter-spacing: 1.5px;
+  padding: 9px 14px; border: 2px solid #30363d; border-radius: 5px;
+  background: #161b22; color: #e6edf3; cursor: pointer; transition: background .15s; width: 100%;
+}
+.sim-btn:hover { background: #21262d; border-color: #8b949e; }
+.sim-btn.primary { border-color: var(--green); color: var(--green); }
+.sim-btn.danger  { border-color: var(--red); color: var(--red); }
+</style>
+</head>
+<body>
+<div data-masthead></div>
+<div class="page-wrap">
+
+<div data-tool-hero
+  data-title="How Uber Finds Nearby Drivers"
+  data-chapter="HOW-07"
+  data-category="How X Works"
+  data-icon="🚗"
+  data-desc="Geohash, Redis GEORADIUS, S2 cells, H3 hexagons — the full spatial indexing stack that returns your driver in under 50ms at global scale."
+  data-color="green"
+  data-badges="SPATIAL INDEX,GEOHASH,REDIS GEO,SYSTEM DESIGN"
+  data-badge-colors="green,blue,orange,yellow">
+</div>
+
+<!-- ───────────────────────────────────────
+     SECTION 01: The Scale Problem
+─────────────────────────────────────────── -->
+<div class="panel">
+  <div class="section-head">
+    <span class="section-num">01</span>
+    <h2>Why You Can't Just Loop Through All Drivers</h2>
+  </div>
+
+  <p>Here's the first idea every engineer has: when a rider requests a trip, scan all active drivers, compute the distance to each one, sort by distance, return the top 10. Sounds fine in your head. Let's run the numbers and watch it collapse.</p>
+
+  <div class="hbox hbox-red"><div class="hbox-label">THE NAIVE APPROACH IN PRODUCTION</div>
+    <div style="margin-top:14px;">
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px;">
+        <div>
+          <p><strong>Uber at peak:</strong></p>
+          <ul>
+            <li>~5 million drivers online globally</li>
+            <li>Location updates every <strong>4 seconds</strong></li>
+            <li>~100,000 trip requests per minute</li>
+            <li>Target latency: <strong>&lt; 100ms</strong> per search</li>
+          </ul>
+        </div>
+        <div>
+          <p><strong>Naive linear scan cost:</strong></p>
+          <ul>
+            <li>5M Haversine calculations per request</li>
+            <li>Each Haversine ≈ 3 trig calls (expensive)</li>
+            <li>100K req/min × 5M ops = <strong>500 billion ops/min</strong></li>
+            <li>You need approximately <strong>10,000 servers</strong> just for search</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <p>The only sane approach: use a <strong>spatial index</strong> — a data structure that can answer "find all points within X km of this coordinate" in <code>O(log n)</code> or better, without touching the bulk of the dataset. Uber uses three overlapping systems: <strong>Geohash</strong> for the simple case, <strong>Redis Geo</strong> for the hot path, and <strong>H3 hexagons</strong> for analytics and supply positioning. Let's build up each one.</p>
+
+  <div class="sfx-row">
+    <span class="sfx">O(N) IS NOT A PLAN</span>
+    <span class="sfx">SPATIAL INDEX OR BUST</span>
+  </div>
+</div>
+
+<!-- ───────────────────────────────────────
+     SECTION 02: Geohash
+─────────────────────────────────────────── -->
+<div class="panel">
+  <div class="section-head">
+    <span class="section-num">02</span>
+    <h2>Geohash: Encoding Space as a String</h2>
+  </div>
+
+  <p>Geohash is a clever trick: <strong>convert a (lat, lng) coordinate into a short string</strong>, where two strings that share a prefix are guaranteed to be geographically close. <code>"9q8yy"</code> and <code>"9q8yz"</code> are next-door neighbors. <code>"9q8yy"</code> and <code>"u0"</code> are on different continents. This lets you do proximity queries with string comparisons.</p>
+
+  <h3>The Encoding Algorithm</h3>
+  <div class="step-flow">
+    <div class="step-item">
+      <div class="step-num" style="background:var(--green);color:#fff;">1</div>
+      <div class="step-body">
+        <h4>Binary-split the bounding box</h4>
+        <p>Start with the whole world. Longitude: <code>-180° → 180°</code>. Latitude: <code>-90° → 90°</code>. Now repeatedly halve each range. If your value is in the <em>right</em> half, encode a <code>1</code>. Left half → <code>0</code>. Alternate between longitude bits (even positions) and latitude bits (odd positions).</p>
+      </div>
+    </div>
+    <div class="step-item">
+      <div class="step-num" style="background:var(--blue);color:#fff;">2</div>
+      <div class="step-body">
+        <h4>Interleave lon/lat bits</h4>
+        <p>You end up with a bit string where even positions encode <em>longitude</em> and odd positions encode <em>latitude</em>. For SF (<code>-122.4194°, 37.7749°</code>): the bit string starts <code>10110001101001000000...</code> The interleaving is key — it creates a <strong>Z-order (Morton) space-filling curve</strong> that preserves locality.</p>
+      </div>
+    </div>
+    <div class="step-item">
+      <div class="step-num" style="background:var(--orange);color:#fff;">3</div>
+      <div class="step-body">
+        <h4>Encode every 5 bits as Base32</h4>
+        <p>Group 5 bits at a time and map to this alphabet: <code>0123456789bcdefghjkmnpqrstuvwxyz</code>. Each character covers 5 bits → 2<sup>5</sup> = 32 possible values (no 'a', 'i', 'l', 'o' to avoid confusion). Result: <strong>SF → <code>9q8yy5</code></strong> at precision 6.</p>
+      </div>
+    </div>
+    <div class="step-item">
+      <div class="step-num" style="background:var(--purple);color:#fff;">4</div>
+      <div class="step-body">
+        <h4>Longer prefix = smaller cell = more precise</h4>
+        <p>Each extra character divides the cell into 32 sub-cells. Longer geohash → tighter area → more precision → larger index storage.</p>
+      </div>
+    </div>
+  </div>
+
+  <h3>Precision Cheat Sheet</h3>
+  <table class="data-table">
+    <thead><tr>
+      <th>Precision</th><th>Cell Width</th><th>Cell Height</th><th>Use Case</th><th>SF Example</th>
+    </tr></thead>
+    <tbody>
+      <tr><td><code>1</code></td><td>5,009 km</td><td>4,992 km</td><td>Country</td><td><code>9</code></td></tr>
+      <tr><td><code>2</code></td><td>1,252 km</td><td>624 km</td><td>US region</td><td><code>9q</code></td></tr>
+      <tr><td><code>3</code></td><td>156 km</td><td>156 km</td><td>Metro area</td><td><code>9q8</code></td></tr>
+      <tr><td><code>4</code></td><td>39 km</td><td>20 km</td><td>City</td><td><code>9q8y</code></td></tr>
+      <tr><td><code>5</code></td><td>4.9 km</td><td>4.9 km</td><td>Neighborhood</td><td><code>9q8yy</code></td></tr>
+      <tr><td><code>6</code></td><td>1.2 km</td><td>0.6 km</td><td>Street block</td><td><code>9q8yy5</code></td></tr>
+      <tr><td><code>7</code></td><td>152 m</td><td>152 m</td><td>Building</td><td><code>9q8yy5d</code></td></tr>
+      <tr><td><code>8</code></td><td>38 m</td><td>19 m</td><td>Exact spot</td><td><code>9q8yy5d3</code></td></tr>
+    </tbody>
+  </table>
+
+  <div class="terminal">
+    <div class="terminal-bar"><span class="tbar-dot red"></span><span class="tbar-dot yellow"></span><span class="tbar-dot green"></span><span class="tbar-label">Python — encoding SF coordinates</span></div>
+    <div class="terminal-body"><span class="t-cmt"># Install: pip install pygeohash</span>
+<span class="t-kw">import</span> pygeohash <span class="t-kw">as</span> gh
+
+lat, lng = <span class="t-num">37.7749</span>, <span class="t-num">-122.4194</span>  <span class="t-cmt"># San Francisco</span>
+
+<span class="t-cmt"># Encode at different precisions</span>
+print(gh.encode(lat, lng, precision=<span class="t-num">5</span>))  <span class="t-cmt"># → '9q8yy'</span>
+print(gh.encode(lat, lng, precision=<span class="t-num">6</span>))  <span class="t-cmt"># → '9q8yy5'</span>
+print(gh.encode(lat, lng, precision=<span class="t-num">7</span>))  <span class="t-cmt"># → '9q8yy5d'</span>
+
+<span class="t-cmt"># Decode back to lat/lng</span>
+point = gh.decode(<span class="t-str">'9q8yy5'</span>)
+print(point)  <span class="t-cmt"># (37.77, -122.42) ← approximate center of cell</span>
+
+<span class="t-cmt"># Get cell bounding box</span>
+box = gh.decode_exactly(<span class="t-str">'9q8yy5'</span>)
+<span class="t-cmt"># → (lat_center, lng_center, lat_err, lng_err)</span>
+<span class="t-cmt"># error = half the cell dimension</span>
+
+<span class="t-cmt"># Find all 8 neighbors</span>
+neighbors = gh.neighbors(<span class="t-str">'9q8yy5'</span>)
+<span class="t-cmt"># → {'n':'9q8yy7', 'ne':'9q8yyh', 'e':'9q8yyh', ...}</span></div>
+  </div>
+</div>
+
+<!-- ───────────────────────────────────────
+     SECTION 03: Interactive Geohash Grid
+─────────────────────────────────────────── -->
+<div class="panel">
+  <div class="section-head">
+    <span class="section-num">03</span>
+    <h2>Interactive: Geohash Grid Visualizer</h2>
+  </div>
+  <p>Click anywhere on the city grid to drop a pickup point. Watch how the geohash cell is identified, the 8 neighboring cells are highlighted, and drivers in the search zone are found — all before a single distance calculation runs.</p>
+
+  <div class="geo-wrap">
+    <div class="geo-bar">
+      <span class="tbar-dot red"></span><span class="tbar-dot yellow"></span><span class="tbar-dot green"></span>
+      <span>GEOHASH CELL EXPLORER — precision 6</span>
+      <span style="margin-left:auto;font-family:'Space Mono',monospace;font-size:.75rem;color:#7d8590;">click grid to place pickup</span>
+    </div>
+    <div class="geo-body">
+      <div class="geo-canvas-wrap">
+        <canvas id="geo-canvas" width="520" height="380"></canvas>
+      </div>
+      <div class="geo-info-panel">
+        <div class="geo-info-box">
+          <span class="label">PICKUP COORDS</span>
+          <span class="value" id="geo-coords">Click on the map</span>
+        </div>
+        <div class="geo-info-box">
+          <span class="label">GEOHASH (prec 6)</span>
+          <span class="value" id="geo-hash">—</span>
+        </div>
+        <div class="geo-info-box">
+          <span class="label">CELLS SEARCHED</span>
+          <span class="value" id="geo-cells">—</span>
+        </div>
+        <div class="geo-info-box">
+          <span class="label">DRIVERS FOUND</span>
+          <span class="value" id="geo-drivers" style="color:#7ee787;">—</span>
+        </div>
+        <div class="geo-info-box">
+          <span class="label">REDIS COMMAND</span>
+          <span class="value" id="geo-redis" style="color:#79c0ff;font-size:.7rem;">—</span>
+        </div>
+        <button class="geo-btn" id="geo-reset-btn" onclick="geoReset()">↺ Reset Drivers</button>
+        <button class="geo-btn active" id="geo-toggle-btn" onclick="geoTogglePing()">⏸ Pause Pings</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ───────────────────────────────────────
+     SECTION 04: The Boundary Problem
+─────────────────────────────────────────── -->
+<div class="panel">
+  <div class="section-head">
+    <span class="section-num">04</span>
+    <h2>The Boundary Problem: Why One Cell Isn't Enough</h2>
+  </div>
+
+  <p>Here's the flaw that would sink a naive geohash implementation. A rider and a driver could be <strong>10 meters apart</strong> but in completely different geohash cells. Imagine a cell boundary running right down the middle of Market Street in SF. The driver is 9 meters to the left. The rider is 9 meters to the right. Same cell? No. Distance? 18 meters. But if you only search the rider's cell, you <strong>completely miss that driver</strong>.</p>
+
+  <div class="hbox hbox-orange"><div class="hbox-label">THE SOLUTION: ALWAYS SEARCH 9 CELLS</div>
+    <p style="margin-top:12px;">Always search the <strong>center cell + all 8 neighbors</strong>. A geohash cell at precision 6 is ~1.2km × 0.6km. Its 8 neighbors form a 3×3 grid covering ~3.6km × 1.8km. Any point within that outer ring is at most ~2km away from the center — which is your initial search radius. After the 9-cell sweep, you still run distance calculations, but only on the small set of candidates from those cells (maybe 20–50 drivers), not the millions of drivers total.</p>
+  </div>
+
+  <div class="grid-2">
+    <div class="card">
+      <div class="card-head" style="color:var(--red)">❌ Search 1 Cell Only</div>
+      <ul>
+        <li>Miss drivers right across the cell boundary</li>
+        <li>A driver 15m away may be invisible</li>
+        <li>Results are incomplete and non-deterministic</li>
+        <li>Worse near city borders (many cells = many boundaries)</li>
+        <li>Unacceptable for production</li>
+      </ul>
+    </div>
+    <div class="card">
+      <div class="card-head" style="color:var(--green)">✅ Search Center + 8 Neighbors</div>
+      <ul>
+        <li>Guaranteed coverage of the entire radius zone</li>
+        <li>9 Redis lookups (still sub-millisecond each)</li>
+        <li>Candidate set stays small (typically 20–80 drivers)</li>
+        <li>Then run exact Haversine distance filter on candidates</li>
+        <li>This is what every production system does</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="hbox hbox-blue"><div class="hbox-label">ALSO WATCH OUT FOR: THE WRAPPING EDGE CASE</div>
+    <p style="margin-top:12px;">Geohash at precision 1 shows an ugly discontinuity: cells on the far-left edge of the map (<code>longitude = -180</code>) and cells on the far-right edge (<code>longitude = +180</code>) are <em>adjacent in space</em> but not adjacent in the geohash string. Same for poles. This is a known limitation. In practice, Uber routes around this by using a different spatial index for polar/edge regions (which have essentially zero ridership anyway).</p>
+  </div>
+</div>
+
+<!-- ───────────────────────────────────────
+     SECTION 05: Redis Geo
+─────────────────────────────────────────── -->
+<div class="panel">
+  <div class="section-head">
+    <span class="section-num">05</span>
+    <h2>Redis Geo Index: The Production Hot Path</h2>
+  </div>
+
+  <p>Redis has native geo commands built on top of sorted sets. Internally, Redis encodes each (lat, lng) as a <strong>52-bit geohash</strong> stored as the score in a <code>ZSET</code>. This gives you ~0.6mm precision — more than enough. The commands feel like magic but are just sorted set operations under the hood.</p>
+
+  <h3>The Three Commands You Actually Need</h3>
+
+  <div class="terminal">
+    <div class="terminal-bar"><span class="tbar-dot red"></span><span class="tbar-dot yellow"></span><span class="tbar-dot green"></span><span class="tbar-label">Redis — Full Lifecycle</span></div>
+    <div class="terminal-body"><span class="t-cmt">━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━</span>
+<span class="t-cmt">PHASE 1: Driver sends GPS update (every 4 seconds)</span>
+<span class="t-cmt">━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━</span>
+
+<span class="t-cmt"># Driver d_42 is in San Francisco, currently available</span>
+<span class="t-hdr">GEOADD</span> drivers:available:SF \
+  <span class="t-num">-122.4194</span> <span class="t-num">37.7749</span> <span class="t-str">"d_42"</span>
+<span class="t-cmt"># → (integer) 1  (added) or 0 (updated existing)</span>
+
+<span class="t-hdr">GEOADD</span> drivers:available:SF \
+  <span class="t-num">-122.4312</span> <span class="t-num">37.7860</span> <span class="t-str">"d_57"</span> \
+  <span class="t-num">-122.4001</span> <span class="t-num">37.7720</span> <span class="t-str">"d_89"</span> \
+  <span class="t-num">-122.4411</span> <span class="t-num">37.7631</span> <span class="t-str">"d_104"</span>
+<span class="t-cmt"># Bulk add — much more efficient. One round trip = 4 drivers indexed.</span>
+
+<span class="t-cmt">━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━</span>
+<span class="t-cmt">PHASE 2: Rider requests a trip (instant lookup)</span>
+<span class="t-cmt">━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━</span>
+
+<span class="t-hdr">GEORADIUS</span> drivers:available:SF \
+  <span class="t-num">-122.4195</span> <span class="t-num">37.7751</span> \  <span class="t-cmt">← rider's lat/lng</span>
+  <span class="t-num">2</span> km \              <span class="t-cmt">← search radius</span>
+  <span class="t-hdr">WITHCOORD</span> \        <span class="t-cmt">← return driver coords too</span>
+  <span class="t-hdr">WITHDIST</span> \         <span class="t-cmt">← return exact distances</span>
+  <span class="t-hdr">ASC</span> \              <span class="t-cmt">← closest first</span>
+  <span class="t-hdr">COUNT</span> <span class="t-num">10</span>           <span class="t-cmt">← return up to 10 candidates</span>
+
+<span class="t-cmt"># Response (typically &lt;2ms):</span>
+<span class="t-cmt">1) 1) "d_42"</span>
+<span class="t-cmt">   2) "0.0106"     ← distance in km (~10m away)</span>
+<span class="t-cmt">   3) 1) "-122.4194"</span>
+<span class="t-cmt">      2) "37.7749"</span>
+<span class="t-cmt">2) 1) "d_89"</span>
+<span class="t-cmt">   2) "1.7834"     ← 1.78 km away</span>
+<span class="t-cmt">   3) 1) "-122.4001"</span>
+<span class="t-cmt">      2) "37.7720"</span>
+
+<span class="t-cmt">━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━</span>
+<span class="t-cmt">PHASE 3: Driver goes offline / starts trip</span>
+<span class="t-cmt">━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━</span>
+
+<span class="t-cmt"># Remove from available set when trip starts</span>
+<span class="t-hdr">ZREM</span> drivers:available:SF <span class="t-str">"d_42"</span>
+
+<span class="t-cmt"># Add to in-trip set (for tracking, not proximity search)</span>
+<span class="t-hdr">GEOADD</span> drivers:on_trip:SF \
+  <span class="t-num">-122.4194</span> <span class="t-num">37.7749</span> <span class="t-str">"d_42"</span></div>
+  </div>
+
+  <div class="hbox hbox-teal"><div class="hbox-label">REDIS GEO INTERNALS: HOW IT REALLY WORKS</div>
+    <p style="margin-top:12px;">Redis <code>GEOADD</code> doesn't store coordinates directly. It calls <code>ZADD</code> internally with a <strong>52-bit integer geohash</strong> as the score. <code>GEORADIUS</code> then computes a bounding box from the radius, converts to geohash score ranges, and runs <code>ZRANGEBYSCORE</code> — which is just a binary search on the sorted set. That's why it's O(N+log(M)) where N is results and M is total members. Extremely fast. The distance filtering is done in-process after the set scan returns candidates.</p>
+  </div>
+
+  <h3>Handling Horizontal Scaling</h3>
+  <div class="terminal">
+    <div class="terminal-bar"><span class="tbar-dot red"></span><span class="tbar-dot yellow"></span><span class="tbar-dot green"></span><span class="tbar-label">Redis Cluster — City Partitioning Strategy</span></div>
+    <div class="terminal-body"><span class="t-cmt"># Partition by city (geographic sharding)</span>
+<span class="t-cmt"># Each shard handles one or more cities</span>
+
+<span class="t-cmt">Shard 1: drivers:available:SF, drivers:available:OAK</span>
+<span class="t-cmt">Shard 2: drivers:available:NYC, drivers:available:BK</span>
+<span class="t-cmt">Shard 3: drivers:available:LA, drivers:available:LB</span>
+<span class="t-cmt">...</span>
+
+<span class="t-cmt"># A rider in SF NEVER needs to look at the NYC shard</span>
+<span class="t-cmt"># Perfect horizontal isolation with no cross-shard queries</span>
+
+<span class="t-cmt"># Key design rule: NO driver appears in two city shards</span>
+<span class="t-cmt"># Driver assignment to city = set when driver goes online</span>
+<span class="t-cmt"># City boundary = Uber's geofence polygon (not simple bounding box)</span>
+
+<span class="t-cmt"># For very large cities: sub-shard by quadrant</span>
+<span class="t-cmt"># drivers:available:NYC:NW  ← northwest quadrant</span>
+<span class="t-cmt"># drivers:available:NYC:NE</span>
+<span class="t-cmt"># drivers:available:NYC:SE</span>
+<span class="t-cmt"># drivers:available:NYC:SW</span></div>
+  </div>
+</div>
+
+<!-- ───────────────────────────────────────
+     SECTION 06: Driver Simulation Demo
+─────────────────────────────────────────── -->
+<div class="panel">
+  <div class="section-head">
+    <span class="section-num">06</span>
+    <h2>Interactive: Live Driver Location Simulator</h2>
+  </div>
+  <p>Watch 30 drivers moving around the city in real time. Click anywhere on the map to drop a pickup point, then hit <strong>Search Drivers</strong> to see the GEORADIUS query execute — with the Redis commands streaming in the terminal.</p>
+
+  <div class="sim-wrap">
+    <div class="sim-bar">
+      <span class="tbar-dot red"></span><span class="tbar-dot yellow"></span><span class="tbar-dot green"></span>
+      <span>UBER SUPPLY SERVICE — Location Dispatcher</span>
+      <span style="margin-left:auto;font-size:.75rem;font-family:'Space Mono',monospace;color:#7d8590;">click map to drop pickup</span>
+    </div>
+    <div class="sim-body">
+      <canvas id="sim-canvas" width="520" height="380"></canvas>
+      <div class="sim-panel">
+        <div class="sim-stats">
+          <div class="sim-stat">
+            <div class="sim-stat-num" id="sim-online" style="color:#7ee787;">0</div>
+            <div class="sim-stat-label">ONLINE</div>
+          </div>
+          <div class="sim-stat">
+            <div class="sim-stat-num" id="sim-found" style="color:#79c0ff;">0</div>
+            <div class="sim-stat-label">IN RADIUS</div>
+          </div>
+          <div class="sim-stat">
+            <div class="sim-stat-num" id="sim-busy" style="color:#7d8590;">0</div>
+            <div class="sim-stat-label">ON TRIP</div>
+          </div>
+          <div class="sim-stat">
+            <div class="sim-stat-num" id="sim-latency" style="color:#e3b341;">—</div>
+            <div class="sim-stat-label">QUERY ms</div>
+          </div>
+        </div>
+        <div class="sim-terminal" id="sim-terminal">
+          <span class="comment"># Waiting for pickup location...</span>
+          <br/><span class="comment"># Click the map to begin</span>
+        </div>
+        <button class="sim-btn primary" onclick="simSearch()">🔍 Search Nearby Drivers</button>
+        <button class="sim-btn" onclick="simTogglePause()">⏸ Pause Movement</button>
+        <button class="sim-btn danger" onclick="simReset()">↺ Randomize Drivers</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="hbox hbox-yellow"><div class="hbox-label">WHAT HAPPENS IN REAL UBER</div>
+    <ul style="margin-top:12px;">
+      <li>Driver GPS → Location Service → <code>GEOADD</code> fires every 4 seconds</li>
+      <li>Uber also publishes every update to a <strong>Kafka topic</strong> <code>driver-locations</code> for analytics, ML feature pipelines, and dispatch optimization</li>
+      <li>GEORADIUS returns up to 10 candidates — the <strong>Dispatch Service</strong> then ranks them by ETA (not distance), driver rating, vehicle type match, and surge zone</li>
+      <li>The first driver who <em>accepts</em> gets the trip — it's a competitive lock</li>
+    </ul>
+  </div>
+</div>
+
+<!-- ───────────────────────────────────────
+     SECTION 07: H3 Hexagonal Grid
+─────────────────────────────────────────── -->
+<div class="panel">
+  <div class="section-head">
+    <span class="section-num">07</span>
+    <h2>H3: Uber's Hexagonal Grid (What They Actually Built)</h2>
+  </div>
+
+  <p>In 2018 Uber open-sourced <strong>H3</strong> — a hierarchical hexagonal grid system that covers the entire Earth. Why hexagons? Because in a hex grid, <strong>every neighbor is equidistant</strong> from the center. In a square grid, diagonal neighbors are <code>√2 ≈ 1.41×</code> farther than edge neighbors. That asymmetry causes systematic bias in any proximity calculation.</p>
+
+  <div class="grid-2">
+    <div class="card">
+      <div class="card-head">Square Grid Problems</div>
+      <ul>
+        <li>Edge neighbors: distance = 1 unit</li>
+        <li>Corner neighbors: distance = 1.41 units</li>
+        <li>→ Searching a circle by grid cells is unequal — corner cells cover less of the circle</li>
+        <li>→ Drivers in corner cells are systematically deprioritized vs edge-cell drivers at same true distance</li>
+      </ul>
+    </div>
+    <div class="card">
+      <div class="card-head" style="color:var(--green)">Hexagonal Grid Advantages</div>
+      <ul>
+        <li>All 6 neighbors: exactly equidistant</li>
+        <li>→ No systematic bias in proximity search</li>
+        <li>→ Better approximation of a circle (max error 13% vs 41% for squares)</li>
+        <li>→ Natural for <em>k-ring</em> expansion (ring of k steps = concentric hexagons)</li>
+        <li>→ Cleaner for supply/demand density maps</li>
+      </ul>
+    </div>
+  </div>
+
+  <h3>H3 Resolution Table</h3>
+  <table class="data-table">
+    <thead><tr>
+      <th>Resolution</th><th>Hex Edge Length</th><th>Hex Area</th><th>Total Cells (Earth)</th><th>Uber Use</th>
+    </tr></thead>
+    <tbody>
+      <tr><td><code>r=0</code></td><td>1,107 km</td><td>4,250,547 km²</td><td>122</td><td>Continent</td></tr>
+      <tr><td><code>r=4</code></td><td>22 km</td><td>1,770 km²</td><td>288,122</td><td>Metro region</td></tr>
+      <tr><td><code>r=7</code></td><td>1.2 km</td><td>5.16 km²</td><td>98M</td><td>Neighborhood</td></tr>
+      <tr><td><code>r=9</code></td><td>174 m</td><td>0.105 km²</td><td>2.4B</td><td>Driver pickup zone ✦</td></tr>
+      <tr><td><code>r=10</code></td><td>65.9 m</td><td>0.015 km²</td><td>16.8B</td><td>Precise location</td></tr>
+      <tr><td><code>r=12</code></td><td>9.4 m</td><td>0.0003 km²</td><td>822B</td><td>Sub-building</td></tr>
+    </tbody>
+  </table>
+
+  <div class="terminal">
+    <div class="terminal-bar"><span class="tbar-dot red"></span><span class="tbar-dot yellow"></span><span class="tbar-dot green"></span><span class="tbar-label">Python — H3 in Production</span></div>
+    <div class="terminal-body"><span class="t-cmt"># Install: pip install h3</span>
+<span class="t-kw">import</span> h3
+
+lat, lng = <span class="t-num">37.7749</span>, <span class="t-num">-122.4194</span>  <span class="t-cmt"># San Francisco</span>
+
+<span class="t-cmt"># Encode to H3 cell at resolution 9</span>
+cell = h3.latlng_to_cell(lat, lng, res=<span class="t-num">9</span>)
+print(cell)  <span class="t-cmt"># → '8928308280fffff'</span>
+
+<span class="t-cmt"># Get all hexes within k=2 rings (ring 0 + ring 1 + ring 2)</span>
+k_ring = h3.grid_disk(cell, k=<span class="t-num">2</span>)
+print(len(k_ring))  <span class="t-cmt"># → 19 hexagons</span>
+<span class="t-cmt"># Ring 0 (center): 1 hex</span>
+<span class="t-cmt"># Ring 1: 6 hexes  </span>
+<span class="t-cmt"># Ring 2: 12 hexes</span>
+<span class="t-cmt"># Total: 1 + 6 + 12 = 19 hexes covering ~2km radius</span>
+
+<span class="t-cmt"># Why 19 covers ~2km: res=9 hex diameter ≈ 300m, 2-ring = ~900m radius</span>
+<span class="t-cmt"># Use k=3 for 2km radius: 1+6+12+18=37 hexes</span>
+
+<span class="t-cmt"># Each driver's location → H3 cell</span>
+<span class="t-cmt"># Store: Redis HSET h3:{cell_id} driver_id 1</span>
+<span class="t-cmt"># Search: for each cell in k_ring: HGETALL h3:{cell_id}</span>
+
+<span class="t-cmt"># H3 is primarily used for:</span>
+<span class="t-cmt"># 1. Supply/demand heatmaps (surge pricing zones)</span>
+<span class="t-cmt"># 2. Driver positioning signals (where to reposition idle drivers)</span>
+<span class="t-cmt"># 3. ML features (density of drivers/riders per hex per time)</span>
+<span class="t-cmt"># 4. Reporting and analytics</span>
+<span class="t-cmt"># Redis GEORADIUS is faster for the hot request path</span></div>
+  </div>
+</div>
+
+<!-- ───────────────────────────────────────
+     SECTION 08: Full Pipeline Architecture
+─────────────────────────────────────────── -->
+<div class="panel">
+  <div class="section-head">
+    <span class="section-num">08</span>
+    <h2>The Full Location Pipeline Architecture</h2>
+  </div>
+
+  <p>Here's how all the pieces connect in production. Three distinct data flows — GPS ingestion, trip request, driver state change — all hitting different services with different consistency requirements.</p>
+
+  <div style="background:#0d1117;border:3px solid #30363d;border-radius:8px;padding:24px;font-family:'Space Mono',monospace;font-size:.78rem;line-height:1.9;overflow-x:auto;margin:16px 0;">
+<pre style="color:#e6edf3;margin:0;white-space:pre-wrap;"><span style="color:#e3b341;">────────────────────────────────────────────────────────────────</span>
+<span style="color:#e3b341;">                 GPS INGESTION PATH (every 4s)</span>
+<span style="color:#e3b341;">────────────────────────────────────────────────────────────────</span>
+
+<span style="color:#7ee787;">Driver App</span>  ──── HTTPS POST /location ──→  <span style="color:#79c0ff;">Load Balancer</span>
+  Payload: { driver_id, lat, lng, heading,         │
+             speed, accuracy, timestamp }           ↓
+  H3 cell computed on-device                 <span style="color:#79c0ff;">Location Service</span>  (Go, ~200 instances)
+  (saves server-side encoding cost)               │         │
+                                           <span style="color:#d2a8ff;">GEOADD</span>          <span style="color:#d2a8ff;">PRODUCE</span>
+                                           <span style="color:#d2a8ff;">drivers:avail</span>    <span style="color:#d2a8ff;">Kafka topic</span>
+                                           <span style="color:#d2a8ff;">:{city}</span>          <span style="color:#d2a8ff;">"driver-locs"</span>
+                                                │         │
+                                        <span style="color:#ff8c42;">Redis Cluster</span>    <span style="color:#ff6b9d;">Consumers:</span>
+                                        <span style="color:#ff8c42;">(Geo Index)</span>       ├ ML feature store
+                                                           ├ H3 density maps
+                                                           ├ ETA model training
+                                                           └ Driver analytics
+
+<span style="color:#e3b341;">────────────────────────────────────────────────────────────────</span>
+<span style="color:#e3b341;">                 TRIP REQUEST PATH (&lt;50ms SLA)</span>
+<span style="color:#e3b341;">────────────────────────────────────────────────────────────────</span>
+
+<span style="color:#7ee787;">Rider App</span>  ──── POST /request-trip ──→  <span style="color:#79c0ff;">Demand Service</span>
+  Payload: { rider_id, pickup_lat,              │
+             pickup_lng, dest_lat,        <span style="color:#d2a8ff;">GEORADIUS</span> (2km, top 10)
+             dest_lng, vehicle_type }           │
+                                        <span style="color:#ff8c42;">Redis Cluster</span>
+                                                │
+                                    Returns 10 driver_ids + distances
+                                                │
+                                        <span style="color:#79c0ff;">Dispatch Service</span>
+                                                │
+                              ┌─────────────────┼────────────────┐
+                              ↓                 ↓                ↓
+                        <span style="color:#ff6b9d;">ETA Service</span>      <span style="color:#ff6b9d;">Driver Cache</span>   <span style="color:#ff6b9d;">Supply State</span>
+                        (route each          (rating,         (available,
+                         driver→pickup)       vehicle type)    not on trip)
+                              │
+                        Rank by ETA + rating
+                              │
+                        <span style="color:#7ee787;">Offer to top 3</span> (simultaneous)
+                              │
+                        First accept wins → ZREM from available set</pre>
+  </div>
+
+  <h3>Key Design Decisions Explained</h3>
+  <table class="data-table">
+    <thead><tr><th>Decision</th><th>Why</th><th>Alternative Considered</th></tr></thead>
+    <tbody>
+      <tr>
+        <td>H3 encoded on device (driver app)</td>
+        <td>Saves 1ms of encoding on servers at 1.25M GPS updates/second</td>
+        <td>Server-side encoding: simpler but doesn't scale</td>
+      </tr>
+      <tr>
+        <td>Redis GEORADIUS as hot path (not geohash lookup)</td>
+        <td>GEORADIUS returns exact distances in one call; geohash requires 9 lookups + manual distance filter</td>
+        <td>Custom geohash index: ~2× more code, marginal speed gain</td>
+      </tr>
+      <tr>
+        <td>Kafka between Location Service and analytics</td>
+        <td>Decouples high-frequency writes from analytics consumers; replay capability for ML retraining</td>
+        <td>Direct DB write: couples ingest latency to analytics query latency</td>
+      </tr>
+      <tr>
+        <td>Two separate Redis sets (available vs on_trip)</td>
+        <td>Trip request only searches <code>available</code> — set is 10× smaller. No wasted compute on busy drivers.</td>
+        <td>Status field + filtered scan: requires reading all drivers then filtering</td>
+      </tr>
+      <tr>
+        <td>Offer to top 3 simultaneously</td>
+        <td>If top driver doesn't respond in 10s, next offer is already pending — reduces rider wait time</td>
+        <td>Sequential offer: simpler, but each rejection adds 10s to rider wait</td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+<!-- ───────────────────────────────────────
+     SECTION 09: Production Numbers
+─────────────────────────────────────────── -->
+<div class="panel">
+  <div class="section-head">
+    <span class="section-num">09</span>
+    <h2>Production Numbers & What You'd Actually Build</h2>
+  </div>
+
+  <div class="grid-2">
+    <div>
+      <h3>Uber Scale (2024)</h3>
+      <table class="data-table">
+        <tbody>
+          <tr><td><strong>Active drivers</strong></td><td>~5 million globally</td></tr>
+          <tr><td><strong>GPS updates/second</strong></td><td>~1.25 million/s</td></tr>
+          <tr><td><strong>Trip requests/minute</strong></td><td>~100,000</td></tr>
+          <tr><td><strong>GEORADIUS p99 latency</strong></td><td>&lt; 5ms</td></tr>
+          <tr><td><strong>End-to-end search SLA</strong></td><td>&lt; 50ms</td></tr>
+          <tr><td><strong>Redis sets per city</strong></td><td>2 (available + on_trip)</td></tr>
+          <tr><td><strong>Redis memory per city</strong></td><td>~50MB for 50K drivers</td></tr>
+          <tr><td><strong>Search radius</strong></td><td>Dynamic: 0.5–8 km based on supply density</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div>
+      <h3>What You'd Build at 1% of Scale</h3>
+      <ul>
+        <li>Single Redis instance handles up to <strong>1M GEOADD/s</strong> — you'd never need a cluster until you're truly big</li>
+        <li>A single <code>GEORADIUS</code> call on a 100K-driver ZSET takes &lt; 1ms</li>
+        <li>One Redis node (r7g.2xlarge on AWS, ~$0.40/hr) handles all of Uber's US ops at a fraction of their scale</li>
+        <li>Start with city partitioning only when you can't fit in one node</li>
+        <li>H3 analytics: only needed once you have rich enough data for supply positioning</li>
+      </ul>
+      <div class="hbox hbox-green" style="margin-top:12px;"><div class="hbox-label">THE PRACTICAL APPROACH</div>
+        <p style="margin-top:10px;font-size:.92rem;">Start with <code>GEOADD + GEORADIUS</code>. Add city sharding when your Redis memory exceeds 80%. Add H3 analytics when you have enough trip history to optimize driver positioning. Don't build the full architecture on day 1.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="sfx-row" style="margin-top:20px;">
+    <span class="sfx">GEOADD ✦ GEORADIUS</span>
+    <span class="sfx">50ms OR LESS</span>
+    <span class="sfx">SCALE IT LATER</span>
+  </div>
+</div>
+
+<div class="chapter-divider"><span>END OF HOW-07</span></div>
+</div><!-- /page-wrap -->
+
+<script src="hero-banner.js"></script>
+<script src="masthead.js"></script>
+<script src="author-card.js"></script>
+
+<script>
+/* ========================================================
+   GEOHASH GRID VISUALIZER
+   ======================================================== */
+(function () {
+  var canvas = document.getElementById('geo-canvas');
+  var ctx = canvas.getContext('2d');
+
+  var W = 520, H = 380;
+  var CELL_COLS = 10, CELL_ROWS = 8;
+  var CW = W / CELL_COLS, CH = H / CELL_ROWS;
+  var pickup = null;
+  var drivers = [];
+  var pingTimer = null;
+  var pinging = true;
+  var animId = null;
+
+  // Realistic-looking geohash prefixes for a city
+  var GH_ALPHA = '0123456789bcdefghjkmnpqrstuvwxyz';
+  var BASE_HASH = '9q8yy';
+
+  function cellHash(col, row) {
+    var idx = row * CELL_COLS + col;
+    return BASE_HASH + GH_ALPHA[idx % 32];
+  }
+
+  function initDrivers() {
+    drivers = [];
+    for (var i = 0; i < 28; i++) {
+      drivers.push({
+        id: 'D' + (100 + i),
+        x: 0.1 + Math.random() * 0.8,
+        y: 0.1 + Math.random() * 0.8,
+        dx: (Math.random() - 0.5) * 0.0008,
+        dy: (Math.random() - 0.5) * 0.0008,
+        busy: Math.random() < 0.25,
+        ping: 0,
+      });
+    }
+  }
+
+  function updateDrivers() {
+    if (!pinging) return;
+    drivers.forEach(function (d) {
+      d.x = Math.max(0.02, Math.min(0.98, d.x + d.dx));
+      d.y = Math.max(0.02, Math.min(0.98, d.y + d.dy));
+      if (Math.random() < 0.002) { d.dx = (Math.random() - 0.5) * 0.001; d.dy = (Math.random() - 0.5) * 0.001; }
+      if (Math.random() < 0.003) { d.busy = !d.busy; }
+      if (pinging && !d.busy && Math.random() < 0.05) { d.ping = 8; }
+      if (d.ping > 0) d.ping--;
+    });
+  }
+
+  function driverCell(d) {
+    return { col: Math.floor(d.x * CELL_COLS), row: Math.floor(d.y * CELL_ROWS) };
+  }
+
+  function pickupCell() {
+    if (!pickup) return null;
+    return { col: Math.floor(pickup.x * CELL_COLS), row: Math.floor(pickup.y * CELL_ROWS) };
+  }
+
+  function neighbors(col, row) {
+    var cells = [];
+    for (var dc = -1; dc <= 1; dc++) {
+      for (var dr = -1; dr <= 1; dr++) {
+        var c = col + dc, r = row + dr;
+        if (c >= 0 && c < CELL_COLS && r >= 0 && r < CELL_ROWS) {
+          cells.push({ col: c, row: r, isCenter: dc === 0 && dr === 0 });
+        }
+      }
+    }
+    return cells;
+  }
+
+  function draw() {
+    ctx.clearRect(0, 0, W, H);
+
+    // Background
+    ctx.fillStyle = '#0d1117';
+    ctx.fillRect(0, 0, W, H);
+
+    // City block feel
+    ctx.strokeStyle = '#1c2a1c';
+    ctx.lineWidth = 0.5;
+    for (var c = 0; c <= CELL_COLS; c++) {
+      ctx.beginPath(); ctx.moveTo(c * CW, 0); ctx.lineTo(c * CW, H); ctx.stroke();
+    }
+    for (var r = 0; r <= CELL_ROWS; r++) {
+      ctx.beginPath(); ctx.moveTo(0, r * CH); ctx.lineTo(W, r * CH); ctx.stroke();
+    }
+
+    var pc = pickupCell();
+    var nbrs = pc ? neighbors(pc.col, pc.row) : [];
+    var nbSet = {};
+    var centerHash = '';
+    nbrs.forEach(function (n) { nbSet[n.col + ',' + n.row] = n; });
+    if (pc) centerHash = cellHash(pc.col, pc.row);
+
+    // Shade cells
+    nbrs.forEach(function (n) {
+      ctx.fillStyle = n.isCenter ? 'rgba(63,163,77,0.18)' : 'rgba(29,111,184,0.12)';
+      ctx.fillRect(n.col * CW + 1, n.row * CH + 1, CW - 2, CH - 2);
+    });
+
+    // Cell borders for search area
+    nbrs.forEach(function (n) {
+      ctx.strokeStyle = n.isCenter ? '#3fa34d' : '#1d6fb8';
+      ctx.lineWidth = n.isCenter ? 2.5 : 1.5;
+      ctx.strokeRect(n.col * CW + 1, n.row * CH + 1, CW - 2, CH - 2);
+    });
+
+    // Cell hash labels
+    if (pc) {
+      ctx.font = '9px Space Mono, monospace';
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'top';
+      nbrs.forEach(function (n) {
+        ctx.fillStyle = n.isCenter ? '#3fa34d' : 'rgba(29,111,184,0.7)';
+        ctx.fillText(cellHash(n.col, n.row), n.col * CW + CW / 2, n.row * CH + 4);
+      });
+    }
+
+    // Drivers
+    var foundCount = 0;
+    drivers.forEach(function (d) {
+      var px = d.x * W, py = d.y * H;
+      var dc = Math.floor(d.x * CELL_COLS), dr = Math.floor(d.y * CELL_ROWS);
+      var key = dc + ',' + dr;
+      var inRange = !!nbSet[key];
+      var available = !d.busy;
+      var found = inRange && available && pc;
+      if (found) foundCount++;
+
+      // Ping ripple
+      if (d.ping > 0) {
+        var rippleR = (8 - d.ping) * 3;
+        ctx.beginPath();
+        ctx.arc(px, py, rippleR, 0, Math.PI * 2);
+        ctx.strokeStyle = 'rgba(63,163,77,0.4)';
+        ctx.lineWidth = 1;
+        ctx.stroke();
+      }
+
+      // Driver circle
+      ctx.beginPath();
+      ctx.arc(px, py, found ? 7 : 5, 0, Math.PI * 2);
+      if (d.busy) {
+        ctx.fillStyle = '#555';
+      } else if (found) {
+        ctx.fillStyle = '#3fa34d';
+      } else {
+        ctx.fillStyle = '#1d6fb8';
+      }
+      ctx.fill();
+      ctx.strokeStyle = found ? '#7ee787' : 'rgba(255,255,255,0.2)';
+      ctx.lineWidth = found ? 2 : 1;
+      ctx.stroke();
+
+      // Car icon
+      if (found) {
+        ctx.fillStyle = '#fff';
+        ctx.font = 'bold 8px sans-serif';
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+        ctx.fillText('🚗', px, py);
+      }
+    });
+
+    // Pickup marker
+    if (pickup) {
+      var ppx = pickup.x * W, ppy = pickup.y * H;
+      // Pulse ring
+      var t = Date.now() / 1000;
+      var ring = 10 + Math.sin(t * 3) * 4;
+      ctx.beginPath(); ctx.arc(ppx, ppy, ring, 0, Math.PI * 2);
+      ctx.strokeStyle = 'rgba(255,210,63,0.4)'; ctx.lineWidth = 2; ctx.stroke();
+
+      ctx.beginPath(); ctx.arc(ppx, ppy, 8, 0, Math.PI * 2);
+      ctx.fillStyle = '#ffd23f'; ctx.fill();
+      ctx.strokeStyle = '#1a1410'; ctx.lineWidth = 2; ctx.stroke();
+      ctx.fillStyle = '#1a1410';
+      ctx.font = 'bold 9px sans-serif';
+      ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+      ctx.fillText('P', ppx, ppy);
+    }
+
+    // Update stats
+    if (pc) {
+      var av = drivers.filter(function(d){ return !d.busy; }).length;
+      document.getElementById('geo-coords').textContent =
+        (pickup.y * 90 - 45).toFixed(4) + '°N, ' + (pickup.x * 360 - 180).toFixed(4) + '°E';
+      document.getElementById('geo-hash').textContent = centerHash;
+      document.getElementById('geo-cells').textContent = nbrs.length + ' cells (center + ' + (nbrs.length - 1) + ' neighbors)';
+      document.getElementById('geo-drivers').textContent = foundCount + ' available drivers found';
+      document.getElementById('geo-redis').textContent =
+        'GEORADIUS drivers:avail:city\n  ' + (pickup.x * 360 - 180).toFixed(4) + ' ' + (pickup.y * 90 - 45).toFixed(4) + '\n  2 km WITHDIST ASC COUNT 10';
+    }
+  }
+
+  function loop() {
+    updateDrivers();
+    draw();
+    animId = requestAnimationFrame(loop);
+  }
+
+  canvas.addEventListener('click', function (e) {
+    var rect = canvas.getBoundingClientRect();
+    var scaleX = W / rect.width;
+    var scaleY = H / rect.height;
+    pickup = {
+      x: (e.clientX - rect.left) * scaleX / W,
+      y: (e.clientY - rect.top)  * scaleY / H,
+    };
+  });
+
+  window.geoReset = function () { initDrivers(); pickup = null; };
+  window.geoTogglePing = function () {
+    pinging = !pinging;
+    document.getElementById('geo-toggle-btn').textContent = pinging ? '⏸ Pause Pings' : '▶ Resume Pings';
+    document.getElementById('geo-toggle-btn').classList.toggle('active', pinging);
+  };
+
+  initDrivers();
+  loop();
+})();
+
+/* ========================================================
+   DRIVER LOCATION SIMULATOR
+   ======================================================== */
+(function () {
+  var canvas = document.getElementById('sim-canvas');
+  var ctx = canvas.getContext('2d');
+  var W = 520, H = 380;
+  var drivers = [];
+  var pickup = null;
+  var searchResult = null;
+  var searchAnim = 0;
+  var paused = false;
+  var animId;
+
+  function initDrivers() {
+    drivers = [];
+    for (var i = 0; i < 30; i++) {
+      drivers.push({
+        id: 'd_' + (Math.floor(Math.random() * 900) + 100),
+        x: 0.05 + Math.random() * 0.9,
+        y: 0.05 + Math.random() * 0.9,
+        dx: (Math.random() - 0.5) * 0.0006,
+        dy: (Math.random() - 0.5) * 0.0006,
+        busy: Math.random() < 0.3,
+        heading: Math.random() * Math.PI * 2,
+        ping: 0,
+      });
+    }
+    searchResult = null;
+    pickup = null;
+    document.getElementById('sim-terminal').innerHTML =
+      '<span class="comment"># Waiting for pickup location...</span><br><span class="comment"># Click the map to begin</span>';
+    updateStats();
+  }
+
+  function updateStats() {
+    var avail = drivers.filter(function(d){ return !d.busy; }).length;
+    var busy  = drivers.filter(function(d){ return d.busy; }).length;
+    var found = searchResult ? searchResult.length : 0;
+    document.getElementById('sim-online').textContent = avail;
+    document.getElementById('sim-busy').textContent = busy;
+    document.getElementById('sim-found').textContent = found;
+  }
+
+  function dist(a, b) {
+    var dx = (a.x - b.x) * W, dy = (a.y - b.y) * H;
+    return Math.sqrt(dx*dx + dy*dy);
+  }
+
+  function drawRoadGrid() {
+    // Subtle city grid
+    ctx.strokeStyle = 'rgba(40,60,40,0.5)';
+    ctx.lineWidth = 1;
+    var cols = 8, rows = 6;
+    for (var i = 0; i <= cols; i++) {
+      ctx.beginPath();
+      ctx.moveTo(i * W / cols, 0); ctx.lineTo(i * W / cols, H); ctx.stroke();
+    }
+    for (var j = 0; j <= rows; j++) {
+      ctx.beginPath();
+      ctx.moveTo(0, j * H / rows); ctx.lineTo(W, j * H / rows); ctx.stroke();
+    }
+    // Street labels
+    ctx.font = '9px Space Mono, monospace';
+    ctx.fillStyle = 'rgba(100,130,100,0.4)';
+    ctx.textAlign = 'center';
+    var streets = ['MARKET ST', 'MISSION ST', 'HOWARD ST', 'FOLSOM ST', 'HARRISON ST'];
+    for (var s = 0; s < streets.length; s++) {
+      ctx.fillText(streets[s], W/2, (s+1) * H/rows - 4);
+    }
+  }
+
+  function draw() {
+    ctx.clearRect(0, 0, W, H);
+    ctx.fillStyle = '#0d1117'; ctx.fillRect(0, 0, W, H);
+    drawRoadGrid();
+
+    // Search radius animation
+    if (pickup && searchAnim > 0) {
+      var maxR = 120;
+      var r = maxR * (1 - searchAnim / 40);
+      searchAnim--;
+      ctx.beginPath(); ctx.arc(pickup.x * W, pickup.y * H, r, 0, Math.PI * 2);
+      ctx.strokeStyle = 'rgba(255,140,66,' + (searchAnim / 40) * 0.8 + ')';
+      ctx.lineWidth = 2; ctx.setLineDash([6, 4]); ctx.stroke(); ctx.setLineDash([]);
+    }
+
+    // Final search circle
+    if (pickup && searchResult) {
+      ctx.beginPath(); ctx.arc(pickup.x * W, pickup.y * H, 120, 0, Math.PI * 2);
+      ctx.strokeStyle = 'rgba(255,140,66,0.4)'; ctx.lineWidth = 1.5;
+      ctx.setLineDash([5, 5]); ctx.stroke(); ctx.setLineDash([]);
+    }
+
+    // Drivers
+    drivers.forEach(function (d) {
+      var px = d.x * W, py = d.y * H;
+      var isFound = searchResult && searchResult.some(function(r){ return r.id === d.id; });
+
+      if (d.ping > 0) {
+        ctx.beginPath(); ctx.arc(px, py, (8 - d.ping) * 2.5, 0, Math.PI * 2);
+        ctx.strokeStyle = 'rgba(63,163,77,0.3)'; ctx.lineWidth = 1; ctx.stroke();
+        d.ping--;
+      }
+
+      // Car body
+      ctx.save();
+      ctx.translate(px, py);
+      ctx.rotate(d.heading);
+      ctx.fillStyle = d.busy ? '#374151' : isFound ? '#ffd23f' : '#1d6fb8';
+      ctx.fillRect(-6, -4, 12, 8);
+      ctx.fillStyle = 'rgba(255,255,255,0.15)';
+      ctx.fillRect(-4, -3, 5, 3);
+      ctx.fillRect(1, -3, 4, 3);
+      if (!d.busy) {
+        ctx.fillStyle = '#fff8';
+        ctx.fillRect(-7, -1, 2, 2);
+        ctx.fillRect(5, -1, 2, 2);
+      }
+      ctx.restore();
+
+      if (isFound) {
+        ctx.beginPath(); ctx.arc(px, py, 12, 0, Math.PI * 2);
+        ctx.strokeStyle = '#ffd23f'; ctx.lineWidth = 2; ctx.stroke();
+      }
+    });
+
+    // Pickup pin
+    if (pickup) {
+      var ppx = pickup.x * W, ppy = pickup.y * H;
+      ctx.beginPath();
+      ctx.arc(ppx, ppy, 8, 0, Math.PI * 2);
+      ctx.fillStyle = '#ff8c42'; ctx.fill();
+      ctx.strokeStyle = '#fff'; ctx.lineWidth = 2; ctx.stroke();
+      ctx.fillStyle = '#fff';
+      ctx.font = 'bold 8px sans-serif';
+      ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+      ctx.fillText('P', ppx, ppy);
+    }
+
+    updateStats();
+  }
+
+  function updateDrivers() {
+    if (paused) return;
+    drivers.forEach(function (d) {
+      d.x = Math.max(0.02, Math.min(0.98, d.x + d.dx));
+      d.y = Math.max(0.02, Math.min(0.98, d.y + d.dy));
+      d.heading = Math.atan2(d.dy, d.dx);
+      if (Math.random() < 0.005) {
+        d.dx = (Math.random() - 0.5) * 0.0008;
+        d.dy = (Math.random() - 0.5) * 0.0008;
+      }
+      if (Math.random() < 0.002) d.busy = !d.busy;
+      if (!d.busy && Math.random() < 0.02) d.ping = 8;
+    });
+  }
+
+  function loop() { updateDrivers(); draw(); animId = requestAnimationFrame(loop); }
+
+  canvas.addEventListener('click', function (e) {
+    var rect = canvas.getBoundingClientRect();
+    pickup = {
+      x: (e.clientX - rect.left) / rect.width,
+      y: (e.clientY - rect.top) / rect.height,
+    };
+    searchResult = null;
+  });
+
+  window.simSearch = function () {
+    if (!pickup) {
+      alert('Click on the map first to drop a pickup location!');
+      return;
+    }
+    var t0 = performance.now();
+    var RADIUS = 120; // pixels
+    searchResult = drivers.filter(function (d) {
+      return !d.busy && dist(d, pickup) < RADIUS;
+    }).sort(function (a, b) { return dist(a, pickup) - dist(b, pickup); }).slice(0, 10);
+    var t1 = performance.now();
+    var ms = (t1 - t0).toFixed(2);
+    document.getElementById('sim-latency').textContent = ms;
+    searchAnim = 40;
+
+    // Build terminal output
+    var term = document.getElementById('sim-terminal');
+    var lat = (pickup.y * 40 - 20 + 37.7).toFixed(4);
+    var lng = (-122 - pickup.x * 0.5).toFixed(4);
+    term.innerHTML = '<span class="cmd">GEORADIUS drivers:available:SF \\\n  ' + lng + ' ' + lat + ' \\\n  2 km WITHCOORD WITHDIST ASC COUNT 10</span>\n\n';
+    searchResult.forEach(function (d, i) {
+      var km = (dist(d, pickup) / W * 5).toFixed(4);
+      term.innerHTML += '<span class="result">' + (i+1) + ') "' + d.id + '"  ' + km + ' km</span>\n';
+    });
+    if (searchResult.length === 0) {
+      term.innerHTML += '<span class="comment">(empty) — expanding radius...</span>';
+    }
+    term.innerHTML += '\n<span class="comment">← query time: ' + ms + 'ms</span>';
+    term.scrollTop = term.scrollHeight;
+    updateStats();
+  };
+
+  window.simTogglePause = function () {
+    paused = !paused;
+    document.querySelectorAll('.sim-btn')[1].textContent = paused ? '▶ Resume Movement' : '⏸ Pause Movement';
+  };
+
+  window.simReset = function () { initDrivers(); };
+
+  initDrivers();
+  loop();
+})();
+</script>
+</body>
+</html>
