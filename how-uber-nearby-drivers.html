@@ -317,10 +317,10 @@ code { font-family: 'Space Mono', monospace; font-size: .85em; background: var(-
       <th>Precision</th><th>Cell Width</th><th>Cell Height</th><th>Use Case</th><th>Delhi Example</th>
     </tr></thead>
     <tbody>
-      <tr><td><code>1</code></td><td>5,009 km</td><td>4,992 km</td><td>Country</td><td><code>9</code></td></tr>
-      <tr><td><code>2</code></td><td>1,252 km</td><td>624 km</td><td>US region</td><td><code>9q</code></td></tr>
-      <tr><td><code>3</code></td><td>156 km</td><td>156 km</td><td>Metro area</td><td><code>9q8</code></td></tr>
-      <tr><td><code>4</code></td><td>39 km</td><td>20 km</td><td>City</td><td><code>9q8y</code></td></tr>
+      <tr><td><code>1</code></td><td>5,009 km</td><td>4,992 km</td><td>Country</td><td><code>t</code></td></tr>
+      <tr><td><code>2</code></td><td>1,252 km</td><td>624 km</td><td>Asia region</td><td><code>tt</code></td></tr>
+      <tr><td><code>3</code></td><td>156 km</td><td>156 km</td><td>Metro area</td><td><code>ttn</code></td></tr>
+      <tr><td><code>4</code></td><td>39 km</td><td>20 km</td><td>City</td><td><code>ttnf</code></td></tr>
       <tr><td><code>5</code></td><td>4.9 km</td><td>4.9 km</td><td>Neighborhood</td><td><code>ttnfv</code></td></tr>
       <tr><td><code>6</code></td><td>1.2 km</td><td>0.6 km</td><td>Street block</td><td><code>ttnfvk</code></td></tr>
       <tr><td><code>7</code></td><td>152 m</td><td>152 m</td><td>Building</td><td><code>ttnfvke</code></td></tr>
@@ -1027,12 +1027,12 @@ code { font-family: 'Space Mono', monospace; font-size: .85em; background: var(-
     if (pc) {
       var av = drivers.filter(function(d){ return !d.busy; }).length;
       document.getElementById('geo-coords').textContent =
-        (pickup.y * 90 - 45).toFixed(4) + '°N, ' + (pickup.x * 360 - 180).toFixed(4) + '°E';
+        (28.9 - pickup.y * 0.6).toFixed(4) + '°N, ' + (76.9 + pickup.x * 0.6).toFixed(4) + '°E';
       document.getElementById('geo-hash').textContent = centerHash;
       document.getElementById('geo-cells').textContent = nbrs.length + ' cells (center + ' + (nbrs.length - 1) + ' neighbors)';
       document.getElementById('geo-drivers').textContent = foundCount + ' available drivers found';
       document.getElementById('geo-redis').textContent =
-        'GEORADIUS drivers:avail:city\n  ' + (pickup.x * 360 - 180).toFixed(4) + ' ' + (pickup.y * 90 - 45).toFixed(4) + '\n  2 km WITHDIST ASC COUNT 10';
+        'GEORADIUS drivers:available:DEL\n  ' + (76.9 + pickup.x * 0.6).toFixed(4) + ' ' + (28.9 - pickup.y * 0.6).toFixed(4) + '\n  2 km WITHDIST ASC COUNT 10';
     }
   }
 
@@ -1129,7 +1129,7 @@ code { font-family: 'Space Mono', monospace; font-size: .85em; background: var(-
     ctx.font = '9px Space Mono, monospace';
     ctx.fillStyle = 'rgba(100,130,100,0.4)';
     ctx.textAlign = 'center';
-    var streets = ['MARKET ST', 'MISSION ST', 'HOWARD ST', 'FOLSOM ST', 'HARRISON ST'];
+    var streets = ['RING RD', 'OUTER RING RD', 'NH-48', 'MEHRAULI RD', 'MG ROAD'];
     for (var s = 0; s < streets.length; s++) {
       ctx.fillText(streets[s], W/2, (s+1) * H/rows - 4);
     }
@@ -1249,8 +1249,8 @@ code { font-family: 'Space Mono', monospace; font-size: .85em; background: var(-
 
     // Build terminal output
     var term = document.getElementById('sim-terminal');
-    var lat = (pickup.y * 8 + 24 + 28.6).toFixed(4);
-    var lng = (77 + pickup.x * 0.5).toFixed(4);
+    var lat = (28.9 - pickup.y * 0.6).toFixed(4);
+    var lng = (76.9 + pickup.x * 0.6).toFixed(4);
     term.innerHTML = '<span class="cmd">GEORADIUS drivers:available:DEL \\\n  ' + lng + ' ' + lat + ' \\\n  2 km WITHCOORD WITHDIST ASC COUNT 10</span>\n\n';
     searchResult.forEach(function (d, i) {
       var km = (dist(d, pickup) / W * 5).toFixed(4);
