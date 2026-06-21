@@ -67,7 +67,7 @@ code { font-family: 'Space Mono', monospace; font-size: .85em; background: var(-
 .tbar-dot.yellow{ background: #ffbd2e; }
 .tbar-dot.green { background: #27c93f; }
 .tbar-label { font-family: 'Space Mono', monospace; font-size: .75rem; color: #8b949e; margin-left: 8px; }
-.terminal-body { padding: 20px 22px; font-family: 'Space Mono', monospace; font-size: .82rem; line-height: 1.7; overflow-x: auto; white-space: pre-wrap; }
+.terminal-body { padding: 20px 22px; font-family: 'Space Mono', monospace; font-size: .95rem; line-height: 1.9; overflow-x: auto; white-space: pre-wrap; }
 .t-kw  { color: #ff7b72; }
 .t-str { color: #a5d6ff; }
 .t-val { color: #79c0ff; }
@@ -158,11 +158,11 @@ code { font-family: 'Space Mono', monospace; font-size: .85em; background: var(-
 #geo-canvas { display: block; border: 2px solid #30363d; border-radius: 4px; cursor: crosshair; width: 100%; max-width: 520px; }
 .geo-info-panel { min-width: 200px; display: flex; flex-direction: column; gap: 10px; }
 .geo-info-box {
-  background: #161b22; border: 1px solid #30363d; border-radius: 6px;
-  padding: 12px; font-family: 'Space Mono', monospace; font-size: .78rem; color: #adbac7; line-height: 1.6;
+  background: #161b22; border: 2px solid #30363d; border-radius: 6px;
+  padding: 12px; font-family: 'Space Mono', monospace; font-size: .88rem; color: #adbac7; line-height: 1.7;
 }
-.geo-info-box .label { font-family: 'Bangers', cursive; font-size: .9rem; letter-spacing: 2px; color: #7d8590; display: block; margin-bottom: 4px; }
-.geo-info-box .value { color: #7ee787; font-size: .85rem; word-break: break-all; }
+.geo-info-box .label { font-family: 'Bangers', cursive; font-size: 1rem; letter-spacing: 2px; color: #7d8590; display: block; margin-bottom: 4px; }
+.geo-info-box .value { color: #7ee787; font-size: .92rem; word-break: break-all; }
 .geo-btn {
   font-family: 'Bangers', cursive; font-size: .95rem; letter-spacing: 1.5px;
   padding: 8px 16px; border: 2px solid #30363d; border-radius: 5px;
@@ -182,26 +182,26 @@ code { font-family: 'Space Mono', monospace; font-size: .85em; background: var(-
   font-family: 'Bangers', cursive; font-size: 1rem; letter-spacing: 2px;
   color: #e6edf3; display: flex; align-items: center; gap: 12px; flex-wrap: wrap;
 }
-.sim-body { padding: 20px; display: grid; grid-template-columns: 1fr 260px; gap: 20px; }
-@media (max-width: 700px) { .sim-body { grid-template-columns: 1fr; } }
+.sim-body { padding: 20px; display: grid; grid-template-columns: 1fr 320px; gap: 20px; }
+@media (max-width: 800px) { .sim-body { grid-template-columns: 1fr; } }
 #sim-canvas { display: block; border: 2px solid #30363d; border-radius: 4px; width: 100%; }
 .sim-panel { display: flex; flex-direction: column; gap: 10px; }
 .sim-terminal {
-  background: #161b22; border: 1px solid #30363d; border-radius: 6px;
-  padding: 12px; font-family: 'Space Mono', monospace; font-size: .72rem;
-  color: #7d8590; line-height: 1.6; min-height: 160px; flex: 1;
-  overflow-y: auto;
+  background: #0d1117; border: 2px solid #238636; border-radius: 6px;
+  padding: 16px; font-family: 'Space Mono', monospace; font-size: .92rem;
+  color: #8b949e; line-height: 1.8; min-height: 200px; flex: 1;
+  overflow-y: auto; word-break: break-word;
 }
-.sim-terminal .cmd { color: #7ee787; }
-.sim-terminal .result { color: #79c0ff; }
-.sim-terminal .comment { color: #7d8590; font-style: italic; }
+.sim-terminal .cmd { color: #3fb950; font-weight: bold; display: block; margin-bottom: 8px; }
+.sim-terminal .result { color: #58a6ff; display: block; }
+.sim-terminal .comment { color: #6e7681; font-style: italic; display: block; }
 .sim-stats { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
-.sim-stat { background: #161b22; border: 1px solid #30363d; border-radius: 5px; padding: 8px; text-align: center; }
-.sim-stat-num { font-family: 'Bangers', cursive; font-size: 1.5rem; letter-spacing: 1px; }
-.sim-stat-label { font-family: 'Space Mono', monospace; font-size: .65rem; color: #7d8590; }
+.sim-stat { background: #161b22; border: 2px solid #30363d; border-radius: 5px; padding: 10px; text-align: center; }
+.sim-stat-num { font-family: 'Bangers', cursive; font-size: 2rem; letter-spacing: 1px; }
+.sim-stat-label { font-family: 'Space Mono', monospace; font-size: .78rem; color: #7d8590; margin-top: 2px; }
 .sim-btn {
-  font-family: 'Bangers', cursive; font-size: .95rem; letter-spacing: 1.5px;
-  padding: 9px 14px; border: 2px solid #30363d; border-radius: 5px;
+  font-family: 'Bangers', cursive; font-size: 1.05rem; letter-spacing: 1.5px;
+  padding: 11px 14px; border: 2px solid #30363d; border-radius: 5px;
   background: #161b22; color: #e6edf3; cursor: pointer; transition: background .15s; width: 100%;
 }
 .sim-btn:hover { background: #21262d; border-color: #8b949e; }
@@ -414,7 +414,7 @@ code { font-family: 'Space Mono', monospace; font-size: .85em; background: var(-
         </div>
         <div class="geo-info-box">
           <span class="label">REDIS COMMAND</span>
-          <span class="value" id="geo-redis" style="color:#79c0ff;font-size:.7rem;">—</span>
+          <span class="value" id="geo-redis" style="color:#79c0ff;font-size:.82rem;word-break:break-word;white-space:pre-wrap;">—</span>
         </div>
         <button class="geo-btn" id="geo-reset-btn" onclick="geoReset()">↺ Reset Drivers</button>
         <button class="geo-btn active" id="geo-toggle-btn" onclick="geoTogglePing()">⏸ Pause Pings</button>
@@ -521,29 +521,29 @@ code { font-family: 'Space Mono', monospace; font-size: .85em; background: var(-
     <div style="padding:18px;display:grid;grid-template-columns:repeat(3,1fr);gap:12px;" id="shard-grid">
       <div style="border:2px solid var(--ink);border-radius:6px;overflow:hidden;">
         <div style="background:var(--blue);color:#fff;padding:6px 12px;font-family:'Bangers',cursive;font-size:.9rem;letter-spacing:1px;">SHARD 1 — North India</div>
-        <div style="padding:10px;font-family:'Space Mono',monospace;font-size:.75rem;background:rgba(29,111,184,.06);">
+        <div style="padding:10px;font-family:'Space Mono',monospace;font-size:.88rem;background:rgba(29,111,184,.06);">
           <div style="margin:3px 0;padding:4px 8px;background:rgba(29,111,184,.15);border-radius:3px;border-left:3px solid var(--blue);">drivers:available:<b>DEL</b></div>
           <div style="margin:3px 0;padding:4px 8px;background:rgba(29,111,184,.1);border-radius:3px;border-left:3px solid var(--blue);">drivers:available:<b>GGN</b></div>
           <div style="margin:3px 0;padding:4px 8px;background:rgba(29,111,184,.08);border-radius:3px;border-left:3px solid var(--blue);">drivers:available:<b>NOI</b></div>
-          <div style="margin-top:8px;font-size:.65rem;color:#666;">~190K drivers · 95MB</div>
+          <div style="margin-top:8px;font-size:.78rem;color:#888;">~190K drivers · 95MB</div>
         </div>
       </div>
       <div style="border:2px solid var(--ink);border-radius:6px;overflow:hidden;">
         <div style="background:var(--red);color:#fff;padding:6px 12px;font-family:'Bangers',cursive;font-size:.9rem;letter-spacing:1px;">SHARD 2 — West India</div>
-        <div style="padding:10px;font-family:'Space Mono',monospace;font-size:.75rem;background:rgba(230,57,70,.05);">
+        <div style="padding:10px;font-family:'Space Mono',monospace;font-size:.88rem;background:rgba(230,57,70,.05);">
           <div style="margin:3px 0;padding:4px 8px;background:rgba(230,57,70,.15);border-radius:3px;border-left:3px solid var(--red);">drivers:available:<b>MUM</b></div>
           <div style="margin:3px 0;padding:4px 8px;background:rgba(230,57,70,.1);border-radius:3px;border-left:3px solid var(--red);">drivers:available:<b>PNE</b></div>
           <div style="margin:3px 0;padding:4px 8px;background:rgba(230,57,70,.08);border-radius:3px;border-left:3px solid var(--red);">drivers:available:<b>HYD</b></div>
-          <div style="margin-top:8px;font-size:.65rem;color:#666;">~280K drivers · 140MB</div>
+          <div style="margin-top:8px;font-size:.78rem;color:#888;">~280K drivers · 140MB</div>
         </div>
       </div>
       <div style="border:2px solid var(--ink);border-radius:6px;overflow:hidden;">
         <div style="background:var(--orange);color:#fff;padding:6px 12px;font-family:'Bangers',cursive;font-size:.9rem;letter-spacing:1px;">SHARD 3 — South India</div>
-        <div style="padding:10px;font-family:'Space Mono',monospace;font-size:.75rem;background:rgba(255,140,66,.05);">
+        <div style="padding:10px;font-family:'Space Mono',monospace;font-size:.88rem;background:rgba(255,140,66,.05);">
           <div style="margin:3px 0;padding:4px 8px;background:rgba(255,140,66,.15);border-radius:3px;border-left:3px solid var(--orange);">drivers:available:<b>BLR</b></div>
           <div style="margin:3px 0;padding:4px 8px;background:rgba(255,140,66,.1);border-radius:3px;border-left:3px solid var(--orange);">drivers:available:<b>CHN</b></div>
           <div style="margin:3px 0;padding:4px 8px;background:rgba(255,140,66,.08);border-radius:3px;border-left:3px solid var(--orange);">drivers:available:<b>HYD</b></div>
-          <div style="margin-top:8px;font-size:.65rem;color:#666;">~190K drivers · 95MB</div>
+          <div style="margin-top:8px;font-size:.78rem;color:#888;">~190K drivers · 95MB</div>
         </div>
       </div>
     </div>
@@ -673,7 +673,7 @@ code { font-family: 'Space Mono', monospace; font-size: .85em; background: var(-
     <div style="padding:20px;background:#111;display:grid;grid-template-columns:1fr 240px;gap:20px;">
       <canvas id="h3-canvas" width="460" height="360" style="border:1px solid #333;border-radius:4px;display:block;width:100%;"></canvas>
       <div style="display:flex;flex-direction:column;gap:10px;">
-        <div id="h3-ring-stats" style="background:#1c1c1c;border:1px solid #333;border-radius:6px;padding:14px;font-family:'Space Mono',monospace;font-size:.75rem;color:#aaa;line-height:1.9;">
+        <div id="h3-ring-stats" style="background:#1c1c1c;border:1px solid #333;border-radius:6px;padding:14px;font-family:'Space Mono',monospace;font-size:.88rem;color:#ccc;line-height:2;">
           <div style="color:#ffd23f;font-family:'Bangers',cursive;font-size:1rem;letter-spacing:2px;margin-bottom:8px;">RING STATS</div>
           <div>Ring 0: <span style="color:#7ee787;">1 hex</span></div>
           <div>Ring 1: <span style="color:#79c0ff;">6 hexes</span></div>
@@ -681,14 +681,14 @@ code { font-family: 'Space Mono', monospace; font-size: .85em; background: var(-
           <div>Ring 3: <span style="color:#ff6b9d;">18 hexes</span></div>
           <div style="border-top:1px solid #333;margin:8px 0;padding-top:8px;">Formula: k×6 per ring<br>Total at k: 1+6k(k+1)/2</div>
         </div>
-        <div id="h3-current" style="background:#1c1c1c;border:1px solid #333;border-radius:6px;padding:14px;font-family:'Space Mono',monospace;font-size:.75rem;color:#aaa;line-height:1.8;">
+        <div id="h3-current" style="background:#1c1c1c;border:1px solid #333;border-radius:6px;padding:14px;font-family:'Space Mono',monospace;font-size:.88rem;color:#ccc;line-height:2;">
           <div style="color:#ffd23f;font-family:'Bangers',cursive;font-size:1rem;letter-spacing:2px;margin-bottom:6px;">CURRENT SELECTION</div>
           <div>k-ring: <span id="h3-k-display" style="color:#7ee787;">0</span></div>
           <div>Hexes: <span id="h3-hex-count" style="color:#7ee787;">1</span></div>
           <div>Drivers found: <span id="h3-drivers" style="color:#ff8c42;">—</span></div>
           <div>Radius: <span id="h3-radius" style="color:#79c0ff;">~175m</span></div>
         </div>
-        <div style="background:#0d2818;border:1px solid #1a5c31;border-radius:6px;padding:12px;font-family:'Space Mono',monospace;font-size:.7rem;color:#4ade80;line-height:1.7;">
+        <div style="background:#0d2818;border:1px solid #1a5c31;border-radius:6px;padding:12px;font-family:'Space Mono',monospace;font-size:.85rem;color:#4ade80;line-height:1.8;">
           <div style="color:#7ee787;font-weight:bold;margin-bottom:4px;">H3 vs GEORADIUS</div>
           GEORADIUS → hot path<br>
           (one call, exact dist)<br><br>
@@ -1251,15 +1251,16 @@ code { font-family: 'Space Mono', monospace; font-size: .85em; background: var(-
     var term = document.getElementById('sim-terminal');
     var lat = (28.9 - pickup.y * 0.6).toFixed(4);
     var lng = (76.9 + pickup.x * 0.6).toFixed(4);
-    term.innerHTML = '<span class="cmd">GEORADIUS drivers:available:DEL \\\n  ' + lng + ' ' + lat + ' \\\n  2 km WITHCOORD WITHDIST ASC COUNT 10</span>\n\n';
+    term.innerHTML =
+      '<span class="cmd">GEORADIUS drivers:available:DEL<br>  ' + lng + ' ' + lat + '<br>  2 km WITHCOORD WITHDIST<br>  ASC COUNT 10</span>';
     searchResult.forEach(function (d, i) {
-      var km = (dist(d, pickup) / W * 5).toFixed(4);
-      term.innerHTML += '<span class="result">' + (i+1) + ') "' + d.id + '"  ' + km + ' km</span>\n';
+      var km = (dist(d, pickup) / W * 5).toFixed(3);
+      term.innerHTML += '<span class="result">' + (i+1) + ')  "' + d.id + '"  —  ' + km + ' km</span>';
     });
     if (searchResult.length === 0) {
-      term.innerHTML += '<span class="comment">(empty) — expanding radius...</span>';
+      term.innerHTML += '<span class="comment">(no drivers) — try expanding radius</span>';
     }
-    term.innerHTML += '\n<span class="comment">← query time: ' + ms + 'ms</span>';
+    term.innerHTML += '<span class="comment">query time: ' + ms + 'ms</span>';
     term.scrollTop = term.scrollHeight;
     updateStats();
   };
