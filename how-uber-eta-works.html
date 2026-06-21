@@ -238,7 +238,7 @@ input[type=range].speed-slider::-webkit-slider-thumb {
       <ul>
         <li><strong>Road network topology</strong> — you can't drive through buildings</li>
         <li><strong>Turn restrictions</strong> — no U-turns, one-ways, no-left-turn at signals</li>
-        <li><strong>Traffic congestion</strong> — Market St at 8am vs 2am: 5× speed difference</li>
+        <li><strong>Traffic congestion</strong> — NH-48 (Gurugram corridor) at 8am vs 2am: 5× speed difference</li>
         <li><strong>Traffic signals</strong> — red lights add 30–90s per intersection</li>
         <li><strong>Road class</strong> — highway vs residential: different speed profiles</li>
       </ul>
@@ -275,7 +275,7 @@ input[type=range].speed-slider::-webkit-slider-thumb {
   <div style="border:3px solid var(--ink);border-radius:8px;overflow:hidden;box-shadow:6px 6px 0 var(--ink);margin:20px 0;">
     <div style="background:var(--blue);color:#fff;padding:12px 20px;font-family:'Bangers',cursive;font-size:1.1rem;letter-spacing:2px;border-bottom:3px solid var(--ink);display:flex;align-items:center;gap:12px;flex-wrap:wrap;">
       <span>🗺</span> ROAD GRAPH EXPLORER — Hover an edge to inspect its properties
-      <span style="margin-left:auto;font-family:'Space Mono',monospace;font-size:.7rem;color:rgba(255,255,255,.7);">Simplified SF neighborhood sample</span>
+      <span style="margin-left:auto;font-family:'Space Mono',monospace;font-size:.7rem;color:rgba(255,255,255,.7);">Simplified Delhi NCR sample</span>
     </div>
     <div style="padding:20px;display:grid;grid-template-columns:1fr 280px;gap:20px;">
       <canvas id="roadgraph-canvas" width="460" height="340" style="border:2px solid #ddd;border-radius:4px;cursor:crosshair;display:block;width:100%;"></canvas>
@@ -307,7 +307,7 @@ input[type=range].speed-slider::-webkit-slider-thumb {
   <div class="hbox hbox-orange"><div class="hbox-label">WHERE DOES THE ROAD DATA COME FROM?</div>
     <ul style="margin-top:12px;">
       <li><strong>OpenStreetMap (OSM)</strong> — the Wikipedia of maps. Uber, Google, and Apple all base their road graphs on OSM data, enriched with proprietary corrections and live data.</li>
-      <li><strong>Government sources</strong> — TIGER/Line (US Census), HERE maps data for speed limits</li>
+      <li><strong>Government sources</strong> — SOI (Survey of India), Bhuvan geoportal data for speed limits</li>
       <li><strong>Uber's own trips</strong> — billions of historical GPS traces are the best possible source of actual travel times on each segment</li>
       <li><strong>Graph simplification</strong> — raw OSM has ~8B nodes globally. After removing redundant intermediate nodes on straight roads, Uber contracts this to ~50M nodes for the US — 160× reduction while preserving routing accuracy</li>
     </ul>
@@ -496,12 +496,12 @@ input[type=range].speed-slider::-webkit-slider-thumb {
     <span class="section-num">05</span>
     <h2>Interactive: Time-of-Day ETA Explorer</h2>
   </div>
-  <p>The <strong>same 8km route</strong> across San Francisco has wildly different ETAs depending on when you travel. Drag the hour slider to see how historical probe data changes the speed profile — and the ETA — for every segment of the route.</p>
+  <p>The <strong>same 8km route</strong> across Delhi NCR has wildly different ETAs depending on when you travel. Drag the hour slider to see how historical probe data changes the speed profile — and the ETA — for every segment of the route.</p>
 
   <div class="speed-wrap">
     <div class="speed-bar">
       <span class="tbar-dot red"></span><span class="tbar-dot yellow"></span><span class="tbar-dot green"></span>
-      <span>EDGE SPEED PROFILE — SF: Tenderloin → SoMa (8km route)</span>
+      <span>EDGE SPEED PROFILE — Delhi: Connaught Place → Dwarka (8km route)</span>
     </div>
     <div class="speed-body">
       <div style="margin-bottom:16px;">
@@ -770,7 +770,7 @@ input[type=range].speed-slider::-webkit-slider-thumb {
         <li><strong>ETA Error Rate</strong>: % of trips where actual &gt; shown ETA by &gt;5 min</li>
         <li><strong>RMSE</strong>: Root mean square error across all trips</li>
         <li><strong>P75 Calibration</strong>: Should be exactly 75% of trips arrive at or before P75 ETA</li>
-        <li><strong>Per-market accuracy</strong>: NYC is harder than Phoenix (density, complexity)</li>
+        <li><strong>Per-market accuracy</strong>: Delhi NCR is harder than Jaipur (density, complexity)</li>
         <li><strong>ETA drift</strong>: Does the 4-second ETA update feel smooth or jumpy?</li>
       </ul>
       <div class="hbox hbox-green" style="margin-top:12px;"><div class="hbox-label">UBER'S INTERNAL TARGET</div>
@@ -1010,7 +1010,7 @@ input[type=range].speed-slider::-webkit-slider-thumb {
   var H = 260;
   canvas.width = W;
 
-  // Realistic speed profiles for SF, km/h per hour of day
+  // Realistic speed profiles for Delhi NCR, km/h per hour of day
   // Simulates congestion patterns
   var speedData = [
     // hr: 0   1   2   3   4   5   6   7   8   9  10  11  12
@@ -1323,7 +1323,7 @@ input[type=range].speed-slider::-webkit-slider-thumb {
     { name:'local_event_density',  cat:'teal',   pct:54, desc:'Score based on nearby concerts, sports games, protests. A stadium emptying adds 200% ETA within 1km.', label:'Event density' },
     { name:'num_traffic_signals',  cat:'red',    pct:47, desc:'Every traffic signal adds an average 30s delay. A route with 12 signals vs 3 signals is 4.5 min different.', label:'Traffic signals' },
     { name:'pickup_walk_time_s',   cat:'orange', pct:43, desc:'Historical average time from car arrival to rider entering vehicle at this pickup zone. Airport terminals average +3 min.', label:'Pickup walk time' },
-    { name:'crosses_bridge',       cat:'red',    pct:38, desc:'Bridges are bottlenecks with no alternative route when blocked. Bay Bridge can add 40 min during incidents.', label:'Crosses bridge' },
+    { name:'crosses_bridge',       cat:'red',    pct:38, desc:'Bridges are bottlenecks with no alternative route when blocked. Yamuna Bridge (NH-24) can add 40 min during incidents.', label:'Crosses bridge' },
     { name:'probe_confidence',     cat:'teal',   pct:35, desc:'Ratio of probe-covered segments to total route segments. Low coverage = rely more on historical data.', label:'Probe coverage' },
     { name:'is_holiday',           cat:'blue',   pct:29, desc:'Holidays have unique patterns: Christmas morning is fast, New Year Eve midnight is gridlock.', label:'Is holiday' },
     { name:'pickup_h3_cell',       cat:'orange', pct:24, desc:'Embedded H3 cell ID captures location-specific patterns like narrow streets, parking difficulty, building types.', label:'Pickup H3 zone' },
@@ -1368,7 +1368,7 @@ input[type=range].speed-slider::-webkit-slider-thumb {
 (function() {
   var tl = [
     { t:'T+0ms',  color:'#ff6b9d', icon:'👆', title:'Rider taps Request', detail:'POST /request-trip → Demand Service' },
-    { t:'T+5ms',  color:'#e63946', icon:'⚡', title:'GEORADIUS → 8 candidates', detail:'Redis: GEORADIUS drivers:available:SF 2km ASC COUNT 8' },
+    { t:'T+5ms',  color:'#e63946', icon:'⚡', title:'GEORADIUS → 8 candidates', detail:'Redis: GEORADIUS drivers:available:DEL 2km ASC COUNT 8' },
     { t:'T+15ms', color:'#ff8c42', icon:'⏱', title:'ETA for each candidate', detail:'CH routing + probe data + ML correction for 8 drivers in parallel' },
     { t:'T+25ms', color:'#ffd23f', icon:'🏆', title:'Rank candidates', detail:'Score = ETA×1.0 + driver_rating×0.2 + vehicle_match×0.3' },
     { t:'T+30ms', color:'#8a4fff', icon:'📨', title:'Offer to top 3 (simultaneous)', detail:'All 3 drivers notified at same time — first accept wins' },

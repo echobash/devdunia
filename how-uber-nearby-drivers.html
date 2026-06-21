@@ -277,7 +277,7 @@ code { font-family: 'Space Mono', monospace; font-size: .85em; background: var(-
     <h2>Geohash: Encoding Space as a String</h2>
   </div>
 
-  <p>Geohash is a clever trick: <strong>convert a (lat, lng) coordinate into a short string</strong>, where two strings that share a prefix are guaranteed to be geographically close. <code>"9q8yy"</code> and <code>"9q8yz"</code> are next-door neighbors. <code>"9q8yy"</code> and <code>"u0"</code> are on different continents. This lets you do proximity queries with string comparisons.</p>
+  <p>Geohash is a clever trick: <strong>convert a (lat, lng) coordinate into a short string</strong>, where two strings that share a prefix are guaranteed to be geographically close. <code>"ttnfv"</code> and <code>"ttnfw"</code> are next-door neighbors. <code>"ttnfv"</code> and <code>"s0"</code> are on different continents. This lets you do proximity queries with string comparisons.</p>
 
   <h3>The Encoding Algorithm</h3>
   <div class="step-flow">
@@ -292,14 +292,14 @@ code { font-family: 'Space Mono', monospace; font-size: .85em; background: var(-
       <div class="step-num" style="background:var(--blue);color:#fff;">2</div>
       <div class="step-body">
         <h4>Interleave lon/lat bits</h4>
-        <p>You end up with a bit string where even positions encode <em>longitude</em> and odd positions encode <em>latitude</em>. For SF (<code>-122.4194°, 37.7749°</code>): the bit string starts <code>10110001101001000000...</code> The interleaving is key — it creates a <strong>Z-order (Morton) space-filling curve</strong> that preserves locality.</p>
+        <p>You end up with a bit string where even positions encode <em>longitude</em> and odd positions encode <em>latitude</em>. For Delhi (<code>77.2090°E, 28.6139°N</code>): the bit string starts <code>11010011100110011000...</code> The interleaving is key — it creates a <strong>Z-order (Morton) space-filling curve</strong> that preserves locality.</p>
       </div>
     </div>
     <div class="step-item">
       <div class="step-num" style="background:var(--orange);color:#fff;">3</div>
       <div class="step-body">
         <h4>Encode every 5 bits as Base32</h4>
-        <p>Group 5 bits at a time and map to this alphabet: <code>0123456789bcdefghjkmnpqrstuvwxyz</code>. Each character covers 5 bits → 2<sup>5</sup> = 32 possible values (no 'a', 'i', 'l', 'o' to avoid confusion). Result: <strong>SF → <code>9q8yy5</code></strong> at precision 6.</p>
+        <p>Group 5 bits at a time and map to this alphabet: <code>0123456789bcdefghjkmnpqrstuvwxyz</code>. Each character covers 5 bits → 2<sup>5</sup> = 32 possible values (no 'a', 'i', 'l', 'o' to avoid confusion). Result: <strong>Delhi → <code>ttnfvk</code></strong> at precision 6.</p>
       </div>
     </div>
     <div class="step-item">
@@ -314,17 +314,17 @@ code { font-family: 'Space Mono', monospace; font-size: .85em; background: var(-
   <h3>Precision Cheat Sheet</h3>
   <table class="data-table">
     <thead><tr>
-      <th>Precision</th><th>Cell Width</th><th>Cell Height</th><th>Use Case</th><th>SF Example</th>
+      <th>Precision</th><th>Cell Width</th><th>Cell Height</th><th>Use Case</th><th>Delhi Example</th>
     </tr></thead>
     <tbody>
       <tr><td><code>1</code></td><td>5,009 km</td><td>4,992 km</td><td>Country</td><td><code>9</code></td></tr>
       <tr><td><code>2</code></td><td>1,252 km</td><td>624 km</td><td>US region</td><td><code>9q</code></td></tr>
       <tr><td><code>3</code></td><td>156 km</td><td>156 km</td><td>Metro area</td><td><code>9q8</code></td></tr>
       <tr><td><code>4</code></td><td>39 km</td><td>20 km</td><td>City</td><td><code>9q8y</code></td></tr>
-      <tr><td><code>5</code></td><td>4.9 km</td><td>4.9 km</td><td>Neighborhood</td><td><code>9q8yy</code></td></tr>
-      <tr><td><code>6</code></td><td>1.2 km</td><td>0.6 km</td><td>Street block</td><td><code>9q8yy5</code></td></tr>
-      <tr><td><code>7</code></td><td>152 m</td><td>152 m</td><td>Building</td><td><code>9q8yy5d</code></td></tr>
-      <tr><td><code>8</code></td><td>38 m</td><td>19 m</td><td>Exact spot</td><td><code>9q8yy5d3</code></td></tr>
+      <tr><td><code>5</code></td><td>4.9 km</td><td>4.9 km</td><td>Neighborhood</td><td><code>ttnfv</code></td></tr>
+      <tr><td><code>6</code></td><td>1.2 km</td><td>0.6 km</td><td>Street block</td><td><code>ttnfvk</code></td></tr>
+      <tr><td><code>7</code></td><td>152 m</td><td>152 m</td><td>Building</td><td><code>ttnfvke</code></td></tr>
+      <tr><td><code>8</code></td><td>38 m</td><td>19 m</td><td>Exact spot</td><td><code>ttnfvkes</code></td></tr>
     </tbody>
   </table>
 
@@ -336,9 +336,9 @@ code { font-family: 'Space Mono', monospace; font-size: .85em; background: var(-
     <div style="padding:20px;background:var(--paper);">
       <div style="display:flex;gap:12px;flex-wrap:wrap;margin-bottom:16px;align-items:center;">
         <label style="font-family:'Bangers',cursive;font-size:1rem;letter-spacing:1px;">LAT:</label>
-        <input id="gh-lat" type="number" value="37.7749" step="0.0001" style="font-family:'Space Mono',monospace;font-size:.9rem;padding:6px 10px;border:2px solid var(--ink);border-radius:4px;width:110px;">
+        <input id="gh-lat" type="number" value="28.6139" step="0.0001" style="font-family:'Space Mono',monospace;font-size:.9rem;padding:6px 10px;border:2px solid var(--ink);border-radius:4px;width:110px;">
         <label style="font-family:'Bangers',cursive;font-size:1rem;letter-spacing:1px;">LNG:</label>
-        <input id="gh-lng" type="number" value="-122.4194" step="0.0001" style="font-family:'Space Mono',monospace;font-size:.9rem;padding:6px 10px;border:2px solid var(--ink);border-radius:4px;width:120px;">
+        <input id="gh-lng" type="number" value="77.2090" step="0.0001" style="font-family:'Space Mono',monospace;font-size:.9rem;padding:6px 10px;border:2px solid var(--ink);border-radius:4px;width:120px;">
         <label style="font-family:'Bangers',cursive;font-size:1rem;letter-spacing:1px;">PRECISION:</label>
         <select id="gh-prec" style="font-family:'Space Mono',monospace;font-size:.9rem;padding:6px 10px;border:2px solid var(--ink);border-radius:4px;">
           <option value="4">4</option><option value="5">5</option><option value="6" selected>6</option><option value="7">7</option>
@@ -432,7 +432,7 @@ code { font-family: 'Space Mono', monospace; font-size: .85em; background: var(-
     <h2>The Boundary Problem: Why One Cell Isn't Enough</h2>
   </div>
 
-  <p>Here's the flaw that would sink a naive geohash implementation. A rider and a driver could be <strong>10 meters apart</strong> but in completely different geohash cells. Imagine a cell boundary running right down the middle of Market Street in SF. The driver is 9 meters to the left. The rider is 9 meters to the right. Same cell? No. Distance? 18 meters. But if you only search the rider's cell, you <strong>completely miss that driver</strong>.</p>
+  <p>Here's the flaw that would sink a naive geohash implementation. A rider and a driver could be <strong>10 meters apart</strong> but in completely different geohash cells. Imagine a cell boundary running right down the middle of Outer Ring Road in Delhi. The driver is 9 meters to the left. The rider is 9 meters to the right. Same cell? No. Distance? 18 meters. But if you only search the rider's cell, you <strong>completely miss that driver</strong>.</p>
 
   <div class="hbox hbox-orange"><div class="hbox-label">THE SOLUTION: ALWAYS SEARCH 9 CELLS</div>
     <p style="margin-top:12px;">Always search the <strong>center cell + all 8 neighbors</strong>. A geohash cell at precision 6 is ~1.2km × 0.6km. Its 8 neighbors form a 3×3 grid covering ~3.6km × 1.8km. Any point within that outer ring is at most ~2km away from the center — which is your initial search radius. After the 9-cell sweep, you still run distance calculations, but only on the small set of candidates from those cells (maybe 20–50 drivers), not the millions of drivers total.</p>
@@ -501,11 +501,11 @@ code { font-family: 'Space Mono', monospace; font-size: .85em; background: var(-
 <span class="t-cmt">━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━</span>
 
 <span class="t-cmt"># Remove from available set when trip starts</span>
-<span class="t-hdr">ZREM</span> drivers:available:SF <span class="t-str">"d_42"</span>
+<span class="t-hdr">ZREM</span> drivers:available:DEL <span class="t-str">"d_42"</span>
 
 <span class="t-cmt"># Add to in-trip set (for tracking, not proximity search)</span>
-<span class="t-hdr">GEOADD</span> drivers:on_trip:SF \
-  <span class="t-num">-122.4194</span> <span class="t-num">37.7749</span> <span class="t-str">"d_42"</span></div>
+<span class="t-hdr">GEOADD</span> drivers:on_trip:DEL \
+  <span class="t-num">77.2090</span> <span class="t-num">28.6139</span> <span class="t-str">"d_42"</span></div>
   </div>
 
   <div class="hbox hbox-teal"><div class="hbox-label">REDIS GEO INTERNALS: HOW IT REALLY WORKS</div>
@@ -520,35 +520,35 @@ code { font-family: 'Space Mono', monospace; font-size: .85em; background: var(-
     </div>
     <div style="padding:18px;display:grid;grid-template-columns:repeat(3,1fr);gap:12px;" id="shard-grid">
       <div style="border:2px solid var(--ink);border-radius:6px;overflow:hidden;">
-        <div style="background:var(--blue);color:#fff;padding:6px 12px;font-family:'Bangers',cursive;font-size:.9rem;letter-spacing:1px;">SHARD 1 — West Coast</div>
+        <div style="background:var(--blue);color:#fff;padding:6px 12px;font-family:'Bangers',cursive;font-size:.9rem;letter-spacing:1px;">SHARD 1 — North India</div>
         <div style="padding:10px;font-family:'Space Mono',monospace;font-size:.75rem;background:rgba(29,111,184,.06);">
-          <div style="margin:3px 0;padding:4px 8px;background:rgba(29,111,184,.15);border-radius:3px;border-left:3px solid var(--blue);">drivers:available:<b>SF</b></div>
-          <div style="margin:3px 0;padding:4px 8px;background:rgba(29,111,184,.1);border-radius:3px;border-left:3px solid var(--blue);">drivers:available:<b>OAK</b></div>
-          <div style="margin:3px 0;padding:4px 8px;background:rgba(29,111,184,.08);border-radius:3px;border-left:3px solid var(--blue);">drivers:available:<b>SEA</b></div>
-          <div style="margin-top:8px;font-size:.65rem;color:#666;">~180K drivers · 90MB</div>
+          <div style="margin:3px 0;padding:4px 8px;background:rgba(29,111,184,.15);border-radius:3px;border-left:3px solid var(--blue);">drivers:available:<b>DEL</b></div>
+          <div style="margin:3px 0;padding:4px 8px;background:rgba(29,111,184,.1);border-radius:3px;border-left:3px solid var(--blue);">drivers:available:<b>GGN</b></div>
+          <div style="margin:3px 0;padding:4px 8px;background:rgba(29,111,184,.08);border-radius:3px;border-left:3px solid var(--blue);">drivers:available:<b>NOI</b></div>
+          <div style="margin-top:8px;font-size:.65rem;color:#666;">~190K drivers · 95MB</div>
         </div>
       </div>
       <div style="border:2px solid var(--ink);border-radius:6px;overflow:hidden;">
-        <div style="background:var(--red);color:#fff;padding:6px 12px;font-family:'Bangers',cursive;font-size:.9rem;letter-spacing:1px;">SHARD 2 — East Coast</div>
+        <div style="background:var(--red);color:#fff;padding:6px 12px;font-family:'Bangers',cursive;font-size:.9rem;letter-spacing:1px;">SHARD 2 — West India</div>
         <div style="padding:10px;font-family:'Space Mono',monospace;font-size:.75rem;background:rgba(230,57,70,.05);">
-          <div style="margin:3px 0;padding:4px 8px;background:rgba(230,57,70,.15);border-radius:3px;border-left:3px solid var(--red);">drivers:available:<b>NYC</b></div>
-          <div style="margin:3px 0;padding:4px 8px;background:rgba(230,57,70,.1);border-radius:3px;border-left:3px solid var(--red);">drivers:available:<b>BOS</b></div>
-          <div style="margin:3px 0;padding:4px 8px;background:rgba(230,57,70,.08);border-radius:3px;border-left:3px solid var(--red);">drivers:available:<b>DC</b></div>
-          <div style="margin-top:8px;font-size:.65rem;color:#666;">~320K drivers · 160MB</div>
+          <div style="margin:3px 0;padding:4px 8px;background:rgba(230,57,70,.15);border-radius:3px;border-left:3px solid var(--red);">drivers:available:<b>MUM</b></div>
+          <div style="margin:3px 0;padding:4px 8px;background:rgba(230,57,70,.1);border-radius:3px;border-left:3px solid var(--red);">drivers:available:<b>PNE</b></div>
+          <div style="margin:3px 0;padding:4px 8px;background:rgba(230,57,70,.08);border-radius:3px;border-left:3px solid var(--red);">drivers:available:<b>HYD</b></div>
+          <div style="margin-top:8px;font-size:.65rem;color:#666;">~280K drivers · 140MB</div>
         </div>
       </div>
       <div style="border:2px solid var(--ink);border-radius:6px;overflow:hidden;">
-        <div style="background:var(--orange);color:#fff;padding:6px 12px;font-family:'Bangers',cursive;font-size:.9rem;letter-spacing:1px;">SHARD 3 — South / Texas</div>
+        <div style="background:var(--orange);color:#fff;padding:6px 12px;font-family:'Bangers',cursive;font-size:.9rem;letter-spacing:1px;">SHARD 3 — South India</div>
         <div style="padding:10px;font-family:'Space Mono',monospace;font-size:.75rem;background:rgba(255,140,66,.05);">
-          <div style="margin:3px 0;padding:4px 8px;background:rgba(255,140,66,.15);border-radius:3px;border-left:3px solid var(--orange);">drivers:available:<b>LA</b></div>
-          <div style="margin:3px 0;padding:4px 8px;background:rgba(255,140,66,.1);border-radius:3px;border-left:3px solid var(--orange);">drivers:available:<b>LV</b></div>
-          <div style="margin:3px 0;padding:4px 8px;background:rgba(255,140,66,.08);border-radius:3px;border-left:3px solid var(--orange);">drivers:available:<b>DFW</b></div>
-          <div style="margin-top:8px;font-size:.65rem;color:#666;">~210K drivers · 105MB</div>
+          <div style="margin:3px 0;padding:4px 8px;background:rgba(255,140,66,.15);border-radius:3px;border-left:3px solid var(--orange);">drivers:available:<b>BLR</b></div>
+          <div style="margin:3px 0;padding:4px 8px;background:rgba(255,140,66,.1);border-radius:3px;border-left:3px solid var(--orange);">drivers:available:<b>CHN</b></div>
+          <div style="margin:3px 0;padding:4px 8px;background:rgba(255,140,66,.08);border-radius:3px;border-left:3px solid var(--orange);">drivers:available:<b>HYD</b></div>
+          <div style="margin-top:8px;font-size:.65rem;color:#666;">~190K drivers · 95MB</div>
         </div>
       </div>
     </div>
     <div style="background:rgba(13,148,136,.08);border-top:2px solid var(--teal);padding:12px 18px;font-size:.9rem;">
-      <strong>Rule:</strong> A rider in NYC <em>never</em> queries Shard 1. City geofence polygon (not bounding box) determines which shard a driver belongs to. Large cities like NYC can further sub-shard by quadrant: <code>NYC:NW</code>, <code>NYC:NE</code>, <code>NYC:SE</code>, <code>NYC:SW</code>.
+      <strong>Rule:</strong> A rider in Mumbai <em>never</em> queries Shard 1. City geofence polygon (not bounding box) determines which shard a driver belongs to. Large cities like Delhi NCR can further sub-shard by quadrant: <code>DEL:NW</code>, <code>DEL:NE</code>, <code>DEL:SE</code>, <code>DEL:SW</code>.
     </div>
   </div>
 </div>
@@ -812,7 +812,7 @@ code { font-family: 'Space Mono', monospace; font-size: .85em; background: var(-
       <ul>
         <li>Single Redis instance handles up to <strong>1M GEOADD/s</strong> — you'd never need a cluster until you're truly big</li>
         <li>A single <code>GEORADIUS</code> call on a 100K-driver ZSET takes &lt; 1ms</li>
-        <li>One Redis node (r7g.2xlarge on AWS, ~$0.40/hr) handles all of Uber's US ops at a fraction of their scale</li>
+        <li>One Redis node (r7g.2xlarge on AWS, ~$0.40/hr) handles Uber ops at India scale at a fraction of their scale</li>
         <li>Start with city partitioning only when you can't fit in one node</li>
         <li>H3 analytics: only needed once you have rich enough data for supply positioning</li>
       </ul>
@@ -855,7 +855,7 @@ code { font-family: 'Space Mono', monospace; font-size: .85em; background: var(-
 
   // Realistic-looking geohash prefixes for a city
   var GH_ALPHA = '0123456789bcdefghjkmnpqrstuvwxyz';
-  var BASE_HASH = '9q8yy';
+  var BASE_HASH = 'ttnfv';
 
   function cellHash(col, row) {
     var idx = row * CELL_COLS + col;
@@ -1249,9 +1249,9 @@ code { font-family: 'Space Mono', monospace; font-size: .85em; background: var(-
 
     // Build terminal output
     var term = document.getElementById('sim-terminal');
-    var lat = (pickup.y * 40 - 20 + 37.7).toFixed(4);
-    var lng = (-122 - pickup.x * 0.5).toFixed(4);
-    term.innerHTML = '<span class="cmd">GEORADIUS drivers:available:SF \\\n  ' + lng + ' ' + lat + ' \\\n  2 km WITHCOORD WITHDIST ASC COUNT 10</span>\n\n';
+    var lat = (pickup.y * 8 + 24 + 28.6).toFixed(4);
+    var lng = (77 + pickup.x * 0.5).toFixed(4);
+    term.innerHTML = '<span class="cmd">GEORADIUS drivers:available:DEL \\\n  ' + lng + ' ' + lat + ' \\\n  2 km WITHCOORD WITHDIST ASC COUNT 10</span>\n\n';
     searchResult.forEach(function (d, i) {
       var km = (dist(d, pickup) / W * 5).toFixed(4);
       term.innerHTML += '<span class="result">' + (i+1) + ') "' + d.id + '"  ' + km + ' km</span>\n';
@@ -1325,8 +1325,8 @@ code { font-family: 'Space Mono', monospace; font-size: .85em; background: var(-
   }
 
   window.ghAnimate = function() {
-    var lat = parseFloat(document.getElementById('gh-lat').value) || 37.7749;
-    var lng = parseFloat(document.getElementById('gh-lng').value) || -122.4194;
+    var lat = parseFloat(document.getElementById('gh-lat').value) || 28.6139;
+    var lng = parseFloat(document.getElementById('gh-lng').value) || 77.2090;
     var prec = parseInt(document.getElementById('gh-prec').value) || 6;
     var res = encodeGeohash(lat, lng, prec);
 
@@ -1366,7 +1366,7 @@ code { font-family: 'Space Mono', monospace; font-size: .85em; background: var(-
     }
     setTimeout(function() {
       resEl.textContent = res.hash;
-      descEl.textContent = 'SF (' + lat + ', ' + lng + ') → "' + res.hash + '" at precision ' + prec + ' · Blue=lon bits, Orange=lat bits';
+      descEl.textContent = 'Delhi (' + lat + ', ' + lng + ') → "' + res.hash + '" at precision ' + prec + ' · Blue=lon bits, Orange=lat bits';
     }, delay + prec * 120 + 100);
   };
 
@@ -1389,7 +1389,7 @@ code { font-family: 'Space Mono', monospace; font-size: .85em; background: var(-
         { icon: '➡️', label: '', detail: '', color: 'arrow' },
         { icon: '🔧', label: 'Location Service', detail: 'Go · ~200 instances\nValidates auth, decodes H3 cell', color: '#8a4fff' },
         { icon: '➡️', label: '', detail: '', color: 'arrow' },
-        { icon: '⚡', label: 'GEOADD', detail: 'GEOADD drivers:available:SF\n-122.4194 37.7749 "d_42"\n→ (integer) 1 (added)', color: '#e63946' },
+        { icon: '⚡', label: 'GEOADD', detail: 'GEOADD drivers:available:DEL\n77.2090 28.6139 "d_42"\n→ (integer) 1 (added)', color: '#e63946' },
         { icon: '➡️', label: '', detail: '', color: 'arrow' },
         { icon: '📨', label: 'Kafka Publish', detail: 'topic: driver-locations\nConsumed by: ML pipeline, H3 maps, analytics', color: '#ff8c42' },
       ]
@@ -1402,11 +1402,11 @@ code { font-family: 'Space Mono', monospace; font-size: .85em; background: var(-
         { icon: '➡️', label: '', detail: '', color: 'arrow' },
         { icon: '📡', label: 'Demand Svc', detail: 'Validates request\nPicks Redis shard by city geofence', color: '#1d6fb8' },
         { icon: '➡️', label: '', detail: '', color: 'arrow' },
-        { icon: '⚡', label: 'GEORADIUS', detail: 'GEORADIUS drivers:available:SF\n-122.4195 37.7751 2 km\nWITHCOORD WITHDIST ASC COUNT 10\n→ <2ms', color: '#e63946' },
+        { icon: '⚡', label: 'GEORADIUS', detail: 'GEORADIUS drivers:available:DEL\n77.2092 28.6141 2 km\nWITHCOORD WITHDIST ASC COUNT 10\n→ <2ms', color: '#e63946' },
         { icon: '➡️', label: '', detail: '', color: 'arrow' },
         { icon: '🚦', label: 'Dispatch Svc', detail: 'Ranks by: ETA + driver rating\n+ vehicle type match\nOffers to top 3 simultaneously', color: '#8a4fff' },
         { icon: '➡️', label: '', detail: '', color: 'arrow' },
-        { icon: '✅', label: 'First Accept', detail: 'ZREM drivers:available:SF "d_42"\nGEOADD drivers:on_trip:SF\n-122.4194 37.7749 "d_42"', color: '#3fa34d' },
+        { icon: '✅', label: 'First Accept', detail: 'ZREM drivers:available:DEL "d_42"\nGEOADD drivers:on_trip:DEL\n77.2090 28.6139 "d_42"', color: '#3fa34d' },
       ]
     },
     3: {
@@ -1415,13 +1415,13 @@ code { font-family: 'Space Mono', monospace; font-size: .85em; background: var(-
       steps: [
         { icon: '🚗', label: 'Trip Starts', detail: 'Driver accepts ride\nStatus changes: available → on_trip', color: '#3fa34d' },
         { icon: '➡️', label: '', detail: '', color: 'arrow' },
-        { icon: '🗑️', label: 'ZREM Available', detail: 'ZREM drivers:available:SF "d_42"\nRemoves from proximity search\n→ (integer) 1', color: '#e63946' },
+        { icon: '🗑️', label: 'ZREM Available', detail: 'ZREM drivers:available:DEL "d_42"\nRemoves from proximity search\n→ (integer) 1', color: '#e63946' },
         { icon: '➡️', label: '', detail: '', color: 'arrow' },
-        { icon: '📌', label: 'GEOADD On-Trip', detail: 'GEOADD drivers:on_trip:SF\n-122.4194 37.7749 "d_42"\nTracked but not searchable', color: '#ff8c42' },
+        { icon: '📌', label: 'GEOADD On-Trip', detail: 'GEOADD drivers:on_trip:DEL\n77.2090 28.6139 "d_42"\nTracked but not searchable', color: '#ff8c42' },
         { icon: '➡️', label: '', detail: '', color: 'arrow' },
         { icon: '🏁', label: 'Trip Ends', detail: 'Driver completes trip\nMoves back: on_trip → available', color: '#1d6fb8' },
         { icon: '➡️', label: '', detail: '', color: 'arrow' },
-        { icon: '🔄', label: 'Back to Phase 1', detail: 'GEOADD drivers:available:SF\nNext GPS ping restores availability\nCycle repeats', color: '#8a4fff' },
+        { icon: '🔄', label: 'Back to Phase 1', detail: 'GEOADD drivers:available:DEL\nNext GPS ping restores availability\nCycle repeats', color: '#8a4fff' },
       ]
     }
   };
