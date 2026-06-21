@@ -328,30 +328,50 @@ code { font-family: 'Space Mono', monospace; font-size: .85em; background: var(-
     </tbody>
   </table>
 
-  <div class="terminal">
-    <div class="terminal-bar"><span class="tbar-dot red"></span><span class="tbar-dot yellow"></span><span class="tbar-dot green"></span><span class="tbar-label">Python — encoding SF coordinates</span></div>
-    <div class="terminal-body"><span class="t-cmt"># Install: pip install pygeohash</span>
-<span class="t-kw">import</span> pygeohash <span class="t-kw">as</span> gh
+  <!-- GEOHASH BIT ANIMATOR -->
+  <div style="border:3px solid var(--ink);border-radius:8px;overflow:hidden;box-shadow:6px 6px 0 var(--ink);margin:20px 0;">
+    <div style="background:var(--green);color:#fff;padding:12px 20px;font-family:'Bangers',cursive;font-size:1.1rem;letter-spacing:2px;border-bottom:3px solid var(--ink);display:flex;align-items:center;gap:12px;">
+      <span>🗂</span> LIVE GEOHASH ENCODER — Watch the Bits Get Woven
+    </div>
+    <div style="padding:20px;background:var(--paper);">
+      <div style="display:flex;gap:12px;flex-wrap:wrap;margin-bottom:16px;align-items:center;">
+        <label style="font-family:'Bangers',cursive;font-size:1rem;letter-spacing:1px;">LAT:</label>
+        <input id="gh-lat" type="number" value="37.7749" step="0.0001" style="font-family:'Space Mono',monospace;font-size:.9rem;padding:6px 10px;border:2px solid var(--ink);border-radius:4px;width:110px;">
+        <label style="font-family:'Bangers',cursive;font-size:1rem;letter-spacing:1px;">LNG:</label>
+        <input id="gh-lng" type="number" value="-122.4194" step="0.0001" style="font-family:'Space Mono',monospace;font-size:.9rem;padding:6px 10px;border:2px solid var(--ink);border-radius:4px;width:120px;">
+        <label style="font-family:'Bangers',cursive;font-size:1rem;letter-spacing:1px;">PRECISION:</label>
+        <select id="gh-prec" style="font-family:'Space Mono',monospace;font-size:.9rem;padding:6px 10px;border:2px solid var(--ink);border-radius:4px;">
+          <option value="4">4</option><option value="5">5</option><option value="6" selected>6</option><option value="7">7</option>
+        </select>
+        <button onclick="ghAnimate()" style="font-family:'Bangers',cursive;font-size:1rem;letter-spacing:1px;padding:8px 18px;background:var(--green);color:#fff;border:2px solid var(--ink);border-radius:4px;cursor:pointer;box-shadow:3px 3px 0 var(--ink);">▶ ENCODE</button>
+      </div>
 
-lat, lng = <span class="t-num">37.7749</span>, <span class="t-num">-122.4194</span>  <span class="t-cmt"># San Francisco</span>
+      <!-- Bit strips -->
+      <div style="margin-bottom:14px;">
+        <div style="font-family:'Bangers',cursive;font-size:.85rem;letter-spacing:1px;color:var(--blue);margin-bottom:4px;">LONGITUDE BITS (even positions):</div>
+        <div id="gh-lngbits" style="display:flex;flex-wrap:wrap;gap:3px;min-height:28px;"></div>
+      </div>
+      <div style="margin-bottom:14px;">
+        <div style="font-family:'Bangers',cursive;font-size:.85rem;letter-spacing:1px;color:var(--orange);margin-bottom:4px;">LATITUDE BITS (odd positions):</div>
+        <div id="gh-latbits" style="display:flex;flex-wrap:wrap;gap:3px;min-height:28px;"></div>
+      </div>
+      <div style="margin-bottom:14px;">
+        <div style="font-family:'Bangers',cursive;font-size:.85rem;letter-spacing:1px;color:var(--purple);margin-bottom:4px;">INTERLEAVED (lon at even, lat at odd):</div>
+        <div id="gh-interlbits" style="display:flex;flex-wrap:wrap;gap:3px;min-height:28px;"></div>
+      </div>
 
-<span class="t-cmt"># Encode at different precisions</span>
-print(gh.encode(lat, lng, precision=<span class="t-num">5</span>))  <span class="t-cmt"># → '9q8yy'</span>
-print(gh.encode(lat, lng, precision=<span class="t-num">6</span>))  <span class="t-cmt"># → '9q8yy5'</span>
-print(gh.encode(lat, lng, precision=<span class="t-num">7</span>))  <span class="t-cmt"># → '9q8yy5d'</span>
-
-<span class="t-cmt"># Decode back to lat/lng</span>
-point = gh.decode(<span class="t-str">'9q8yy5'</span>)
-print(point)  <span class="t-cmt"># (37.77, -122.42) ← approximate center of cell</span>
-
-<span class="t-cmt"># Get cell bounding box</span>
-box = gh.decode_exactly(<span class="t-str">'9q8yy5'</span>)
-<span class="t-cmt"># → (lat_center, lng_center, lat_err, lng_err)</span>
-<span class="t-cmt"># error = half the cell dimension</span>
-
-<span class="t-cmt"># Find all 8 neighbors</span>
-neighbors = gh.neighbors(<span class="t-str">'9q8yy5'</span>)
-<span class="t-cmt"># → {'n':'9q8yy7', 'ne':'9q8yyh', 'e':'9q8yyh', ...}</span></div>
+      <!-- Base32 result -->
+      <div style="background:var(--ink);border-radius:6px;padding:16px 20px;display:flex;align-items:center;gap:20px;flex-wrap:wrap;">
+        <div>
+          <div style="font-family:'Bangers',cursive;font-size:.85rem;letter-spacing:2px;color:rgba(255,255,255,.5);margin-bottom:4px;">GEOHASH RESULT</div>
+          <div id="gh-result" style="font-family:'Space Mono',monospace;font-size:1.8rem;color:var(--yellow);letter-spacing:6px;">——</div>
+        </div>
+        <div style="flex:1;min-width:200px;">
+          <div id="gh-chars" style="display:flex;gap:4px;flex-wrap:wrap;"></div>
+        </div>
+        <div style="font-family:'Space Mono',monospace;font-size:.75rem;color:rgba(255,255,255,.5);line-height:1.7;" id="gh-desc">Each character = 5 bits → Base32 alphabet</div>
+      </div>
+    </div>
   </div>
 </div>
 
@@ -459,44 +479,22 @@ neighbors = gh.neighbors(<span class="t-str">'9q8yy5'</span>)
 
   <h3>The Three Commands You Actually Need</h3>
 
-  <div class="terminal">
-    <div class="terminal-bar"><span class="tbar-dot red"></span><span class="tbar-dot yellow"></span><span class="tbar-dot green"></span><span class="tbar-label">Redis — Full Lifecycle</span></div>
-    <div class="terminal-body"><span class="t-cmt">━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━</span>
-<span class="t-cmt">PHASE 1: Driver sends GPS update (every 4 seconds)</span>
-<span class="t-cmt">━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━</span>
-
-<span class="t-cmt"># Driver d_42 is in San Francisco, currently available</span>
-<span class="t-hdr">GEOADD</span> drivers:available:SF \
-  <span class="t-num">-122.4194</span> <span class="t-num">37.7749</span> <span class="t-str">"d_42"</span>
-<span class="t-cmt"># → (integer) 1  (added) or 0 (updated existing)</span>
-
-<span class="t-hdr">GEOADD</span> drivers:available:SF \
-  <span class="t-num">-122.4312</span> <span class="t-num">37.7860</span> <span class="t-str">"d_57"</span> \
-  <span class="t-num">-122.4001</span> <span class="t-num">37.7720</span> <span class="t-str">"d_89"</span> \
-  <span class="t-num">-122.4411</span> <span class="t-num">37.7631</span> <span class="t-str">"d_104"</span>
-<span class="t-cmt"># Bulk add — much more efficient. One round trip = 4 drivers indexed.</span>
-
-<span class="t-cmt">━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━</span>
-<span class="t-cmt">PHASE 2: Rider requests a trip (instant lookup)</span>
-<span class="t-cmt">━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━</span>
-
-<span class="t-hdr">GEORADIUS</span> drivers:available:SF \
-  <span class="t-num">-122.4195</span> <span class="t-num">37.7751</span> \  <span class="t-cmt">← rider's lat/lng</span>
-  <span class="t-num">2</span> km \              <span class="t-cmt">← search radius</span>
-  <span class="t-hdr">WITHCOORD</span> \        <span class="t-cmt">← return driver coords too</span>
-  <span class="t-hdr">WITHDIST</span> \         <span class="t-cmt">← return exact distances</span>
-  <span class="t-hdr">ASC</span> \              <span class="t-cmt">← closest first</span>
-  <span class="t-hdr">COUNT</span> <span class="t-num">10</span>           <span class="t-cmt">← return up to 10 candidates</span>
-
-<span class="t-cmt"># Response (typically &lt;2ms):</span>
-<span class="t-cmt">1) 1) "d_42"</span>
-<span class="t-cmt">   2) "0.0106"     ← distance in km (~10m away)</span>
-<span class="t-cmt">   3) 1) "-122.4194"</span>
-<span class="t-cmt">      2) "37.7749"</span>
-<span class="t-cmt">2) 1) "d_89"</span>
-<span class="t-cmt">   2) "1.7834"     ← 1.78 km away</span>
-<span class="t-cmt">   3) 1) "-122.4001"</span>
-<span class="t-cmt">      2) "37.7720"</span>
+  <!-- REDIS LIFECYCLE FLOW DIAGRAM -->
+  <div style="border:3px solid var(--ink);border-radius:8px;overflow:hidden;box-shadow:6px 6px 0 var(--ink);margin:20px 0;" id="redis-flow-wrap">
+    <div style="background:var(--red);color:#fff;padding:12px 20px;font-family:'Bangers',cursive;font-size:1.1rem;letter-spacing:2px;border-bottom:3px solid var(--ink);display:flex;align-items:center;gap:12px;">
+      <span>⚡</span> REDIS GEO LIFECYCLE — 3 Phases Animated
+      <button onclick="redisAnimate()" style="margin-left:auto;font-family:'Bangers',cursive;font-size:.9rem;padding:5px 14px;background:rgba(255,255,255,.2);color:#fff;border:2px solid rgba(255,255,255,.5);border-radius:4px;cursor:pointer;letter-spacing:1px;">▶ ANIMATE</button>
+    </div>
+    <div style="padding:20px 24px;">
+      <!-- Phase tabs -->
+      <div style="display:flex;gap:8px;margin-bottom:20px;flex-wrap:wrap;">
+        <button class="redis-phase-btn active" onclick="redisPhase(1,this)" style="font-family:'Bangers',cursive;font-size:.95rem;letter-spacing:1px;padding:6px 16px;background:var(--green);color:#fff;border:2px solid var(--ink);border-radius:4px;cursor:pointer;box-shadow:2px 2px 0 var(--ink);">PHASE 1: Driver GPS</button>
+        <button class="redis-phase-btn" onclick="redisPhase(2,this)" style="font-family:'Bangers',cursive;font-size:.95rem;letter-spacing:1px;padding:6px 16px;background:var(--paper);color:var(--ink);border:2px solid var(--ink);border-radius:4px;cursor:pointer;">PHASE 2: Rider Request</button>
+        <button class="redis-phase-btn" onclick="redisPhase(3,this)" style="font-family:'Bangers',cursive;font-size:.95rem;letter-spacing:1px;padding:6px 16px;background:var(--paper);color:var(--ink);border:2px solid var(--ink);border-radius:4px;cursor:pointer;">PHASE 3: Trip Starts</button>
+      </div>
+      <div id="redis-phase-view" style="position:relative;"></div>
+    </div>
+  </div>
 
 <span class="t-cmt">━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━</span>
 <span class="t-cmt">PHASE 3: Driver goes offline / starts trip</span>
@@ -515,28 +513,43 @@ neighbors = gh.neighbors(<span class="t-str">'9q8yy5'</span>)
   </div>
 
   <h3>Handling Horizontal Scaling</h3>
-  <div class="terminal">
-    <div class="terminal-bar"><span class="tbar-dot red"></span><span class="tbar-dot yellow"></span><span class="tbar-dot green"></span><span class="tbar-label">Redis Cluster — City Partitioning Strategy</span></div>
-    <div class="terminal-body"><span class="t-cmt"># Partition by city (geographic sharding)</span>
-<span class="t-cmt"># Each shard handles one or more cities</span>
-
-<span class="t-cmt">Shard 1: drivers:available:SF, drivers:available:OAK</span>
-<span class="t-cmt">Shard 2: drivers:available:NYC, drivers:available:BK</span>
-<span class="t-cmt">Shard 3: drivers:available:LA, drivers:available:LB</span>
-<span class="t-cmt">...</span>
-
-<span class="t-cmt"># A rider in SF NEVER needs to look at the NYC shard</span>
-<span class="t-cmt"># Perfect horizontal isolation with no cross-shard queries</span>
-
-<span class="t-cmt"># Key design rule: NO driver appears in two city shards</span>
-<span class="t-cmt"># Driver assignment to city = set when driver goes online</span>
-<span class="t-cmt"># City boundary = Uber's geofence polygon (not simple bounding box)</span>
-
-<span class="t-cmt"># For very large cities: sub-shard by quadrant</span>
-<span class="t-cmt"># drivers:available:NYC:NW  ← northwest quadrant</span>
-<span class="t-cmt"># drivers:available:NYC:NE</span>
-<span class="t-cmt"># drivers:available:NYC:SE</span>
-<span class="t-cmt"># drivers:available:NYC:SW</span></div>
+  <!-- CITY SHARDING VISUAL -->
+  <div style="border:3px solid var(--ink);border-radius:8px;overflow:hidden;box-shadow:5px 5px 0 var(--ink);margin:16px 0;">
+    <div style="background:var(--teal);color:#fff;padding:10px 18px;font-family:'Bangers',cursive;font-size:1rem;letter-spacing:2px;border-bottom:3px solid var(--ink);">
+      🗃 CITY-BASED SHARDING — Each Shard Owns a City
+    </div>
+    <div style="padding:18px;display:grid;grid-template-columns:repeat(3,1fr);gap:12px;" id="shard-grid">
+      <div style="border:2px solid var(--ink);border-radius:6px;overflow:hidden;">
+        <div style="background:var(--blue);color:#fff;padding:6px 12px;font-family:'Bangers',cursive;font-size:.9rem;letter-spacing:1px;">SHARD 1 — West Coast</div>
+        <div style="padding:10px;font-family:'Space Mono',monospace;font-size:.75rem;background:rgba(29,111,184,.06);">
+          <div style="margin:3px 0;padding:4px 8px;background:rgba(29,111,184,.15);border-radius:3px;border-left:3px solid var(--blue);">drivers:available:<b>SF</b></div>
+          <div style="margin:3px 0;padding:4px 8px;background:rgba(29,111,184,.1);border-radius:3px;border-left:3px solid var(--blue);">drivers:available:<b>OAK</b></div>
+          <div style="margin:3px 0;padding:4px 8px;background:rgba(29,111,184,.08);border-radius:3px;border-left:3px solid var(--blue);">drivers:available:<b>SEA</b></div>
+          <div style="margin-top:8px;font-size:.65rem;color:#666;">~180K drivers · 90MB</div>
+        </div>
+      </div>
+      <div style="border:2px solid var(--ink);border-radius:6px;overflow:hidden;">
+        <div style="background:var(--red);color:#fff;padding:6px 12px;font-family:'Bangers',cursive;font-size:.9rem;letter-spacing:1px;">SHARD 2 — East Coast</div>
+        <div style="padding:10px;font-family:'Space Mono',monospace;font-size:.75rem;background:rgba(230,57,70,.05);">
+          <div style="margin:3px 0;padding:4px 8px;background:rgba(230,57,70,.15);border-radius:3px;border-left:3px solid var(--red);">drivers:available:<b>NYC</b></div>
+          <div style="margin:3px 0;padding:4px 8px;background:rgba(230,57,70,.1);border-radius:3px;border-left:3px solid var(--red);">drivers:available:<b>BOS</b></div>
+          <div style="margin:3px 0;padding:4px 8px;background:rgba(230,57,70,.08);border-radius:3px;border-left:3px solid var(--red);">drivers:available:<b>DC</b></div>
+          <div style="margin-top:8px;font-size:.65rem;color:#666;">~320K drivers · 160MB</div>
+        </div>
+      </div>
+      <div style="border:2px solid var(--ink);border-radius:6px;overflow:hidden;">
+        <div style="background:var(--orange);color:#fff;padding:6px 12px;font-family:'Bangers',cursive;font-size:.9rem;letter-spacing:1px;">SHARD 3 — South / Texas</div>
+        <div style="padding:10px;font-family:'Space Mono',monospace;font-size:.75rem;background:rgba(255,140,66,.05);">
+          <div style="margin:3px 0;padding:4px 8px;background:rgba(255,140,66,.15);border-radius:3px;border-left:3px solid var(--orange);">drivers:available:<b>LA</b></div>
+          <div style="margin:3px 0;padding:4px 8px;background:rgba(255,140,66,.1);border-radius:3px;border-left:3px solid var(--orange);">drivers:available:<b>LV</b></div>
+          <div style="margin:3px 0;padding:4px 8px;background:rgba(255,140,66,.08);border-radius:3px;border-left:3px solid var(--orange);">drivers:available:<b>DFW</b></div>
+          <div style="margin-top:8px;font-size:.65rem;color:#666;">~210K drivers · 105MB</div>
+        </div>
+      </div>
+    </div>
+    <div style="background:rgba(13,148,136,.08);border-top:2px solid var(--teal);padding:12px 18px;font-size:.9rem;">
+      <strong>Rule:</strong> A rider in NYC <em>never</em> queries Shard 1. City geofence polygon (not bounding box) determines which shard a driver belongs to. Large cities like NYC can further sub-shard by quadrant: <code>NYC:NW</code>, <code>NYC:NE</code>, <code>NYC:SE</code>, <code>NYC:SW</code>.
+    </div>
   </div>
 </div>
 
@@ -646,38 +659,45 @@ neighbors = gh.neighbors(<span class="t-str">'9q8yy5'</span>)
     </tbody>
   </table>
 
-  <div class="terminal">
-    <div class="terminal-bar"><span class="tbar-dot red"></span><span class="tbar-dot yellow"></span><span class="tbar-dot green"></span><span class="tbar-label">Python — H3 in Production</span></div>
-    <div class="terminal-body"><span class="t-cmt"># Install: pip install h3</span>
-<span class="t-kw">import</span> h3
-
-lat, lng = <span class="t-num">37.7749</span>, <span class="t-num">-122.4194</span>  <span class="t-cmt"># San Francisco</span>
-
-<span class="t-cmt"># Encode to H3 cell at resolution 9</span>
-cell = h3.latlng_to_cell(lat, lng, res=<span class="t-num">9</span>)
-print(cell)  <span class="t-cmt"># → '8928308280fffff'</span>
-
-<span class="t-cmt"># Get all hexes within k=2 rings (ring 0 + ring 1 + ring 2)</span>
-k_ring = h3.grid_disk(cell, k=<span class="t-num">2</span>)
-print(len(k_ring))  <span class="t-cmt"># → 19 hexagons</span>
-<span class="t-cmt"># Ring 0 (center): 1 hex</span>
-<span class="t-cmt"># Ring 1: 6 hexes  </span>
-<span class="t-cmt"># Ring 2: 12 hexes</span>
-<span class="t-cmt"># Total: 1 + 6 + 12 = 19 hexes covering ~2km radius</span>
-
-<span class="t-cmt"># Why 19 covers ~2km: res=9 hex diameter ≈ 300m, 2-ring = ~900m radius</span>
-<span class="t-cmt"># Use k=3 for 2km radius: 1+6+12+18=37 hexes</span>
-
-<span class="t-cmt"># Each driver's location → H3 cell</span>
-<span class="t-cmt"># Store: Redis HSET h3:{cell_id} driver_id 1</span>
-<span class="t-cmt"># Search: for each cell in k_ring: HGETALL h3:{cell_id}</span>
-
-<span class="t-cmt"># H3 is primarily used for:</span>
-<span class="t-cmt"># 1. Supply/demand heatmaps (surge pricing zones)</span>
-<span class="t-cmt"># 2. Driver positioning signals (where to reposition idle drivers)</span>
-<span class="t-cmt"># 3. ML features (density of drivers/riders per hex per time)</span>
-<span class="t-cmt"># 4. Reporting and analytics</span>
-<span class="t-cmt"># Redis GEORADIUS is faster for the hot request path</span></div>
+  <!-- H3 K-RING EXPANDER -->
+  <div style="border:3px solid var(--ink);border-radius:8px;overflow:hidden;box-shadow:6px 6px 0 var(--ink);margin:20px 0;">
+    <div style="background:#1a1410;color:#ffd23f;padding:12px 20px;font-family:'Bangers',cursive;font-size:1.1rem;letter-spacing:2px;border-bottom:3px solid var(--ink);display:flex;align-items:center;gap:12px;flex-wrap:wrap;">
+      <span>⬡</span> INTERACTIVE H3 K-RING EXPANDER
+      <div style="margin-left:auto;display:flex;gap:8px;">
+        <button onclick="h3SetK(0)" id="h3-k0" style="font-family:'Bangers',cursive;font-size:.9rem;padding:5px 12px;background:var(--green);color:#fff;border:2px solid var(--yellow);border-radius:4px;cursor:pointer;">k=0</button>
+        <button onclick="h3SetK(1)" id="h3-k1" style="font-family:'Bangers',cursive;font-size:.9rem;padding:5px 12px;background:#333;color:#aaa;border:2px solid #555;border-radius:4px;cursor:pointer;">k=1</button>
+        <button onclick="h3SetK(2)" id="h3-k2" style="font-family:'Bangers',cursive;font-size:.9rem;padding:5px 12px;background:#333;color:#aaa;border:2px solid #555;border-radius:4px;cursor:pointer;">k=2</button>
+        <button onclick="h3SetK(3)" id="h3-k3" style="font-family:'Bangers',cursive;font-size:.9rem;padding:5px 12px;background:#333;color:#aaa;border:2px solid #555;border-radius:4px;cursor:pointer;">k=3</button>
+      </div>
+    </div>
+    <div style="padding:20px;background:#111;display:grid;grid-template-columns:1fr 240px;gap:20px;">
+      <canvas id="h3-canvas" width="460" height="360" style="border:1px solid #333;border-radius:4px;display:block;width:100%;"></canvas>
+      <div style="display:flex;flex-direction:column;gap:10px;">
+        <div id="h3-ring-stats" style="background:#1c1c1c;border:1px solid #333;border-radius:6px;padding:14px;font-family:'Space Mono',monospace;font-size:.75rem;color:#aaa;line-height:1.9;">
+          <div style="color:#ffd23f;font-family:'Bangers',cursive;font-size:1rem;letter-spacing:2px;margin-bottom:8px;">RING STATS</div>
+          <div>Ring 0: <span style="color:#7ee787;">1 hex</span></div>
+          <div>Ring 1: <span style="color:#79c0ff;">6 hexes</span></div>
+          <div>Ring 2: <span style="color:#ff8c42;">12 hexes</span></div>
+          <div>Ring 3: <span style="color:#ff6b9d;">18 hexes</span></div>
+          <div style="border-top:1px solid #333;margin:8px 0;padding-top:8px;">Formula: k×6 per ring<br>Total at k: 1+6k(k+1)/2</div>
+        </div>
+        <div id="h3-current" style="background:#1c1c1c;border:1px solid #333;border-radius:6px;padding:14px;font-family:'Space Mono',monospace;font-size:.75rem;color:#aaa;line-height:1.8;">
+          <div style="color:#ffd23f;font-family:'Bangers',cursive;font-size:1rem;letter-spacing:2px;margin-bottom:6px;">CURRENT SELECTION</div>
+          <div>k-ring: <span id="h3-k-display" style="color:#7ee787;">0</span></div>
+          <div>Hexes: <span id="h3-hex-count" style="color:#7ee787;">1</span></div>
+          <div>Drivers found: <span id="h3-drivers" style="color:#ff8c42;">—</span></div>
+          <div>Radius: <span id="h3-radius" style="color:#79c0ff;">~175m</span></div>
+        </div>
+        <div style="background:#0d2818;border:1px solid #1a5c31;border-radius:6px;padding:12px;font-family:'Space Mono',monospace;font-size:.7rem;color:#4ade80;line-height:1.7;">
+          <div style="color:#7ee787;font-weight:bold;margin-bottom:4px;">H3 vs GEORADIUS</div>
+          GEORADIUS → hot path<br>
+          (one call, exact dist)<br><br>
+          H3 → analytics path<br>
+          (density maps, surge<br>
+          pricing, reposition)
+        </div>
+      </div>
+    </div>
   </div>
 </div>
 
@@ -692,52 +712,42 @@ print(len(k_ring))  <span class="t-cmt"># → 19 hexagons</span>
 
   <p>Here's how all the pieces connect in production. Three distinct data flows — GPS ingestion, trip request, driver state change — all hitting different services with different consistency requirements.</p>
 
-  <div style="background:#0d1117;border:3px solid #30363d;border-radius:8px;padding:24px;font-family:'Space Mono',monospace;font-size:.78rem;line-height:1.9;overflow-x:auto;margin:16px 0;">
-<pre style="color:#e6edf3;margin:0;white-space:pre-wrap;"><span style="color:#e3b341;">────────────────────────────────────────────────────────────────</span>
-<span style="color:#e3b341;">                 GPS INGESTION PATH (every 4s)</span>
-<span style="color:#e3b341;">────────────────────────────────────────────────────────────────</span>
-
-<span style="color:#7ee787;">Driver App</span>  ──── HTTPS POST /location ──→  <span style="color:#79c0ff;">Load Balancer</span>
-  Payload: { driver_id, lat, lng, heading,         │
-             speed, accuracy, timestamp }           ↓
-  H3 cell computed on-device                 <span style="color:#79c0ff;">Location Service</span>  (Go, ~200 instances)
-  (saves server-side encoding cost)               │         │
-                                           <span style="color:#d2a8ff;">GEOADD</span>          <span style="color:#d2a8ff;">PRODUCE</span>
-                                           <span style="color:#d2a8ff;">drivers:avail</span>    <span style="color:#d2a8ff;">Kafka topic</span>
-                                           <span style="color:#d2a8ff;">:{city}</span>          <span style="color:#d2a8ff;">"driver-locs"</span>
-                                                │         │
-                                        <span style="color:#ff8c42;">Redis Cluster</span>    <span style="color:#ff6b9d;">Consumers:</span>
-                                        <span style="color:#ff8c42;">(Geo Index)</span>       ├ ML feature store
-                                                           ├ H3 density maps
-                                                           ├ ETA model training
-                                                           └ Driver analytics
-
-<span style="color:#e3b341;">────────────────────────────────────────────────────────────────</span>
-<span style="color:#e3b341;">                 TRIP REQUEST PATH (&lt;50ms SLA)</span>
-<span style="color:#e3b341;">────────────────────────────────────────────────────────────────</span>
-
-<span style="color:#7ee787;">Rider App</span>  ──── POST /request-trip ──→  <span style="color:#79c0ff;">Demand Service</span>
-  Payload: { rider_id, pickup_lat,              │
-             pickup_lng, dest_lat,        <span style="color:#d2a8ff;">GEORADIUS</span> (2km, top 10)
-             dest_lng, vehicle_type }           │
-                                        <span style="color:#ff8c42;">Redis Cluster</span>
-                                                │
-                                    Returns 10 driver_ids + distances
-                                                │
-                                        <span style="color:#79c0ff;">Dispatch Service</span>
-                                                │
-                              ┌─────────────────┼────────────────┐
-                              ↓                 ↓                ↓
-                        <span style="color:#ff6b9d;">ETA Service</span>      <span style="color:#ff6b9d;">Driver Cache</span>   <span style="color:#ff6b9d;">Supply State</span>
-                        (route each          (rating,         (available,
-                         driver→pickup)       vehicle type)    not on trip)
-                              │
-                        Rank by ETA + rating
-                              │
-                        <span style="color:#7ee787;">Offer to top 3</span> (simultaneous)
-                              │
-                        First accept wins → ZREM from available set</pre>
+  <!-- ARCHITECTURE PIPELINE INFOGRAPHIC -->
+  <div style="margin:20px 0;">
+    <!-- GPS Ingestion Path -->
+    <div style="font-family:'Bangers',cursive;font-size:1rem;letter-spacing:2px;color:var(--orange);margin-bottom:10px;padding-left:4px;">GPS INGESTION PATH — Every 4 seconds per driver</div>
+    <div style="display:flex;align-items:center;gap:0;flex-wrap:wrap;margin-bottom:20px;" id="arch-ingest">
+      <div class="arch-node" style="background:var(--green);">📱 Driver App<div class="arch-node-sub">GPS ping<br>H3 encoded on device</div></div>
+      <div class="arch-arrow">──▶</div>
+      <div class="arch-node" style="background:var(--blue);">⚖️ Load Balancer<div class="arch-node-sub">HTTPS POST<br>/location</div></div>
+      <div class="arch-arrow">──▶</div>
+      <div class="arch-node" style="background:var(--purple);">🔧 Location Service<div class="arch-node-sub">Go · 200 instances<br>validates + routes</div></div>
+      <div class="arch-arrow">──▶</div>
+      <div style="display:flex;flex-direction:column;gap:8px;">
+        <div class="arch-node" style="background:var(--red);">⚡ Redis Cluster<div class="arch-node-sub">GEOADD<br>drivers:avail:{city}</div></div>
+        <div class="arch-node" style="background:var(--orange);">📨 Kafka<div class="arch-node-sub">"driver-locations"<br>ML · H3 · analytics</div></div>
+      </div>
+    </div>
+    <!-- Trip Request Path -->
+    <div style="font-family:'Bangers',cursive;font-size:1rem;letter-spacing:2px;color:var(--blue);margin-bottom:10px;padding-left:4px;">TRIP REQUEST PATH — &lt;50ms SLA</div>
+    <div style="display:flex;align-items:flex-start;gap:0;flex-wrap:wrap;" id="arch-trip">
+      <div class="arch-node" style="background:var(--pink);">🙋 Rider App<div class="arch-node-sub">POST /request-trip<br>pickup + dest coords</div></div>
+      <div class="arch-arrow" style="margin-top:20px;">──▶</div>
+      <div class="arch-node" style="background:var(--blue);">📡 Demand Svc<div class="arch-node-sub">GEORADIUS 2km<br>top 10 candidates</div></div>
+      <div class="arch-arrow" style="margin-top:20px;">──▶</div>
+      <div class="arch-node" style="background:var(--red);">⚡ Redis Cluster<div class="arch-node-sub">returns<br>10 driver_ids + dist</div></div>
+      <div class="arch-arrow" style="margin-top:20px;">──▶</div>
+      <div class="arch-node" style="background:var(--purple);">🚦 Dispatch Svc<div class="arch-node-sub">parallel lookup:<br>ETA · rating · type</div></div>
+      <div class="arch-arrow" style="margin-top:20px;">──▶</div>
+      <div class="arch-node" style="background:var(--green);">✅ Offer Top 3<div class="arch-node-sub">simultaneously<br>first accept wins</div></div>
+    </div>
   </div>
+  <style>
+  .arch-node { color:#fff; border:3px solid var(--ink); border-radius:6px; padding:10px 14px; font-family:'Bangers',cursive; font-size:.95rem; letter-spacing:1px; box-shadow:4px 4px 0 var(--ink); min-width:110px; text-align:center; }
+  .arch-node-sub { font-family:'Comic Neue',cursive; font-size:.72rem; font-weight:400; letter-spacing:0; margin-top:5px; color:rgba(255,255,255,.8); line-height:1.4; }
+  .arch-arrow { font-family:'Space Mono',monospace; font-size:1.2rem; color:var(--ink); padding:0 6px; align-self:center; flex-shrink:0; }
+  @media(max-width:640px){.arch-arrow{display:none}}
+  </style>
 
   <h3>Key Design Decisions Explained</h3>
   <table class="data-table">
@@ -1263,6 +1273,326 @@ print(len(k_ring))  <span class="t-cmt"># → 19 hexagons</span>
 
   initDrivers();
   loop();
+})();
+
+/* ========================================================
+   GEOHASH BIT ANIMATOR
+   ======================================================== */
+(function() {
+  var GH32 = '0123456789bcdefghjkmnpqrstuvwxyz';
+
+  function encodeGeohash(lat, lng, prec) {
+    var minLat = -90, maxLat = 90, minLng = -180, maxLng = 180;
+    var bits = [];
+    var isLng = true;
+    var lngBits = [], latBits = [];
+    for (var i = 0; i < prec * 5; i++) {
+      if (isLng) {
+        var midLng = (minLng + maxLng) / 2;
+        if (lng >= midLng) { bits.push(1); lngBits.push(1); minLng = midLng; }
+        else { bits.push(0); lngBits.push(0); maxLng = midLng; }
+      } else {
+        var midLat = (minLat + maxLat) / 2;
+        if (lat >= midLat) { bits.push(1); latBits.push(1); minLat = midLat; }
+        else { bits.push(0); latBits.push(0); maxLat = midLat; }
+      }
+      isLng = !isLng;
+    }
+    var hash = '';
+    for (var j = 0; j < bits.length; j += 5) {
+      var val = bits[j]*16 + bits[j+1]*8 + bits[j+2]*4 + bits[j+3]*2 + bits[j+4];
+      hash += GH32[val];
+    }
+    return { hash: hash, lngBits: lngBits, latBits: latBits, interlBits: bits };
+  }
+
+  function makeBitEl(val, color) {
+    var el = document.createElement('div');
+    el.style.cssText = 'width:22px;height:22px;border-radius:3px;display:flex;align-items:center;justify-content:center;font-family:Space Mono,monospace;font-size:.75rem;font-weight:bold;border:1px solid rgba(0,0,0,.2);';
+    el.style.background = val ? color : '#e8e0d0';
+    el.style.color = val ? '#fff' : '#888';
+    el.textContent = val;
+    return el;
+  }
+
+  function makeCharEl(ch, bits5) {
+    var el = document.createElement('div');
+    el.style.cssText = 'border:2px solid #1a1410;border-radius:4px;padding:4px 8px;text-align:center;min-width:48px;box-shadow:2px 2px 0 #1a1410;';
+    el.style.background = '#ffd23f';
+    el.innerHTML = '<div style="font-family:Bangers,cursive;font-size:1.4rem;letter-spacing:1px;">' + ch + '</div>'
+      + '<div style="font-family:Space Mono,monospace;font-size:.55rem;color:#666;margin-top:2px;">' + bits5 + '</div>';
+    return el;
+  }
+
+  window.ghAnimate = function() {
+    var lat = parseFloat(document.getElementById('gh-lat').value) || 37.7749;
+    var lng = parseFloat(document.getElementById('gh-lng').value) || -122.4194;
+    var prec = parseInt(document.getElementById('gh-prec').value) || 6;
+    var res = encodeGeohash(lat, lng, prec);
+
+    var lngEl = document.getElementById('gh-lngbits');
+    var latEl = document.getElementById('gh-latbits');
+    var intEl = document.getElementById('gh-interlbits');
+    var resEl = document.getElementById('gh-result');
+    var charEl = document.getElementById('gh-chars');
+    var descEl = document.getElementById('gh-desc');
+
+    lngEl.innerHTML = ''; latEl.innerHTML = ''; intEl.innerHTML = ''; charEl.innerHTML = '';
+    resEl.textContent = '——';
+
+    var delay = 0;
+    res.lngBits.forEach(function(b, i) {
+      setTimeout(function() { lngEl.appendChild(makeBitEl(b, '#1d6fb8')); }, delay);
+      delay += 40;
+    });
+    res.latBits.forEach(function(b, i) {
+      setTimeout(function() { latEl.appendChild(makeBitEl(b, '#ff8c42')); }, delay);
+      delay += 40;
+    });
+    res.interlBits.forEach(function(b, i) {
+      var color = (i % 2 === 0) ? '#1d6fb8' : '#ff8c42';
+      setTimeout(function() { intEl.appendChild(makeBitEl(b, color)); }, delay);
+      delay += 30;
+    });
+    // Reveal chars
+    for (var ci = 0; ci < prec; ci++) {
+      (function(idx) {
+        setTimeout(function() {
+          var bits5 = res.interlBits.slice(idx*5, idx*5+5).join('');
+          charEl.appendChild(makeCharEl(res.hash[idx], bits5));
+          resEl.textContent = res.hash.slice(0, idx+1) + '—'.repeat(prec - idx - 1);
+        }, delay + idx * 120);
+      })(ci);
+    }
+    setTimeout(function() {
+      resEl.textContent = res.hash;
+      descEl.textContent = 'SF (' + lat + ', ' + lng + ') → "' + res.hash + '" at precision ' + prec + ' · Blue=lon bits, Orange=lat bits';
+    }, delay + prec * 120 + 100);
+  };
+
+  // Auto-run on load
+  setTimeout(window.ghAnimate, 400);
+})();
+
+/* ========================================================
+   REDIS LIFECYCLE PHASES
+   ======================================================== */
+(function() {
+  var phases = {
+    1: {
+      title: 'PHASE 1: Driver GPS Update (every 4 seconds)',
+      color: '#3fa34d',
+      steps: [
+        { icon: '📱', label: 'Driver App', detail: 'GPS ping fired every 4s\nPayload: driver_id, lat, lng, heading, speed', color: '#3fa34d' },
+        { icon: '➡️', label: '', detail: '', color: 'arrow' },
+        { icon: '⚖️', label: 'Load Balancer', detail: 'HTTPS POST /location\nRoutes to available Location Service pod', color: '#1d6fb8' },
+        { icon: '➡️', label: '', detail: '', color: 'arrow' },
+        { icon: '🔧', label: 'Location Service', detail: 'Go · ~200 instances\nValidates auth, decodes H3 cell', color: '#8a4fff' },
+        { icon: '➡️', label: '', detail: '', color: 'arrow' },
+        { icon: '⚡', label: 'GEOADD', detail: 'GEOADD drivers:available:SF\n-122.4194 37.7749 "d_42"\n→ (integer) 1 (added)', color: '#e63946' },
+        { icon: '➡️', label: '', detail: '', color: 'arrow' },
+        { icon: '📨', label: 'Kafka Publish', detail: 'topic: driver-locations\nConsumed by: ML pipeline, H3 maps, analytics', color: '#ff8c42' },
+      ]
+    },
+    2: {
+      title: 'PHASE 2: Rider Requests Trip (<50ms SLA)',
+      color: '#1d6fb8',
+      steps: [
+        { icon: '🙋', label: 'Rider App', detail: 'POST /request-trip\npickup_lat, pickup_lng\ndest_lat, dest_lng', color: '#ff6b9d' },
+        { icon: '➡️', label: '', detail: '', color: 'arrow' },
+        { icon: '📡', label: 'Demand Svc', detail: 'Validates request\nPicks Redis shard by city geofence', color: '#1d6fb8' },
+        { icon: '➡️', label: '', detail: '', color: 'arrow' },
+        { icon: '⚡', label: 'GEORADIUS', detail: 'GEORADIUS drivers:available:SF\n-122.4195 37.7751 2 km\nWITHCOORD WITHDIST ASC COUNT 10\n→ <2ms', color: '#e63946' },
+        { icon: '➡️', label: '', detail: '', color: 'arrow' },
+        { icon: '🚦', label: 'Dispatch Svc', detail: 'Ranks by: ETA + driver rating\n+ vehicle type match\nOffers to top 3 simultaneously', color: '#8a4fff' },
+        { icon: '➡️', label: '', detail: '', color: 'arrow' },
+        { icon: '✅', label: 'First Accept', detail: 'ZREM drivers:available:SF "d_42"\nGEOADD drivers:on_trip:SF\n-122.4194 37.7749 "d_42"', color: '#3fa34d' },
+      ]
+    },
+    3: {
+      title: 'PHASE 3: Trip Starts / Driver Goes Offline',
+      color: '#ff8c42',
+      steps: [
+        { icon: '🚗', label: 'Trip Starts', detail: 'Driver accepts ride\nStatus changes: available → on_trip', color: '#3fa34d' },
+        { icon: '➡️', label: '', detail: '', color: 'arrow' },
+        { icon: '🗑️', label: 'ZREM Available', detail: 'ZREM drivers:available:SF "d_42"\nRemoves from proximity search\n→ (integer) 1', color: '#e63946' },
+        { icon: '➡️', label: '', detail: '', color: 'arrow' },
+        { icon: '📌', label: 'GEOADD On-Trip', detail: 'GEOADD drivers:on_trip:SF\n-122.4194 37.7749 "d_42"\nTracked but not searchable', color: '#ff8c42' },
+        { icon: '➡️', label: '', detail: '', color: 'arrow' },
+        { icon: '🏁', label: 'Trip Ends', detail: 'Driver completes trip\nMoves back: on_trip → available', color: '#1d6fb8' },
+        { icon: '➡️', label: '', detail: '', color: 'arrow' },
+        { icon: '🔄', label: 'Back to Phase 1', detail: 'GEOADD drivers:available:SF\nNext GPS ping restores availability\nCycle repeats', color: '#8a4fff' },
+      ]
+    }
+  };
+
+  function renderPhase(n) {
+    var p = phases[n];
+    var view = document.getElementById('redis-phase-view');
+    var html = '<div style="background:' + p.color + '15;border:2px solid ' + p.color + ';border-radius:6px;padding:14px 16px;margin-bottom:14px;font-family:Bangers,cursive;font-size:1rem;letter-spacing:2px;color:' + p.color + ';">' + p.title + '</div>';
+    html += '<div style="display:flex;flex-wrap:wrap;align-items:flex-start;gap:6px;">';
+    p.steps.forEach(function(s) {
+      if (s.color === 'arrow') {
+        html += '<div style="font-size:1.5rem;padding:0 2px;align-self:center;color:#888;">→</div>';
+      } else {
+        html += '<div style="border:2px solid #1a1410;border-radius:6px;padding:10px 12px;text-align:center;min-width:100px;max-width:130px;flex:1;box-shadow:3px 3px 0 #1a1410;background:white;">'
+          + '<div style="font-size:1.4rem;">' + s.icon + '</div>'
+          + '<div style="font-family:Bangers,cursive;font-size:.85rem;letter-spacing:1px;margin:4px 0;color:#1a1410;">' + s.label + '</div>'
+          + '<div style="font-family:Space Mono,monospace;font-size:.62rem;color:#555;text-align:left;white-space:pre-wrap;line-height:1.5;">' + s.detail + '</div>'
+          + '</div>';
+      }
+    });
+    html += '</div>';
+    view.innerHTML = html;
+  }
+
+  window.redisPhase = function(n, btn) {
+    document.querySelectorAll('.redis-phase-btn').forEach(function(b) {
+      b.style.background = 'var(--paper)';
+      b.style.color = 'var(--ink)';
+    });
+    var colors = ['','#3fa34d','#1d6fb8','#ff8c42'];
+    btn.style.background = colors[n];
+    btn.style.color = '#fff';
+    renderPhase(n);
+  };
+  window.redisAnimate = function() {
+    var btns = document.querySelectorAll('.redis-phase-btn');
+    var i = 0;
+    function next() {
+      if (i >= 3) return;
+      window.redisPhase(i+1, btns[i]);
+      i++;
+      setTimeout(next, 2500);
+    }
+    next();
+  };
+  renderPhase(1);
+})();
+
+/* ========================================================
+   H3 K-RING HEX EXPANDER
+   ======================================================== */
+(function() {
+  var canvas = document.getElementById('h3-canvas');
+  var ctx = canvas.getContext('2d');
+  var W = canvas.width, H = canvas.height;
+  var currentK = 0;
+  var HEX_R = 28;
+  var CENTER = { x: W/2, y: H/2 };
+
+  // Hex grid directions in offset coords (axial q,r)
+  var DIRS = [[1,0],[1,-1],[0,-1],[-1,0],[-1,1],[0,1]];
+  var RING_COLORS = ['#3fa34d','#1d6fb8','#ff8c42','#ff6b9d'];
+  var RING_LABELS = ['ring 0 (center)','ring 1','ring 2','ring 3'];
+
+  // Hex to pixel (flat-top)
+  function hexToPixel(q, r) {
+    var x = CENTER.x + HEX_R * (3/2 * q);
+    var y = CENTER.y + HEX_R * (Math.sqrt(3)/2 * q + Math.sqrt(3) * r);
+    return { x: x, y: y };
+  }
+
+  function drawHex(cx, cy, r, fill, stroke, alpha) {
+    ctx.globalAlpha = alpha || 1;
+    ctx.beginPath();
+    for (var i = 0; i < 6; i++) {
+      var angle = Math.PI / 180 * (60 * i);
+      var hx = cx + r * Math.cos(angle);
+      var hy = cy + r * Math.sin(angle);
+      i === 0 ? ctx.moveTo(hx, hy) : ctx.lineTo(hx, hy);
+    }
+    ctx.closePath();
+    ctx.fillStyle = fill;
+    ctx.fill();
+    ctx.strokeStyle = stroke;
+    ctx.lineWidth = 2;
+    ctx.stroke();
+    ctx.globalAlpha = 1;
+  }
+
+  // Generate all hexes in k-ring (axial coords)
+  function kRing(k) {
+    var result = [{q:0, r:0, ring:0}];
+    if (k === 0) return result;
+    for (var ring = 1; ring <= k; ring++) {
+      var q = 0, r = -ring;
+      for (var s = 0; s < 6; s++) {
+        for (var t = 0; t < ring; t++) {
+          result.push({q:q, r:r, ring:ring});
+          q += DIRS[s][0]; r += DIRS[s][1];
+        }
+      }
+    }
+    return result;
+  }
+
+  // Simulated driver counts per ring
+  var driverCounts = [Math.floor(2+Math.random()*4), Math.floor(8+Math.random()*10), Math.floor(15+Math.random()*18), Math.floor(22+Math.random()*20)];
+
+  function draw(k) {
+    ctx.clearRect(0, 0, W, H);
+    ctx.fillStyle = '#0d1117';
+    ctx.fillRect(0, 0, W, H);
+
+    var hexes = kRing(k);
+    // Draw all visible rings first (faded)
+    for (var ring = k; ring >= 0; ring--) {
+      var rHexes = hexes.filter(function(h){ return h.ring === ring; });
+      rHexes.forEach(function(h) {
+        var p = hexToPixel(h.q, h.r);
+        var alpha = ring === k ? 0.85 : 0.4;
+        drawHex(p.x, p.y, HEX_R - 2, RING_COLORS[ring] + '33', RING_COLORS[ring], alpha);
+      });
+    }
+
+    // Draw center stronger
+    var cp = hexToPixel(0, 0);
+    drawHex(cp.x, cp.y, HEX_R - 2, RING_COLORS[0] + '66', RING_COLORS[0], 1);
+    ctx.fillStyle = '#ffd23f';
+    ctx.font = 'bold 14px Space Mono, monospace';
+    ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+    ctx.fillText('📍', cp.x, cp.y);
+
+    // Ring labels along right side
+    for (var ri = 0; ri <= k; ri++) {
+      ctx.fillStyle = RING_COLORS[ri];
+      ctx.font = '700 11px Space Mono, monospace';
+      ctx.textAlign = 'left';
+      var ly = 20 + ri * 24;
+      ctx.fillRect(W - 110, ly, 10, 10);
+      ctx.fillStyle = '#e6edf3';
+      ctx.fillText(RING_LABELS[ri], W - 95, ly + 8);
+    }
+
+    // Update stats
+    var total = hexes.length;
+    var totalDrivers = driverCounts.slice(0, k+1).reduce(function(a,b){return a+b;}, 0);
+    var radii = ['~175m','~875m','~1.75km','~2.6km'];
+    document.getElementById('h3-k-display').textContent = k;
+    document.getElementById('h3-hex-count').textContent = total;
+    document.getElementById('h3-drivers').textContent = totalDrivers + ' drivers';
+    document.getElementById('h3-radius').textContent = radii[k];
+  }
+
+  window.h3SetK = function(k) {
+    currentK = k;
+    ['h3-k0','h3-k1','h3-k2','h3-k3'].forEach(function(id, i) {
+      var btn = document.getElementById(id);
+      if (i === k) {
+        btn.style.background = RING_COLORS[k];
+        btn.style.color = '#fff';
+        btn.style.borderColor = '#ffd23f';
+      } else {
+        btn.style.background = '#333';
+        btn.style.color = '#aaa';
+        btn.style.borderColor = '#555';
+      }
+    });
+    draw(k);
+  };
+
+  draw(0);
 })();
 </script>
 </body>

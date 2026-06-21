@@ -271,47 +271,37 @@ input[type=range].speed-slider::-webkit-slider-thumb {
 
   <p>Model every city as a directed weighted graph. <strong>Nodes</strong> = road intersections and endpoints. <strong>Directed edges</strong> = road segments (one-way streets are single-direction edges; two-way streets are two edges in opposite directions). <strong>Edge weight</strong> = estimated travel time in seconds.</p>
 
-  <div class="terminal">
-    <div class="terminal-bar"><span class="tbar-dot red"></span><span class="tbar-dot yellow"></span><span class="tbar-dot green"></span><span class="tbar-label">Road Graph Data Model</span></div>
-    <div class="terminal-body"><span class="t-cmt">-- Node (intersection)</span>
-<span class="t-key">CREATE TABLE</span> nodes (
-  node_id    BIGINT <span class="t-kw">PRIMARY KEY</span>,   <span class="t-cmt">-- OSM node ID</span>
-  lat        FLOAT,
-  lng        FLOAT,
-  h3_cell    VARCHAR(<span class="t-num">15</span>)            <span class="t-cmt">-- H3 r=9 cell for spatial partitioning</span>
-);
-
-<span class="t-cmt">-- Edge (road segment)</span>
-<span class="t-key">CREATE TABLE</span> edges (
-  edge_id       BIGINT <span class="t-kw">PRIMARY KEY</span>,
-  from_node_id  BIGINT <span class="t-kw">REFERENCES</span> nodes,
-  to_node_id    BIGINT <span class="t-kw">REFERENCES</span> nodes,
-  distance_m    FLOAT,              <span class="t-cmt">-- physical length in meters</span>
-  road_class    SMALLINT,          <span class="t-cmt">-- motorway=1, trunk=2, primary=3, ... residential=7</span>
-  speed_limit   SMALLINT,          <span class="t-cmt">-- km/h, from OSM</span>
-  base_cost_s   FLOAT,             <span class="t-cmt">-- distance_m / (speed_limit / 3.6)</span>
-  has_traffic_signals BOOLEAN,
-  turn_cost_s   FLOAT DEFAULT 0    <span class="t-cmt">-- added for turns, U-turns, etc.</span>
-);
-
-<span class="t-cmt">-- Historical speed profiles (one row per edge per 15-min time bucket)</span>
-<span class="t-key">CREATE TABLE</span> speed_profiles (
-  edge_id       BIGINT <span class="t-kw">REFERENCES</span> edges,
-  time_bucket   SMALLINT,          <span class="t-cmt">-- 0..671 (7 days × 24h × 4 buckets/h)</span>
-  speed_p50     FLOAT,             <span class="t-cmt">-- 50th percentile speed in km/h</span>
-  speed_p75     FLOAT,             <span class="t-cmt">-- 75th percentile</span>
-  speed_p90     FLOAT,             <span class="t-cmt">-- 90th percentile</span>
-  sample_count  INTEGER,           <span class="t-cmt">-- how many trips informed this bucket</span>
-  <span class="t-kw">PRIMARY KEY</span> (edge_id, time_bucket)
-);
-
-<span class="t-cmt">-- At query time: edge_cost(e, departure_time) =</span>
-<span class="t-cmt">--   distance_m / (speed_p50[time_bucket(departure_time)] / 3.6)</span>
-
-<span class="t-cmt">-- Global scale: US road network</span>
-<span class="t-cmt">-- Nodes:  ~50M (after simplification from 500M raw OSM nodes)</span>
-<span class="t-cmt">-- Edges:  ~120M (two directions for most roads)</span>
-<span class="t-cmt">-- Time buckets: 672 per edge → 80B rows total (not all stored; sparse)</span></div>
+  <!-- ROAD GRAPH INTERACTIVE VISUAL -->
+  <div style="border:3px solid var(--ink);border-radius:8px;overflow:hidden;box-shadow:6px 6px 0 var(--ink);margin:20px 0;">
+    <div style="background:var(--blue);color:#fff;padding:12px 20px;font-family:'Bangers',cursive;font-size:1.1rem;letter-spacing:2px;border-bottom:3px solid var(--ink);display:flex;align-items:center;gap:12px;flex-wrap:wrap;">
+      <span>🗺</span> ROAD GRAPH EXPLORER — Hover an edge to inspect its properties
+      <span style="margin-left:auto;font-family:'Space Mono',monospace;font-size:.7rem;color:rgba(255,255,255,.7);">Simplified SF neighborhood sample</span>
+    </div>
+    <div style="padding:20px;display:grid;grid-template-columns:1fr 280px;gap:20px;">
+      <canvas id="roadgraph-canvas" width="460" height="340" style="border:2px solid #ddd;border-radius:4px;cursor:crosshair;display:block;width:100%;"></canvas>
+      <div style="display:flex;flex-direction:column;gap:10px;">
+        <div style="border:2px solid var(--ink);border-radius:6px;overflow:hidden;">
+          <div style="background:var(--ink);color:var(--yellow);padding:6px 12px;font-family:'Bangers',cursive;font-size:.9rem;letter-spacing:2px;">ROAD CLASSES</div>
+          <div style="padding:10px;display:flex;flex-direction:column;gap:6px;font-family:'Space Mono',monospace;font-size:.72rem;">
+            <div style="display:flex;align-items:center;gap:8px;"><div style="width:30px;height:5px;background:#e63946;border-radius:2px;"></div><span><b>Motorway</b> — 100 km/h</span></div>
+            <div style="display:flex;align-items:center;gap:8px;"><div style="width:30px;height:4px;background:#ff8c42;border-radius:2px;"></div><span><b>Primary</b> — 60 km/h</span></div>
+            <div style="display:flex;align-items:center;gap:8px;"><div style="width:30px;height:3px;background:#ffd23f;border-radius:2px;"></div><span><b>Secondary</b> — 50 km/h</span></div>
+            <div style="display:flex;align-items:center;gap:8px;"><div style="width:30px;height:2px;background:#3fa34d;border-radius:2px;"></div><span><b>Residential</b> — 30 km/h</span></div>
+          </div>
+        </div>
+        <div id="rg-edge-info" style="border:2px solid var(--ink);border-radius:6px;padding:12px;font-family:'Space Mono',monospace;font-size:.72rem;line-height:1.8;flex:1;background:var(--paper2);">
+          <div style="font-family:'Bangers',cursive;font-size:.9rem;letter-spacing:2px;margin-bottom:6px;color:var(--blue);">EDGE PROPERTIES</div>
+          <div style="color:#666;">Hover over a road<br>segment to inspect<br>its properties</div>
+        </div>
+        <div style="border:2px solid var(--ink);border-radius:6px;padding:12px;font-family:'Space Mono',monospace;font-size:.7rem;line-height:1.7;background:rgba(29,111,184,.06);">
+          <div style="font-family:'Bangers',cursive;font-size:.9rem;letter-spacing:2px;margin-bottom:6px;color:var(--blue);">US SCALE</div>
+          <div>Nodes: <b>~50M</b> (intersections)</div>
+          <div>Edges: <b>~120M</b> (segments)</div>
+          <div>Time buckets: <b>672</b> / edge</div>
+          <div>OSM → simplified 160×</div>
+        </div>
+      </div>
+    </div>
   </div>
 
   <div class="hbox hbox-orange"><div class="hbox-label">WHERE DOES THE ROAD DATA COME FROM?</div>
@@ -397,46 +387,47 @@ input[type=range].speed-slider::-webkit-slider-thumb {
     </div>
   </div>
 
-  <div class="terminal">
-    <div class="terminal-bar"><span class="tbar-dot red"></span><span class="tbar-dot yellow"></span><span class="tbar-dot green"></span><span class="tbar-label">A* Core Implementation</span></div>
-    <div class="terminal-body"><span class="t-kw">import</span> heapq
-
-<span class="t-kw">def</span> <span class="t-val">astar</span>(graph, start, goal, h):
-    <span class="t-str">"""
-    graph: dict of node_id → list of (neighbor_id, edge_cost_seconds)
-    h:     heuristic(node_id, goal_id) → float (never overestimate)
-    """</span>
-    open_set  = [(h(start, goal), <span class="t-num">0</span>, start, [start])]
-    g_score   = {start: <span class="t-num">0</span>}
-    explored  = <span class="t-num">0</span>
-
-    <span class="t-kw">while</span> open_set:
-        f, g, node, path = heapq.heappop(open_set)
-        explored += <span class="t-num">1</span>
-
-        <span class="t-kw">if</span> node == goal:
-            <span class="t-kw">return</span> path, g, explored  <span class="t-cmt"># path, total_seconds, nodes_explored</span>
-
-        <span class="t-kw">for</span> neighbor, cost <span class="t-kw">in</span> graph.get(node, []):
-            new_g = g + cost
-            <span class="t-kw">if</span> new_g < g_score.get(neighbor, <span class="t-val">float</span>(<span class="t-str">'inf'</span>)):
-                g_score[neighbor] = new_g
-                f_new = new_g + h(neighbor, goal)
-                heapq.heappush(open_set, (f_new, new_g, neighbor, path + [neighbor]))
-
-    <span class="t-kw">return</span> <span class="t-val">None</span>, <span class="t-val">float</span>(<span class="t-str">'inf'</span>), explored  <span class="t-cmt"># no path found</span>
-
-<span class="t-cmt"># Haversine-based admissible heuristic</span>
-<span class="t-kw">def</span> <span class="t-val">heuristic</span>(a_id, b_id, coords, max_speed_ms=<span class="t-num">33.3</span>):  <span class="t-cmt"># 120 km/h = 33.3 m/s</span>
-    lat1, lng1 = coords[a_id]
-    lat2, lng2 = coords[b_id]
-    dist_m = haversine(lat1, lng1, lat2, lng2)
-    <span class="t-kw">return</span> dist_m / max_speed_ms  <span class="t-cmt"># seconds at max possible speed (admissible)</span>
-
-<span class="t-cmt"># Result on US road graph:</span>
-<span class="t-cmt"># Dijkstra: ~2M nodes explored for 15km urban route → ~400ms</span>
-<span class="t-cmt"># A*:        ~200K nodes explored → ~40ms</span>
-<span class="t-cmt"># CH+bidir:  ~500 nodes explored  → ~2ms  ← what Uber uses</span></div>
+  <!-- ALGORITHM COMPARISON VISUAL -->
+  <div style="border:3px solid var(--ink);border-radius:8px;overflow:hidden;box-shadow:5px 5px 0 var(--ink);margin:20px 0;">
+    <div style="background:var(--ink);color:var(--yellow);padding:10px 18px;font-family:'Bangers',cursive;font-size:1rem;letter-spacing:2px;border-bottom:3px solid var(--ink);">⚖️ ALGORITHM COMPARISON — Same 15km Urban Route</div>
+    <div style="padding:18px;display:grid;grid-template-columns:repeat(3,1fr);gap:12px;">
+      <div style="border:3px solid var(--ink);border-radius:6px;overflow:hidden;box-shadow:3px 3px 0 var(--ink);">
+        <div style="background:var(--purple);color:#fff;padding:8px 12px;font-family:'Bangers',cursive;font-size:1rem;letter-spacing:1px;">Dijkstra</div>
+        <div style="padding:12px;font-family:'Space Mono',monospace;font-size:.72rem;line-height:1.8;">
+          <div>Strategy: <b>expand cheapest</b></div>
+          <div>Heuristic: <b>none</b></div>
+          <div>Nodes explored: <b style="color:var(--red);">~2,000,000</b></div>
+          <div>Query time: <b style="color:var(--red);">~400ms</b></div>
+          <div>Preprocessing: <b>none</b></div>
+          <div style="margin-top:8px;padding:6px 8px;background:rgba(230,57,70,.1);border-radius:4px;font-size:.65rem;color:var(--red);">❌ Too slow for production</div>
+        </div>
+      </div>
+      <div style="border:3px solid var(--ink);border-radius:6px;overflow:hidden;box-shadow:3px 3px 0 var(--ink);">
+        <div style="background:var(--orange);color:#fff;padding:8px 12px;font-family:'Bangers',cursive;font-size:1rem;letter-spacing:1px;">A* Algorithm</div>
+        <div style="padding:12px;font-family:'Space Mono',monospace;font-size:.72rem;line-height:1.8;">
+          <div>Strategy: <b>cheapest + heuristic</b></div>
+          <div>Heuristic: <b>Euclidean / max_v</b></div>
+          <div>Nodes explored: <b style="color:var(--orange);">~200,000</b></div>
+          <div>Query time: <b style="color:var(--orange);">~40ms</b></div>
+          <div>Preprocessing: <b>none</b></div>
+          <div style="margin-top:8px;padding:6px 8px;background:rgba(255,140,66,.1);border-radius:4px;font-size:.65rem;color:var(--orange);">⚡ 10× faster but still too slow</div>
+        </div>
+      </div>
+      <div style="border:3px solid var(--green);border-radius:6px;overflow:hidden;box-shadow:3px 3px 0 var(--green);">
+        <div style="background:var(--green);color:#fff;padding:8px 12px;font-family:'Bangers',cursive;font-size:1rem;letter-spacing:1px;">CH + Bidir</div>
+        <div style="padding:12px;font-family:'Space Mono',monospace;font-size:.72rem;line-height:1.8;">
+          <div>Strategy: <b>upward only, bidir</b></div>
+          <div>Heuristic: <b>hierarchy level</b></div>
+          <div>Nodes explored: <b style="color:var(--green);">~500–2,000</b></div>
+          <div>Query time: <b style="color:var(--green);">~1–3ms</b></div>
+          <div>Preprocessing: <b>~2 hours once</b></div>
+          <div style="margin-top:8px;padding:6px 8px;background:rgba(63,163,77,.15);border-radius:4px;font-size:.65rem;color:var(--green);">✅ What Uber actually uses</div>
+        </div>
+      </div>
+    </div>
+    <div style="padding:12px 18px;border-top:2px solid var(--ink);background:rgba(255,210,63,.1);font-size:.9rem;">
+      <strong>Key insight:</strong> A* uses <code>f(n) = g(n) + h(n)</code> — actual cost so far + estimated remaining. The heuristic <code>h(n)</code> = straight-line distance / max possible speed is always an underestimate (admissible), so A* always finds the optimal path while exploring far fewer nodes.
+    </div>
   </div>
 </div>
 
@@ -550,49 +541,81 @@ input[type=range].speed-slider::-webkit-slider-thumb {
 
   <p>Historical speed profiles tell you what a road is usually like at 8am on Mondays. But today's 8am Monday could have a marathon closing 12 blocks, or a water main break, or an unexpected clear day. <strong>Real-time probe data</strong> — GPS traces from every active driver and trip — provides the current ground truth.</p>
 
-  <div class="terminal">
-    <div class="terminal-bar"><span class="tbar-dot red"></span><span class="tbar-dot yellow"></span><span class="tbar-dot green"></span><span class="tbar-label">Probe Data Pipeline</span></div>
-    <div class="terminal-body"><span class="t-cmt">━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━</span>
-<span class="t-cmt">EVERY ACTIVE DRIVER emits GPS pings every 4 seconds:</span>
-<span class="t-cmt">━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━</span>
-
-{
-  <span class="t-key">"driver_id"</span>: <span class="t-str">"d_42"</span>,
-  <span class="t-key">"ts"</span>:        <span class="t-num">1750001200</span>,
-  <span class="t-key">"lat"</span>:       <span class="t-num">37.7749</span>,
-  <span class="t-key">"lng"</span>:       <span class="t-num">-122.4194</span>,
-  <span class="t-key">"speed_ms"</span>:  <span class="t-num">4.2</span>,         <span class="t-cmt">← 4.2 m/s = 15 km/h (heavy traffic!)</span>
-  <span class="t-key">"heading"</span>:   <span class="t-num">271</span>           <span class="t-cmt">← degrees</span>
-}
-
-<span class="t-cmt">━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━</span>
-<span class="t-cmt">MAP MATCHING: snap GPS ping to road segment</span>
-<span class="t-cmt">━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━</span>
-
-<span class="t-cmt"># GPS has ±5m error — could be on any of 3 nearby roads</span>
-<span class="t-cmt"># Hidden Markov Model map-matching determines most likely segment</span>
-
-matched_edge = map_match(lat, lng, heading, speed_ms)
-<span class="t-cmt"># → edge_id: 8819234  (Market St westbound, block 44-45)</span>
-
-<span class="t-cmt">━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━</span>
-<span class="t-cmt">SPEED AGGREGATION: combine probes per segment per time window</span>
-<span class="t-cmt">━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━</span>
-
-<span class="t-cmt"># Stream processing (Apache Flink) — 5-minute rolling window</span>
-current_speed[edge_id] = weighted_avg(
-    probe_speeds_last_5min,
-    weights=[1/age_seconds for each probe]  <span class="t-cmt">← fresher probes = higher weight</span>
-)
-
-<span class="t-cmt"># Blend with historical profile</span>
-effective_speed = (
-    <span class="t-num">0.65</span> * current_speed[edge_id] +    <span class="t-cmt">← real-time dominates when dense</span>
-    <span class="t-num">0.35</span> * historical_p50[edge_id][bucket]
-)
-<span class="t-cmt"># If fewer than 3 probes in window: trust historical more</span>
-<span class="t-cmt"># If 20+ probes: trust real-time almost entirely</span></div>
+  <!-- PROBE DATA PIPELINE VISUAL -->
+  <div style="border:3px solid var(--ink);border-radius:8px;overflow:hidden;box-shadow:6px 6px 0 var(--ink);margin:20px 0;">
+    <div style="background:var(--teal);color:#fff;padding:12px 20px;font-family:'Bangers',cursive;font-size:1.1rem;letter-spacing:2px;border-bottom:3px solid var(--ink);">
+      📡 PROBE DATA PIPELINE — From GPS ping to ETA weight
+    </div>
+    <div style="padding:20px;">
+      <!-- Step pipeline -->
+      <div style="display:grid;grid-template-columns:repeat(5,1fr);gap:0;margin-bottom:20px;">
+        <div class="probe-step" style="background:var(--green);">
+          <div class="ps-icon">📱</div>
+          <div class="ps-title">GPS Ping</div>
+          <div class="ps-detail">Every 4s<br>driver_id, lat, lng<br>speed, heading<br><span style="color:rgba(255,255,255,.6)">±5m accuracy</span></div>
+        </div>
+        <div class="probe-arrow">▶</div>
+        <div class="probe-step" style="background:var(--blue);">
+          <div class="ps-icon">🎯</div>
+          <div class="ps-title">Map Match</div>
+          <div class="ps-detail">Hidden Markov Model<br>GPS → road segment<br>uses: lat, lng,<br>heading, speed</div>
+        </div>
+        <div class="probe-arrow">▶</div>
+        <div class="probe-step" style="background:var(--purple);">
+          <div class="ps-icon">⚡</div>
+          <div class="ps-title">Flink Stream</div>
+          <div class="ps-detail">5-min rolling window<br>weighted avg speed<br>fresher = higher weight<br>1/age_seconds</div>
+        </div>
+        <div class="probe-arrow">▶</div>
+        <div class="probe-step" style="background:var(--orange);">
+          <div class="ps-icon">⚖️</div>
+          <div class="ps-title">Blend</div>
+          <div class="ps-detail">65% real-time<br>35% historical<br>flips when probe<br>count is low</div>
+        </div>
+        <div class="probe-arrow">▶</div>
+        <div class="probe-step" style="background:var(--red);">
+          <div class="ps-icon">⏱</div>
+          <div class="ps-title">ETA Weight</div>
+          <div class="ps-detail">edge_cost_s =<br>dist_m / eff_speed<br>→ CH router uses<br>as edge weight</div>
+        </div>
+      </div>
+      <!-- Blend formula visual -->
+      <div style="background:var(--paper2);border:2px solid var(--ink);border-radius:6px;padding:16px 20px;">
+        <div style="font-family:'Bangers',cursive;font-size:1rem;letter-spacing:2px;margin-bottom:14px;">BLENDING FORMULA — adjusts based on probe density</div>
+        <div id="probe-blend-bars">
+          <div style="margin-bottom:12px;">
+            <div style="font-family:'Space Mono',monospace;font-size:.75rem;margin-bottom:4px;">Dense probes (20+ in window) — rush hour</div>
+            <div style="height:24px;display:flex;border-radius:4px;overflow:hidden;border:2px solid var(--ink);">
+              <div style="width:85%;background:var(--blue);display:flex;align-items:center;justify-content:center;font-family:'Bangers',cursive;font-size:.85rem;color:#fff;letter-spacing:1px;">85% REAL-TIME</div>
+              <div style="width:15%;background:var(--paper);display:flex;align-items:center;justify-content:center;font-family:'Bangers',cursive;font-size:.75rem;letter-spacing:1px;">15% HIST</div>
+            </div>
+          </div>
+          <div style="margin-bottom:12px;">
+            <div style="font-family:'Space Mono',monospace;font-size:.75rem;margin-bottom:4px;">Moderate probes (5–20) — normal conditions</div>
+            <div style="height:24px;display:flex;border-radius:4px;overflow:hidden;border:2px solid var(--ink);">
+              <div style="width:65%;background:var(--teal);display:flex;align-items:center;justify-content:center;font-family:'Bangers',cursive;font-size:.85rem;color:#fff;letter-spacing:1px;">65% REAL-TIME</div>
+              <div style="width:35%;background:var(--paper);display:flex;align-items:center;justify-content:center;font-family:'Bangers',cursive;font-size:.8rem;letter-spacing:1px;">35% HISTORICAL</div>
+            </div>
+          </div>
+          <div>
+            <div style="font-family:'Space Mono',monospace;font-size:.75rem;margin-bottom:4px;">Sparse probes (&lt;3) — 3am, rural</div>
+            <div style="height:24px;display:flex;border-radius:4px;overflow:hidden;border:2px solid var(--ink);">
+              <div style="width:20%;background:var(--orange);display:flex;align-items:center;justify-content:center;font-family:'Bangers',cursive;font-size:.75rem;color:#fff;letter-spacing:1px;">20%</div>
+              <div style="width:80%;background:var(--paper);display:flex;align-items:center;justify-content:center;font-family:'Bangers',cursive;font-size:.85rem;letter-spacing:1px;">80% HISTORICAL PROFILE</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
+  <style>
+  .probe-step { color:#fff; padding:12px; text-align:center; }
+  .ps-icon { font-size:1.5rem; margin-bottom:4px; }
+  .ps-title { font-family:'Bangers',cursive; font-size:.95rem; letter-spacing:1px; margin-bottom:6px; }
+  .ps-detail { font-family:'Space Mono',monospace; font-size:.63rem; line-height:1.5; color:rgba(255,255,255,.85); }
+  .probe-arrow { display:flex; align-items:center; justify-content:center; font-size:1.2rem; color:var(--ink); background:var(--paper2); }
+  @media(max-width:640px){ .probe-step,.probe-arrow { display:none; } .probe-step:nth-child(1),.probe-step:nth-child(9){ display:block; } }
+  </style>
 
   <div class="hbox hbox-yellow"><div class="hbox-label">THE COLD START PROBLEM</div>
     <p style="margin-top:12px;">At 3am, there are far fewer active drivers — fewer probes per segment. Segments with zero probes fall back entirely to historical data. This is why Uber ETAs are slightly less accurate at 3am despite low traffic — not because of congestion, but because of reduced probe coverage. At peak hours (rush hour), probe density is so high that real-time data dominates and historical data barely matters.</p>
@@ -610,48 +633,27 @@ effective_speed = (
 
   <p>Even with perfect probe data, the routing model has systematic blind spots. The graph can't model: a driver who always runs 3 minutes late because they stop for coffee. A pickup zone where every rider takes 90 seconds to walk out of the building. Traffic signal timing that creates a 45-second cluster effect. This is where the machine learning correction layer earns its keep.</p>
 
-  <div class="terminal">
-    <div class="terminal-bar"><span class="tbar-dot red"></span><span class="tbar-dot yellow"></span><span class="tbar-dot green"></span><span class="tbar-label">ETA ML Model — Feature Engineering</span></div>
-    <div class="terminal-body"><span class="t-cmt"># Gradient Boosted Decision Trees (XGBoost / LightGBM)</span>
-<span class="t-cmt"># Target: actual_trip_duration_seconds</span>
-<span class="t-cmt"># Trained on 500M+ historical trips</span>
-
-features = {
-  <span class="t-cmt"># Routing output features</span>
-  <span class="t-key">"routing_eta_s"</span>:        routing_model_output,     <span class="t-cmt">← the CH+probe estimate</span>
-  <span class="t-key">"route_distance_m"</span>:     path_length_meters,
-  <span class="t-key">"num_turns"</span>:            count_of_turns_on_route,
-  <span class="t-key">"num_traffic_signals"</span>:  count_of_signals,
-  <span class="t-key">"road_class_mix"</span>:       [frac_highway, frac_primary, frac_residential],
-  <span class="t-key">"crosses_bridge"</span>:       bool,                      <span class="t-cmt">← bridge = bottleneck</span>
-
-  <span class="t-cmt"># Time features</span>
-  <span class="t-key">"hour_of_day"</span>:          departure_hour,
-  <span class="t-key">"day_of_week"</span>:          departure_dow,             <span class="t-cmt">← Mon=0 ... Sun=6</span>
-  <span class="t-key">"is_holiday"</span>:           bool,
-  <span class="t-key">"minutes_to_sunrise"</span>:   float,                     <span class="t-cmt">← glare patterns</span>
-  <span class="t-key">"local_event_density"</span>:  nearby_events_score,       <span class="t-cmt">← concerts, games, protests</span>
-
-  <span class="t-cmt"># Real-time context</span>
-  <span class="t-key">"rain_intensity"</span>:       weather_api_mm_per_hr,
-  <span class="t-key">"temperature"</span>:          celsius,                   <span class="t-cmt">← extreme cold/heat = slower</span>
-  <span class="t-key">"supply_density"</span>:       drivers_per_km2_in_zone,
-  <span class="t-key">"demand_surge"</span>:         surge_multiplier,
-  <span class="t-key">"avg_probe_speed_route"</span>: mean speed across route segments,
-  <span class="t-key">"probe_confidence"</span>:     probe_count / route_segments,  <span class="t-cmt">← coverage density</span>
-
-  <span class="t-cmt"># Pickup zone features</span>
-  <span class="t-key">"pickup_h3_cell"</span>:       h3_r9_encoded,             <span class="t-cmt">← embedded, not raw</span>
-  <span class="t-key">"pickup_walk_time_s"</span>:   historical_avg_walk_to_car, <span class="t-cmt">← some buildings have slow egress</span>
-}
-
-<span class="t-cmt"># Output</span>
-eta_correction_s = xgb_model.predict(features)       <span class="t-cmt">← signed delta in seconds</span>
-final_eta_p50    = routing_eta_s + eta_correction_s
-
-<span class="t-cmt"># Separate models for P75 and P90 (quantile regression)</span>
-final_eta_p75 = xgb_p75_model.predict(features)      <span class="t-cmt">← shown to rider</span>
-final_eta_p90 = xgb_p90_model.predict(features)</div>
+  <!-- ML FEATURE IMPORTANCE BAR CHART -->
+  <div style="border:3px solid var(--ink);border-radius:8px;overflow:hidden;box-shadow:6px 6px 0 var(--ink);margin:20px 0;">
+    <div style="background:var(--purple);color:#fff;padding:12px 20px;font-family:'Bangers',cursive;font-size:1.1rem;letter-spacing:2px;border-bottom:3px solid var(--ink);display:flex;align-items:center;gap:12px;flex-wrap:wrap;">
+      🤖 XGBoost FEATURE IMPORTANCE — hover a bar for details
+      <span style="margin-left:auto;font-family:'Space Mono',monospace;font-size:.7rem;color:rgba(255,255,255,.7);">Trained on 500M+ trips</span>
+    </div>
+    <div style="padding:20px;">
+      <div style="display:grid;grid-template-columns:1fr 240px;gap:20px;">
+        <div id="ml-feat-chart"></div>
+        <div id="ml-feat-detail" style="border:2px solid var(--ink);border-radius:6px;padding:14px;font-family:'Space Mono',monospace;font-size:.72rem;line-height:1.8;background:var(--paper2);">
+          <div style="font-family:'Bangers',cursive;font-size:1rem;letter-spacing:2px;margin-bottom:8px;color:var(--purple);">FEATURE DETAIL</div>
+          <div style="color:#666;">Hover a bar to see what this<br>feature measures and why<br>it matters to ETA accuracy.</div>
+        </div>
+      </div>
+      <div style="margin-top:16px;display:flex;gap:10px;flex-wrap:wrap;">
+        <div style="display:flex;align-items:center;gap:6px;font-family:'Space Mono',monospace;font-size:.7rem;"><div style="width:14px;height:14px;background:var(--red);border-radius:2px;"></div>Routing features</div>
+        <div style="display:flex;align-items:center;gap:6px;font-family:'Space Mono',monospace;font-size:.7rem;"><div style="width:14px;height:14px;background:var(--blue);border-radius:2px;"></div>Time features</div>
+        <div style="display:flex;align-items:center;gap:6px;font-family:'Space Mono',monospace;font-size:.7rem;"><div style="width:14px;height:14px;background:var(--teal);border-radius:2px;"></div>Real-time context</div>
+        <div style="display:flex;align-items:center;gap:6px;font-family:'Space Mono',monospace;font-size:.7rem;"><div style="width:14px;height:14px;background:var(--orange);border-radius:2px;"></div>Pickup zone</div>
+      </div>
+    </div>
   </div>
 
   <div class="hbox hbox-purple"><div class="hbox-label">TYPICAL ML CORRECTION MAGNITUDES</div>
@@ -711,37 +713,32 @@ final_eta_p90 = xgb_p90_model.predict(features)</div>
     </div>
   </div>
 
-  <div style="background:#0d1117;border:3px solid #30363d;border-radius:8px;padding:20px;font-family:'Space Mono',monospace;font-size:.78rem;line-height:1.9;overflow-x:auto;margin:16px 0;">
-<pre style="color:#e6edf3;margin:0;white-space:pre-wrap;"><span style="color:#e3b341;">Timeline of what happens when you request an Uber:</span>
-
-T+0ms    Rider taps Request
-T+5ms    Demand service queries Redis GEORADIUS → 8 candidate drivers
-T+15ms   ETA service: compute Phase 1 ETA for each candidate
-         (driver_location → pickup) via CH routing + probe data + ML
-T+25ms   Ranking: sort candidates by (Phase 1 ETA × 1.0) +
-         (driver_rating × 0.2) + (vehicle_type_match × 0.3)
-T+30ms   Simultaneously offer trip to top 3 ranked drivers
-T+40ms   Compute Phase 2 ETA: pickup → destination (background)
-T+45ms   Return to rider app: "Driver d_42 is 4 min away, trip ≈ 22 min"
-
-<span style="color:#7d8590;">← entire flow under 50ms SLA</span>
-
-T+4s     Driver GPS update → Phase 1 ETA recalculated: "3 min away"
-T+8s     Another update: "3 min away" (driver slightly closer)
-T+12s    Driver accepts via app → confirmed
-
-While driver en route to pickup:
-  every 4s: Phase 1 ETA recalculates and pushes to rider app
-  dead reckoning between pings smooths out the display
-
-Driver arrives at pickup:
-  Phase 1 ETA = 0, switch to "Driver has arrived"
-  Phase 2 ETA displayed as "22 min to destination"
-
-During trip:
-  Phase 2 ETA updates every ~30s (less frequent, route is longer)
-  Significant traffic event → reroute + full Phase 2 recalculation
-  Arrival: "You have arrived" + rating prompt</pre>
+  <!-- TWO-PHASE TIMELINE VISUAL -->
+  <div style="border:3px solid var(--ink);border-radius:8px;overflow:hidden;box-shadow:6px 6px 0 var(--ink);margin:20px 0;">
+    <div style="background:var(--ink);color:var(--yellow);padding:12px 20px;font-family:'Bangers',cursive;font-size:1.1rem;letter-spacing:2px;border-bottom:3px solid var(--ink);display:flex;align-items:center;gap:12px;flex-wrap:wrap;">
+      ⏱ UBER REQUEST TIMELINE — &lt;50ms from tap to "driver found"
+      <button onclick="etaTimelinePlay()" style="margin-left:auto;font-family:'Bangers',cursive;font-size:.9rem;padding:5px 14px;background:var(--yellow);color:var(--ink);border:2px solid var(--ink);border-radius:4px;cursor:pointer;letter-spacing:1px;">▶ PLAY</button>
+    </div>
+    <div style="padding:20px;" id="eta-timeline-wrap">
+      <div id="eta-tl-items" style="display:flex;flex-direction:column;gap:8px;"></div>
+      <div style="margin-top:16px;padding-top:16px;border-top:2px dashed var(--ink);">
+        <div style="font-family:'Bangers',cursive;font-size:1rem;letter-spacing:2px;color:var(--green);margin-bottom:10px;">ONGOING UPDATES — After driver is matched</div>
+        <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px;">
+          <div style="border:2px solid var(--green);border-radius:6px;padding:10px;background:rgba(63,163,77,.07);">
+            <div style="font-family:'Bangers',cursive;font-size:.9rem;letter-spacing:1px;color:var(--green);margin-bottom:6px;">Every 4s (en route)</div>
+            <div style="font-family:'Space Mono',monospace;font-size:.7rem;line-height:1.6;">Phase 1 ETA recalculates<br>Driver GPS → new position<br>"4 min → 3 min → 2 min"<br>Dead reckoning smooths display</div>
+          </div>
+          <div style="border:2px solid var(--blue);border-radius:6px;padding:10px;background:rgba(29,111,184,.07);">
+            <div style="font-family:'Bangers',cursive;font-size:.9rem;letter-spacing:1px;color:var(--blue);margin-bottom:6px;">Every 30s (during trip)</div>
+            <div style="font-family:'Space Mono',monospace;font-size:.7rem;line-height:1.6;">Phase 2 ETA recalculates<br>Traffic changes en route<br>"22 min → 19 min" etc<br>Full reroute if deviated</div>
+          </div>
+          <div style="border:2px solid var(--orange);border-radius:6px;padding:10px;background:rgba(255,140,66,.07);">
+            <div style="font-family:'Bangers',cursive;font-size:.9rem;letter-spacing:1px;color:var(--orange);margin-bottom:6px;">On event (accident/reroute)</div>
+            <div style="font-family:'Space Mono',monospace;font-size:.7rem;line-height:1.6;">Full Phase 2 recalculation<br>New route via CH routing<br>New ETA pushed to app<br>"Traffic detected — rerouting"</div>
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
 </div>
 
@@ -1140,6 +1137,277 @@ During trip:
 
   window.addEventListener('resize', resize);
   update(8); // Start at 8am
+})();
+
+/* ========================================================
+   ROAD GRAPH VISUALIZER
+   ======================================================== */
+(function() {
+  var canvas = document.getElementById('roadgraph-canvas');
+  if (!canvas) return;
+  var ctx = canvas.getContext('2d');
+  var W = canvas.width, H = canvas.height;
+
+  // Sample road network: nodes = intersections
+  var nodes = [
+    {id:0, x:80,  y:60,  label:'A'},
+    {id:1, x:220, y:60,  label:'B'},
+    {id:2, x:360, y:60,  label:'C'},
+    {id:3, x:80,  y:160, label:'D'},
+    {id:4, x:220, y:160, label:'E'},
+    {id:5, x:360, y:160, label:'F'},
+    {id:6, x:80,  y:260, label:'G'},
+    {id:7, x:220, y:260, label:'H'},
+    {id:8, x:360, y:260, label:'I'},
+    {id:9, x:160, y:110, label:'J'},
+    {id:10,x:300, y:110, label:'K'},
+    {id:11,x:160, y:210, label:'L'},
+    {id:12,x:300, y:210, label:'M'},
+  ];
+
+  // Edges with road properties
+  var edges = [
+    {a:0,b:1, cls:'primary',   speed:60, dist:450, signals:true},
+    {a:1,b:2, cls:'primary',   speed:60, dist:450, signals:true},
+    {a:3,b:4, cls:'secondary', speed:50, dist:430, signals:false},
+    {a:4,b:5, cls:'secondary', speed:50, dist:430, signals:false},
+    {a:6,b:7, cls:'residential',speed:30,dist:410, signals:false},
+    {a:7,b:8, cls:'residential',speed:30,dist:410, signals:false},
+    {a:0,b:3, cls:'secondary', speed:50, dist:310, signals:false},
+    {a:3,b:6, cls:'residential',speed:30,dist:300, signals:false},
+    {a:1,b:4, cls:'primary',   speed:60, dist:305, signals:true},
+    {a:4,b:7, cls:'secondary', speed:50, dist:295, signals:false},
+    {a:2,b:5, cls:'secondary', speed:50, dist:308, signals:false},
+    {a:5,b:8, cls:'residential',speed:30,dist:298, signals:false},
+    {a:9,b:10,cls:'motorway',  speed:100,dist:420, signals:false},
+    {a:0,b:9, cls:'primary',   speed:60, dist:200, signals:false},
+    {a:9,b:4, cls:'primary',   speed:60, dist:190, signals:false},
+    {a:10,b:2,cls:'primary',   speed:60, dist:205, signals:false},
+    {a:11,b:12,cls:'secondary',speed:50, dist:415, signals:false},
+    {a:6,b:11, cls:'secondary',speed:50, dist:195, signals:false},
+    {a:11,b:7, cls:'residential',speed:30,dist:180,signals:false},
+    {a:12,b:8, cls:'secondary',speed:50, dist:200, signals:false},
+  ];
+
+  var ROAD_STYLES = {
+    motorway:    { color:'#e63946', width:6 },
+    primary:     { color:'#ff8c42', width:4 },
+    secondary:   { color:'#ffd23f', width:3 },
+    residential: { color:'#3fa34d', width:2 },
+  };
+
+  var hoveredEdge = null;
+
+  function edgeCost(e) {
+    return Math.round(e.dist / (e.speed / 3.6));
+  }
+
+  function draw() {
+    ctx.clearRect(0, 0, W, H);
+    ctx.fillStyle = '#f5f0e8';
+    ctx.fillRect(0, 0, W, H);
+
+    // Draw edges
+    edges.forEach(function(e, ei) {
+      var a = nodes[e.a], b = nodes[e.b];
+      var s = ROAD_STYLES[e.cls];
+      ctx.strokeStyle = ei === hoveredEdge ? '#8a4fff' : s.color;
+      ctx.lineWidth = ei === hoveredEdge ? s.width + 2 : s.width;
+      ctx.beginPath();
+      ctx.moveTo(a.x, a.y); ctx.lineTo(b.x, b.y);
+      ctx.stroke();
+
+      // Arrow for direction
+      var mx = (a.x + b.x) / 2, my = (a.y + b.y) / 2;
+      var angle = Math.atan2(b.y - a.y, b.x - a.x);
+      if (ei === hoveredEdge) {
+        ctx.fillStyle = '#8a4fff';
+      } else {
+        ctx.fillStyle = s.color;
+      }
+      ctx.save();
+      ctx.translate(mx, my);
+      ctx.rotate(angle);
+      ctx.beginPath();
+      ctx.moveTo(6, 0); ctx.lineTo(-4, -4); ctx.lineTo(-4, 4);
+      ctx.closePath(); ctx.fill();
+      ctx.restore();
+
+      // Cost label on hovered
+      if (ei === hoveredEdge) {
+        ctx.fillStyle = '#1a1410';
+        ctx.font = 'bold 11px Space Mono, monospace';
+        ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+        var lx = mx + 16 * Math.cos(angle + Math.PI/2);
+        var ly = my + 16 * Math.sin(angle + Math.PI/2);
+        ctx.fillText(edgeCost(e) + 's', lx, ly);
+      }
+    });
+
+    // Draw nodes
+    nodes.forEach(function(n) {
+      ctx.beginPath();
+      ctx.arc(n.x, n.y, 10, 0, Math.PI * 2);
+      ctx.fillStyle = '#1a1410';
+      ctx.fill();
+      ctx.strokeStyle = '#fff';
+      ctx.lineWidth = 2;
+      ctx.stroke();
+      ctx.fillStyle = '#fff';
+      ctx.font = 'bold 9px Space Mono, monospace';
+      ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+      ctx.fillText(n.label, n.x, n.y);
+    });
+  }
+
+  function getHoveredEdge(mx, my) {
+    var best = -1, bestDist = 16;
+    edges.forEach(function(e, ei) {
+      var a = nodes[e.a], b = nodes[e.b];
+      var dx = b.x - a.x, dy = b.y - a.y;
+      var len2 = dx*dx + dy*dy;
+      var t = Math.max(0, Math.min(1, ((mx-a.x)*dx + (my-a.y)*dy) / len2));
+      var px = a.x + t*dx, py = a.y + t*dy;
+      var d = Math.sqrt((mx-px)*(mx-px) + (my-py)*(my-py));
+      if (d < bestDist) { bestDist = d; best = ei; }
+    });
+    return best;
+  }
+
+  canvas.addEventListener('mousemove', function(ev) {
+    var r = canvas.getBoundingClientRect();
+    var sx = canvas.width / r.width;
+    var sy = canvas.height / r.height;
+    var mx = (ev.clientX - r.left) * sx;
+    var my = (ev.clientY - r.top) * sy;
+    var prev = hoveredEdge;
+    hoveredEdge = getHoveredEdge(mx, my);
+    if (hoveredEdge !== prev) {
+      draw();
+      var info = document.getElementById('rg-edge-info');
+      if (hoveredEdge >= 0) {
+        var e = edges[hoveredEdge];
+        var cost = edgeCost(e);
+        info.innerHTML = '<div style="font-family:Bangers,cursive;font-size:.9rem;letter-spacing:2px;margin-bottom:6px;color:var(--blue);">EDGE PROPERTIES</div>'
+          + '<div><b>Road class:</b> ' + e.cls + '</div>'
+          + '<div><b>Speed limit:</b> ' + e.speed + ' km/h</div>'
+          + '<div><b>Length:</b> ' + e.dist + ' m</div>'
+          + '<div><b>Base cost:</b> ' + cost + 's</div>'
+          + '<div><b>Signals:</b> ' + (e.signals ? 'Yes (+30s avg)' : 'No') + '</div>'
+          + '<div style="margin-top:8px;padding:6px 8px;background:rgba(138,79,255,.1);border-radius:4px;font-size:.65rem;">'
+          + 'Edge weight = dist / (speed/3.6)<br>= ' + e.dist + ' / ' + (e.speed/3.6).toFixed(1) + ' = ' + cost + 's<br>'
+          + (e.signals ? '+ traffic signal delay ~30s' : '') + '</div>';
+      } else {
+        info.innerHTML = '<div style="font-family:Bangers,cursive;font-size:.9rem;letter-spacing:2px;margin-bottom:6px;color:var(--blue);">EDGE PROPERTIES</div><div style="color:#666;">Hover over a road<br>segment to inspect<br>its properties</div>';
+      }
+    }
+  });
+
+  canvas.addEventListener('mouseleave', function() {
+    hoveredEdge = null; draw();
+  });
+
+  draw();
+})();
+
+/* ========================================================
+   ML FEATURE IMPORTANCE CHART
+   ======================================================== */
+(function() {
+  var features = [
+    { name:'routing_eta_s',        cat:'red',    pct:92, desc:'The CH+probe routing estimate. The ML model uses this as its strongest base signal and applies a multiplicative correction.', label:'Routing ETA (base)' },
+    { name:'avg_probe_speed',      cat:'teal',   pct:78, desc:'Average current speed of active probe vehicles along this route. Direct real-time signal for congestion.', label:'Avg probe speed' },
+    { name:'hour_of_day',          cat:'blue',   pct:74, desc:'Rush hour vs. off-peak is the single most predictable ETA factor. 8am Monday vs 2am Sunday = 3× ETA difference.', label:'Hour of day' },
+    { name:'rain_intensity',        cat:'teal',   pct:61, desc:'Rainfall in mm/hr. Even light rain causes 15% slowdown. Heavy rain (>10mm/hr) causes 35% slowdown and accident risk.', label:'Rain intensity' },
+    { name:'day_of_week',          cat:'blue',   pct:58, desc:'Friday evenings and Sunday afternoons have unique traffic patterns learned from historical data.', label:'Day of week' },
+    { name:'local_event_density',  cat:'teal',   pct:54, desc:'Score based on nearby concerts, sports games, protests. A stadium emptying adds 200% ETA within 1km.', label:'Event density' },
+    { name:'num_traffic_signals',  cat:'red',    pct:47, desc:'Every traffic signal adds an average 30s delay. A route with 12 signals vs 3 signals is 4.5 min different.', label:'Traffic signals' },
+    { name:'pickup_walk_time_s',   cat:'orange', pct:43, desc:'Historical average time from car arrival to rider entering vehicle at this pickup zone. Airport terminals average +3 min.', label:'Pickup walk time' },
+    { name:'crosses_bridge',       cat:'red',    pct:38, desc:'Bridges are bottlenecks with no alternative route when blocked. Bay Bridge can add 40 min during incidents.', label:'Crosses bridge' },
+    { name:'probe_confidence',     cat:'teal',   pct:35, desc:'Ratio of probe-covered segments to total route segments. Low coverage = rely more on historical data.', label:'Probe coverage' },
+    { name:'is_holiday',           cat:'blue',   pct:29, desc:'Holidays have unique patterns: Christmas morning is fast, New Year Eve midnight is gridlock.', label:'Is holiday' },
+    { name:'pickup_h3_cell',       cat:'orange', pct:24, desc:'Embedded H3 cell ID captures location-specific patterns like narrow streets, parking difficulty, building types.', label:'Pickup H3 zone' },
+  ];
+
+  var catColors = { red:'#e63946', blue:'#1d6fb8', teal:'#0d9488', orange:'#ff8c42' };
+
+  var container = document.getElementById('ml-feat-chart');
+  if (!container) return;
+
+  var html = '';
+  features.forEach(function(f, i) {
+    html += '<div class="ml-feat-row" data-idx="' + i + '" style="display:flex;align-items:center;gap:8px;margin-bottom:6px;cursor:pointer;" onmouseenter="mlFeatHover(' + i + ')" onclick="mlFeatHover(' + i + ')">'
+      + '<div style="width:130px;font-family:Space Mono,monospace;font-size:.65rem;color:#333;text-align:right;flex-shrink:0;">' + f.label + '</div>'
+      + '<div style="flex:1;height:20px;background:#e8e0d0;border-radius:3px;overflow:hidden;border:1px solid #ccc;">'
+      + '<div class="ml-bar" style="width:0%;height:100%;background:' + catColors[f.cat] + ';border-radius:3px;transition:width .6s ease ' + (i*0.05) + 's;" data-w="' + f.pct + '%"></div>'
+      + '</div>'
+      + '<div style="width:30px;font-family:Bangers,cursive;font-size:.85rem;color:' + catColors[f.cat] + ';flex-shrink:0;">' + f.pct + '</div>'
+      + '</div>';
+  });
+  container.innerHTML = html;
+
+  window.mlFeatHover = function(idx) {
+    var f = features[idx];
+    document.getElementById('ml-feat-detail').innerHTML =
+      '<div style="font-family:Bangers,cursive;font-size:1rem;letter-spacing:2px;margin-bottom:8px;color:' + catColors[f.cat] + ';">' + f.label.toUpperCase() + '</div>'
+      + '<div style="font-family:Space Mono,monospace;font-size:.7rem;line-height:1.7;">' + f.desc + '</div>'
+      + '<div style="margin-top:10px;padding:6px;background:rgba(0,0,0,.05);border-radius:4px;font-family:Bangers,cursive;font-size:.9rem;letter-spacing:1px;">Importance score: <span style="color:' + catColors[f.cat] + ';">' + f.pct + '</span></div>';
+  };
+
+  // Animate bars on load
+  setTimeout(function() {
+    document.querySelectorAll('.ml-bar').forEach(function(bar) {
+      bar.style.width = bar.dataset.w;
+    });
+  }, 200);
+})();
+
+/* ========================================================
+   ETA TIMELINE VISUALIZER
+   ======================================================== */
+(function() {
+  var tl = [
+    { t:'T+0ms',  color:'#ff6b9d', icon:'👆', title:'Rider taps Request', detail:'POST /request-trip → Demand Service' },
+    { t:'T+5ms',  color:'#e63946', icon:'⚡', title:'GEORADIUS → 8 candidates', detail:'Redis: GEORADIUS drivers:available:SF 2km ASC COUNT 8' },
+    { t:'T+15ms', color:'#ff8c42', icon:'⏱', title:'ETA for each candidate', detail:'CH routing + probe data + ML correction for 8 drivers in parallel' },
+    { t:'T+25ms', color:'#ffd23f', icon:'🏆', title:'Rank candidates', detail:'Score = ETA×1.0 + driver_rating×0.2 + vehicle_match×0.3' },
+    { t:'T+30ms', color:'#8a4fff', icon:'📨', title:'Offer to top 3 (simultaneous)', detail:'All 3 drivers notified at same time — first accept wins' },
+    { t:'T+40ms', color:'#1d6fb8', icon:'🗺', title:'Phase 2 ETA (background)', detail:'Pickup → Destination route computed via CH + probe + ML' },
+    { t:'T+45ms', color:'#3fa34d', icon:'✅', title:'App shows: "4 min away, trip ≈ 22 min"', detail:'Phase 1 ETA + Phase 2 ETA returned to rider UI' },
+  ];
+
+  var container = document.getElementById('eta-tl-items');
+  if (!container) return;
+
+  container.innerHTML = tl.map(function(step, i) {
+    return '<div class="eta-tl-item" style="display:grid;grid-template-columns:70px 40px 1fr;gap:0;opacity:0;transform:translateX(-20px);transition:all .4s ease ' + (i*0.12) + 's;" data-idx="' + i + '">'
+      + '<div style="font-family:Bangers,cursive;font-size:.95rem;letter-spacing:1px;color:' + step.color + ';padding:8px 4px 8px 0;text-align:right;">' + step.t + '</div>'
+      + '<div style="display:flex;flex-direction:column;align-items:center;">'
+      + '<div style="width:32px;height:32px;border-radius:50%;background:' + step.color + ';display:flex;align-items:center;justify-content:center;font-size:1rem;border:2px solid #1a1410;box-shadow:2px 2px 0 #1a1410;">' + step.icon + '</div>'
+      + (i < tl.length-1 ? '<div style="width:2px;flex:1;background:#ddd;margin:2px 0;"></div>' : '')
+      + '</div>'
+      + '<div style="padding:6px 0 6px 10px;">'
+      + '<div style="font-family:Bangers,cursive;font-size:1rem;letter-spacing:1px;">' + step.title + '</div>'
+      + '<div style="font-family:Space Mono,monospace;font-size:.68rem;color:#666;margin-top:2px;">' + step.detail + '</div>'
+      + '</div>'
+      + '</div>';
+  }).join('');
+
+  var played = false;
+  window.etaTimelinePlay = function() {
+    played = true;
+    document.querySelectorAll('.eta-tl-item').forEach(function(el, i) {
+      setTimeout(function() {
+        el.style.opacity = '1';
+        el.style.transform = 'translateX(0)';
+      }, i * 180);
+    });
+  };
+
+  // Auto-play after short delay
+  setTimeout(function() {
+    if (!played) window.etaTimelinePlay();
+  }, 600);
 })();
 </script>
 </body>
