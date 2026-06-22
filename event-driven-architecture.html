@@ -1,0 +1,1468 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Event-Driven Architecture — DevDunia</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bangers&family=Comic+Neue:ital,wght@0,400;0,700;1,400&family=Space+Mono:wght@400;700&display=swap">
+<script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
+<style>
+:root {
+  --ink: #1a1410; --paper: #fdf3e3; --paper2: #fbe9cc;
+  --red: #e63946; --blue: #1d6fb8; --yellow: #ffd23f;
+  --green: #3fa34d; --pink: #ff6b9d; --purple: #8a4fff;
+  --orange: #ff8c42; --teal: #0d9488;
+}
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  font-family: 'Comic Neue', cursive;
+  color: var(--ink);
+  background-color: var(--paper);
+  background-image: radial-gradient(var(--ink) 0.5px, transparent 0.6px);
+  background-size: 14px 14px;
+  background-attachment: fixed;
+  line-height: 1.65;
+}
+.page-wrap { position: relative; z-index: 1; max-width: 1240px; margin: 0 auto; padding: 20px 32px 60px; }
+.panel {
+  border: 4px solid var(--ink); border-radius: 6px;
+  box-shadow: 7px 7px 0 var(--ink);
+  background: var(--paper); padding: 28px 32px; margin-bottom: 32px;
+}
+h2 { font-family: 'Bangers', cursive; font-size: 2.4rem; letter-spacing: 2px; margin-bottom: 16px; line-height: 1; }
+h3 { font-family: 'Bangers', cursive; font-size: 1.6rem; letter-spacing: 1px; margin-bottom: 12px; }
+h4 { font-family: 'Bangers', cursive; font-size: 1.2rem; letter-spacing: 1px; margin-bottom: 8px; }
+p  { margin-bottom: 14px; font-size: 1.05rem; }
+p:last-child { margin-bottom: 0; }
+ul { padding-left: 22px; margin-bottom: 14px; }
+li { margin-bottom: 6px; font-size: 1rem; }
+code { font-family: 'Space Mono', monospace; font-size: .85em; background: var(--paper2); padding: 1px 5px; border-radius: 3px; }
+.section-head { display: flex; align-items: center; gap: 14px; margin-bottom: 22px; flex-wrap: wrap; }
+.section-num {
+  font-family: 'Bangers', cursive; font-size: 1.1rem; letter-spacing: 2px;
+  background: var(--teal); color: #fff; padding: 4px 14px;
+  border-radius: 4px; border: 2px solid var(--ink); box-shadow: 2px 2px 0 var(--ink);
+}
+.chip {
+  display: inline-block; font-family: 'Bangers', cursive; font-size: .85rem;
+  letter-spacing: 1.5px; padding: 3px 12px; border-radius: 4px;
+  border: 2px solid var(--ink); margin-right: 6px; margin-bottom: 6px; vertical-align: middle;
+}
+.chip-green  { background: var(--green);  color: #fff; }
+.chip-red    { background: var(--red);    color: #fff; }
+.chip-blue   { background: var(--blue);   color: #fff; }
+.chip-yellow { background: var(--yellow); color: var(--ink); }
+.chip-orange { background: var(--orange); color: #fff; }
+.chip-teal   { background: var(--teal);   color: #fff; }
+.chip-purple { background: var(--purple); color: #fff; }
+.hbox {
+  border: 3px solid var(--ink); border-radius: 5px; padding: 18px 22px;
+  margin: 16px 0; position: relative;
+}
+.hbox-label {
+  font-family: 'Bangers', cursive; font-size: .9rem; letter-spacing: 2px;
+  position: absolute; top: -14px; left: 16px; padding: 2px 12px;
+  border: 2px solid var(--ink); border-radius: 4px;
+}
+.hbox-orange { background: rgba(255,140,66,.1); border-color: var(--orange); }
+.hbox-orange .hbox-label { background: var(--orange); color: #fff; }
+.hbox-red { background: rgba(230,57,70,.08); border-color: var(--red); }
+.hbox-red .hbox-label { background: var(--red); color: #fff; }
+.hbox-green { background: rgba(63,163,77,.1); border-color: var(--green); }
+.hbox-green .hbox-label { background: var(--green); color: #fff; }
+.hbox-blue { background: rgba(29,111,184,.1); border-color: var(--blue); }
+.hbox-blue .hbox-label { background: var(--blue); color: #fff; }
+.hbox-yellow { background: rgba(255,210,63,.15); border-color: var(--yellow); }
+.hbox-yellow .hbox-label { background: var(--yellow); color: var(--ink); }
+.hbox-teal { background: rgba(13,148,136,.1); border-color: var(--teal); }
+.hbox-teal .hbox-label { background: var(--teal); color: #fff; }
+.hbox-purple { background: rgba(138,79,255,.1); border-color: var(--purple); }
+.hbox-purple .hbox-label { background: var(--purple); color: #fff; }
+.data-table { width: 100%; border-collapse: collapse; margin: 16px 0; font-size: .93rem; }
+.data-table th {
+  font-family: 'Bangers', cursive; font-size: 1rem; letter-spacing: 1px;
+  background: var(--ink); color: #fff; padding: 10px 14px; text-align: left; border: 2px solid var(--ink);
+}
+.data-table td { padding: 10px 14px; border: 2px solid var(--ink); vertical-align: top; }
+.data-table tr:nth-child(odd)  td { background: var(--paper2); }
+.data-table tr:nth-child(even) td { background: var(--paper); }
+.grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin: 16px 0; }
+.grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 16px; margin: 16px 0; }
+@media (max-width: 640px) { .grid-2, .grid-3 { grid-template-columns: 1fr; } }
+.card {
+  border: 3px solid var(--ink); border-radius: 5px;
+  box-shadow: 4px 4px 0 var(--ink); padding: 18px; background: var(--paper);
+}
+.card-head { font-family: 'Bangers', cursive; font-size: 1.1rem; letter-spacing: 1px; margin-bottom: 10px; padding-bottom: 8px; border-bottom: 2px solid var(--ink); }
+.sfx-row { display: flex; gap: 16px; flex-wrap: wrap; margin: 20px 0; }
+.sfx {
+  font-family: 'Bangers', cursive; font-size: 1.8rem; letter-spacing: 3px;
+  color: var(--ink); text-shadow: 3px 3px 0 var(--yellow); transform: rotate(-2deg); display: inline-block;
+}
+.sfx:nth-child(even) { transform: rotate(2deg); text-shadow: 3px 3px 0 var(--orange); }
+.chapter-divider { text-align: center; margin: 40px 0 28px; position: relative; }
+.chapter-divider::before { content: ''; position: absolute; top: 50%; left: 0; right: 0; height: 3px; background: var(--ink); }
+.chapter-divider span { position: relative; background: var(--paper); font-family: 'Bangers', cursive; font-size: 1rem; letter-spacing: 3px; padding: 0 16px; }
+/* Lucide icon helpers */
+.lc { width: 20px; height: 20px; vertical-align: middle; stroke-width: 2; display: inline-block; }
+.lc-lg { width: 32px; height: 32px; stroke-width: 2; }
+.lc svg { display: block; }
+
+/* ── FLOW CONNECTOR ───────────────────────────── */
+.flow-row { display: flex; align-items: center; gap: 0; flex-wrap: nowrap; overflow-x: auto; margin: 20px 0; }
+.flow-node {
+  border: 3px solid var(--ink); border-radius: 6px;
+  padding: 14px 16px; text-align: center; background: var(--paper);
+  font-family: 'Bangers', cursive; font-size: .9rem; letter-spacing: 1px;
+  box-shadow: 4px 4px 0 var(--ink); min-width: 110px; flex-shrink: 0;
+}
+.flow-arrow {
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0; padding: 0 6px;
+}
+.flow-arrow-bar {
+  width: 32px; height: 3px; background: var(--ink); position: relative;
+}
+.flow-arrow-bar::after {
+  content: ''; position: absolute; right: -1px; top: 50%;
+  transform: translateY(-50%);
+  border-top: 7px solid transparent;
+  border-bottom: 7px solid transparent;
+  border-left: 10px solid var(--ink);
+}
+
+/* ── VERTICAL CONNECTOR ───────────────────────── */
+.vcon { display: flex; justify-content: center; margin: 4px 0; }
+.vcon-bar {
+  width: 3px; height: 20px; background: var(--ink); position: relative;
+}
+.vcon-bar::after {
+  content: ''; position: absolute; bottom: -1px; left: 50%;
+  transform: translateX(-50%);
+  border-left: 6px solid transparent;
+  border-right: 6px solid transparent;
+  border-top: 9px solid var(--ink);
+}
+
+/* ── CANVAS WRAPPER ───────────────────────────── */
+.sim-wrap {
+  background: #0d1117; border: 4px solid var(--ink); border-radius: 8px;
+  box-shadow: 7px 7px 0 var(--ink); overflow: hidden; margin: 24px 0;
+}
+.sim-bar {
+  background: #161b22; border-bottom: 2px solid #30363d; padding: 10px 16px;
+  font-family: 'Bangers', cursive; font-size: 1rem; letter-spacing: 2px;
+  color: #e6edf3; display: flex; align-items: center; gap: 12px; flex-wrap: wrap;
+}
+.sim-body { padding: 16px 20px 20px; display: grid; grid-template-columns: 580px 1fr; gap: 20px; }
+@media(max-width:900px){ .sim-body { grid-template-columns: 1fr; } }
+#eda-canvas { display: block; border: 2px solid #30363d; border-radius: 4px; }
+.sim-side { display: flex; flex-direction: column; gap: 10px; }
+.sim-btn {
+  font-family: 'Bangers', cursive; font-size: 1rem; letter-spacing: 1.5px;
+  padding: 10px 14px; border: 2px solid #30363d; border-radius: 5px;
+  background: #161b22; color: #e6edf3; cursor: pointer; transition: background .15s;
+  text-align: center;
+}
+.sim-btn:hover { background: #21262d; border-color: #8b949e; }
+.sim-btn.active-sync  { border-color: var(--blue); color: var(--blue); }
+.sim-btn.active-event { border-color: var(--teal); color: var(--teal); }
+.sim-btn.fail-btn     { border-color: var(--red); color: var(--red); }
+.sim-info-box {
+  background: #161b22; border: 2px solid #30363d; border-radius: 6px;
+  padding: 12px; font-family: 'Space Mono', monospace; font-size: .8rem; color: #adbac7; line-height: 1.7;
+}
+</style>
+</head>
+<body>
+<div data-masthead></div>
+<div class="page-wrap">
+
+<div data-tool-hero
+  data-title="Event-Driven Architecture"
+  data-chapter="HOW-15"
+  data-category="How X Works"
+  data-icon="⚡"
+  data-desc="Events, commands, sagas, CQRS — why the world's most scalable systems are built around things that happened rather than things to do."
+  data-color="teal"
+  data-badges="EDA,EVENT SOURCING,CQRS,SYSTEM DESIGN"
+  data-badge-colors="teal,blue,purple,yellow">
+</div>
+
+<!-- ───────────────────────────────────────
+     SECTION 01: Events vs Commands vs Queries
+─────────────────────────────────────────── -->
+<div class="panel">
+  <div class="section-head">
+    <span class="section-num">01</span>
+    <h2>Events vs Commands vs Queries</h2>
+  </div>
+
+  <p>Before any EDA conversation, you need to speak the language precisely. There are three fundamental message types, and confusing them is the #1 source of poorly-designed event-driven systems. They are <strong>not</strong> interchangeable.</p>
+
+  <div class="grid-3" style="margin: 24px 0;">
+    <!-- EVENT -->
+    <div class="card" style="border-color: var(--teal);">
+      <div class="card-head" style="color: var(--teal); border-color: var(--teal); display: flex; align-items: center; gap: 8px;">
+        <i data-lucide="radio" class="lc"></i> Event
+      </div>
+      <div style="background: rgba(13,148,136,.1); border: 2px solid var(--teal); border-radius: 6px; padding: 14px; margin-bottom: 12px; text-align: center;">
+        <div style="font-family:'Bangers',cursive; font-size:1.3rem; letter-spacing:2px; color:var(--teal);">OrderPlaced</div>
+        <div style="font-family:'Space Mono',monospace; font-size:.72rem; color:#888; margin-top:4px;">past tense · immutable · broadcast</div>
+      </div>
+      <ul style="font-size:.95rem;">
+        <li><strong>Something that already happened</strong> — a fact, not a request</li>
+        <li>Named in <strong>past tense</strong>: <code>UserRegistered</code>, <code>PaymentFailed</code></li>
+        <li><strong>Immutable</strong> — you can't un-happen an event</li>
+        <li><strong>Broadcast</strong> — producer doesn't care who listens</li>
+        <li>Zero or many consumers react to it</li>
+      </ul>
+      <div style="margin-top: 10px; display: flex; gap: 6px; flex-wrap: wrap;">
+        <span class="chip chip-teal">UserRegistered</span>
+        <span class="chip chip-teal">PaymentFailed</span>
+        <span class="chip chip-teal">ItemShipped</span>
+      </div>
+    </div>
+
+    <!-- COMMAND -->
+    <div class="card" style="border-color: var(--blue);">
+      <div class="card-head" style="color: var(--blue); border-color: var(--blue); display: flex; align-items: center; gap: 8px;">
+        <i data-lucide="terminal" class="lc"></i> Command
+      </div>
+      <div style="background: rgba(29,111,184,.1); border: 2px solid var(--blue); border-radius: 6px; padding: 14px; margin-bottom: 12px; text-align: center;">
+        <div style="font-family:'Bangers',cursive; font-size:1.3rem; letter-spacing:2px; color:var(--blue);">PlaceOrder</div>
+        <div style="font-family:'Space Mono',monospace; font-size:.72rem; color:#888; margin-top:4px;">imperative · targeted · can be rejected</div>
+      </div>
+      <ul style="font-size:.95rem;">
+        <li><strong>An instruction to do something</strong> — a request for change</li>
+        <li>Named in <strong>imperative</strong>: <code>CreateUser</code>, <code>CancelOrder</code></li>
+        <li><strong>Can be rejected</strong> — validation may fail</li>
+        <li><strong>Targeted</strong> — sent to one specific handler</li>
+        <li>Exactly one consumer handles it</li>
+      </ul>
+      <div style="margin-top: 10px; display: flex; gap: 6px; flex-wrap: wrap;">
+        <span class="chip chip-blue">CreateUser</span>
+        <span class="chip chip-blue">CancelOrder</span>
+        <span class="chip chip-blue">SendEmail</span>
+      </div>
+    </div>
+
+    <!-- QUERY -->
+    <div class="card" style="border-color: var(--purple);">
+      <div class="card-head" style="color: var(--purple); border-color: var(--purple); display: flex; align-items: center; gap: 8px;">
+        <i data-lucide="search" class="lc"></i> Query
+      </div>
+      <div style="background: rgba(138,79,255,.1); border: 2px solid var(--purple); border-radius: 6px; padding: 14px; margin-bottom: 12px; text-align: center;">
+        <div style="font-family:'Bangers',cursive; font-size:1.3rem; letter-spacing:2px; color:var(--purple);">GetOrder</div>
+        <div style="font-family:'Space Mono',monospace; font-size:.72rem; color:#888; margin-top:4px;">question · no side effects · returns data</div>
+      </div>
+      <ul style="font-size:.95rem;">
+        <li><strong>A request for data</strong> — nothing changes</li>
+        <li>Named as a question: <code>GetUserProfile</code>, <code>ListOrders</code></li>
+        <li><strong>No side effects</strong> — safe to retry, cache, replicate</li>
+        <li><strong>Returns data</strong> — synchronous in nature</li>
+        <li>The R in CQRS</li>
+      </ul>
+      <div style="margin-top: 10px; display: flex; gap: 6px; flex-wrap: wrap;">
+        <span class="chip chip-purple">GetUserProfile</span>
+        <span class="chip chip-purple">ListOrders</span>
+        <span class="chip chip-purple">SearchProducts</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Comparison table -->
+  <table class="data-table">
+    <thead><tr>
+      <th><i data-lucide="layers" class="lc"></i> Dimension</th>
+      <th style="color:var(--teal);"><i data-lucide="radio" class="lc"></i> Event</th>
+      <th style="color:var(--blue);"><i data-lucide="terminal" class="lc"></i> Command</th>
+      <th style="color:var(--purple);"><i data-lucide="search" class="lc"></i> Query</th>
+    </tr></thead>
+    <tbody>
+      <tr>
+        <td><strong>Tense</strong></td>
+        <td>Past — <em>happened</em></td>
+        <td>Imperative — <em>do this</em></td>
+        <td>Question — <em>what is?</em></td>
+      </tr>
+      <tr>
+        <td><strong>Receivers</strong></td>
+        <td>Zero or many (broadcast)</td>
+        <td>Exactly one (targeted)</td>
+        <td>Exactly one (returns data)</td>
+      </tr>
+      <tr>
+        <td><strong>Can be rejected?</strong></td>
+        <td>No — it already happened</td>
+        <td>Yes — validation can fail</td>
+        <td>N/A — no state change</td>
+      </tr>
+      <tr>
+        <td><strong>Side effects</strong></td>
+        <td>Triggers reactions in consumers</td>
+        <td>Causes state change</td>
+        <td>None — read only</td>
+      </tr>
+      <tr>
+        <td><strong>Example</strong></td>
+        <td><code>UserRegistered</code></td>
+        <td><code>CreateUser</code></td>
+        <td><code>GetUserProfile</code></td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div class="hbox hbox-teal">
+    <div class="hbox-label">THE CQS FOUNDATION</div>
+    <p style="margin-top:12px;">Command-Query Separation (CQS) was coined by Bertrand Meyer: every method should either be a <strong>command</strong> (changes state, returns nothing) or a <strong>query</strong> (reads state, no changes). CQRS (Command Query <em>Responsibility Segregation</em>) scales this to the architectural level — separate models for writes and reads. Events are what connect those two worlds asynchronously.</p>
+  </div>
+
+  <div class="sfx-row">
+    <span class="sfx">PAST TENSE = EVENT</span>
+    <span class="sfx">IMPERATIVE = COMMAND</span>
+    <span class="sfx">QUESTION = QUERY</span>
+  </div>
+</div>
+
+<!-- ───────────────────────────────────────
+     SECTION 02: The Event-Driven Flow
+─────────────────────────────────────────── -->
+<div class="panel">
+  <div class="section-head">
+    <span class="section-num">02</span>
+    <h2>The Event-Driven Flow: Loose Coupling at Scale</h2>
+  </div>
+
+  <p>The core idea: instead of Service A calling Service B directly (tight coupling), A <strong>emits an event</strong> into a broker. B, C, D subscribe and react independently. A doesn't know or care who's listening. This single shift solves dozens of distributed systems problems at once.</p>
+
+  <!-- REQUEST-DRIVEN vs EDA side by side -->
+  <div class="grid-2" style="margin: 24px 0;">
+
+    <!-- Sync chain -->
+    <div style="border: 3px solid var(--red); border-radius: 8px; overflow: hidden; box-shadow: 5px 5px 0 var(--ink);">
+      <div style="background: var(--red); color: #fff; padding: 10px 16px; font-family: 'Bangers', cursive; font-size: 1rem; letter-spacing: 2px; display: flex; align-items: center; gap: 8px;">
+        <i data-lucide="link" style="width:18px;height:18px;"></i> Request-Driven (Tight Coupling)
+      </div>
+      <div style="padding: 20px; background: rgba(230,57,70,.05);">
+        <div style="display: flex; flex-direction: column; gap: 0; align-items: center;">
+          <!-- Client -->
+          <div style="border: 2px solid var(--ink); border-radius: 5px; padding: 8px 16px; background: var(--paper); font-family:'Bangers',cursive; font-size:.9rem; letter-spacing:1px; min-width:140px; text-align:center; box-shadow:3px 3px 0 var(--ink);">
+            <i data-lucide="monitor" class="lc"></i> Client
+          </div>
+          <div class="vcon"><div class="vcon-bar"></div></div>
+          <div style="border: 2px solid var(--blue); border-radius: 5px; padding: 8px 16px; background: rgba(29,111,184,.1); font-family:'Bangers',cursive; font-size:.9rem; letter-spacing:1px; min-width:140px; text-align:center; box-shadow:3px 3px 0 var(--ink);">
+            <i data-lucide="package" class="lc" style="color:var(--blue);"></i> Order Svc
+          </div>
+          <div class="vcon"><div class="vcon-bar"></div></div>
+          <div style="border: 2px solid var(--orange); border-radius: 5px; padding: 8px 16px; background: rgba(255,140,66,.1); font-family:'Bangers',cursive; font-size:.9rem; letter-spacing:1px; min-width:140px; text-align:center; box-shadow:3px 3px 0 var(--ink);">
+            <i data-lucide="archive" class="lc" style="color:var(--orange);"></i> Inventory Svc
+          </div>
+          <div class="vcon"><div class="vcon-bar"></div></div>
+          <div style="border: 2px solid var(--green); border-radius: 5px; padding: 8px 16px; background: rgba(63,163,77,.1); font-family:'Bangers',cursive; font-size:.9rem; letter-spacing:1px; min-width:140px; text-align:center; box-shadow:3px 3px 0 var(--ink);">
+            <i data-lucide="credit-card" class="lc" style="color:var(--green);"></i> Payment Svc
+          </div>
+          <div class="vcon"><div class="vcon-bar"></div></div>
+          <div style="border: 2px solid var(--purple); border-radius: 5px; padding: 8px 16px; background: rgba(138,79,255,.1); font-family:'Bangers',cursive; font-size:.9rem; letter-spacing:1px; min-width:140px; text-align:center; box-shadow:3px 3px 0 var(--ink);">
+            <i data-lucide="truck" class="lc" style="color:var(--purple);"></i> Shipping Svc
+          </div>
+        </div>
+        <div style="margin-top: 14px; background: rgba(230,57,70,.12); border: 2px solid var(--red); border-radius: 5px; padding: 10px 14px; font-family:'Space Mono',monospace; font-size:.78rem; color:var(--red); line-height:1.8;">
+          <i data-lucide="alert-triangle" style="width:14px;height:14px;vertical-align:middle;"></i> Sequential — each hop waits for the previous<br>
+          <i data-lucide="zap-off" style="width:14px;height:14px;vertical-align:middle;"></i> One service fails = whole chain fails<br>
+          <i data-lucide="clock" style="width:14px;height:14px;vertical-align:middle;"></i> Total latency = sum of all service latencies
+        </div>
+      </div>
+    </div>
+
+    <!-- EDA flow -->
+    <div style="border: 3px solid var(--teal); border-radius: 8px; overflow: hidden; box-shadow: 5px 5px 0 var(--ink);">
+      <div style="background: var(--teal); color: #fff; padding: 10px 16px; font-family: 'Bangers', cursive; font-size: 1rem; letter-spacing: 2px; display: flex; align-items: center; gap: 8px;">
+        <i data-lucide="radio" style="width:18px;height:18px;"></i> Event-Driven (Loose Coupling)
+      </div>
+      <div style="padding: 20px; background: rgba(13,148,136,.05);">
+        <!-- Producer row -->
+        <div style="display:flex; align-items:center; justify-content:center; gap:0; margin-bottom:6px;">
+          <div style="border: 2px solid var(--ink); border-radius: 5px; padding: 8px 12px; background: var(--paper); font-family:'Bangers',cursive; font-size:.85rem; letter-spacing:1px; text-align:center; box-shadow:3px 3px 0 var(--ink);">
+            <i data-lucide="monitor" class="lc"></i><br>Client
+          </div>
+          <div class="flow-arrow" style="padding: 0 6px;"><div class="flow-arrow-bar"></div></div>
+          <div style="border: 2px solid var(--blue); border-radius: 5px; padding: 8px 12px; background: rgba(29,111,184,.1); font-family:'Bangers',cursive; font-size:.85rem; letter-spacing:1px; text-align:center; box-shadow:3px 3px 0 var(--ink);">
+            <i data-lucide="package" class="lc" style="color:var(--blue);"></i><br>Order Svc<br><span style="font-family:'Space Mono',monospace;font-size:.65rem;color:#888;">emits event</span>
+          </div>
+          <div class="flow-arrow" style="padding: 0 6px;"><div class="flow-arrow-bar"></div></div>
+          <!-- Broker -->
+          <div style="border: 3px solid var(--teal); border-radius: 8px; padding: 10px 12px; background: rgba(13,148,136,.15); font-family:'Bangers',cursive; font-size:.85rem; letter-spacing:1px; text-align:center; box-shadow:3px 3px 0 var(--ink);">
+            <i data-lucide="server" class="lc" style="color:var(--teal);"></i><br>Kafka /<br>EventBridge<br><span style="font-family:'Space Mono',monospace;font-size:.62rem;color:#555;">OrderPlaced</span>
+          </div>
+        </div>
+        <!-- Fan-out to consumers -->
+        <div style="display:flex; justify-content:center;">
+          <div style="width:3px;height:20px;background:var(--ink);"></div>
+        </div>
+        <div style="position:relative; display:flex; justify-content:space-around; gap:8px;">
+          <div style="position:absolute;top:0;left:16%;right:16%;height:3px;background:var(--ink);"></div>
+          <!-- Inventory -->
+          <div style="display:flex;flex-direction:column;align-items:center;gap:0;padding-top:3px;">
+            <div style="width:3px;height:18px;background:var(--ink);position:relative;">
+              <div style="position:absolute;bottom:-1px;left:50%;transform:translateX(-50%);border-left:5px solid transparent;border-right:5px solid transparent;border-top:7px solid var(--ink);"></div>
+            </div>
+            <div style="border: 2px solid var(--orange); border-radius: 5px; padding: 8px 10px; background: rgba(255,140,66,.1); font-family:'Bangers',cursive; font-size:.8rem; letter-spacing:1px; text-align:center; box-shadow:3px 3px 0 var(--ink);">
+              <i data-lucide="archive" class="lc" style="color:var(--orange);"></i><br>Inventory
+            </div>
+          </div>
+          <!-- Payment -->
+          <div style="display:flex;flex-direction:column;align-items:center;gap:0;padding-top:3px;">
+            <div style="width:3px;height:18px;background:var(--ink);position:relative;">
+              <div style="position:absolute;bottom:-1px;left:50%;transform:translateX(-50%);border-left:5px solid transparent;border-right:5px solid transparent;border-top:7px solid var(--ink);"></div>
+            </div>
+            <div style="border: 2px solid var(--green); border-radius: 5px; padding: 8px 10px; background: rgba(63,163,77,.1); font-family:'Bangers',cursive; font-size:.8rem; letter-spacing:1px; text-align:center; box-shadow:3px 3px 0 var(--ink);">
+              <i data-lucide="credit-card" class="lc" style="color:var(--green);"></i><br>Payment
+            </div>
+          </div>
+          <!-- Shipping -->
+          <div style="display:flex;flex-direction:column;align-items:center;gap:0;padding-top:3px;">
+            <div style="width:3px;height:18px;background:var(--ink);position:relative;">
+              <div style="position:absolute;bottom:-1px;left:50%;transform:translateX(-50%);border-left:5px solid transparent;border-right:5px solid transparent;border-top:7px solid var(--ink);"></div>
+            </div>
+            <div style="border: 2px solid var(--purple); border-radius: 5px; padding: 8px 10px; background: rgba(138,79,255,.1); font-family:'Bangers',cursive; font-size:.8rem; letter-spacing:1px; text-align:center; box-shadow:3px 3px 0 var(--ink);">
+              <i data-lucide="truck" class="lc" style="color:var(--purple);"></i><br>Shipping
+            </div>
+          </div>
+        </div>
+        <div style="margin-top: 14px; background: rgba(13,148,136,.12); border: 2px solid var(--teal); border-radius: 5px; padding: 10px 14px; font-family:'Space Mono',monospace; font-size:.78rem; color:var(--teal); line-height:1.8;">
+          <i data-lucide="check-circle" style="width:14px;height:14px;vertical-align:middle;"></i> Parallel — consumers react independently<br>
+          <i data-lucide="shield" style="width:14px;height:14px;vertical-align:middle;"></i> One consumer fails = others still succeed<br>
+          <i data-lucide="zap" style="width:14px;height:14px;vertical-align:middle;"></i> Total latency = slowest consumer, not sum
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="grid-2">
+    <div class="hbox hbox-teal" style="margin:0;">
+      <div class="hbox-label">TEMPORAL DECOUPLING</div>
+      <p style="margin-top:12px;">The producer emits an event and <strong>does not wait</strong> for consumers to react. The event is persisted in the broker. Consumers process it at their own pace — even if they're down when the event is published, they'll catch up when they come back online. This breaks the "both services must be up simultaneously" constraint of synchronous calls.</p>
+    </div>
+    <div class="hbox hbox-blue" style="margin:0;">
+      <div class="hbox-label">LOCATION DECOUPLING</div>
+      <p style="margin-top:12px;">The producer has no idea who consumes its events. You can add a new consumer (analytics, audit log, notification service) without touching the producer at all. Removing a consumer requires zero changes to anything else. This is the key to independent deployability in microservices.</p>
+    </div>
+  </div>
+</div>
+
+<!-- ───────────────────────────────────────
+     SECTION 03: Event Sourcing
+─────────────────────────────────────────── -->
+<div class="panel">
+  <div class="section-head">
+    <span class="section-num">03</span>
+    <h2>Event Sourcing: The Log Is the Truth</h2>
+  </div>
+
+  <p>Traditional systems store <em>current state</em>: you update a row, the old value is gone. Event Sourcing inverts this: you store the <strong>sequence of events</strong> that led to the current state. Current state is derived by replaying events from the beginning. This is how your bank account works — the balance isn't stored directly; it's the sum of all deposits and withdrawals.</p>
+
+  <!-- Event log visual -->
+  <div style="border: 3px solid var(--ink); border-radius: 8px; overflow: hidden; box-shadow: 6px 6px 0 var(--ink); margin: 24px 0;">
+    <div style="background: var(--ink); color: #fff; padding: 10px 20px; font-family: 'Bangers', cursive; font-size: 1rem; letter-spacing: 2px;">
+      BANK ACCOUNT — EVENT LOG vs CURRENT STATE
+    </div>
+    <div style="padding: 20px; background: var(--paper); display: grid; grid-template-columns: 1fr auto 1fr; gap: 16px; align-items: start;">
+      <!-- Event log -->
+      <div>
+        <div style="font-family:'Bangers',cursive;font-size:1rem;letter-spacing:1px;color:var(--blue);margin-bottom:10px;display:flex;align-items:center;gap:6px;">
+          <i data-lucide="list" style="width:18px;height:18px;"></i> EVENT LOG (immutable append-only)
+        </div>
+        <div style="display:flex;flex-direction:column;gap:6px;">
+          <div style="border:2px solid var(--green);border-radius:5px;padding:8px 12px;background:rgba(63,163,77,.08);font-family:'Space Mono',monospace;font-size:.8rem;display:flex;justify-content:space-between;align-items:center;">
+            <span style="color:var(--green);font-family:'Bangers',cursive;font-size:.95rem;letter-spacing:1px;">AccountOpened</span>
+            <span style="color:var(--ink);">+$0</span>
+          </div>
+          <div style="border:2px solid var(--green);border-radius:5px;padding:8px 12px;background:rgba(63,163,77,.08);font-family:'Space Mono',monospace;font-size:.8rem;display:flex;justify-content:space-between;align-items:center;">
+            <span style="color:var(--green);font-family:'Bangers',cursive;font-size:.95rem;letter-spacing:1px;">MoneyDeposited</span>
+            <span style="color:var(--ink);">+$500</span>
+          </div>
+          <div style="border:2px solid var(--green);border-radius:5px;padding:8px 12px;background:rgba(63,163,77,.08);font-family:'Space Mono',monospace;font-size:.8rem;display:flex;justify-content:space-between;align-items:center;">
+            <span style="color:var(--green);font-family:'Bangers',cursive;font-size:.95rem;letter-spacing:1px;">MoneyDeposited</span>
+            <span style="color:var(--ink);">+$200</span>
+          </div>
+          <div style="border:2px solid var(--red);border-radius:5px;padding:8px 12px;background:rgba(230,57,70,.08);font-family:'Space Mono',monospace;font-size:.8rem;display:flex;justify-content:space-between;align-items:center;">
+            <span style="color:var(--red);font-family:'Bangers',cursive;font-size:.95rem;letter-spacing:1px;">MoneyWithdrawn</span>
+            <span style="color:var(--ink);">-$100</span>
+          </div>
+          <div style="border:2px solid var(--green);border-radius:5px;padding:8px 12px;background:rgba(63,163,77,.08);font-family:'Space Mono',monospace;font-size:.8rem;display:flex;justify-content:space-between;align-items:center;">
+            <span style="color:var(--green);font-family:'Bangers',cursive;font-size:.95rem;letter-spacing:1px;">MoneyDeposited</span>
+            <span style="color:var(--ink);">+$50</span>
+          </div>
+        </div>
+      </div>
+      <!-- Replay arrow -->
+      <div style="display:flex;align-items:center;padding-top:40px;">
+        <div style="display:flex;flex-direction:column;align-items:center;gap:8px;">
+          <div style="font-family:'Bangers',cursive;font-size:.8rem;letter-spacing:1px;color:var(--teal);white-space:nowrap;">REPLAY</div>
+          <div style="width:3px;height:60px;background:var(--teal);position:relative;">
+            <div style="position:absolute;bottom:-1px;left:50%;transform:translateX(-50%);border-left:6px solid transparent;border-right:6px solid transparent;border-top:9px solid var(--teal);"></div>
+          </div>
+          <div style="font-family:'Space Mono',monospace;font-size:.65rem;color:#888;white-space:nowrap;text-align:center;">reduce<br>all events</div>
+        </div>
+      </div>
+      <!-- Current state projection -->
+      <div>
+        <div style="font-family:'Bangers',cursive;font-size:1rem;letter-spacing:1px;color:var(--teal);margin-bottom:10px;display:flex;align-items:center;gap:6px;">
+          <i data-lucide="database" style="width:18px;height:18px;"></i> CURRENT STATE (projection)
+        </div>
+        <div style="border:3px solid var(--teal);border-radius:6px;padding:20px;background:rgba(13,148,136,.1);box-shadow:4px 4px 0 var(--ink);">
+          <div style="font-family:'Space Mono',monospace;font-size:.82rem;line-height:2;">
+            <div><span style="color:#888;">accountId:</span> <span style="color:var(--ink);">acc-123</span></div>
+            <div><span style="color:#888;">status:</span> <span style="color:var(--green);">OPEN</span></div>
+            <div><span style="color:#888;">balance:</span> <span style="color:var(--teal); font-size:1.1rem; font-family:'Bangers',cursive; letter-spacing:1px;">$650</span></div>
+            <div style="color:#888;font-size:.72rem;margin-top:6px;">(500 + 200 - 100 + 50)</div>
+          </div>
+          <div style="margin-top:12px;border-top:2px solid var(--teal);padding-top:10px;font-family:'Space Mono',monospace;font-size:.72rem;color:#888;line-height:1.8;">
+            + Full audit log built-in<br>
+            + Time-travel: balance at any date<br>
+            + Rebuild any projection anytime
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="grid-2">
+    <div class="hbox hbox-green" style="margin:0;">
+      <div class="hbox-label">BENEFITS</div>
+      <ul style="margin-top:12px;">
+        <li><strong>Full audit log:</strong> every change is recorded, who did what and when — free</li>
+        <li><strong>Time-travel queries:</strong> rebuild state at any point in history</li>
+        <li><strong>Rebuild projections:</strong> add a new read model by replaying all events</li>
+        <li><strong>Debug by replay:</strong> reproduce any bug by replaying events up to that point</li>
+        <li><strong>Event-driven naturally:</strong> events are the source of truth, not derived</li>
+      </ul>
+    </div>
+    <div class="hbox hbox-red" style="margin:0;">
+      <div class="hbox-label">DRAWBACKS</div>
+      <ul style="margin-top:12px;">
+        <li><strong>Schema evolution:</strong> old events must stay readable as schemas change</li>
+        <li><strong>Replay performance:</strong> millions of events = slow cold replay without snapshots</li>
+        <li><strong>Eventual consistency:</strong> projections may lag behind the event log</li>
+        <li><strong>Steep learning curve:</strong> CRUD instincts don't apply</li>
+        <li><strong>Snapshots needed:</strong> periodic state snapshots to avoid full replay</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="hbox hbox-yellow" style="margin-top:16px;">
+    <div class="hbox-label">SNAPSHOTS: THE PERFORMANCE FIX</div>
+    <p style="margin-top:12px;">After a million events, replaying from scratch takes too long. Solution: periodically save a snapshot of the current state alongside the event stream. On next load, start from the latest snapshot and replay only events <em>after</em> that snapshot. You get full history without O(n) startup cost. Most event sourcing libraries (Axon, EventStoreDB) handle snapshots automatically.</p>
+  </div>
+</div>
+
+<!-- ───────────────────────────────────────
+     SECTION 04: CQRS
+─────────────────────────────────────────── -->
+<div class="panel">
+  <div class="section-head">
+    <span class="section-num">04</span>
+    <h2>CQRS: Two Models, One Truth</h2>
+  </div>
+
+  <p>Command Query Responsibility Segregation means your <strong>write path</strong> and <strong>read path</strong> use completely separate models. The write model is optimized for consistency and business rules enforcement. The read model is optimized for fast query performance — pre-computed, denormalized, sometimes a completely different database technology.</p>
+
+  <!-- CQRS diagram -->
+  <div style="border: 3px solid var(--ink); border-radius: 8px; overflow: hidden; box-shadow: 6px 6px 0 var(--ink); margin: 24px 0;">
+    <div style="background: var(--ink); color: #fff; padding: 10px 20px; font-family: 'Bangers', cursive; font-size: 1rem; letter-spacing: 2px;">
+      CQRS ARCHITECTURE — WRITE SIDE vs READ SIDE
+    </div>
+    <div style="padding: 24px; background: var(--paper);">
+      <!-- Top: client sends command / query -->
+      <div style="display:flex; justify-content:center; gap:40px; margin-bottom:6px;">
+        <div style="border:2px solid var(--blue);border-radius:5px;padding:8px 18px;background:rgba(29,111,184,.1);font-family:'Bangers',cursive;font-size:.9rem;letter-spacing:1px;text-align:center;box-shadow:3px 3px 0 var(--ink);">
+          <i data-lucide="terminal" class="lc" style="color:var(--blue);"></i> Command<br><span style="font-family:'Space Mono',monospace;font-size:.65rem;color:#888;">PlaceOrder</span>
+        </div>
+        <div style="border:2px solid var(--ink);border-radius:5px;padding:8px 18px;background:var(--paper);font-family:'Bangers',cursive;font-size:.9rem;letter-spacing:1px;text-align:center;box-shadow:3px 3px 0 var(--ink);">
+          <i data-lucide="monitor" class="lc"></i> Client
+        </div>
+        <div style="border:2px solid var(--purple);border-radius:5px;padding:8px 18px;background:rgba(138,79,255,.1);font-family:'Bangers',cursive;font-size:.9rem;letter-spacing:1px;text-align:center;box-shadow:3px 3px 0 var(--ink);">
+          <i data-lucide="search" class="lc" style="color:var(--purple);"></i> Query<br><span style="font-family:'Space Mono',monospace;font-size:.65rem;color:#888;">GetOrderDashboard</span>
+        </div>
+      </div>
+      <!-- Arrows down -->
+      <div style="display:flex;justify-content:center;gap:40px;">
+        <div style="display:flex;flex-direction:column;align-items:center;"><div style="width:3px;height:22px;background:var(--blue);position:relative;"><div style="position:absolute;bottom:-1px;left:50%;transform:translateX(-50%);border-left:5px solid transparent;border-right:5px solid transparent;border-top:8px solid var(--blue);"></div></div></div>
+        <div style="width:3px;"></div>
+        <div style="display:flex;flex-direction:column;align-items:center;"><div style="width:3px;height:22px;background:var(--purple);position:relative;"><div style="position:absolute;bottom:-1px;left:50%;transform:translateX(-50%);border-left:5px solid transparent;border-right:5px solid transparent;border-top:8px solid var(--purple);"></div></div></div>
+      </div>
+      <!-- Two models -->
+      <div style="display:grid;grid-template-columns:1fr 120px 1fr;gap:16px;align-items:start;">
+        <!-- Write side -->
+        <div style="border:3px solid var(--blue);border-radius:8px;overflow:hidden;box-shadow:4px 4px 0 var(--ink);">
+          <div style="background:var(--blue);color:#fff;padding:8px 16px;font-family:'Bangers',cursive;font-size:.95rem;letter-spacing:1.5px;">WRITE SIDE</div>
+          <div style="padding:16px;">
+            <div style="border:2px solid var(--blue);border-radius:5px;padding:10px 12px;background:rgba(29,111,184,.08);margin-bottom:8px;font-family:'Bangers',cursive;font-size:.85rem;letter-spacing:1px;text-align:center;">
+              <i data-lucide="shield-check" class="lc" style="color:var(--blue);"></i> Command Handler<br><span style="font-family:'Space Mono',monospace;font-size:.65rem;color:#888;font-weight:400;">validates business rules</span>
+            </div>
+            <div class="vcon"><div class="vcon-bar"></div></div>
+            <div style="border:2px solid var(--blue);border-radius:5px;padding:10px 12px;background:rgba(29,111,184,.08);margin-bottom:8px;font-family:'Bangers',cursive;font-size:.85rem;letter-spacing:1px;text-align:center;">
+              <i data-lucide="book-open" class="lc" style="color:var(--blue);"></i> Domain Model<br><span style="font-family:'Space Mono',monospace;font-size:.65rem;color:#888;font-weight:400;">normalized, ACID</span>
+            </div>
+            <div class="vcon"><div class="vcon-bar"></div></div>
+            <div style="border:2px solid var(--ink);border-radius:5px;padding:10px 12px;background:var(--paper2);margin-bottom:8px;font-family:'Bangers',cursive;font-size:.85rem;letter-spacing:1px;text-align:center;">
+              <i data-lucide="database" class="lc"></i> Write DB<br><span style="font-family:'Space Mono',monospace;font-size:.65rem;color:#888;font-weight:400;">PostgreSQL · normalized</span>
+            </div>
+          </div>
+        </div>
+        <!-- Event bus in middle -->
+        <div style="display:flex;flex-direction:column;align-items:center;justify-content:center;padding-top:30px;gap:6px;">
+          <div style="font-family:'Bangers',cursive;font-size:.75rem;letter-spacing:1px;color:var(--teal);text-align:center;">ORDER<br>PLACED<br>EVENT</div>
+          <div style="border:2px solid var(--teal);border-radius:5px;padding:8px 10px;background:rgba(13,148,136,.15);font-family:'Bangers',cursive;font-size:.78rem;letter-spacing:1px;text-align:center;box-shadow:2px 2px 0 var(--ink);">
+            <i data-lucide="radio" style="width:22px;height:22px;color:var(--teal);display:block;margin:0 auto 4px;"></i>
+            Event<br>Bus
+          </div>
+          <div style="font-family:'Space Mono',monospace;font-size:.6rem;color:#888;text-align:center;">Kafka /<br>RabbitMQ</div>
+        </div>
+        <!-- Read side -->
+        <div style="border:3px solid var(--purple);border-radius:8px;overflow:hidden;box-shadow:4px 4px 0 var(--ink);">
+          <div style="background:var(--purple);color:#fff;padding:8px 16px;font-family:'Bangers',cursive;font-size:.95rem;letter-spacing:1.5px;">READ SIDE</div>
+          <div style="padding:16px;">
+            <div style="border:2px solid var(--purple);border-radius:5px;padding:10px 12px;background:rgba(138,79,255,.08);margin-bottom:8px;font-family:'Bangers',cursive;font-size:.85rem;letter-spacing:1px;text-align:center;">
+              <i data-lucide="eye" class="lc" style="color:var(--purple);"></i> Event Handler<br><span style="font-family:'Space Mono',monospace;font-size:.65rem;color:#888;font-weight:400;">updates projections</span>
+            </div>
+            <div class="vcon"><div class="vcon-bar"></div></div>
+            <div style="border:2px solid var(--purple);border-radius:5px;padding:10px 12px;background:rgba(138,79,255,.08);margin-bottom:8px;font-family:'Bangers',cursive;font-size:.85rem;letter-spacing:1px;text-align:center;">
+              <i data-lucide="layout" class="lc" style="color:var(--purple);"></i> Read Model<br><span style="font-family:'Space Mono',monospace;font-size:.65rem;color:#888;font-weight:400;">denormalized views</span>
+            </div>
+            <div class="vcon"><div class="vcon-bar"></div></div>
+            <div style="border:2px solid var(--ink);border-radius:5px;padding:10px 12px;background:var(--paper2);margin-bottom:8px;font-family:'Bangers',cursive;font-size:.85rem;letter-spacing:1px;text-align:center;">
+              <i data-lucide="database" class="lc"></i> Read DB<br><span style="font-family:'Space Mono',monospace;font-size:.65rem;color:#888;font-weight:400;">Redis / Elasticsearch</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="hbox hbox-teal">
+    <div class="hbox-label">E-COMMERCE CQRS EXAMPLE</div>
+    <div style="margin-top:14px;" class="grid-2">
+      <div>
+        <div style="font-family:'Bangers',cursive;font-size:.9rem;letter-spacing:1px;color:var(--blue);margin-bottom:8px;">WRITE DB (normalized)</div>
+        <div style="background:var(--paper2);border:2px solid var(--ink);border-radius:4px;padding:8px 12px;font-family:'Space Mono',monospace;font-size:.75rem;line-height:1.8;">
+          products(id, name, price)<br>
+          inventory(product_id, stock)<br>
+          reviews(id, product_id, rating)<br>
+          orders(id, user_id, total)
+        </div>
+        <div style="font-family:'Space Mono',monospace;font-size:.72rem;color:#888;margin-top:6px;">3NF, ACID transactions, optimized for writes</div>
+      </div>
+      <div>
+        <div style="font-family:'Bangers',cursive;font-size:.9rem;letter-spacing:1px;color:var(--purple);margin-bottom:8px;">READ DB (pre-computed aggregate)</div>
+        <div style="background:var(--paper2);border:2px solid var(--ink);border-radius:4px;padding:8px 12px;font-family:'Space Mono',monospace;font-size:.75rem;line-height:1.8;">
+          product_page {<br>
+          &nbsp;&nbsp;id, name, price,<br>
+          &nbsp;&nbsp;stock_count,<br>
+          &nbsp;&nbsp;avg_rating, review_count,<br>
+          &nbsp;&nbsp;related_products[]<br>
+          }
+        </div>
+        <div style="font-family:'Space Mono',monospace;font-size:.72rem;color:#888;margin-top:6px;">Denormalized, single doc, O(1) read</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ───────────────────────────────────────
+     SECTION 05: Choreography vs Orchestration
+─────────────────────────────────────────── -->
+<div class="panel">
+  <div class="section-head">
+    <span class="section-num">05</span>
+    <h2>Choreography vs Orchestration</h2>
+  </div>
+
+  <p>Two fundamental patterns for coordinating multiple services in an event-driven flow. Both work — but they make very different trade-offs in coupling, debuggability, and who owns the business logic.</p>
+
+  <div class="grid-2" style="margin: 24px 0;">
+
+    <!-- Choreography -->
+    <div style="border: 3px solid var(--teal); border-radius: 8px; overflow: hidden; box-shadow: 5px 5px 0 var(--ink);">
+      <div style="background: var(--teal); color: #fff; padding: 10px 16px; font-family: 'Bangers', cursive; font-size: 1rem; letter-spacing: 2px; display:flex;align-items:center;gap:8px;">
+        <i data-lucide="music" style="width:18px;height:18px;"></i> Choreography
+      </div>
+      <div style="padding: 20px; background: rgba(13,148,136,.05);">
+        <p style="font-size:.92rem;">Each service <strong>knows what to do</strong> when it sees a specific event. No central coordinator — services "dance" together by reacting to each other's events.</p>
+        <!-- Flow diagram -->
+        <div style="display:flex;flex-direction:column;gap:0;align-items:flex-start;margin:16px 0;">
+          <div style="border:2px solid var(--blue);border-radius:5px;padding:7px 12px;background:rgba(29,111,184,.1);font-family:'Bangers',cursive;font-size:.82rem;letter-spacing:1px;min-width:200px;">
+            <i data-lucide="package" class="lc" style="color:var(--blue);"></i> OrderSvc emits <code>OrderPlaced</code>
+          </div>
+          <div style="display:flex;gap:16px;padding-left:12px;">
+            <div style="width:3px;height:20px;background:var(--ink);position:relative;"><div style="position:absolute;bottom:-1px;left:50%;transform:translateX(-50%);border-left:5px solid transparent;border-right:5px solid transparent;border-top:7px solid var(--ink);"></div></div>
+          </div>
+          <div style="border:2px solid var(--orange);border-radius:5px;padding:7px 12px;background:rgba(255,140,66,.1);font-family:'Bangers',cursive;font-size:.82rem;letter-spacing:1px;min-width:200px;">
+            <i data-lucide="archive" class="lc" style="color:var(--orange);"></i> InventorySvc reacts → emits <code>StockReserved</code>
+          </div>
+          <div style="display:flex;gap:16px;padding-left:12px;">
+            <div style="width:3px;height:20px;background:var(--ink);position:relative;"><div style="position:absolute;bottom:-1px;left:50%;transform:translateX(-50%);border-left:5px solid transparent;border-right:5px solid transparent;border-top:7px solid var(--ink);"></div></div>
+          </div>
+          <div style="border:2px solid var(--green);border-radius:5px;padding:7px 12px;background:rgba(63,163,77,.1);font-family:'Bangers',cursive;font-size:.82rem;letter-spacing:1px;min-width:200px;">
+            <i data-lucide="credit-card" class="lc" style="color:var(--green);"></i> PaymentSvc reacts → emits <code>PaymentCharged</code>
+          </div>
+          <div style="display:flex;gap:16px;padding-left:12px;">
+            <div style="width:3px;height:20px;background:var(--ink);position:relative;"><div style="position:absolute;bottom:-1px;left:50%;transform:translateX(-50%);border-left:5px solid transparent;border-right:5px solid transparent;border-top:7px solid var(--ink);"></div></div>
+          </div>
+          <div style="border:2px solid var(--purple);border-radius:5px;padding:7px 12px;background:rgba(138,79,255,.1);font-family:'Bangers',cursive;font-size:.82rem;letter-spacing:1px;min-width:200px;">
+            <i data-lucide="truck" class="lc" style="color:var(--purple);"></i> ShippingSvc reacts → emits <code>Shipped</code>
+          </div>
+        </div>
+        <div style="background:rgba(13,148,136,.12);border:2px solid var(--teal);border-radius:5px;padding:10px 12px;font-family:'Space Mono',monospace;font-size:.75rem;color:#555;line-height:1.8;margin-top:8px;">
+          <span style="color:var(--green);">+ No central point of failure</span><br>
+          <span style="color:var(--green);">+ Services fully independent</span><br>
+          <span style="color:var(--red);">- Hard to trace: "what is the overall flow?"</span><br>
+          <span style="color:var(--red);">- Logic scattered across services</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Orchestration -->
+    <div style="border: 3px solid var(--blue); border-radius: 8px; overflow: hidden; box-shadow: 5px 5px 0 var(--ink);">
+      <div style="background: var(--blue); color: #fff; padding: 10px 16px; font-family: 'Bangers', cursive; font-size: 1rem; letter-spacing: 2px; display:flex;align-items:center;gap:8px;">
+        <i data-lucide="git-merge" style="width:18px;height:18px;"></i> Orchestration
+      </div>
+      <div style="padding: 20px; background: rgba(29,111,184,.05);">
+        <p style="font-size:.92rem;">A <strong>central saga orchestrator</strong> sends commands and waits for responses. It owns the business flow and tracks state explicitly.</p>
+        <!-- Orchestrator diagram -->
+        <div style="display:flex;flex-direction:column;align-items:center;gap:0;margin:16px 0;">
+          <div style="border:3px solid var(--blue);border-radius:6px;padding:10px 20px;background:rgba(29,111,184,.15);font-family:'Bangers',cursive;font-size:.9rem;letter-spacing:1px;text-align:center;box-shadow:3px 3px 0 var(--ink);">
+            <i data-lucide="git-merge" class="lc" style="color:var(--blue);"></i> OrderSaga Orchestrator
+          </div>
+          <!-- Branches to 3 services -->
+          <div style="position:relative;display:flex;justify-content:space-around;width:100%;margin-top:4px;">
+            <div style="position:absolute;top:0;left:10%;right:10%;height:3px;background:var(--ink);"></div>
+            <div style="display:flex;flex-direction:column;align-items:center;padding-top:3px;gap:0;">
+              <div style="width:3px;height:18px;background:var(--ink);position:relative;"><div style="position:absolute;bottom:-1px;left:50%;transform:translateX(-50%);border-left:5px solid transparent;border-right:5px solid transparent;border-top:7px solid var(--ink);"></div></div>
+              <div style="border:2px solid var(--orange);border-radius:5px;padding:7px 10px;background:rgba(255,140,66,.1);font-family:'Bangers',cursive;font-size:.78rem;letter-spacing:1px;text-align:center;box-shadow:2px 2px 0 var(--ink);">
+                <span style="color:var(--orange);">1.</span> ReserveInventory<br>
+                <i data-lucide="archive" class="lc" style="color:var(--orange);"></i>
+              </div>
+            </div>
+            <div style="display:flex;flex-direction:column;align-items:center;padding-top:3px;gap:0;">
+              <div style="width:3px;height:18px;background:var(--ink);position:relative;"><div style="position:absolute;bottom:-1px;left:50%;transform:translateX(-50%);border-left:5px solid transparent;border-right:5px solid transparent;border-top:7px solid var(--ink);"></div></div>
+              <div style="border:2px solid var(--green);border-radius:5px;padding:7px 10px;background:rgba(63,163,77,.1);font-family:'Bangers',cursive;font-size:.78rem;letter-spacing:1px;text-align:center;box-shadow:2px 2px 0 var(--ink);">
+                <span style="color:var(--green);">2.</span> ChargePayment<br>
+                <i data-lucide="credit-card" class="lc" style="color:var(--green);"></i>
+              </div>
+            </div>
+            <div style="display:flex;flex-direction:column;align-items:center;padding-top:3px;gap:0;">
+              <div style="width:3px;height:18px;background:var(--ink);position:relative;"><div style="position:absolute;bottom:-1px;left:50%;transform:translateX(-50%);border-left:5px solid transparent;border-right:5px solid transparent;border-top:7px solid var(--ink);"></div></div>
+              <div style="border:2px solid var(--purple);border-radius:5px;padding:7px 10px;background:rgba(138,79,255,.1);font-family:'Bangers',cursive;font-size:.78rem;letter-spacing:1px;text-align:center;box-shadow:2px 2px 0 var(--ink);">
+                <span style="color:var(--purple);">3.</span> ShipOrder<br>
+                <i data-lucide="truck" class="lc" style="color:var(--purple);"></i>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div style="background:rgba(29,111,184,.12);border:2px solid var(--blue);border-radius:5px;padding:10px 12px;font-family:'Space Mono',monospace;font-size:.75rem;color:#555;line-height:1.8;margin-top:8px;">
+          <span style="color:var(--green);">+ Easy to trace: one place, one flow</span><br>
+          <span style="color:var(--green);">+ Business logic is centralized</span><br>
+          <span style="color:var(--red);">- Orchestrator is a central point of failure</span><br>
+          <span style="color:var(--red);">- Services coupled to orchestrator protocol</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="hbox hbox-yellow">
+    <div class="hbox-label">WHEN TO CHOOSE WHICH</div>
+    <div style="margin-top:14px;" class="grid-2">
+      <div>
+        <div style="font-family:'Bangers',cursive;font-size:.95rem;letter-spacing:1px;color:var(--teal);margin-bottom:6px;">USE CHOREOGRAPHY WHEN</div>
+        <ul style="font-size:.9rem;">
+          <li>Services are truly independent domains</li>
+          <li>The flow is simple (2-3 steps)</li>
+          <li>Maximum decoupling is the priority</li>
+          <li>Teams own services end-to-end</li>
+        </ul>
+      </div>
+      <div>
+        <div style="font-family:'Bangers',cursive;font-size:.95rem;letter-spacing:1px;color:var(--blue);margin-bottom:6px;">USE ORCHESTRATION WHEN</div>
+        <ul style="font-size:.9rem;">
+          <li>Flow has complex conditional logic</li>
+          <li>You need clear visibility into saga state</li>
+          <li>Compensating transactions are complex</li>
+          <li>Central ops team manages the flow</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ───────────────────────────────────────
+     SECTION 06: The Saga Pattern
+─────────────────────────────────────────── -->
+<div class="panel">
+  <div class="section-head">
+    <span class="section-num">06</span>
+    <h2>The Saga Pattern: Distributed Transactions Without 2PC</h2>
+  </div>
+
+  <p>In microservices, you cannot do a traditional ACID transaction spanning multiple services — they have separate databases. The <strong>Saga pattern</strong> solves this: a saga is a sequence of local transactions, each publishing an event. If any step fails, <strong>compensating transactions</strong> undo the previous steps. Not a rollback — a forward correction.</p>
+
+  <!-- Happy path vs compensation -->
+  <div style="border: 3px solid var(--ink); border-radius: 8px; overflow: hidden; box-shadow: 6px 6px 0 var(--ink); margin: 24px 0;">
+    <div style="background: var(--ink); color: #fff; padding: 10px 20px; font-family: 'Bangers', cursive; font-size: 1rem; letter-spacing: 2px;">
+      BOOK TRIP SAGA — HAPPY PATH vs COMPENSATION
+    </div>
+    <div style="padding: 20px; background: var(--paper); display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+
+      <!-- Happy path -->
+      <div>
+        <div style="font-family:'Bangers',cursive;font-size:.95rem;letter-spacing:1px;color:var(--green);margin-bottom:12px;display:flex;align-items:center;gap:6px;">
+          <i data-lucide="check-circle" style="width:18px;height:18px;"></i> Happy Path
+        </div>
+        <div style="display:flex;flex-direction:column;gap:0;align-items:flex-start;">
+          <div style="border:2px solid var(--green);border-radius:5px;padding:8px 12px;background:rgba(63,163,77,.1);font-family:'Bangers',cursive;font-size:.82rem;letter-spacing:1px;width:100%;box-shadow:2px 2px 0 var(--ink);">
+            <i data-lucide="hotel" class="lc" style="color:var(--green);"></i> 1. Book Hotel
+            <div style="font-family:'Space Mono',monospace;font-size:.65rem;color:#888;font-weight:400;margin-top:3px;">emits HotelBooked</div>
+          </div>
+          <div class="vcon"><div class="vcon-bar"></div></div>
+          <div style="border:2px solid var(--green);border-radius:5px;padding:8px 12px;background:rgba(63,163,77,.1);font-family:'Bangers',cursive;font-size:.82rem;letter-spacing:1px;width:100%;box-shadow:2px 2px 0 var(--ink);">
+            <i data-lucide="plane" class="lc" style="color:var(--green);"></i> 2. Book Flight
+            <div style="font-family:'Space Mono',monospace;font-size:.65rem;color:#888;font-weight:400;margin-top:3px;">emits FlightBooked</div>
+          </div>
+          <div class="vcon"><div class="vcon-bar"></div></div>
+          <div style="border:2px solid var(--green);border-radius:5px;padding:8px 12px;background:rgba(63,163,77,.1);font-family:'Bangers',cursive;font-size:.82rem;letter-spacing:1px;width:100%;box-shadow:2px 2px 0 var(--ink);">
+            <i data-lucide="car" class="lc" style="color:var(--green);"></i> 3. Rent Car
+            <div style="font-family:'Space Mono',monospace;font-size:.65rem;color:#888;font-weight:400;margin-top:3px;">emits CarRented</div>
+          </div>
+          <div class="vcon"><div class="vcon-bar"></div></div>
+          <div style="border:2px solid var(--teal);border-radius:5px;padding:8px 12px;background:rgba(13,148,136,.15);font-family:'Bangers',cursive;font-size:.82rem;letter-spacing:1px;width:100%;box-shadow:2px 2px 0 var(--ink);text-align:center;">
+            <i data-lucide="check-circle" class="lc" style="color:var(--teal);"></i> TRIP CONFIRMED
+          </div>
+        </div>
+      </div>
+
+      <!-- Compensation path -->
+      <div>
+        <div style="font-family:'Bangers',cursive;font-size:.95rem;letter-spacing:1px;color:var(--red);margin-bottom:12px;display:flex;align-items:center;gap:6px;">
+          <i data-lucide="alert-circle" style="width:18px;height:18px;"></i> Compensation Path (Car Rental Fails)
+        </div>
+        <div style="display:flex;flex-direction:column;gap:0;align-items:flex-start;">
+          <div style="border:2px solid var(--green);border-radius:5px;padding:8px 12px;background:rgba(63,163,77,.1);font-family:'Bangers',cursive;font-size:.82rem;letter-spacing:1px;width:100%;box-shadow:2px 2px 0 var(--ink);">
+            <i data-lucide="hotel" class="lc" style="color:var(--green);"></i> 1. Book Hotel <span style="color:var(--green);font-size:.75rem;">SUCCESS</span>
+          </div>
+          <div class="vcon"><div class="vcon-bar"></div></div>
+          <div style="border:2px solid var(--green);border-radius:5px;padding:8px 12px;background:rgba(63,163,77,.1);font-family:'Bangers',cursive;font-size:.82rem;letter-spacing:1px;width:100%;box-shadow:2px 2px 0 var(--ink);">
+            <i data-lucide="plane" class="lc" style="color:var(--green);"></i> 2. Book Flight <span style="color:var(--green);font-size:.75rem;">SUCCESS</span>
+          </div>
+          <div class="vcon"><div class="vcon-bar"></div></div>
+          <div style="border:3px solid var(--red);border-radius:5px;padding:8px 12px;background:rgba(230,57,70,.12);font-family:'Bangers',cursive;font-size:.82rem;letter-spacing:1px;width:100%;box-shadow:2px 2px 0 var(--ink);">
+            <i data-lucide="car" class="lc" style="color:var(--red);"></i> 3. Rent Car <span style="color:var(--red);font-size:.75rem;">FAILED</span>
+            <div style="font-family:'Space Mono',monospace;font-size:.65rem;color:var(--red);margin-top:3px;">no cars available</div>
+          </div>
+          <!-- Compensation steps (going back up) -->
+          <div style="width:100%;border:2px dashed var(--red);border-radius:5px;padding:6px 10px;background:rgba(230,57,70,.05);margin-top:8px;margin-bottom:4px;">
+            <div style="font-family:'Bangers',cursive;font-size:.8rem;letter-spacing:1px;color:var(--red);margin-bottom:6px;display:flex;align-items:center;gap:4px;">
+              <i data-lucide="corner-left-up" style="width:14px;height:14px;"></i> COMPENSATING TRANSACTIONS
+            </div>
+            <div style="border:2px solid var(--orange);border-radius:4px;padding:6px 10px;background:rgba(255,140,66,.1);font-family:'Bangers',cursive;font-size:.78rem;letter-spacing:1px;margin-bottom:5px;">
+              <i data-lucide="x" class="lc" style="color:var(--orange);"></i> Cancel Flight Booking
+            </div>
+            <div style="border:2px solid var(--orange);border-radius:4px;padding:6px 10px;background:rgba(255,140,66,.1);font-family:'Bangers',cursive;font-size:.78rem;letter-spacing:1px;">
+              <i data-lucide="x" class="lc" style="color:var(--orange);"></i> Cancel Hotel Booking
+            </div>
+          </div>
+          <div style="border:2px solid var(--red);border-radius:5px;padding:8px 12px;background:rgba(230,57,70,.1);font-family:'Bangers',cursive;font-size:.82rem;letter-spacing:1px;width:100%;box-shadow:2px 2px 0 var(--ink);text-align:center;">
+            <i data-lucide="x-circle" class="lc" style="color:var(--red);"></i> TRIP CANCELLED — REFUNDS ISSUED
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="hbox hbox-orange">
+    <div class="hbox-label">KEY INSIGHT: COMPENSATING TRANSACTIONS</div>
+    <p style="margin-top:12px;">Compensating transactions are not rollbacks — you can't un-send an email or un-charge a card. They're <strong>semantic undos</strong>: a charge becomes a refund, a booking becomes a cancellation. Each compensating transaction is itself a local ACID transaction that emits its own event. The saga tracks which steps completed and which compensations are still pending. This is why saga state must be durable — if the saga coordinator crashes mid-compensation, it must resume correctly.</p>
+  </div>
+
+  <div class="sfx-row">
+    <span class="sfx">NO 2PC NEEDED</span>
+    <span class="sfx">COMPENSATE FORWARD</span>
+    <span class="sfx">EVENTUAL CONSISTENCY</span>
+  </div>
+</div>
+
+<!-- ───────────────────────────────────────
+     SECTION 07: Event Schema and Evolution
+─────────────────────────────────────────── -->
+<div class="panel">
+  <div class="section-head">
+    <span class="section-num">07</span>
+    <h2>Event Schema and Evolution</h2>
+  </div>
+
+  <p>Events are <strong>contracts between services</strong>. Once consumers depend on an event schema, changing it can break them silently in the worst possible way — at runtime, hours after deployment. Event schema management is the operational tax you pay for the decoupling benefits of EDA.</p>
+
+  <!-- Schema evolution visual -->
+  <div style="border: 3px solid var(--ink); border-radius: 8px; overflow: hidden; box-shadow: 6px 6px 0 var(--ink); margin: 24px 0;">
+    <div style="background: var(--ink); color: #fff; padding: 10px 20px; font-family: 'Bangers', cursive; font-size: 1rem; letter-spacing: 2px;">
+      EVENT SCHEMA EVOLUTION — OrderPlaced v1 to v2
+    </div>
+    <div style="padding: 20px; background: var(--paper); display: grid; grid-template-columns: 1fr auto 1fr; gap: 16px; align-items: start;">
+      <!-- v1 -->
+      <div>
+        <div style="font-family:'Bangers',cursive;font-size:.95rem;letter-spacing:1px;color:var(--blue);margin-bottom:10px;">VERSION 1</div>
+        <div style="border:2px solid var(--blue);border-radius:5px;padding:14px;background:rgba(29,111,184,.08);font-family:'Space Mono',monospace;font-size:.8rem;line-height:2;">
+          {<br>
+          &nbsp;&nbsp;"type": "OrderPlaced",<br>
+          &nbsp;&nbsp;"version": 1,<br>
+          &nbsp;&nbsp;"orderId": "ord-123",<br>
+          &nbsp;&nbsp;"userId": "usr-456",<br>
+          &nbsp;&nbsp;"total": 99.99<br>
+          }
+        </div>
+        <div style="margin-top:8px;font-family:'Space Mono',monospace;font-size:.72rem;color:#888;">Consumed by: InventorySvc<br>PaymentSvc · ShippingSvc</div>
+      </div>
+      <!-- Evolution arrows -->
+      <div style="display:flex;flex-direction:column;align-items:center;gap:10px;padding-top:40px;">
+        <div style="border:2px solid var(--green);border-radius:4px;padding:5px 10px;background:rgba(63,163,77,.1);font-family:'Bangers',cursive;font-size:.75rem;letter-spacing:1px;color:var(--green);text-align:center;">
+          <i data-lucide="plus-circle" style="width:14px;height:14px;vertical-align:middle;"></i> ADD FIELD<br><span style="color:var(--green);">SAFE</span>
+        </div>
+        <div style="border:2px solid var(--red);border-radius:4px;padding:5px 10px;background:rgba(230,57,70,.1);font-family:'Bangers',cursive;font-size:.75rem;letter-spacing:1px;color:var(--red);text-align:center;">
+          <i data-lucide="minus-circle" style="width:14px;height:14px;vertical-align:middle;"></i> REMOVE FIELD<br><span style="color:var(--red);">BREAKING</span>
+        </div>
+        <div style="border:2px solid var(--red);border-radius:4px;padding:5px 10px;background:rgba(230,57,70,.1);font-family:'Bangers',cursive;font-size:.75rem;letter-spacing:1px;color:var(--red);text-align:center;">
+          <i data-lucide="edit" style="width:14px;height:14px;vertical-align:middle;"></i> RENAME FIELD<br><span style="color:var(--red);">BREAKING</span>
+        </div>
+        <div style="border:2px solid var(--orange);border-radius:4px;padding:5px 10px;background:rgba(255,140,66,.1);font-family:'Bangers',cursive;font-size:.75rem;letter-spacing:1px;color:var(--orange);text-align:center;">
+          <i data-lucide="shuffle" style="width:14px;height:14px;vertical-align:middle;"></i> CHANGE TYPE<br><span style="color:var(--orange);">DANGEROUS</span>
+        </div>
+      </div>
+      <!-- v2 -->
+      <div>
+        <div style="font-family:'Bangers',cursive;font-size:.95rem;letter-spacing:1px;color:var(--teal);margin-bottom:10px;">VERSION 2 (safe additive)</div>
+        <div style="border:2px solid var(--teal);border-radius:5px;padding:14px;background:rgba(13,148,136,.08);font-family:'Space Mono',monospace;font-size:.8rem;line-height:2;">
+          {<br>
+          &nbsp;&nbsp;"type": "OrderPlaced",<br>
+          &nbsp;&nbsp;"version": 2,<br>
+          &nbsp;&nbsp;"orderId": "ord-123",<br>
+          &nbsp;&nbsp;"userId": "usr-456",<br>
+          &nbsp;&nbsp;"total": 99.99,<br>
+          &nbsp;&nbsp;<span style="color:var(--teal);">"currency": "USD",</span> <span style="color:#888;font-size:.7rem;">← new</span><br>
+          &nbsp;&nbsp;<span style="color:var(--teal);">"couponCode": null</span> <span style="color:#888;font-size:.7rem;">← new (nullable)</span><br>
+          }
+        </div>
+        <div style="margin-top:8px;font-family:'Space Mono',monospace;font-size:.72rem;color:var(--green);">Old consumers ignore new fields.<br>New consumers use them if present.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="grid-2">
+    <div class="hbox hbox-teal" style="margin:0;">
+      <div class="hbox-label">SCHEMA REGISTRY (CONFLUENT / AVRO)</div>
+      <p style="margin-top:12px;font-size:.9rem;">Instead of ad-hoc JSON, use <strong>Apache Avro</strong> with a Confluent Schema Registry. Producers register their schema; consumers fetch it by ID embedded in each message. The registry enforces compatibility rules: BACKWARD (new schema reads old data), FORWARD (old schema reads new data), or FULL (both directions). Schema violations are caught at publish time, not at consume time.</p>
+      <div style="margin-top:10px;background:var(--paper2);border:2px solid var(--ink);border-radius:4px;padding:8px 12px;font-family:'Space Mono',monospace;font-size:.75rem;line-height:1.8;">
+        Message bytes: [magic byte][schema id 4b][avro payload]<br>
+        Consumer fetches schema by id → deserializes safely
+      </div>
+    </div>
+    <div class="hbox hbox-purple" style="margin:0;">
+      <div class="hbox-label">CONSUMER-DRIVEN CONTRACT TESTING</div>
+      <p style="margin-top:12px;font-size:.9rem;">Each consumer publishes a <strong>Pact contract</strong> describing exactly which fields it needs from each event. The producer's CI pipeline runs all consumer contracts as tests — if a proposed schema change breaks a consumer's contract, the build fails <em>before</em> the change is deployed. The consumer, not the producer, defines the interface. This inverts the ownership model and prevents breaking changes from ever reaching production.</p>
+    </div>
+  </div>
+
+  <div class="hbox hbox-yellow" style="margin-top:16px;">
+    <div class="hbox-label">RULE OF THUMB: ADDITIVE ONLY</div>
+    <p style="margin-top:12px;">The golden rule of event evolution: <strong>only add optional fields, never remove or rename</strong>. When you must remove a field, run old and new schemas simultaneously during a migration period (dual-write), give all consumers time to update, then retire the old schema. Version your event types in the type name (<code>OrderPlaced.v2</code>) or in a version field so consumers can route accordingly. Treat event schemas like database columns — once deployed, they live forever.</p>
+  </div>
+</div>
+
+<!-- ───────────────────────────────────────
+     SECTION 08: Interactive Canvas
+─────────────────────────────────────────── -->
+<div class="panel">
+  <div class="section-head">
+    <span class="section-num">08</span>
+    <h2>Interactive: EDA Order Flow Simulator</h2>
+  </div>
+
+  <p>See the architectural difference in motion. Toggle between <strong>Sync Mode</strong> (REST chain) and <strong>Event Mode</strong> (event-driven). Watch latency accumulate sequentially vs. services running in parallel. Then hit "Simulate Failure" to see how each model handles a broken service.</p>
+
+  <div class="sim-wrap">
+    <div class="sim-bar">
+      <span style="width:12px;height:12px;border-radius:50%;background:#ff5f56;display:inline-block;"></span>
+      <span style="width:12px;height:12px;border-radius:50%;background:#ffbd2e;display:inline-block;"></span>
+      <span style="width:12px;height:12px;border-radius:50%;background:#27c93f;display:inline-block;"></span>
+      <span>ORDER FLOW SIMULATOR</span>
+      <span id="sim-mode-label" style="margin-left:auto;font-family:'Space Mono',monospace;font-size:.8rem;color:var(--blue);">SYNC MODE</span>
+    </div>
+    <div class="sim-body">
+      <canvas id="eda-canvas" width="580" height="380"></canvas>
+      <div class="sim-side">
+        <div style="font-family:'Bangers',cursive;font-size:.9rem;letter-spacing:2px;color:#7d8590;margin-bottom:4px;">MODE</div>
+        <button class="sim-btn active-sync" id="btn-sync" onclick="edaSetMode('sync',this)">
+          <i data-lucide="link" class="lc"></i> SYNC MODE
+        </button>
+        <button class="sim-btn" id="btn-event" onclick="edaSetMode('event',this)">
+          <i data-lucide="radio" class="lc"></i> EVENT MODE
+        </button>
+        <button class="sim-btn fail-btn" id="btn-fail" onclick="edaSimulateFail()">
+          <i data-lucide="zap-off" class="lc"></i> SIMULATE FAILURE
+        </button>
+        <button class="sim-btn" id="btn-reset" onclick="edaReset()">
+          <i data-lucide="rotate-ccw" class="lc"></i> RESET
+        </button>
+        <div class="sim-info-box" id="sim-info-box">
+          <div style="color:var(--blue);font-family:'Bangers',cursive;font-size:.9rem;letter-spacing:1px;margin-bottom:4px;">SYNC MODE</div>
+          Client calls OrderSvc, which calls Inventory, Payment, then Shipping — each hop waits for the previous. Total time = sum of all hops. One failure kills everything.
+        </div>
+        <div class="sim-info-box" id="sim-latency-box">
+          <div style="color:#7d8590;font-family:'Bangers',cursive;font-size:.85rem;letter-spacing:1px;margin-bottom:4px;">LATENCY</div>
+          <div id="sim-latency-val" style="font-family:'Space Mono',monospace;font-size:1.1rem;color:#e6edf3;">— ms</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="grid-2" style="margin-top:16px;">
+    <div class="hbox hbox-red" style="margin:0;">
+      <div class="hbox-label">SYNC MODE FAILURE CHARACTERISTICS</div>
+      <ul style="margin-top:12px;font-size:.9rem;">
+        <li>One service down = client gets an error</li>
+        <li>Partial completion is dangerous (order placed but not paid)</li>
+        <li>Upstream services are blocked waiting for a dead downstream</li>
+        <li>Retry storms: every retry re-executes all steps</li>
+        <li>No work is saved if the chain breaks mid-way</li>
+      </ul>
+    </div>
+    <div class="hbox hbox-teal" style="margin:0;">
+      <div class="hbox-label">EVENT MODE FAILURE CHARACTERISTICS</div>
+      <ul style="margin-top:12px;font-size:.9rem;">
+        <li>One consumer fails = event stays in broker, retried later</li>
+        <li>Other consumers keep processing — partial success is fine</li>
+        <li>No cascade: producer never knew about consumer failure</li>
+        <li>Dead letter queue catches poison messages after N retries</li>
+        <li>Service restarts catch up by replaying from broker offset</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<div class="chapter-divider"><span>END OF HOW-15</span></div>
+</div><!-- /page-wrap -->
+
+<script src="hero-banner.js"></script>
+<script src="masthead.js"></script>
+<script src="author-card.js"></script>
+
+<script>
+/* ================================================================
+   SECTION 08: EDA Order Flow Simulator
+   ================================================================ */
+(function() {
+  var canvas = document.getElementById('eda-canvas');
+  if (!canvas) return;
+  var ctx = canvas.getContext('2d');
+  var W = 580, H = 380;
+
+  /* ── state ─────────────────────────────────────────────────── */
+  var mode = 'sync';     // 'sync' | 'event'
+  var failMode = false;
+  var simRunning = false;
+  var simPhase = 0;      // which hop is active (sync) or tick counter
+  var simTick = 0;
+  var totalLatencyMs = 0;
+  var displayedLatency = 0;
+  var failedService = -1; // index of failed service (-1 = none)
+
+  /* ── layout constants ───────────────────────────────────────── */
+  var CLIENT_X = 52, CLIENT_Y = 190;
+  var ORDER_X  = 168, ORDER_Y  = 190;
+  var BROKER_X = 290, BROKER_Y = 190;
+
+  var SERVICES = [
+    { name: 'Inventory', x: 430, y: 90,  color: '#ff8c42' },
+    { name: 'Payment',   x: 430, y: 190, color: '#3fa34d' },
+    { name: 'Shipping',  x: 430, y: 290, color: '#8a4fff' },
+  ];
+
+  var SYNC_HOPS = [
+    { from: {x: CLIENT_X, y: CLIENT_Y}, to: {x: ORDER_X,  y: ORDER_Y},  label: 'POST /orders',         latency: 40  },
+    { from: {x: ORDER_X,  y: ORDER_Y},  to: SERVICES[0],                 label: 'checkInventory()',     latency: 85  },
+    { from: SERVICES[0],               to: SERVICES[1],                  label: 'chargePayment()',      latency: 120 },
+    { from: SERVICES[1],               to: SERVICES[2],                  label: 'scheduleShipping()',   latency: 70  },
+    { from: SERVICES[2],               to: {x: CLIENT_X, y: CLIENT_Y},  label: '200 OK',               latency: 40  },
+  ];
+
+  /* ── animated dots ──────────────────────────────────────────── */
+  var dots = [];
+  var pulses = []; // ripple effects on nodes
+
+  function addDot(fx, fy, tx, ty, color, speed, label) {
+    dots.push({ fx:fx, fy:fy, tx:tx, ty:ty, x:fx, y:fy, color:color, speed:speed||0.018, label:label||'', progress:0, done:false });
+  }
+
+  function addPulse(x, y, color) {
+    pulses.push({ x:x, y:y, color:color, r:10, maxR:34, age:0 });
+  }
+
+  /* ── draw helpers ───────────────────────────────────────────── */
+  function roundRect(cx, cy, w, h, r, fill, stroke, lw) {
+    ctx.beginPath();
+    ctx.roundRect(cx - w/2, cy - h/2, w, h, r||5);
+    if (fill) { ctx.fillStyle = fill; ctx.fill(); }
+    if (stroke) { ctx.strokeStyle = stroke; ctx.lineWidth = lw||2; ctx.stroke(); }
+  }
+
+  function drawNode(x, y, label, sublabel, fillColor, strokeColor, w, h) {
+    w = w || 80; h = h || 44;
+    roundRect(x, y, w, h, 5, fillColor, strokeColor, 2);
+    ctx.fillStyle = '#e6edf3';
+    ctx.font = '700 11px Bangers, cursive';
+    ctx.textAlign = 'center';
+    ctx.fillText(label, x, y + 4);
+    if (sublabel) {
+      ctx.fillStyle = '#7d8590';
+      ctx.font = '9px Space Mono, monospace';
+      ctx.fillText(sublabel, x, y + 15);
+    }
+  }
+
+  function drawArrow(x1, y1, x2, y2, color, dashed) {
+    ctx.save();
+    ctx.strokeStyle = color || 'rgba(255,255,255,0.15)';
+    ctx.lineWidth = 1.5;
+    if (dashed) ctx.setLineDash([4,4]);
+    ctx.beginPath();
+    ctx.moveTo(x1, y1);
+    ctx.lineTo(x2, y2);
+    ctx.stroke();
+    ctx.setLineDash([]);
+    // arrowhead
+    var angle = Math.atan2(y2 - y1, x2 - x1);
+    ctx.fillStyle = color || 'rgba(255,255,255,0.15)';
+    ctx.beginPath();
+    ctx.moveTo(x2, y2);
+    ctx.lineTo(x2 - 10*Math.cos(angle-0.3), y2 - 10*Math.sin(angle-0.3));
+    ctx.lineTo(x2 - 10*Math.cos(angle+0.3), y2 - 10*Math.sin(angle+0.3));
+    ctx.closePath();
+    ctx.fill();
+    ctx.restore();
+  }
+
+  function drawScene() {
+    /* background */
+    ctx.fillStyle = '#0d1117';
+    ctx.fillRect(0, 0, W, H);
+
+    /* mode label */
+    ctx.fillStyle = mode === 'sync' ? '#1d6fb8' : '#0d9488';
+    ctx.font = '700 13px Bangers, cursive';
+    ctx.textAlign = 'left';
+    ctx.letterSpacing = '2px';
+    ctx.fillText(mode === 'sync' ? 'SYNC MODE' : 'EVENT MODE', 12, 22);
+    ctx.letterSpacing = '0px';
+
+    if (mode === 'sync') {
+      drawSyncLayout();
+    } else {
+      drawEventLayout();
+    }
+
+    /* draw pulses */
+    pulses.forEach(function(p) {
+      p.age++;
+      p.r += (p.maxR - p.r) * 0.15;
+      var alpha = Math.max(0, 1 - p.age / 30);
+      ctx.beginPath();
+      ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+      var hex = p.color.replace('#','');
+      var r = parseInt(hex.slice(0,2),16), g = parseInt(hex.slice(2,4),16), b = parseInt(hex.slice(4,6),16);
+      ctx.strokeStyle = 'rgba('+r+','+g+','+b+','+alpha+')';
+      ctx.lineWidth = 2;
+      ctx.stroke();
+    });
+    pulses = pulses.filter(function(p){ return p.age < 30; });
+
+    /* draw dots */
+    dots.forEach(function(d) {
+      if (d.done) return;
+      d.progress = Math.min(1, d.progress + d.speed);
+      d.x = d.fx + (d.tx - d.fx) * d.progress;
+      d.y = d.fy + (d.ty - d.fy) * d.progress;
+      ctx.beginPath(); ctx.arc(d.x, d.y, 5, 0, Math.PI * 2);
+      ctx.fillStyle = d.color; ctx.fill();
+      ctx.strokeStyle = 'rgba(255,255,255,.35)'; ctx.lineWidth = 1; ctx.stroke();
+      if (d.progress >= 1) {
+        d.done = true;
+        addPulse(d.tx, d.ty, d.color);
+      }
+    });
+    dots = dots.filter(function(d){ return !d.done || d.progress < 1; });
+  }
+
+  function drawSyncLayout() {
+    var phaseColors = ['#e6edf3','#e6edf3','#e6edf3','#e6edf3'];
+
+    // Static guide lines (dim)
+    drawArrow(CLIENT_X+42, CLIENT_Y, ORDER_X-42, ORDER_Y, 'rgba(255,255,255,0.07)');
+    drawArrow(ORDER_X+42,  ORDER_Y,  SERVICES[0].x-42, SERVICES[0].y, 'rgba(255,255,255,0.07)');
+    drawArrow(SERVICES[0].x+42, SERVICES[0].y, SERVICES[1].x-42, SERVICES[1].y, 'rgba(255,255,255,0.07)', true);
+    drawArrow(SERVICES[1].x+42, SERVICES[1].y, SERVICES[2].x-42, SERVICES[2].y, 'rgba(255,255,255,0.07)', true);
+
+    // Client
+    drawNode(CLIENT_X, CLIENT_Y, 'Client', 'browser', '#161b22', '#e6edf3', 72, 44);
+
+    // OrderSvc
+    var orderBorder = simPhase === 0 ? '#1d6fb8' : '#30363d';
+    drawNode(ORDER_X, ORDER_Y, 'OrderSvc', ':8000', '#161b22', orderBorder, 80, 44);
+
+    // Services
+    SERVICES.forEach(function(s, i) {
+      var isFailed = failMode && failedService === i;
+      var isActive = simPhase === i+1 || simPhase === i+2;
+      var border = isFailed ? '#e63946' : (isActive ? s.color : '#30363d');
+      var bg = isFailed ? 'rgba(230,57,70,.18)' : '#161b22';
+      drawNode(s.x, s.y, s.name, isFailed ? 'FAILED' : 'svc', bg, border, 88, 44);
+    });
+
+    // Latency labels on hops
+    if (simPhase > 0) {
+      var labels = ['40ms','85ms','120ms','70ms'];
+      ctx.fillStyle = '#7d8590';
+      ctx.font = '9px Space Mono, monospace';
+      ctx.textAlign = 'center';
+      ctx.fillText('40ms', (CLIENT_X+ORDER_X)/2, CLIENT_Y-10);
+      if (simPhase >= 2) ctx.fillText('85ms',  (ORDER_X+SERVICES[0].x)/2, (ORDER_Y+SERVICES[0].y)/2 - 8);
+      if (simPhase >= 3) ctx.fillText('120ms', (SERVICES[0].x+SERVICES[1].x)/2+10, (SERVICES[0].y+SERVICES[1].y)/2 - 8);
+      if (simPhase >= 4) ctx.fillText('70ms',  (SERVICES[1].x+SERVICES[2].x)/2+10, (SERVICES[1].y+SERVICES[2].y)/2 - 8);
+    }
+
+    // Total latency indicator
+    if (simPhase >= 4 && !failMode) {
+      ctx.fillStyle = '#3fa34d';
+      ctx.font = '700 12px Bangers, cursive';
+      ctx.textAlign = 'center';
+      ctx.fillText('TOTAL: 355ms', W/2, H - 14);
+    }
+    if (failMode) {
+      ctx.fillStyle = '#e63946';
+      ctx.font = '700 12px Bangers, cursive';
+      ctx.textAlign = 'center';
+      ctx.fillText('CHAIN BROKEN — CLIENT GETS 500 ERROR', W/2, H - 14);
+    }
+  }
+
+  function drawEventLayout() {
+    // Guide lines to broker
+    drawArrow(CLIENT_X+42, CLIENT_Y, ORDER_X-42, ORDER_Y, 'rgba(255,255,255,0.07)');
+    drawArrow(ORDER_X+42, ORDER_Y, BROKER_X-38, BROKER_Y, 'rgba(255,255,255,0.07)');
+    // Broker to services
+    SERVICES.forEach(function(s) {
+      drawArrow(BROKER_X+38, BROKER_Y, s.x-44, s.y, 'rgba(255,255,255,0.07)', true);
+    });
+
+    // Client
+    drawNode(CLIENT_X, CLIENT_Y, 'Client', 'browser', '#161b22', '#e6edf3', 72, 44);
+
+    // OrderSvc
+    drawNode(ORDER_X, ORDER_Y, 'OrderSvc', 'emits event', '#161b22', simPhase===1?'#0d9488':'#30363d', 80, 44);
+
+    // Broker
+    drawNode(BROKER_X, BROKER_Y, 'Kafka', 'OrderPlaced', 'rgba(13,148,136,.2)', '#0d9488', 76, 44);
+
+    // Services (parallel consumers)
+    SERVICES.forEach(function(s, i) {
+      var isFailed = failMode && failedService === i;
+      var border = isFailed ? '#e63946' : (simPhase >= 3 ? s.color : '#30363d');
+      var bg = isFailed ? 'rgba(230,57,70,.18)' : '#161b22';
+      var sub = isFailed ? 'FAILED' : (simPhase >= 3 ? 'processing' : 'listening');
+      drawNode(s.x, s.y, s.name, sub, bg, border, 88, 44);
+    });
+
+    // Parallel label
+    if (simPhase >= 3) {
+      ctx.fillStyle = '#0d9488';
+      ctx.font = '700 10px Bangers, cursive';
+      ctx.textAlign = 'center';
+      ctx.fillText('ALL PARALLEL', BROKER_X + 90, BROKER_Y - 22);
+    }
+
+    // Latency
+    if (simPhase >= 3 && !failMode) {
+      ctx.fillStyle = '#3fa34d';
+      ctx.font = '700 12px Bangers, cursive';
+      ctx.textAlign = 'center';
+      ctx.fillText('TOTAL: ~120ms (parallel)', W/2, H - 14);
+    }
+    if (failMode) {
+      ctx.fillStyle = '#ffbd2e';
+      ctx.font = '700 12px Bangers, cursive';
+      ctx.textAlign = 'center';
+      ctx.fillText('ONE SERVICE FAILED — OTHERS SUCCEED', W/2, H - 14);
+    }
+  }
+
+  /* ── simulation steps ───────────────────────────────────────── */
+  function runSyncStep() {
+    if (simPhase === 0) {
+      addDot(CLIENT_X+36, CLIENT_Y, ORDER_X-40, ORDER_Y, '#1d6fb8', 0.025, 'PlaceOrder');
+      totalLatencyMs += 40;
+      simPhase = 1;
+    } else if (simPhase === 1) {
+      if (failMode && failedService === 0) { endFail(); return; }
+      addDot(ORDER_X+40, ORDER_Y, SERVICES[0].x-44, SERVICES[0].y, SERVICES[0].color, 0.02);
+      totalLatencyMs += 85;
+      simPhase = 2;
+    } else if (simPhase === 2) {
+      if (failMode && failedService === 1) { endFail(); return; }
+      addDot(SERVICES[0].x+44, SERVICES[0].y, SERVICES[1].x-44, SERVICES[1].y, SERVICES[1].color, 0.016);
+      totalLatencyMs += 120;
+      simPhase = 3;
+    } else if (simPhase === 3) {
+      if (failMode && failedService === 2) { endFail(); return; }
+      addDot(SERVICES[1].x+44, SERVICES[1].y, SERVICES[2].x-44, SERVICES[2].y, SERVICES[2].color, 0.02);
+      totalLatencyMs += 70;
+      simPhase = 4;
+    } else if (simPhase === 4) {
+      addDot(SERVICES[2].x-44, SERVICES[2].y, CLIENT_X+36, CLIENT_Y, '#3fa34d', 0.025, '200 OK');
+      simPhase = 5;
+    }
+    updateLatencyDisplay(totalLatencyMs);
+  }
+
+  function runEventStep() {
+    if (simPhase === 0) {
+      addDot(CLIENT_X+36, CLIENT_Y, ORDER_X-40, ORDER_Y, '#0d9488', 0.025);
+      totalLatencyMs += 25;
+      simPhase = 1;
+    } else if (simPhase === 1) {
+      addDot(ORDER_X+40, ORDER_Y, BROKER_X-38, BROKER_Y, '#0d9488', 0.025);
+      totalLatencyMs += 10;
+      simPhase = 2;
+    } else if (simPhase === 2) {
+      // Fan out to all consumers in parallel
+      SERVICES.forEach(function(s, i) {
+        var isFailed = failMode && failedService === i;
+        if (!isFailed) {
+          addDot(BROKER_X+38, BROKER_Y, s.x-44, s.y, s.color, 0.018 + i*0.003);
+        } else {
+          // Send a red failing dot
+          addDot(BROKER_X+38, BROKER_Y, s.x-44, s.y, '#e63946', 0.018);
+        }
+      });
+      totalLatencyMs += 90;
+      simPhase = 3;
+    }
+    updateLatencyDisplay(totalLatencyMs);
+  }
+
+  function endFail() {
+    simPhase = 99; // end
+    simRunning = false;
+    updateLatencyDisplay(totalLatencyMs);
+  }
+
+  function updateLatencyDisplay(ms) {
+    displayedLatency = ms;
+    var el = document.getElementById('sim-latency-val');
+    if (el) el.textContent = ms + 'ms total';
+  }
+
+  /* ── main loop ──────────────────────────────────────────────── */
+  function loop() {
+    simTick++;
+    // auto-advance steps
+    if (simRunning && simTick % 55 === 0) {
+      if (mode === 'sync') runSyncStep();
+      else runEventStep();
+      if (simPhase >= 5 && mode === 'sync') simRunning = false;
+      if (simPhase >= 3 && mode === 'event') simRunning = false;
+    }
+    drawScene();
+    requestAnimationFrame(loop);
+  }
+
+  /* ── public API ─────────────────────────────────────────────── */
+  window.edaSetMode = function(m, btn) {
+    mode = m;
+    failMode = false;
+    failedService = -1;
+    simPhase = 0;
+    simTick = 0;
+    totalLatencyMs = 0;
+    dots = []; pulses = [];
+    simRunning = true;
+
+    document.querySelectorAll('.sim-btn').forEach(function(b) {
+      b.classList.remove('active-sync','active-event');
+    });
+    btn.classList.add(m === 'sync' ? 'active-sync' : 'active-event');
+
+    var modeLabel = document.getElementById('sim-mode-label');
+    if (modeLabel) {
+      modeLabel.textContent = m === 'sync' ? 'SYNC MODE' : 'EVENT MODE';
+      modeLabel.style.color = m === 'sync' ? '#1d6fb8' : '#0d9488';
+    }
+
+    var infoBox = document.getElementById('sim-info-box');
+    if (infoBox) {
+      if (m === 'sync') {
+        infoBox.innerHTML = '<div style="color:var(--blue);font-family:\'Bangers\',cursive;font-size:.9rem;letter-spacing:1px;margin-bottom:4px;">SYNC MODE</div>Client calls OrderSvc, which calls Inventory, Payment, then Shipping sequentially. Total time = sum of all hops. One failure kills everything.';
+      } else {
+        infoBox.innerHTML = '<div style="color:var(--teal);font-family:\'Bangers\',cursive;font-size:.9rem;letter-spacing:1px;margin-bottom:4px;">EVENT MODE</div>OrderSvc emits OrderPlaced event to Kafka broker. Inventory, Payment, Shipping all consume in parallel. Total time = slowest consumer, not sum.';
+      }
+    }
+    updateLatencyDisplay(0);
+    var lel = document.getElementById('sim-latency-val');
+    if (lel) lel.textContent = '— ms';
+  };
+
+  window.edaSimulateFail = function() {
+    failMode = true;
+    failedService = 1; // Payment fails
+    simPhase = 0;
+    simTick = 0;
+    totalLatencyMs = 0;
+    dots = []; pulses = [];
+    simRunning = true;
+
+    var infoBox = document.getElementById('sim-info-box');
+    if (infoBox) {
+      if (mode === 'sync') {
+        infoBox.innerHTML = '<div style="color:var(--red);font-family:\'Bangers\',cursive;font-size:.9rem;letter-spacing:1px;margin-bottom:4px;">FAILURE — SYNC MODE</div>PaymentSvc goes down. The sync chain breaks — Inventory was already called but Payment fails. Client gets a 500 error. Order is in a partial state.';
+      } else {
+        infoBox.innerHTML = '<div style="color:var(--orange);font-family:\'Bangers\',cursive;font-size:.9rem;letter-spacing:1px;margin-bottom:4px;">FAILURE — EVENT MODE</div>PaymentSvc fails to consume. Event stays in Kafka — retried with backoff. Inventory and Shipping still process successfully. No cascade failure.';
+      }
+    }
+    var lel = document.getElementById('sim-latency-val');
+    if (lel) lel.textContent = '— ms';
+  };
+
+  window.edaReset = function() {
+    failMode = false;
+    failedService = -1;
+    simPhase = 0;
+    simTick = 0;
+    totalLatencyMs = 0;
+    dots = []; pulses = [];
+    simRunning = true;
+    var lel = document.getElementById('sim-latency-val');
+    if (lel) lel.textContent = '— ms';
+  };
+
+  // Start automatically
+  simRunning = true;
+  loop();
+})();
+
+/* ================================================================
+   Lucide icon initialization
+   ================================================================ */
+if (typeof lucide !== 'undefined') {
+  lucide.createIcons();
+}
+</script>
+</body>
+</html>

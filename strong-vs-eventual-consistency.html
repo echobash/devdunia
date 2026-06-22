@@ -1,0 +1,1448 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Strong vs Eventual Consistency — DevDunia</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bangers&family=Comic+Neue:ital,wght@0,400;0,700;1,400&family=Space+Mono:wght@400;700&display=swap">
+<script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
+<style>
+:root {
+  --ink: #1a1410; --paper: #fdf3e3; --paper2: #fbe9cc;
+  --red: #e63946; --blue: #1d6fb8; --yellow: #ffd23f;
+  --green: #3fa34d; --pink: #ff6b9d; --purple: #8a4fff;
+  --orange: #ff8c42; --teal: #0d9488;
+}
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  font-family: 'Comic Neue', cursive;
+  color: var(--ink);
+  background-color: var(--paper);
+  background-image: radial-gradient(var(--ink) 0.5px, transparent 0.6px);
+  background-size: 14px 14px;
+  background-attachment: fixed;
+  line-height: 1.65;
+}
+.page-wrap { position: relative; z-index: 1; max-width: 1240px; margin: 0 auto; padding: 20px 32px 60px; }
+.panel {
+  border: 4px solid var(--ink); border-radius: 6px;
+  box-shadow: 7px 7px 0 var(--ink);
+  background: var(--paper); padding: 28px 32px; margin-bottom: 32px;
+}
+h2 { font-family: 'Bangers', cursive; font-size: 2.4rem; letter-spacing: 2px; margin-bottom: 16px; line-height: 1; }
+h3 { font-family: 'Bangers', cursive; font-size: 1.6rem; letter-spacing: 1px; margin-bottom: 12px; }
+h4 { font-family: 'Bangers', cursive; font-size: 1.2rem; letter-spacing: 1px; margin-bottom: 8px; }
+p  { margin-bottom: 14px; font-size: 1.05rem; }
+p:last-child { margin-bottom: 0; }
+ul { padding-left: 22px; margin-bottom: 14px; }
+li { margin-bottom: 6px; font-size: 1rem; }
+code { font-family: 'Space Mono', monospace; font-size: .85em; background: var(--paper2); padding: 1px 5px; border-radius: 3px; }
+.section-head { display: flex; align-items: center; gap: 14px; margin-bottom: 22px; flex-wrap: wrap; }
+.section-num {
+  font-family: 'Bangers', cursive; font-size: 1.1rem; letter-spacing: 2px;
+  background: var(--teal); color: #fff; padding: 4px 14px;
+  border-radius: 4px; border: 2px solid var(--ink); box-shadow: 2px 2px 0 var(--ink);
+}
+.chip {
+  display: inline-block; font-family: 'Bangers', cursive; font-size: .85rem;
+  letter-spacing: 1.5px; padding: 3px 12px; border-radius: 4px;
+  border: 2px solid var(--ink); margin-right: 6px; margin-bottom: 6px; vertical-align: middle;
+}
+.chip-green  { background: var(--green);  color: #fff; }
+.chip-red    { background: var(--red);    color: #fff; }
+.chip-blue   { background: var(--blue);   color: #fff; }
+.chip-yellow { background: var(--yellow); color: var(--ink); }
+.chip-orange { background: var(--orange); color: #fff; }
+.chip-teal   { background: var(--teal);   color: #fff; }
+.hbox {
+  border: 3px solid var(--ink); border-radius: 5px; padding: 18px 22px;
+  margin: 16px 0; position: relative;
+}
+.hbox-label {
+  font-family: 'Bangers', cursive; font-size: .9rem; letter-spacing: 2px;
+  position: absolute; top: -14px; left: 16px; padding: 2px 12px;
+  border: 2px solid var(--ink); border-radius: 4px;
+}
+.hbox-orange { background: rgba(255,140,66,.1); border-color: var(--orange); }
+.hbox-orange .hbox-label { background: var(--orange); color: #fff; }
+.hbox-red { background: rgba(230,57,70,.08); border-color: var(--red); }
+.hbox-red .hbox-label { background: var(--red); color: #fff; }
+.hbox-green { background: rgba(63,163,77,.1); border-color: var(--green); }
+.hbox-green .hbox-label { background: var(--green); color: #fff; }
+.hbox-blue { background: rgba(29,111,184,.1); border-color: var(--blue); }
+.hbox-blue .hbox-label { background: var(--blue); color: #fff; }
+.hbox-yellow { background: rgba(255,210,63,.15); border-color: var(--yellow); }
+.hbox-yellow .hbox-label { background: var(--yellow); color: var(--ink); }
+.hbox-teal { background: rgba(13,148,136,.1); border-color: var(--teal); }
+.hbox-teal .hbox-label { background: var(--teal); color: #fff; }
+.hbox-purple { background: rgba(138,79,255,.1); border-color: var(--purple); }
+.hbox-purple .hbox-label { background: var(--purple); color: #fff; }
+.data-table { width: 100%; border-collapse: collapse; margin: 16px 0; font-size: .93rem; }
+.data-table th {
+  font-family: 'Bangers', cursive; font-size: 1rem; letter-spacing: 1px;
+  background: var(--ink); color: #fff; padding: 10px 14px; text-align: left; border: 2px solid var(--ink);
+}
+.data-table td { padding: 10px 14px; border: 2px solid var(--ink); vertical-align: top; }
+.data-table tr:nth-child(odd)  td { background: var(--paper2); }
+.data-table tr:nth-child(even) td { background: var(--paper); }
+.grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin: 16px 0; }
+.grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 16px; margin: 16px 0; }
+@media (max-width: 640px) { .grid-2, .grid-3 { grid-template-columns: 1fr; } }
+.card {
+  border: 3px solid var(--ink); border-radius: 5px;
+  box-shadow: 4px 4px 0 var(--ink); padding: 18px; background: var(--paper);
+}
+.card-head { font-family: 'Bangers', cursive; font-size: 1.1rem; letter-spacing: 1px; margin-bottom: 10px; padding-bottom: 8px; border-bottom: 2px solid var(--ink); }
+.sfx-row { display: flex; gap: 16px; flex-wrap: wrap; margin: 20px 0; }
+.sfx {
+  font-family: 'Bangers', cursive; font-size: 1.8rem; letter-spacing: 3px;
+  color: var(--ink); text-shadow: 3px 3px 0 var(--yellow); transform: rotate(-2deg); display: inline-block;
+}
+.sfx:nth-child(even) { transform: rotate(2deg); text-shadow: 3px 3px 0 var(--orange); }
+.chapter-divider { text-align: center; margin: 40px 0 28px; position: relative; }
+.chapter-divider::before { content: ''; position: absolute; top: 50%; left: 0; right: 0; height: 3px; background: var(--ink); }
+.chapter-divider span { position: relative; background: var(--paper); font-family: 'Bangers', cursive; font-size: 1rem; letter-spacing: 3px; padding: 0 16px; }
+/* Lucide icon helpers */
+.lc { width: 20px; height: 20px; vertical-align: middle; stroke-width: 2; display: inline-block; }
+.lc-lg { width: 32px; height: 32px; stroke-width: 2; }
+.lc svg { display: block; }
+
+/* ── SPECTRUM BAR ─────────────────────────── */
+.spectrum-wrap { margin: 28px 0; }
+.spectrum-bar {
+  position: relative; height: 48px; border-radius: 8px; border: 3px solid var(--ink);
+  background: linear-gradient(90deg, rgba(63,163,77,.4) 0%, rgba(255,210,63,.4) 30%, rgba(255,140,66,.4) 60%, rgba(230,57,70,.4) 80%, rgba(13,148,136,.4) 100%);
+  box-shadow: 4px 4px 0 var(--ink);
+}
+.spectrum-labels {
+  display: flex; justify-content: space-between; margin-top: 10px;
+}
+.spectrum-label {
+  font-family: 'Bangers', cursive; font-size: .78rem; letter-spacing: 1px;
+  text-align: center; flex: 1; padding: 6px 4px;
+  border: 2px solid var(--ink); border-radius: 4px;
+  box-shadow: 2px 2px 0 var(--ink); cursor: default;
+}
+.spectrum-label + .spectrum-label { margin-left: 6px; }
+.spec-eventual  { background: rgba(63,163,77,.2);  border-color: var(--green); }
+.spec-monotonic { background: rgba(255,210,63,.25); border-color: var(--yellow); color: var(--ink); }
+.spec-ryow      { background: rgba(255,140,66,.2); border-color: var(--orange); }
+.spec-causal    { background: rgba(138,79,255,.2); border-color: var(--purple); }
+.spec-seq       { background: rgba(29,111,184,.2); border-color: var(--blue); }
+.spec-strong    { background: rgba(13,148,136,.2); border-color: var(--teal); }
+.cost-bar-wrap { margin-top: 18px; }
+.cost-row { display: flex; align-items: center; gap: 14px; margin-bottom: 10px; }
+.cost-label { font-family: 'Bangers', cursive; font-size: .85rem; letter-spacing: 1px; min-width: 130px; }
+.cost-fill-bar { flex: 1; height: 18px; border: 2px solid var(--ink); border-radius: 4px; overflow: hidden; }
+.cost-fill { height: 100%; border-radius: 2px; transition: width .3s; }
+
+/* ── TIMELINE DIAGRAM ─────────────────────── */
+.timeline-wrap { margin: 20px 0; overflow-x: auto; }
+.timeline { min-width: 600px; }
+.tl-row { display: flex; align-items: center; margin-bottom: 14px; gap: 0; }
+.tl-node-label { font-family: 'Bangers', cursive; font-size: .88rem; letter-spacing: 1px; min-width: 72px; flex-shrink: 0; }
+.tl-line { flex: 1; position: relative; height: 36px; }
+.tl-rail { position: absolute; top: 50%; left: 0; right: 0; height: 3px; background: var(--ink); transform: translateY(-50%); }
+.tl-event {
+  position: absolute; top: 50%; transform: translate(-50%,-50%);
+  border: 2px solid var(--ink); border-radius: 4px;
+  font-family: 'Bangers', cursive; font-size: .72rem; letter-spacing: 1px;
+  padding: 3px 8px; white-space: nowrap; box-shadow: 2px 2px 0 var(--ink);
+}
+.tl-time-axis { display: flex; justify-content: space-between; padding: 0 72px; margin-top: 4px; }
+.tl-time-label { font-family: 'Space Mono', monospace; font-size: .68rem; color: #888; }
+
+/* ── QUORUM DIAGRAM ──────────────────────── */
+.quorum-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 16px; margin: 20px 0; }
+@media(max-width:640px){ .quorum-grid { grid-template-columns: 1fr; } }
+.quorum-card {
+  border: 3px solid var(--ink); border-radius: 6px; padding: 16px;
+  box-shadow: 4px 4px 0 var(--ink); text-align: center;
+}
+.quorum-nodes { display: flex; justify-content: center; gap: 10px; margin: 12px 0; }
+.q-node {
+  width: 44px; height: 44px; border-radius: 50%; border: 3px solid var(--ink);
+  display: flex; align-items: center; justify-content: center;
+  font-family: 'Bangers', cursive; font-size: 1rem; letter-spacing: 1px;
+  box-shadow: 3px 3px 0 var(--ink);
+}
+
+/* ── SIM CANVAS WRAPPER ──────────────────── */
+.sim-wrap {
+  background: #0d1117; border: 4px solid var(--ink); border-radius: 8px;
+  box-shadow: 7px 7px 0 var(--ink); overflow: hidden; margin: 24px 0;
+}
+.sim-bar {
+  background: #161b22; border-bottom: 2px solid #30363d; padding: 10px 16px;
+  font-family: 'Bangers', cursive; font-size: 1rem; letter-spacing: 2px;
+  color: #e6edf3; display: flex; align-items: center; gap: 12px; flex-wrap: wrap;
+}
+.sim-body { padding: 20px; display: grid; grid-template-columns: 1fr 300px; gap: 20px; }
+@media(max-width:760px){ .sim-body { grid-template-columns: 1fr; } }
+#sim-canvas { display: block; border: 2px solid #30363d; border-radius: 4px; width: 100%; max-width: 580px; }
+.sim-side { display: flex; flex-direction: column; gap: 10px; }
+.sim-btn {
+  font-family: 'Bangers', cursive; font-size: 1rem; letter-spacing: 1.5px;
+  padding: 10px 14px; border: 2px solid #30363d; border-radius: 5px;
+  background: #161b22; color: #e6edf3; cursor: pointer; transition: background .15s;
+  text-align: left; width: 100%;
+}
+.sim-btn:hover { background: #21262d; border-color: #8b949e; }
+.sim-btn.active-eventual  { border-color: var(--green); color: var(--green); }
+.sim-btn.active-ryow      { border-color: var(--orange); color: var(--orange); }
+.sim-btn.active-causal    { border-color: var(--purple); color: var(--purple); }
+.sim-btn.active-strong    { border-color: var(--teal); color: var(--teal); }
+.sim-info-box {
+  background: #161b22; border: 2px solid #30363d; border-radius: 6px;
+  padding: 12px; font-family: 'Space Mono', monospace; font-size: .78rem; color: #adbac7; line-height: 1.7;
+}
+.sim-ctrl-row { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+.sim-input {
+  font-family: 'Space Mono', monospace; font-size: .82rem;
+  background: #0d1117; color: #e6edf3; border: 2px solid #30363d; border-radius: 4px;
+  padding: 6px 10px; flex: 1; min-width: 80px;
+}
+.sim-input:focus { outline: none; border-color: var(--teal); }
+.sim-action-btn {
+  font-family: 'Bangers', cursive; font-size: .9rem; letter-spacing: 1px;
+  padding: 7px 14px; border: 2px solid #30363d; border-radius: 4px;
+  background: #21262d; color: #e6edf3; cursor: pointer;
+}
+.sim-action-btn:hover { background: #2d333b; }
+.sim-slider-row { display: flex; align-items: center; gap: 10px; }
+.sim-slider { flex: 1; accent-color: var(--teal); }
+.sim-log {
+  background: #0d1117; border: 2px solid #30363d; border-radius: 6px;
+  padding: 10px 12px; font-family: 'Space Mono', monospace; font-size: .72rem;
+  color: #7d8590; line-height: 1.8; max-height: 140px; overflow-y: auto;
+}
+.sim-log-entry { display: block; border-bottom: 1px solid #21262d; padding: 2px 0; }
+.log-ok    { color: #3fb950; }
+.log-stale { color: #f0883e; }
+.log-block { color: #58a6ff; }
+.log-causal{ color: #d2a8ff; }
+</style>
+</head>
+<body>
+<div data-masthead></div>
+<div class="page-wrap">
+
+<div data-tool-hero
+  data-title="Strong vs Eventual Consistency"
+  data-chapter="DATA-06"
+  data-category="Data &amp; Storage"
+  data-icon="🔄"
+  data-desc="Strong, causal, read-your-writes, monotonic reads, eventual — the full consistency spectrum and why Amazon's shopping cart uses eventual consistency."
+  data-color="teal"
+  data-badges="CONSISTENCY,REPLICATION,DISTRIBUTED,CAP"
+  data-badge-colors="teal,blue,orange,yellow">
+</div>
+
+<!-- ───────────────────────────────────────
+     SECTION 01: The Spectrum
+─────────────────────────────────────────── -->
+<div class="panel">
+  <div class="section-head">
+    <span class="section-num">01</span>
+    <h2>The Spectrum of Consistency</h2>
+  </div>
+
+  <p>Consistency in distributed systems is <strong>not a binary switch</strong>. It is a spectrum with many named points, each offering a different trade-off between safety guarantees and the cost of coordination. Stronger guarantees require more nodes to agree before returning a result — and that agreement takes time and can fail.</p>
+
+  <!-- SPECTRUM BAR -->
+  <div class="spectrum-wrap">
+    <div style="display:flex;justify-content:space-between;margin-bottom:8px;padding:0 2px;">
+      <span style="font-family:'Bangers',cursive;font-size:.88rem;letter-spacing:1px;color:var(--green);">WEAKEST</span>
+      <span style="font-family:'Bangers',cursive;font-size:.88rem;letter-spacing:1px;color:var(--teal);">STRONGEST</span>
+    </div>
+    <div class="spectrum-bar">
+      <!-- visual gradient bar, no text inside — handled by labels below -->
+    </div>
+    <div style="display:flex;align-items:center;justify-content:center;margin:6px 0 2px;">
+      <!-- arrow connector line -->
+      <div style="flex:1;height:3px;background:var(--ink);position:relative;">
+        <div style="position:absolute;right:-1px;top:50%;transform:translateY(-50%);border-top:7px solid transparent;border-bottom:7px solid transparent;border-left:10px solid var(--ink);"></div>
+      </div>
+    </div>
+    <div class="spectrum-labels">
+      <div class="spectrum-label spec-eventual">
+        <i data-lucide="circle" style="width:14px;height:14px;color:var(--green);display:block;margin:0 auto 2px;"></i>
+        Eventual
+      </div>
+      <div class="spectrum-label spec-monotonic">
+        <i data-lucide="trending-up" style="width:14px;height:14px;color:#b8860b;display:block;margin:0 auto 2px;"></i>
+        Monotonic<br>Reads
+      </div>
+      <div class="spectrum-label spec-ryow">
+        <i data-lucide="user-check" style="width:14px;height:14px;color:var(--orange);display:block;margin:0 auto 2px;"></i>
+        Read-Your-<br>Writes
+      </div>
+      <div class="spectrum-label spec-causal">
+        <i data-lucide="git-commit" style="width:14px;height:14px;color:var(--purple);display:block;margin:0 auto 2px;"></i>
+        Causal
+      </div>
+      <div class="spectrum-label spec-seq">
+        <i data-lucide="list-ordered" style="width:14px;height:14px;color:var(--blue);display:block;margin:0 auto 2px;"></i>
+        Sequential
+      </div>
+      <div class="spectrum-label spec-strong">
+        <i data-lucide="shield-check" style="width:14px;height:14px;color:var(--teal);display:block;margin:0 auto 2px;"></i>
+        Linearizable<br>(Strong)
+      </div>
+    </div>
+  </div>
+
+  <!-- COST BARS -->
+  <div class="cost-bar-wrap">
+    <h3>Cost of Stronger Consistency</h3>
+    <div class="cost-row">
+      <span class="cost-label"><i data-lucide="clock" class="lc"></i> Latency cost</span>
+      <div class="cost-fill-bar">
+        <div class="cost-fill" style="width:12%;background:var(--green);"></div>
+      </div>
+      <span style="font-family:'Bangers',cursive;font-size:.85rem;color:var(--green);">Eventual</span>
+    </div>
+    <div class="cost-row">
+      <span class="cost-label"><i data-lucide="clock" class="lc"></i> Latency cost</span>
+      <div class="cost-fill-bar">
+        <div class="cost-fill" style="width:30%;background:var(--yellow);"></div>
+      </div>
+      <span style="font-family:'Bangers',cursive;font-size:.85rem;color:#b8860b;">Monotonic Reads</span>
+    </div>
+    <div class="cost-row">
+      <span class="cost-label"><i data-lucide="clock" class="lc"></i> Latency cost</span>
+      <div class="cost-fill-bar">
+        <div class="cost-fill" style="width:45%;background:var(--orange);"></div>
+      </div>
+      <span style="font-family:'Bangers',cursive;font-size:.85rem;color:var(--orange);">Read-Your-Writes</span>
+    </div>
+    <div class="cost-row">
+      <span class="cost-label"><i data-lucide="clock" class="lc"></i> Latency cost</span>
+      <div class="cost-fill-bar">
+        <div class="cost-fill" style="width:62%;background:var(--purple);"></div>
+      </div>
+      <span style="font-family:'Bangers',cursive;font-size:.85rem;color:var(--purple);">Causal</span>
+    </div>
+    <div class="cost-row">
+      <span class="cost-label"><i data-lucide="clock" class="lc"></i> Latency cost</span>
+      <div class="cost-fill-bar">
+        <div class="cost-fill" style="width:80%;background:var(--blue);"></div>
+      </div>
+      <span style="font-family:'Bangers',cursive;font-size:.85rem;color:var(--blue);">Sequential</span>
+    </div>
+    <div class="cost-row">
+      <span class="cost-label"><i data-lucide="clock" class="lc"></i> Latency cost</span>
+      <div class="cost-fill-bar">
+        <div class="cost-fill" style="width:100%;background:var(--teal);"></div>
+      </div>
+      <span style="font-family:'Bangers',cursive;font-size:.85rem;color:var(--teal);">Linearizable</span>
+    </div>
+  </div>
+
+  <div class="hbox hbox-teal">
+    <div class="hbox-label">THE CORE TRADE-OFF</div>
+    <p style="margin-top:12px;">Every step stronger on the consistency spectrum requires more coordination. Linearizability demands that <em>every read sees the most recent write globally</em> — achieving that means querying a quorum or a leader on every read, which adds round-trip latency proportional to your network distance. In a global system spanning continents, that can mean 150–300ms of overhead per operation. Eventual consistency lets you read locally with no coordination — 1ms — but you might see stale data.</p>
+  </div>
+
+  <div class="sfx-row">
+    <span class="sfx">NOT BINARY</span>
+    <span class="sfx">IT'S A SPECTRUM</span>
+    <span class="sfx">TRADE-OFFS EVERYWHERE</span>
+  </div>
+</div>
+
+<!-- ───────────────────────────────────────
+     SECTION 02: Eventual Consistency
+─────────────────────────────────────────── -->
+<div class="panel">
+  <div class="section-head">
+    <span class="section-num">02</span>
+    <h2>Eventual Consistency</h2>
+  </div>
+
+  <p>The guarantee is simple: <strong>if no new writes arrive, all replicas will eventually converge to the same value</strong>. There is no guarantee on <em>when</em>. During the convergence window, different replicas may return different values for the same key. This is not a bug — it is an intentional design choice that maximises availability and performance.</p>
+
+  <div class="grid-2">
+    <div class="card" style="border-color:var(--green);">
+      <div class="card-head" style="color:var(--green);border-color:var(--green);">
+        <i data-lucide="globe" class="lc"></i> Example: DNS Propagation
+      </div>
+      <p style="font-size:.9rem;">You add an A record for <code>api.example.com</code> pointing to your new server. The DNS root and your registrar update immediately. But:</p>
+      <ul style="font-size:.88rem;">
+        <li>Your local resolver: sees the new IP in <strong>1 minute</strong></li>
+        <li>Resolver in Singapore: sees it in <strong>4 hours</strong></li>
+        <li>Resolver in Brazil: sees it in <strong>24–48 hours</strong></li>
+      </ul>
+      <p style="font-size:.9rem;margin-top:8px;">During that window, half the world hits your old server, half hits the new one. Eventually — they all agree. Classic eventual consistency.</p>
+    </div>
+    <div class="card" style="border-color:var(--orange);">
+      <div class="card-head" style="color:var(--orange);border-color:var(--orange);">
+        <i data-lucide="thumbs-up" class="lc"></i> Example: Social Media Likes
+      </div>
+      <p style="font-size:.9rem;">A post has 1,000 likes. You and your friend open it simultaneously from different data centres:</p>
+      <ul style="font-size:.88rem;">
+        <li>You see: <strong>1,000 likes</strong> (replica A, slightly lagged)</li>
+        <li>Friend sees: <strong>1,001 likes</strong> (replica B, more up-to-date)</li>
+      </ul>
+      <p style="font-size:.9rem;margin-top:8px;">One second later, both replicas sync. You both see 1,001. The discrepancy was harmless — no one was harmed by seeing one fewer like momentarily.</p>
+    </div>
+  </div>
+
+  <div class="hbox hbox-yellow" style="margin:20px 0;">
+    <div class="hbox-label">AMAZON DYNAMO PAPER (2007)</div>
+    <p style="margin-top:12px;">Werner Vogels and the Amazon team published the Dynamo paper describing how they built their shopping cart using <strong>eventual consistency intentionally</strong>. The insight: <em>"Is it better to show you an empty cart or a slightly stale cart?"</em> A stale cart that still shows your items is far better UX than refusing to load the cart because a replica is unreachable. Availability wins over consistency for the shopping cart. This paper influenced the design of Cassandra, Riak, and DynamoDB.</p>
+  </div>
+
+  <!-- TIMELINE: Replicas Converging -->
+  <h3>Replica Convergence Timeline</h3>
+  <div style="border:3px solid var(--ink);border-radius:8px;overflow:hidden;box-shadow:5px 5px 0 var(--ink);margin:16px 0;">
+    <div style="background:var(--ink);color:#fff;padding:10px 20px;font-family:'Bangers',cursive;font-size:1rem;letter-spacing:2px;">
+      WRITE THEN STOP — REPLICAS CONVERGE OVER TIME
+    </div>
+    <div style="padding:20px;background:var(--paper);">
+      <div class="timeline-wrap">
+        <div class="timeline">
+          <!-- Node A -->
+          <div class="tl-row">
+            <div class="tl-node-label"><i data-lucide="database" class="lc" style="color:var(--teal);"></i> Node A</div>
+            <div class="tl-line">
+              <div class="tl-rail"></div>
+              <div class="tl-event" style="left:5%;background:rgba(13,148,136,.2);border-color:var(--teal);color:var(--teal);">Write v=42</div>
+              <div class="tl-event" style="left:28%;background:rgba(13,148,136,.15);border-color:var(--teal);">v=42</div>
+              <div class="tl-event" style="left:55%;background:rgba(13,148,136,.15);border-color:var(--teal);">v=42</div>
+              <div class="tl-event" style="left:80%;background:rgba(13,148,136,.3);border-color:var(--teal);">v=42</div>
+            </div>
+          </div>
+          <!-- Node B -->
+          <div class="tl-row">
+            <div class="tl-node-label"><i data-lucide="database" class="lc" style="color:var(--orange);"></i> Node B</div>
+            <div class="tl-line">
+              <div class="tl-rail"></div>
+              <div class="tl-event" style="left:5%;background:rgba(255,140,66,.12);border-color:var(--orange);">v=41 (old)</div>
+              <div class="tl-event" style="left:28%;background:rgba(255,140,66,.15);border-color:var(--orange);">v=41 (old)</div>
+              <div class="tl-event" style="left:50%;background:rgba(255,140,66,.3);border-color:var(--orange);color:var(--orange);">Sync recv</div>
+              <div class="tl-event" style="left:80%;background:rgba(13,148,136,.3);border-color:var(--teal);">v=42</div>
+            </div>
+          </div>
+          <!-- Node C -->
+          <div class="tl-row">
+            <div class="tl-node-label"><i data-lucide="database" class="lc" style="color:var(--blue);"></i> Node C</div>
+            <div class="tl-line">
+              <div class="tl-rail"></div>
+              <div class="tl-event" style="left:5%;background:rgba(29,111,184,.1);border-color:var(--blue);">v=41 (old)</div>
+              <div class="tl-event" style="left:28%;background:rgba(29,111,184,.12);border-color:var(--blue);">v=41 (old)</div>
+              <div class="tl-event" style="left:60%;background:rgba(29,111,184,.2);border-color:var(--blue);color:var(--blue);">Sync recv</div>
+              <div class="tl-event" style="left:80%;background:rgba(13,148,136,.3);border-color:var(--teal);">v=42</div>
+            </div>
+          </div>
+          <div class="tl-time-axis">
+            <span class="tl-time-label">t=0 (write)</span>
+            <span class="tl-time-label">t=50ms</span>
+            <span class="tl-time-label">t=120ms</span>
+            <span class="tl-time-label">t=200ms (converged)</span>
+          </div>
+        </div>
+      </div>
+      <div style="margin-top:12px;display:flex;gap:16px;flex-wrap:wrap;">
+        <div style="display:flex;align-items:center;gap:6px;font-family:'Space Mono',monospace;font-size:.78rem;">
+          <div style="width:14px;height:14px;border-radius:3px;background:rgba(255,140,66,.3);border:2px solid var(--orange);"></div>
+          Stale / diverged
+        </div>
+        <div style="display:flex;align-items:center;gap:6px;font-family:'Space Mono',monospace;font-size:.78rem;">
+          <div style="width:14px;height:14px;border-radius:3px;background:rgba(13,148,136,.3);border:2px solid var(--teal);"></div>
+          Converged to latest
+        </div>
+        <div style="display:flex;align-items:center;gap:6px;font-family:'Space Mono',monospace;font-size:.78rem;">
+          <div style="width:14px;height:14px;border-radius:3px;background:rgba(255,140,66,.4);border:2px solid var(--orange);"></div>
+          Sync message received
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ───────────────────────────────────────
+     SECTION 03: Read-Your-Own-Writes
+─────────────────────────────────────────── -->
+<div class="panel">
+  <div class="section-head">
+    <span class="section-num">03</span>
+    <h2>Read-Your-Own-Writes (Session Consistency)</h2>
+  </div>
+
+  <p>A targeted upgrade from eventual consistency: <strong>you always see your own writes</strong>, even if replication hasn't finished and other users might still see stale data. This is also called <em>session consistency</em> because the guarantee applies within a single client session.</p>
+
+  <div class="hbox hbox-red">
+    <div class="hbox-label">THE FAILURE SCENARIO</div>
+    <p style="margin-top:12px;">User uploads a new profile photo. Write goes to <strong>Replica A</strong>. User refreshes the page — their next request is load-balanced to <strong>Replica B</strong>, which hasn't received the replication yet. User sees their old photo. They upload again, thinking it failed. Classic stale read after a self-write. Infuriating UX, even though the system is "correct" under pure eventual consistency.</p>
+  </div>
+
+  <!-- VISUAL: Write to A, read from B vs A -->
+  <div style="border:3px solid var(--ink);border-radius:8px;overflow:hidden;box-shadow:5px 5px 0 var(--ink);margin:20px 0;">
+    <div style="background:var(--ink);color:#fff;padding:10px 20px;font-family:'Bangers',cursive;font-size:1rem;letter-spacing:2px;">READ-YOUR-WRITES: STALE vs FRESH</div>
+    <div style="padding:24px;background:var(--paper);">
+      <div class="grid-2">
+        <!-- Without RYOW -->
+        <div style="border:3px solid var(--red);border-radius:6px;padding:16px;background:rgba(230,57,70,.05);">
+          <div style="font-family:'Bangers',cursive;font-size:1rem;letter-spacing:1px;color:var(--red);margin-bottom:14px;display:flex;align-items:center;gap:8px;">
+            <i data-lucide="x-circle" style="width:22px;height:22px;"></i> WITHOUT RYOW — Stale Read
+          </div>
+          <!-- User -->
+          <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px;">
+            <div style="border:2px solid var(--ink);border-radius:5px;padding:8px 12px;background:rgba(255,107,157,.1);text-align:center;min-width:80px;">
+              <i data-lucide="user" style="width:22px;height:22px;color:var(--pink);display:block;margin:0 auto 4px;"></i>
+              <div style="font-family:'Bangers',cursive;font-size:.8rem;">User</div>
+            </div>
+            <div style="flex:1;text-align:center;">
+              <div style="font-family:'Space Mono',monospace;font-size:.7rem;color:var(--teal);margin-bottom:3px;">WRITE photo</div>
+              <div style="height:3px;background:var(--teal);position:relative;margin-bottom:3px;">
+                <div style="position:absolute;right:-1px;top:50%;transform:translateY(-50%);border-top:5px solid transparent;border-bottom:5px solid transparent;border-left:7px solid var(--teal);"></div>
+              </div>
+            </div>
+            <div style="border:2px solid var(--teal);border-radius:5px;padding:8px 12px;background:rgba(13,148,136,.1);text-align:center;min-width:80px;">
+              <i data-lucide="database" style="width:22px;height:22px;color:var(--teal);display:block;margin:0 auto 4px;"></i>
+              <div style="font-family:'Bangers',cursive;font-size:.8rem;color:var(--teal);">Node A</div>
+              <div style="font-family:'Space Mono',monospace;font-size:.65rem;color:#555;">v=new</div>
+            </div>
+          </div>
+          <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px;">
+            <div style="border:2px solid var(--ink);border-radius:5px;padding:8px 12px;background:rgba(255,107,157,.1);text-align:center;min-width:80px;">
+              <i data-lucide="user" style="width:22px;height:22px;color:var(--pink);display:block;margin:0 auto 4px;"></i>
+              <div style="font-family:'Bangers',cursive;font-size:.8rem;">User</div>
+            </div>
+            <div style="flex:1;text-align:center;">
+              <div style="font-family:'Space Mono',monospace;font-size:.7rem;color:var(--red);margin-bottom:3px;">READ refresh</div>
+              <div style="height:3px;background:var(--red);position:relative;margin-bottom:3px;">
+                <div style="position:absolute;right:-1px;top:50%;transform:translateY(-50%);border-top:5px solid transparent;border-bottom:5px solid transparent;border-left:7px solid var(--red);"></div>
+              </div>
+            </div>
+            <div style="border:2px solid var(--red);border-radius:5px;padding:8px 12px;background:rgba(230,57,70,.1);text-align:center;min-width:80px;">
+              <i data-lucide="database" style="width:22px;height:22px;color:var(--red);display:block;margin:0 auto 4px;"></i>
+              <div style="font-family:'Bangers',cursive;font-size:.8rem;color:var(--red);">Node B</div>
+              <div style="font-family:'Space Mono',monospace;font-size:.65rem;color:var(--red);">v=OLD (stale!)</div>
+            </div>
+          </div>
+          <div style="background:rgba(230,57,70,.12);border:2px solid var(--red);border-radius:4px;padding:8px;font-family:'Space Mono',monospace;font-size:.75rem;color:var(--red);text-align:center;">
+            User sees old photo — confused, uploads again
+          </div>
+        </div>
+        <!-- With RYOW -->
+        <div style="border:3px solid var(--green);border-radius:6px;padding:16px;background:rgba(63,163,77,.05);">
+          <div style="font-family:'Bangers',cursive;font-size:1rem;letter-spacing:1px;color:var(--green);margin-bottom:14px;display:flex;align-items:center;gap:8px;">
+            <i data-lucide="check-circle" style="width:22px;height:22px;"></i> WITH RYOW — Fresh Read
+          </div>
+          <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px;">
+            <div style="border:2px solid var(--ink);border-radius:5px;padding:8px 12px;background:rgba(255,107,157,.1);text-align:center;min-width:80px;">
+              <i data-lucide="user" style="width:22px;height:22px;color:var(--pink);display:block;margin:0 auto 4px;"></i>
+              <div style="font-family:'Bangers',cursive;font-size:.8rem;">User</div>
+            </div>
+            <div style="flex:1;text-align:center;">
+              <div style="font-family:'Space Mono',monospace;font-size:.7rem;color:var(--teal);margin-bottom:3px;">WRITE photo</div>
+              <div style="height:3px;background:var(--teal);position:relative;margin-bottom:3px;">
+                <div style="position:absolute;right:-1px;top:50%;transform:translateY(-50%);border-top:5px solid transparent;border-bottom:5px solid transparent;border-left:7px solid var(--teal);"></div>
+              </div>
+            </div>
+            <div style="border:2px solid var(--teal);border-radius:5px;padding:8px 12px;background:rgba(13,148,136,.1);text-align:center;min-width:80px;">
+              <i data-lucide="database" style="width:22px;height:22px;color:var(--teal);display:block;margin:0 auto 4px;"></i>
+              <div style="font-family:'Bangers',cursive;font-size:.8rem;color:var(--teal);">Node A</div>
+              <div style="font-family:'Space Mono',monospace;font-size:.65rem;color:#555;">v=new</div>
+            </div>
+          </div>
+          <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px;">
+            <div style="border:2px solid var(--ink);border-radius:5px;padding:8px 12px;background:rgba(255,107,157,.1);text-align:center;min-width:80px;">
+              <i data-lucide="user" style="width:22px;height:22px;color:var(--pink);display:block;margin:0 auto 4px;"></i>
+              <div style="font-family:'Bangers',cursive;font-size:.8rem;">User</div>
+            </div>
+            <div style="flex:1;text-align:center;">
+              <div style="font-family:'Space Mono',monospace;font-size:.7rem;color:var(--green);margin-bottom:3px;">READ (routed to A)</div>
+              <div style="height:3px;background:var(--green);position:relative;margin-bottom:3px;">
+                <div style="position:absolute;right:-1px;top:50%;transform:translateY(-50%);border-top:5px solid transparent;border-bottom:5px solid transparent;border-left:7px solid var(--green);"></div>
+              </div>
+            </div>
+            <div style="border:2px solid var(--green);border-radius:5px;padding:8px 12px;background:rgba(63,163,77,.1);text-align:center;min-width:80px;">
+              <i data-lucide="database" style="width:22px;height:22px;color:var(--green);display:block;margin:0 auto 4px;"></i>
+              <div style="font-family:'Bangers',cursive;font-size:.8rem;color:var(--green);">Node A</div>
+              <div style="font-family:'Space Mono',monospace;font-size:.65rem;color:var(--green);">v=new (fresh!)</div>
+            </div>
+          </div>
+          <div style="background:rgba(63,163,77,.12);border:2px solid var(--green);border-radius:4px;padding:8px;font-family:'Space Mono',monospace;font-size:.75rem;color:var(--green);text-align:center;">
+            User sees new photo immediately
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <h3>Implementation Strategies</h3>
+  <div class="grid-3">
+    <div class="hbox hbox-teal" style="margin:0;">
+      <div class="hbox-label">STICKY SESSIONS</div>
+      <p style="margin-top:12px;font-size:.88rem;">Tag the client session with the replica they wrote to. Route all subsequent reads for that session to the same replica. Simple, but ties users to a node — creates hotspots.</p>
+    </div>
+    <div class="hbox hbox-blue" style="margin:0;">
+      <div class="hbox-label">READ FROM PRIMARY</div>
+      <p style="margin-top:12px;font-size:.88rem;">After a write, read all requests from the primary for a 1-second window (the expected replication lag). After that window, allow reads from replicas again. Trade-off: primary becomes a bottleneck during that window.</p>
+    </div>
+    <div class="hbox hbox-orange" style="margin:0;">
+      <div class="hbox-label">CLIENT-SIDE TIMESTAMP</div>
+      <p style="margin-top:12px;font-size:.88rem;">Client tracks the timestamp of its last write. Reads include that timestamp. Replicas refuse to answer if their data is older than the timestamp — forces routing to a sufficiently fresh node.</p>
+    </div>
+  </div>
+</div>
+
+<!-- ───────────────────────────────────────
+     SECTION 04: Causal Consistency
+─────────────────────────────────────────── -->
+<div class="panel">
+  <div class="section-head">
+    <span class="section-num">04</span>
+    <h2>Causal Consistency</h2>
+  </div>
+
+  <p>Causal consistency captures real-world cause-and-effect: <strong>if event B happened after event A, and B depends on A (B knows about A), then any node that sees B must also have seen A first</strong>. Concurrent events (neither knows about the other) can be seen in any order.</p>
+
+  <div class="hbox hbox-purple">
+    <div class="hbox-label">THE COMMENT REPLY PROBLEM</div>
+    <p style="margin-top:12px;">Alice posts a comment: <em>"Who wants pizza tonight?"</em>. Bob replies: <em>"Me! I love pizza!"</em>. Under eventual consistency without causal ordering, Bob's reply can arrive at a replica before Alice's original comment. The reply appears without the question — completely nonsensical to any reader hitting that replica. Causal consistency prevents this: any node that serves Bob's reply must have already applied Alice's comment, because Bob's write causally depends on Alice's.</p>
+  </div>
+
+  <div class="grid-2">
+    <div>
+      <h3>Happens-Before Relationship</h3>
+      <p>Event A <em>happens-before</em> event B (written A → B) if:</p>
+      <ul>
+        <li>A and B are in the same process, and A came first in program order</li>
+        <li>A is a send, B is the corresponding receive of that message</li>
+        <li>There exists a chain: A → C → B for some event C</li>
+      </ul>
+      <p>If neither A → B nor B → A holds, the events are <strong>concurrent</strong> and may be observed in either order.</p>
+    </div>
+    <div>
+      <h3>Vector Clocks</h3>
+      <div style="border:3px solid var(--ink);border-radius:6px;padding:16px;box-shadow:4px 4px 0 var(--ink);background:var(--paper2);">
+        <p style="font-size:.88rem;">Each node maintains a vector of counters, one per node in the cluster. On every event, it increments its own counter. On receiving a message, it takes the element-wise max with the sender's vector.</p>
+        <div style="font-family:'Space Mono',monospace;font-size:.78rem;margin-top:10px;line-height:1.9;">
+          <div style="color:var(--teal);">Node A writes:   VC = [A:1, B:0, C:0]</div>
+          <div style="color:var(--orange);">Node B receives: VC = [A:1, B:1, C:0]</div>
+          <div style="color:var(--purple);">Node B replies:  VC = [A:1, B:2, C:0]</div>
+          <div style="color:#888;">B's reply causally follows A's write.</div>
+          <div style="color:#888;">Any node serving B:2 must have A:1.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="hbox hbox-blue" style="margin-top:16px;">
+    <div class="hbox-label">DYNAMODB CONDITIONAL WRITES</div>
+    <p style="margin-top:12px;">Amazon DynamoDB implements causal consistency through <strong>conditional expressions</strong>. A write can specify: <code>condition_expression="version = :expected"</code> — the write only succeeds if the current version in the database matches the client's expected version. This ensures a write that depends on seeing version N can only be applied after that version is visible, enforcing the causal dependency at the application level without vector clocks.</p>
+  </div>
+</div>
+
+<!-- ───────────────────────────────────────
+     SECTION 05: Linearizability
+─────────────────────────────────────────── -->
+<div class="panel">
+  <div class="section-head">
+    <span class="section-num">05</span>
+    <h2>Linearizability (Strong Consistency)</h2>
+  </div>
+
+  <p>The strongest and most intuitive guarantee: <strong>every operation appears to execute atomically at some single point in real time, and every read sees the most recent write from any client in the entire cluster</strong>. A linearizable system behaves identically to a single-server system with no concurrency — even if it is actually running on dozens of machines across multiple data centres.</p>
+
+  <div class="grid-2">
+    <div class="card" style="border-color:var(--teal);">
+      <div class="card-head" style="color:var(--teal);border-color:var(--teal);">
+        <i data-lucide="shield-check" class="lc"></i> What Linearizability Guarantees
+      </div>
+      <ul>
+        <li>If write W completes before read R starts, R must see W's value (or a later write)</li>
+        <li>If two writes are concurrent, all readers see the same order for both writes</li>
+        <li>There is a total order of all operations consistent with real-time order</li>
+        <li>No operation can go "back in time" — once a value is seen, no older value is ever returned</li>
+      </ul>
+    </div>
+    <div class="card" style="border-color:var(--red);">
+      <div class="card-head" style="color:var(--red);border-color:var(--red);">
+        <i data-lucide="alert-triangle" class="lc"></i> The Cost
+      </div>
+      <ul>
+        <li>Every read must contact a quorum of nodes (or the leader) to confirm the latest value</li>
+        <li>Network round-trip to multiple nodes on every read — cannot serve from local cache</li>
+        <li>If a quorum cannot be reached (network partition), the system must refuse the read</li>
+        <li>In a global system (US + EU + Asia), a linearizable read from Sydney might take 200ms</li>
+        <li>This is the CAP theorem's C: you must sacrifice availability (A) to maintain it under partition (P)</li>
+      </ul>
+    </div>
+  </div>
+
+  <h3>Real-World Linearizable Systems</h3>
+  <table class="data-table">
+    <thead><tr>
+      <th><i data-lucide="server" class="lc"></i> System</th>
+      <th><i data-lucide="check-circle" class="lc"></i> Linearizability Mechanism</th>
+      <th><i data-lucide="info" class="lc"></i> Use Case</th>
+    </tr></thead>
+    <tbody>
+      <tr>
+        <td><strong>ZooKeeper</strong></td>
+        <td>Leader-based consensus (ZAB protocol). All writes go through leader. Reads from leader are linearizable; reads from followers are sequentially consistent unless you call <code>sync()</code> first.</td>
+        <td>Distributed coordination, leader election, config management.</td>
+      </tr>
+      <tr>
+        <td><strong>Google Spanner</strong></td>
+        <td>TrueTime API: GPS clocks + atomic clocks give bounded clock uncertainty (±7ms). Commits wait out the uncertainty window before becoming visible. Globally consistent reads without a central leader.</td>
+        <td>Google's globally distributed relational database. Financial systems.</td>
+      </tr>
+      <tr>
+        <td><strong>etcd</strong></td>
+        <td>Raft consensus. All reads default to linearizable (routed through leader). Can opt for serializable reads for lower latency when linearizability is not required.</td>
+        <td>Kubernetes cluster state, distributed locks, service discovery.</td>
+      </tr>
+      <tr>
+        <td><strong>CockroachDB</strong></td>
+        <td>Serializable isolation + HLC (Hybrid Logical Clocks). Transactions are serializable, with external consistency (linearizability) achievable via <code>AS OF SYSTEM TIME</code> on reads.</td>
+        <td>Globally distributed SQL transactions.</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div class="sfx-row">
+    <span class="sfx">ONE GLOBAL TRUTH</span>
+    <span class="sfx">HIGHEST COST</span>
+    <span class="sfx">STRONGEST GUARANTEE</span>
+  </div>
+</div>
+
+<!-- ───────────────────────────────────────
+     SECTION 06: Quorum-Based Consistency
+─────────────────────────────────────────── -->
+<div class="panel">
+  <div class="section-head">
+    <span class="section-num">06</span>
+    <h2>Quorum-Based Consistency (Cassandra / DynamoDB)</h2>
+  </div>
+
+  <p>Quorum-based systems let you <strong>dial your own consistency level per operation</strong> by tuning three numbers: <strong>N</strong> (total replicas), <strong>W</strong> (write acknowledgements needed), and <strong>R</strong> (read responses needed). The magic formula: <code>W + R &gt; N</code> guarantees that at least one node in your read set has the latest write.</p>
+
+  <div class="hbox hbox-teal">
+    <div class="hbox-label">THE QUORUM FORMULA</div>
+    <div style="margin-top:14px;display:flex;align-items:center;gap:20px;flex-wrap:wrap;">
+      <div style="background:rgba(13,148,136,.15);border:3px solid var(--teal);border-radius:8px;padding:16px 24px;text-align:center;min-width:160px;box-shadow:4px 4px 0 var(--ink);">
+        <div style="font-family:'Bangers',cursive;font-size:2rem;letter-spacing:2px;color:var(--teal);">W + R &gt; N</div>
+        <div style="font-family:'Space Mono',monospace;font-size:.78rem;color:#555;margin-top:6px;">Strong Consistency</div>
+      </div>
+      <div style="flex:1;min-width:200px;">
+        <div style="font-family:'Space Mono',monospace;font-size:.85rem;line-height:2;">
+          <div><strong style="color:var(--teal);">N</strong> = total replica count</div>
+          <div><strong style="color:var(--blue);">W</strong> = nodes that must ACK a write</div>
+          <div><strong style="color:var(--orange);">R</strong> = nodes that must respond to a read</div>
+          <div style="margin-top:6px;color:#888;">If W+R &gt; N, the write and read sets must overlap.</div>
+          <div style="color:#888;">Overlap guarantees at least 1 reader has the latest write.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- QUORUM DIAGRAMS -->
+  <h3>Quorum Configuration Examples (N=3)</h3>
+  <div class="quorum-grid">
+    <!-- W=3, R=1 -->
+    <div class="quorum-card" style="border-color:var(--teal);">
+      <div style="font-family:'Bangers',cursive;font-size:1rem;letter-spacing:1px;color:var(--teal);">W=3, R=1</div>
+      <div style="font-family:'Space Mono',monospace;font-size:.75rem;color:var(--green);margin:4px 0;">W+R=4 &gt; N=3 ✓</div>
+      <div class="quorum-nodes">
+        <div class="q-node" style="background:rgba(13,148,136,.2);border-color:var(--teal);">N1</div>
+        <div class="q-node" style="background:rgba(13,148,136,.2);border-color:var(--teal);">N2</div>
+        <div class="q-node" style="background:rgba(13,148,136,.2);border-color:var(--teal);">N3</div>
+      </div>
+      <div style="font-family:'Space Mono',monospace;font-size:.72rem;color:#555;line-height:1.6;">
+        All 3 must ACK write<br>
+        Any 1 can serve read<br>
+        <span style="color:var(--green);">Fast reads, slow writes</span><br>
+        Use for: read-heavy, infrequent writes
+      </div>
+    </div>
+    <!-- W=1, R=3 -->
+    <div class="quorum-card" style="border-color:var(--blue);">
+      <div style="font-family:'Bangers',cursive;font-size:1rem;letter-spacing:1px;color:var(--blue);">W=1, R=3</div>
+      <div style="font-family:'Space Mono',monospace;font-size:.75rem;color:var(--green);margin:4px 0;">W+R=4 &gt; N=3 ✓</div>
+      <div class="quorum-nodes">
+        <div class="q-node" style="background:rgba(29,111,184,.2);border-color:var(--blue);">N1</div>
+        <div class="q-node" style="background:rgba(29,111,184,.2);border-color:var(--blue);">N2</div>
+        <div class="q-node" style="background:rgba(29,111,184,.2);border-color:var(--blue);">N3</div>
+      </div>
+      <div style="font-family:'Space Mono',monospace;font-size:.72rem;color:#555;line-height:1.6;">
+        Any 1 can ACK write<br>
+        All 3 must respond to read<br>
+        <span style="color:var(--blue);">Fast writes, slow reads</span><br>
+        Use for: write-heavy, infrequent reads
+      </div>
+    </div>
+    <!-- W=2, R=2 -->
+    <div class="quorum-card" style="border-color:var(--orange);">
+      <div style="font-family:'Bangers',cursive;font-size:1rem;letter-spacing:1px;color:var(--orange);">W=2, R=2</div>
+      <div style="font-family:'Space Mono',monospace;font-size:.75rem;color:var(--green);margin:4px 0;">W+R=4 &gt; N=3 ✓</div>
+      <div class="quorum-nodes">
+        <div class="q-node" style="background:rgba(255,140,66,.2);border-color:var(--orange);">N1</div>
+        <div class="q-node" style="background:rgba(255,140,66,.2);border-color:var(--orange);">N2</div>
+        <div class="q-node" style="background:rgba(255,140,66,.1);border-color:#ccc;">N3</div>
+      </div>
+      <div style="font-family:'Space Mono',monospace;font-size:.72rem;color:#555;line-height:1.6;">
+        2 of 3 must ACK write<br>
+        Any 2 can serve read<br>
+        <span style="color:var(--orange);">Balanced trade-off</span><br>
+        Classic Cassandra QUORUM
+      </div>
+    </div>
+    <!-- W=1, R=1 eventual -->
+    <div class="quorum-card" style="border-color:var(--green);">
+      <div style="font-family:'Bangers',cursive;font-size:1rem;letter-spacing:1px;color:var(--green);">W=1, R=1</div>
+      <div style="font-family:'Space Mono',monospace;font-size:.75rem;color:var(--red);margin:4px 0;">W+R=2 ≤ N=3 ✗</div>
+      <div class="quorum-nodes">
+        <div class="q-node" style="background:rgba(63,163,77,.2);border-color:var(--green);">N1</div>
+        <div class="q-node" style="background:rgba(200,200,200,.15);border-color:#bbb;">N2</div>
+        <div class="q-node" style="background:rgba(200,200,200,.15);border-color:#bbb;">N3</div>
+      </div>
+      <div style="font-family:'Space Mono',monospace;font-size:.72rem;color:#555;line-height:1.6;">
+        1 ACK on write, 1 on read<br>
+        No overlap guaranteed<br>
+        <span style="color:var(--red);">Eventual consistency only</span><br>
+        Cassandra ONE level
+      </div>
+    </div>
+    <!-- W=2, R=1 eventual -->
+    <div class="quorum-card" style="border-color:var(--red);">
+      <div style="font-family:'Bangers',cursive;font-size:1rem;letter-spacing:1px;color:var(--red);">W=2, R=1</div>
+      <div style="font-family:'Space Mono',monospace;font-size:.75rem;color:var(--red);margin:4px 0;">W+R=3 = N=3 ✗</div>
+      <div class="quorum-nodes">
+        <div class="q-node" style="background:rgba(230,57,70,.2);border-color:var(--red);">N1</div>
+        <div class="q-node" style="background:rgba(230,57,70,.2);border-color:var(--red);">N2</div>
+        <div class="q-node" style="background:rgba(200,200,200,.15);border-color:#bbb;">N3</div>
+      </div>
+      <div style="font-family:'Space Mono',monospace;font-size:.72rem;color:#555;line-height:1.6;">
+        2 ACKs on write<br>
+        Read hits N3 (no write yet)<br>
+        <span style="color:var(--red);">Stale read possible</span><br>
+        W+R must be &gt; N, not equal
+      </div>
+    </div>
+    <!-- ALL_QUORUM -->
+    <div class="quorum-card" style="border-color:var(--purple);">
+      <div style="font-family:'Bangers',cursive;font-size:1rem;letter-spacing:1px;color:var(--purple);">W=3, R=3</div>
+      <div style="font-family:'Space Mono',monospace;font-size:.75rem;color:var(--green);margin:4px 0;">W+R=6 &gt; N=3 ✓✓</div>
+      <div class="quorum-nodes">
+        <div class="q-node" style="background:rgba(138,79,255,.2);border-color:var(--purple);">N1</div>
+        <div class="q-node" style="background:rgba(138,79,255,.2);border-color:var(--purple);">N2</div>
+        <div class="q-node" style="background:rgba(138,79,255,.2);border-color:var(--purple);">N3</div>
+      </div>
+      <div style="font-family:'Space Mono',monospace;font-size:.72rem;color:#555;line-height:1.6;">
+        All nodes must ACK everything<br>
+        Maximum durability + consistency<br>
+        <span style="color:var(--purple);">Lowest availability</span><br>
+        1 node down = full outage
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ───────────────────────────────────────
+     SECTION 07: Conflict Resolution
+─────────────────────────────────────────── -->
+<div class="panel">
+  <div class="section-head">
+    <span class="section-num">07</span>
+    <h2>Conflict Resolution in Eventual Consistent Systems</h2>
+  </div>
+
+  <p>When two nodes accept writes for the same key during a network partition and then reconnect, you have a <strong>conflict</strong>: two diverged versions. How does the system decide what the "real" value is?</p>
+
+  <div class="grid-2">
+    <div>
+      <div class="hbox hbox-orange" style="margin-bottom:16px;">
+        <div class="hbox-label">LAST WRITE WINS (LWW)</div>
+        <p style="margin-top:12px;font-size:.9rem;">Compare timestamps. Whichever write has the higher timestamp survives; the other is discarded. Used by <strong>Cassandra</strong> as its default conflict resolution.</p>
+        <ul style="font-size:.88rem;">
+          <li><strong>Pro:</strong> Simple, no application logic needed</li>
+          <li><strong>Con:</strong> Data loss. If clocks are skewed, a newer write can lose to an older-timestamp write. Clock drift can be 100ms on real servers.</li>
+          <li><strong>Con:</strong> Concurrent writes to different fields of the same row: all fields revert to the winning timestamp's values, even fields that weren't changed by either write</li>
+        </ul>
+      </div>
+      <div class="hbox hbox-purple">
+        <div class="hbox-label">VECTOR CLOCKS (AMAZON DYNAMO)</div>
+        <p style="margin-top:12px;font-size:.9rem;">Instead of timestamps, track the <em>causal history</em> of each value. When merging, if one version's history fully contains the other's, the superset wins (no true conflict). If the histories diverged (concurrent writes), both versions are kept and returned to the <strong>application</strong> to resolve.</p>
+        <ul style="font-size:.88rem;">
+          <li><strong>Pro:</strong> No silent data loss — conflicts are surfaced</li>
+          <li><strong>Con:</strong> Application must implement merge logic</li>
+          <li>Dynamo's shopping cart: merge by union — add all items from both versions</li>
+        </ul>
+      </div>
+    </div>
+    <div>
+      <div class="hbox hbox-teal" style="margin-bottom:16px;">
+        <div class="hbox-label">CRDTs (CONFLICT-FREE REPLICATED DATA TYPES)</div>
+        <p style="margin-top:12px;font-size:.9rem;">Mathematical data structures where any two states can always be merged into a single consistent state — <strong>automatically, without conflicts</strong>. Used by Redis, Riak, collaborative editors.</p>
+        <div style="font-family:'Space Mono',monospace;font-size:.8rem;margin-top:10px;">
+          <div style="margin-bottom:8px;"><strong style="color:var(--teal);">G-Counter (grow-only):</strong></div>
+          <div style="color:#555;line-height:1.8;">Node A: [3, 0, 0] → total = 3<br>Node B: [0, 2, 0] → total = 2<br>Merge:  [3, 2, 0] → total = 5<br><span style="color:var(--green);">Always correct! element-wise max</span></div>
+        </div>
+        <div style="font-family:'Space Mono',monospace;font-size:.8rem;margin-top:10px;">
+          <div style="margin-bottom:4px;"><strong style="color:var(--teal);">Other CRDTs:</strong></div>
+          <div style="color:#555;line-height:1.8;">OR-Set, LWW-Register, MV-Register<br>Sequence (RGA), Graph, JSON</div>
+        </div>
+      </div>
+      <div class="hbox hbox-blue">
+        <div class="hbox-label">APPLICATION-LEVEL (COUCHDB / RIAK)</div>
+        <p style="margin-top:12px;font-size:.9rem;">The database detects a conflict and stores <em>all versions</em>. The application reads the conflicting revisions and decides how to merge them — e.g., a calendar app might union overlapping events, a bank account might sum the deltas.</p>
+        <ul style="font-size:.88rem;">
+          <li><strong>Pro:</strong> Maximum flexibility and correctness</li>
+          <li><strong>Con:</strong> Every application must implement domain-specific merge logic</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- CRDT Shopping Cart Visual -->
+  <div style="border:3px solid var(--ink);border-radius:8px;overflow:hidden;box-shadow:5px 5px 0 var(--ink);margin-top:20px;">
+    <div style="background:var(--teal);color:#fff;padding:10px 20px;font-family:'Bangers',cursive;font-size:1rem;letter-spacing:2px;border-bottom:3px solid var(--ink);">
+      CRDT SHOPPING CART MERGE — UNION OF ITEMS
+    </div>
+    <div style="padding:20px;background:var(--paper);">
+      <div style="display:flex;gap:16px;align-items:center;flex-wrap:wrap;">
+        <!-- Cart A -->
+        <div style="flex:1;min-width:160px;border:3px solid var(--blue);border-radius:6px;padding:14px;box-shadow:4px 4px 0 var(--ink);background:rgba(29,111,184,.07);">
+          <div style="font-family:'Bangers',cursive;font-size:.9rem;letter-spacing:1px;color:var(--blue);margin-bottom:8px;display:flex;align-items:center;gap:6px;">
+            <i data-lucide="shopping-cart" style="width:18px;height:18px;"></i> Node A Cart
+          </div>
+          <div style="font-family:'Space Mono',monospace;font-size:.78rem;line-height:2;">
+            <div><i data-lucide="check" style="width:14px;height:14px;color:var(--green);vertical-align:middle;"></i> Laptop</div>
+            <div><i data-lucide="check" style="width:14px;height:14px;color:var(--green);vertical-align:middle;"></i> Mouse</div>
+            <div style="color:#888;">(partition isolated)</div>
+          </div>
+        </div>
+        <!-- Plus -->
+        <div style="font-family:'Bangers',cursive;font-size:2rem;color:var(--ink);padding:0 8px;">+</div>
+        <!-- Cart B -->
+        <div style="flex:1;min-width:160px;border:3px solid var(--orange);border-radius:6px;padding:14px;box-shadow:4px 4px 0 var(--ink);background:rgba(255,140,66,.07);">
+          <div style="font-family:'Bangers',cursive;font-size:.9rem;letter-spacing:1px;color:var(--orange);margin-bottom:8px;display:flex;align-items:center;gap:6px;">
+            <i data-lucide="shopping-cart" style="width:18px;height:18px;"></i> Node B Cart
+          </div>
+          <div style="font-family:'Space Mono',monospace;font-size:.78rem;line-height:2;">
+            <div><i data-lucide="check" style="width:14px;height:14px;color:var(--green);vertical-align:middle;"></i> Laptop</div>
+            <div><i data-lucide="check" style="width:14px;height:14px;color:var(--green);vertical-align:middle;"></i> Keyboard</div>
+            <div style="color:#888;">(concurrent write)</div>
+          </div>
+        </div>
+        <!-- Equals -->
+        <div style="font-family:'Bangers',cursive;font-size:2rem;color:var(--ink);padding:0 8px;">=</div>
+        <!-- Merged Cart -->
+        <div style="flex:1;min-width:160px;border:3px solid var(--teal);border-radius:6px;padding:14px;box-shadow:4px 4px 0 var(--ink);background:rgba(13,148,136,.1);">
+          <div style="font-family:'Bangers',cursive;font-size:.9rem;letter-spacing:1px;color:var(--teal);margin-bottom:8px;display:flex;align-items:center;gap:6px;">
+            <i data-lucide="shopping-cart" style="width:18px;height:18px;"></i> Merged (CRDT union)
+          </div>
+          <div style="font-family:'Space Mono',monospace;font-size:.78rem;line-height:2;">
+            <div><i data-lucide="check" style="width:14px;height:14px;color:var(--green);vertical-align:middle;"></i> Laptop</div>
+            <div><i data-lucide="check" style="width:14px;height:14px;color:var(--green);vertical-align:middle;"></i> Mouse</div>
+            <div><i data-lucide="check" style="width:14px;height:14px;color:var(--green);vertical-align:middle;"></i> Keyboard</div>
+          </div>
+          <div style="font-family:'Space Mono',monospace;font-size:.7rem;color:var(--green);margin-top:6px;">No conflicts. No data loss.</div>
+        </div>
+      </div>
+      <p style="font-size:.88rem;margin-top:14px;color:#555;">Amazon's Dynamo paper explicitly chose to never lose cart items — even if it means showing duplicate items that a user deleted during a partition. Adding items back is less frustrating than silently losing them.</p>
+    </div>
+  </div>
+</div>
+
+<!-- ───────────────────────────────────────
+     SECTION 08: INTERACTIVE SIMULATOR
+─────────────────────────────────────────── -->
+<div class="panel">
+  <div class="section-head">
+    <span class="section-num">08</span>
+    <h2>Consistency Model Simulator</h2>
+  </div>
+
+  <p>Write a value to Node A, then read it from Node B or Node C. The replication lag slider controls how long it takes for the write to propagate. Switch consistency models to see how the same scenario plays out differently.</p>
+
+  <div class="sim-wrap">
+    <div class="sim-bar">
+      <span style="width:12px;height:12px;border-radius:50%;background:#ff5f56;display:inline-block;"></span>
+      <span style="width:12px;height:12px;border-radius:50%;background:#ffbd2e;display:inline-block;"></span>
+      <span style="width:12px;height:12px;border-radius:50%;background:#27c93f;display:inline-block;"></span>
+      <span>CONSISTENCY MODEL SIMULATOR</span>
+    </div>
+    <div class="sim-body">
+      <canvas id="sim-canvas" width="580" height="380"></canvas>
+      <div class="sim-side">
+        <div style="font-family:'Bangers',cursive;font-size:.88rem;letter-spacing:2px;color:#7d8590;margin-bottom:4px;">CONSISTENCY MODEL</div>
+        <div style="display:flex;flex-direction:column;gap:6px;">
+          <button class="sim-btn active-eventual" id="sim-eventual" onclick="simSetModel('eventual',this)">
+            <i data-lucide="circle" style="width:16px;height:16px;vertical-align:middle;"></i> Eventual
+          </button>
+          <button class="sim-btn" id="sim-ryow" onclick="simSetModel('ryow',this)">
+            <i data-lucide="user-check" style="width:16px;height:16px;vertical-align:middle;"></i> Read-Your-Own-Writes
+          </button>
+          <button class="sim-btn" id="sim-causal" onclick="simSetModel('causal',this)">
+            <i data-lucide="git-commit" style="width:16px;height:16px;vertical-align:middle;"></i> Causal
+          </button>
+          <button class="sim-btn" id="sim-strong" onclick="simSetModel('strong',this)">
+            <i data-lucide="shield-check" style="width:16px;height:16px;vertical-align:middle;"></i> Strong (Linearizable)
+          </button>
+        </div>
+
+        <div style="font-family:'Bangers',cursive;font-size:.88rem;letter-spacing:2px;color:#7d8590;margin-top:8px;margin-bottom:4px;">WRITE TO NODE A</div>
+        <div class="sim-ctrl-row">
+          <input type="text" id="sim-write-input" class="sim-input" value="v=42" placeholder="value">
+          <button class="sim-action-btn" onclick="simDoWrite()" style="border-color:var(--teal);color:var(--teal);">
+            <i data-lucide="send" style="width:14px;height:14px;vertical-align:middle;"></i> WRITE
+          </button>
+        </div>
+
+        <div style="font-family:'Bangers',cursive;font-size:.88rem;letter-spacing:2px;color:#7d8590;margin-top:8px;margin-bottom:4px;">READ</div>
+        <div style="display:flex;gap:6px;">
+          <button class="sim-action-btn" onclick="simDoRead('B')" style="flex:1;border-color:var(--orange);color:var(--orange);">Read B</button>
+          <button class="sim-action-btn" onclick="simDoRead('C')" style="flex:1;border-color:var(--blue);color:var(--blue);">Read C</button>
+          <button class="sim-action-btn" onclick="simDoRead('A')" style="flex:1;border-color:var(--teal);color:var(--teal);">Read A</button>
+        </div>
+
+        <div style="font-family:'Bangers',cursive;font-size:.88rem;letter-spacing:2px;color:#7d8590;margin-top:8px;margin-bottom:4px;">REPLICATION LAG</div>
+        <div class="sim-slider-row">
+          <span style="font-family:'Space Mono',monospace;font-size:.72rem;color:#7d8590;">0ms</span>
+          <input type="range" id="sim-lag-slider" class="sim-slider" min="0" max="2000" step="100" value="800">
+          <span style="font-family:'Space Mono',monospace;font-size:.72rem;color:#7d8590;">2000ms</span>
+        </div>
+        <div style="font-family:'Space Mono',monospace;font-size:.78rem;color:var(--teal);text-align:center;" id="sim-lag-label">Lag: 800ms</div>
+
+        <div class="sim-info-box" id="sim-model-desc">
+          <div style="color:var(--green);font-family:'Bangers',cursive;font-size:.9rem;letter-spacing:1px;margin-bottom:4px;">EVENTUAL</div>
+          Replicas sync asynchronously. Reads from B or C may return stale data during the lag window. No coordination cost.
+        </div>
+      </div>
+    </div>
+
+    <div style="padding:0 20px 20px;">
+      <div style="font-family:'Bangers',cursive;font-size:.88rem;letter-spacing:2px;color:#7d8590;margin-bottom:6px;">OPERATION LOG</div>
+      <div class="sim-log" id="sim-log">
+        <span class="sim-log-entry" style="color:#7d8590;">Simulator ready. Write a value, then read from Node B or C.</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="chapter-divider"><span>END OF DATA-06</span></div>
+</div><!-- /page-wrap -->
+
+<script src="hero-banner.js"></script>
+<script src="masthead.js"></script>
+<script src="author-card.js"></script>
+
+<script>
+/* ================================================================
+   SECTION 08: Consistency Model Simulator
+   ================================================================ */
+(function() {
+
+var canvas = document.getElementById('sim-canvas');
+if (!canvas) return;
+var ctx = canvas.getContext('2d');
+var W = 580, H = 380;
+
+/* ── State ─────────────────────────────────── */
+var model = 'eventual';
+var lagMs = 800;
+var writeTs = null;       // timestamp of last write to A
+var writeVal = 'v=42';
+var nodeValues = { A: 'v=0', B: 'v=0', C: 'v=0' };
+var nodeSynced = { A: true, B: true, C: true };
+var lastWriteNode = null; // which node received the write
+
+// Particles flying between nodes
+var particles = [];
+
+// Nodes layout (canvas coords)
+var nodes = {
+  A: { x: 100, y: 190, color: '#0d9488', label: 'Node A' },
+  B: { x: 350, y: 80,  color: '#ff8c42', label: 'Node B' },
+  C: { x: 350, y: 300, color: '#1d6fb8', label: 'Node C' },
+};
+
+/* ── Canvas Draw ─────────────────────────── */
+function drawNode(id, highlighted) {
+  var n = nodes[id];
+  var r = 42;
+  ctx.save();
+  // Glow if highlighted
+  if (highlighted) {
+    ctx.shadowColor = n.color;
+    ctx.shadowBlur = 20;
+  }
+  // Circle fill
+  ctx.beginPath();
+  ctx.arc(n.x, n.y, r, 0, Math.PI * 2);
+  ctx.fillStyle = '#161b22';
+  ctx.fill();
+  ctx.strokeStyle = n.color;
+  ctx.lineWidth = highlighted ? 4 : 2.5;
+  ctx.stroke();
+  ctx.shadowBlur = 0;
+
+  // Label
+  ctx.fillStyle = n.color;
+  ctx.font = '700 12px Bangers, cursive';
+  ctx.textAlign = 'center';
+  ctx.fillText(n.label, n.x, n.y - 10);
+
+  // Value
+  var val = nodeValues[id];
+  var isStale = !nodeSynced[id] && id !== 'A';
+  ctx.fillStyle = isStale ? '#f0883e' : '#e6edf3';
+  ctx.font = '9px Space Mono, monospace';
+  ctx.fillText(val, n.x, n.y + 6);
+
+  // Stale badge
+  if (isStale) {
+    ctx.fillStyle = 'rgba(240,136,62,.2)';
+    ctx.strokeStyle = '#f0883e';
+    ctx.lineWidth = 1.5;
+    ctx.beginPath();
+    ctx.roundRect(n.x - 22, n.y + 14, 44, 16, 3);
+    ctx.fill(); ctx.stroke();
+    ctx.fillStyle = '#f0883e';
+    ctx.font = '700 8px Space Mono, monospace';
+    ctx.fillText('STALE', n.x, n.y + 25);
+  } else if (highlighted) {
+    ctx.fillStyle = 'rgba(13,148,136,.2)';
+    ctx.strokeStyle = '#0d9488';
+    ctx.lineWidth = 1.5;
+    ctx.beginPath();
+    ctx.roundRect(n.x - 22, n.y + 14, 44, 16, 3);
+    ctx.fill(); ctx.stroke();
+    ctx.fillStyle = '#0d9488';
+    ctx.font = '700 8px Space Mono, monospace';
+    ctx.fillText('FRESH', n.x, n.y + 25);
+  }
+
+  ctx.restore();
+}
+
+function drawConnections() {
+  var pairs = [['A','B'],['A','C'],['B','C']];
+  pairs.forEach(function(p) {
+    var na = nodes[p[0]], nb = nodes[p[1]];
+    ctx.beginPath();
+    ctx.moveTo(na.x, na.y);
+    ctx.lineTo(nb.x, nb.y);
+    ctx.strokeStyle = 'rgba(255,255,255,0.07)';
+    ctx.setLineDash([6,6]);
+    ctx.lineWidth = 1.5;
+    ctx.stroke();
+    ctx.setLineDash([]);
+  });
+}
+
+function drawParticles() {
+  particles.forEach(function(p) {
+    var alpha = Math.min(1, Math.min(p.life / 10, (p.maxLife - p.life) / 10));
+    ctx.beginPath();
+    ctx.arc(p.x, p.y, 5, 0, Math.PI * 2);
+    ctx.fillStyle = p.color;
+    ctx.globalAlpha = alpha;
+    ctx.fill();
+    // trail
+    ctx.strokeStyle = p.color;
+    ctx.lineWidth = 1;
+    ctx.globalAlpha = alpha * 0.3;
+    ctx.beginPath();
+    ctx.arc(p.x, p.y, 9, 0, Math.PI * 2);
+    ctx.stroke();
+    ctx.globalAlpha = 1;
+  });
+}
+
+var highlightedRead = null;
+var highlightTimer = 0;
+var blockingAnim = false;
+var blockingProgress = 0;
+
+function drawBlockingAnim() {
+  if (!blockingAnim) return;
+  // Show a "syncing all nodes" animation
+  var progress = blockingProgress;
+  ['A','B','C'].forEach(function(id) {
+    var n = nodes[id];
+    var angle = -Math.PI / 2 + (progress * Math.PI * 2);
+    ctx.beginPath();
+    ctx.arc(n.x, n.y, 52, -Math.PI / 2, angle);
+    ctx.strokeStyle = '#0d9488';
+    ctx.lineWidth = 3;
+    ctx.stroke();
+  });
+  // "BLOCKING..." label
+  ctx.fillStyle = '#58a6ff';
+  ctx.font = '700 11px Bangers, cursive';
+  ctx.textAlign = 'center';
+  ctx.fillText('BLOCKING... WAITING FOR QUORUM', W / 2, H - 16);
+}
+
+function draw() {
+  ctx.clearRect(0, 0, W, H);
+  ctx.fillStyle = '#0d1117';
+  ctx.fillRect(0, 0, W, H);
+
+  // Model label
+  var modelColors = { eventual: '#3fa34d', ryow: '#ff8c42', causal: '#d2a8ff', strong: '#0d9488' };
+  ctx.fillStyle = modelColors[model] || '#7d8590';
+  ctx.font = '700 12px Bangers, cursive';
+  ctx.textAlign = 'left';
+  ctx.fillText('MODEL: ' + model.toUpperCase(), 14, 22);
+
+  // Lag label
+  ctx.fillStyle = '#7d8590';
+  ctx.font = '700 10px Space Mono, monospace';
+  ctx.fillText('LAG: ' + lagMs + 'ms', 14, 38);
+
+  drawConnections();
+  ['A','B','C'].forEach(function(id) {
+    drawNode(id, highlightedRead === id);
+  });
+  drawParticles();
+  drawBlockingAnim();
+
+  // Result overlay
+  if (lastResult) {
+    var col = lastResult.stale ? '#f0883e' : lastResult.blocking ? '#58a6ff' : '#3fb950';
+    ctx.fillStyle = col;
+    ctx.font = '700 13px Bangers, cursive';
+    ctx.textAlign = 'center';
+    ctx.fillText(lastResult.text, W / 2, H - 30);
+  }
+}
+
+var lastResult = null;
+var resultTimer = 0;
+
+/* ── Particle helpers ─────────────────────── */
+function spawnParticle(from, to, color, onDone) {
+  var na = nodes[from], nb = nodes[to];
+  var p = {
+    x: na.x, y: na.y, tx: nb.x, ty: nb.y,
+    color: color, progress: 0, speed: 0.02,
+    life: 0, maxLife: 50,
+    onDone: onDone,
+  };
+  particles.push(p);
+}
+
+/* ── Model descriptions ───────────────────── */
+var modelDescs = {
+  eventual: '<div style="color:var(--green);font-family:\'Bangers\',cursive;font-size:.9rem;letter-spacing:1px;margin-bottom:4px;">EVENTUAL</div>Replicas sync asynchronously. Reads from B or C may return stale data during the lag window. No coordination cost.',
+  ryow: '<div style="color:var(--orange);font-family:\'Bangers\',cursive;font-size:.9rem;letter-spacing:1px;margin-bottom:4px;">READ-YOUR-OWN-WRITES</div>Reading from Node A (the write node) always returns fresh data. Reading from B or C may still be stale. Your own writes are visible to you.',
+  causal: '<div style="color:#d2a8ff;font-family:\'Bangers\',cursive;font-size:.9rem;letter-spacing:1px;margin-bottom:4px;">CAUSAL</div>Reads that causally follow your write will always see your write. Node B and C must acknowledge receiving your write before serving reads that depend on it.',
+  strong: '<div style="color:var(--teal);font-family:\'Bangers\',cursive;font-size:.9rem;letter-spacing:1px;margin-bottom:4px;">STRONG (LINEARIZABLE)</div>All reads block until all nodes agree on the value. During the lag window, reads return only after sync completes. Maximum latency, maximum correctness.',
+};
+
+/* ── Public API ───────────────────────────── */
+window.simSetModel = function(m, btn) {
+  model = m;
+  document.querySelectorAll('.sim-btn').forEach(function(b) {
+    b.classList.remove('active-eventual','active-ryow','active-causal','active-strong');
+  });
+  btn.classList.add('active-' + m);
+  var desc = document.getElementById('sim-model-desc');
+  if (desc) desc.innerHTML = modelDescs[m];
+  simLog('Switched to <strong style="color:' + ({ eventual:'#3fa34d', ryow:'#ff8c42', causal:'#d2a8ff', strong:'#0d9488' })[m] + '">' + m.toUpperCase() + '</strong> consistency model.', '');
+};
+
+window.simDoWrite = function() {
+  var inp = document.getElementById('sim-write-input');
+  writeVal = inp ? inp.value.trim() : 'v=42';
+  if (!writeVal) writeVal = 'v=42';
+
+  writeTs = Date.now();
+  nodeValues.A = writeVal;
+  nodeSynced.A = true;
+  nodeSynced.B = false;
+  nodeSynced.C = false;
+  lastWriteNode = 'A';
+
+  simLog('WRITE <strong style="color:#0d9488">' + writeVal + '</strong> → Node A accepted.', 'ok');
+
+  // Schedule replication to B and C after lag
+  var lag = lagMs;
+  setTimeout(function() {
+    nodeValues.B = writeVal;
+    nodeSynced.B = true;
+    spawnParticle('A', 'B', '#ff8c42', null);
+    simLog('SYNC: Node A → Node B replicated <strong style="color:#3fb950">' + writeVal + '</strong> (lag ' + lag + 'ms)', 'ok');
+  }, lag);
+  setTimeout(function() {
+    nodeValues.C = writeVal;
+    nodeSynced.C = true;
+    spawnParticle('A', 'C', '#1d6fb8', null);
+    simLog('SYNC: Node A → Node C replicated <strong style="color:#3fb950">' + writeVal + '</strong> (lag ' + lag + 'ms)', 'ok');
+  }, lag * 1.15); // slight difference
+
+  // Animate write particle
+  spawnParticle('A', 'B', '#0d9488', null);
+  spawnParticle('A', 'C', '#0d9488', null);
+};
+
+window.simDoRead = function(nodeId) {
+  var now = Date.now();
+  var msSinceWrite = writeTs ? (now - writeTs) : Infinity;
+  var lag = lagMs;
+  var isSynced = nodeSynced[nodeId];
+
+  highlightedRead = nodeId;
+  highlightTimer = 80;
+
+  if (model === 'eventual') {
+    if (isSynced) {
+      lastResult = { text: 'READ from Node ' + nodeId + ': ' + nodeValues[nodeId] + ' — FRESH', stale: false };
+      simLog('READ Node ' + nodeId + ': <strong style="color:#3fb950">' + nodeValues[nodeId] + '</strong> (FRESH)', 'ok');
+    } else {
+      lastResult = { text: 'READ from Node ' + nodeId + ': ' + nodeValues[nodeId] + ' — STALE (replication lag ' + Math.max(0, lag - msSinceWrite) + 'ms remaining)', stale: true };
+      simLog('READ Node ' + nodeId + ': <strong style="color:#f0883e">' + nodeValues[nodeId] + '</strong> — STALE (replication pending, ' + Math.round(Math.max(0, lag - msSinceWrite)) + 'ms remaining)', 'stale');
+    }
+
+  } else if (model === 'ryow') {
+    if (nodeId === 'A') {
+      lastResult = { text: 'READ from Node A (write node): ' + nodeValues.A + ' — RYOW GUARANTEED', stale: false };
+      simLog('READ Node A: <strong style="color:#3fb950">' + nodeValues.A + '</strong> — FRESH (same node as write, RYOW guaranteed)', 'ok');
+    } else if (isSynced) {
+      lastResult = { text: 'READ from Node ' + nodeId + ': ' + nodeValues[nodeId] + ' — FRESH', stale: false };
+      simLog('READ Node ' + nodeId + ': <strong style="color:#3fb950">' + nodeValues[nodeId] + '</strong> — FRESH (replication completed)', 'ok');
+    } else {
+      lastResult = { text: 'READ from Node ' + nodeId + ': ' + nodeValues[nodeId] + ' — STALE (not the write node)', stale: true };
+      simLog('READ Node ' + nodeId + ': <strong style="color:#f0883e">' + nodeValues[nodeId] + '</strong> — STALE (RYOW only covers writes from this session to Node A; read routed to different node)', 'stale');
+    }
+
+  } else if (model === 'causal') {
+    if (isSynced || nodeId === 'A') {
+      lastResult = { text: 'READ from Node ' + nodeId + ': ' + nodeValues[nodeId] + ' — CAUSALLY CONSISTENT', stale: false };
+      simLog('READ Node ' + nodeId + ': <strong style="color:#d2a8ff">' + nodeValues[nodeId] + '</strong> — CAUSALLY CONSISTENT (causal dependency satisfied)', 'causal');
+    } else {
+      // Causal blocks until synced
+      lastResult = { text: 'READ from Node ' + nodeId + ': BLOCKED (causal fence — waiting for write propagation)', stale: false, blocking: true };
+      simLog('READ Node ' + nodeId + ': <strong style="color:#58a6ff">BLOCKED</strong> — causal fence active, waiting for write to propagate (~' + Math.round(Math.max(0, lag - msSinceWrite)) + 'ms)', 'block');
+      blockingAnim = true;
+      blockingProgress = 0;
+      var blockInterval = setInterval(function() {
+        blockingProgress += 0.03;
+        if (blockingProgress >= 1) {
+          clearInterval(blockInterval);
+          blockingAnim = false;
+          blockingProgress = 0;
+          simLog('READ Node ' + nodeId + ': <strong style="color:#3fb950">' + nodeValues[nodeId] + '</strong> — CAUSAL FENCE RELEASED, returning fresh value', 'ok');
+          lastResult = null;
+        }
+      }, 50);
+    }
+
+  } else if (model === 'strong') {
+    // Strong always blocks until all nodes agree
+    if (!isSynced) {
+      lastResult = { text: 'READ from Node ' + nodeId + ': BLOCKING — waiting for quorum agreement...', blocking: true };
+      simLog('READ Node ' + nodeId + ': <strong style="color:#58a6ff">BLOCKING</strong> — linearizable read must confirm with quorum (all 3 nodes must agree)', 'block');
+      blockingAnim = true;
+      blockingProgress = 0;
+      var remaining = Math.max(100, lag - msSinceWrite);
+      var steps = Math.ceil(remaining / 50);
+      var step = 0;
+      var strongInterval = setInterval(function() {
+        step++;
+        blockingProgress = step / steps;
+        if (step >= steps) {
+          clearInterval(strongInterval);
+          blockingAnim = false;
+          blockingProgress = 0;
+          simLog('READ Node ' + nodeId + ': <strong style="color:#3fb950">' + nodeValues[nodeId] + '</strong> — QUORUM CONFIRMED (' + (step * 50) + 'ms blocking delay), returning linearizable value', 'ok');
+          lastResult = null;
+        }
+      }, 50);
+    } else {
+      lastResult = { text: 'READ from Node ' + nodeId + ': ' + nodeValues[nodeId] + ' — LINEARIZABLE (all nodes synced)', stale: false };
+      simLog('READ Node ' + nodeId + ': <strong style="color:#0d9488">' + nodeValues[nodeId] + '</strong> — LINEARIZABLE, all replicas in agreement', 'ok');
+    }
+  }
+};
+
+/* ── Log helper ────────────────────────────── */
+function simLog(msg, type) {
+  var logEl = document.getElementById('sim-log');
+  if (!logEl) return;
+  var span = document.createElement('span');
+  span.className = 'sim-log-entry ' + (type === 'ok' ? 'log-ok' : type === 'stale' ? 'log-stale' : type === 'block' ? 'log-block' : type === 'causal' ? 'log-causal' : '');
+  var now = new Date();
+  var ts = now.getHours().toString().padStart(2,'0') + ':' + now.getMinutes().toString().padStart(2,'0') + ':' + now.getSeconds().toString().padStart(2,'0') + '.' + now.getMilliseconds().toString().padStart(3,'0');
+  span.innerHTML = '<span style="color:#555;">[' + ts + ']</span> ' + msg;
+  logEl.appendChild(span);
+  logEl.scrollTop = logEl.scrollHeight;
+  // Keep log short
+  while (logEl.children.length > 30) {
+    logEl.removeChild(logEl.firstChild);
+  }
+}
+
+/* ── Animation loop ─────────────────────── */
+function animFrame() {
+  // Update particles
+  particles.forEach(function(p) {
+    p.progress = Math.min(1, p.progress + p.speed);
+    p.x = nodes[p.from || 'A'] ? p.x : p.x; // initial position set at creation
+    // Lerp x,y toward target
+    var startX = p.startX !== undefined ? p.startX : p.x;
+    var startY = p.startY !== undefined ? p.startY : p.y;
+    p.x = startX + (p.tx - startX) * p.progress;
+    p.y = startY + (p.ty - startY) * p.progress;
+    p.life++;
+  });
+  // Capture start positions on first frame
+  particles = particles.map(function(p) {
+    if (p.startX === undefined) {
+      p.startX = p.x; p.startY = p.y;
+    }
+    return p;
+  });
+  particles = particles.filter(function(p) { return p.life < p.maxLife; });
+
+  // Result timer
+  if (lastResult && !lastResult.blocking) {
+    resultTimer++;
+    if (resultTimer > 120) { lastResult = null; resultTimer = 0; }
+  }
+
+  // Highlight timer
+  if (highlightTimer > 0) {
+    highlightTimer--;
+    if (highlightTimer === 0) highlightedRead = null;
+  }
+
+  draw();
+  requestAnimationFrame(animFrame);
+}
+
+/* ── Lag slider ─────────────────────────── */
+var lagSlider = document.getElementById('sim-lag-slider');
+var lagLabel = document.getElementById('sim-lag-label');
+if (lagSlider) {
+  lagSlider.addEventListener('input', function() {
+    lagMs = parseInt(this.value);
+    if (lagLabel) lagLabel.textContent = 'Lag: ' + lagMs + 'ms';
+  });
+}
+
+// Kick off
+animFrame();
+
+})(); // end IIFE
+
+/* ================================================================
+   Lucide icon initialization
+   ================================================================ */
+if (typeof lucide !== 'undefined') {
+  lucide.createIcons();
+}
+</script>
+</body>
+</html>

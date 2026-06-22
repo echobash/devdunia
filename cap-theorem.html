@@ -1,0 +1,1341 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CAP Theorem — DevDunia</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bangers&family=Comic+Neue:ital,wght@0,400;0,700;1,400&family=Space+Mono:wght@400;700&display=swap">
+<script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
+<style>
+:root {
+  --ink: #1a1410; --paper: #fdf3e3; --paper2: #fbe9cc;
+  --red: #e63946; --blue: #1d6fb8; --yellow: #ffd23f;
+  --green: #3fa34d; --pink: #ff6b9d; --purple: #8a4fff;
+  --orange: #ff8c42; --teal: #0d9488;
+}
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  font-family: 'Comic Neue', cursive;
+  color: var(--ink);
+  background-color: var(--paper);
+  background-image: radial-gradient(var(--ink) 0.5px, transparent 0.6px);
+  background-size: 14px 14px;
+  background-attachment: fixed;
+  line-height: 1.65;
+}
+.page-wrap { position: relative; z-index: 1; max-width: 1240px; margin: 0 auto; padding: 20px 32px 60px; }
+.panel {
+  border: 4px solid var(--ink); border-radius: 6px;
+  box-shadow: 7px 7px 0 var(--ink);
+  background: var(--paper); padding: 28px 32px; margin-bottom: 32px;
+}
+h2 { font-family: 'Bangers', cursive; font-size: 2.4rem; letter-spacing: 2px; margin-bottom: 16px; line-height: 1; }
+h3 { font-family: 'Bangers', cursive; font-size: 1.6rem; letter-spacing: 1px; margin-bottom: 12px; }
+h4 { font-family: 'Bangers', cursive; font-size: 1.2rem; letter-spacing: 1px; margin-bottom: 8px; }
+p  { margin-bottom: 14px; font-size: 1.05rem; }
+p:last-child { margin-bottom: 0; }
+ul { padding-left: 22px; margin-bottom: 14px; }
+li { margin-bottom: 6px; font-size: 1rem; }
+code { font-family: 'Space Mono', monospace; font-size: .85em; background: var(--paper2); padding: 1px 5px; border-radius: 3px; }
+.section-head { display: flex; align-items: center; gap: 14px; margin-bottom: 22px; flex-wrap: wrap; }
+.section-num {
+  font-family: 'Bangers', cursive; font-size: 1.1rem; letter-spacing: 2px;
+  background: var(--red); color: #fff; padding: 4px 14px;
+  border-radius: 4px; border: 2px solid var(--ink); box-shadow: 2px 2px 0 var(--ink);
+}
+.chip {
+  display: inline-block; font-family: 'Bangers', cursive; font-size: .85rem;
+  letter-spacing: 1.5px; padding: 3px 12px; border-radius: 4px;
+  border: 2px solid var(--ink); margin-right: 6px; margin-bottom: 6px; vertical-align: middle;
+}
+.chip-green  { background: var(--green);  color: #fff; }
+.chip-red    { background: var(--red);    color: #fff; }
+.chip-blue   { background: var(--blue);   color: #fff; }
+.chip-yellow { background: var(--yellow); color: var(--ink); }
+.chip-orange { background: var(--orange); color: #fff; }
+.chip-teal   { background: var(--teal);   color: #fff; }
+.hbox {
+  border: 3px solid var(--ink); border-radius: 5px; padding: 18px 22px;
+  margin: 16px 0; position: relative;
+}
+.hbox-label {
+  font-family: 'Bangers', cursive; font-size: .9rem; letter-spacing: 2px;
+  position: absolute; top: -14px; left: 16px; padding: 2px 12px;
+  border: 2px solid var(--ink); border-radius: 4px;
+}
+.hbox-orange { background: rgba(255,140,66,.1); border-color: var(--orange); }
+.hbox-orange .hbox-label { background: var(--orange); color: #fff; }
+.hbox-red { background: rgba(230,57,70,.08); border-color: var(--red); }
+.hbox-red .hbox-label { background: var(--red); color: #fff; }
+.hbox-green { background: rgba(63,163,77,.1); border-color: var(--green); }
+.hbox-green .hbox-label { background: var(--green); color: #fff; }
+.hbox-blue { background: rgba(29,111,184,.1); border-color: var(--blue); }
+.hbox-blue .hbox-label { background: var(--blue); color: #fff; }
+.hbox-yellow { background: rgba(255,210,63,.15); border-color: var(--yellow); }
+.hbox-yellow .hbox-label { background: var(--yellow); color: var(--ink); }
+.hbox-teal { background: rgba(13,148,136,.1); border-color: var(--teal); }
+.hbox-teal .hbox-label { background: var(--teal); color: #fff; }
+.hbox-purple { background: rgba(138,79,255,.1); border-color: var(--purple); }
+.hbox-purple .hbox-label { background: var(--purple); color: #fff; }
+.data-table { width: 100%; border-collapse: collapse; margin: 16px 0; font-size: .93rem; }
+.data-table th {
+  font-family: 'Bangers', cursive; font-size: 1rem; letter-spacing: 1px;
+  background: var(--ink); color: #fff; padding: 10px 14px; text-align: left; border: 2px solid var(--ink);
+}
+.data-table td { padding: 10px 14px; border: 2px solid var(--ink); vertical-align: top; }
+.data-table tr:nth-child(odd)  td { background: var(--paper2); }
+.data-table tr:nth-child(even) td { background: var(--paper); }
+.grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin: 16px 0; }
+.grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 16px; margin: 16px 0; }
+@media (max-width: 640px) { .grid-2, .grid-3 { grid-template-columns: 1fr; } }
+.card {
+  border: 3px solid var(--ink); border-radius: 5px;
+  box-shadow: 4px 4px 0 var(--ink); padding: 18px; background: var(--paper);
+}
+.card-head { font-family: 'Bangers', cursive; font-size: 1.1rem; letter-spacing: 1px; margin-bottom: 10px; padding-bottom: 8px; border-bottom: 2px solid var(--ink); }
+.sfx-row { display: flex; gap: 16px; flex-wrap: wrap; margin: 20px 0; }
+.sfx {
+  font-family: 'Bangers', cursive; font-size: 1.8rem; letter-spacing: 3px;
+  color: var(--ink); text-shadow: 3px 3px 0 var(--yellow); transform: rotate(-2deg); display: inline-block;
+}
+.sfx:nth-child(even) { transform: rotate(2deg); text-shadow: 3px 3px 0 var(--orange); }
+.chapter-divider { text-align: center; margin: 40px 0 28px; position: relative; }
+.chapter-divider::before { content: ''; position: absolute; top: 50%; left: 0; right: 0; height: 3px; background: var(--ink); }
+.chapter-divider span { position: relative; background: var(--paper); font-family: 'Bangers', cursive; font-size: 1rem; letter-spacing: 3px; padding: 0 16px; }
+/* Lucide icon helpers */
+.lc { width: 20px; height: 20px; vertical-align: middle; stroke-width: 2; display: inline-block; }
+.lc-lg { width: 32px; height: 32px; stroke-width: 2; }
+.lc svg { display: block; }
+
+/* ── VENN DIAGRAM ──────────────────────────── */
+.venn-wrap {
+  position: relative; width: 100%; max-width: 540px; margin: 24px auto; height: 320px;
+}
+.venn-circle {
+  position: absolute; border-radius: 50%; opacity: 0.22;
+}
+.venn-label {
+  position: absolute; text-align: center; font-family: 'Bangers', cursive; font-size: 1rem; letter-spacing: 1.5px;
+  pointer-events: none;
+}
+.venn-center {
+  position: absolute; text-align: center; font-family: 'Bangers', cursive; font-size: .85rem;
+  letter-spacing: 1px; color: var(--red); transform: translate(-50%,-50%);
+  border: 2px solid var(--red); border-radius: 4px; padding: 3px 10px;
+  background: rgba(230,57,70,.12); white-space: nowrap;
+}
+
+/* ── NODE DIAGRAM ──────────────────────────── */
+.node-box {
+  border: 3px solid var(--ink); border-radius: 6px;
+  padding: 14px 16px; text-align: center; min-width: 110px;
+  box-shadow: 4px 4px 0 var(--ink);
+  font-family: 'Bangers', cursive; font-size: .95rem; letter-spacing: 1.5px;
+}
+.h-connector {
+  flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 0 8px; min-width: 60px;
+}
+.h-line { height: 3px; width: 100%; background: var(--ink); position: relative; }
+.h-line-label { font-family: 'Space Mono', monospace; font-size: .68rem; margin-top: 4px; text-align: center; }
+
+/* ── CAP SIMULATOR WRAPPER ─────────────────── */
+.cap-wrap {
+  background: #0d1117; border: 4px solid var(--ink); border-radius: 8px;
+  box-shadow: 7px 7px 0 var(--ink); overflow: hidden; margin: 24px 0;
+}
+.cap-bar {
+  background: #161b22; border-bottom: 2px solid #30363d; padding: 10px 16px;
+  font-family: 'Bangers', cursive; font-size: 1rem; letter-spacing: 2px;
+  color: #e6edf3; display: flex; align-items: center; gap: 12px; flex-wrap: wrap;
+}
+.cap-body { padding: 20px; display: grid; grid-template-columns: 1fr 300px; gap: 20px; }
+@media(max-width:760px){ .cap-body { grid-template-columns: 1fr; } }
+#cap-canvas { display: block; border: 2px solid #30363d; border-radius: 4px; width: 100%; max-width: 560px; }
+.cap-side { display: flex; flex-direction: column; gap: 10px; }
+.cap-btn {
+  font-family: 'Bangers', cursive; font-size: 1rem; letter-spacing: 1.5px;
+  padding: 10px 14px; border: 2px solid #30363d; border-radius: 5px;
+  background: #161b22; color: #e6edf3; cursor: pointer; transition: background .15s;
+  text-align: left;
+}
+.cap-btn:hover { background: #21262d; border-color: #8b949e; }
+.cap-btn.active-cp  { border-color: var(--red); color: var(--red); }
+.cap-btn.active-ap  { border-color: var(--green); color: var(--green); }
+.cap-btn.active-partition { border-color: var(--orange); color: var(--orange); }
+.cap-btn.active-heal { border-color: var(--teal); color: var(--teal); }
+.cap-status-box {
+  background: #161b22; border: 2px solid #30363d; border-radius: 6px;
+  padding: 12px; font-family: 'Space Mono', monospace; font-size: .8rem; color: #adbac7; line-height: 1.7;
+}
+.cap-log {
+  background: #0d1117; border: 2px solid #30363d; border-radius: 6px;
+  padding: 10px 12px; font-family: 'Space Mono', monospace; font-size: .76rem; color: #8b949e;
+  max-height: 130px; overflow-y: auto; line-height: 1.8;
+}
+</style>
+</head>
+<body>
+<div data-masthead></div>
+<div class="page-wrap">
+
+<div data-tool-hero
+  data-title="CAP Theorem"
+  data-chapter="DATA-05"
+  data-category="Data &amp; Storage"
+  data-icon="&#x2696;"
+  data-desc="Consistency, Availability, Partition Tolerance — why every distributed database is forced to choose, and how real systems navigate that choice."
+  data-color="red"
+  data-badges="CAP THEOREM,CONSISTENCY,AVAILABILITY,DISTRIBUTED SYSTEMS"
+  data-badge-colors="red,blue,orange,yellow">
+</div>
+
+<!-- ───────────────────────────────────────
+     SECTION 01: What CAP Theorem Says
+─────────────────────────────────────────── -->
+<div class="panel">
+  <div class="section-head">
+    <span class="section-num">01</span>
+    <h2>What CAP Theorem Says</h2>
+  </div>
+
+  <p>Proposed by Eric Brewer in 2000 and proved by Gilbert &amp; Lynch in 2002, the <strong>CAP Theorem</strong> states that a distributed data store can guarantee at most <strong>2 of 3</strong> properties simultaneously: <strong>Consistency</strong>, <strong>Availability</strong>, and <strong>Partition Tolerance</strong>.</p>
+
+  <div class="grid-3" style="margin: 24px 0;">
+    <div class="card" style="border-color: var(--blue);">
+      <div class="card-head" style="color: var(--blue); border-color: var(--blue); display: flex; align-items: center; gap: 8px;">
+        <i data-lucide="check-square" class="lc"></i> Consistency (C)
+      </div>
+      <p style="font-size: .95rem;">Every read receives the <strong>most recent write</strong> or an error. All nodes in the cluster see the same data at the same time. There is a single, globally consistent view of the data.</p>
+      <div style="background: rgba(29,111,184,.1); border: 2px solid var(--blue); border-radius: 5px; padding: 10px 12px; font-family: 'Space Mono', monospace; font-size: .78rem; color: #555; margin-top: 10px;">
+        Write X=5 on Node A<br>
+        Read from Node B<br>
+        <span style="color: var(--blue);">Result: X=5 (guaranteed)</span>
+      </div>
+    </div>
+    <div class="card" style="border-color: var(--green);">
+      <div class="card-head" style="color: var(--green); border-color: var(--green); display: flex; align-items: center; gap: 8px;">
+        <i data-lucide="wifi" class="lc"></i> Availability (A)
+      </div>
+      <p style="font-size: .95rem;">Every request receives a <strong>response</strong> — not necessarily the most recent data. Every non-failing node always returns a result (no timeouts or errors), even if data may be stale.</p>
+      <div style="background: rgba(63,163,77,.1); border: 2px solid var(--green); border-radius: 5px; padding: 10px 12px; font-family: 'Space Mono', monospace; font-size: .78rem; color: #555; margin-top: 10px;">
+        Write X=5 on Node A<br>
+        Read from Node B<br>
+        <span style="color: var(--green);">Result: X=3 (old value, but responds)</span>
+      </div>
+    </div>
+    <div class="card" style="border-color: var(--orange);">
+      <div class="card-head" style="color: var(--orange); border-color: var(--orange); display: flex; align-items: center; gap: 8px;">
+        <i data-lucide="git-fork" class="lc"></i> Partition Tolerance (P)
+      </div>
+      <p style="font-size: .95rem;">The system continues operating even when <strong>network messages are lost or delayed</strong> between nodes. The system survives a split where nodes cannot communicate with each other.</p>
+      <div style="background: rgba(255,140,66,.1); border: 2px solid var(--orange); border-radius: 5px; padding: 10px 12px; font-family: 'Space Mono', monospace; font-size: .78rem; color: #555; margin-top: 10px;">
+        Node A ✗ Node B<br>
+        (network partition)<br>
+        <span style="color: var(--orange);">System still handles requests</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- VENN DIAGRAM -->
+  <div style="border: 3px solid var(--ink); border-radius: 8px; overflow: hidden; box-shadow: 6px 6px 0 var(--ink); margin: 20px 0;">
+    <div style="background: var(--ink); color: #fff; padding: 10px 20px; font-family: 'Bangers', cursive; font-size: 1rem; letter-spacing: 2px; display: flex; align-items: center; gap: 10px;">
+      <i data-lucide="circle" style="width:18px;height:18px;"></i> CAP VENN: PICK ANY TWO
+    </div>
+    <div style="padding: 28px; background: var(--paper); display: flex; flex-wrap: wrap; gap: 24px; align-items: center; justify-content: center;">
+      <div class="venn-wrap">
+        <!-- C circle (top) -->
+        <div class="venn-circle" style="width:220px;height:220px;background:var(--blue);top:10px;left:50%;transform:translateX(-50%);"></div>
+        <!-- A circle (bottom-left) -->
+        <div class="venn-circle" style="width:220px;height:220px;background:var(--green);top:100px;left:20px;"></div>
+        <!-- P circle (bottom-right) -->
+        <div class="venn-circle" style="width:220px;height:220px;background:var(--orange);top:100px;right:20px;"></div>
+
+        <!-- Labels for circles -->
+        <div class="venn-label" style="top:30px;left:50%;transform:translateX(-50%);color:var(--blue);">
+          <i data-lucide="check-square" style="width:20px;height:20px;display:block;margin:0 auto 4px;stroke:var(--blue);"></i>
+          CONSISTENCY
+        </div>
+        <div class="venn-label" style="bottom:10px;left:40px;color:var(--green);">
+          <i data-lucide="wifi" style="width:20px;height:20px;display:block;margin:0 auto 4px;stroke:var(--green);"></i>
+          AVAILABILITY
+        </div>
+        <div class="venn-label" style="bottom:10px;right:24px;color:var(--orange);">
+          <i data-lucide="git-fork" style="width:20px;height:20px;display:block;margin:0 auto 4px;stroke:var(--orange);"></i>
+          PARTITION<br>TOLERANCE
+        </div>
+
+        <!-- Intersection labels -->
+        <div style="position:absolute;top:140px;left:50%;transform:translateX(-50%);font-family:'Bangers',cursive;font-size:.8rem;letter-spacing:1px;background:rgba(253,243,227,.9);border:2px solid var(--ink);border-radius:4px;padding:2px 8px;white-space:nowrap;text-align:center;">
+          <span style="color:var(--blue);">C</span>+<span style="color:var(--green);">A</span><br>
+          <span style="font-size:.7rem;color:#888;">single node only</span>
+        </div>
+        <div style="position:absolute;top:110px;left:88px;font-family:'Bangers',cursive;font-size:.8rem;letter-spacing:1px;background:rgba(253,243,227,.9);border:2px solid var(--ink);border-radius:4px;padding:2px 8px;white-space:nowrap;text-align:center;">
+          <span style="color:var(--blue);">C</span>+<span style="color:var(--orange);">P</span><br>
+          <span style="font-size:.7rem;color:#888;">no availability</span>
+        </div>
+        <div style="position:absolute;top:110px;right:70px;font-family:'Bangers',cursive;font-size:.8rem;letter-spacing:1px;background:rgba(253,243,227,.9);border:2px solid var(--ink);border-radius:4px;padding:2px 8px;white-space:nowrap;text-align:center;">
+          <span style="color:var(--green);">A</span>+<span style="color:var(--orange);">P</span><br>
+          <span style="font-size:.7rem;color:#888;">no consistency</span>
+        </div>
+
+        <!-- Center: impossible -->
+        <div class="venn-center" style="top:50%;left:50%;">
+          <i data-lucide="x-circle" style="width:14px;height:14px;vertical-align:middle;stroke:var(--red);"></i>
+          C+A+P IMPOSSIBLE
+        </div>
+      </div>
+      <div style="max-width: 280px;">
+        <div class="hbox hbox-red" style="margin: 0 0 14px;">
+          <div class="hbox-label">THE CORE INSIGHT</div>
+          <p style="margin-top:12px;font-size:.92rem;">In a distributed system, <strong>network partitions will happen</strong>. You cannot prevent them. Therefore, you must choose between <strong>C</strong> and <strong>A</strong> when a partition occurs.</p>
+        </div>
+        <div style="background: rgba(255,210,63,.15); border: 3px solid var(--yellow); border-radius: 5px; padding: 14px 16px;">
+          <div style="font-family: 'Bangers', cursive; font-size: .9rem; letter-spacing: 2px; margin-bottom: 8px;">REAL CHOICE:</div>
+          <div style="display: flex; flex-direction: column; gap: 8px;">
+            <div style="display: flex; align-items: center; gap: 8px; font-size: .9rem;">
+              <span class="chip chip-blue" style="margin:0;">CP</span> Refuse to answer (error) rather than return stale data
+            </div>
+            <div style="display: flex; align-items: center; gap: 8px; font-size: .9rem;">
+              <span class="chip chip-green" style="margin:0;">AP</span> Return possibly stale data rather than refuse requests
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="sfx-row">
+    <span class="sfx">PICK TWO</span>
+    <span class="sfx">CAN'T HAVE ALL THREE</span>
+    <span class="sfx">PROVEN MATH</span>
+  </div>
+</div>
+
+<!-- ───────────────────────────────────────
+     SECTION 02: Why P Is Non-Negotiable
+─────────────────────────────────────────── -->
+<div class="panel">
+  <div class="section-head">
+    <span class="section-num">02</span>
+    <h2>Why Partition Tolerance Is Non-Negotiable</h2>
+  </div>
+
+  <p>A <strong>network partition</strong> is when two or more nodes in your cluster cannot communicate with each other — even though both nodes are running fine. The network between them is broken, delayed, or dropping packets.</p>
+
+  <div class="grid-2" style="margin: 24px 0;">
+    <div>
+      <div class="hbox hbox-red" style="margin: 0 0 16px;">
+        <div class="hbox-label">WHEN PARTITIONS HAPPEN</div>
+        <ul style="margin-top:14px;">
+          <li><i data-lucide="cable" class="lc" style="stroke:var(--red);"></i> Network cable physically severed</li>
+          <li><i data-lucide="rotate-cw" class="lc" style="stroke:var(--red);"></i> Switch or router reboots mid-traffic</li>
+          <li><i data-lucide="cloud-lightning" class="lc" style="stroke:var(--red);"></i> AWS Availability Zone goes down</li>
+          <li><i data-lucide="clock" class="lc" style="stroke:var(--red);"></i> Packet loss causes timeout between nodes</li>
+          <li><i data-lucide="wifi-off" class="lc" style="stroke:var(--red);"></i> Datacenter network congestion drops packets</li>
+          <li><i data-lucide="wrench" class="lc" style="stroke:var(--red);"></i> Firewall rule change cuts inter-node traffic</li>
+        </ul>
+      </div>
+      <div class="hbox hbox-yellow" style="margin: 0;">
+        <div class="hbox-label">THE FUNDAMENTAL RULE</div>
+        <p style="margin-top: 12px;">If you run your system on <strong>more than one node</strong>, you <em>will</em> experience partitions eventually. It's not a matter of if — it's a matter of when. This is why <strong>P is not optional</strong>: you have to decide how your system behaves when a partition occurs.</p>
+      </div>
+    </div>
+
+    <!-- Partition visual -->
+    <div style="border: 3px solid var(--ink); border-radius: 8px; overflow: hidden; box-shadow: 5px 5px 0 var(--ink);">
+      <div style="background: var(--red); color: #fff; padding: 10px 16px; font-family: 'Bangers', cursive; font-size: .95rem; letter-spacing: 2px; border-bottom: 3px solid var(--ink);">
+        <i data-lucide="zap-off" style="width:18px;height:18px;vertical-align:middle;"></i> NETWORK PARTITION
+      </div>
+      <div style="padding: 20px; background: var(--paper);">
+        <!-- Two nodes with severed link -->
+        <div style="display: flex; align-items: center; gap: 0;">
+          <!-- Node A -->
+          <div style="border: 3px solid var(--blue); border-radius: 6px; padding: 14px 16px; text-align: center; flex: 1; background: rgba(29,111,184,.08); box-shadow: 3px 3px 0 var(--ink);">
+            <i data-lucide="database" style="width:28px;height:28px;color:var(--blue);display:block;margin:0 auto 6px;"></i>
+            <div style="font-family:'Bangers',cursive;font-size:.95rem;letter-spacing:1px;">Node A</div>
+            <div style="font-family:'Space Mono',monospace;font-size:.7rem;color:#555;margin-top:4px;">X = 5 (new)<br>last write: NOW</div>
+          </div>
+
+          <!-- Broken link -->
+          <div style="flex: 0 0 100px; display: flex; flex-direction: column; align-items: center; gap: 4px; padding: 0 4px; position: relative;">
+            <div style="height: 3px; width: 38%; background: var(--ink); border-radius: 2px;"></div>
+            <div style="border: 2px solid var(--red); border-radius: 4px; padding: 3px 7px; background: rgba(230,57,70,.12); display: flex; flex-direction: column; align-items: center; gap: 2px;">
+              <i data-lucide="scissors" style="width:18px;height:18px;stroke:var(--red);"></i>
+              <span style="font-family:'Bangers',cursive;font-size:.72rem;letter-spacing:1px;color:var(--red);">SEVERED</span>
+            </div>
+            <div style="height: 3px; width: 38%; background: var(--ink); border-radius: 2px;"></div>
+            <div style="font-family:'Space Mono',monospace;font-size:.62rem;color:var(--red);margin-top:2px;text-align:center;">no messages<br>pass</div>
+          </div>
+
+          <!-- Node B -->
+          <div style="border: 3px solid var(--green); border-radius: 6px; padding: 14px 16px; text-align: center; flex: 1; background: rgba(63,163,77,.08); box-shadow: 3px 3px 0 var(--ink);">
+            <i data-lucide="database" style="width:28px;height:28px;color:var(--green);display:block;margin:0 auto 6px;"></i>
+            <div style="font-family:'Bangers',cursive;font-size:.95rem;letter-spacing:1px;">Node B</div>
+            <div style="font-family:'Space Mono',monospace;font-size:.7rem;color:#555;margin-top:4px;">X = 3 (stale)<br>last sync: -5min</div>
+          </div>
+        </div>
+
+        <!-- The choice -->
+        <div style="margin-top: 18px; display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+          <div style="border: 2px solid var(--red); border-radius: 5px; padding: 10px; background: rgba(230,57,70,.08); text-align: center;">
+            <div style="font-family:'Bangers',cursive;font-size:.9rem;letter-spacing:1px;color:var(--red);margin-bottom:4px;">CP CHOICE</div>
+            <div style="font-family:'Space Mono',monospace;font-size:.72rem;color:#555;line-height:1.6;">Node B rejects reads<br>Returns: ERROR<br><span style="color:var(--red);">Safe but unavailable</span></div>
+          </div>
+          <div style="border: 2px solid var(--green); border-radius: 5px; padding: 10px; background: rgba(63,163,77,.08); text-align: center;">
+            <div style="font-family:'Bangers',cursive;font-size:.9rem;letter-spacing:1px;color:var(--green);margin-bottom:4px;">AP CHOICE</div>
+            <div style="font-family:'Space Mono',monospace;font-size:.72rem;color:#555;line-height:1.6;">Node B serves X=3<br>Returns: STALE OK<br><span style="color:var(--green);">Available but inconsistent</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="hbox hbox-blue">
+    <div class="hbox-label">WHY YOU CAN'T AVOID THIS CHOICE</div>
+    <p style="margin-top: 12px;">If Node B receives a read request during a partition, it has exactly two options: <strong>(1)</strong> refuse to answer and return an error — sacrificing availability but maintaining the consistency guarantee; or <strong>(2)</strong> answer with the data it has locally — maintaining availability but potentially returning stale data. There is no third option. This is the inescapable trade-off at the heart of distributed systems.</p>
+  </div>
+</div>
+
+<!-- ───────────────────────────────────────
+     SECTION 03: CP Systems
+─────────────────────────────────────────── -->
+<div class="panel">
+  <div class="section-head">
+    <span class="section-num">03</span>
+    <h2>CP Systems: Consistency over Availability</h2>
+  </div>
+
+  <p>A <strong>CP system</strong> prioritizes correctness: during a network partition, it will <em>refuse</em> to return potentially stale data, instead returning an error. The guarantee: every read returns the most recent write — or fails.</p>
+
+  <div class="grid-2" style="margin: 24px 0;">
+    <div>
+      <div class="hbox hbox-red" style="margin: 0 0 16px;">
+        <div class="hbox-label">CP BEHAVIOR DURING PARTITION</div>
+        <ul style="margin-top: 14px;">
+          <li><i data-lucide="shield" class="lc" style="stroke:var(--red);"></i> Node cannot confirm write with majority? <strong>Reject the write.</strong></li>
+          <li><i data-lucide="lock" class="lc" style="stroke:var(--red);"></i> Node cannot confirm read is fresh? <strong>Return error.</strong></li>
+          <li><i data-lucide="users" class="lc" style="stroke:var(--red);"></i> Uses leader election (Raft/Paxos): minority partition stops accepting writes</li>
+          <li><i data-lucide="alert-circle" class="lc" style="stroke:var(--red);"></i> Client sees: connection refused / timeout / "no leader" error</li>
+        </ul>
+      </div>
+
+      <h3>When to Choose CP</h3>
+      <ul>
+        <li><strong>Financial transactions</strong> — "Did my bank transfer go through?" must be definitive</li>
+        <li><strong>Distributed locks</strong> — only one node should hold the lock at a time</li>
+        <li><strong>Leader election</strong> — exactly one leader, no split-brain</li>
+        <li><strong>Configuration management</strong> — all services must see the same config version</li>
+        <li><strong>Inventory management</strong> — overselling a product is a business disaster</li>
+      </ul>
+    </div>
+
+    <!-- CP System Visual -->
+    <div style="border: 3px solid var(--ink); border-radius: 8px; overflow: hidden; box-shadow: 5px 5px 0 var(--ink);">
+      <div style="background: var(--red); color: #fff; padding: 10px 16px; font-family: 'Bangers', cursive; font-size: .95rem; letter-spacing: 2px; border-bottom: 3px solid var(--ink);">
+        <i data-lucide="shield-off" style="width:18px;height:18px;vertical-align:middle;"></i> CP: WRITE REJECTED DURING PARTITION
+      </div>
+      <div style="padding: 20px; background: var(--paper);">
+        <!-- Timeline -->
+        <div style="display: flex; flex-direction: column; gap: 10px;">
+          <div style="display: flex; align-items: center; gap: 10px; padding: 10px; border: 2px solid var(--blue); border-radius: 5px; background: rgba(29,111,184,.08);">
+            <i data-lucide="edit-3" style="width:20px;height:20px;stroke:var(--blue);flex-shrink:0;"></i>
+            <div>
+              <div style="font-family:'Bangers',cursive;font-size:.9rem;letter-spacing:1px;color:var(--blue);">Client writes X=5 to Node A</div>
+              <div style="font-family:'Space Mono',monospace;font-size:.72rem;color:#555;">Needs to replicate to quorum (majority)</div>
+            </div>
+          </div>
+
+          <div style="display: flex; justify-content: center;">
+            <div style="width: 3px; height: 20px; background: var(--ink); position: relative;">
+              <div style="position:absolute;bottom:-1px;left:50%;transform:translateX(-50%);border-left:5px solid transparent;border-right:5px solid transparent;border-top:7px solid var(--ink);"></div>
+            </div>
+          </div>
+
+          <div style="display: flex; align-items: center; gap: 10px; padding: 10px; border: 2px solid var(--orange); border-radius: 5px; background: rgba(255,140,66,.08);">
+            <i data-lucide="zap-off" style="width:20px;height:20px;stroke:var(--orange);flex-shrink:0;"></i>
+            <div>
+              <div style="font-family:'Bangers',cursive;font-size:.9rem;letter-spacing:1px;color:var(--orange);">Partition! Node A can't reach Node B, C</div>
+              <div style="font-family:'Space Mono',monospace;font-size:.72rem;color:#555;">Cannot achieve quorum</div>
+            </div>
+          </div>
+
+          <div style="display: flex; justify-content: center;">
+            <div style="width: 3px; height: 20px; background: var(--ink); position: relative;">
+              <div style="position:absolute;bottom:-1px;left:50%;transform:translateX(-50%);border-left:5px solid transparent;border-right:5px solid transparent;border-top:7px solid var(--ink);"></div>
+            </div>
+          </div>
+
+          <div style="display: flex; align-items: center; gap: 10px; padding: 10px; border: 2px solid var(--red); border-radius: 5px; background: rgba(230,57,70,.12);">
+            <i data-lucide="x-circle" style="width:20px;height:20px;stroke:var(--red);flex-shrink:0;"></i>
+            <div>
+              <div style="font-family:'Bangers',cursive;font-size:.9rem;letter-spacing:1px;color:var(--red);">WRITE REJECTED</div>
+              <div style="font-family:'Space Mono',monospace;font-size:.72rem;color:var(--red);">Error: "cannot reach quorum"</div>
+            </div>
+          </div>
+
+          <div style="display: flex; justify-content: center;">
+            <div style="width: 3px; height: 20px; background: var(--ink); position: relative;">
+              <div style="position:absolute;bottom:-1px;left:50%;transform:translateX(-50%);border-left:5px solid transparent;border-right:5px solid transparent;border-top:7px solid var(--ink);"></div>
+            </div>
+          </div>
+
+          <div style="display: flex; align-items: center; gap: 10px; padding: 10px; border: 2px solid var(--green); border-radius: 5px; background: rgba(63,163,77,.08);">
+            <i data-lucide="check-circle" style="width:20px;height:20px;stroke:var(--green);flex-shrink:0;"></i>
+            <div>
+              <div style="font-family:'Bangers',cursive;font-size:.9rem;letter-spacing:1px;color:var(--green);">PARTITION HEALS</div>
+              <div style="font-family:'Space Mono',monospace;font-size:.72rem;color:#555;">Normal writes resume, consistency restored</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <h3>Real-World CP Systems</h3>
+  <div class="grid-3">
+    <div class="card" style="border-color: var(--red);">
+      <div class="card-head" style="color: var(--red); border-color: var(--red); display: flex; align-items: center; gap: 8px;">
+        <i data-lucide="git-branch" class="lc"></i> ZooKeeper
+      </div>
+      <p style="font-size:.88rem;">Distributed coordination service. Uses ZAB (Zookeeper Atomic Broadcast) for consensus. During partition minority, nodes stop accepting writes. Used by Kafka, Hadoop for leader election.</p>
+    </div>
+    <div class="card" style="border-color: var(--red);">
+      <div class="card-head" style="color: var(--red); border-color: var(--red); display: flex; align-items: center; gap: 8px;">
+        <i data-lucide="key" class="lc"></i> etcd
+      </div>
+      <p style="font-size:.88rem;">Kubernetes' backing store for all cluster state. Uses Raft consensus. A write must be acknowledged by a majority before it's confirmed. Minority partition returns errors.</p>
+    </div>
+    <div class="card" style="border-color: var(--red);">
+      <div class="card-head" style="color: var(--red); border-color: var(--red); display: flex; align-items: center; gap: 8px;">
+        <i data-lucide="database" class="lc"></i> HBase
+      </div>
+      <p style="font-size:.88rem;">Distributed column store (Hadoop ecosystem). Uses HDFS replication and ZooKeeper for region server coordination. Consistency is always guaranteed — writes wait for replication.</p>
+    </div>
+  </div>
+</div>
+
+<!-- ───────────────────────────────────────
+     SECTION 04: AP Systems
+─────────────────────────────────────────── -->
+<div class="panel">
+  <div class="section-head">
+    <span class="section-num">04</span>
+    <h2>AP Systems: Availability over Consistency</h2>
+  </div>
+
+  <p>An <strong>AP system</strong> prioritizes staying online: during a network partition, every node continues to answer requests based on its own local state — even if that data is stale. The system stays up, but you may read old data. Once the partition heals, nodes <strong>reconcile their diverged states</strong> — a process called <em>eventual consistency</em>.</p>
+
+  <div class="grid-2" style="margin: 24px 0;">
+    <div>
+      <div class="hbox hbox-green" style="margin: 0 0 16px;">
+        <div class="hbox-label">AP BEHAVIOR DURING PARTITION</div>
+        <ul style="margin-top: 14px;">
+          <li><i data-lucide="wifi" class="lc" style="stroke:var(--green);"></i> Every node answers every request — no errors during partition</li>
+          <li><i data-lucide="clock" class="lc" style="stroke:var(--green);"></i> Reads may return stale data (from before the partition)</li>
+          <li><i data-lucide="git-merge" class="lc" style="stroke:var(--green);"></i> Diverged writes are reconciled after partition heals</li>
+          <li><i data-lucide="repeat" class="lc" style="stroke:var(--green);"></i> Conflict resolution: last-write-wins, CRDTs, or manual merge</li>
+        </ul>
+      </div>
+
+      <div class="hbox hbox-teal" style="margin: 0;">
+        <div class="hbox-label">EVENTUAL CONSISTENCY</div>
+        <p style="margin-top: 12px;">The guarantee: if no new writes happen, eventually all replicas will converge to the same value. "Eventually" could be milliseconds or seconds depending on network conditions. The key word is <em>eventually</em> — not immediately.</p>
+      </div>
+    </div>
+
+    <!-- AP Reconciliation Visual -->
+    <div style="border: 3px solid var(--ink); border-radius: 8px; overflow: hidden; box-shadow: 5px 5px 0 var(--ink);">
+      <div style="background: var(--green); color: #fff; padding: 10px 16px; font-family: 'Bangers', cursive; font-size: .95rem; letter-spacing: 2px; border-bottom: 3px solid var(--ink);">
+        <i data-lucide="git-merge" style="width:18px;height:18px;vertical-align:middle;"></i> AP: STALE DATA THEN RECONCILE
+      </div>
+      <div style="padding: 20px; background: var(--paper);">
+        <div style="display: flex; flex-direction: column; gap: 8px;">
+          <!-- Before partition -->
+          <div style="font-family:'Bangers',cursive;font-size:.85rem;letter-spacing:1px;color:#888;text-align:center;padding:4px 0;">DURING PARTITION</div>
+          <div style="display: flex; gap: 10px;">
+            <div style="flex:1;border:2px solid var(--blue);border-radius:5px;padding:8px;background:rgba(29,111,184,.08);text-align:center;">
+              <div style="font-family:'Bangers',cursive;font-size:.85rem;color:var(--blue);">Node A</div>
+              <div style="font-family:'Space Mono',monospace;font-size:.72rem;margin-top:4px;color:var(--blue);">X = 5</div>
+              <div style="font-family:'Space Mono',monospace;font-size:.65rem;color:#888;">(new write)</div>
+            </div>
+            <div style="display:flex;align-items:center;"><i data-lucide="scissors" style="width:16px;height:16px;stroke:var(--red);"></i></div>
+            <div style="flex:1;border:2px solid var(--green);border-radius:5px;padding:8px;background:rgba(63,163,77,.08);text-align:center;">
+              <div style="font-family:'Bangers',cursive;font-size:.85rem;color:var(--green);">Node B</div>
+              <div style="font-family:'Space Mono',monospace;font-size:.72rem;margin-top:4px;color:var(--orange);">X = 3</div>
+              <div style="font-family:'Space Mono',monospace;font-size:.65rem;color:#888;">(stale)</div>
+            </div>
+          </div>
+
+          <div style="display: flex; gap: 10px;">
+            <div style="flex:1;border:2px dashed var(--green);border-radius:4px;padding:6px;background:rgba(63,163,77,.05);text-align:center;">
+              <div style="font-family:'Space Mono',monospace;font-size:.7rem;color:var(--green);">read(X)</div>
+              <div style="font-family:'Bangers',cursive;font-size:.85rem;letter-spacing:1px;color:var(--green);">OK: X=5</div>
+            </div>
+            <div style="flex:0 0 20px;"></div>
+            <div style="flex:1;border:2px dashed var(--orange);border-radius:4px;padding:6px;background:rgba(255,140,66,.05);text-align:center;">
+              <div style="font-family:'Space Mono',monospace;font-size:.7rem;color:var(--orange);">read(X)</div>
+              <div style="font-family:'Bangers',cursive;font-size:.85rem;letter-spacing:1px;color:var(--orange);">STALE: X=3</div>
+            </div>
+          </div>
+
+          <!-- Heal -->
+          <div style="font-family:'Bangers',cursive;font-size:.85rem;letter-spacing:1px;color:#888;text-align:center;padding:4px 0;margin-top:4px;">AFTER PARTITION HEALS</div>
+          <div style="display: flex; gap: 10px;">
+            <div style="flex:1;border:2px solid var(--teal);border-radius:5px;padding:8px;background:rgba(13,148,136,.08);text-align:center;">
+              <div style="font-family:'Bangers',cursive;font-size:.85rem;color:var(--teal);">Node A</div>
+              <div style="font-family:'Space Mono',monospace;font-size:.72rem;margin-top:4px;color:var(--teal);">X = 5</div>
+            </div>
+            <div style="display:flex;align-items:center;flex-direction:column;gap:2px;">
+              <div style="width:3px;height:12px;background:var(--ink);border-radius:2px;"></div>
+              <i data-lucide="repeat" style="width:14px;height:14px;stroke:var(--teal);"></i>
+              <div style="width:3px;height:12px;background:var(--ink);border-radius:2px;"></div>
+            </div>
+            <div style="flex:1;border:2px solid var(--teal);border-radius:5px;padding:8px;background:rgba(13,148,136,.08);text-align:center;">
+              <div style="font-family:'Bangers',cursive;font-size:.85rem;color:var(--teal);">Node B</div>
+              <div style="font-family:'Space Mono',monospace;font-size:.72rem;margin-top:4px;color:var(--teal);">X = 5</div>
+              <div style="font-family:'Space Mono',monospace;font-size:.65rem;color:#888;">(reconciled)</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <h3>Real-World AP Systems</h3>
+  <div class="grid-3">
+    <div class="card" style="border-color: var(--green);">
+      <div class="card-head" style="color: var(--green); border-color: var(--green); display: flex; align-items: center; gap: 8px;">
+        <i data-lucide="database" class="lc"></i> Cassandra
+      </div>
+      <p style="font-size:.88rem;">Every node can accept reads and writes. No single point of failure. Replication is asynchronous. Consistency level is tunable per-query (more on this in Section 06).</p>
+    </div>
+    <div class="card" style="border-color: var(--green);">
+      <div class="card-head" style="color: var(--green); border-color: var(--green); display: flex; align-items: center; gap: 8px;">
+        <i data-lucide="cloud" class="lc"></i> DynamoDB (default)
+      </div>
+      <p style="font-size:.88rem;">Default eventually consistent reads. Maximum availability and low latency. You can opt into strongly consistent reads per request — at higher cost and latency.</p>
+    </div>
+    <div class="card" style="border-color: var(--green);">
+      <div class="card-head" style="color: var(--green); border-color: var(--green); display: flex; align-items: center; gap: 8px;">
+        <i data-lucide="globe" class="lc"></i> DNS
+      </div>
+      <p style="font-size:.88rem;">Classic AP system. A DNS record update may take minutes to hours to propagate globally. Every resolver answers immediately with cached data. Eventual consistency by design.</p>
+    </div>
+  </div>
+
+  <div class="hbox hbox-blue" style="margin-top: 16px;">
+    <div class="hbox-label">WHEN TO CHOOSE AP</div>
+    <ul style="margin-top: 12px;">
+      <li><strong>Social media likes/counts:</strong> seeing 10,203 vs 10,204 likes is not critical</li>
+      <li><strong>Shopping cart:</strong> briefly showing stale cart contents is acceptable</li>
+      <li><strong>User profile / settings:</strong> a few seconds of staleness is fine</li>
+      <li><strong>DNS records:</strong> propagation delay is a known and accepted trade-off</li>
+      <li><strong>Analytics dashboards:</strong> near-real-time is good enough</li>
+    </ul>
+  </div>
+</div>
+
+<!-- ───────────────────────────────────────
+     SECTION 05: CA Systems
+─────────────────────────────────────────── -->
+<div class="panel">
+  <div class="section-head">
+    <span class="section-num">05</span>
+    <h2>CA Systems: The Impossible Category</h2>
+  </div>
+
+  <p>A <strong>CA system</strong> provides Consistency and Availability but sacrifices Partition Tolerance. The catch: this is only possible if you can <em>guarantee</em> there will never be a network partition — which is only achievable on a <strong>single node</strong>.</p>
+
+  <div class="grid-2" style="margin: 24px 0;">
+    <div class="hbox hbox-orange" style="margin: 0;">
+      <div class="hbox-label">SINGLE-NODE = CA (SORT OF)</div>
+      <p style="margin-top: 12px;">A traditional RDBMS (PostgreSQL, MySQL) on a single server provides both C and A: every read sees the latest committed write, and the server always responds. But it's not a "distributed" system — there's only one node, so partitions can't happen. Once you add replicas, you re-enter CAP territory.</p>
+      <div style="margin-top: 12px; display: flex; align-items: center; gap: 12px; border: 2px solid var(--orange); border-radius: 5px; padding: 10px 14px; background: rgba(255,140,66,.08);">
+        <i data-lucide="server" style="width:32px;height:32px;stroke:var(--orange);flex-shrink:0;"></i>
+        <div>
+          <div style="font-family:'Bangers',cursive;font-size:1rem;letter-spacing:1px;">Single PostgreSQL / MySQL</div>
+          <div style="font-family:'Space Mono',monospace;font-size:.78rem;color:#555;margin-top:4px;">Consistent + Available<br>But: one SPOF, can't scale horizontally</div>
+        </div>
+      </div>
+    </div>
+
+    <div>
+      <div class="hbox hbox-purple" style="margin: 0 0 16px;">
+        <div class="hbox-label">NEWSQL: CP WITH HIGH AVAILABILITY</div>
+        <p style="margin-top: 12px;">Systems like <strong>Google Spanner</strong> and <strong>CockroachDB</strong> are often marketed as "CA" but are more accurately <strong>CP with very high availability</strong>. They use consensus protocols (Paxos / Raft) to achieve strong consistency across nodes. During a partition, the minority side stops accepting writes — but in practice, they're engineered to make partitions extremely rare and brief.</p>
+      </div>
+      <div class="grid-2" style="margin: 0; gap: 10px;">
+        <div class="card" style="border-color: var(--purple); padding: 14px;">
+          <div class="card-head" style="color:var(--purple);border-color:var(--purple);font-size:.95rem;">Google Spanner</div>
+          <p style="font-size:.82rem;">Globally distributed, externally consistent. Uses TrueTime (GPS + atomic clocks) to order transactions. CP in practice — partition minority halts.</p>
+        </div>
+        <div class="card" style="border-color: var(--purple); padding: 14px;">
+          <div class="card-head" style="color:var(--purple);border-color:var(--purple);font-size:.95rem;">CockroachDB</div>
+          <p style="font-size:.82rem;">Distributed SQL with serializable isolation. Uses Raft consensus. CP system — provides ACID transactions across nodes with strong consistency.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="hbox hbox-yellow">
+    <div class="hbox-label">THE NUANCE: "CA" IS MOSTLY A FICTION IN DISTRIBUTED SYSTEMS</div>
+    <p style="margin-top: 12px;">When system designers say a distributed system is "CA," they typically mean one of two things: <strong>(1)</strong> it runs on a single node (so partitions can't occur by definition), or <strong>(2)</strong> it's actually CP but engineered to maximize availability — meaning it's so reliable that partitions are extremely rare, but when they do occur, it still chooses consistency. There is no truly distributed CA system — the network eventually fails.</p>
+  </div>
+</div>
+
+<!-- ───────────────────────────────────────
+     SECTION 06: Real-World Positioning
+─────────────────────────────────────────── -->
+<div class="panel">
+  <div class="section-head">
+    <span class="section-num">06</span>
+    <h2>Real-World System Positioning</h2>
+  </div>
+
+  <p>Different databases make different trade-offs depending on their design goals. Here's where major systems land on the CAP spectrum — and why some systems can slide between CP and AP based on configuration.</p>
+
+  <!-- Big comparison infographic -->
+  <div style="border: 3px solid var(--ink); border-radius: 8px; overflow: hidden; box-shadow: 6px 6px 0 var(--ink); margin: 24px 0;">
+    <div style="background: var(--ink); color: #fff; padding: 10px 20px; font-family: 'Bangers', cursive; font-size: 1rem; letter-spacing: 2px; display: flex; align-items: center; gap: 10px;">
+      <i data-lucide="map" style="width:20px;height:20px;"></i> DATABASE CAP POSITIONING MAP
+    </div>
+    <div style="padding: 24px; background: var(--paper);">
+      <!-- Spectrum bar -->
+      <div style="position:relative;height:60px;margin:0 0 28px;border-radius:6px;overflow:hidden;background:linear-gradient(to right, rgba(230,57,70,.25), rgba(29,111,184,.1), rgba(63,163,77,.25));border:2px solid var(--ink);">
+        <div style="position:absolute;left:0;top:0;bottom:0;width:50%;border-right:3px dashed var(--ink);"></div>
+        <div style="position:absolute;left:0;top:50%;transform:translateY(-50%);padding:0 16px;font-family:'Bangers',cursive;font-size:1.1rem;letter-spacing:2px;color:var(--red);">
+          <i data-lucide="shield" style="width:16px;height:16px;vertical-align:middle;"></i> CP — CONSISTENCY FIRST
+        </div>
+        <div style="position:absolute;right:0;top:50%;transform:translateY(-50%);padding:0 16px;font-family:'Bangers',cursive;font-size:1.1rem;letter-spacing:2px;color:var(--green);">
+          AP — AVAILABILITY FIRST <i data-lucide="wifi" style="width:16px;height:16px;vertical-align:middle;"></i>
+        </div>
+      </div>
+
+      <div class="grid-2" style="gap: 24px;">
+        <!-- CP column -->
+        <div>
+          <div style="font-family:'Bangers',cursive;font-size:1.1rem;letter-spacing:2px;color:var(--red);margin-bottom:14px;display:flex;align-items:center;gap:8px;border-bottom:3px solid var(--red);padding-bottom:8px;">
+            <i data-lucide="shield" style="width:20px;height:20px;"></i> CP SYSTEMS
+          </div>
+          <div style="display: flex; flex-direction: column; gap: 10px;">
+            <div style="border:2px solid var(--red);border-radius:6px;padding:12px 14px;background:rgba(230,57,70,.06);">
+              <div style="font-family:'Bangers',cursive;font-size:.95rem;letter-spacing:1px;color:var(--red);display:flex;align-items:center;gap:6px;margin-bottom:4px;">
+                <i data-lucide="git-branch" style="width:16px;height:16px;"></i> ZooKeeper
+              </div>
+              <div style="font-family:'Space Mono',monospace;font-size:.75rem;color:#555;line-height:1.6;">ZAB consensus protocol. Leader-based writes. Minority halts during partition. Foundation of Kafka, Hadoop coordination.</div>
+            </div>
+            <div style="border:2px solid var(--red);border-radius:6px;padding:12px 14px;background:rgba(230,57,70,.06);">
+              <div style="font-family:'Bangers',cursive;font-size:.95rem;letter-spacing:1px;color:var(--red);display:flex;align-items:center;gap:6px;margin-bottom:4px;">
+                <i data-lucide="key" style="width:16px;height:16px;"></i> etcd
+              </div>
+              <div style="font-family:'Space Mono',monospace;font-size:.75rem;color:#555;line-height:1.6;">Raft consensus. Kubernetes backing store. Majority quorum required for every write. Strongly consistent reads.</div>
+            </div>
+            <div style="border:2px solid var(--red);border-radius:6px;padding:12px 14px;background:rgba(230,57,70,.06);">
+              <div style="font-family:'Bangers',cursive;font-size:.95rem;letter-spacing:1px;color:var(--red);display:flex;align-items:center;gap:6px;margin-bottom:4px;">
+                <i data-lucide="database" class="lc"></i> HBase
+              </div>
+              <div style="font-family:'Space Mono',monospace;font-size:.75rem;color:#555;line-height:1.6;">HDFS + ZooKeeper coordination. Region server writes are strongly consistent. AP not supported by design.</div>
+            </div>
+            <div style="border:2px solid var(--red);border-radius:6px;padding:12px 14px;background:rgba(230,57,70,.06);">
+              <div style="font-family:'Bangers',cursive;font-size:.95rem;letter-spacing:1px;color:var(--red);display:flex;align-items:center;gap:6px;margin-bottom:4px;">
+                <i data-lucide="zap" style="width:16px;height:16px;"></i> Redis Cluster
+              </div>
+              <div style="font-family:'Space Mono',monospace;font-size:.75rem;color:#555;line-height:1.6;">Sharded. Each shard uses leader replication. If primary loses majority of replicas, shard stops accepting writes.</div>
+            </div>
+            <div style="border:2px solid var(--red);border-radius:6px;padding:12px 14px;background:rgba(230,57,70,.06);">
+              <div style="font-family:'Bangers',cursive;font-size:.95rem;letter-spacing:1px;color:var(--red);display:flex;align-items:center;gap:6px;margin-bottom:4px;">
+                <i data-lucide="database" class="lc"></i> MongoDB (majority)
+              </div>
+              <div style="font-family:'Space Mono',monospace;font-size:.75rem;color:#555;line-height:1.6;">writeConcern: majority + readConcern: majority = CP. Minority partition secondaries won't serve reads. Default write concern is lower.</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- AP column -->
+        <div>
+          <div style="font-family:'Bangers',cursive;font-size:1.1rem;letter-spacing:2px;color:var(--green);margin-bottom:14px;display:flex;align-items:center;gap:8px;border-bottom:3px solid var(--green);padding-bottom:8px;">
+            <i data-lucide="wifi" style="width:20px;height:20px;"></i> AP SYSTEMS
+          </div>
+          <div style="display: flex; flex-direction: column; gap: 10px;">
+            <div style="border:2px solid var(--green);border-radius:6px;padding:12px 14px;background:rgba(63,163,77,.06);">
+              <div style="font-family:'Bangers',cursive;font-size:.95rem;letter-spacing:1px;color:var(--green);display:flex;align-items:center;gap:6px;margin-bottom:4px;">
+                <i data-lucide="database" class="lc"></i> Cassandra (tunable)
+              </div>
+              <div style="font-family:'Space Mono',monospace;font-size:.75rem;color:#555;line-height:1.6;">Default: AP. Every node accepts writes. Async replication. Consistency level ONE = AP; QUORUM = CP-ish. All nodes masterless.</div>
+            </div>
+            <div style="border:2px solid var(--green);border-radius:6px;padding:12px 14px;background:rgba(63,163,77,.06);">
+              <div style="font-family:'Bangers',cursive;font-size:.95rem;letter-spacing:1px;color:var(--green);display:flex;align-items:center;gap:6px;margin-bottom:4px;">
+                <i data-lucide="cloud" class="lc"></i> DynamoDB (eventual)
+              </div>
+              <div style="font-family:'Space Mono',monospace;font-size:.75rem;color:#555;line-height:1.6;">Default eventually consistent reads = AP. Strongly consistent reads (opt-in) = CP. Per-request choice. High global availability SLA.</div>
+            </div>
+            <div style="border:2px solid var(--green);border-radius:6px;padding:12px 14px;background:rgba(63,163,77,.06);">
+              <div style="font-family:'Bangers',cursive;font-size:.95rem;letter-spacing:1px;color:var(--green);display:flex;align-items:center;gap:6px;margin-bottom:4px;">
+                <i data-lucide="file-text" class="lc"></i> CouchDB
+              </div>
+              <div style="font-family:'Space Mono',monospace;font-size:.75rem;color:#555;line-height:1.6;">Multi-master replication. Built for offline-first sync. Conflict detection + merge model. Embrace eventual consistency explicitly.</div>
+            </div>
+            <div style="border:2px solid var(--green);border-radius:6px;padding:12px 14px;background:rgba(63,163,77,.06);">
+              <div style="font-family:'Bangers',cursive;font-size:.95rem;letter-spacing:1px;color:var(--green);display:flex;align-items:center;gap:6px;margin-bottom:4px;">
+                <i data-lucide="globe" class="lc"></i> DNS
+              </div>
+              <div style="font-family:'Space Mono',monospace;font-size:.75rem;color:#555;line-height:1.6;">Classic AP. Every resolver answers immediately from cache. TTL-based eventual consistency. Never returns errors during zone propagation.</div>
+            </div>
+            <div style="border:2px solid var(--green);border-radius:6px;padding:12px 14px;background:rgba(63,163,77,.06);">
+              <div style="font-family:'Bangers',cursive;font-size:.95rem;letter-spacing:1px;color:var(--green);display:flex;align-items:center;gap:6px;margin-bottom:4px;">
+                <i data-lucide="package" class="lc"></i> Riak
+              </div>
+              <div style="font-family:'Space Mono',monospace;font-size:.75rem;color:#555;line-height:1.6;">Masterless. Vector clocks for conflict detection. Always available. Designed explicitly around AP with CRDT support for conflict-free merges.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Cassandra consistency slider explanation -->
+  <h3>Cassandra: Sliding the CP/AP Dial</h3>
+  <p>Cassandra is unique in letting you choose your consistency level <strong>per query</strong>. With <em>N</em> total replicas:</p>
+
+  <table class="data-table">
+    <thead><tr>
+      <th>Consistency Level</th>
+      <th>Nodes Required to ACK</th>
+      <th>CAP Behaviour</th>
+      <th>Use Case</th>
+    </tr></thead>
+    <tbody>
+      <tr>
+        <td><code>ONE</code></td>
+        <td>1 replica responds</td>
+        <td><span class="chip chip-green" style="font-size:.75rem;">AP</span> Maximum availability, possible staleness</td>
+        <td>Analytics, counters, non-critical reads</td>
+      </tr>
+      <tr>
+        <td><code>QUORUM</code></td>
+        <td>&gt; N/2 replicas respond</td>
+        <td><span style="font-size:.85rem;">Between CP and AP</span> — strong in practice, may fail during heavy partition</td>
+        <td>Most production use cases — the sweet spot</td>
+      </tr>
+      <tr>
+        <td><code>ALL</code></td>
+        <td>All N replicas respond</td>
+        <td><span class="chip chip-red" style="font-size:.75rem;">CP</span> Strongest consistency, highest latency and error risk</td>
+        <td>Critical data where stale reads are never acceptable</td>
+      </tr>
+      <tr>
+        <td><code>LOCAL_QUORUM</code></td>
+        <td>Quorum within local DC only</td>
+        <td>CP within datacenter, AP across datacenters</td>
+        <td>Multi-region deployments with low cross-region latency needs</td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+<!-- ───────────────────────────────────────
+     SECTION 07: PACELC
+─────────────────────────────────────────── -->
+<div class="panel">
+  <div class="section-head">
+    <span class="section-num">07</span>
+    <h2>PACELC: The CAP Extension</h2>
+  </div>
+
+  <p>CAP only describes behavior during a network <strong>P</strong>artition. But what about when things are running normally? The <strong>PACELC model</strong> (Daniel Abadi, 2012) extends CAP to also address the trade-off during <em>normal operation</em>:</p>
+
+  <div class="hbox hbox-blue" style="margin: 24px 0;">
+    <div class="hbox-label">THE PACELC FORMULA</div>
+    <div style="margin-top: 16px; display: flex; flex-wrap: wrap; align-items: center; gap: 8px; font-family: 'Bangers', cursive; font-size: 1.2rem; letter-spacing: 2px;">
+      <span style="background: var(--orange); color: #fff; padding: 4px 14px; border: 2px solid var(--ink); border-radius: 4px;">P</span>
+      <span style="color: #888; font-size: .9rem; font-family: 'Comic Neue', cursive; font-weight: 700;">Partition?</span>
+      <span style="color: var(--ink);">then</span>
+      <span style="background: var(--red); color: #fff; padding: 4px 14px; border: 2px solid var(--ink); border-radius: 4px;">C</span>
+      <span style="color: #888;">or</span>
+      <span style="background: var(--green); color: #fff; padding: 4px 14px; border: 2px solid var(--ink); border-radius: 4px;">A</span>
+      <span style="color: var(--ink); font-size: 1rem; padding: 0 8px;">—</span>
+      <span style="background: var(--blue); color: #fff; padding: 4px 14px; border: 2px solid var(--ink); border-radius: 4px;">E</span>
+      <span style="color: #888; font-size: .9rem; font-family: 'Comic Neue', cursive; font-weight: 700;">Else (normal)</span>
+      <span style="color: var(--ink);">then</span>
+      <span style="background: var(--purple); color: #fff; padding: 4px 14px; border: 2px solid var(--ink); border-radius: 4px;">L</span>
+      <span style="color: #888;">or</span>
+      <span style="background: var(--teal); color: #fff; padding: 4px 14px; border: 2px solid var(--ink); border-radius: 4px;">C</span>
+    </div>
+    <p style="margin-top: 14px;"><strong>P</strong>artition — <strong>A</strong>vailability — <strong>C</strong>onsistency — <strong>E</strong>lse — <strong>L</strong>atency — <strong>C</strong>onsistency</p>
+    <p style="font-size: .9rem; color: #555;">Even without partitions, replicating data across nodes introduces a choice: you can respond immediately (low <strong>L</strong>atency, possibly stale) or wait for all replicas to confirm (high <strong>C</strong>onsistency, higher latency).</p>
+  </div>
+
+  <div class="grid-2" style="margin: 20px 0;">
+    <div class="hbox hbox-orange" style="margin: 0;">
+      <div class="hbox-label">THE LATENCY/CONSISTENCY TRADE-OFF</div>
+      <p style="margin-top:12px;font-size:.92rem;">Even when the network is healthy, synchronous replication to all replicas before returning to the client adds round-trip latency. To return quickly, you must accept that some replicas may not yet have the latest write — a consistency window exists.</p>
+      <div style="display:flex;flex-direction:column;gap:8px;margin-top:12px;">
+        <div style="display:flex;align-items:center;gap:8px;font-size:.88rem;">
+          <i data-lucide="zap" style="width:18px;height:18px;stroke:var(--green);flex-shrink:0;"></i>
+          <div><strong>EL (Else Latency):</strong> acknowledge write as soon as primary stores it. Replicas sync async. Fast but window of inconsistency.</div>
+        </div>
+        <div style="display:flex;align-items:center;gap:8px;font-size:.88rem;">
+          <i data-lucide="shield-check" style="width:18px;height:18px;stroke:var(--red);flex-shrink:0;"></i>
+          <div><strong>EC (Else Consistency):</strong> wait for all replicas to confirm before returning. Strongly consistent but higher latency on every write.</div>
+        </div>
+      </div>
+    </div>
+
+    <div>
+      <table class="data-table" style="margin:0;">
+        <thead><tr>
+          <th>System</th>
+          <th>Partition</th>
+          <th>Else</th>
+          <th>PACELC</th>
+        </tr></thead>
+        <tbody>
+          <tr>
+            <td><strong>DynamoDB</strong></td>
+            <td><span class="chip chip-green" style="font-size:.7rem;">PA</span></td>
+            <td><span class="chip chip-orange" style="font-size:.7rem;">EL</span></td>
+            <td style="font-family:'Space Mono',monospace;font-size:.78rem;">PA/EL</td>
+          </tr>
+          <tr>
+            <td><strong>Cassandra</strong></td>
+            <td><span class="chip chip-green" style="font-size:.7rem;">PA</span></td>
+            <td><span class="chip chip-orange" style="font-size:.7rem;">EL</span></td>
+            <td style="font-family:'Space Mono',monospace;font-size:.78rem;">PA/EL</td>
+          </tr>
+          <tr>
+            <td><strong>Spanner</strong></td>
+            <td><span class="chip chip-red" style="font-size:.7rem;">PC</span></td>
+            <td><span class="chip chip-teal" style="font-size:.7rem;">EC</span></td>
+            <td style="font-family:'Space Mono',monospace;font-size:.78rem;">PC/EC</td>
+          </tr>
+          <tr>
+            <td><strong>etcd</strong></td>
+            <td><span class="chip chip-red" style="font-size:.7rem;">PC</span></td>
+            <td><span class="chip chip-teal" style="font-size:.7rem;">EC</span></td>
+            <td style="font-family:'Space Mono',monospace;font-size:.78rem;">PC/EC</td>
+          </tr>
+          <tr>
+            <td><strong>MongoDB (def)</strong></td>
+            <td><span class="chip chip-red" style="font-size:.7rem;">PC</span></td>
+            <td><span class="chip chip-orange" style="font-size:.7rem;">EL</span></td>
+            <td style="font-family:'Space Mono',monospace;font-size:.78rem;">PC/EL</td>
+          </tr>
+          <tr>
+            <td><strong>MySQL (repl)</strong></td>
+            <td><span class="chip chip-red" style="font-size:.7rem;">PC</span></td>
+            <td><span class="chip chip-orange" style="font-size:.7rem;">EL</span></td>
+            <td style="font-family:'Space Mono',monospace;font-size:.78rem;">PC/EL</td>
+          </tr>
+          <tr>
+            <td><strong>CouchDB</strong></td>
+            <td><span class="chip chip-green" style="font-size:.7rem;">PA</span></td>
+            <td><span class="chip chip-orange" style="font-size:.7rem;">EL</span></td>
+            <td style="font-family:'Space Mono',monospace;font-size:.78rem;">PA/EL</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="hbox hbox-purple">
+    <div class="hbox-label">WHY PACELC MATTERS MORE IN PRACTICE</div>
+    <p style="margin-top:12px;">Network partitions are rare events. The latency/consistency trade-off (the EL vs EC dimension) affects <em>every single operation</em> your system handles. For high-throughput systems, this often matters more day-to-day than the partition behavior. A system like Spanner pays higher latency on every write to guarantee consistency; DynamoDB pays lower latency but accepts a window of inconsistency on every write.</p>
+  </div>
+
+  <div class="sfx-row">
+    <span class="sfx">PARTITIONS ARE RARE</span>
+    <span class="sfx">LATENCY IS CONSTANT</span>
+    <span class="sfx">PACELC SEES BOTH</span>
+  </div>
+</div>
+
+<!-- ───────────────────────────────────────
+     SECTION 08: Interactive Simulator
+─────────────────────────────────────────── -->
+<div class="panel">
+  <div class="section-head">
+    <span class="section-num">08</span>
+    <h2>Interactive: CAP Partition Simulator</h2>
+  </div>
+
+  <p>Watch three database nodes operate normally, then simulate a network partition between Node A and Node B. Switch between <strong>CP Mode</strong> and <strong>AP Mode</strong> to see how the cluster responds differently. Click <strong>Write to A</strong> and <strong>Read from B</strong> to observe the behavior.</p>
+
+  <div class="cap-wrap">
+    <div class="cap-bar">
+      <span style="width:12px;height:12px;border-radius:50%;background:#ff5f56;display:inline-block;"></span>
+      <span style="width:12px;height:12px;border-radius:50%;background:#ffbd2e;display:inline-block;"></span>
+      <span style="width:12px;height:12px;border-radius:50%;background:#27c93f;display:inline-block;"></span>
+      <span>CAP THEOREM — LIVE PARTITION SIMULATOR</span>
+    </div>
+    <div class="cap-body">
+      <canvas id="cap-canvas" width="580" height="380"></canvas>
+      <div class="cap-side">
+        <div style="font-family:'Bangers',cursive;font-size:.9rem;letter-spacing:2px;color:#7d8590;margin-bottom:4px;">MODE</div>
+        <div style="display:flex;flex-direction:column;gap:8px;">
+          <button class="cap-btn active-cp" id="btn-cp" onclick="capSetMode('cp',this)">
+            <i data-lucide="shield" class="lc"></i> CP Mode (Consistency First)
+          </button>
+          <button class="cap-btn" id="btn-ap" onclick="capSetMode('ap',this)">
+            <i data-lucide="wifi" class="lc"></i> AP Mode (Availability First)
+          </button>
+        </div>
+
+        <div style="font-family:'Bangers',cursive;font-size:.9rem;letter-spacing:2px;color:#7d8590;margin-top:4px;margin-bottom:4px;">PARTITION CONTROL</div>
+        <div style="display:flex;flex-direction:column;gap:8px;">
+          <button class="cap-btn" id="btn-partition" onclick="capPartition()">
+            <i data-lucide="scissors" class="lc"></i> Simulate Partition (A-B)
+          </button>
+          <button class="cap-btn" id="btn-heal" onclick="capHeal()">
+            <i data-lucide="heart-handshake" class="lc"></i> Heal Partition
+          </button>
+        </div>
+
+        <div style="font-family:'Bangers',cursive;font-size:.9rem;letter-spacing:2px;color:#7d8590;margin-top:4px;margin-bottom:4px;">OPERATIONS</div>
+        <div style="display:flex;flex-direction:column;gap:8px;">
+          <button class="cap-btn" id="btn-write" onclick="capWrite()">
+            <i data-lucide="edit-3" class="lc"></i> Write to Node A
+          </button>
+          <button class="cap-btn" id="btn-read-b" onclick="capReadB()">
+            <i data-lucide="eye" class="lc"></i> Read from Node B
+          </button>
+          <button class="cap-btn" onclick="capReset()">
+            <i data-lucide="rotate-ccw" class="lc"></i> Reset
+          </button>
+        </div>
+
+        <div class="cap-status-box">
+          <div style="color:#7ee787;font-family:'Bangers',cursive;font-size:.9rem;letter-spacing:2px;margin-bottom:6px;">STATUS</div>
+          <div>Mode: <span id="cap-mode-label" style="color:var(--red);">CP</span></div>
+          <div>Partition: <span id="cap-partition-label" style="color:var(--green);">None</span></div>
+          <div>Node A value: <span id="cap-val-a" style="color:#e6edf3;">X=0</span></div>
+          <div>Node B value: <span id="cap-val-b" style="color:#e6edf3;">X=0</span></div>
+          <div>Node C value: <span id="cap-val-c" style="color:#e6edf3;">X=0</span></div>
+        </div>
+
+        <div style="font-family:'Bangers',cursive;font-size:.85rem;letter-spacing:1px;color:#7d8590;margin-top:2px;">EVENT LOG</div>
+        <div class="cap-log" id="cap-log">
+          <div style="color:#7ee787;">System initialized. All nodes synced.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="chapter-divider"><span>END OF DATA-05</span></div>
+</div><!-- /page-wrap -->
+
+<script src="hero-banner.js"></script>
+<script src="masthead.js"></script>
+<script src="author-card.js"></script>
+
+<script>
+/* ================================================================
+   SECTION 08: CAP Partition Simulator
+   ================================================================ */
+(function() {
+  var canvas = document.getElementById('cap-canvas');
+  if (!canvas) return;
+  var ctx = canvas.getContext('2d');
+  var W = 580, H = 380;
+
+  // State
+  var mode = 'cp';         // 'cp' or 'ap'
+  var partitioned = false; // A-B link severed
+  var writeValue = 0;
+  var nodeValues = { A: 0, B: 0, C: 0 };
+  var nodeLabels = { A: 'Node A', B: 'Node B', C: 'Node C' };
+  var nodeColors = { A: '#1d6fb8', B: '#3fa34d', C: '#ff8c42' };
+  var nodeFill   = { A: 'rgba(29,111,184,.15)', B: 'rgba(63,163,77,.15)', C: 'rgba(255,140,66,.15)' };
+
+  // Node positions: triangle formation
+  var nodes = {
+    A: { x: 150, y: 120 },
+    B: { x: 430, y: 120 },
+    C: { x: 290, y: 290 },
+  };
+
+  // Animations
+  var animations = []; // { type, from, to, progress, speed, text, color }
+  var flashMessages = []; // { node, text, color, age, maxAge }
+  var partitionAnim = 0; // 0..1 when partition is active
+  var healAnim = 0;      // counts up during heal flash
+
+  function log(msg, color) {
+    var logEl = document.getElementById('cap-log');
+    if (!logEl) return;
+    var line = document.createElement('div');
+    line.style.color = color || '#adbac7';
+    line.textContent = msg;
+    logEl.appendChild(line);
+    logEl.scrollTop = logEl.scrollHeight;
+  }
+
+  function updateStatus() {
+    var modeEl = document.getElementById('cap-mode-label');
+    var partEl = document.getElementById('cap-partition-label');
+    var va = document.getElementById('cap-val-a');
+    var vb = document.getElementById('cap-val-b');
+    var vc = document.getElementById('cap-val-c');
+    if (modeEl) { modeEl.textContent = mode.toUpperCase(); modeEl.style.color = mode === 'cp' ? '#e63946' : '#3fa34d'; }
+    if (partEl) { partEl.textContent = partitioned ? 'A-B SEVERED' : 'None'; partEl.style.color = partitioned ? '#e63946' : '#3fa34d'; }
+    if (va) va.textContent = 'X=' + nodeValues.A;
+    if (vb) vb.textContent = 'X=' + nodeValues.B;
+    if (vc) vc.textContent = 'X=' + nodeValues.C;
+  }
+
+  function flashNode(nodeKey, text, color) {
+    flashMessages.push({ node: nodeKey, text: text, color: color, age: 0, maxAge: 90 });
+  }
+
+  function spawnPacket(fromKey, toKey, color, label) {
+    var from = nodes[fromKey];
+    var to   = nodes[toKey];
+    animations.push({ from: {x:from.x, y:from.y}, to: {x:to.x, y:to.y}, progress: 0, speed: 0.025, color: color, label: label });
+  }
+
+  // Draw
+  function draw() {
+    ctx.clearRect(0, 0, W, H);
+    ctx.fillStyle = '#0d1117';
+    ctx.fillRect(0, 0, W, H);
+
+    // Background grid
+    ctx.strokeStyle = 'rgba(255,255,255,0.03)';
+    ctx.lineWidth = 1;
+    for (var gx = 0; gx < W; gx += 30) { ctx.beginPath(); ctx.moveTo(gx,0); ctx.lineTo(gx,H); ctx.stroke(); }
+    for (var gy = 0; gy < H; gy += 30) { ctx.beginPath(); ctx.moveTo(0,gy); ctx.lineTo(W,gy); ctx.stroke(); }
+
+    // Draw links
+    var links = [['A','B'],['A','C'],['B','C']];
+    links.forEach(function(link) {
+      var a = nodes[link[0]], b = nodes[link[1]];
+      var isPartitionLink = (link[0]==='A'&&link[1]==='B') || (link[0]==='B'&&link[1]==='A');
+
+      if (isPartitionLink && partitioned) {
+        // Draw two halves with a break in the middle
+        var mx = (a.x + b.x) / 2, my = (a.y + b.y) / 2;
+        ctx.strokeStyle = '#30363d';
+        ctx.lineWidth = 2;
+        ctx.setLineDash([6,4]);
+        ctx.beginPath(); ctx.moveTo(a.x, a.y); ctx.lineTo(mx - 24, my); ctx.stroke();
+        ctx.beginPath(); ctx.moveTo(b.x, b.y); ctx.lineTo(mx + 24, my); ctx.stroke();
+        ctx.setLineDash([]);
+
+        // Jagged lightning bolt at midpoint
+        var jx = mx, jy = my;
+        ctx.strokeStyle = '#e63946';
+        ctx.lineWidth = 2.5;
+        ctx.beginPath();
+        ctx.moveTo(jx - 20, jy - 8);
+        ctx.lineTo(jx - 6, jy - 2);
+        ctx.lineTo(jx - 14, jy + 2);
+        ctx.lineTo(jx, jy + 10);
+        ctx.lineTo(jx + 14, jy + 2);
+        ctx.lineTo(jx + 6, jy - 2);
+        ctx.lineTo(jx + 20, jy - 8);
+        ctx.stroke();
+
+        // "PARTITION" label
+        ctx.fillStyle = '#e63946';
+        ctx.font = '700 10px Bangers, cursive';
+        ctx.textAlign = 'center';
+        ctx.fillText('PARTITION', jx, jy - 16);
+
+      } else {
+        ctx.strokeStyle = 'rgba(255,255,255,0.12)';
+        ctx.lineWidth = 2;
+        ctx.setLineDash([]);
+        ctx.beginPath(); ctx.moveTo(a.x, a.y); ctx.lineTo(b.x, b.y); ctx.stroke();
+
+        // Pulse if heal animation active
+        if (healAnim > 0 && healAnim < 60 && isPartitionLink) {
+          var alpha = Math.sin(healAnim * Math.PI / 60);
+          ctx.strokeStyle = 'rgba(13,148,136,' + alpha + ')';
+          ctx.lineWidth = 4;
+          ctx.beginPath(); ctx.moveTo(a.x, a.y); ctx.lineTo(b.x, b.y); ctx.stroke();
+        }
+      }
+    });
+
+    // Draw nodes
+    ['A','B','C'].forEach(function(key) {
+      var n = nodes[key];
+      var col = nodeColors[key];
+      var fill = nodeFill[key];
+
+      // Glow
+      ctx.beginPath(); ctx.arc(n.x, n.y, 46, 0, Math.PI*2);
+      ctx.fillStyle = fill; ctx.fill();
+
+      // Border
+      ctx.beginPath(); ctx.arc(n.x, n.y, 40, 0, Math.PI*2);
+      ctx.strokeStyle = col; ctx.lineWidth = 3; ctx.stroke();
+      ctx.fillStyle = '#161b22'; ctx.fill();
+
+      // Node name
+      ctx.fillStyle = col;
+      ctx.font = '700 14px Bangers, cursive';
+      ctx.textAlign = 'center';
+      ctx.fillText(nodeLabels[key], n.x, n.y - 8);
+
+      // Value
+      ctx.fillStyle = '#e6edf3';
+      ctx.font = '700 12px Space Mono, monospace';
+      ctx.fillText('X=' + nodeValues[key], n.x, n.y + 10);
+
+      // Status indicator dot
+      var dotColor = '#3fa34d';
+      if (partitioned && (key === 'A' || key === 'B') && mode === 'cp') dotColor = '#e63946';
+      ctx.beginPath(); ctx.arc(n.x + 28, n.y - 28, 6, 0, Math.PI*2);
+      ctx.fillStyle = dotColor; ctx.fill();
+    });
+
+    // Draw flying packets
+    animations.forEach(function(a) {
+      a.progress = Math.min(1, a.progress + a.speed);
+      var x = a.from.x + (a.to.x - a.from.x) * a.progress;
+      var y = a.from.y + (a.to.y - a.from.y) * a.progress;
+      // Slight arc
+      var midX = (a.from.x + a.to.x) / 2;
+      var midY = (a.from.y + a.to.y) / 2 - 20;
+      var t = a.progress;
+      var bx = (1-t)*(1-t)*a.from.x + 2*(1-t)*t*midX + t*t*a.to.x;
+      var by = (1-t)*(1-t)*a.from.y + 2*(1-t)*t*midY + t*t*a.to.y;
+      ctx.beginPath(); ctx.arc(bx, by, 5, 0, Math.PI*2);
+      ctx.fillStyle = a.color; ctx.fill();
+      ctx.strokeStyle = 'rgba(255,255,255,.3)'; ctx.lineWidth = 1; ctx.stroke();
+      if (a.label) {
+        ctx.fillStyle = a.color;
+        ctx.font = '700 9px Space Mono, monospace';
+        ctx.textAlign = 'center';
+        ctx.fillText(a.label, bx, by - 10);
+      }
+    });
+    animations = animations.filter(function(a) { return a.progress < 1; });
+
+    // Draw flash messages
+    flashMessages.forEach(function(f) {
+      var n = nodes[f.node];
+      var alpha = Math.max(0, 1 - f.age / f.maxAge);
+      var yOff = -55 - (f.age / f.maxAge) * 20;
+      ctx.save();
+      ctx.globalAlpha = alpha;
+      ctx.fillStyle = f.color;
+      ctx.font = '700 11px Bangers, cursive';
+      ctx.textAlign = 'center';
+      // background pill
+      var textW = ctx.measureText(f.text).width;
+      ctx.fillStyle = 'rgba(13,17,23,' + alpha * 0.85 + ')';
+      ctx.beginPath();
+      ctx.roundRect(n.x - textW/2 - 8, n.y + yOff - 14, textW + 16, 20, 4);
+      ctx.fill();
+      ctx.fillStyle = f.color;
+      ctx.fillText(f.text, n.x, n.y + yOff);
+      ctx.restore();
+      f.age++;
+    });
+    flashMessages = flashMessages.filter(function(f) { return f.age < f.maxAge; });
+
+    if (healAnim > 0) healAnim++;
+    if (healAnim > 60) healAnim = 0;
+
+    updateStatus();
+    requestAnimationFrame(draw);
+  }
+
+  // Actions
+  window.capSetMode = function(m, btn) {
+    mode = m;
+    document.querySelectorAll('.cap-btn[id^=btn-]').forEach(function(b) {
+      b.classList.remove('active-cp','active-ap');
+    });
+    btn.classList.add('active-' + m);
+    log('Switched to ' + m.toUpperCase() + ' mode.', mode === 'cp' ? '#e63946' : '#3fa34d');
+  };
+
+  window.capPartition = function() {
+    if (partitioned) { log('Partition already active.', '#7d8590'); return; }
+    partitioned = true;
+    log('Partition simulated: Node A <-> Node B link SEVERED.', '#e63946');
+  };
+
+  window.capHeal = function() {
+    if (!partitioned) { log('No active partition.', '#7d8590'); return; }
+    partitioned = false;
+    healAnim = 1;
+    // Reconcile: B and C catch up to A
+    nodeValues.B = nodeValues.A;
+    nodeValues.C = nodeValues.A;
+    spawnPacket('A','B','#0d9488','sync');
+    spawnPacket('A','C','#0d9488','sync');
+    log('Partition healed! Nodes reconciling — B and C syncing to X=' + nodeValues.A, '#0d9488');
+  };
+
+  window.capWrite = function() {
+    writeValue++;
+    var val = writeValue;
+    if (!partitioned) {
+      // Normal: write replicates everywhere
+      nodeValues.A = val;
+      nodeValues.B = val;
+      nodeValues.C = val;
+      spawnPacket('A','B','#1d6fb8','X='+val);
+      spawnPacket('A','C','#1d6fb8','X='+val);
+      flashNode('A', 'WRITE X='+val+' OK', '#1d6fb8');
+      flashNode('B', 'SYNCED', '#3fa34d');
+      flashNode('C', 'SYNCED', '#3fa34d');
+      log('Write X=' + val + ' to Node A. Replicated to B and C.', '#1d6fb8');
+    } else if (mode === 'cp') {
+      // CP: reject write — can't confirm quorum
+      writeValue--; // rollback counter
+      flashNode('A', 'WRITE REJECTED', '#e63946');
+      log('CP Mode: Write REJECTED. Cannot replicate to B — no quorum. Consistency guaranteed.', '#e63946');
+    } else {
+      // AP: write to A only, B stays stale
+      nodeValues.A = val;
+      nodeValues.C = val; // C is still reachable from A
+      spawnPacket('A','C','#ff8c42','X='+val);
+      flashNode('A', 'WRITE X='+val+' OK', '#ff8c42');
+      flashNode('B', 'STALE: X='+nodeValues.B, '#ffd23f');
+      log('AP Mode: Write X=' + val + ' accepted on A. B is partitioned — B still has X=' + nodeValues.B + ' (stale).', '#ff8c42');
+    }
+  };
+
+  window.capReadB = function() {
+    if (!partitioned) {
+      flashNode('B', 'READ X='+nodeValues.B+' OK', '#3fa34d');
+      log('Read from B: X=' + nodeValues.B + ' (fresh).', '#3fa34d');
+    } else if (mode === 'cp') {
+      flashNode('B', 'ERROR: STALE', '#e63946');
+      log('CP Mode: Read from B REFUSED. B cannot confirm data freshness. Returns error.', '#e63946');
+    } else {
+      flashNode('B', 'STALE: X='+nodeValues.B, '#ffd23f');
+      log('AP Mode: Read from B returns X=' + nodeValues.B + ' — may be stale (Node A has X=' + nodeValues.A + ').', '#ffd23f');
+    }
+  };
+
+  window.capReset = function() {
+    partitioned = false;
+    writeValue = 0;
+    nodeValues = { A:0, B:0, C:0 };
+    animations = [];
+    flashMessages = [];
+    healAnim = 0;
+    var logEl = document.getElementById('cap-log');
+    if (logEl) { logEl.innerHTML = '<div style="color:#7ee787;">System reset. All nodes synced. X=0.</div>'; }
+    log('Ready.', '#7d8590');
+  };
+
+  draw();
+})();
+
+/* ================================================================
+   Lucide icon initialization
+   ================================================================ */
+if (typeof lucide !== 'undefined') {
+  lucide.createIcons();
+}
+</script>
+</body>
+</html>

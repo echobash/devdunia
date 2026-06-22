@@ -1,0 +1,1355 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>How Kafka Works — DevDunia</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bangers&family=Comic+Neue:ital,wght@0,400;0,700;1,400&family=Space+Mono:wght@400;700&display=swap">
+<script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
+<style>
+:root {
+  --ink: #1a1410; --paper: #fdf3e3; --paper2: #fbe9cc;
+  --red: #e63946; --blue: #1d6fb8; --yellow: #ffd23f;
+  --green: #3fa34d; --pink: #ff6b9d; --purple: #8a4fff;
+  --orange: #ff8c42; --teal: #0d9488;
+}
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  font-family: 'Comic Neue', cursive;
+  color: var(--ink);
+  background-color: var(--paper);
+  background-image: radial-gradient(var(--ink) 0.5px, transparent 0.6px);
+  background-size: 14px 14px;
+  background-attachment: fixed;
+  line-height: 1.65;
+}
+.page-wrap { position: relative; z-index: 1; max-width: 1240px; margin: 0 auto; padding: 20px 32px 60px; }
+.panel {
+  border: 4px solid var(--ink); border-radius: 6px;
+  box-shadow: 7px 7px 0 var(--ink);
+  background: var(--paper); padding: 28px 32px; margin-bottom: 32px;
+}
+h2 { font-family: 'Bangers', cursive; font-size: 2.4rem; letter-spacing: 2px; margin-bottom: 16px; line-height: 1; }
+h3 { font-family: 'Bangers', cursive; font-size: 1.6rem; letter-spacing: 1px; margin-bottom: 12px; }
+h4 { font-family: 'Bangers', cursive; font-size: 1.2rem; letter-spacing: 1px; margin-bottom: 8px; }
+p  { margin-bottom: 14px; font-size: 1.05rem; }
+p:last-child { margin-bottom: 0; }
+ul { padding-left: 22px; margin-bottom: 14px; }
+li { margin-bottom: 6px; font-size: 1rem; }
+code { font-family: 'Space Mono', monospace; font-size: .85em; background: var(--paper2); padding: 1px 5px; border-radius: 3px; }
+.section-head { display: flex; align-items: center; gap: 14px; margin-bottom: 22px; flex-wrap: wrap; }
+.section-num {
+  font-family: 'Bangers', cursive; font-size: 1.1rem; letter-spacing: 2px;
+  background: var(--green); color: #fff; padding: 4px 14px;
+  border-radius: 4px; border: 2px solid var(--ink); box-shadow: 2px 2px 0 var(--ink);
+}
+.chip {
+  display: inline-block; font-family: 'Bangers', cursive; font-size: .85rem;
+  letter-spacing: 1.5px; padding: 3px 12px; border-radius: 4px;
+  border: 2px solid var(--ink); margin-right: 6px; margin-bottom: 6px; vertical-align: middle;
+}
+.chip-green  { background: var(--green);  color: #fff; }
+.chip-red    { background: var(--red);    color: #fff; }
+.chip-blue   { background: var(--blue);   color: #fff; }
+.chip-yellow { background: var(--yellow); color: var(--ink); }
+.chip-orange { background: var(--orange); color: #fff; }
+.chip-teal   { background: var(--teal);   color: #fff; }
+.hbox {
+  border: 3px solid var(--ink); border-radius: 5px; padding: 18px 22px;
+  margin: 16px 0; position: relative;
+}
+.hbox-label {
+  font-family: 'Bangers', cursive; font-size: .9rem; letter-spacing: 2px;
+  position: absolute; top: -14px; left: 16px; padding: 2px 12px;
+  border: 2px solid var(--ink); border-radius: 4px;
+}
+.hbox-orange { background: rgba(255,140,66,.1); border-color: var(--orange); }
+.hbox-orange .hbox-label { background: var(--orange); color: #fff; }
+.hbox-red { background: rgba(230,57,70,.08); border-color: var(--red); }
+.hbox-red .hbox-label { background: var(--red); color: #fff; }
+.hbox-green { background: rgba(63,163,77,.1); border-color: var(--green); }
+.hbox-green .hbox-label { background: var(--green); color: #fff; }
+.hbox-blue { background: rgba(29,111,184,.1); border-color: var(--blue); }
+.hbox-blue .hbox-label { background: var(--blue); color: #fff; }
+.hbox-yellow { background: rgba(255,210,63,.15); border-color: var(--yellow); }
+.hbox-yellow .hbox-label { background: var(--yellow); color: var(--ink); }
+.hbox-teal { background: rgba(13,148,136,.1); border-color: var(--teal); }
+.hbox-teal .hbox-label { background: var(--teal); color: #fff; }
+.hbox-purple { background: rgba(138,79,255,.1); border-color: var(--purple); }
+.hbox-purple .hbox-label { background: var(--purple); color: #fff; }
+.data-table { width: 100%; border-collapse: collapse; margin: 16px 0; font-size: .93rem; }
+.data-table th {
+  font-family: 'Bangers', cursive; font-size: 1rem; letter-spacing: 1px;
+  background: var(--ink); color: #fff; padding: 10px 14px; text-align: left; border: 2px solid var(--ink);
+}
+.data-table td { padding: 10px 14px; border: 2px solid var(--ink); vertical-align: top; }
+.data-table tr:nth-child(odd)  td { background: var(--paper2); }
+.data-table tr:nth-child(even) td { background: var(--paper); }
+.grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin: 16px 0; }
+.grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 16px; margin: 16px 0; }
+@media (max-width: 640px) { .grid-2, .grid-3 { grid-template-columns: 1fr; } }
+.card {
+  border: 3px solid var(--ink); border-radius: 5px;
+  box-shadow: 4px 4px 0 var(--ink); padding: 18px; background: var(--paper);
+}
+.card-head { font-family: 'Bangers', cursive; font-size: 1.1rem; letter-spacing: 1px; margin-bottom: 10px; padding-bottom: 8px; border-bottom: 2px solid var(--ink); }
+.sfx-row { display: flex; gap: 16px; flex-wrap: wrap; margin: 20px 0; }
+.sfx {
+  font-family: 'Bangers', cursive; font-size: 1.8rem; letter-spacing: 3px;
+  color: var(--ink); text-shadow: 3px 3px 0 var(--yellow); transform: rotate(-2deg); display: inline-block;
+}
+.sfx:nth-child(even) { transform: rotate(2deg); text-shadow: 3px 3px 0 var(--orange); }
+.chapter-divider { text-align: center; margin: 40px 0 28px; position: relative; }
+.chapter-divider::before { content: ''; position: absolute; top: 50%; left: 0; right: 0; height: 3px; background: var(--ink); }
+.chapter-divider span { position: relative; background: var(--paper); font-family: 'Bangers', cursive; font-size: 1rem; letter-spacing: 3px; padding: 0 16px; }
+/* Lucide icon helpers */
+.lc { width: 20px; height: 20px; vertical-align: middle; stroke-width: 2; display: inline-block; }
+.lc-lg { width: 32px; height: 32px; stroke-width: 2; }
+.lc svg { display: block; }
+
+/* ── CSS ARROW CONNECTOR ──────────────────────── */
+.css-arrow {
+  display: flex; align-items: center; justify-content: center;
+  padding: 0 6px; flex-shrink: 0;
+}
+.css-arrow-line {
+  height: 3px; background: var(--ink); width: 32px; position: relative;
+}
+.css-arrow-line::after {
+  content: ''; position: absolute; right: -1px; top: 50%;
+  transform: translateY(-50%);
+  border-top: 7px solid transparent;
+  border-bottom: 7px solid transparent;
+  border-left: 10px solid var(--ink);
+}
+.css-arrow-down {
+  display: flex; flex-direction: column; align-items: center;
+  padding: 2px 0; flex-shrink: 0;
+}
+.css-arrow-down-line {
+  width: 3px; background: var(--ink); height: 24px; position: relative;
+}
+.css-arrow-down-line::after {
+  content: ''; position: absolute; bottom: -1px; left: 50%;
+  transform: translateX(-50%);
+  border-left: 7px solid transparent;
+  border-right: 7px solid transparent;
+  border-top: 10px solid var(--ink);
+}
+
+/* ── PARTITION LOG VISUAL ──────────────────────── */
+.partition-log {
+  display: flex; align-items: center; gap: 0;
+  margin: 8px 0; overflow-x: auto;
+}
+.log-header {
+  font-family: 'Bangers', cursive; font-size: .85rem; letter-spacing: 1px;
+  min-width: 90px; padding: 6px 10px; border: 2px solid var(--ink);
+  border-radius: 5px 0 0 5px; text-align: center; flex-shrink: 0;
+}
+.log-cell {
+  border: 2px solid var(--ink); border-left: none;
+  padding: 6px 10px; text-align: center; min-width: 52px;
+  font-family: 'Space Mono', monospace; font-size: .72rem;
+  flex-shrink: 0;
+}
+.log-cell:last-child { border-radius: 0 5px 5px 0; }
+.log-cell-offset {
+  display: block; font-size: .6rem; color: #888; margin-top: 2px;
+}
+
+/* ── KAFKA CANVAS WRAPPER ──────────────────────── */
+.kafka-wrap {
+  background: #0d1117; border: 4px solid var(--ink); border-radius: 8px;
+  box-shadow: 7px 7px 0 var(--ink); overflow: hidden; margin: 24px 0;
+}
+.kafka-bar {
+  background: #161b22; border-bottom: 2px solid #30363d; padding: 10px 16px;
+  font-family: 'Bangers', cursive; font-size: 1rem; letter-spacing: 2px;
+  color: #e6edf3; display: flex; align-items: center; gap: 12px; flex-wrap: wrap;
+}
+.kafka-body { padding: 20px; }
+.kafka-btn-row { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 16px; }
+.kafka-btn {
+  font-family: 'Bangers', cursive; font-size: .95rem; letter-spacing: 1.5px;
+  padding: 9px 16px; border: 2px solid #30363d; border-radius: 5px;
+  background: #161b22; color: #e6edf3; cursor: pointer; transition: background .15s;
+}
+.kafka-btn:hover { background: #21262d; border-color: #8b949e; }
+.kafka-btn.btn-green { border-color: var(--green); color: var(--green); }
+.kafka-btn.btn-blue  { border-color: var(--blue);  color: var(--blue); }
+.kafka-btn.btn-orange{ border-color: var(--orange); color: var(--orange); }
+.kafka-btn.btn-red   { border-color: var(--red);    color: var(--red); }
+
+/* ── DELIVERY SEMANTICS COMPARE ────────────────── */
+.semantics-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 16px; margin: 20px 0; }
+@media(max-width: 640px) { .semantics-grid { grid-template-columns: 1fr; } }
+</style>
+</head>
+<body>
+<div data-masthead></div>
+<div class="page-wrap">
+
+<div data-tool-hero
+  data-title="How Kafka Works"
+  data-chapter="HOW-13"
+  data-category="How X Works"
+  data-icon="📨"
+  data-desc="Topics, partitions, consumer groups, log segments, replication — how Kafka moves millions of events per second without losing a single one."
+  data-color="green"
+  data-badges="KAFKA,EVENT STREAMING,PARTITIONS,SYSTEM DESIGN"
+  data-badge-colors="green,blue,orange,yellow">
+</div>
+
+<!-- ───────────────────────────────────────
+     SECTION 01: Why Kafka Exists
+─────────────────────────────────────────── -->
+<div class="panel">
+  <div class="section-head">
+    <span class="section-num">01</span>
+    <h2>Why Kafka Exists: The Message Queue Problem</h2>
+  </div>
+
+  <p>Traditional message queues — RabbitMQ, ActiveMQ, SQS — were built around one core idea: <strong>deliver a message, then delete it</strong>. A producer sends a job, the queue holds it, a consumer picks it up, the message disappears. Simple. But this model breaks down at LinkedIn scale, where the need was to move <strong>1+ trillion messages per day</strong> across dozens of systems simultaneously.</p>
+
+  <div class="grid-2" style="margin: 24px 0;">
+    <!-- Traditional MQ side -->
+    <div class="card" style="border-color: var(--red);">
+      <div class="card-head" style="color: var(--red); border-color: var(--red);">
+        <i data-lucide="trash-2" class="lc"></i> Traditional MQ: Destructive Read
+      </div>
+      <div style="background: rgba(230,57,70,.06); border: 2px solid var(--red); border-radius: 6px; padding: 16px; margin-bottom: 12px;">
+        <!-- Visual flow -->
+        <div style="display: flex; align-items: center; gap: 0; flex-wrap: wrap;">
+          <div style="border: 2px solid var(--red); border-radius: 5px; padding: 10px 14px; text-align: center; background: rgba(230,57,70,.12); min-width: 80px;">
+            <i data-lucide="package" style="width:22px;height:22px;color:var(--red);display:block;margin:0 auto 4px;"></i>
+            <div style="font-family:'Bangers',cursive;font-size:.82rem;letter-spacing:1px;">Producer</div>
+          </div>
+          <div class="css-arrow"><div class="css-arrow-line"></div></div>
+          <div style="border: 2px solid var(--red); border-radius: 5px; padding: 10px 14px; text-align: center; background: rgba(230,57,70,.12); min-width: 80px;">
+            <i data-lucide="inbox" style="width:22px;height:22px;color:var(--red);display:block;margin:0 auto 4px;"></i>
+            <div style="font-family:'Bangers',cursive;font-size:.82rem;letter-spacing:1px;">Queue</div>
+          </div>
+          <div class="css-arrow"><div class="css-arrow-line"></div></div>
+          <div style="border: 2px solid var(--red); border-radius: 5px; padding: 10px 14px; text-align: center; background: rgba(230,57,70,.12); min-width: 80px;">
+            <i data-lucide="user" style="width:22px;height:22px;color:var(--red);display:block;margin:0 auto 4px;"></i>
+            <div style="font-family:'Bangers',cursive;font-size:.82rem;letter-spacing:1px;">Consumer</div>
+          </div>
+        </div>
+        <div style="margin-top: 12px; text-align: center; background: rgba(230,57,70,.15); border: 2px dashed var(--red); border-radius: 4px; padding: 6px 10px;">
+          <i data-lucide="x-circle" style="width:16px;height:16px;color:var(--red);vertical-align:middle;"></i>
+          <span style="font-family:'Bangers',cursive;font-size:.85rem;letter-spacing:1px;color:var(--red);"> MESSAGE GONE AFTER CONSUMPTION</span>
+        </div>
+      </div>
+      <ul>
+        <li>Message is <strong>deleted</strong> once a consumer ACKs it</li>
+        <li>Only ONE consumer group can process each message</li>
+        <li>No replay — crash mid-processing means the message is lost</li>
+        <li>Analytics team cannot read what the billing team already consumed</li>
+        <li>Scaling bottleneck: adding consumers doesn't help if queue is single-threaded</li>
+      </ul>
+    </div>
+
+    <!-- Kafka side -->
+    <div class="card" style="border-color: var(--green);">
+      <div class="card-head" style="color: var(--green); border-color: var(--green);">
+        <i data-lucide="database" class="lc"></i> Kafka: Log as Source of Truth
+      </div>
+      <div style="background: rgba(63,163,77,.08); border: 2px solid var(--green); border-radius: 6px; padding: 16px; margin-bottom: 12px;">
+        <!-- Visual flow: producer writes to immutable log, multiple consumers read independently -->
+        <div style="display: flex; align-items: center; gap: 0; margin-bottom: 10px;">
+          <div style="border: 2px solid var(--green); border-radius: 5px; padding: 10px 12px; text-align: center; background: rgba(63,163,77,.12); min-width: 76px;">
+            <i data-lucide="package" style="width:20px;height:20px;color:var(--green);display:block;margin:0 auto 4px;"></i>
+            <div style="font-family:'Bangers',cursive;font-size:.78rem;letter-spacing:1px;">Producer</div>
+          </div>
+          <div class="css-arrow"><div class="css-arrow-line"></div></div>
+          <div style="flex:1; border: 2px solid var(--green); border-radius: 5px; padding: 8px; background: rgba(63,163,77,.12);">
+            <div style="font-family:'Bangers',cursive;font-size:.75rem;letter-spacing:1px;color:var(--green);text-align:center;margin-bottom:4px;">IMMUTABLE LOG</div>
+            <div style="display:flex;gap:2px;">
+              <div style="flex:1;background:rgba(63,163,77,.25);border:1px solid var(--green);border-radius:3px;text-align:center;padding:3px;font-family:'Space Mono',monospace;font-size:.6rem;color:#aaa;">msg 0</div>
+              <div style="flex:1;background:rgba(63,163,77,.25);border:1px solid var(--green);border-radius:3px;text-align:center;padding:3px;font-family:'Space Mono',monospace;font-size:.6rem;color:#aaa;">msg 1</div>
+              <div style="flex:1;background:rgba(63,163,77,.25);border:1px solid var(--green);border-radius:3px;text-align:center;padding:3px;font-family:'Space Mono',monospace;font-size:.6rem;color:#aaa;">msg 2</div>
+              <div style="flex:1;background:rgba(255,210,63,.3);border:1px solid var(--yellow);border-radius:3px;text-align:center;padding:3px;font-family:'Space Mono',monospace;font-size:.6rem;color:#aaa;">msg 3</div>
+            </div>
+          </div>
+        </div>
+        <div style="display:flex; gap: 10px; justify-content: flex-end;">
+          <div style="border: 2px solid var(--blue); border-radius: 5px; padding: 6px 10px; text-align: center; background: rgba(29,111,184,.1); flex:1;">
+            <i data-lucide="users" style="width:16px;height:16px;color:var(--blue);vertical-align:middle;"></i>
+            <div style="font-family:'Bangers',cursive;font-size:.72rem;letter-spacing:1px;color:var(--blue);">Group A</div>
+            <div style="font-family:'Space Mono',monospace;font-size:.6rem;color:#888;">offset: 2</div>
+          </div>
+          <div style="border: 2px solid var(--orange); border-radius: 5px; padding: 6px 10px; text-align: center; background: rgba(255,140,66,.1); flex:1;">
+            <i data-lucide="users" style="width:16px;height:16px;color:var(--orange);vertical-align:middle;"></i>
+            <div style="font-family:'Bangers',cursive;font-size:.72rem;letter-spacing:1px;color:var(--orange);">Group B</div>
+            <div style="font-family:'Space Mono',monospace;font-size:.6rem;color:#888;">offset: 0</div>
+          </div>
+        </div>
+        <div style="margin-top: 10px; text-align: center; background: rgba(63,163,77,.15); border: 2px solid var(--green); border-radius: 4px; padding: 6px 10px;">
+          <i data-lucide="check-circle" style="width:16px;height:16px;color:var(--green);vertical-align:middle;"></i>
+          <span style="font-family:'Bangers',cursive;font-size:.85rem;letter-spacing:1px;color:var(--green);"> MESSAGE STAYS — CONSUMERS READ INDEPENDENTLY</span>
+        </div>
+      </div>
+      <ul>
+        <li>Log is <strong>append-only and immutable</strong> — messages are never deleted on read</li>
+        <li>Any number of consumer groups each get a <strong>full independent copy</strong></li>
+        <li>Consumers track their own offset — replay from any point on crash recovery</li>
+        <li>LinkedIn's original use: activity events, metrics, operational data — all one system</li>
+        <li>Throughput scales by adding partitions, not by tuning a single queue</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="hbox hbox-yellow">
+    <div class="hbox-label">THE LINKEDIN ORIGIN STORY</div>
+    <p style="margin-top: 12px;">Jay Kreps, Neha Narkhede, and Jun Rao built Kafka at LinkedIn in 2010. They needed a unified pipeline to handle activity tracking, metrics, log aggregation, and stream processing — all at once. By 2014, LinkedIn was processing over <strong>1 trillion messages per day</strong>. Kafka was open-sourced via Apache in 2011 and has since become the de-facto backbone for event-driven architectures at companies like Uber, Netflix, Twitter, and Cloudflare.</p>
+  </div>
+
+  <div class="sfx-row">
+    <span class="sfx">APPEND ONLY</span>
+    <span class="sfx">NEVER DELETE</span>
+    <span class="sfx">REPLAY ANYTIME</span>
+  </div>
+</div>
+
+<!-- ───────────────────────────────────────
+     SECTION 02: Topics and Partitions
+─────────────────────────────────────────── -->
+<div class="panel">
+  <div class="section-head">
+    <span class="section-num">02</span>
+    <h2>Topics and Partitions: The Core Data Model</h2>
+  </div>
+
+  <p>A <strong>topic</strong> is a named stream of events — think of it like a database table or a log file category. A topic called <code>user-clicks</code> holds all click events; <code>order-placed</code> holds all orders. But a topic alone isn't enough for scale — Kafka splits each topic into <strong>partitions</strong>.</p>
+
+  <div class="grid-2">
+    <div class="hbox hbox-green" style="margin: 0;">
+      <div class="hbox-label">TOPIC</div>
+      <ul style="margin-top: 14px;">
+        <li>A logical category name — <code>user-clicks</code>, <code>payments</code>, <code>sensor-data</code></li>
+        <li>Producers write to a topic by name</li>
+        <li>Consumers subscribe to a topic by name</li>
+        <li>Equivalent to a "database table" but append-only and time-ordered</li>
+        <li>Retention is configured per-topic (time or size based)</li>
+      </ul>
+    </div>
+    <div class="hbox hbox-blue" style="margin: 0;">
+      <div class="hbox-label">PARTITION</div>
+      <ul style="margin-top: 14px;">
+        <li>An ordered, <strong>immutable sequence</strong> of messages within a topic</li>
+        <li>Each message gets a monotonically increasing <strong>offset</strong> (0, 1, 2, ...)</li>
+        <li>Stored as a physical log file on disk on a broker</li>
+        <li>Parallelism unit: each partition can be consumed independently</li>
+        <li>Ordering guaranteed <em>within</em> a partition, NOT across partitions</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- PARTITION VISUAL -->
+  <div style="margin: 24px 0; border: 3px solid var(--ink); border-radius: 8px; overflow: hidden; box-shadow: 6px 6px 0 var(--ink);">
+    <div style="background: var(--green); color: #fff; padding: 10px 20px; font-family: 'Bangers', cursive; font-size: 1rem; letter-spacing: 2px; border-bottom: 3px solid var(--ink);">
+      <i data-lucide="layers" style="width:20px;height:20px;vertical-align:middle;margin-right:8px;"></i>
+      TOPIC "user-clicks" — 3 Partitions
+    </div>
+    <div style="padding: 20px; background: var(--paper); overflow-x: auto;">
+      <!-- Partition 0 -->
+      <div style="margin-bottom: 14px;">
+        <div style="font-family:'Bangers',cursive;font-size:.9rem;letter-spacing:1px;color:var(--green);margin-bottom:4px;display:flex;align-items:center;gap:8px;">
+          <i data-lucide="align-left" class="lc" style="color:var(--green);"></i> Partition 0 — Key: "userA"
+        </div>
+        <div class="partition-log">
+          <div class="log-header" style="background:rgba(63,163,77,.15);border-color:var(--green);">P-0</div>
+          <div class="log-cell" style="background:rgba(63,163,77,.1);">click<span class="log-cell-offset">offset 0</span></div>
+          <div class="log-cell" style="background:rgba(63,163,77,.1);">click<span class="log-cell-offset">offset 1</span></div>
+          <div class="log-cell" style="background:rgba(63,163,77,.1);">view<span class="log-cell-offset">offset 2</span></div>
+          <div class="log-cell" style="background:rgba(63,163,77,.1);">click<span class="log-cell-offset">offset 3</span></div>
+          <div class="log-cell" style="background:rgba(63,163,77,.1);">scroll<span class="log-cell-offset">offset 4</span></div>
+          <div class="log-cell" style="background:rgba(255,210,63,.2);border-color:var(--yellow);">click<span class="log-cell-offset" style="color:var(--orange);">offset 5 ←new</span></div>
+        </div>
+      </div>
+      <!-- Partition 1 -->
+      <div style="margin-bottom: 14px;">
+        <div style="font-family:'Bangers',cursive;font-size:.9rem;letter-spacing:1px;color:var(--blue);margin-bottom:4px;display:flex;align-items:center;gap:8px;">
+          <i data-lucide="align-left" class="lc" style="color:var(--blue);"></i> Partition 1 — Key: "userB"
+        </div>
+        <div class="partition-log">
+          <div class="log-header" style="background:rgba(29,111,184,.15);border-color:var(--blue);">P-1</div>
+          <div class="log-cell" style="background:rgba(29,111,184,.1);">login<span class="log-cell-offset">offset 0</span></div>
+          <div class="log-cell" style="background:rgba(29,111,184,.1);">click<span class="log-cell-offset">offset 1</span></div>
+          <div class="log-cell" style="background:rgba(29,111,184,.1);">purchase<span class="log-cell-offset">offset 2</span></div>
+          <div class="log-cell" style="background:rgba(255,210,63,.2);border-color:var(--yellow);">logout<span class="log-cell-offset" style="color:var(--orange);">offset 3 ←new</span></div>
+        </div>
+      </div>
+      <!-- Partition 2 -->
+      <div>
+        <div style="font-family:'Bangers',cursive;font-size:.9rem;letter-spacing:1px;color:var(--orange);margin-bottom:4px;display:flex;align-items:center;gap:8px;">
+          <i data-lucide="align-left" class="lc" style="color:var(--orange);"></i> Partition 2 — Key: "userC"
+        </div>
+        <div class="partition-log">
+          <div class="log-header" style="background:rgba(255,140,66,.15);border-color:var(--orange);">P-2</div>
+          <div class="log-cell" style="background:rgba(255,140,66,.1);">view<span class="log-cell-offset">offset 0</span></div>
+          <div class="log-cell" style="background:rgba(255,140,66,.1);">view<span class="log-cell-offset">offset 1</span></div>
+          <div class="log-cell" style="background:rgba(255,210,63,.2);border-color:var(--yellow);">click<span class="log-cell-offset" style="color:var(--orange);">offset 2 ←new</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <h3>Partition Key and Hash Routing</h3>
+  <div class="grid-2">
+    <div class="hbox hbox-orange" style="margin: 0;">
+      <div class="hbox-label">WITH PARTITION KEY</div>
+      <p style="margin-top: 12px; font-size: .9rem;">If a producer sends a message with a <strong>key</strong>, Kafka computes:</p>
+      <div style="background: var(--paper2); border: 2px solid var(--ink); border-radius: 4px; padding: 10px 14px; font-family: 'Space Mono', monospace; font-size: .82rem; line-height: 1.8; margin-top: 8px;">
+        partition = hash(key) % num_partitions
+      </div>
+      <p style="margin-top: 10px; font-size: .9rem;">Same key <strong>always</strong> routes to the same partition. This preserves ordering per key (e.g., all events for user-123 stay in order in partition 0).</p>
+    </div>
+    <div class="hbox hbox-teal" style="margin: 0;">
+      <div class="hbox-label">WITHOUT KEY (ROUND-ROBIN)</div>
+      <p style="margin-top: 12px; font-size: .9rem;">If no key is provided, Kafka distributes messages across partitions in round-robin fashion (or sticky-batch in newer versions for better throughput). Messages are spread evenly but ordering is NOT guaranteed across partitions.</p>
+      <div style="background: var(--paper2); border: 2px solid var(--ink); border-radius: 4px; padding: 10px 14px; font-family: 'Space Mono', monospace; font-size: .82rem; line-height: 1.8; margin-top: 8px;">
+        ProducerRecord("topic", null, value)<br>
+        <span style="color:#888;">// key=null → round-robin</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="hbox hbox-yellow" style="margin-top: 16px;">
+    <div class="hbox-label">ORDERING GUARANTEE: WITHIN A PARTITION ONLY</div>
+    <p style="margin-top: 12px;">This is one of the most misunderstood aspects of Kafka. If you need all events for a specific entity (user, order, device) to be processed in order, always send with that entity's ID as the key. Kafka guarantees messages with the same key land in the same partition — and within a partition, offset order = arrival order. Across partitions, there is no global ordering.</p>
+  </div>
+</div>
+
+<!-- ───────────────────────────────────────
+     SECTION 03: Producers
+─────────────────────────────────────────── -->
+<div class="panel">
+  <div class="section-head">
+    <span class="section-num">03</span>
+    <h2>Producers: How Messages Get Written</h2>
+  </div>
+
+  <p>A Kafka producer is a client library that serializes records, determines which partition to write to, batches them up for efficiency, optionally compresses them, and then sends the batch to the partition's leader broker. The producer is designed to be high-throughput and configurable for the reliability level you need.</p>
+
+  <!-- PRODUCER FLOW DIAGRAM -->
+  <div style="margin: 20px 0; border: 3px solid var(--ink); border-radius: 8px; overflow: hidden; box-shadow: 5px 5px 0 var(--ink);">
+    <div style="background: var(--ink); color: #fff; padding: 10px 20px; font-family: 'Bangers', cursive; font-size: 1rem; letter-spacing: 2px;">
+      PRODUCER WRITE PATH
+    </div>
+    <div style="padding: 20px; background: var(--paper);">
+      <div style="display: flex; align-items: center; gap: 0; flex-wrap: wrap; justify-content: center;">
+        <!-- App -->
+        <div style="border: 3px solid var(--ink); border-radius: 6px; padding: 14px 16px; text-align: center; min-width: 100px; box-shadow: 4px 4px 0 var(--ink); background: rgba(138,79,255,.1);">
+          <i data-lucide="code" style="width:28px;height:28px;color:var(--purple);display:block;margin:0 auto 6px;"></i>
+          <div style="font-family:'Bangers',cursive;font-size:.9rem;letter-spacing:1px;">App Code</div>
+          <div style="font-family:'Space Mono',monospace;font-size:.62rem;color:#888;margin-top:4px;">produces records</div>
+        </div>
+        <div class="css-arrow"><div class="css-arrow-line"></div></div>
+        <!-- Serializer -->
+        <div style="border: 3px solid var(--teal); border-radius: 6px; padding: 14px 12px; text-align: center; min-width: 96px; box-shadow: 4px 4px 0 var(--ink); background: rgba(13,148,136,.1);">
+          <i data-lucide="binary" style="width:24px;height:24px;color:var(--teal);display:block;margin:0 auto 4px;"></i>
+          <div style="font-family:'Bangers',cursive;font-size:.85rem;letter-spacing:1px;color:var(--teal);">Serializer</div>
+          <div style="font-family:'Space Mono',monospace;font-size:.62rem;color:#888;margin-top:4px;">JSON/Avro/Proto</div>
+        </div>
+        <div class="css-arrow"><div class="css-arrow-line"></div></div>
+        <!-- Partitioner -->
+        <div style="border: 3px solid var(--orange); border-radius: 6px; padding: 14px 12px; text-align: center; min-width: 96px; box-shadow: 4px 4px 0 var(--ink); background: rgba(255,140,66,.1);">
+          <i data-lucide="git-branch" style="width:24px;height:24px;color:var(--orange);display:block;margin:0 auto 4px;"></i>
+          <div style="font-family:'Bangers',cursive;font-size:.85rem;letter-spacing:1px;color:var(--orange);">Partitioner</div>
+          <div style="font-family:'Space Mono',monospace;font-size:.62rem;color:#888;margin-top:4px;">hash(key) % N</div>
+        </div>
+        <div class="css-arrow"><div class="css-arrow-line"></div></div>
+        <!-- Batch Buffer -->
+        <div style="border: 3px solid var(--blue); border-radius: 6px; padding: 14px 12px; text-align: center; min-width: 96px; box-shadow: 4px 4px 0 var(--ink); background: rgba(29,111,184,.1);">
+          <i data-lucide="layers" style="width:24px;height:24px;color:var(--blue);display:block;margin:0 auto 4px;"></i>
+          <div style="font-family:'Bangers',cursive;font-size:.85rem;letter-spacing:1px;color:var(--blue);">Batch Buffer</div>
+          <div style="font-family:'Space Mono',monospace;font-size:.62rem;color:#888;margin-top:4px;">batch.size=16KB</div>
+        </div>
+        <div class="css-arrow"><div class="css-arrow-line"></div></div>
+        <!-- Compressor -->
+        <div style="border: 3px solid var(--green); border-radius: 6px; padding: 14px 12px; text-align: center; min-width: 96px; box-shadow: 4px 4px 0 var(--ink); background: rgba(63,163,77,.1);">
+          <i data-lucide="archive" style="width:24px;height:24px;color:var(--green);display:block;margin:0 auto 4px;"></i>
+          <div style="font-family:'Bangers',cursive;font-size:.85rem;letter-spacing:1px;color:var(--green);">Compress</div>
+          <div style="font-family:'Space Mono',monospace;font-size:.62rem;color:#888;margin-top:4px;">snappy/lz4/gzip</div>
+        </div>
+        <div class="css-arrow"><div class="css-arrow-line"></div></div>
+        <!-- Broker Leader -->
+        <div style="border: 3px solid var(--ink); border-radius: 6px; padding: 14px 12px; text-align: center; min-width: 96px; box-shadow: 4px 4px 0 var(--ink); background: rgba(255,210,63,.15);">
+          <i data-lucide="server" style="width:24px;height:24px;color:var(--orange);display:block;margin:0 auto 4px;"></i>
+          <div style="font-family:'Bangers',cursive;font-size:.85rem;letter-spacing:1px;">Leader Broker</div>
+          <div style="font-family:'Space Mono',monospace;font-size:.62rem;color:#888;margin-top:4px;">writes to log</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <h3>ACK Levels: Trading Durability for Speed</h3>
+  <div class="grid-3">
+    <div class="card" style="border-color: var(--orange);">
+      <div class="card-head" style="color: var(--orange); border-color: var(--orange);">
+        <i data-lucide="zap" class="lc"></i> acks=0 — Fire &amp; Forget
+      </div>
+      <p style="font-size:.9rem;">Producer sends and never waits for a response. Maximum throughput, <strong>zero durability</strong>. If the broker crashes before writing, the message is silently lost. Use only for high-volume metrics where occasional loss is acceptable.</p>
+      <div style="background:rgba(255,140,66,.1);border:2px solid var(--orange);border-radius:4px;padding:6px 10px;font-family:'Space Mono',monospace;font-size:.72rem;margin-top:8px;color:var(--orange);">Risk: data loss on broker failure</div>
+    </div>
+    <div class="card" style="border-color: var(--blue);">
+      <div class="card-head" style="color: var(--blue); border-color: var(--blue);">
+        <i data-lucide="check" class="lc"></i> acks=1 — Leader ACK
+      </div>
+      <p style="font-size:.9rem;">Producer waits for the <strong>partition leader</strong> to write the message to its local log. Replicas may not have it yet. If the leader crashes before replication, message is lost. Good balance of throughput and safety for non-critical data.</p>
+      <div style="background:rgba(29,111,184,.1);border:2px solid var(--blue);border-radius:4px;padding:6px 10px;font-family:'Space Mono',monospace;font-size:.72rem;margin-top:8px;color:var(--blue);">Risk: loss if leader fails mid-replication</div>
+    </div>
+    <div class="card" style="border-color: var(--green);">
+      <div class="card-head" style="color: var(--green); border-color: var(--green);">
+        <i data-lucide="check-check" class="lc"></i> acks=all (-1) — All Replicas
+      </div>
+      <p style="font-size:.9rem;">Producer waits until <strong>all ISR replicas</strong> (in-sync replicas) have written the message. Strongest durability guarantee. Requires <code>min.insync.replicas</code> to be set (typically 2). Lowest throughput but no data loss even if broker crashes.</p>
+      <div style="background:rgba(63,163,77,.1);border:2px solid var(--green);border-radius:4px;padding:6px 10px;font-family:'Space Mono',monospace;font-size:.72rem;margin-top:8px;color:var(--green);">Strongest: no loss even on broker failure</div>
+    </div>
+  </div>
+
+  <div class="hbox hbox-blue" style="margin-top: 16px;">
+    <div class="hbox-label">BATCHING: THE THROUGHPUT MULTIPLIER</div>
+    <p style="margin-top: 12px;">The producer doesn't send each message immediately — it accumulates messages in a per-partition buffer. Two settings control this: <code>batch.size</code> (default 16 KB — flush when buffer fills) and <code>linger.ms</code> (default 0 ms — wait this long for more messages before flushing). Setting <code>linger.ms=5</code> with compression can increase throughput by 10x at the cost of 5ms additional latency — a common production trade-off.</p>
+  </div>
+</div>
+
+<!-- ───────────────────────────────────────
+     SECTION 04: Consumers and Consumer Groups
+─────────────────────────────────────────── -->
+<div class="panel">
+  <div class="section-head">
+    <span class="section-num">04</span>
+    <h2>Consumers and Consumer Groups</h2>
+  </div>
+
+  <p>A Kafka consumer reads messages from partitions by tracking an <strong>offset</strong> — a simple integer pointing to the next message to read. It advances the offset as it processes messages, at its own pace. The broker doesn't push; the consumer pulls. This design means a slow consumer never slows down a fast producer.</p>
+
+  <!-- CONSUMER GROUP VISUAL -->
+  <div style="margin: 20px 0; border: 3px solid var(--ink); border-radius: 8px; overflow: hidden; box-shadow: 6px 6px 0 var(--ink);">
+    <div style="background: var(--blue); color: #fff; padding: 10px 20px; font-family: 'Bangers', cursive; font-size: 1rem; letter-spacing: 2px; border-bottom: 3px solid var(--ink);">
+      <i data-lucide="users" style="width:20px;height:20px;vertical-align:middle;margin-right:8px;"></i>
+      CONSUMER GROUP PARTITION ASSIGNMENT — 3 Partitions
+    </div>
+    <div style="padding: 20px; background: var(--paper); overflow-x: auto;">
+      <!-- Partitions row -->
+      <div style="display: flex; gap: 10px; margin-bottom: 20px;">
+        <div style="flex:1; border: 2px solid var(--green); border-radius: 6px; padding: 10px; text-align: center; background: rgba(63,163,77,.1);">
+          <i data-lucide="align-left" style="width:18px;height:18px;color:var(--green);display:block;margin:0 auto 4px;"></i>
+          <div style="font-family:'Bangers',cursive;font-size:.9rem;letter-spacing:1px;">Partition 0</div>
+          <div style="font-family:'Space Mono',monospace;font-size:.65rem;color:#888;margin-top:2px;">offsets 0–152</div>
+        </div>
+        <div style="flex:1; border: 2px solid var(--blue); border-radius: 6px; padding: 10px; text-align: center; background: rgba(29,111,184,.1);">
+          <i data-lucide="align-left" style="width:18px;height:18px;color:var(--blue);display:block;margin:0 auto 4px;"></i>
+          <div style="font-family:'Bangers',cursive;font-size:.9rem;letter-spacing:1px;">Partition 1</div>
+          <div style="font-family:'Space Mono',monospace;font-size:.65rem;color:#888;margin-top:2px;">offsets 0–140</div>
+        </div>
+        <div style="flex:1; border: 2px solid var(--orange); border-radius: 6px; padding: 10px; text-align: center; background: rgba(255,140,66,.1);">
+          <i data-lucide="align-left" style="width:18px;height:18px;color:var(--orange);display:block;margin:0 auto 4px;"></i>
+          <div style="font-family:'Bangers',cursive;font-size:.9rem;letter-spacing:1px;">Partition 2</div>
+          <div style="font-family:'Space Mono',monospace;font-size:.65rem;color:#888;margin-top:2px;">offsets 0–167</div>
+        </div>
+      </div>
+
+      <div class="grid-2">
+        <!-- Group A -->
+        <div style="border: 3px solid var(--green); border-radius: 6px; padding: 14px; background: rgba(63,163,77,.05);">
+          <div style="font-family:'Bangers',cursive;font-size:1rem;letter-spacing:1px;color:var(--green);margin-bottom:12px;display:flex;align-items:center;gap:8px;">
+            <i data-lucide="users" class="lc" style="color:var(--green);"></i> Group A — 2 Consumers
+          </div>
+          <div style="border: 2px solid var(--green); border-radius: 5px; padding: 10px; margin-bottom: 8px; background: rgba(63,163,77,.1);">
+            <div style="font-family:'Bangers',cursive;font-size:.85rem;letter-spacing:1px;">Consumer A-1</div>
+            <div style="display:flex;gap:6px;margin-top:6px;flex-wrap:wrap;">
+              <span style="background:rgba(63,163,77,.25);border:1px solid var(--green);border-radius:3px;padding:2px 8px;font-family:'Space Mono',monospace;font-size:.7rem;">P-0 (offset 98)</span>
+              <span style="background:rgba(29,111,184,.2);border:1px solid var(--blue);border-radius:3px;padding:2px 8px;font-family:'Space Mono',monospace;font-size:.7rem;">P-1 (offset 87)</span>
+            </div>
+          </div>
+          <div style="border: 2px solid var(--orange); border-radius: 5px; padding: 10px; background: rgba(255,140,66,.08);">
+            <div style="font-family:'Bangers',cursive;font-size:.85rem;letter-spacing:1px;">Consumer A-2</div>
+            <div style="display:flex;gap:6px;margin-top:6px;">
+              <span style="background:rgba(255,140,66,.2);border:1px solid var(--orange);border-radius:3px;padding:2px 8px;font-family:'Space Mono',monospace;font-size:.7rem;">P-2 (offset 120)</span>
+            </div>
+          </div>
+          <div style="margin-top:10px;font-family:'Space Mono',monospace;font-size:.72rem;color:#888;line-height:1.6;">
+            Rule: each partition assigned to<br>exactly ONE consumer per group
+          </div>
+        </div>
+        <!-- Group B -->
+        <div style="border: 3px solid var(--purple); border-radius: 6px; padding: 14px; background: rgba(138,79,255,.05);">
+          <div style="font-family:'Bangers',cursive;font-size:1rem;letter-spacing:1px;color:var(--purple);margin-bottom:12px;display:flex;align-items:center;gap:8px;">
+            <i data-lucide="users" class="lc" style="color:var(--purple);"></i> Group B — 1 Consumer
+          </div>
+          <div style="border: 2px solid var(--purple); border-radius: 5px; padding: 10px; background: rgba(138,79,255,.1);">
+            <div style="font-family:'Bangers',cursive;font-size:.85rem;letter-spacing:1px;">Consumer B-1</div>
+            <div style="display:flex;gap:6px;margin-top:6px;flex-wrap:wrap;">
+              <span style="background:rgba(63,163,77,.2);border:1px solid var(--green);border-radius:3px;padding:2px 8px;font-family:'Space Mono',monospace;font-size:.7rem;">P-0 (offset 152)</span>
+              <span style="background:rgba(29,111,184,.2);border:1px solid var(--blue);border-radius:3px;padding:2px 8px;font-family:'Space Mono',monospace;font-size:.7rem;">P-1 (offset 140)</span>
+              <span style="background:rgba(255,140,66,.2);border:1px solid var(--orange);border-radius:3px;padding:2px 8px;font-family:'Space Mono',monospace;font-size:.7rem;">P-2 (offset 167)</span>
+            </div>
+          </div>
+          <div style="margin-top:10px;font-family:'Space Mono',monospace;font-size:.72rem;color:#888;line-height:1.6;">
+            Group B gets ALL messages independently.<br>
+            Group A's progress doesn't affect Group B.
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="grid-2">
+    <div class="hbox hbox-orange" style="margin: 0;">
+      <div class="hbox-label">REBALANCING</div>
+      <p style="margin-top: 12px; font-size: .9rem;">When a consumer <strong>joins</strong> or <strong>leaves</strong> a group (including crashes), Kafka triggers a rebalance. The group coordinator (a broker) pauses all consumers, reassigns partitions, and resumes. During the rebalance window (can be seconds), no messages are consumed. <strong>Cooperative rebalancing</strong> (Kafka 2.4+) dramatically reduces this pause by only reassigning partitions that change owners.</p>
+    </div>
+    <div class="hbox hbox-teal" style="margin: 0;">
+      <div class="hbox-label">PARALLELISM CEILING</div>
+      <p style="margin-top: 12px; font-size: .9rem;">The maximum useful parallelism in a consumer group equals the <strong>number of partitions</strong>. If you have 3 partitions and add a 4th consumer to the group, that consumer sits idle — there are no partitions to assign it. This is why partition count is a key design decision: set it higher than your current consumer count to allow future scale-out without re-partitioning.</p>
+    </div>
+  </div>
+</div>
+
+<!-- ───────────────────────────────────────
+     SECTION 05: Brokers, Leaders, Replication
+─────────────────────────────────────────── -->
+<div class="panel">
+  <div class="section-head">
+    <span class="section-num">05</span>
+    <h2>Brokers, Leaders, and Replication</h2>
+  </div>
+
+  <p>A <strong>broker</strong> is a single Kafka server — a JVM process that stores partition data on disk and serves read/write requests. A Kafka cluster is typically 3–10+ brokers. Partitions are spread across brokers, and each partition has exactly <strong>one leader</strong> and zero or more <strong>follower replicas</strong>. All reads and writes go through the leader.</p>
+
+  <!-- BROKER REPLICATION VISUAL -->
+  <div style="margin: 20px 0; border: 3px solid var(--ink); border-radius: 8px; overflow: hidden; box-shadow: 6px 6px 0 var(--ink);">
+    <div style="background: var(--ink); color: #fff; padding: 10px 20px; font-family: 'Bangers', cursive; font-size: 1rem; letter-spacing: 2px; border-bottom: 3px solid var(--ink);">
+      <i data-lucide="server" style="width:20px;height:20px;vertical-align:middle;margin-right:8px;"></i>
+      3-BROKER CLUSTER — Partition 0 Replication (replication-factor=3)
+    </div>
+    <div style="padding: 24px; background: var(--paper); overflow-x: auto;">
+      <div style="display: flex; gap: 16px; min-width: 600px;">
+        <!-- Broker 1 = Leader for P0 -->
+        <div style="flex:1; border: 3px solid var(--green); border-radius: 6px; padding: 16px; background: rgba(63,163,77,.06); box-shadow: 4px 4px 0 var(--ink);">
+          <div style="font-family:'Bangers',cursive;font-size:1rem;letter-spacing:1px;margin-bottom:4px;display:flex;align-items:center;gap:8px;">
+            <i data-lucide="server" class="lc" style="color:var(--green);"></i> Broker 1
+          </div>
+          <div style="background:rgba(63,163,77,.2);border:2px solid var(--green);border-radius:4px;padding:8px;margin-bottom:8px;text-align:center;">
+            <div style="font-family:'Bangers',cursive;font-size:.85rem;letter-spacing:1px;color:var(--green);">P-0 LEADER</div>
+            <div style="font-family:'Space Mono',monospace;font-size:.65rem;color:#888;margin-top:2px;">reads + writes here</div>
+          </div>
+          <div style="border:1px dashed #ccc;border-radius:4px;padding:6px;text-align:center;">
+            <div style="font-family:'Bangers',cursive;font-size:.8rem;letter-spacing:1px;color:#888;">P-1 Follower</div>
+          </div>
+          <div style="border:1px dashed #ccc;border-radius:4px;padding:6px;text-align:center;margin-top:6px;">
+            <div style="font-family:'Bangers',cursive;font-size:.8rem;letter-spacing:1px;color:#888;">P-2 Follower</div>
+          </div>
+          <div style="margin-top:10px;font-family:'Space Mono',monospace;font-size:.68rem;color:var(--green);">
+            <i data-lucide="arrow-down" style="width:12px;height:12px;vertical-align:middle;"></i> Producer writes here
+          </div>
+        </div>
+
+        <!-- Replication arrows + ISR label -->
+        <div style="display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;padding:0 4px;flex-shrink:0;">
+          <div style="font-family:'Bangers',cursive;font-size:.75rem;letter-spacing:1px;color:var(--blue);text-align:center;white-space:nowrap;">FOLLOWER<br>PULLS</div>
+          <div style="display:flex;flex-direction:column;align-items:center;gap:4px;">
+            <div style="width:3px;height:30px;background:var(--blue);position:relative;">
+              <div style="position:absolute;right:-4px;top:-1px;border-top:6px solid transparent;border-bottom:6px solid transparent;border-right:8px solid var(--blue);"></div>
+            </div>
+            <div style="width:3px;height:30px;background:var(--blue);position:relative;">
+              <div style="position:absolute;right:-4px;top:-1px;border-top:6px solid transparent;border-bottom:6px solid transparent;border-right:8px solid var(--blue);"></div>
+            </div>
+          </div>
+          <div style="background:rgba(29,111,184,.15);border:2px solid var(--blue);border-radius:4px;padding:4px 8px;font-family:'Space Mono',monospace;font-size:.62rem;color:var(--blue);text-align:center;white-space:nowrap;">ISR<br>in-sync</div>
+        </div>
+
+        <!-- Broker 2 = Follower -->
+        <div style="flex:1; border: 3px solid var(--blue); border-radius: 6px; padding: 16px; background: rgba(29,111,184,.06); box-shadow: 4px 4px 0 var(--ink);">
+          <div style="font-family:'Bangers',cursive;font-size:1rem;letter-spacing:1px;margin-bottom:4px;display:flex;align-items:center;gap:8px;">
+            <i data-lucide="server" class="lc" style="color:var(--blue);"></i> Broker 2
+          </div>
+          <div style="background:rgba(63,163,77,.12);border:2px dashed var(--green);border-radius:4px;padding:8px;margin-bottom:8px;text-align:center;">
+            <div style="font-family:'Bangers',cursive;font-size:.85rem;letter-spacing:1px;color:var(--green);">P-0 Follower</div>
+            <div style="font-family:'Space Mono',monospace;font-size:.65rem;color:#888;margin-top:2px;">replica in ISR</div>
+          </div>
+          <div style="background:rgba(29,111,184,.2);border:2px solid var(--blue);border-radius:4px;padding:8px;margin-bottom:6px;text-align:center;">
+            <div style="font-family:'Bangers',cursive;font-size:.85rem;letter-spacing:1px;color:var(--blue);">P-1 LEADER</div>
+          </div>
+          <div style="border:1px dashed #ccc;border-radius:4px;padding:6px;text-align:center;">
+            <div style="font-family:'Bangers',cursive;font-size:.8rem;letter-spacing:1px;color:#888;">P-2 Follower</div>
+          </div>
+        </div>
+
+        <!-- Arrow -->
+        <div style="display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;padding:0 4px;flex-shrink:0;">
+          <div style="font-family:'Bangers',cursive;font-size:.75rem;letter-spacing:1px;color:var(--blue);text-align:center;white-space:nowrap;">FOLLOWER<br>PULLS</div>
+          <div style="display:flex;flex-direction:column;align-items:center;gap:4px;">
+            <div style="width:3px;height:30px;background:var(--blue);position:relative;">
+              <div style="position:absolute;right:-4px;top:-1px;border-top:6px solid transparent;border-bottom:6px solid transparent;border-right:8px solid var(--blue);"></div>
+            </div>
+          </div>
+          <div style="background:rgba(29,111,184,.15);border:2px solid var(--blue);border-radius:4px;padding:4px 8px;font-family:'Space Mono',monospace;font-size:.62rem;color:var(--blue);text-align:center;white-space:nowrap;">ISR<br>in-sync</div>
+        </div>
+
+        <!-- Broker 3 = Follower -->
+        <div style="flex:1; border: 3px solid var(--orange); border-radius: 6px; padding: 16px; background: rgba(255,140,66,.06); box-shadow: 4px 4px 0 var(--ink);">
+          <div style="font-family:'Bangers',cursive;font-size:1rem;letter-spacing:1px;margin-bottom:4px;display:flex;align-items:center;gap:8px;">
+            <i data-lucide="server" class="lc" style="color:var(--orange);"></i> Broker 3
+          </div>
+          <div style="background:rgba(63,163,77,.12);border:2px dashed var(--green);border-radius:4px;padding:8px;margin-bottom:8px;text-align:center;">
+            <div style="font-family:'Bangers',cursive;font-size:.85rem;letter-spacing:1px;color:var(--green);">P-0 Follower</div>
+            <div style="font-family:'Space Mono',monospace;font-size:.65rem;color:#888;margin-top:2px;">replica in ISR</div>
+          </div>
+          <div style="border:1px dashed #ccc;border-radius:4px;padding:6px;text-align:center;margin-bottom:6px;">
+            <div style="font-family:'Bangers',cursive;font-size:.8rem;letter-spacing:1px;color:#888;">P-1 Follower</div>
+          </div>
+          <div style="background:rgba(255,140,66,.2);border:2px solid var(--orange);border-radius:4px;padding:8px;text-align:center;">
+            <div style="font-family:'Bangers',cursive;font-size:.85rem;letter-spacing:1px;color:var(--orange);">P-2 LEADER</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="grid-2">
+    <div class="hbox hbox-green" style="margin: 0;">
+      <div class="hbox-label">ISR: IN-SYNC REPLICAS</div>
+      <p style="margin-top: 12px; font-size: .9rem;">The ISR is the set of replicas that are caught up with the leader (within <code>replica.lag.time.max.ms</code>, default 10 seconds). If a follower falls too far behind, it's removed from the ISR. A write with <code>acks=all</code> only succeeds when all ISR members have acknowledged. If the ISR shrinks to just the leader, <code>min.insync.replicas</code> prevents writes from succeeding if durability is required.</p>
+    </div>
+    <div class="hbox hbox-red" style="margin: 0;">
+      <div class="hbox-label">LEADER ELECTION ON FAILURE</div>
+      <p style="margin-top: 12px; font-size: .9rem;">When a broker crashes, the partitions it led need new leaders. In KRaft mode (Kafka 2.8+), the cluster controller handles leader election directly. Only replicas in the ISR are eligible to become leader by default (<code>unclean.leader.election.enable=false</code>). Unclean election risks data loss — a lagging replica becomes leader and the messages it missed are gone forever.</p>
+    </div>
+  </div>
+</div>
+
+<!-- ───────────────────────────────────────
+     SECTION 06: Log Segments and Retention
+─────────────────────────────────────────── -->
+<div class="panel">
+  <div class="section-head">
+    <span class="section-num">06</span>
+    <h2>Log Segments and Retention</h2>
+  </div>
+
+  <p>Each Kafka partition is physically stored as a series of <strong>log segment files</strong> on disk. Kafka doesn't write one giant endless file — it rolls over to a new segment when the current one hits a size limit or age threshold. Only the newest segment (the <strong>active segment</strong>) accepts new writes; all others are immutable and subject to retention or compaction.</p>
+
+  <!-- LOG SEGMENT VISUAL -->
+  <div style="margin: 20px 0; border: 3px solid var(--ink); border-radius: 8px; overflow: hidden; box-shadow: 5px 5px 0 var(--ink);">
+    <div style="background: var(--ink); color: #fff; padding: 10px 20px; font-family: 'Bangers', cursive; font-size: 1rem; letter-spacing: 2px; border-bottom: 3px solid var(--ink);">
+      <i data-lucide="hard-drive" style="width:20px;height:20px;vertical-align:middle;margin-right:8px;"></i>
+      PARTITION ON-DISK LAYOUT — /kafka-logs/user-clicks-0/
+    </div>
+    <div style="padding: 20px; background: var(--paper); overflow-x: auto;">
+      <div style="display: flex; align-items: flex-end; gap: 10px; min-width: 700px;">
+        <!-- Old segments (retention expired) -->
+        <div style="display:flex;flex-direction:column;align-items:center;gap:4px;">
+          <div style="background:rgba(230,57,70,.12);border:2px dashed var(--red);border-radius:5px;padding:10px 14px;text-align:center;min-width:90px;">
+            <i data-lucide="file-x" style="width:20px;height:20px;color:var(--red);display:block;margin:0 auto 4px;"></i>
+            <div style="font-family:'Space Mono',monospace;font-size:.68rem;color:var(--red);">00000000.log</div>
+            <div style="font-family:'Space Mono',monospace;font-size:.62rem;color:#888;margin-top:2px;">0.8 GB</div>
+            <div style="font-family:'Space Mono',monospace;font-size:.6rem;color:#888;">7+ days old</div>
+          </div>
+          <div style="background:var(--red);color:#fff;border-radius:3px;padding:2px 8px;font-family:'Bangers',cursive;font-size:.75rem;letter-spacing:1px;">EXPIRED</div>
+        </div>
+        <div style="display:flex;flex-direction:column;align-items:center;gap:4px;">
+          <div style="background:rgba(230,57,70,.12);border:2px dashed var(--red);border-radius:5px;padding:10px 14px;text-align:center;min-width:90px;">
+            <i data-lucide="file-x" style="width:20px;height:20px;color:var(--red);display:block;margin:0 auto 4px;"></i>
+            <div style="font-family:'Space Mono',monospace;font-size:.68rem;color:var(--red);">00000820.log</div>
+            <div style="font-family:'Space Mono',monospace;font-size:.62rem;color:#888;margin-top:2px;">1.0 GB</div>
+            <div style="font-family:'Space Mono',monospace;font-size:.6rem;color:#888;">6.5 days old</div>
+          </div>
+          <div style="background:var(--red);color:#fff;border-radius:3px;padding:2px 8px;font-family:'Bangers',cursive;font-size:.75rem;letter-spacing:1px;">EXPIRED</div>
+        </div>
+
+        <!-- Retention boundary line -->
+        <div style="display:flex;flex-direction:column;align-items:center;gap:4px;flex-shrink:0;">
+          <div style="width:3px;height:100px;background:var(--orange);position:relative;">
+            <div style="position:absolute;top:-8px;left:50%;transform:translateX(-50%);background:var(--orange);color:#fff;font-family:'Bangers',cursive;font-size:.7rem;letter-spacing:1px;padding:2px 6px;border-radius:3px;white-space:nowrap;">RETENTION<br>BOUNDARY</div>
+          </div>
+          <div style="font-family:'Space Mono',monospace;font-size:.62rem;color:var(--orange);white-space:nowrap;">7 days</div>
+        </div>
+
+        <!-- Live segments -->
+        <div style="display:flex;flex-direction:column;align-items:center;gap:4px;">
+          <div style="background:rgba(29,111,184,.1);border:2px solid var(--blue);border-radius:5px;padding:10px 14px;text-align:center;min-width:90px;">
+            <i data-lucide="file" style="width:20px;height:20px;color:var(--blue);display:block;margin:0 auto 4px;"></i>
+            <div style="font-family:'Space Mono',monospace;font-size:.68rem;color:var(--blue);">00001840.log</div>
+            <div style="font-family:'Space Mono',monospace;font-size:.62rem;color:#888;margin-top:2px;">1.0 GB</div>
+            <div style="font-family:'Space Mono',monospace;font-size:.6rem;color:#888;">5 days old</div>
+          </div>
+          <div style="background:var(--blue);color:#fff;border-radius:3px;padding:2px 8px;font-family:'Bangers',cursive;font-size:.75rem;letter-spacing:1px;">CLOSED</div>
+        </div>
+        <div style="display:flex;flex-direction:column;align-items:center;gap:4px;">
+          <div style="background:rgba(29,111,184,.1);border:2px solid var(--blue);border-radius:5px;padding:10px 14px;text-align:center;min-width:90px;">
+            <i data-lucide="file" style="width:20px;height:20px;color:var(--blue);display:block;margin:0 auto 4px;"></i>
+            <div style="font-family:'Space Mono',monospace;font-size:.68rem;color:var(--blue);">00002900.log</div>
+            <div style="font-family:'Space Mono',monospace;font-size:.62rem;color:#888;margin-top:2px;">0.9 GB</div>
+            <div style="font-family:'Space Mono',monospace;font-size:.6rem;color:#888;">2 days old</div>
+          </div>
+          <div style="background:var(--blue);color:#fff;border-radius:3px;padding:2px 8px;font-family:'Bangers',cursive;font-size:.75rem;letter-spacing:1px;">CLOSED</div>
+        </div>
+        <div style="display:flex;flex-direction:column;align-items:center;gap:4px;">
+          <div style="background:rgba(63,163,77,.15);border:3px solid var(--green);border-radius:5px;padding:10px 14px;text-align:center;min-width:90px;box-shadow:3px 3px 0 var(--ink);">
+            <i data-lucide="file-plus" style="width:20px;height:20px;color:var(--green);display:block;margin:0 auto 4px;"></i>
+            <div style="font-family:'Space Mono',monospace;font-size:.68rem;color:var(--green);">00003840.log</div>
+            <div style="font-family:'Space Mono',monospace;font-size:.62rem;color:#888;margin-top:2px;">234 MB</div>
+            <div style="font-family:'Space Mono',monospace;font-size:.6rem;color:var(--green);">ACTIVE</div>
+          </div>
+          <div style="background:var(--green);color:#fff;border-radius:3px;padding:2px 8px;font-family:'Bangers',cursive;font-size:.75rem;letter-spacing:1px;">ACTIVE</div>
+        </div>
+      </div>
+      <div style="margin-top:14px;font-family:'Space Mono',monospace;font-size:.72rem;color:#888;line-height:1.8;">
+        Each .log file is paired with a .index (offset index) and .timeindex (timestamp index) for O(log N) random access.
+      </div>
+    </div>
+  </div>
+
+  <div class="grid-2">
+    <div class="hbox hbox-blue" style="margin: 0;">
+      <div class="hbox-label">TIME-BASED RETENTION</div>
+      <p style="margin-top: 12px; font-size: .9rem;">Default: <code>log.retention.hours=168</code> (7 days). Kafka's log cleaner thread scans segments. When the <em>oldest message</em> in a closed segment is older than the retention period, the entire segment file is deleted atomically. Configurable per-topic with <code>retention.ms</code>.</p>
+    </div>
+    <div class="hbox hbox-orange" style="margin: 0;">
+      <div class="hbox-label">LOG COMPACTION</div>
+      <p style="margin-top: 12px; font-size: .9rem;">For <strong>changelog topics</strong> (e.g., user profile updates), use <code>cleanup.policy=compact</code>. Instead of deleting old segments by time, Kafka keeps only the <strong>latest value per key</strong>. The result is a compact "current state" of every key — perfect for Kafka Streams state stores or CDC event streams. Null-value messages are "tombstones" that delete a key.</p>
+    </div>
+  </div>
+</div>
+
+<!-- ───────────────────────────────────────
+     SECTION 07: Consumer Offset Management
+─────────────────────────────────────────── -->
+<div class="panel">
+  <div class="section-head">
+    <span class="section-num">07</span>
+    <h2>Consumer Offset Management and Delivery Semantics</h2>
+  </div>
+
+  <p>An offset is just a number — the position of the next message to read from a partition. Consumer groups store their offset progress in an internal Kafka topic called <code>__consumer_offsets</code>. When a consumer restarts, it reads its last committed offset and resumes from there. How and <em>when</em> you commit offsets determines your delivery guarantee.</p>
+
+  <div class="grid-2">
+    <div class="hbox hbox-teal" style="margin: 0;">
+      <div class="hbox-label">AUTO COMMIT (enable.auto.commit=true)</div>
+      <p style="margin-top: 12px; font-size: .9rem;">Every <code>auto.commit.interval.ms</code> (default 5000 ms), the consumer automatically commits the highest fetched offset. Problem: if the consumer crashes between fetching a batch and the 5-second auto-commit, those messages will be re-delivered when it restarts. This is <strong>at-least-once delivery</strong> (you may process the same message twice after a crash).</p>
+    </div>
+    <div class="hbox hbox-purple" style="margin: 0;">
+      <div class="hbox-label">MANUAL COMMIT</div>
+      <p style="margin-top: 12px; font-size: .9rem;">Disable auto-commit and call <code>commitSync()</code> or <code>commitAsync()</code> only after you've successfully processed the batch. <code>commitSync</code> blocks until the broker ACKs. <code>commitAsync</code> doesn't retry on failure (dangerous). Best practice: use <code>commitAsync</code> in the happy path and <code>commitSync</code> in the shutdown/error handler.</p>
+    </div>
+  </div>
+
+  <!-- DELIVERY SEMANTICS COMPARISON -->
+  <h3 style="margin-top: 24px;">Delivery Semantics: The Big Three</h3>
+  <div class="semantics-grid">
+    <div style="border: 3px solid var(--orange); border-radius: 6px; padding: 16px; box-shadow: 4px 4px 0 var(--ink); background: rgba(255,140,66,.05);">
+      <div style="font-family:'Bangers',cursive;font-size:1.1rem;letter-spacing:1px;color:var(--orange);margin-bottom:10px;display:flex;align-items:center;gap:8px;">
+        <i data-lucide="wind" class="lc" style="color:var(--orange);"></i> At-Most-Once
+      </div>
+      <p style="font-size:.88rem;margin-bottom:10px;">Commit offset <em>before</em> processing. If crash occurs during processing, the message is NOT re-delivered — it's skipped forever.</p>
+      <div style="font-family:'Space Mono',monospace;font-size:.72rem;background:var(--paper2);border:2px solid var(--ink);border-radius:4px;padding:8px;line-height:1.8;">
+        commitOffset(msg.offset)<br>
+        process(msg) ← crash here?<br>
+        <span style="color:var(--red);">// message gone forever</span>
+      </div>
+      <div style="margin-top:8px;background:rgba(255,140,66,.15);border-radius:3px;padding:4px 8px;font-family:'Bangers',cursive;font-size:.75rem;letter-spacing:1px;color:var(--orange);">Use: metrics you can afford to lose</div>
+    </div>
+    <div style="border: 3px solid var(--blue); border-radius: 6px; padding: 16px; box-shadow: 4px 4px 0 var(--ink); background: rgba(29,111,184,.05);">
+      <div style="font-family:'Bangers',cursive;font-size:1.1rem;letter-spacing:1px;color:var(--blue);margin-bottom:10px;display:flex;align-items:center;gap:8px;">
+        <i data-lucide="repeat" class="lc" style="color:var(--blue);"></i> At-Least-Once
+      </div>
+      <p style="font-size:.88rem;margin-bottom:10px;">Commit offset <em>after</em> processing. If crash occurs before commit, the message is re-delivered — your consumer must handle <strong>duplicates</strong>.</p>
+      <div style="font-family:'Space Mono',monospace;font-size:.72rem;background:var(--paper2);border:2px solid var(--ink);border-radius:4px;padding:8px;line-height:1.8;">
+        process(msg) ← crash here?<br>
+        commitOffset(msg.offset)<br>
+        <span style="color:var(--blue);">// re-delivered on restart</span>
+      </div>
+      <div style="margin-top:8px;background:rgba(29,111,184,.15);border-radius:3px;padding:4px 8px;font-family:'Bangers',cursive;font-size:.75rem;letter-spacing:1px;color:var(--blue);">Use: most production systems (idempotent sink)</div>
+    </div>
+    <div style="border: 3px solid var(--green); border-radius: 6px; padding: 16px; box-shadow: 4px 4px 0 var(--ink); background: rgba(63,163,77,.05);">
+      <div style="font-family:'Bangers',cursive;font-size:1.1rem;letter-spacing:1px;color:var(--green);margin-bottom:10px;display:flex;align-items:center;gap:8px;">
+        <i data-lucide="shield-check" class="lc" style="color:var(--green);"></i> Exactly-Once (EOS)
+      </div>
+      <p style="font-size:.88rem;margin-bottom:10px;">Achieved via <strong>idempotent producer</strong> + <strong>transactional API</strong>. Each producer batch has a sequence number; duplicates are deduplicated by the broker. Read-process-write in a single atomic transaction.</p>
+      <div style="font-family:'Space Mono',monospace;font-size:.72rem;background:var(--paper2);border:2px solid var(--ink);border-radius:4px;padding:8px;line-height:1.8;">
+        producer.initTransactions()<br>
+        producer.beginTransaction()<br>
+        process + produce output<br>
+        sendOffsetsToTransaction()<br>
+        producer.commitTransaction()
+      </div>
+      <div style="margin-top:8px;background:rgba(63,163,77,.15);border-radius:3px;padding:4px 8px;font-family:'Bangers',cursive;font-size:.75rem;letter-spacing:1px;color:var(--green);">Use: payments, financial records, billing</div>
+    </div>
+  </div>
+
+  <div class="hbox hbox-yellow" style="margin-top: 16px;">
+    <div class="hbox-label">OFFSET HISTORY: FROM ZOOKEEPER TO KAFKACRAFT</div>
+    <p style="margin-top: 12px;">Before Kafka 0.9 (2015), consumer offsets were stored in ZooKeeper — a distributed coordination service that became a bottleneck and operational burden. Kafka 0.9 moved offsets to the internal <code>__consumer_offsets</code> topic (50 partitions by default), making offset commits just Kafka writes. Kafka 2.8 (2021) introduced <strong>KRaft mode</strong>, replacing ZooKeeper entirely with Kafka's own Raft-based metadata management — eliminating the last external dependency.</p>
+  </div>
+</div>
+
+<!-- ───────────────────────────────────────
+     SECTION 08: INTERACTIVE CANVAS SIMULATOR
+─────────────────────────────────────────── -->
+<div class="panel">
+  <div class="section-head">
+    <span class="section-num">08</span>
+    <h2>Interactive: Kafka Partition Simulator</h2>
+  </div>
+
+  <p>Watch how producers route messages to partitions using hash keys, how consumer groups share the work (each partition to exactly one consumer per group), and how a consumer crash triggers a rebalance. Send messages with different keys and observe which partition they land in.</p>
+
+  <div class="kafka-wrap">
+    <div class="kafka-bar">
+      <span style="width:12px;height:12px;border-radius:50%;background:#ff5f56;display:inline-block;"></span>
+      <span style="width:12px;height:12px;border-radius:50%;background:#ffbd2e;display:inline-block;"></span>
+      <span style="width:12px;height:12px;border-radius:50%;background:#27c93f;display:inline-block;"></span>
+      <span>KAFKA PARTITION SIMULATOR — Live</span>
+      <span id="kafka-status" style="margin-left:auto;font-family:'Space Mono',monospace;font-size:.78rem;color:#7ee787;">RUNNING</span>
+    </div>
+    <div class="kafka-body">
+      <div class="kafka-btn-row">
+        <button class="kafka-btn btn-green" onclick="kafkaSend('A')">
+          <i data-lucide="send" style="width:14px;height:14px;vertical-align:middle;margin-right:4px;"></i> Send (Key A)
+        </button>
+        <button class="kafka-btn btn-blue" onclick="kafkaSend('B')">
+          <i data-lucide="send" style="width:14px;height:14px;vertical-align:middle;margin-right:4px;"></i> Send (Key B)
+        </button>
+        <button class="kafka-btn btn-orange" onclick="kafkaSend('C')">
+          <i data-lucide="send" style="width:14px;height:14px;vertical-align:middle;margin-right:4px;"></i> Send (Key C)
+        </button>
+        <button class="kafka-btn btn-red" onclick="kafkaCrash()">
+          <i data-lucide="zap" style="width:14px;height:14px;vertical-align:middle;margin-right:4px;"></i> Crash Consumer
+        </button>
+        <button class="kafka-btn" onclick="kafkaReset()" style="margin-left:auto;">
+          <i data-lucide="refresh-cw" style="width:14px;height:14px;vertical-align:middle;margin-right:4px;"></i> Reset
+        </button>
+      </div>
+      <canvas id="kafka-canvas" width="580" height="380" style="display:block;border:2px solid #30363d;border-radius:6px;width:100%;max-width:580px;"></canvas>
+    </div>
+  </div>
+
+  <div class="grid-2" style="margin-top: 16px;">
+    <div class="hbox hbox-green" style="margin: 0;">
+      <div class="hbox-label">KEY ROUTING RULES (hash % 3)</div>
+      <ul style="margin-top: 14px;">
+        <li><strong>Key A</strong> → always Partition 0 (green)</li>
+        <li><strong>Key B</strong> → always Partition 1 (blue)</li>
+        <li><strong>Key C</strong> → always Partition 2 (orange)</li>
+        <li>Same key <strong>always</strong> same partition — ordering preserved per key</li>
+      </ul>
+    </div>
+    <div class="hbox hbox-red" style="margin: 0;">
+      <div class="hbox-label">CRASH + REBALANCE</div>
+      <p style="margin-top: 12px; font-size: .9rem;">When Consumer A-1 crashes, Group A's coordinator detects the missed heartbeat (after <code>session.timeout.ms</code>, default 45s). It triggers a rebalance — Consumer A-2 takes over P-0 and P-1 in addition to P-2. Watch the partition assignments redistribute in the animation.</p>
+    </div>
+  </div>
+
+  <div class="sfx-row" style="margin-top: 20px;">
+    <span class="sfx">PARTITIONS</span>
+    <span class="sfx">SCALE OUT</span>
+    <span class="sfx">ZERO LOSS</span>
+    <span class="sfx">1T/DAY</span>
+  </div>
+</div>
+
+<div class="chapter-divider"><span>END OF HOW-13</span></div>
+</div><!-- /page-wrap -->
+
+<script src="hero-banner.js"></script>
+<script src="masthead.js"></script>
+<script src="author-card.js"></script>
+
+<script>
+/* ================================================================
+   SECTION 08: Kafka Partition Simulator Canvas
+   ================================================================ */
+(function() {
+  var canvas = document.getElementById('kafka-canvas');
+  if (!canvas) return;
+  var ctx = canvas.getContext('2d');
+  var W = 580, H = 380;
+
+  // Layout constants
+  var TOPIC_Y = 40;
+  var PART_H = 38;
+  var PART_W = 180;
+  var PART_X = 180;
+  var GROUP_Y_A = 210;
+  var GROUP_Y_B = 310;
+  var PRODUCER_X = 30;
+  var PRODUCER_Y = TOPIC_Y + PART_H;
+
+  // Partition colors + offsets
+  var partitions = [
+    { name: 'P-0', color: '#3fa34d', msgs: [], offset: 0 },
+    { name: 'P-1', color: '#1d6fb8', msgs: [], offset: 0 },
+    { name: 'P-2', color: '#ff8c42', msgs: [], offset: 0 },
+  ];
+
+  var keyMap = { 'A': 0, 'B': 1, 'C': 2 };
+  var keyColors = { 'A': '#3fa34d', 'B': '#1d6fb8', 'C': '#ff8c42' };
+
+  // Consumer groups
+  var groupA = {
+    name: 'Group A',
+    color: '#8a4fff',
+    consumers: [
+      { name: 'A-1', partitions: [0, 1], offsets: [0, 0], alive: true },
+      { name: 'A-2', partitions: [2],    offsets: [0],    alive: true },
+    ],
+    crashed: false,
+    rebalancing: false,
+    rebalanceTimer: 0,
+  };
+
+  var groupB = {
+    name: 'Group B',
+    color: '#ff6b9d',
+    consumers: [
+      { name: 'B-1', partitions: [0, 1, 2], offsets: [0, 0, 0], alive: true },
+    ],
+    crashed: false,
+    rebalancing: false,
+    rebalanceTimer: 0,
+  };
+
+  // Animated messages in flight
+  var inFlight = [];
+  // Offset advance animations
+  var offsetPulse = [0, 0, 0];
+
+  // Rebalance state
+  var crashed = false;
+  var rebalancing = false;
+  var rebalanceTimer = 0;
+  var REBALANCE_FRAMES = 90;
+
+  // Status label
+  var statusEl = document.getElementById('kafka-status');
+
+  function hashKey(key) {
+    return keyMap[key] !== undefined ? keyMap[key] : 0;
+  }
+
+  window.kafkaSend = function(key) {
+    var pIdx = hashKey(key);
+    var color = keyColors[key] || '#e6edf3';
+    // Animate message from producer to partition
+    inFlight.push({
+      key: key,
+      color: color,
+      pIdx: pIdx,
+      x: PRODUCER_X + 36,
+      y: PRODUCER_Y,
+      tx: PART_X + 8 + Math.min(partitions[pIdx].msgs.length, 6) * 24,
+      ty: TOPIC_Y + pIdx * (PART_H + 6) + PART_H / 2,
+      progress: 0,
+      speed: 0.04,
+      landed: false,
+    });
+  };
+
+  window.kafkaCrash = function() {
+    if (crashed || rebalancing) return;
+    crashed = true;
+    rebalancing = true;
+    rebalanceTimer = 0;
+    if (statusEl) { statusEl.textContent = 'REBALANCING...'; statusEl.style.color = '#ffd23f'; }
+  };
+
+  window.kafkaReset = function() {
+    partitions.forEach(function(p) { p.msgs = []; p.offset = 0; });
+    inFlight = [];
+    offsetPulse = [0, 0, 0];
+    crashed = false;
+    rebalancing = false;
+    rebalanceTimer = 0;
+    groupA.consumers[0].alive = true;
+    groupA.consumers[0].partitions = [0, 1];
+    groupA.consumers[0].offsets = [0, 0];
+    groupA.consumers[1].partitions = [2];
+    groupA.consumers[1].offsets = [0];
+    groupA.rebalancing = false;
+    if (statusEl) { statusEl.textContent = 'RUNNING'; statusEl.style.color = '#7ee787'; }
+  };
+
+  // Auto-advance consumer offsets every 60 frames
+  var autoAdvanceTimer = 0;
+
+  function draw() {
+    ctx.clearRect(0, 0, W, H);
+    ctx.fillStyle = '#0d1117';
+    ctx.fillRect(0, 0, W, H);
+
+    // ── TITLE: TOPIC ──────────────────────────────
+    ctx.fillStyle = '#7d8590';
+    ctx.font = '700 10px Space Mono, monospace';
+    ctx.textAlign = 'left';
+    ctx.fillText('TOPIC: user-events', PART_X, TOPIC_Y - 8);
+
+    // ── PARTITIONS ────────────────────────────────
+    partitions.forEach(function(p, i) {
+      var py = TOPIC_Y + i * (PART_H + 6);
+      // Partition background
+      ctx.fillStyle = '#161b22';
+      ctx.strokeStyle = p.color;
+      ctx.lineWidth = 2;
+      ctx.beginPath();
+      if (ctx.roundRect) ctx.roundRect(PART_X, py, PART_W, PART_H, 4);
+      else ctx.rect(PART_X, py, PART_W, PART_H);
+      ctx.fill(); ctx.stroke();
+
+      // Partition label
+      ctx.fillStyle = p.color;
+      ctx.font = '700 11px Bangers, cursive';
+      ctx.textAlign = 'left';
+      ctx.fillText(p.name, PART_X + 6, py + 14);
+
+      // Offset label
+      ctx.fillStyle = '#7d8590';
+      ctx.font = '9px Space Mono, monospace';
+      ctx.fillText('next: ' + p.offset, PART_X + 6, py + 27);
+
+      // Message cells
+      var maxVis = 5;
+      var start = Math.max(0, p.msgs.length - maxVis);
+      p.msgs.slice(start).forEach(function(m, mi) {
+        var mx = PART_X + 70 + mi * 22;
+        var my = py + 4;
+        ctx.fillStyle = m.color;
+        ctx.strokeStyle = 'rgba(255,255,255,.25)';
+        ctx.lineWidth = 1;
+        ctx.beginPath();
+        if (ctx.roundRect) ctx.roundRect(mx, my, 18, PART_H - 8, 2);
+        else ctx.rect(mx, my, 18, PART_H - 8);
+        ctx.fill(); ctx.stroke();
+        ctx.fillStyle = '#fff';
+        ctx.font = '700 8px Bangers, cursive';
+        ctx.textAlign = 'center';
+        ctx.fillText(m.key, mx + 9, my + 19);
+      });
+
+      // Pulse effect on new message
+      if (offsetPulse[i] > 0) {
+        ctx.strokeStyle = p.color;
+        ctx.lineWidth = 2;
+        ctx.globalAlpha = offsetPulse[i] / 20;
+        ctx.beginPath();
+        if (ctx.roundRect) ctx.roundRect(PART_X - 2, py - 2, PART_W + 4, PART_H + 4, 6);
+        else ctx.rect(PART_X - 2, py - 2, PART_W + 4, PART_H + 4);
+        ctx.stroke();
+        ctx.globalAlpha = 1;
+        offsetPulse[i]--;
+      }
+    });
+
+    // ── PRODUCER BOX ─────────────────────────────
+    ctx.fillStyle = '#161b22';
+    ctx.strokeStyle = '#30363d';
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    if (ctx.roundRect) ctx.roundRect(PRODUCER_X, TOPIC_Y + 18, 72, 60, 5);
+    else ctx.rect(PRODUCER_X, TOPIC_Y + 18, 72, 60);
+    ctx.fill(); ctx.stroke();
+    ctx.fillStyle = '#e6edf3';
+    ctx.font = '700 10px Bangers, cursive';
+    ctx.textAlign = 'center';
+    ctx.fillText('PRODUCER', PRODUCER_X + 36, TOPIC_Y + 38);
+    ctx.fillStyle = '#7d8590';
+    ctx.font = '8px Space Mono, monospace';
+    ctx.fillText('sends with', PRODUCER_X + 36, TOPIC_Y + 52);
+    ctx.fillText('key A/B/C', PRODUCER_X + 36, TOPIC_Y + 63);
+
+    // Connector lines from producer to each partition
+    partitions.forEach(function(p, i) {
+      var py = TOPIC_Y + i * (PART_H + 6) + PART_H / 2;
+      ctx.beginPath();
+      ctx.moveTo(PRODUCER_X + 72, PRODUCER_Y);
+      ctx.lineTo(PART_X, py);
+      ctx.strokeStyle = 'rgba(255,255,255,0.04)';
+      ctx.lineWidth = 1;
+      ctx.stroke();
+    });
+
+    // ── CONSUMER GROUP A ─────────────────────────
+    var groupAy = GROUP_Y_A;
+    ctx.fillStyle = 'rgba(138,79,255,0.08)';
+    ctx.strokeStyle = rebalancing ? '#ffd23f' : '#8a4fff';
+    ctx.lineWidth = rebalancing ? 2 : 2;
+    ctx.setLineDash(rebalancing ? [4, 4] : []);
+    ctx.beginPath();
+    if (ctx.roundRect) ctx.roundRect(8, groupAy, W - 16, 80, 6);
+    else ctx.rect(8, groupAy, W - 16, 80);
+    ctx.fill(); ctx.stroke();
+    ctx.setLineDash([]);
+
+    ctx.fillStyle = rebalancing ? '#ffd23f' : '#8a4fff';
+    ctx.font = '700 10px Bangers, cursive';
+    ctx.textAlign = 'left';
+    ctx.fillText(rebalancing ? 'GROUP A — REBALANCING...' : 'GROUP A', 16, groupAy + 14);
+
+    // Consumer A-1
+    var a1alive = !crashed;
+    ctx.fillStyle = a1alive ? '#161b22' : 'rgba(230,57,70,.1)';
+    ctx.strokeStyle = a1alive ? '#8a4fff' : '#e63946';
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    if (ctx.roundRect) ctx.roundRect(16, groupAy + 20, 160, 50, 5);
+    else ctx.rect(16, groupAy + 20, 160, 50);
+    ctx.fill(); ctx.stroke();
+    ctx.fillStyle = a1alive ? '#8a4fff' : '#e63946';
+    ctx.font = '700 10px Bangers, cursive';
+    ctx.textAlign = 'left';
+    ctx.fillText(a1alive ? 'Consumer A-1' : 'Consumer A-1 [CRASHED]', 24, groupAy + 35);
+    if (a1alive) {
+      ctx.fillStyle = '#7d8590';
+      ctx.font = '8px Space Mono, monospace';
+      ctx.fillText('P-0 off:' + groupA.consumers[0].offsets[0] + '  P-1 off:' + groupA.consumers[0].offsets[1], 24, groupAy + 50);
+    } else {
+      ctx.fillStyle = '#e63946';
+      ctx.font = '8px Space Mono, monospace';
+      ctx.fillText('heartbeat lost', 24, groupAy + 50);
+    }
+
+    // Consumer A-2
+    var a2partitions = crashed ? [0, 1, 2] : [2];
+    ctx.fillStyle = '#161b22';
+    ctx.strokeStyle = '#8a4fff';
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    if (ctx.roundRect) ctx.roundRect(190, groupAy + 20, 160, 50, 5);
+    else ctx.rect(190, groupAy + 20, 160, 50);
+    ctx.fill(); ctx.stroke();
+    ctx.fillStyle = '#8a4fff';
+    ctx.font = '700 10px Bangers, cursive';
+    ctx.textAlign = 'left';
+    ctx.fillText('Consumer A-2', 198, groupAy + 35);
+    ctx.fillStyle = '#7d8590';
+    ctx.font = '8px Space Mono, monospace';
+    var a2label = crashed ? 'P-0, P-1, P-2 (rebalanced)' : 'P-2 off:' + groupA.consumers[1].offsets[0];
+    ctx.fillText(a2label, 198, groupAy + 50);
+
+    // Offset advancement arrows for A-2 partitions
+    a2partitions.forEach(function(pIdx, j) {
+      var py = TOPIC_Y + pIdx * (PART_H + 6) + PART_H / 2;
+      var cx2 = 190 + 80;
+      ctx.beginPath();
+      ctx.moveTo(cx2, groupAy + 20);
+      ctx.lineTo(PART_X + PART_W, py);
+      ctx.strokeStyle = 'rgba(138,79,255,0.25)';
+      ctx.lineWidth = 1;
+      ctx.stroke();
+    });
+
+    // ── CONSUMER GROUP B ─────────────────────────
+    var groupBy = GROUP_Y_B;
+    ctx.fillStyle = 'rgba(255,107,157,0.06)';
+    ctx.strokeStyle = '#ff6b9d';
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    if (ctx.roundRect) ctx.roundRect(8, groupBy, W - 16, 62, 6);
+    else ctx.rect(8, groupBy, W - 16, 62);
+    ctx.fill(); ctx.stroke();
+
+    ctx.fillStyle = '#ff6b9d';
+    ctx.font = '700 10px Bangers, cursive';
+    ctx.textAlign = 'left';
+    ctx.fillText('GROUP B — independent full copy', 16, groupBy + 14);
+
+    // Consumer B-1 with all partitions
+    ctx.fillStyle = '#161b22';
+    ctx.strokeStyle = '#ff6b9d';
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    if (ctx.roundRect) ctx.roundRect(16, groupBy + 18, 340, 34, 5);
+    else ctx.rect(16, groupBy + 18, 340, 34);
+    ctx.fill(); ctx.stroke();
+    ctx.fillStyle = '#ff6b9d';
+    ctx.font = '700 10px Bangers, cursive';
+    ctx.textAlign = 'left';
+    ctx.fillText('Consumer B-1', 24, groupBy + 32);
+    ctx.fillStyle = '#7d8590';
+    ctx.font = '8px Space Mono, monospace';
+    ctx.fillText('P-0 off:' + groupB.consumers[0].offsets[0] + '  P-1 off:' + groupB.consumers[0].offsets[1] + '  P-2 off:' + groupB.consumers[0].offsets[2], 24, groupBy + 44);
+
+    // Connecting lines B
+    [0, 1, 2].forEach(function(pIdx) {
+      var py = TOPIC_Y + pIdx * (PART_H + 6) + PART_H / 2;
+      ctx.beginPath();
+      ctx.moveTo(190, groupBy + 35);
+      ctx.lineTo(PART_X + PART_W, py);
+      ctx.strokeStyle = 'rgba(255,107,157,0.2)';
+      ctx.lineWidth = 1;
+      ctx.stroke();
+    });
+
+    // ── IN-FLIGHT MESSAGES ────────────────────────
+    inFlight.forEach(function(f) {
+      f.progress = Math.min(1, f.progress + f.speed);
+      var t = f.progress;
+      // Bezier arc
+      var cpx = (f.x + f.tx) / 2;
+      var cpy = Math.min(f.y, f.ty) - 30;
+      var cx = (1-t)*(1-t)*f.x + 2*(1-t)*t*cpx + t*t*f.tx;
+      var cy = (1-t)*(1-t)*f.y + 2*(1-t)*t*cpy + t*t*f.ty;
+
+      ctx.beginPath();
+      ctx.arc(cx, cy, 8, 0, Math.PI * 2);
+      ctx.fillStyle = f.color;
+      ctx.fill();
+      ctx.strokeStyle = 'rgba(255,255,255,.4)';
+      ctx.lineWidth = 1.5;
+      ctx.stroke();
+
+      ctx.fillStyle = '#fff';
+      ctx.font = '700 9px Bangers, cursive';
+      ctx.textAlign = 'center';
+      ctx.fillText(f.key, cx, cy + 3);
+    });
+
+    // Remove landed messages
+    var landed = inFlight.filter(function(f) { return f.progress >= 1 && !f.landed; });
+    landed.forEach(function(f) {
+      f.landed = true;
+      var p = partitions[f.pIdx];
+      p.msgs.push({ key: f.key, color: f.color, offset: p.offset });
+      p.offset++;
+      offsetPulse[f.pIdx] = 20;
+
+      // Advance consumer offsets automatically (simulate processing)
+      groupB.consumers[0].offsets[f.pIdx] = p.offset;
+      if (!crashed) {
+        if (f.pIdx === 0 || f.pIdx === 1) groupA.consumers[0].offsets[f.pIdx === 0 ? 0 : 1] = p.offset;
+        else groupA.consumers[1].offsets[0] = p.offset;
+      } else {
+        groupA.consumers[1].offsets = [partitions[0].offset, partitions[1].offset, partitions[2].offset];
+      }
+    });
+    inFlight = inFlight.filter(function(f) { return f.progress < 1 || !f.landed; });
+
+    // Rebalance timer
+    if (rebalancing) {
+      rebalanceTimer++;
+      if (rebalanceTimer >= REBALANCE_FRAMES) {
+        rebalancing = false;
+        if (statusEl) { statusEl.textContent = 'REBALANCED'; statusEl.style.color = '#7ee787'; }
+      }
+    }
+
+    requestAnimationFrame(draw);
+  }
+
+  draw();
+})();
+
+/* ================================================================
+   Lucide icon initialization
+   ================================================================ */
+if (typeof lucide !== 'undefined') {
+  lucide.createIcons();
+}
+</script>
+</body>
+</html>

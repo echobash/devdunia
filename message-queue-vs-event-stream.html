@@ -1,0 +1,1415 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Message Queue vs Event Stream — DevDunia</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bangers&family=Comic+Neue:ital,wght@0,400;0,700;1,400&family=Space+Mono:wght@400;700&display=swap">
+<script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
+<style>
+:root {
+  --ink: #1a1410; --paper: #fdf3e3; --paper2: #fbe9cc;
+  --red: #e63946; --blue: #1d6fb8; --yellow: #ffd23f;
+  --green: #3fa34d; --pink: #ff6b9d; --purple: #8a4fff;
+  --orange: #ff8c42; --teal: #0d9488;
+}
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  font-family: 'Comic Neue', cursive;
+  color: var(--ink);
+  background-color: var(--paper);
+  background-image: radial-gradient(var(--ink) 0.5px, transparent 0.6px);
+  background-size: 14px 14px;
+  background-attachment: fixed;
+  line-height: 1.65;
+}
+.page-wrap { position: relative; z-index: 1; max-width: 1240px; margin: 0 auto; padding: 20px 32px 60px; }
+.panel {
+  border: 4px solid var(--ink); border-radius: 6px;
+  box-shadow: 7px 7px 0 var(--ink);
+  background: var(--paper); padding: 28px 32px; margin-bottom: 32px;
+}
+h2 { font-family: 'Bangers', cursive; font-size: 2.4rem; letter-spacing: 2px; margin-bottom: 16px; line-height: 1; }
+h3 { font-family: 'Bangers', cursive; font-size: 1.6rem; letter-spacing: 1px; margin-bottom: 12px; }
+h4 { font-family: 'Bangers', cursive; font-size: 1.2rem; letter-spacing: 1px; margin-bottom: 8px; }
+p  { margin-bottom: 14px; font-size: 1.05rem; }
+p:last-child { margin-bottom: 0; }
+ul { padding-left: 22px; margin-bottom: 14px; }
+li { margin-bottom: 6px; font-size: 1rem; }
+code { font-family: 'Space Mono', monospace; font-size: .85em; background: var(--paper2); padding: 1px 5px; border-radius: 3px; }
+.section-head { display: flex; align-items: center; gap: 14px; margin-bottom: 22px; flex-wrap: wrap; }
+.section-num {
+  font-family: 'Bangers', cursive; font-size: 1.1rem; letter-spacing: 2px;
+  background: var(--purple); color: #fff; padding: 4px 14px;
+  border-radius: 4px; border: 2px solid var(--ink); box-shadow: 2px 2px 0 var(--ink);
+}
+.chip {
+  display: inline-block; font-family: 'Bangers', cursive; font-size: .85rem;
+  letter-spacing: 1.5px; padding: 3px 12px; border-radius: 4px;
+  border: 2px solid var(--ink); margin-right: 6px; margin-bottom: 6px; vertical-align: middle;
+}
+.chip-green  { background: var(--green);  color: #fff; }
+.chip-red    { background: var(--red);    color: #fff; }
+.chip-blue   { background: var(--blue);   color: #fff; }
+.chip-yellow { background: var(--yellow); color: var(--ink); }
+.chip-orange { background: var(--orange); color: #fff; }
+.chip-teal   { background: var(--teal);   color: #fff; }
+.chip-purple { background: var(--purple); color: #fff; }
+.hbox {
+  border: 3px solid var(--ink); border-radius: 5px; padding: 18px 22px;
+  margin: 16px 0; position: relative;
+}
+.hbox-label {
+  font-family: 'Bangers', cursive; font-size: .9rem; letter-spacing: 2px;
+  position: absolute; top: -14px; left: 16px; padding: 2px 12px;
+  border: 2px solid var(--ink); border-radius: 4px;
+}
+.hbox-orange { background: rgba(255,140,66,.1); border-color: var(--orange); }
+.hbox-orange .hbox-label { background: var(--orange); color: #fff; }
+.hbox-red { background: rgba(230,57,70,.08); border-color: var(--red); }
+.hbox-red .hbox-label { background: var(--red); color: #fff; }
+.hbox-green { background: rgba(63,163,77,.1); border-color: var(--green); }
+.hbox-green .hbox-label { background: var(--green); color: #fff; }
+.hbox-blue { background: rgba(29,111,184,.1); border-color: var(--blue); }
+.hbox-blue .hbox-label { background: var(--blue); color: #fff; }
+.hbox-yellow { background: rgba(255,210,63,.15); border-color: var(--yellow); }
+.hbox-yellow .hbox-label { background: var(--yellow); color: var(--ink); }
+.hbox-teal { background: rgba(13,148,136,.1); border-color: var(--teal); }
+.hbox-teal .hbox-label { background: var(--teal); color: #fff; }
+.hbox-purple { background: rgba(138,79,255,.1); border-color: var(--purple); }
+.hbox-purple .hbox-label { background: var(--purple); color: #fff; }
+.data-table { width: 100%; border-collapse: collapse; margin: 16px 0; font-size: .93rem; }
+.data-table th {
+  font-family: 'Bangers', cursive; font-size: 1rem; letter-spacing: 1px;
+  background: var(--ink); color: #fff; padding: 10px 14px; text-align: left; border: 2px solid var(--ink);
+}
+.data-table td { padding: 10px 14px; border: 2px solid var(--ink); vertical-align: top; }
+.data-table tr:nth-child(odd)  td { background: var(--paper2); }
+.data-table tr:nth-child(even) td { background: var(--paper); }
+.grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin: 16px 0; }
+.grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 16px; margin: 16px 0; }
+@media (max-width: 640px) { .grid-2, .grid-3 { grid-template-columns: 1fr; } }
+.card {
+  border: 3px solid var(--ink); border-radius: 5px;
+  box-shadow: 4px 4px 0 var(--ink); padding: 18px; background: var(--paper);
+}
+.card-head { font-family: 'Bangers', cursive; font-size: 1.1rem; letter-spacing: 1px; margin-bottom: 10px; padding-bottom: 8px; border-bottom: 2px solid var(--ink); }
+.sfx-row { display: flex; gap: 16px; flex-wrap: wrap; margin: 20px 0; }
+.sfx {
+  font-family: 'Bangers', cursive; font-size: 1.8rem; letter-spacing: 3px;
+  color: var(--ink); text-shadow: 3px 3px 0 var(--yellow); transform: rotate(-2deg); display: inline-block;
+}
+.sfx:nth-child(even) { transform: rotate(2deg); text-shadow: 3px 3px 0 var(--orange); }
+.chapter-divider { text-align: center; margin: 40px 0 28px; position: relative; }
+.chapter-divider::before { content: ''; position: absolute; top: 50%; left: 0; right: 0; height: 3px; background: var(--ink); }
+.chapter-divider span { position: relative; background: var(--paper); font-family: 'Bangers', cursive; font-size: 1rem; letter-spacing: 3px; padding: 0 16px; }
+/* Lucide icon helpers */
+.lc { width: 20px; height: 20px; vertical-align: middle; stroke-width: 2; display: inline-block; }
+.lc-lg { width: 32px; height: 32px; stroke-width: 2; }
+.lc svg { display: block; }
+
+/* ── FLOW CONNECTOR ──────────────────────────────── */
+.flow-arrow {
+  display: flex; align-items: center; justify-content: center;
+  padding: 0 6px; flex-shrink: 0;
+}
+.flow-arrow-bar {
+  width: 36px; height: 3px; background: var(--ink); position: relative;
+}
+.flow-arrow-bar::after {
+  content: ''; position: absolute; right: -1px; top: 50%;
+  transform: translateY(-50%);
+  border-top: 7px solid transparent;
+  border-bottom: 7px solid transparent;
+  border-left: 10px solid var(--ink);
+}
+.flow-arrow-down {
+  display: flex; flex-direction: column; align-items: center;
+  padding: 4px 0; flex-shrink: 0;
+}
+.flow-arrow-down-bar {
+  width: 3px; height: 24px; background: var(--ink); position: relative;
+}
+.flow-arrow-down-bar::after {
+  content: ''; position: absolute; bottom: -1px; left: 50%;
+  transform: translateX(-50%);
+  border-left: 6px solid transparent;
+  border-right: 6px solid transparent;
+  border-top: 9px solid var(--ink);
+}
+
+/* ── MQ FLOW NODES ───────────────────────────────── */
+.flow-node {
+  border: 3px solid var(--ink); border-radius: 6px;
+  padding: 12px 16px; text-align: center; font-family: 'Bangers', cursive;
+  font-size: .9rem; letter-spacing: 1px; box-shadow: 4px 4px 0 var(--ink);
+  min-width: 100px;
+}
+
+/* ── LOG DIAGRAM ─────────────────────────────────── */
+.log-row {
+  display: flex; align-items: stretch; gap: 0; margin: 16px 0;
+}
+.log-cell {
+  border: 2px solid var(--ink); padding: 10px 14px;
+  font-family: 'Space Mono', monospace; font-size: .8rem;
+  text-align: center; min-width: 60px; position: relative;
+  background: var(--paper2);
+}
+.log-cell + .log-cell { border-left: none; }
+.log-cell:first-child { border-radius: 5px 0 0 5px; }
+.log-cell.log-cell-end { border-radius: 0 5px 5px 0; border-style: dashed; }
+.offset-pointer {
+  position: absolute; top: -34px; left: 50%; transform: translateX(-50%);
+  display: flex; flex-direction: column; align-items: center; gap: 0;
+}
+.offset-label {
+  font-family: 'Bangers', cursive; font-size: .75rem; letter-spacing: 1px;
+  padding: 2px 8px; border: 2px solid var(--ink); border-radius: 4px;
+  white-space: nowrap;
+}
+.offset-stem { width: 2px; height: 12px; background: var(--ink); }
+
+/* ── CANVAS WIDGET ───────────────────────────────── */
+.mq-wrap {
+  background: #0d1117; border: 4px solid var(--ink); border-radius: 8px;
+  box-shadow: 7px 7px 0 var(--ink); overflow: hidden; margin: 24px 0;
+}
+.mq-bar {
+  background: #161b22; border-bottom: 2px solid #30363d; padding: 10px 16px;
+  font-family: 'Bangers', cursive; font-size: 1rem; letter-spacing: 2px;
+  color: #e6edf3; display: flex; align-items: center; gap: 12px; flex-wrap: wrap;
+}
+.mq-body { padding: 16px; display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+@media(max-width:760px){ .mq-body { grid-template-columns: 1fr; } }
+.mq-panel-label {
+  font-family: 'Bangers', cursive; font-size: .95rem; letter-spacing: 2px;
+  text-align: center; padding: 6px; margin-bottom: 8px; border-radius: 4px;
+  border: 2px solid #30363d;
+}
+.mq-canvas { display: block; border: 2px solid #30363d; border-radius: 4px; width: 100%; }
+.mq-ctrl-row { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 10px; }
+.mq-btn {
+  font-family: 'Bangers', cursive; font-size: .95rem; letter-spacing: 1.5px;
+  padding: 8px 14px; border: 2px solid #30363d; border-radius: 5px;
+  background: #161b22; color: #e6edf3; cursor: pointer; transition: background .15s;
+  flex: 1;
+}
+.mq-btn:hover { background: #21262d; border-color: #8b949e; }
+.mq-btn-purple { border-color: var(--purple); color: var(--purple); }
+.mq-btn-green  { border-color: var(--green);  color: var(--green); }
+.mq-btn-red    { border-color: var(--red);    color: var(--red); }
+.mq-status {
+  background: #161b22; border: 2px solid #30363d; border-radius: 5px;
+  padding: 8px 12px; font-family: 'Space Mono', monospace; font-size: .78rem;
+  color: #adbac7; line-height: 1.7; margin-top: 8px; min-height: 60px;
+}
+</style>
+</head>
+<body>
+<div data-masthead></div>
+<div class="page-wrap">
+
+<div data-tool-hero
+  data-title="Message Queue vs Event Stream"
+  data-chapter="HOW-14"
+  data-category="How X Works"
+  data-icon="🔀"
+  data-desc="RabbitMQ vs Kafka — destructive reads vs log retention, push vs pull, when each one is the right tool and why it matters."
+  data-color="purple"
+  data-badges="RABBITMQ,KAFKA,MESSAGING,SYSTEM DESIGN"
+  data-badge-colors="purple,green,blue,yellow">
+</div>
+
+<!-- ───────────────────────────────────────
+     SECTION 01: Two Mental Models
+─────────────────────────────────────────── -->
+<div class="panel">
+  <div class="section-head">
+    <span class="section-num">01</span>
+    <h2>Two Mental Models: Work Orders vs Whiteboards</h2>
+  </div>
+
+  <p>Before any code, you need the right mental model. A <strong>message queue</strong> and an <strong>event stream</strong> look superficially similar — both move data from one process to another — but they solve fundamentally different problems and make opposite trade-offs around who owns the message and for how long.</p>
+
+  <!-- SIDE BY SIDE MENTAL MODELS -->
+  <div class="grid-2" style="margin: 28px 0;">
+    <!-- Message Queue -->
+    <div class="card" style="border-color: var(--purple);">
+      <div class="card-head" style="color: var(--purple); border-color: var(--purple); display: flex; align-items: center; gap: 8px;">
+        <i data-lucide="inbox" class="lc"></i> Message Queue Mental Model
+      </div>
+      <div style="background: rgba(138,79,255,.08); border: 2px solid var(--purple); border-radius: 6px; padding: 16px; margin-bottom: 14px;">
+        <div style="font-family: 'Bangers', cursive; font-size: .9rem; letter-spacing: 1px; color: var(--purple); margin-bottom: 12px;">TASK DISPATCH</div>
+        <!-- Producer -->
+        <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 8px;">
+          <div class="flow-node" style="border-color: var(--blue); background: rgba(29,111,184,.1); min-width: 80px;">
+            <i data-lucide="user" style="width:18px;height:18px;color:var(--blue);display:block;margin:0 auto 4px;"></i>
+            <div style="font-size: .8rem;">Producer</div>
+          </div>
+          <div class="flow-arrow"><div class="flow-arrow-bar"></div></div>
+          <!-- Queue box -->
+          <div style="border: 3px solid var(--purple); border-radius: 6px; padding: 8px 12px; background: rgba(138,79,255,.12); flex: 1; text-align: center; box-shadow: 3px 3px 0 var(--ink);">
+            <i data-lucide="layers" style="width:20px;height:20px;color:var(--purple);display:block;margin:0 auto 4px;"></i>
+            <div style="font-family:'Bangers',cursive;font-size:.85rem;letter-spacing:1px;">Queue</div>
+            <div style="display:flex;justify-content:center;gap:3px;margin-top:6px;">
+              <div style="width:12px;height:12px;border-radius:2px;background:var(--purple);border:1px solid var(--ink);opacity:.9;"></div>
+              <div style="width:12px;height:12px;border-radius:2px;background:var(--purple);border:1px solid var(--ink);opacity:.7;"></div>
+              <div style="width:12px;height:12px;border-radius:2px;background:var(--purple);border:1px solid var(--ink);opacity:.5;"></div>
+            </div>
+          </div>
+          <div class="flow-arrow"><div class="flow-arrow-bar"></div></div>
+          <!-- One worker -->
+          <div class="flow-node" style="border-color: var(--green); background: rgba(63,163,77,.1); min-width: 80px;">
+            <i data-lucide="wrench" style="width:18px;height:18px;color:var(--green);display:block;margin:0 auto 4px;"></i>
+            <div style="font-size: .8rem;">Worker</div>
+            <div style="font-family:'Space Mono',monospace;font-size:.65rem;color:var(--green);margin-top:3px;">ACK + DELETE</div>
+          </div>
+        </div>
+        <div style="font-family:'Space Mono',monospace;font-size:.75rem;color:var(--red);text-align:center;margin-top:8px;padding:5px;background:rgba(230,57,70,.1);border-radius:4px;border:1px dashed var(--red);">
+          Message consumed = Message GONE
+        </div>
+      </div>
+      <ul>
+        <li>Producer puts a <strong>job</strong> in the queue</li>
+        <li>Exactly one worker picks it up and processes it</li>
+        <li>Worker sends ACK — broker deletes the message</li>
+        <li>Other workers never see that message</li>
+      </ul>
+      <div style="font-family:'Bangers',cursive;font-size:.95rem;letter-spacing:1px;color:var(--purple);margin-top:10px;padding:8px 12px;background:rgba(138,79,255,.08);border-radius:4px;border:2px solid var(--purple);">
+        Analogy: work order handed to ONE employee. Done — it's gone.
+      </div>
+    </div>
+
+    <!-- Event Stream -->
+    <div class="card" style="border-color: var(--green);">
+      <div class="card-head" style="color: var(--green); border-color: var(--green); display: flex; align-items: center; gap: 8px;">
+        <i data-lucide="git-commit" class="lc"></i> Event Stream Mental Model
+      </div>
+      <div style="background: rgba(63,163,77,.08); border: 2px solid var(--green); border-radius: 6px; padding: 16px; margin-bottom: 14px;">
+        <div style="font-family: 'Bangers', cursive; font-size: .9rem; letter-spacing: 1px; color: var(--green); margin-bottom: 12px;">COMMIT LOG</div>
+        <!-- Log -->
+        <div style="border: 2px solid var(--green); border-radius: 6px; padding: 10px; background: rgba(63,163,77,.06); margin-bottom: 10px;">
+          <div style="font-family:'Bangers',cursive;font-size:.78rem;letter-spacing:1px;color:var(--green);margin-bottom:6px;">APPEND-ONLY LOG</div>
+          <div style="display:flex;gap:2px;">
+            <div style="flex:1;border:2px solid var(--ink);border-radius:3px;background:var(--paper2);padding:4px;text-align:center;font-family:'Space Mono',monospace;font-size:.62rem;">evt 0</div>
+            <div style="flex:1;border:2px solid var(--ink);border-radius:3px;background:var(--paper2);padding:4px;text-align:center;font-family:'Space Mono',monospace;font-size:.62rem;">evt 1</div>
+            <div style="flex:1;border:2px solid var(--ink);border-radius:3px;background:var(--paper2);padding:4px;text-align:center;font-family:'Space Mono',monospace;font-size:.62rem;">evt 2</div>
+            <div style="flex:1;border:2px solid var(--ink);border-radius:3px;background:rgba(63,163,77,.2);padding:4px;text-align:center;font-family:'Space Mono',monospace;font-size:.62rem;">evt 3</div>
+          </div>
+        </div>
+        <!-- Multiple consumers -->
+        <div style="display:flex;flex-direction:column;gap:6px;">
+          <div style="display:flex;align-items:center;gap:6px;">
+            <div style="flex:1;border:2px solid var(--blue);border-radius:4px;padding:5px 8px;background:rgba(29,111,184,.1);font-family:'Bangers',cursive;font-size:.78rem;color:var(--blue);">
+              <i data-lucide="users" style="width:14px;height:14px;vertical-align:middle;"></i> Group A — offset: 2
+            </div>
+          </div>
+          <div style="display:flex;align-items:center;gap:6px;">
+            <div style="flex:1;border:2px solid var(--orange);border-radius:4px;padding:5px 8px;background:rgba(255,140,66,.1);font-family:'Bangers',cursive;font-size:.78rem;color:var(--orange);">
+              <i data-lucide="users" style="width:14px;height:14px;vertical-align:middle;"></i> Group B — offset: 1
+            </div>
+          </div>
+        </div>
+        <div style="font-family:'Space Mono',monospace;font-size:.75rem;color:var(--green);text-align:center;margin-top:8px;padding:5px;background:rgba(63,163,77,.1);border-radius:4px;border:1px dashed var(--green);">
+          Messages consumed = Messages STAY in log
+        </div>
+      </div>
+      <ul>
+        <li>Producer <strong>appends</strong> events to an ordered log</li>
+        <li>Any consumer group reads from any position (offset)</li>
+        <li>Messages stay until retention policy expires them</li>
+        <li>Different consumer groups advance independently</li>
+      </ul>
+      <div style="font-family:'Bangers',cursive;font-size:.95rem;letter-spacing:1px;color:var(--green);margin-top:10px;padding:8px 12px;background:rgba(63,163,77,.08);border-radius:4px;border:2px solid var(--green);">
+        Analogy: whiteboard everyone can read and RE-READ.
+      </div>
+    </div>
+  </div>
+
+  <div class="hbox hbox-yellow">
+    <div class="hbox-label">THE ONE SENTENCE THAT SEPARATES THEM</div>
+    <p style="margin-top: 12px;">In a message queue, <strong>consumption is destructive</strong> — the act of reading removes the message. In an event stream, <strong>consumption is non-destructive</strong> — reading just advances your pointer, the data remains for everyone else and for replay.</p>
+  </div>
+
+  <div class="sfx-row">
+    <span class="sfx">TASK DISPATCH</span>
+    <span class="sfx">VS COMMIT LOG</span>
+    <span class="sfx">CHOOSE WISELY</span>
+  </div>
+</div>
+
+<!-- ───────────────────────────────────────
+     SECTION 02: How Message Queues Work
+─────────────────────────────────────────── -->
+<div class="panel">
+  <div class="section-head">
+    <span class="section-num">02</span>
+    <h2>How Message Queues Work (RabbitMQ Deep Dive)</h2>
+  </div>
+
+  <p>RabbitMQ is the canonical message queue. Its architecture follows AMQP: producers send to an <strong>exchange</strong>, which routes messages to one or more <strong>queues</strong> based on routing keys and binding rules. Consumers register on queues and receive pushed messages.</p>
+
+  <!-- RABBITMQ ARCHITECTURE DIAGRAM -->
+  <div style="border: 3px solid var(--ink); border-radius: 8px; overflow: hidden; box-shadow: 6px 6px 0 var(--ink); margin: 20px 0;">
+    <div style="background: var(--purple); color: #fff; padding: 10px 20px; font-family: 'Bangers', cursive; font-size: 1rem; letter-spacing: 2px; border-bottom: 3px solid var(--ink);">
+      RABBITMQ TOPOLOGY — EXCHANGE + QUEUE + CONSUMERS
+    </div>
+    <div style="padding: 24px; background: var(--paper);">
+      <!-- Producer -->
+      <div style="display: flex; align-items: flex-start; gap: 0; flex-wrap: wrap;">
+        <div style="display:flex;flex-direction:column;align-items:center;gap:0;">
+          <div class="flow-node" style="border-color:var(--blue);background:rgba(29,111,184,.1);">
+            <i data-lucide="send" style="width:24px;height:24px;color:var(--blue);display:block;margin:0 auto 6px;"></i>
+            <div>Producer</div>
+            <div style="font-family:'Space Mono',monospace;font-size:.65rem;color:#888;margin-top:3px;">publishes msg</div>
+          </div>
+        </div>
+        <div class="flow-arrow" style="align-self:center;"><div class="flow-arrow-bar"></div></div>
+        <!-- Exchange -->
+        <div style="display:flex;flex-direction:column;align-items:center;gap:0;">
+          <div class="flow-node" style="border-color:var(--purple);background:rgba(138,79,255,.1);">
+            <i data-lucide="shuffle" style="width:24px;height:24px;color:var(--purple);display:block;margin:0 auto 6px;"></i>
+            <div>Exchange</div>
+            <div style="font-family:'Space Mono',monospace;font-size:.65rem;color:#888;margin-top:3px;">routing key</div>
+            <div style="display:flex;gap:4px;margin-top:6px;flex-wrap:wrap;justify-content:center;">
+              <span class="chip chip-purple" style="font-size:.6rem;padding:1px 6px;">DIRECT</span>
+              <span class="chip chip-blue" style="font-size:.6rem;padding:1px 6px;">TOPIC</span>
+              <span class="chip chip-teal" style="font-size:.6rem;padding:1px 6px;">FANOUT</span>
+            </div>
+          </div>
+        </div>
+        <div class="flow-arrow" style="align-self:center;"><div class="flow-arrow-bar"></div></div>
+        <!-- Queues -->
+        <div style="display:flex;flex-direction:column;gap:14px;align-self:center;">
+          <div style="display:flex;align-items:center;gap:8px;">
+            <div class="flow-node" style="border-color:var(--orange);background:rgba(255,140,66,.1);min-width:130px;">
+              <i data-lucide="inbox" style="width:20px;height:20px;color:var(--orange);display:block;margin:0 auto 4px;"></i>
+              <div>Queue: email</div>
+              <div style="font-family:'Space Mono',monospace;font-size:.62rem;color:#888;margin-top:2px;">3 msgs buffered</div>
+            </div>
+            <div class="flow-arrow"><div class="flow-arrow-bar"></div></div>
+            <!-- Workers for this queue -->
+            <div style="display:flex;flex-direction:column;gap:6px;">
+              <div class="flow-node" style="border-color:var(--green);background:rgba(63,163,77,.1);min-width:90px;padding:8px;">
+                <i data-lucide="cpu" style="width:16px;height:16px;color:var(--green);display:block;margin:0 auto 3px;"></i>
+                <div style="font-size:.8rem;">Worker 1</div>
+                <div style="font-family:'Space Mono',monospace;font-size:.6rem;color:var(--green);">ACK</div>
+              </div>
+              <div class="flow-node" style="border-color:var(--green);background:rgba(63,163,77,.1);min-width:90px;padding:8px;">
+                <i data-lucide="cpu" style="width:16px;height:16px;color:var(--green);display:block;margin:0 auto 3px;"></i>
+                <div style="font-size:.8rem;">Worker 2</div>
+                <div style="font-family:'Space Mono',monospace;font-size:.6rem;color:var(--green);">ACK</div>
+              </div>
+            </div>
+          </div>
+          <div style="display:flex;align-items:center;gap:8px;">
+            <div class="flow-node" style="border-color:var(--teal);background:rgba(13,148,136,.1);min-width:130px;">
+              <i data-lucide="inbox" style="width:20px;height:20px;color:var(--teal);display:block;margin:0 auto 4px;"></i>
+              <div>Queue: resize</div>
+              <div style="font-family:'Space Mono',monospace;font-size:.62rem;color:#888;margin-top:2px;">1 msg buffered</div>
+            </div>
+            <div class="flow-arrow"><div class="flow-arrow-bar"></div></div>
+            <div class="flow-node" style="border-color:var(--green);background:rgba(63,163,77,.1);min-width:90px;padding:8px;">
+              <i data-lucide="cpu" style="width:16px;height:16px;color:var(--green);display:block;margin:0 auto 3px;"></i>
+              <div style="font-size:.8rem;">Worker 3</div>
+              <div style="font-family:'Space Mono',monospace;font-size:.6rem;color:var(--green);">ACK</div>
+            </div>
+          </div>
+        </div>
+        <!-- DLQ -->
+        <div style="display:flex;flex-direction:column;align-items:center;gap:6px;margin-left:auto;padding-left:20px;align-self:center;">
+          <div style="font-family:'Bangers',cursive;font-size:.75rem;letter-spacing:1px;color:var(--red);">NACK / FAIL</div>
+          <div class="flow-arrow-down"><div class="flow-arrow-down-bar"></div></div>
+          <div class="flow-node" style="border-color:var(--red);background:rgba(230,57,70,.1);min-width:100px;padding:10px;">
+            <i data-lucide="alert-octagon" style="width:20px;height:20px;color:var(--red);display:block;margin:0 auto 4px;"></i>
+            <div style="font-size:.85rem;">Dead Letter<br>Queue (DLQ)</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="grid-2">
+    <div class="hbox hbox-purple" style="margin: 0;">
+      <div class="hbox-label">PUSH MODEL + ACKNOWLEDGEMENT</div>
+      <p style="margin-top: 12px; font-size: .9rem;">RabbitMQ <em>pushes</em> messages to connected consumers. The broker tracks which messages are in-flight (delivered but not yet ACKed). When the consumer calls <code>basicAck</code>, the broker permanently removes that message. If the consumer dies without ACKing, the broker re-queues the message for another worker — this is exactly why the push model with per-message ACK provides at-least-once delivery.</p>
+    </div>
+    <div class="hbox hbox-green" style="margin: 0;">
+      <div class="hbox-label">COMPETING CONSUMERS</div>
+      <p style="margin-top: 12px; font-size: .9rem;">Multiple workers subscribing to the same queue get <strong>different messages</strong> — the broker hands each message to exactly one worker. This is the core load-balancing pattern: add more workers to a queue when you need more throughput. They compete for work. This is perfect for job dispatch but means no worker ever sees what another consumed.</p>
+    </div>
+  </div>
+
+  <div class="hbox hbox-red" style="margin-top: 16px;">
+    <div class="hbox-label">DEAD LETTER QUEUE (DLQ)</div>
+    <p style="margin-top: 12px;">When a message is rejected (NACK), exceeds its TTL, or hits the queue length limit, RabbitMQ routes it to a configured <strong>Dead Letter Exchange</strong> which delivers it to a DLQ. Your ops team monitors the DLQ for failed jobs — they inspect failures, fix bugs, and manually replay messages from the DLQ. Without a DLQ, failed messages just vanish. Always configure one in production.</p>
+  </div>
+
+  <div class="sfx-row">
+    <span class="sfx">PUSH MODEL</span>
+    <span class="sfx">ACK TO DELETE</span>
+    <span class="sfx">DLQ FOR FAILURES</span>
+  </div>
+</div>
+
+<!-- ───────────────────────────────────────
+     SECTION 03: How Event Streams Work
+─────────────────────────────────────────── -->
+<div class="panel">
+  <div class="section-head">
+    <span class="section-num">03</span>
+    <h2>How Event Streams Work (Kafka Deep Dive)</h2>
+  </div>
+
+  <p>Apache Kafka is an <strong>append-only distributed log</strong>. Events are written to topics which are split into partitions. Every message gets an immutable offset — its permanent position in the log. Consumers are stateful: they remember their position and poll for new messages at their own pace. The broker never pushes.</p>
+
+  <!-- KAFKA LOG DIAGRAM -->
+  <div style="border: 3px solid var(--ink); border-radius: 8px; overflow: hidden; box-shadow: 6px 6px 0 var(--ink); margin: 20px 0;">
+    <div style="background: var(--green); color: #fff; padding: 10px 20px; font-family: 'Bangers', cursive; font-size: 1rem; letter-spacing: 2px; border-bottom: 3px solid var(--ink);">
+      KAFKA PARTITION LOG — MULTIPLE CONSUMER GROUP OFFSETS
+    </div>
+    <div style="padding: 24px; background: var(--paper);">
+
+      <!-- Producer side -->
+      <div style="display:flex;align-items:center;gap:12px;margin-bottom:24px;">
+        <div class="flow-node" style="border-color:var(--blue);background:rgba(29,111,184,.1);">
+          <i data-lucide="upload" style="width:20px;height:20px;color:var(--blue);display:block;margin:0 auto 4px;"></i>
+          <div style="font-size:.85rem;">Producer</div>
+        </div>
+        <div class="flow-arrow"><div class="flow-arrow-bar"></div></div>
+        <div style="font-family:'Bangers',cursive;font-size:.85rem;letter-spacing:1px;color:var(--green);">appends to offset 7</div>
+      </div>
+
+      <!-- Log cells -->
+      <div style="position:relative;margin-top:40px;margin-bottom:40px;">
+        <!-- Consumer group A pointer -->
+        <div style="position:absolute;top:-38px;left:0;width:100%;display:flex;">
+          <div style="flex:3.5;"></div><!-- spacer to offset 3 -->
+          <div style="display:flex;flex-direction:column;align-items:center;">
+            <div class="offset-label" style="background:rgba(255,140,66,.2);border-color:var(--orange);color:var(--orange);">Group A @ 3</div>
+            <div class="offset-stem"></div>
+          </div>
+          <div style="flex:3;"></div>
+          <div style="display:flex;flex-direction:column;align-items:center;">
+            <div class="offset-label" style="background:rgba(29,111,184,.2);border-color:var(--blue);color:var(--blue);">Group B @ 6</div>
+            <div class="offset-stem"></div>
+          </div>
+          <div style="flex:1;"></div>
+        </div>
+        <div class="log-row">
+          <div class="log-cell">
+            <div style="font-family:'Bangers',cursive;font-size:.7rem;color:var(--green);">0</div>
+            <div>user.signup</div>
+          </div>
+          <div class="log-cell">
+            <div style="font-family:'Bangers',cursive;font-size:.7rem;color:var(--green);">1</div>
+            <div>order.placed</div>
+          </div>
+          <div class="log-cell">
+            <div style="font-family:'Bangers',cursive;font-size:.7rem;color:var(--green);">2</div>
+            <div>payment.ok</div>
+          </div>
+          <div class="log-cell" style="background:rgba(255,140,66,.15);border-color:var(--orange);">
+            <div style="font-family:'Bangers',cursive;font-size:.7rem;color:var(--orange);">3</div>
+            <div>email.sent</div>
+          </div>
+          <div class="log-cell">
+            <div style="font-family:'Bangers',cursive;font-size:.7rem;color:var(--green);">4</div>
+            <div>ship.req</div>
+          </div>
+          <div class="log-cell">
+            <div style="font-family:'Bangers',cursive;font-size:.7rem;color:var(--green);">5</div>
+            <div>user.login</div>
+          </div>
+          <div class="log-cell" style="background:rgba(29,111,184,.15);border-color:var(--blue);">
+            <div style="font-family:'Bangers',cursive;font-size:.7rem;color:var(--blue);">6</div>
+            <div>order.placed</div>
+          </div>
+          <div class="log-cell" style="background:rgba(63,163,77,.2);border-color:var(--green);">
+            <div style="font-family:'Bangers',cursive;font-size:.7rem;color:var(--green);">7</div>
+            <div>NEW &#8592;</div>
+          </div>
+          <div class="log-cell log-cell-end">
+            <div style="font-family:'Bangers',cursive;font-size:.7rem;color:#aaa;">8+</div>
+            <div style="color:#aaa;">future</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Consumer groups -->
+      <div class="grid-2" style="margin-top: 8px;">
+        <div style="border: 2px solid var(--orange); border-radius: 6px; padding: 14px; background: rgba(255,140,66,.08);">
+          <div style="font-family:'Bangers',cursive;font-size:.9rem;letter-spacing:1px;color:var(--orange);margin-bottom:8px; display:flex;align-items:center;gap:6px;">
+            <i data-lucide="users" style="width:18px;height:18px;"></i> Consumer Group A (Analytics)
+          </div>
+          <div style="font-family:'Space Mono',monospace;font-size:.78rem;color:#555;line-height:1.8;">
+            <div>Current offset: <strong style="color:var(--orange);">3</strong></div>
+            <div>Next poll: reads offset 3, 4, 5...</div>
+            <div>Group B doesn't affect Group A</div>
+            <div style="margin-top:6px;color:var(--orange);">Can replay from offset 0 anytime</div>
+          </div>
+        </div>
+        <div style="border: 2px solid var(--blue); border-radius: 6px; padding: 14px; background: rgba(29,111,184,.08);">
+          <div style="font-family:'Bangers',cursive;font-size:.9rem;letter-spacing:1px;color:var(--blue);margin-bottom:8px; display:flex;align-items:center;gap:6px;">
+            <i data-lucide="users" style="width:18px;height:18px;"></i> Consumer Group B (Notifications)
+          </div>
+          <div style="font-family:'Space Mono',monospace;font-size:.78rem;color:#555;line-height:1.8;">
+            <div>Current offset: <strong style="color:var(--blue);">6</strong></div>
+            <div>Next poll: reads offset 6, 7...</div>
+            <div>Independent from Group A entirely</div>
+            <div style="margin-top:6px;color:var(--blue);">Offset stored in __consumer_offsets</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="grid-2">
+    <div class="hbox hbox-green" style="margin: 0;">
+      <div class="hbox-label">PULL MODEL</div>
+      <p style="margin-top: 12px; font-size: .9rem;">Kafka consumers <strong>poll</strong> — they call <code>consumer.poll(timeout)</code> in a loop. The broker never pushes. This means slow consumers can't be overwhelmed; they just fall behind. The consumer controls its own pace. If a consumer is offline for a week, it picks up where it left off (within retention limits).</p>
+    </div>
+    <div class="hbox hbox-blue" style="margin: 0;">
+      <div class="hbox-label">LOG RETENTION + REPLAY</div>
+      <p style="margin-top: 12px; font-size: .9rem;">Messages are kept on disk for a configured retention period (default 7 days) or up to a size limit. Any consumer can <strong>rewind</strong> its offset to 0 and re-process the entire history. This is transformative: you can deploy a new microservice today and replay 3 months of historical events to build its initial state.</p>
+    </div>
+  </div>
+
+  <div class="hbox hbox-teal" style="margin-top: 16px;">
+    <div class="hbox-label">PARTITIONS: THE KEY TO KAFKA SCALE</div>
+    <p style="margin-top: 12px;">Each topic is split into <strong>N partitions</strong>. Ordering is guaranteed within a partition (not across). Each partition is an independent log. Within a consumer group, each partition is assigned to exactly one consumer — so if you have 6 partitions and 3 consumers, each consumer handles 2 partitions. Scale consumers up to partition count for maximum parallelism.</p>
+  </div>
+</div>
+
+<!-- ───────────────────────────────────────
+     SECTION 04: The Critical Differences
+─────────────────────────────────────────── -->
+<div class="panel">
+  <div class="section-head">
+    <span class="section-num">04</span>
+    <h2>The Critical Differences: Deep Comparison</h2>
+  </div>
+
+  <p>These two patterns look similar on the surface — both move data between processes — but they differ fundamentally on almost every dimension that matters in production. The right choice depends entirely on which properties your use case requires.</p>
+
+  <!-- BIG COMPARISON TABLE -->
+  <table class="data-table">
+    <thead>
+      <tr>
+        <th><i data-lucide="layers" class="lc"></i> Dimension</th>
+        <th><i data-lucide="inbox" class="lc" style="color:#d9b3ff;"></i> Message Queue (RabbitMQ / SQS)</th>
+        <th><i data-lucide="git-commit" class="lc" style="color:#8fdf9a;"></i> Event Stream (Kafka / Kinesis)</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>Consumption model</strong></td>
+        <td><span class="chip chip-red" style="font-size:.75rem;">DESTRUCTIVE</span> Message is removed after one consumer reads it</td>
+        <td><span class="chip chip-green" style="font-size:.75rem;">NON-DESTRUCTIVE</span> Message stays; consumer advances its offset pointer</td>
+      </tr>
+      <tr>
+        <td><strong>Delivery model</strong></td>
+        <td><span class="chip chip-purple" style="font-size:.75rem;">PUSH</span> Broker pushes to subscribed consumers (prefetch count controls flow)</td>
+        <td><span class="chip chip-blue" style="font-size:.75rem;">PULL</span> Consumer polls on its own schedule; broker waits passively</td>
+      </tr>
+      <tr>
+        <td><strong>Message ordering</strong></td>
+        <td>FIFO per queue. Add multiple workers and ordering is lost across workers.</td>
+        <td>Strict ordering within a partition. Use partition keys to preserve order for a user/entity.</td>
+      </tr>
+      <tr>
+        <td><strong>Replay</strong></td>
+        <td><span class="chip chip-red" style="font-size:.75rem;">NO</span> Once consumed and ACKed, the message is gone forever</td>
+        <td><span class="chip chip-green" style="font-size:.75rem;">YES</span> Seek to any offset, rewind to beginning, replay entire history</td>
+      </tr>
+      <tr>
+        <td><strong>Consumer model</strong></td>
+        <td>Competing consumers: N workers share M messages. One message = one worker.</td>
+        <td>Consumer groups: group A and group B each get a full independent copy of the stream</td>
+      </tr>
+      <tr>
+        <td><strong>Message retention</strong></td>
+        <td>Messages live until consumed (or TTL expires). Queue depth grows if consumers are slow.</td>
+        <td>Messages live until retention policy (e.g. 7 days / 100 GB). Consumed or not — doesn't matter.</td>
+      </tr>
+      <tr>
+        <td><strong>Backpressure</strong></td>
+        <td>Queue depth. If workers can't keep up, queue grows and may OOM the broker.</td>
+        <td>Consumer just falls behind in offset. Broker is not affected — data sits safely on disk.</td>
+      </tr>
+      <tr>
+        <td><strong>Throughput</strong></td>
+        <td>High throughput for individual jobs. AMQP overhead per message. Typical: tens of thousands/sec.</td>
+        <td>Extremely high throughput via sequential disk writes and batching. Millions of events/sec.</td>
+      </tr>
+      <tr>
+        <td><strong>Best for</strong></td>
+        <td>Task queues, job dispatch, request/reply, work distribution across N workers</td>
+        <td>Event sourcing, audit logs, analytics pipelines, microservices choreography, replay</td>
+      </tr>
+      <tr>
+        <td><strong>Examples</strong></td>
+        <td>RabbitMQ, ActiveMQ, AWS SQS, Azure Service Bus, Google Cloud Tasks</td>
+        <td>Apache Kafka, AWS Kinesis, Azure Event Hubs, Apache Pulsar, Redpanda</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <!-- VISUAL COMPARISON: CRASH RECOVERY -->
+  <h3 style="margin-top: 24px;">Failure Recovery: The Biggest Practical Difference</h3>
+  <div class="grid-2">
+    <div class="card" style="border-color: var(--purple);">
+      <div class="card-head" style="color: var(--purple); border-color: var(--purple); display:flex;align-items:center;gap:8px;">
+        <i data-lucide="inbox" class="lc"></i> MQ Consumer Crash
+      </div>
+      <ol style="padding-left: 20px; font-size: .92rem; line-height: 1.9;">
+        <li>Broker delivers message M to Worker 1</li>
+        <li>Worker 1 crashes mid-processing — never ACKs</li>
+        <li>Broker detects connection drop</li>
+        <li>Message M is <strong>re-queued</strong> automatically</li>
+        <li>Worker 2 picks it up and retries</li>
+        <li>Worker 2 ACKs — message gone</li>
+      </ol>
+      <div style="background:rgba(138,79,255,.1);border:2px solid var(--purple);border-radius:4px;padding:8px 12px;font-family:'Space Mono',monospace;font-size:.78rem;margin-top:10px;color:var(--purple);">
+        Result: at-least-once delivery. Message is retried automatically. You may get duplicates — make your handler idempotent.
+      </div>
+    </div>
+    <div class="card" style="border-color: var(--green);">
+      <div class="card-head" style="color: var(--green); border-color: var(--green); display:flex;align-items:center;gap:8px;">
+        <i data-lucide="git-commit" class="lc"></i> Stream Consumer Crash
+      </div>
+      <ol style="padding-left: 20px; font-size: .92rem; line-height: 1.9;">
+        <li>Consumer reads offset 5, crashes without committing offset</li>
+        <li>Consumer group coordinator detects timeout</li>
+        <li>Partition reassigned to another consumer</li>
+        <li>New consumer resumes from last <strong>committed offset</strong> (e.g. 4)</li>
+        <li>Processes offset 4 and 5 again (duplicate)</li>
+        <li>Commits offset 6 after success</li>
+      </ol>
+      <div style="background:rgba(63,163,77,.1);border:2px solid var(--green);border-radius:4px;padding:8px 12px;font-family:'Space Mono',monospace;font-size:.78rem;margin-top:10px;color:var(--green);">
+        Result: at-least-once by default. Exactly-once possible with transactional producers + idempotent consumers.
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ───────────────────────────────────────
+     SECTION 05: When to Use a Message Queue
+─────────────────────────────────────────── -->
+<div class="panel">
+  <div class="section-head">
+    <span class="section-num">05</span>
+    <h2>When to Use a Message Queue</h2>
+  </div>
+
+  <p>A message queue is the right tool when your primary concern is <strong>distributing units of work to available workers</strong> and you don't need history, replay, or multiple independent consumers seeing the same data.</p>
+
+  <div class="grid-3" style="margin: 20px 0;">
+    <div class="card" style="border-color: var(--purple);">
+      <div class="card-head" style="color: var(--purple); border-color: var(--purple); display:flex;align-items:center;gap:6px;">
+        <i data-lucide="mail" class="lc"></i> Transactional Email
+      </div>
+      <p style="font-size: .88rem;">User signs up. API puts "send welcome email" job in queue. Email worker picks it up, calls SendGrid, ACKs. You don't need to replay email jobs — once sent is once sent.</p>
+      <div style="font-family:'Space Mono',monospace;font-size:.72rem;color:#888;margin-top:6px;">Celery + Redis / SQS + Lambda</div>
+    </div>
+    <div class="card" style="border-color: var(--blue);">
+      <div class="card-head" style="color: var(--blue); border-color: var(--blue); display:flex;align-items:center;gap:6px;">
+        <i data-lucide="image" class="lc"></i> Image / Video Processing
+      </div>
+      <p style="font-size: .88rem;">Upload triggers job: "resize to 3 sizes + generate thumbnail." Multiple workers share the queue. One job = one processing run. No need to re-process old uploads.</p>
+      <div style="font-family:'Space Mono',monospace;font-size:.72rem;color:#888;margin-top:6px;">RabbitMQ + workers / SQS + EC2</div>
+    </div>
+    <div class="card" style="border-color: var(--green);">
+      <div class="card-head" style="color: var(--green); border-color: var(--green); display:flex;align-items:center;gap:6px;">
+        <i data-lucide="credit-card" class="lc"></i> Payment Processing
+      </div>
+      <p style="font-size: .88rem;">"Charge customer $99" job is sensitive — exactly one worker should process it. Queue semantics + idempotency key prevent double charges even on retry.</p>
+      <div style="font-family:'Space Mono',monospace;font-size:.72rem;color:#888;margin-top:6px;">SQS FIFO + Lambda</div>
+    </div>
+  </div>
+
+  <div class="grid-2" style="margin-top: 8px;">
+    <div class="hbox hbox-purple" style="margin: 0;">
+      <div class="hbox-label">REQUEST / REPLY PATTERN</div>
+      <p style="margin-top: 12px; font-size: .9rem;">RabbitMQ supports <strong>reply-to queues</strong>: the producer puts a temporary reply-queue address in the message. The consumer processes the job and publishes the result to that reply queue. The producer is unblocked waiting on its private reply queue. Useful for synchronous-feeling async operations (e.g. run a slow report, get back a presigned S3 URL).</p>
+    </div>
+    <div class="hbox hbox-orange" style="margin: 0;">
+      <div class="hbox-label">WHEN YOU DON'T NEED A QUEUE</div>
+      <p style="margin-top: 12px; font-size: .9rem;">Don't over-engineer. If you have one producer and one consumer with low throughput, a queue may add unnecessary operational overhead. If you need replay, multiple subscribers, or audit history, skip the queue and use Kafka. If you need strict synchronous response, use HTTP/gRPC directly.</p>
+    </div>
+  </div>
+
+  <div class="hbox hbox-green" style="margin-top: 16px;">
+    <div class="hbox-label">THE QUEUE DECISION CHECKLIST</div>
+    <ul style="margin-top: 14px; columns: 2; gap: 24px;">
+      <li>Work needs to be distributed across N workers</li>
+      <li>Once processed, the job result is stored elsewhere</li>
+      <li>You don't need to replay old jobs</li>
+      <li>Only one consumer should handle each job</li>
+      <li>Failure handling via retry and DLQ is sufficient</li>
+      <li>Job-level priority is important (<code>x-priority</code>)</li>
+    </ul>
+  </div>
+</div>
+
+<!-- ───────────────────────────────────────
+     SECTION 06: When to Use an Event Stream
+─────────────────────────────────────────── -->
+<div class="panel">
+  <div class="section-head">
+    <span class="section-num">06</span>
+    <h2>When to Use an Event Stream</h2>
+  </div>
+
+  <p>An event stream is the right tool when <strong>the history of what happened is itself valuable</strong>, multiple independent consumers need the same data, or you need to rebuild state from scratch by replaying events.</p>
+
+  <div class="grid-2" style="margin: 20px 0;">
+    <div>
+      <div class="hbox hbox-green" style="margin-bottom: 14px;">
+        <div class="hbox-label">EVENT SOURCING</div>
+        <p style="margin-top: 12px; font-size: .9rem;">Instead of storing current state in a database row, you store a sequence of events: <code>AccountCreated</code>, <code>DepositMade($100)</code>, <code>WithdrawalMade($30)</code>. Current balance = replay all events. Kafka is the persistence layer. Bugs in your state computation? Fix the code, replay, correct state falls out automatically.</p>
+      </div>
+      <div class="hbox hbox-blue" style="margin: 0;">
+        <div class="hbox-label">MULTIPLE INDEPENDENT CONSUMERS</div>
+        <p style="margin-top: 12px; font-size: .9rem;">One <code>order.placed</code> event needs to trigger: inventory reduction, billing, shipping notification, analytics update, ML feature pipeline. Each is a separate consumer group reading the same stream independently. With a queue you'd need to manually fanout to 5 separate queues.</p>
+      </div>
+    </div>
+    <div>
+      <div class="hbox hbox-teal" style="margin-bottom: 14px;">
+        <div class="hbox-label">AUDIT LOGS AND COMPLIANCE</div>
+        <p style="margin-top: 12px; font-size: .9rem;">Kafka is append-only and durable. Write every sensitive action as an event: <code>user.data.accessed</code>, <code>config.changed</code>, <code>payment.attempted</code>. The log is tamper-evident (log compaction preserves history). Compliance teams query the stream. Impossible to "delete" an audit record — the immutability is the feature.</p>
+      </div>
+      <div class="hbox hbox-purple" style="margin: 0;">
+        <div class="hbox-label">REPROCESSING AFTER BUG FIX</div>
+        <p style="margin-top: 12px; font-size: .9rem;">You discover a bug in your recommendation engine — it incorrectly classified 3 days of user behavior. With Kafka: fix the bug, reset your consumer group offset to 3 days ago, reprocess. The correct state is rebuilt automatically. With a queue: those messages are long gone — you have no history to replay.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="grid-3" style="margin-top: 8px;">
+    <div class="card" style="border-color: var(--teal);">
+      <div class="card-head" style="color: var(--teal); border-color: var(--teal); display:flex;align-items:center;gap:6px;">
+        <i data-lucide="bar-chart-2" class="lc"></i> Real-Time Analytics
+      </div>
+      <p style="font-size: .88rem;">Kafka Streams or Flink reads the event stream and computes running aggregates: revenue per minute, active users, error rates. State is the stream, not a DB table.</p>
+      <div style="font-family:'Space Mono',monospace;font-size:.72rem;color:#888;margin-top:6px;">Uber, LinkedIn, Airbnb use this</div>
+    </div>
+    <div class="card" style="border-color: var(--orange);">
+      <div class="card-head" style="color: var(--orange); border-color: var(--orange); display:flex;align-items:center;gap:6px;">
+        <i data-lucide="git-branch" class="lc"></i> Microservices Choreography
+      </div>
+      <p style="font-size: .88rem;">Services publish events, other services react. No orchestrator — no central brain. Order service publishes <code>order.created</code>. Inventory, billing, shipping all subscribe independently.</p>
+      <div style="font-family:'Space Mono',monospace;font-size:.72rem;color:#888;margin-top:6px;">Loose coupling, high cohesion</div>
+    </div>
+    <div class="card" style="border-color: var(--blue);">
+      <div class="card-head" style="color: var(--blue); border-color: var(--blue); display:flex;align-items:center;gap:6px;">
+        <i data-lucide="database" class="lc"></i> CDC (Change Data Capture)
+      </div>
+      <p style="font-size: .88rem;">Debezium streams database changes as Kafka events. Every INSERT/UPDATE/DELETE becomes an event. Downstream systems stay in sync without polling the DB.</p>
+      <div style="font-family:'Space Mono',monospace;font-size:.72rem;color:#888;margin-top:6px;">Postgres WAL + Debezium + Kafka</div>
+    </div>
+  </div>
+</div>
+
+<!-- ───────────────────────────────────────
+     SECTION 07: Hybrid Patterns
+─────────────────────────────────────────── -->
+<div class="panel">
+  <div class="section-head">
+    <span class="section-num">07</span>
+    <h2>Hybrid Patterns: When You Need Both</h2>
+  </div>
+
+  <p>Production systems rarely choose one or the other exclusively. The most robust architectures use <strong>event streams for the durable spine and message queues at the edges</strong> for work dispatch. Here are the most important hybrid patterns.</p>
+
+  <!-- HYBRID ARCHITECTURE DIAGRAM -->
+  <div style="border: 3px solid var(--ink); border-radius: 8px; overflow: hidden; box-shadow: 6px 6px 0 var(--ink); margin: 20px 0;">
+    <div style="background: var(--ink); color: #fff; padding: 10px 20px; font-family: 'Bangers', cursive; font-size: 1rem; letter-spacing: 2px; border-bottom: 3px solid var(--ink);">
+      KAFKA + SQS FANOUT — STREAM AS BACKBONE, QUEUES FOR WORK
+    </div>
+    <div style="padding: 24px; background: var(--paper);">
+      <div style="display: flex; align-items: center; gap: 0; flex-wrap: wrap;">
+        <!-- Producer -->
+        <div class="flow-node" style="border-color:var(--blue);background:rgba(29,111,184,.1);">
+          <i data-lucide="database" style="width:22px;height:22px;color:var(--blue);display:block;margin:0 auto 5px;"></i>
+          <div>DB / API</div>
+          <div style="font-family:'Space Mono',monospace;font-size:.62rem;color:#888;margin-top:2px;">produces events</div>
+        </div>
+        <div class="flow-arrow"><div class="flow-arrow-bar"></div></div>
+        <!-- Kafka -->
+        <div class="flow-node" style="border-color:var(--green);background:rgba(63,163,77,.1);">
+          <i data-lucide="git-commit" style="width:22px;height:22px;color:var(--green);display:block;margin:0 auto 5px;"></i>
+          <div>Kafka Topic</div>
+          <div style="font-family:'Space Mono',monospace;font-size:.62rem;color:var(--green);margin-top:2px;">durable log</div>
+        </div>
+        <div class="flow-arrow"><div class="flow-arrow-bar"></div></div>
+        <!-- Fanout consumers -->
+        <div style="display:flex;flex-direction:column;gap:10px;">
+          <!-- Direct consumer: analytics -->
+          <div style="display:flex;align-items:center;gap:8px;">
+            <div class="flow-node" style="border-color:var(--teal);background:rgba(13,148,136,.1);min-width:110px;padding:8px;">
+              <div style="font-size:.82rem; display:flex;align-items:center;gap:4px;justify-content:center;">
+                <i data-lucide="bar-chart-2" style="width:16px;height:16px;color:var(--teal);"></i> Analytics
+              </div>
+              <div style="font-family:'Space Mono',monospace;font-size:.6rem;color:#888;margin-top:2px;">consumer group</div>
+            </div>
+          </div>
+          <!-- Bridge to SQS -->
+          <div style="display:flex;align-items:center;gap:8px;">
+            <div class="flow-node" style="border-color:var(--orange);background:rgba(255,140,66,.1);min-width:110px;padding:8px;">
+              <div style="font-size:.82rem; display:flex;align-items:center;gap:4px;justify-content:center;">
+                <i data-lucide="shuffle" style="width:16px;height:16px;color:var(--orange);"></i> Bridge Worker
+              </div>
+              <div style="font-family:'Space Mono',monospace;font-size:.6rem;color:#888;margin-top:2px;">reads Kafka</div>
+            </div>
+            <div class="flow-arrow"><div class="flow-arrow-bar"></div></div>
+            <div class="flow-node" style="border-color:var(--purple);background:rgba(138,79,255,.1);min-width:90px;padding:8px;">
+              <i data-lucide="inbox" style="width:16px;height:16px;color:var(--purple);display:block;margin:0 auto 3px;"></i>
+              <div style="font-size:.82rem;">SQS Queue</div>
+              <div style="font-family:'Space Mono',monospace;font-size:.6rem;color:#888;margin-top:2px;">work dispatch</div>
+            </div>
+            <div class="flow-arrow"><div class="flow-arrow-bar"></div></div>
+            <div style="display:flex;flex-direction:column;gap:4px;">
+              <div class="flow-node" style="border-color:var(--green);background:rgba(63,163,77,.08);padding:5px 10px;">
+                <div style="font-size:.75rem; display:flex;align-items:center;gap:4px;">
+                  <i data-lucide="cpu" style="width:12px;height:12px;color:var(--green);"></i> Lambda 1
+                </div>
+              </div>
+              <div class="flow-node" style="border-color:var(--green);background:rgba(63,163,77,.08);padding:5px 10px;">
+                <div style="font-size:.75rem; display:flex;align-items:center;gap:4px;">
+                  <i data-lucide="cpu" style="width:12px;height:12px;color:var(--green);"></i> Lambda 2
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="grid-2">
+    <div class="hbox hbox-blue" style="margin: 0;">
+      <div class="hbox-label">OUTBOX PATTERN</div>
+      <p style="margin-top: 12px; font-size: .9rem;">The classic distributed systems problem: you save to DB and publish to Kafka in the same "operation" — but they're not atomic. The DB might commit and Kafka publish fail (or vice versa). Solution: write to an <strong>outbox table</strong> in the same DB transaction. A CDC tool (Debezium) watches the outbox and streams changes to Kafka. DB and Kafka are now consistent.</p>
+    </div>
+    <div class="hbox hbox-teal" style="margin: 0;">
+      <div class="hbox-label">SAGA PATTERN</div>
+      <p style="margin-top: 12px; font-size: .9rem;">Distributed transactions across microservices using a sequence of local transactions + compensating events. <strong>Orchestration saga:</strong> a central saga orchestrator sends commands to services via message queue and waits for replies. <strong>Choreography saga:</strong> each service publishes events to a stream; downstream services react. Kafka is better for choreography; RabbitMQ is better for orchestration.</p>
+    </div>
+  </div>
+
+  <div class="hbox hbox-purple" style="margin-top: 16px;">
+    <div class="hbox-label">CQRS + EVENT STREAM</div>
+    <p style="margin-top: 12px;">Command Query Responsibility Segregation: writes go to the <strong>command side</strong> (events published to Kafka), reads go to a <strong>query side</strong> (a read-optimized materialized view built by consuming the stream). The event stream is the source of truth; read models are projections built from it. Invalidate and rebuild any read model by replaying the stream.</p>
+  </div>
+</div>
+
+<!-- ───────────────────────────────────────
+     SECTION 08: INTERACTIVE Canvas Widget
+─────────────────────────────────────────── -->
+<div class="panel">
+  <div class="section-head">
+    <span class="section-num">08</span>
+    <h2>Interactive: Message Delivery Side-by-Side</h2>
+  </div>
+
+  <p>Watch both models in action simultaneously. The left canvas shows a Message Queue (RabbitMQ-style): messages are consumed destructively and disappear. The right shows an Event Stream (Kafka-style): messages stay in the log and consumer group offsets advance independently. Simulate sending messages, adding consumers, and crashing a consumer to see how each model recovers.</p>
+
+  <div class="mq-wrap">
+    <div class="mq-bar">
+      <span style="width:12px;height:12px;border-radius:50%;background:#ff5f56;display:inline-block;"></span>
+      <span style="width:12px;height:12px;border-radius:50%;background:#ffbd2e;display:inline-block;"></span>
+      <span style="width:12px;height:12px;border-radius:50%;background:#27c93f;display:inline-block;"></span>
+      <span>MESSAGE DELIVERY COMPARISON — Live Simulation</span>
+    </div>
+    <div class="mq-body">
+      <!-- LEFT: Message Queue -->
+      <div>
+        <div class="mq-panel-label" style="color:var(--purple);border-color:var(--purple);background:rgba(138,79,255,.1);">
+          <i data-lucide="inbox" style="width:16px;height:16px;vertical-align:middle;"></i> MESSAGE QUEUE (RabbitMQ-style)
+        </div>
+        <canvas id="mq-canvas" class="mq-canvas" width="520" height="360"></canvas>
+        <div class="mq-ctrl-row">
+          <button class="mq-btn mq-btn-purple" onclick="mqSend5()">
+            <i data-lucide="plus-circle" style="width:15px;height:15px;vertical-align:middle;"></i> Send 5 Msgs
+          </button>
+          <button class="mq-btn mq-btn-green" onclick="mqAddWorker()">
+            <i data-lucide="user-plus" style="width:15px;height:15px;vertical-align:middle;"></i> Add Worker
+          </button>
+          <button class="mq-btn mq-btn-red" onclick="mqCrashWorker()">
+            <i data-lucide="zap-off" style="width:15px;height:15px;vertical-align:middle;"></i> Crash Worker
+          </button>
+        </div>
+        <div class="mq-status" id="mq-status">Ready. Workers pull messages from the queue. ACK = message deleted.</div>
+      </div>
+      <!-- RIGHT: Event Stream -->
+      <div>
+        <div class="mq-panel-label" style="color:var(--green);border-color:var(--green);background:rgba(63,163,77,.1);">
+          <i data-lucide="git-commit" style="width:16px;height:16px;vertical-align:middle;"></i> EVENT STREAM (Kafka-style)
+        </div>
+        <canvas id="es-canvas" class="mq-canvas" width="520" height="360"></canvas>
+        <div class="mq-ctrl-row">
+          <button class="mq-btn mq-btn-green" onclick="esSend5()">
+            <i data-lucide="plus-circle" style="width:15px;height:15px;vertical-align:middle;"></i> Send 5 Events
+          </button>
+          <button class="mq-btn mq-btn-green" onclick="esAddGroup()">
+            <i data-lucide="user-plus" style="width:15px;height:15px;vertical-align:middle;"></i> Add Consumer
+          </button>
+          <button class="mq-btn mq-btn-red" onclick="esCrashConsumer()">
+            <i data-lucide="zap-off" style="width:15px;height:15px;vertical-align:middle;"></i> Crash Consumer
+          </button>
+        </div>
+        <div class="mq-status" id="es-status">Ready. Consumer groups advance their offsets. Messages stay in the log.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="grid-2" style="margin-top: 16px;">
+    <div class="hbox hbox-purple" style="margin: 0;">
+      <div class="hbox-label">WHAT TO OBSERVE — MQ SIDE</div>
+      <ul style="margin-top: 14px; font-size: .9rem;">
+        <li>Send 5 messages — they appear in the queue box</li>
+        <li>Workers (circles) animate toward queue to pick up messages</li>
+        <li>Message picked up = <strong>vanishes</strong> from queue</li>
+        <li>Crash a worker — its in-flight message bounces <strong>back to queue</strong></li>
+        <li>Add workers — load is distributed; throughput increases</li>
+      </ul>
+    </div>
+    <div class="hbox hbox-green" style="margin: 0;">
+      <div class="hbox-label">WHAT TO OBSERVE — STREAM SIDE</div>
+      <ul style="margin-top: 14px; font-size: .9rem;">
+        <li>Send 5 events — they <strong>accumulate</strong> in the log</li>
+        <li>Each consumer group offset pointer advances independently</li>
+        <li>Crash a consumer — offset rolls back to last committed position</li>
+        <li>Add a consumer group — it <strong>starts from offset 0</strong>, replays all history</li>
+        <li>All groups see every event — no competition for messages</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="sfx-row">
+    <span class="sfx">DESTRUCTIVE</span>
+    <span class="sfx">VS NON-DESTRUCTIVE</span>
+    <span class="sfx">KNOW THE DIFF</span>
+  </div>
+</div>
+
+<div class="chapter-divider"><span>END OF HOW-14</span></div>
+</div><!-- /page-wrap -->
+
+<script src="hero-banner.js"></script>
+<script src="masthead.js"></script>
+<script src="author-card.js"></script>
+
+<script>
+/* ================================================================
+   MESSAGE QUEUE CANVAS SIMULATION
+   ================================================================ */
+(function() {
+  var canvas = document.getElementById('mq-canvas');
+  if (!canvas) return;
+  var ctx = canvas.getContext('2d');
+  var W = 520, H = 360;
+
+  // -- State --
+  var queue = [];   // pending message objects { id, y, color }
+  var workers = [
+    { id: 0, x: 420, y: 100, color: '#3fa34d', status: 'idle', heldMsg: null, flashTimer: 0, crashTimer: 0, requeueTimer: 0 },
+    { id: 1, x: 420, y: 220, color: '#1d6fb8', status: 'idle', heldMsg: null, flashTimer: 0, crashTimer: 0, requeueTimer: 0 },
+  ];
+  var flying = [];  // {x, y, tx, ty, color, workerIdx, progress, speed, type:'toWorker'|'toQueue'}
+  var processed = 0;
+  var msgId = 0;
+
+  var QUEUE_BOX = { x: 160, y: 50, w: 120, h: H - 100 };
+  var PRODUCER_X = 30, PRODUCER_Y = H / 2;
+
+  function queueY(idx) { return QUEUE_BOX.y + 20 + idx * 28; }
+
+  function addMessage() {
+    var colors = ['#8a4fff','#1d6fb8','#ff8c42','#3fa34d','#ffd23f'];
+    queue.push({ id: msgId++, color: colors[msgId % colors.length], flashTimer: 8 });
+  }
+
+  function setStatus(txt) {
+    var el = document.getElementById('mq-status');
+    if (el) el.textContent = txt;
+  }
+
+  window.mqSend5 = function() {
+    for (var i = 0; i < 5; i++) addMessage();
+    setStatus('5 messages added to queue. Workers will pick them up.');
+  };
+
+  window.mqAddWorker = function() {
+    if (workers.length >= 5) { setStatus('Max 5 workers reached.'); return; }
+    var colors = ['#3fa34d','#1d6fb8','#ff8c42','#8a4fff','#0d9488'];
+    var yPositions = [80, 160, 240, 300, 340];
+    workers.push({
+      id: workers.length,
+      x: 420,
+      y: yPositions[workers.length] || (80 + workers.length * 60),
+      color: colors[workers.length % colors.length],
+      status: 'idle', heldMsg: null, flashTimer: 0, crashTimer: 0, requeueTimer: 0
+    });
+    setStatus('Worker ' + workers.length + ' added. More workers = more throughput.');
+  };
+
+  window.mqCrashWorker = function() {
+    // Find a busy worker or any non-crashed worker
+    var target = workers.find(function(w){ return w.status === 'busy' && w.heldMsg; });
+    if (!target) target = workers.find(function(w){ return w.status === 'idle'; });
+    if (!target) { setStatus('No workers available to crash.'); return; }
+    target.status = 'crashed';
+    target.crashTimer = 80;
+    var requeued = target.heldMsg;
+    target.heldMsg = null;
+    if (requeued) {
+      // Re-queue the message
+      queue.unshift(requeued);
+      setStatus('Worker ' + target.id + ' CRASHED! In-flight message RE-QUEUED automatically. Another worker will retry.');
+    } else {
+      setStatus('Worker ' + target.id + ' CRASHED! No in-flight message. It will restart in a moment.');
+    }
+  };
+
+  function dispatchToWorker() {
+    if (queue.length === 0) return;
+    var idleWorker = null;
+    for (var i = 0; i < workers.length; i++) {
+      if (workers[i].status === 'idle') { idleWorker = workers[i]; break; }
+    }
+    if (!idleWorker) return;
+
+    var msg = queue.shift();
+    idleWorker.status = 'fetching';
+    flying.push({
+      type: 'toWorker',
+      msg: msg,
+      sx: QUEUE_BOX.x + QUEUE_BOX.w,
+      sy: QUEUE_BOX.y + QUEUE_BOX.h / 2,
+      tx: idleWorker.x - 20,
+      ty: idleWorker.y,
+      workerIdx: idleWorker.id,
+      progress: 0,
+      speed: 0.03,
+    });
+  }
+
+  function draw() {
+    ctx.clearRect(0, 0, W, H);
+    ctx.fillStyle = '#0d1117';
+    ctx.fillRect(0, 0, W, H);
+
+    // Producer
+    ctx.fillStyle = '#1d6fb8';
+    ctx.strokeStyle = '#4d9fff';
+    ctx.lineWidth = 2;
+    ctx.beginPath(); ctx.roundRect(10, PRODUCER_Y - 28, 56, 56, 6); ctx.fill(); ctx.stroke();
+    ctx.fillStyle = '#e6edf3'; ctx.font = '700 9px Bangers, cursive'; ctx.textAlign = 'center';
+    ctx.fillText('PROD', 38, PRODUCER_Y - 4);
+    ctx.fillText('UCER', 38, PRODUCER_Y + 8);
+
+    // Arrow from producer to queue
+    ctx.strokeStyle = 'rgba(255,255,255,.15)'; ctx.lineWidth = 2;
+    ctx.beginPath(); ctx.moveTo(68, PRODUCER_Y); ctx.lineTo(QUEUE_BOX.x, QUEUE_BOX.y + QUEUE_BOX.h / 2); ctx.stroke();
+
+    // Queue box
+    ctx.fillStyle = '#161b22';
+    ctx.strokeStyle = '#8a4fff'; ctx.lineWidth = 3;
+    ctx.beginPath(); ctx.roundRect(QUEUE_BOX.x, QUEUE_BOX.y, QUEUE_BOX.w, QUEUE_BOX.h, 8); ctx.fill(); ctx.stroke();
+    ctx.fillStyle = '#d2a8ff'; ctx.font = '700 11px Bangers, cursive'; ctx.textAlign = 'center';
+    ctx.fillText('QUEUE', QUEUE_BOX.x + QUEUE_BOX.w / 2, QUEUE_BOX.y + 14);
+
+    // Queue messages
+    var maxVisible = Math.floor((QUEUE_BOX.h - 30) / 28);
+    queue.slice(0, maxVisible).forEach(function(msg, i) {
+      var my = QUEUE_BOX.y + 24 + i * 28;
+      ctx.fillStyle = msg.color;
+      ctx.strokeStyle = 'rgba(255,255,255,.3)'; ctx.lineWidth = 1.5;
+      ctx.beginPath(); ctx.roundRect(QUEUE_BOX.x + 10, my, QUEUE_BOX.w - 20, 22, 4); ctx.fill(); ctx.stroke();
+      ctx.fillStyle = '#fff'; ctx.font = '700 8px Space Mono, monospace'; ctx.textAlign = 'center';
+      ctx.fillText('msg #' + msg.id, QUEUE_BOX.x + QUEUE_BOX.w / 2, my + 14);
+    });
+    if (queue.length > maxVisible) {
+      ctx.fillStyle = '#7d8590'; ctx.font = '9px Space Mono, monospace'; ctx.textAlign = 'center';
+      ctx.fillText('+' + (queue.length - maxVisible) + ' more', QUEUE_BOX.x + QUEUE_BOX.w / 2, QUEUE_BOX.y + QUEUE_BOX.h - 8);
+    }
+
+    // Workers
+    workers.forEach(function(w) {
+      if (w.crashTimer > 0) {
+        w.crashTimer--;
+        if (w.crashTimer <= 0) { w.status = 'idle'; }
+      }
+
+      var alpha = w.status === 'crashed' ? 0.4 : 1;
+      ctx.globalAlpha = alpha;
+
+      // Worker circle
+      ctx.fillStyle = w.status === 'crashed' ? '#555' : w.color;
+      ctx.strokeStyle = w.status === 'crashed' ? '#888' : '#fff';
+      ctx.lineWidth = 2;
+      ctx.beginPath(); ctx.arc(w.x, w.y, 22, 0, Math.PI * 2); ctx.fill(); ctx.stroke();
+
+      ctx.fillStyle = '#fff'; ctx.font = '700 9px Bangers, cursive'; ctx.textAlign = 'center';
+      ctx.fillText(w.status === 'crashed' ? 'DEAD' : 'W' + w.id, w.x, w.y + 4);
+
+      // Status label
+      ctx.fillStyle = w.status === 'crashed' ? '#ff5f56' : w.status === 'busy' ? '#ffd23f' : '#7d8590';
+      ctx.font = '8px Space Mono, monospace'; ctx.textAlign = 'center';
+      ctx.fillText(w.status === 'crashed' ? 'restarting' : w.status, w.x, w.y + 36);
+
+      // Held message indicator
+      if (w.heldMsg && w.status === 'busy') {
+        ctx.fillStyle = w.heldMsg.color;
+        ctx.strokeStyle = 'rgba(255,255,255,.4)'; ctx.lineWidth = 1;
+        ctx.beginPath(); ctx.arc(w.x + 26, w.y - 16, 8, 0, Math.PI * 2); ctx.fill(); ctx.stroke();
+      }
+
+      ctx.globalAlpha = 1;
+    });
+
+    // Flying messages
+    flying = flying.filter(function(f) {
+      f.progress = Math.min(1, f.progress + f.speed);
+      var t = f.progress;
+      var cx2 = f.sx + (f.tx - f.sx) * t;
+      var cy2 = f.sy + (f.ty - f.sy) * t;
+
+      // Draw dot
+      ctx.beginPath(); ctx.arc(cx2, cy2, 7, 0, Math.PI * 2);
+      ctx.fillStyle = f.msg ? f.msg.color : '#fff'; ctx.fill();
+      ctx.strokeStyle = 'rgba(255,255,255,.4)'; ctx.lineWidth = 1; ctx.stroke();
+
+      if (f.progress >= 1) {
+        if (f.type === 'toWorker') {
+          var w = workers.find(function(x){ return x.id === f.workerIdx; });
+          if (w && w.status !== 'crashed') {
+            w.status = 'busy';
+            w.heldMsg = f.msg;
+            // Worker processes for a bit then finishes
+            setTimeout(function() {
+              if (w.status === 'busy') {
+                w.status = 'idle';
+                w.heldMsg = null;
+                processed++;
+                setStatus('Worker ' + w.id + ' processed msg #' + f.msg.id + '. Total processed: ' + processed + '. Message DELETED.');
+              }
+            }, 1200 + Math.random() * 800);
+          }
+        }
+        return false;
+      }
+      return true;
+    });
+
+    // Stats
+    ctx.fillStyle = '#7d8590'; ctx.font = '9px Space Mono, monospace'; ctx.textAlign = 'left';
+    ctx.fillText('Queue: ' + queue.length + ' | Processed: ' + processed, 10, H - 8);
+
+    // Dispatch idle workers
+    dispatchToWorker();
+  }
+
+  function loop() { draw(); requestAnimationFrame(loop); }
+
+  // Auto-send initial messages
+  for (var i = 0; i < 3; i++) addMessage();
+  loop();
+})();
+
+/* ================================================================
+   EVENT STREAM CANVAS SIMULATION
+   ================================================================ */
+(function() {
+  var canvas = document.getElementById('es-canvas');
+  if (!canvas) return;
+  var ctx = canvas.getContext('2d');
+  var W = 520, H = 360;
+
+  var LOG_X = 60, LOG_Y = 60, LOG_CELL_W = 52, LOG_CELL_H = 44, LOG_MAX_VISIBLE = 8;
+  var log = [];  // { id, topic, color }
+  var eventId = 0;
+
+  var consumerGroups = [
+    { id: 0, name: 'Group A', color: '#ff8c42', offset: 0, y: 200, status: 'active', crashTimer: 0 },
+    { id: 1, name: 'Group B', color: '#1d6fb8', offset: 0, y: 270, status: 'active', crashTimer: 0 },
+  ];
+
+  var flying = [];
+  var groupColors = ['#ff8c42','#1d6fb8','#8a4fff','#0d9488','#e63946'];
+
+  function esSetStatus(txt) {
+    var el = document.getElementById('es-status');
+    if (el) el.textContent = txt;
+  }
+
+  function addEvent() {
+    var topics = ['user.login','order.placed','payment.ok','ship.req','cart.add'];
+    var colors = ['#8a4fff','#3fa34d','#1d6fb8','#ff8c42','#0d9488'];
+    var i = eventId % topics.length;
+    log.push({ id: eventId, topic: topics[i], color: colors[i] });
+    eventId++;
+  }
+
+  window.esSend5 = function() {
+    for (var i = 0; i < 5; i++) addEvent();
+    esSetStatus('5 events appended to log. Events STAY in log regardless of consumption.');
+  };
+
+  window.esAddGroup = function() {
+    if (consumerGroups.length >= 4) { esSetStatus('Max 4 consumer groups.'); return; }
+    var yPos = [200, 270, 310, 340];
+    var newGroup = {
+      id: consumerGroups.length,
+      name: 'Group ' + String.fromCharCode(65 + consumerGroups.length),
+      color: groupColors[consumerGroups.length % groupColors.length],
+      offset: 0, // NEW consumer group starts from beginning!
+      y: yPos[consumerGroups.length] || 340,
+      status: 'active', crashTimer: 0
+    };
+    consumerGroups.push(newGroup);
+    esSetStatus('New ' + newGroup.name + ' added — starts at offset 0, replaying ALL history!');
+  };
+
+  window.esCrashConsumer = function() {
+    var active = consumerGroups.find(function(g){ return g.status === 'active'; });
+    if (!active) { esSetStatus('No active consumers to crash.'); return; }
+    var prevOffset = active.offset;
+    active.status = 'crashed';
+    active.crashTimer = 100;
+    // Roll back offset to simulate uncommitted reads
+    active.offset = Math.max(0, active.offset - Math.floor(Math.random() * 2 + 1));
+    esSetStatus(active.name + ' CRASHED! Offset rolled back from ' + prevOffset + ' to ' + active.offset + '. Will resume from last committed offset.');
+  };
+
+  function visibleStart() {
+    return Math.max(0, log.length - LOG_MAX_VISIBLE);
+  }
+
+  function draw() {
+    ctx.clearRect(0, 0, W, H);
+    ctx.fillStyle = '#0d1117';
+    ctx.fillRect(0, 0, W, H);
+
+    // Producer
+    ctx.fillStyle = '#3fa34d'; ctx.strokeStyle = '#4ddf6f'; ctx.lineWidth = 2;
+    ctx.beginPath(); ctx.roundRect(10, 30, 44, 44, 6); ctx.fill(); ctx.stroke();
+    ctx.fillStyle = '#fff'; ctx.font = '700 9px Bangers, cursive'; ctx.textAlign = 'center';
+    ctx.fillText('PROD', 32, 52); ctx.fillText('UCER', 32, 64);
+
+    // Arrow from producer to log
+    ctx.strokeStyle = 'rgba(255,255,255,.15)'; ctx.lineWidth = 2;
+    ctx.beginPath(); ctx.moveTo(56, 52); ctx.lineTo(LOG_X, 52 + LOG_CELL_H / 2); ctx.stroke();
+
+    var vstart = visibleStart();
+    var visibleLog = log.slice(vstart);
+
+    // Log label
+    ctx.fillStyle = '#7d8590'; ctx.font = '700 10px Bangers, cursive'; ctx.textAlign = 'left';
+    ctx.fillText('APPEND-ONLY LOG (topic: events)', LOG_X, LOG_Y - 8);
+
+    // Draw log cells
+    visibleLog.forEach(function(evt, i) {
+      var x = LOG_X + i * LOG_CELL_W;
+      var y = LOG_Y;
+      var isNew = evt.id === log.length - 1;
+
+      ctx.fillStyle = isNew ? evt.color : '#161b22';
+      ctx.strokeStyle = evt.color;
+      ctx.lineWidth = isNew ? 3 : 2;
+      ctx.beginPath(); ctx.roundRect(x, y, LOG_CELL_W - 2, LOG_CELL_H, 4); ctx.fill(); ctx.stroke();
+
+      ctx.fillStyle = isNew ? '#fff' : evt.color;
+      ctx.font = '700 8px Bangers, cursive'; ctx.textAlign = 'center';
+      ctx.fillText(String(vstart + i), x + LOG_CELL_W / 2 - 1, y + 14);
+      ctx.fillStyle = isNew ? '#fff' : '#adbac7';
+      ctx.font = '7px Space Mono, monospace';
+      var shortTopic = evt.topic.split('.')[1] || evt.topic;
+      ctx.fillText(shortTopic, x + LOG_CELL_W / 2 - 1, y + 28);
+    });
+
+    // Ellipsis if log is long
+    if (log.length > LOG_MAX_VISIBLE) {
+      ctx.fillStyle = '#7d8590'; ctx.font = '9px Space Mono, monospace'; ctx.textAlign = 'left';
+      ctx.fillText('(+' + (log.length - LOG_MAX_VISIBLE) + ' older)', LOG_X, LOG_Y + LOG_CELL_H + 12);
+    }
+
+    // Consumer groups
+    consumerGroups.forEach(function(g, gi) {
+      if (g.crashTimer > 0) {
+        g.crashTimer--;
+        if (g.crashTimer <= 0) {
+          g.status = 'active';
+          esSetStatus(g.name + ' restarted, resuming from offset ' + g.offset + '.');
+        }
+      }
+
+      var alpha = g.status === 'crashed' ? 0.4 : 1;
+      ctx.globalAlpha = alpha;
+
+      // Group row
+      var rowY = g.y;
+      ctx.fillStyle = '#161b22'; ctx.strokeStyle = g.color; ctx.lineWidth = 2;
+      ctx.beginPath(); ctx.roundRect(LOG_X, rowY, LOG_MAX_VISIBLE * LOG_CELL_W - 2, 28, 4); ctx.fill(); ctx.stroke();
+
+      ctx.fillStyle = g.color; ctx.font = '700 9px Bangers, cursive'; ctx.textAlign = 'left';
+      ctx.fillText(g.name + (g.status === 'crashed' ? ' [CRASHED - RESTARTING]' : ''), LOG_X + 8, rowY + 12);
+      ctx.fillStyle = '#7d8590'; ctx.font = '8px Space Mono, monospace';
+      ctx.fillText('offset: ' + g.offset + ' / ' + log.length, LOG_X + 8, rowY + 24);
+
+      // Offset pointer arrow on the log
+      var offsetInView = g.offset - vstart;
+      if (offsetInView >= 0 && offsetInView < LOG_MAX_VISIBLE && log.length > 0) {
+        var arrowX = LOG_X + offsetInView * LOG_CELL_W + LOG_CELL_W / 2 - 1;
+        ctx.fillStyle = g.color; ctx.strokeStyle = g.color; ctx.lineWidth = 2;
+        ctx.beginPath();
+        ctx.moveTo(arrowX, LOG_Y + LOG_CELL_H + 4);
+        ctx.lineTo(arrowX, rowY);
+        ctx.stroke();
+        // Arrow tip
+        ctx.beginPath();
+        ctx.moveTo(arrowX, LOG_Y + LOG_CELL_H + 4);
+        ctx.lineTo(arrowX - 5, LOG_Y + LOG_CELL_H + 12);
+        ctx.lineTo(arrowX + 5, LOG_Y + LOG_CELL_H + 12);
+        ctx.closePath(); ctx.fill();
+      }
+
+      ctx.globalAlpha = 1;
+
+      // Auto-advance active consumers
+      if (g.status === 'active' && g.offset < log.length) {
+        if (Math.random() < 0.008) {
+          g.offset++;
+          esSetStatus(g.name + ' consumed offset ' + (g.offset - 1) + '. Log entry STAYS. Offset advanced to ' + g.offset + '.');
+        }
+      }
+    });
+
+    // Stats
+    ctx.fillStyle = '#7d8590'; ctx.font = '9px Space Mono, monospace'; ctx.textAlign = 'left';
+    ctx.fillText('Log size: ' + log.length + ' events | Groups: ' + consumerGroups.length, 10, H - 8);
+  }
+
+  function loop() { draw(); requestAnimationFrame(loop); }
+
+  // Seed initial events
+  for (var i = 0; i < 4; i++) addEvent();
+  consumerGroups[0].offset = 2;
+  consumerGroups[1].offset = 1;
+
+  loop();
+})();
+
+/* ================================================================
+   Lucide icon initialization
+   ================================================================ */
+if (typeof lucide !== 'undefined') {
+  lucide.createIcons();
+}
+</script>
+</body>
+</html>

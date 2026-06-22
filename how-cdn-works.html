@@ -1,0 +1,1695 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>How CDN Works — DevDunia</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bangers&family=Comic+Neue:ital,wght@0,400;0,700;1,400&family=Space+Mono:wght@400;700&display=swap">
+<script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
+<style>
+:root {
+  --ink: #1a1410; --paper: #fdf3e3; --paper2: #fbe9cc;
+  --red: #e63946; --blue: #1d6fb8; --yellow: #ffd23f;
+  --green: #3fa34d; --pink: #ff6b9d; --purple: #8a4fff;
+  --orange: #ff8c42; --teal: #0d9488;
+}
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  font-family: 'Comic Neue', cursive;
+  color: var(--ink);
+  background-color: var(--paper);
+  background-image: radial-gradient(var(--ink) 0.5px, transparent 0.6px);
+  background-size: 14px 14px;
+  background-attachment: fixed;
+  line-height: 1.65;
+}
+.page-wrap { position: relative; z-index: 1; max-width: 1240px; margin: 0 auto; padding: 20px 32px 60px; }
+.panel {
+  border: 4px solid var(--ink); border-radius: 6px;
+  box-shadow: 7px 7px 0 var(--ink);
+  background: var(--paper); padding: 28px 32px; margin-bottom: 32px;
+}
+h2 { font-family: 'Bangers', cursive; font-size: 2.4rem; letter-spacing: 2px; margin-bottom: 16px; line-height: 1; }
+h3 { font-family: 'Bangers', cursive; font-size: 1.6rem; letter-spacing: 1px; margin-bottom: 12px; }
+h4 { font-family: 'Bangers', cursive; font-size: 1.2rem; letter-spacing: 1px; margin-bottom: 8px; }
+p  { margin-bottom: 14px; font-size: 1.05rem; }
+p:last-child { margin-bottom: 0; }
+ul { padding-left: 22px; margin-bottom: 14px; }
+li { margin-bottom: 6px; font-size: 1rem; }
+code { font-family: 'Space Mono', monospace; font-size: .85em; background: var(--paper2); padding: 1px 5px; border-radius: 3px; }
+.section-head { display: flex; align-items: center; gap: 14px; margin-bottom: 22px; flex-wrap: wrap; }
+.section-num {
+  font-family: 'Bangers', cursive; font-size: 1.1rem; letter-spacing: 2px;
+  background: var(--teal); color: #fff; padding: 4px 14px;
+  border-radius: 4px; border: 2px solid var(--ink); box-shadow: 2px 2px 0 var(--ink);
+}
+.chip {
+  display: inline-block; font-family: 'Bangers', cursive; font-size: .85rem;
+  letter-spacing: 1.5px; padding: 3px 12px; border-radius: 4px;
+  border: 2px solid var(--ink); margin-right: 6px; margin-bottom: 6px; vertical-align: middle;
+}
+.chip-green  { background: var(--green);  color: #fff; }
+.chip-red    { background: var(--red);    color: #fff; }
+.chip-blue   { background: var(--blue);   color: #fff; }
+.chip-yellow { background: var(--yellow); color: var(--ink); }
+.chip-orange { background: var(--orange); color: #fff; }
+.chip-teal   { background: var(--teal);   color: #fff; }
+.chip-purple { background: var(--purple); color: #fff; }
+.hbox {
+  border: 3px solid var(--ink); border-radius: 5px; padding: 18px 22px;
+  margin: 16px 0; position: relative;
+}
+.hbox-label {
+  font-family: 'Bangers', cursive; font-size: .9rem; letter-spacing: 2px;
+  position: absolute; top: -14px; left: 16px; padding: 2px 12px;
+  border: 2px solid var(--ink); border-radius: 4px;
+}
+.hbox-orange { background: rgba(255,140,66,.1); border-color: var(--orange); }
+.hbox-orange .hbox-label { background: var(--orange); color: #fff; }
+.hbox-red { background: rgba(230,57,70,.08); border-color: var(--red); }
+.hbox-red .hbox-label { background: var(--red); color: #fff; }
+.hbox-green { background: rgba(63,163,77,.1); border-color: var(--green); }
+.hbox-green .hbox-label { background: var(--green); color: #fff; }
+.hbox-blue { background: rgba(29,111,184,.1); border-color: var(--blue); }
+.hbox-blue .hbox-label { background: var(--blue); color: #fff; }
+.hbox-yellow { background: rgba(255,210,63,.15); border-color: var(--yellow); }
+.hbox-yellow .hbox-label { background: var(--yellow); color: var(--ink); }
+.hbox-teal { background: rgba(13,148,136,.1); border-color: var(--teal); }
+.hbox-teal .hbox-label { background: var(--teal); color: #fff; }
+.hbox-purple { background: rgba(138,79,255,.08); border-color: var(--purple); }
+.hbox-purple .hbox-label { background: var(--purple); color: #fff; }
+.data-table { width: 100%; border-collapse: collapse; margin: 16px 0; font-size: .93rem; }
+.data-table th {
+  font-family: 'Bangers', cursive; font-size: 1rem; letter-spacing: 1px;
+  background: var(--ink); color: #fff; padding: 10px 14px; text-align: left; border: 2px solid var(--ink);
+}
+.data-table td { padding: 10px 14px; border: 2px solid var(--ink); vertical-align: top; }
+.data-table tr:nth-child(odd)  td { background: var(--paper2); }
+.data-table tr:nth-child(even) td { background: var(--paper); }
+.grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin: 16px 0; }
+.grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 16px; margin: 16px 0; }
+@media (max-width: 640px) { .grid-2, .grid-3 { grid-template-columns: 1fr; } }
+.card {
+  border: 3px solid var(--ink); border-radius: 5px;
+  box-shadow: 4px 4px 0 var(--ink); padding: 18px; background: var(--paper);
+}
+.card-head { font-family: 'Bangers', cursive; font-size: 1.1rem; letter-spacing: 1px; margin-bottom: 10px; padding-bottom: 8px; border-bottom: 2px solid var(--ink); }
+.step-flow { display: flex; flex-direction: column; gap: 0; }
+.step-item { display: grid; grid-template-columns: 52px 1fr; gap: 0 18px; position: relative; }
+.step-item:not(:last-child)::after { content: ''; position: absolute; left: 25px; top: 52px; bottom: -16px; width: 2px; background: var(--ink); }
+.step-num {
+  width: 52px; height: 52px; border-radius: 50%;
+  border: 3px solid var(--ink); display: flex; align-items: center; justify-content: center;
+  font-family: 'Bangers', cursive; font-size: 1.3rem;
+  box-shadow: 3px 3px 0 var(--ink); flex-shrink: 0; position: relative; z-index: 1;
+}
+.step-body { padding: 8px 0 28px; }
+.sfx-row { display: flex; gap: 16px; flex-wrap: wrap; margin: 20px 0; }
+.sfx {
+  font-family: 'Bangers', cursive; font-size: 1.8rem; letter-spacing: 3px;
+  color: var(--ink); text-shadow: 3px 3px 0 var(--yellow); transform: rotate(-2deg); display: inline-block;
+}
+.sfx:nth-child(even) { transform: rotate(2deg); text-shadow: 3px 3px 0 var(--orange); }
+.chapter-divider { text-align: center; margin: 40px 0 28px; position: relative; }
+.chapter-divider::before { content: ''; position: absolute; top: 50%; left: 0; right: 0; height: 3px; background: var(--ink); }
+.chapter-divider span { position: relative; background: var(--paper); font-family: 'Bangers', cursive; font-size: 1rem; letter-spacing: 3px; padding: 0 16px; }
+
+/* Lucide icon sizing */
+.lc { width: 20px; height: 20px; vertical-align: middle; stroke-width: 2; display: inline-block; }
+.lc-lg { width: 28px; height: 28px; vertical-align: middle; stroke-width: 2; display: inline-block; }
+.lc-xl { width: 36px; height: 36px; vertical-align: middle; stroke-width: 1.75; display: inline-block; }
+
+/* ── CDN SIMULATOR ─────────────────────── */
+.cdn-sim-wrap {
+  background: #0d1117; border: 4px solid var(--ink); border-radius: 8px;
+  box-shadow: 7px 7px 0 var(--ink); overflow: hidden; margin: 24px 0;
+}
+.cdn-sim-bar {
+  background: #161b22; border-bottom: 2px solid #30363d; padding: 10px 16px;
+  font-family: 'Bangers', cursive; font-size: 1rem; letter-spacing: 2px;
+  color: #e6edf3; display: flex; align-items: center; gap: 12px; flex-wrap: wrap;
+}
+.cdn-sim-body { padding: 20px; display: grid; grid-template-columns: 1fr 280px; gap: 20px; }
+@media (max-width: 800px) { .cdn-sim-body { grid-template-columns: 1fr; } }
+#cdn-canvas { display: block; border: 2px solid #30363d; border-radius: 4px; width: 100%; }
+.cdn-side-panel { display: flex; flex-direction: column; gap: 10px; }
+.cdn-info-box {
+  background: #161b22; border: 2px solid #30363d; border-radius: 6px;
+  padding: 12px; font-family: 'Space Mono', monospace; font-size: .85rem; color: #adbac7; line-height: 1.7;
+}
+.cdn-info-box .label { font-family: 'Bangers', cursive; font-size: .95rem; letter-spacing: 2px; color: #7d8590; display: block; margin-bottom: 4px; }
+.cdn-info-box .value { color: #7ee787; font-size: .9rem; }
+.cdn-info-box .value.miss { color: #ff7b72; }
+.cdn-info-box .value.hit  { color: #7ee787; }
+.cdn-btn {
+  font-family: 'Bangers', cursive; font-size: 1rem; letter-spacing: 1.5px;
+  padding: 10px 14px; border: 2px solid #30363d; border-radius: 5px;
+  background: #161b22; color: #e6edf3; cursor: pointer; transition: background .15s; width: 100%;
+}
+.cdn-btn:hover { background: #21262d; border-color: #8b949e; }
+.cdn-btn.miss-btn { border-color: #ff7b72; color: #ff7b72; }
+.cdn-btn.hit-btn  { border-color: #7ee787; color: #7ee787; }
+.cdn-latency-bar {
+  background: #161b22; border: 2px solid #30363d; border-radius: 6px;
+  padding: 12px; display: flex; flex-direction: column; gap: 6px;
+}
+.cdn-latency-bar .lat-label { font-family: 'Bangers', cursive; font-size: .85rem; letter-spacing: 2px; color: #7d8590; }
+.cdn-latency-num { font-family: 'Bangers', cursive; font-size: 2.2rem; letter-spacing: 1px; }
+.cdn-latency-track { height: 8px; background: #21262d; border-radius: 4px; overflow: hidden; margin-top: 4px; }
+.cdn-latency-fill { height: 100%; border-radius: 4px; transition: width .6s ease; }
+
+/* ── CACHE FLOW ANIMATION ──────────────── */
+.cache-flow-wrap {
+  display: grid; grid-template-columns: 1fr 1fr; gap: 0;
+  border: 3px solid var(--ink); border-radius: 8px; overflow: hidden;
+  box-shadow: 6px 6px 0 var(--ink); margin: 20px 0;
+}
+@media (max-width: 640px) { .cache-flow-wrap { grid-template-columns: 1fr; } }
+.cache-flow-col {
+  padding: 20px; position: relative;
+}
+.cache-flow-col:first-child { border-right: 3px solid var(--ink); background: rgba(230,57,70,.05); }
+.cache-flow-col:last-child  { background: rgba(63,163,77,.05); }
+.cache-flow-title {
+  font-family: 'Bangers', cursive; font-size: 1.1rem; letter-spacing: 2px;
+  text-align: center; padding: 8px 16px; border-radius: 4px; margin-bottom: 16px;
+  border: 2px solid var(--ink); box-shadow: 2px 2px 0 var(--ink);
+}
+.flow-step {
+  display: flex; align-items: center; gap: 10px; margin-bottom: 4px;
+  padding: 8px 12px; border-radius: 5px; border: 2px solid transparent;
+  font-family: 'Space Mono', monospace; font-size: .82rem; transition: all .3s;
+}
+.flow-step.active { border-color: var(--yellow); background: rgba(255,210,63,.15); transform: translateX(3px); }
+.flow-step .step-icon { flex-shrink: 0; }
+.flow-connector {
+  width: 2px; height: 18px; margin: 0 auto 0 22px;
+  border-left: 2px dashed rgba(0,0,0,0.2);
+}
+.flow-latency-badge {
+  font-family: 'Bangers', cursive; font-size: 1.4rem; letter-spacing: 1px;
+  text-align: center; padding: 8px; margin-top: 14px; border-radius: 5px;
+  border: 2px solid var(--ink); box-shadow: 2px 2px 0 var(--ink);
+}
+
+/* ── HEADER ANATOMY ────────────────────── */
+.header-anatomy {
+  background: #0d1117; border: 3px solid var(--ink); border-radius: 8px;
+  overflow: hidden; box-shadow: 6px 6px 0 var(--ink); margin: 20px 0;
+}
+.header-anatomy-bar {
+  background: #161b22; border-bottom: 2px solid #30363d; padding: 10px 18px;
+  font-family: 'Bangers', cursive; font-size: 1rem; letter-spacing: 2px; color: #e6edf3;
+  display: flex; align-items: center; gap: 10px;
+}
+.header-anatomy-raw {
+  padding: 18px 22px; font-family: 'Space Mono', monospace; font-size: .9rem; color: #e6edf3;
+  border-bottom: 2px solid #21262d; background: #0d1117; line-height: 1.5;
+  overflow-x: auto; white-space: nowrap;
+}
+.ha-public  { color: #79c0ff; }
+.ha-maxage  { color: #7ee787; }
+.ha-smaxage { color: #ffa657; }
+.ha-swr     { color: #d2a8ff; }
+.ha-colon   { color: #8b949e; }
+.header-directives {
+  display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 0; border-top: 2px solid #21262d;
+}
+.directive-card {
+  padding: 16px; border-right: 2px solid #21262d; border-bottom: 2px solid #21262d;
+}
+.directive-card:last-child { border-right: none; }
+.directive-name { font-family: 'Space Mono', monospace; font-size: .82rem; font-weight: bold; margin-bottom: 6px; padding: 3px 8px; border-radius: 3px; display: inline-block; }
+.directive-desc { font-family: 'Comic Neue', cursive; font-size: .88rem; color: #adbac7; line-height: 1.6; }
+.directive-example { font-family: 'Space Mono', monospace; font-size: .75rem; color: #6e7681; margin-top: 6px; }
+
+/* ── ANYCAST INFOGRAPHIC ───────────────── */
+.anycast-wrap {
+  display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px; margin: 20px 0;
+}
+@media (max-width: 640px) { .anycast-wrap { grid-template-columns: 1fr; } }
+.anycast-node {
+  border: 3px solid var(--ink); border-radius: 8px; padding: 16px;
+  box-shadow: 4px 4px 0 var(--ink); position: relative; text-align: center;
+}
+.anycast-ip {
+  font-family: 'Space Mono', monospace; font-size: 1rem; font-weight: bold;
+  background: var(--teal); color: #fff; padding: 4px 12px; border-radius: 4px;
+  border: 2px solid var(--ink); display: inline-block; margin-bottom: 10px; letter-spacing: 1px;
+}
+.anycast-location {
+  font-family: 'Bangers', cursive; font-size: 1.2rem; letter-spacing: 2px; margin-bottom: 6px;
+}
+.anycast-user-badge {
+  display: inline-flex; align-items: center; gap: 6px;
+  background: var(--yellow); border: 2px solid var(--ink); border-radius: 4px;
+  padding: 4px 10px; font-family: 'Bangers', cursive; font-size: .85rem; letter-spacing: 1px;
+  margin-top: 8px; box-shadow: 2px 2px 0 var(--ink);
+}
+
+/* ── INVALIDATION STRATEGY CARDS ──────── */
+.inval-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin: 20px 0; }
+@media (max-width: 700px) { .inval-grid { grid-template-columns: 1fr; } }
+.inval-card {
+  border: 3px solid var(--ink); border-radius: 8px; overflow: hidden;
+  box-shadow: 5px 5px 0 var(--ink);
+}
+.inval-card-head {
+  padding: 12px 16px; font-family: 'Bangers', cursive; font-size: 1.1rem;
+  letter-spacing: 2px; border-bottom: 3px solid var(--ink);
+  display: flex; align-items: center; gap: 10px; color: #fff;
+}
+.inval-card-body { padding: 14px 16px; background: var(--paper); font-size: .9rem; }
+.inval-card-body ul { padding-left: 18px; margin-bottom: 8px; }
+.inval-card-body li { margin-bottom: 5px; font-size: .88rem; }
+
+/* ── EDGE COMPUTE COMPARISON ───────────── */
+.edge-compare { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin: 20px 0; }
+@media (max-width: 640px) { .edge-compare { grid-template-columns: 1fr; } }
+.edge-path {
+  border: 3px solid var(--ink); border-radius: 8px; overflow: hidden; box-shadow: 4px 4px 0 var(--ink);
+}
+.edge-path-head {
+  padding: 10px 16px; font-family: 'Bangers', cursive; font-size: 1rem;
+  letter-spacing: 2px; border-bottom: 3px solid var(--ink); color: #fff;
+  display: flex; align-items: center; gap: 10px;
+}
+.edge-path-body { padding: 14px; background: var(--paper); }
+.edge-hop {
+  display: flex; align-items: center; gap: 8px; padding: 7px 10px;
+  border: 2px solid var(--ink); border-radius: 5px; margin-bottom: 6px;
+  font-family: 'Space Mono', monospace; font-size: .8rem; background: var(--paper2);
+}
+.edge-hop-time { margin-left: auto; font-family: 'Bangers', cursive; font-size: .95rem; letter-spacing: 1px; }
+.edge-svg-connector {
+  text-align: center; margin: 4px 0; color: var(--ink);
+}
+.edge-total {
+  text-align: center; font-family: 'Bangers', cursive; font-size: 1.5rem;
+  letter-spacing: 1px; margin-top: 10px; padding: 8px;
+  border-radius: 5px; border: 2px solid var(--ink);
+}
+
+/* ── WORLD MAP CANVAS WRAP ─────────────── */
+.world-map-wrap {
+  background: #0d1117; border: 4px solid var(--ink); border-radius: 8px;
+  overflow: hidden; box-shadow: 7px 7px 0 var(--ink); margin: 20px 0;
+}
+.world-map-bar {
+  background: #161b22; border-bottom: 2px solid #30363d; padding: 10px 16px;
+  font-family: 'Bangers', cursive; font-size: 1rem; letter-spacing: 2px;
+  color: #e6edf3; display: flex; align-items: center; gap: 12px; flex-wrap: wrap;
+}
+#world-arch-canvas { display: block; width: 100%; border-bottom: 2px solid #30363d; }
+.world-map-legend {
+  padding: 14px 18px; display: flex; flex-wrap: wrap; gap: 20px;
+  font-family: 'Space Mono', monospace; font-size: .82rem; color: #adbac7;
+}
+.legend-item { display: flex; align-items: center; gap: 8px; }
+.legend-dot { width: 12px; height: 12px; border-radius: 50%; flex-shrink: 0; border: 2px solid rgba(255,255,255,0.3); }
+</style>
+</head>
+<body>
+<div data-masthead></div>
+<div class="page-wrap">
+
+<div data-tool-hero
+  data-title="How CDN Works"
+  data-chapter="HOW-10"
+  data-category="How X Works"
+  data-icon="🌐"
+  data-desc="Edge nodes, PoPs, anycast routing, cache-control headers — how a CDN turns a 150ms request into an 8ms one by moving data to where users actually are."
+  data-color="teal"
+  data-badges="CDN,CACHING,EDGE COMPUTE,SYSTEM DESIGN"
+  data-badge-colors="teal,blue,purple,yellow">
+</div>
+
+<!-- ───────────────────────────────────────
+     SECTION 01: The Latency Problem
+─────────────────────────────────────────── -->
+<div class="panel">
+  <div class="section-head">
+    <span class="section-num">01</span>
+    <h2>The Latency Problem: Physics Is Not Optional</h2>
+  </div>
+
+  <p>Before CDNs existed, a single server somewhere in a data center served all users worldwide. That sounds fine — until you realize that <strong>the speed of light in fiber optic cable is roughly 200,000 km/s</strong>, which is about two-thirds the speed of light in a vacuum. And that limit is not a software problem you can optimize away. It is physics.</p>
+
+  <div class="hbox hbox-red"><div class="hbox-label">THE PHYSICS CONSTRAINT</div>
+    <div style="margin-top:14px;display:grid;grid-template-columns:1fr 1fr;gap:20px;">
+      <div>
+        <h4 style="color:var(--red);">Light in fiber: ~200,000 km/s</h4>
+        <ul>
+          <li>Mumbai to New York = ~12,000 km of cable</li>
+          <li>One-way trip = ~60ms of pure propagation</li>
+          <li>TCP requires a round-trip to establish: <strong>+120ms before the first byte</strong></li>
+          <li>TLS handshake adds 1–2 more round-trips: <strong>+240–360ms</strong></li>
+        </ul>
+      </div>
+      <div>
+        <h4 style="color:var(--red);">One page load = many round trips</h4>
+        <ul>
+          <li>HTML fetch: 1 RTT</li>
+          <li>CSS files: 2–5 RTTs</li>
+          <li>JS bundles: 5–15 RTTs</li>
+          <li>Images, fonts, API calls: 10–30 RTTs</li>
+          <li>Total: <strong>10–50 RTTs × 120ms = 1.2–6 seconds</strong> from physics alone</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <p>The painful truth: a user in New York loading a page from a Mumbai server <em>will</em> wait over a second purely because of the speed of light — no amount of code optimization fixes this. The only solution is <strong>to move the data closer to the user</strong>. That's a CDN.</p>
+
+  <!-- Latency world infographic SVG -->
+  <div style="border:3px solid var(--ink);border-radius:8px;overflow:hidden;box-shadow:6px 6px 0 var(--ink);margin:20px 0;background:#0d1117;">
+    <div style="background:#161b22;border-bottom:2px solid #30363d;padding:10px 18px;font-family:'Bangers',cursive;font-size:1rem;letter-spacing:2px;color:#e6edf3;display:flex;align-items:center;gap:10px;">
+      <i data-lucide="globe" class="lc" style="stroke:var(--teal)"></i>
+      SINGLE ORIGIN SERVER — The Painful Round-Trip Reality
+    </div>
+    <svg viewBox="0 0 700 300" xmlns="http://www.w3.org/2000/svg" style="display:block;width:100%;background:#0d1117;">
+      <!-- Subtle continents -->
+      <!-- North America blob -->
+      <path d="M100,80 Q90,70 110,60 Q145,45 165,60 Q180,72 170,100 Q160,125 140,135 Q115,140 100,120 Z" fill="#1a2a1a" stroke="#2a3a2a" stroke-width="1"/>
+      <!-- South America blob -->
+      <path d="M150,160 Q140,150 158,148 Q175,148 180,165 Q182,190 170,210 Q155,225 145,205 Q135,185 150,160 Z" fill="#1a2a1a" stroke="#2a3a2a" stroke-width="1"/>
+      <!-- Europe blob -->
+      <path d="M310,55 Q320,45 340,48 Q355,50 355,68 Q355,85 340,90 Q320,90 310,78 Z" fill="#1a2a1a" stroke="#2a3a2a" stroke-width="1"/>
+      <!-- Africa blob -->
+      <path d="M320,100 Q330,90 348,92 Q365,95 368,120 Q370,155 355,175 Q340,185 325,175 Q308,160 310,130 Q310,110 320,100 Z" fill="#1a2a1a" stroke="#2a3a2a" stroke-width="1"/>
+      <!-- Asia / India region -->
+      <path d="M440,60 Q460,45 500,48 Q540,50 560,70 Q570,90 555,110 Q535,125 510,120 Q475,118 455,100 Q435,85 440,60 Z" fill="#1a2a1a" stroke="#2a3a2a" stroke-width="1"/>
+      <path d="M490,120 Q500,115 510,122 Q515,135 505,148 Q495,155 486,145 Q480,133 490,120 Z" fill="#1a2a1a" stroke="#2a3a2a" stroke-width="1"/>
+      <!-- Australia blob -->
+      <path d="M555,195 Q570,185 590,190 Q610,196 610,218 Q608,238 588,242 Q568,242 558,225 Q550,208 555,195 Z" fill="#1a2a1a" stroke="#2a3a2a" stroke-width="1"/>
+      <!-- Japan region -->
+      <path d="M600,75 Q606,70 614,74 Q618,82 612,88 Q605,90 600,83 Z" fill="#1a2a1a" stroke="#2a3a2a" stroke-width="1"/>
+
+      <!-- Origin server in India -->
+      <g id="origin-server">
+        <circle cx="497" cy="135" r="18" fill="#e63946" stroke="#fff" stroke-width="2"/>
+        <text x="497" y="139" text-anchor="middle" font-family="Bangers,cursive" font-size="9" fill="#fff" letter-spacing="0.5">ORIGIN</text>
+        <text x="497" y="162" text-anchor="middle" font-family="Space Mono,monospace" font-size="9" fill="#ff7b72">Mumbai</text>
+      </g>
+
+      <!-- User in New York -->
+      <circle cx="128" cy="95" r="10" fill="#1d6fb8" stroke="#79c0ff" stroke-width="2"/>
+      <text x="128" y="116" text-anchor="middle" font-family="Space Mono,monospace" font-size="9" fill="#79c0ff">New York</text>
+
+      <!-- User in London -->
+      <circle cx="328" cy="65" r="10" fill="#8a4fff" stroke="#d2a8ff" stroke-width="2"/>
+      <text x="328" y="86" text-anchor="middle" font-family="Space Mono,monospace" font-size="9" fill="#d2a8ff">London</text>
+
+      <!-- User in Tokyo -->
+      <circle cx="608" cy="78" r="10" fill="#ff8c42" stroke="#ffa657" stroke-width="2"/>
+      <text x="608" y="99" text-anchor="middle" font-family="Space Mono,monospace" font-size="9" fill="#ffa657">Tokyo</text>
+
+      <!-- Animated paths: New York to Mumbai -->
+      <path d="M138,95 Q300,30 487,135" fill="none" stroke="#1d6fb8" stroke-width="1.5" stroke-dasharray="6,4" opacity="0.6">
+        <animate attributeName="stroke-dashoffset" from="0" to="-60" dur="2s" repeatCount="indefinite"/>
+      </path>
+      <!-- RTT label NY -->
+      <text x="285" y="44" text-anchor="middle" font-family="Bangers,cursive" font-size="12" fill="#1d6fb8">~240ms RTT</text>
+
+      <!-- Animated path: London to Mumbai -->
+      <path d="M338,70 Q420,50 487,130" fill="none" stroke="#8a4fff" stroke-width="1.5" stroke-dasharray="6,4" opacity="0.6">
+        <animate attributeName="stroke-dashoffset" from="0" to="-40" dur="1.4s" repeatCount="indefinite"/>
+      </path>
+      <text x="415" y="45" text-anchor="middle" font-family="Bangers,cursive" font-size="12" fill="#8a4fff">~140ms RTT</text>
+
+      <!-- Animated path: Tokyo to Mumbai -->
+      <path d="M598,83 Q570,100 507,135" fill="none" stroke="#ff8c42" stroke-width="1.5" stroke-dasharray="6,4" opacity="0.6">
+        <animate attributeName="stroke-dashoffset" from="0" to="-40" dur="1.1s" repeatCount="indefinite"/>
+      </path>
+      <text x="570" y="127" text-anchor="middle" font-family="Bangers,cursive" font-size="12" fill="#ff8c42">~110ms RTT</text>
+
+      <!-- Legend -->
+      <text x="20" y="270" font-family="Space Mono,monospace" font-size="9" fill="#6e7681">Every dashed line = a painful round-trip. Without CDN, every user waits the full distance.</text>
+    </svg>
+    <div style="background:#161b22;padding:10px 18px;font-family:'Space Mono',monospace;font-size:.78rem;color:#7d8590;border-top:2px solid #30363d;">
+      These are propagation delays only — does not include queueing, TLS handshakes, or server processing time.
+    </div>
+  </div>
+
+  <div class="sfx-row">
+    <span class="sfx">PHYSICS WINS</span>
+    <span class="sfx">MOVE THE DATA</span>
+  </div>
+</div>
+
+<!-- ───────────────────────────────────────
+     SECTION 02: CDN Architecture
+─────────────────────────────────────────── -->
+<div class="panel">
+  <div class="section-head">
+    <span class="section-num">02</span>
+    <h2>CDN Architecture: Origin, Backbone, and Edge</h2>
+  </div>
+
+  <p>A CDN is a three-layer system. Your origin server holds the <em>truth</em>. The CDN backbone is a private high-speed fiber network connecting data centers around the world. Edge nodes — also called <strong>PoPs (Points of Presence)</strong> — are the CDN's outposts in hundreds of cities. Users connect to the nearest PoP, not to your origin.</p>
+
+  <div class="grid-3" style="margin:24px 0;">
+    <div class="card" style="border-color:var(--orange);box-shadow:4px 4px 0 var(--orange);">
+      <div class="card-head" style="color:var(--orange);border-color:var(--orange);">
+        <i data-lucide="server" class="lc" style="stroke:var(--orange)"></i> Origin Server
+      </div>
+      <ul>
+        <li>Your actual application</li>
+        <li>Holds the canonical data</li>
+        <li>Only CDN edge nodes talk to it (ideally)</li>
+        <li>Can be a single server or a cluster</li>
+        <li>Protected from direct user traffic</li>
+      </ul>
+    </div>
+    <div class="card" style="border-color:var(--blue);box-shadow:4px 4px 0 var(--blue);">
+      <div class="card-head" style="color:var(--blue);border-color:var(--blue);">
+        <i data-lucide="network" class="lc" style="stroke:var(--blue)"></i> CDN Backbone
+      </div>
+      <ul>
+        <li>Private fiber between CDN data centers</li>
+        <li>Bypasses the public internet's congestion</li>
+        <li>Lower latency than BGP-routed internet</li>
+        <li>Handles inter-PoP traffic and origin fetches</li>
+        <li>Typically owned by the CDN provider</li>
+      </ul>
+    </div>
+    <div class="card" style="border-color:var(--teal);box-shadow:4px 4px 0 var(--teal);">
+      <div class="card-head" style="color:var(--teal);border-color:var(--teal);">
+        <i data-lucide="map-pin" class="lc" style="stroke:var(--teal)"></i> Edge PoP
+      </div>
+      <ul>
+        <li>CDN data center in a city</li>
+        <li>Caches content locally</li>
+        <li>Serves users with sub-10ms latency</li>
+        <li>Cloudflare: 300+ PoPs globally</li>
+        <li>Akamai: 4,200+ PoPs globally</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- World map canvas with PoPs -->
+  <div class="world-map-wrap">
+    <div class="world-map-bar">
+      <i data-lucide="globe" class="lc" style="stroke:var(--teal)"></i>
+      CDN ARCHITECTURE — Origin + Edge PoPs Worldwide
+      <span style="margin-left:auto;font-family:'Space Mono',monospace;font-size:.75rem;color:#7d8590;">hover over a PoP to see its region</span>
+    </div>
+    <canvas id="world-arch-canvas" width="700" height="280"></canvas>
+    <div class="world-map-legend">
+      <div class="legend-item"><div class="legend-dot" style="background:var(--orange);"></div><span>Origin Server (India)</span></div>
+      <div class="legend-item"><div class="legend-dot" style="background:var(--teal);"></div><span>Edge PoP nodes</span></div>
+      <div class="legend-item"><div class="legend-dot" style="background:#30363d;"></div><span>CDN backbone connections</span></div>
+    </div>
+  </div>
+
+  <div class="hbox hbox-teal"><div class="hbox-label">HOW A PoP IS STRUCTURED INSIDE</div>
+    <p style="margin-top:12px;">Each PoP is a small data center with: <strong>reverse proxy servers</strong> (Nginx/Varnish/custom) that handle TLS termination and cache lookups; <strong>solid-state disk storage</strong> for the local cache (typically terabytes); and <strong>BGP routers</strong> that advertise the CDN's anycast IP addresses. A large PoP might have dozens of servers behind a local load balancer.</p>
+  </div>
+</div>
+
+<!-- ───────────────────────────────────────
+     SECTION 03: Cache Miss vs Cache Hit
+─────────────────────────────────────────── -->
+<div class="panel">
+  <div class="section-head">
+    <span class="section-num">03</span>
+    <h2>Cache Miss vs Cache Hit: The Key Concept</h2>
+  </div>
+
+  <p>This is the mechanism that makes CDNs work. The <em>first</em> request for a resource has to go all the way to origin — that's a <strong>cache miss</strong>. Every <em>subsequent</em> request for the same resource is served from the PoP's local cache — that's a <strong>cache hit</strong>. The latency difference is staggering.</p>
+
+  <div class="cache-flow-wrap">
+    <!-- Cache Miss Column -->
+    <div class="cache-flow-col">
+      <div class="cache-flow-title" style="background:var(--red);color:#fff;">
+        <i data-lucide="x-circle" class="lc" style="stroke:#fff"></i> FIRST REQUEST (CACHE MISS)
+      </div>
+      <div class="flow-step" id="miss-1">
+        <span class="step-icon"><i data-lucide="user" class="lc" style="stroke:var(--blue)"></i></span>
+        <span>User in New York requests <code>/hero.jpg</code></span>
+      </div>
+      <div class="flow-connector" style="border-color:rgba(230,57,70,0.4);"></div>
+      <div class="flow-step" id="miss-2">
+        <span class="step-icon"><i data-lucide="map-pin" class="lc" style="stroke:var(--teal)"></i></span>
+        <span>Hits NYC PoP — <strong style="color:var(--red);">MISS</strong> — not in cache</span>
+      </div>
+      <div class="flow-connector" style="border-color:rgba(230,57,70,0.4);"></div>
+      <div class="flow-step" id="miss-3">
+        <span class="step-icon"><i data-lucide="server" class="lc" style="stroke:var(--orange)"></i></span>
+        <span>PoP fetches from origin (Mumbai): +120ms</span>
+      </div>
+      <div class="flow-connector" style="border-color:rgba(230,57,70,0.4);"></div>
+      <div class="flow-step" id="miss-4">
+        <span class="step-icon"><i data-lucide="save" class="lc" style="stroke:var(--purple)"></i></span>
+        <span>PoP stores response in local cache</span>
+      </div>
+      <div class="flow-connector" style="border-color:rgba(230,57,70,0.4);"></div>
+      <div class="flow-step" id="miss-5">
+        <span class="step-icon"><i data-lucide="user" class="lc" style="stroke:var(--green)"></i></span>
+        <span>Response returned to user — headers include <code>X-Cache: MISS</code></span>
+      </div>
+      <div class="flow-latency-badge" style="background:rgba(230,57,70,.1);border-color:var(--red);">
+        <span style="color:var(--red);">~150ms</span>
+        <span style="font-size:.85rem;font-family:'Space Mono',monospace;"> total latency</span>
+      </div>
+    </div>
+
+    <!-- Cache Hit Column -->
+    <div class="cache-flow-col">
+      <div class="cache-flow-title" style="background:var(--green);color:#fff;">
+        <i data-lucide="check-circle" class="lc" style="stroke:#fff"></i> SAME REQUEST AGAIN (CACHE HIT)
+      </div>
+      <div class="flow-step" id="hit-1">
+        <span class="step-icon"><i data-lucide="user" class="lc" style="stroke:var(--blue)"></i></span>
+        <span>Same user (or different user) requests <code>/hero.jpg</code></span>
+      </div>
+      <div class="flow-connector" style="border-color:rgba(63,163,77,0.4);"></div>
+      <div class="flow-step" id="hit-2">
+        <span class="step-icon"><i data-lucide="zap" class="lc" style="stroke:var(--yellow)"></i></span>
+        <span>NYC PoP — <strong style="color:var(--green);">HIT</strong> — served directly from SSD</span>
+      </div>
+      <div class="flow-connector" style="border-color:rgba(63,163,77,0.4);"></div>
+      <div class="flow-step" id="hit-3">
+        <span class="step-icon"><i data-lucide="user" class="lc" style="stroke:var(--green)"></i></span>
+        <span>Response returned — headers include <code>X-Cache: HIT</code></span>
+      </div>
+      <div style="height:18px;"></div>
+      <div style="height:18px;"></div>
+      <div style="height:18px;"></div>
+      <div class="flow-latency-badge" style="background:rgba(63,163,77,.1);border-color:var(--green);">
+        <span style="color:var(--green);">~8ms</span>
+        <span style="font-size:.85rem;font-family:'Space Mono',monospace;"> total latency</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="hbox hbox-yellow" style="margin-top:20px;"><div class="hbox-label">THE 18x DIFFERENCE</div>
+    <p style="margin-top:12px;">Cache miss: ~150ms. Cache hit: ~8ms. That's an <strong>18× speedup</strong> — and the math only gets better for users further from the origin. A Tokyo user hitting a Mumbai origin sees ~200ms; the same Tokyo user hitting a Tokyo PoP sees ~3ms. The CDN moves the disk read to 3ms away instead of 200ms away.</p>
+  </div>
+
+  <p>The fraction of requests served from cache is called the <strong>cache hit ratio</strong>. A good CDN config achieves 85–99% cache hit ratio. The remaining 1–15% are cache misses — new content, dynamically personalized pages, or cache expirations.</p>
+</div>
+
+<!-- ───────────────────────────────────────
+     SECTION 04: Cache-Control Headers
+─────────────────────────────────────────── -->
+<div class="panel">
+  <div class="section-head">
+    <span class="section-num">04</span>
+    <h2>Cache-Control Headers: What Gets Cached and For How Long</h2>
+  </div>
+
+  <p>CDNs respect HTTP cache headers that your origin server sends back. The most important is <code>Cache-Control</code>. This single header tells browsers, proxies, and CDN edges exactly how long to cache a response, under what conditions, and whether it can be shared across users.</p>
+
+  <div class="header-anatomy">
+    <div class="header-anatomy-bar">
+      <span class="tbar-dot" style="width:12px;height:12px;border-radius:50%;background:#ff5f56;display:inline-block;"></span>
+      <span class="tbar-dot" style="width:12px;height:12px;border-radius:50%;background:#ffbd2e;display:inline-block;margin-left:4px;"></span>
+      <span class="tbar-dot" style="width:12px;height:12px;border-radius:50%;background:#27c93f;display:inline-block;margin-left:4px;"></span>
+      <i data-lucide="file-code" class="lc" style="stroke:var(--teal);margin-left:12px;"></i>
+      RESPONSE HEADER ANATOMY
+    </div>
+    <div class="header-anatomy-raw">
+      <span style="color:#8b949e;">Cache-Control</span><span class="ha-colon">: </span><span class="ha-public">public</span><span style="color:#8b949e;">, </span><span class="ha-maxage">max-age=86400</span><span style="color:#8b949e;">, </span><span class="ha-smaxage">s-maxage=604800</span><span style="color:#8b949e;">, </span><span class="ha-swr">stale-while-revalidate=3600</span>
+    </div>
+    <div class="header-directives">
+      <div class="directive-card">
+        <div class="directive-name" style="background:rgba(121,192,255,.15);color:#79c0ff;">public</div>
+        <div class="directive-desc">Response can be stored by <em>any</em> cache — browser, CDN edge, proxy. Without this, the CDN won't cache it.</div>
+        <div class="directive-example">Opposite: <code>private</code> (browser only, no CDN)</div>
+      </div>
+      <div class="directive-card">
+        <div class="directive-name" style="background:rgba(126,231,135,.15);color:#7ee787;">max-age=86400</div>
+        <div class="directive-desc">Browser caches for 86,400 seconds (1 day). After this, browser re-validates with the CDN or origin.</div>
+        <div class="directive-example">86400 = 1 day · 604800 = 1 week · 31536000 = 1 year</div>
+      </div>
+      <div class="directive-card">
+        <div class="directive-name" style="background:rgba(255,166,87,.15);color:#ffa657;">s-maxage=604800</div>
+        <div class="directive-desc">Overrides <code>max-age</code> for <em>shared caches</em> (CDN edges). CDN keeps it for 7 days even if browser TTL is 1 day.</div>
+        <div class="directive-example">"s-" = shared. Only CDN nodes respect this, not browsers.</div>
+      </div>
+      <div class="directive-card">
+        <div class="directive-name" style="background:rgba(210,168,255,.15);color:#d2a8ff;">stale-while-revalidate=3600</div>
+        <div class="directive-desc">Serve stale content for up to 1 hour while fetching a fresh copy from origin in the background. Zero added latency on revalidation.</div>
+        <div class="directive-example">Key for avoiding cache stampede on popular content.</div>
+      </div>
+    </div>
+  </div>
+
+  <h3>ETags and Conditional Requests</h3>
+  <p>When a cached response expires, the CDN doesn't always need to re-download the full file. If the origin sent an <code>ETag</code> header (a hash of the file content), the CDN can send a conditional request:</p>
+
+  <div class="hbox hbox-blue" style="margin-top:8px;"><div class="hbox-label">CONDITIONAL REQUEST FLOW</div>
+    <div style="margin-top:14px;font-family:'Space Mono',monospace;font-size:.88rem;line-height:2;background:#0d1117;padding:14px 18px;border-radius:6px;color:#e6edf3;">
+      <span style="color:#d2a8ff;"># CDN asks: "Is this still fresh?"</span><br>
+      <span style="color:#79c0ff;">GET</span> /logo.png <span style="color:#ffd23f;">HTTP/1.1</span><br>
+      <span style="color:#7ee787;">If-None-Match</span>: <span style="color:#ffa657;">"abc123def456"</span><br><br>
+      <span style="color:#d2a8ff;"># Origin says: "Yep, still the same" (tiny response, no body)</span><br>
+      <span style="color:#ffd23f;">HTTP/1.1 304 Not Modified</span><br>
+      <span style="color:#7ee787;">ETag</span>: <span style="color:#ffa657;">"abc123def456"</span><br><br>
+      <span style="color:#d2a8ff;"># CDN extends its cache TTL. No bandwidth wasted re-downloading the file.</span>
+    </div>
+  </div>
+
+  <div class="grid-2" style="margin-top:20px;">
+    <div class="card">
+      <div class="card-head"><i data-lucide="check-circle" class="lc" style="stroke:var(--green)"></i> What CDNs Cache</div>
+      <ul>
+        <li>Static assets with <code>public</code> directive</li>
+        <li>Images, JS, CSS, fonts, videos</li>
+        <li>HTML pages with explicit Cache-Control</li>
+        <li>API responses marked as public</li>
+        <li>Any response with <code>s-maxage &gt; 0</code></li>
+      </ul>
+    </div>
+    <div class="card">
+      <div class="card-head"><i data-lucide="x-circle" class="lc" style="stroke:var(--red)"></i> What CDNs Skip</div>
+      <ul>
+        <li>Responses with <code>private</code> directive</li>
+        <li>Responses with <code>no-store</code></li>
+        <li>Set-Cookie responses (usually)</li>
+        <li>Requests with Authorization headers</li>
+        <li>POST/PUT/DELETE requests (non-idempotent)</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="hbox hbox-orange"><div class="hbox-label">THE VARY HEADER TRAP</div>
+    <p style="margin-top:12px;">The <code>Vary</code> header tells CDNs to maintain <em>separate cache entries</em> for different request variants. <code>Vary: Accept-Encoding</code> is fine — CDN caches a gzip version and a br version. But <code>Vary: User-Agent</code> is a cache-buster: CDN creates a separate cache entry for every unique User-Agent string — there are thousands of them. This effectively destroys your cache hit ratio. Never vary on User-Agent.</p>
+  </div>
+</div>
+
+<!-- ───────────────────────────────────────
+     SECTION 05: Anycast Routing
+─────────────────────────────────────────── -->
+<div class="panel">
+  <div class="section-head">
+    <span class="section-num">05</span>
+    <h2>Anycast Routing: How You Land on the Nearest PoP</h2>
+  </div>
+
+  <p>Here's the magic trick: a CDN announces the <strong>exact same IP address from every PoP worldwide</strong>, simultaneously, using BGP (Border Gateway Protocol). When your device does a DNS lookup for <code>assets.example.com</code>, it gets back, say, <code>203.0.113.1</code>. But BGP routes your actual connection to the <em>geographically nearest</em> PoP that is advertising that IP. No client-side logic needed.</p>
+
+  <div class="hbox hbox-teal"><div class="hbox-label">HOW BGP ANYCAST WORKS</div>
+    <div style="margin-top:14px;display:grid;grid-template-columns:1fr 1fr;gap:20px;">
+      <div>
+        <h4>Traditional Unicast (one server, one IP)</h4>
+        <ul>
+          <li>IP <code>203.0.113.1</code> lives on <em>one</em> machine</li>
+          <li>All users worldwide connect to that machine</li>
+          <li>Routing is shortest path to that one destination</li>
+        </ul>
+      </div>
+      <div>
+        <h4>Anycast (many servers, same IP)</h4>
+        <ul>
+          <li>IP <code>203.0.113.1</code> is announced from <em>every PoP</em></li>
+          <li>BGP routers globally route each packet to the <em>nearest announcing PoP</em></li>
+          <li>User in London ends up at London PoP automatically</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <h3>The Same IP, Four Locations</h3>
+  <div class="anycast-wrap">
+    <div class="anycast-node" style="background:rgba(13,148,136,.06);border-color:var(--teal);">
+      <div class="anycast-ip">203.0.113.1</div>
+      <div class="anycast-location"><i data-lucide="map-pin" class="lc" style="stroke:var(--teal)"></i> New York PoP</div>
+      <p style="font-size:.88rem;color:#666;margin-bottom:8px;">Announced to North American routers via AS12345</p>
+      <div class="anycast-user-badge"><i data-lucide="user" class="lc" style="stroke:var(--ink)"></i> US/Canada users land here</div>
+    </div>
+    <div class="anycast-node" style="background:rgba(13,148,136,.06);border-color:var(--teal);">
+      <div class="anycast-ip">203.0.113.1</div>
+      <div class="anycast-location"><i data-lucide="map-pin" class="lc" style="stroke:var(--teal)"></i> Frankfurt PoP</div>
+      <p style="font-size:.88rem;color:#666;margin-bottom:8px;">Announced to European routers via AS12345</p>
+      <div class="anycast-user-badge"><i data-lucide="user" class="lc" style="stroke:var(--ink)"></i> EU users land here</div>
+    </div>
+    <div class="anycast-node" style="background:rgba(13,148,136,.06);border-color:var(--teal);">
+      <div class="anycast-ip">203.0.113.1</div>
+      <div class="anycast-location"><i data-lucide="map-pin" class="lc" style="stroke:var(--teal)"></i> Singapore PoP</div>
+      <p style="font-size:.88rem;color:#666;margin-bottom:8px;">Announced to SEA routers via AS12345</p>
+      <div class="anycast-user-badge"><i data-lucide="user" class="lc" style="stroke:var(--ink)"></i> SEA/India users land here</div>
+    </div>
+    <div class="anycast-node" style="background:rgba(13,148,136,.06);border-color:var(--teal);">
+      <div class="anycast-ip">203.0.113.1</div>
+      <div class="anycast-location"><i data-lucide="map-pin" class="lc" style="stroke:var(--teal)"></i> Tokyo PoP</div>
+      <p style="font-size:.88rem;color:#666;margin-bottom:8px;">Announced to APAC routers via AS12345</p>
+      <div class="anycast-user-badge"><i data-lucide="user" class="lc" style="stroke:var(--ink)"></i> Japan/Korea users land here</div>
+    </div>
+  </div>
+
+  <div class="hbox hbox-purple"><div class="hbox-label">WHY NOT USE DNS-BASED ROUTING?</div>
+    <p style="margin-top:12px;">Older CDNs used GeoDNS — returning a different IP per DNS lookup based on the resolver's location. Problem: DNS has TTLs, so you can't respond to network conditions in real time. BGP anycast is <em>network-layer</em> routing — routers continuously re-evaluate paths based on latency and reachability. If a PoP goes down, BGP automatically reroutes traffic to the next nearest PoP within seconds, without any DNS TTL waiting period.</p>
+  </div>
+</div>
+
+<!-- ───────────────────────────────────────
+     SECTION 06: Cache Invalidation
+─────────────────────────────────────────── -->
+<div class="panel">
+  <div class="section-head">
+    <span class="section-num">06</span>
+    <h2>Cache Invalidation: The Hard Problem</h2>
+  </div>
+
+  <div class="hbox hbox-yellow" style="margin-bottom:20px;"><div class="hbox-label">THE QUOTE</div>
+    <p style="margin-top:12px;font-family:'Bangers',cursive;font-size:1.4rem;letter-spacing:1px;line-height:1.4;">"There are only two hard problems in computer science: cache invalidation and naming things."</p>
+    <p style="font-size:.9rem;color:#666;margin-top:6px;margin-bottom:0;">— Phil Karlton (made famous by Martin Fowler)</p>
+  </div>
+
+  <p>You've cached <code>/app.js</code> across 300 PoPs worldwide with a 7-day TTL. Then you push a bug fix. How do you update 300 servers instantly? That's cache invalidation — and there are three strategies in use today.</p>
+
+  <div class="inval-grid">
+    <div class="inval-card">
+      <div class="inval-card-head" style="background:var(--blue);">
+        <i data-lucide="link" class="lc" style="stroke:#fff"></i>
+        URL VERSIONING
+      </div>
+      <div class="inval-card-body">
+        <p style="font-size:.88rem;margin-bottom:10px;">Never change the URL of a file. Instead, embed the version in the filename or as a query parameter.</p>
+        <div style="background:#0d1117;border-radius:5px;padding:10px 12px;font-family:'Space Mono',monospace;font-size:.78rem;color:#e6edf3;margin-bottom:10px;line-height:1.8;">
+          <span style="color:#7d8590;"># Old version (cached forever)</span><br>
+          /static/app.<span style="color:#ff7b72;">v3.4.1</span>.js<br>
+          <span style="color:#7d8590;"># New deploy — new URL</span><br>
+          /static/app.<span style="color:#7ee787;">v3.4.2</span>.js
+        </div>
+        <ul>
+          <li>Old URL stays cached forever — no problem</li>
+          <li>New URL is a brand new cache entry (miss once)</li>
+          <li>Works automatically with build tools (Vite, Webpack)</li>
+        </ul>
+        <p style="font-size:.82rem;color:var(--green);margin-bottom:0;"><strong>Best for:</strong> Static assets (JS, CSS, images)</p>
+      </div>
+    </div>
+
+    <div class="inval-card">
+      <div class="inval-card-head" style="background:var(--orange);">
+        <i data-lucide="trash-2" class="lc" style="stroke:#fff"></i>
+        PURGE API
+      </div>
+      <div class="inval-card-body">
+        <p style="font-size:.88rem;margin-bottom:10px;">Every CDN exposes an API to immediately invalidate specific URLs across all PoPs.</p>
+        <div style="background:#0d1117;border-radius:5px;padding:10px 12px;font-family:'Space Mono',monospace;font-size:.78rem;color:#e6edf3;margin-bottom:10px;line-height:1.8;">
+          <span style="color:#7d8590;"># Cloudflare purge</span><br>
+          <span style="color:#79c0ff;">POST</span> /zones/{id}/purge_cache<br>
+          <span style="color:#ffa657;">{ "files": ["/blog/post-123"] }</span>
+        </div>
+        <ul>
+          <li>Immediate invalidation (~150ms propagation)</li>
+          <li>Use when content changes without URL change</li>
+          <li>Deploy hooks: trigger purge on CMS publish</li>
+          <li>Rate limits apply (don't purge millions of URLs)</li>
+        </ul>
+        <p style="font-size:.82rem;color:var(--orange);margin-bottom:0;"><strong>Best for:</strong> CMS pages, news articles</p>
+      </div>
+    </div>
+
+    <div class="inval-card">
+      <div class="inval-card-head" style="background:var(--purple);">
+        <i data-lucide="tag" class="lc" style="stroke:#fff"></i>
+        SURROGATE KEYS
+      </div>
+      <div class="inval-card-body">
+        <p style="font-size:.88rem;margin-bottom:10px;">Tag cached responses with arbitrary keys. Purge all assets with a given tag in one API call.</p>
+        <div style="background:#0d1117;border-radius:5px;padding:10px 12px;font-family:'Space Mono',monospace;font-size:.78rem;color:#e6edf3;margin-bottom:10px;line-height:1.8;">
+          <span style="color:#7d8590;"># Origin sends tag in header</span><br>
+          <span style="color:#7ee787;">Surrogate-Key</span>: <span style="color:#ffa657;">product-42 category-shoes</span><br><br>
+          <span style="color:#7d8590;"># Purge all tagged "product-42"</span><br>
+          <span style="color:#79c0ff;">POST</span> /purge { "tag": "product-42" }
+        </div>
+        <ul>
+          <li>One purge call invalidates thousands of URLs</li>
+          <li>Supported by Fastly, Cloudflare (Cache-Tag)</li>
+          <li>Product update? Purge all pages containing it</li>
+        </ul>
+        <p style="font-size:.82rem;color:var(--purple);margin-bottom:0;"><strong>Best for:</strong> E-commerce, data relationships</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="hbox hbox-teal"><div class="hbox-label">STALE-WHILE-REVALIDATE: THE HYBRID TRICK</div>
+    <p style="margin-top:12px;"><code>stale-while-revalidate=N</code> is the best of both worlds. When a cached response expires, instead of blocking the user while it fetches fresh content, the CDN serves the stale version <em>immediately</em> and kicks off a background refresh. Users see zero added latency. The trade-off: for up to N seconds after the TTL expires, users might see content that is one version old. For most content (blog posts, product pages), this is an acceptable trade-off for the latency win.</p>
+  </div>
+</div>
+
+<!-- ───────────────────────────────────────
+     SECTION 07: Edge Compute
+─────────────────────────────────────────── -->
+<div class="panel">
+  <div class="section-head">
+    <span class="section-num">07</span>
+    <h2>Edge Compute: Beyond Caching</h2>
+  </div>
+
+  <p>Modern CDNs can run your code — JavaScript or WebAssembly — <em>at the edge node</em>, before the request ever reaches your origin. This is a paradigm shift: instead of caching pre-built responses, you run logic at the closest server to the user.</p>
+
+  <div class="grid-3">
+    <div class="card" style="border-color:var(--orange);">
+      <div class="card-head" style="color:var(--orange);"><i data-lucide="zap" class="lc" style="stroke:var(--orange)"></i> Cloudflare Workers</div>
+      <ul>
+        <li>V8 isolates, not containers</li>
+        <li>Cold start: ~0ms (no JVM/Node boot)</li>
+        <li>JavaScript/TypeScript/Wasm</li>
+        <li>Runs at 300+ PoPs globally</li>
+        <li>Up to 30ms CPU per request</li>
+      </ul>
+    </div>
+    <div class="card" style="border-color:var(--blue);">
+      <div class="card-head" style="color:var(--blue);"><i data-lucide="cloud" class="lc" style="stroke:var(--blue)"></i> AWS Lambda@Edge</div>
+      <ul>
+        <li>Runs at CloudFront PoPs</li>
+        <li>Node.js or Python</li>
+        <li>Cold start: 100–500ms (container-based)</li>
+        <li>Can modify request/response headers</li>
+        <li>Deeper AWS integration</li>
+      </ul>
+    </div>
+    <div class="card" style="border-color:var(--green);">
+      <div class="card-head" style="color:var(--green);"><i data-lucide="cpu" class="lc" style="stroke:var(--green)"></i> Fastly Compute</div>
+      <ul>
+        <li>WebAssembly-first (Rust, Go, JS)</li>
+        <li>Sub-millisecond cold starts</li>
+        <li>Strongest isolation model</li>
+        <li>Instant global deploys</li>
+        <li>Granular traffic control</li>
+      </ul>
+    </div>
+  </div>
+
+  <h3>Edge Compute Use Cases</h3>
+  <div class="grid-2" style="margin-top:6px;">
+    <div class="hbox hbox-teal" style="margin:0;"><div class="hbox-label">A/B TESTING AT EDGE</div>
+      <p style="margin-top:12px;font-size:.9rem;">Instead of sending users to origin to check which variant they're in, the edge Worker reads the cookie, assigns variant, and serves the correct cached HTML. Zero round-trips to origin. Zero latency added to A/B testing.</p>
+    </div>
+    <div class="hbox hbox-blue" style="margin:0;"><div class="hbox-label">AUTH CHECK AT EDGE</div>
+      <p style="margin-top:12px;font-size:.9rem;">Validate JWT tokens at the PoP before the request reaches origin. Protected routes bounce unauthenticated requests in ~5ms, before wasting origin resources. 98% of auth-blocked requests never touch your servers.</p>
+    </div>
+    <div class="hbox hbox-purple" style="margin:0;"><div class="hbox-label">GEO REDIRECTS</div>
+      <p style="margin-top:12px;font-size:.9rem;">Read the user's country from CDN request metadata and redirect to the correct regional domain — at the PoP. No origin round-trip needed for <code>/eu/</code> vs <code>/us/</code> routing.</p>
+    </div>
+    <div class="hbox hbox-orange" style="margin:0;"><div class="hbox-label">IMAGE TRANSFORMS</div>
+      <p style="margin-top:12px;font-size:.9rem;">Resize, compress, convert to WebP/AVIF at the edge based on the Accept header and device width. No pre-generated image variants needed on origin — the edge handles it on first request and caches the result.</p>
+    </div>
+  </div>
+
+  <h3 style="margin-top:24px;">The Latency Stack: Edge vs Origin Auth</h3>
+  <div class="edge-compare">
+    <div class="edge-path">
+      <div class="edge-path-head" style="background:var(--red);">
+        <i data-lucide="x-circle" class="lc" style="stroke:#fff"></i> Auth at Origin (Slow)
+      </div>
+      <div class="edge-path-body">
+        <div class="edge-hop">
+          <i data-lucide="user" class="lc" style="stroke:var(--blue)"></i>
+          <span>User sends request</span>
+          <span class="edge-hop-time" style="color:var(--blue);">0ms</span>
+        </div>
+        <div class="edge-svg-connector">
+          <svg width="2" height="18" viewBox="0 0 2 18"><line x1="1" y1="0" x2="1" y2="18" stroke="#1a1410" stroke-width="2" stroke-dasharray="3,3"/></svg>
+        </div>
+        <div class="edge-hop">
+          <i data-lucide="map-pin" class="lc" style="stroke:var(--teal)"></i>
+          <span>CDN PoP (passes through)</span>
+          <span class="edge-hop-time" style="color:var(--teal);">+5ms</span>
+        </div>
+        <div class="edge-svg-connector">
+          <svg width="2" height="18" viewBox="0 0 2 18"><line x1="1" y1="0" x2="1" y2="18" stroke="#1a1410" stroke-width="2" stroke-dasharray="3,3"/></svg>
+        </div>
+        <div class="edge-hop">
+          <i data-lucide="server" class="lc" style="stroke:var(--orange)"></i>
+          <span>Origin receives request</span>
+          <span class="edge-hop-time" style="color:var(--orange);">+120ms</span>
+        </div>
+        <div class="edge-svg-connector">
+          <svg width="2" height="18" viewBox="0 0 2 18"><line x1="1" y1="0" x2="1" y2="18" stroke="#1a1410" stroke-width="2" stroke-dasharray="3,3"/></svg>
+        </div>
+        <div class="edge-hop">
+          <i data-lucide="lock" class="lc" style="stroke:var(--purple)"></i>
+          <span>JWT validated on origin</span>
+          <span class="edge-hop-time" style="color:var(--purple);">+5ms</span>
+        </div>
+        <div class="edge-svg-connector">
+          <svg width="2" height="18" viewBox="0 0 2 18"><line x1="1" y1="0" x2="1" y2="18" stroke="#1a1410" stroke-width="2" stroke-dasharray="3,3"/></svg>
+        </div>
+        <div class="edge-hop">
+          <i data-lucide="user" class="lc" style="stroke:var(--green)"></i>
+          <span>Response returns to user</span>
+          <span class="edge-hop-time" style="color:var(--green);">+120ms</span>
+        </div>
+        <div class="edge-total" style="background:rgba(230,57,70,.1);border-color:var(--red);color:var(--red);">
+          ~250ms total
+        </div>
+      </div>
+    </div>
+
+    <div class="edge-path">
+      <div class="edge-path-head" style="background:var(--green);">
+        <i data-lucide="check-circle" class="lc" style="stroke:#fff"></i> Auth at Edge (Fast)
+      </div>
+      <div class="edge-path-body">
+        <div class="edge-hop">
+          <i data-lucide="user" class="lc" style="stroke:var(--blue)"></i>
+          <span>User sends request</span>
+          <span class="edge-hop-time" style="color:var(--blue);">0ms</span>
+        </div>
+        <div class="edge-svg-connector">
+          <svg width="2" height="18" viewBox="0 0 2 18"><line x1="1" y1="0" x2="1" y2="18" stroke="#1a1410" stroke-width="2" stroke-dasharray="3,3"/></svg>
+        </div>
+        <div class="edge-hop">
+          <i data-lucide="map-pin" class="lc" style="stroke:var(--teal)"></i>
+          <span>PoP Worker validates JWT</span>
+          <span class="edge-hop-time" style="color:var(--teal);">+5ms</span>
+        </div>
+        <div class="edge-svg-connector">
+          <svg width="2" height="18" viewBox="0 0 2 18"><line x1="1" y1="0" x2="1" y2="18" stroke="#1a1410" stroke-width="2" stroke-dasharray="3,3"/></svg>
+        </div>
+        <div class="edge-hop">
+          <i data-lucide="server" class="lc" style="stroke:var(--orange)"></i>
+          <span>Authenticated req to origin</span>
+          <span class="edge-hop-time" style="color:var(--orange);">+120ms</span>
+        </div>
+        <div class="edge-svg-connector">
+          <svg width="2" height="18" viewBox="0 0 2 18"><line x1="1" y1="0" x2="1" y2="18" stroke="#1a1410" stroke-width="2" stroke-dasharray="3,3"/></svg>
+        </div>
+        <div class="edge-hop" style="opacity:.5">
+          <i data-lucide="lock" class="lc" style="stroke:var(--purple)"></i>
+          <span style="font-style:italic;">No re-auth needed at origin</span>
+          <span class="edge-hop-time" style="color:var(--green);">+0ms</span>
+        </div>
+        <div class="edge-svg-connector">
+          <svg width="2" height="18" viewBox="0 0 2 18"><line x1="1" y1="0" x2="1" y2="18" stroke="#1a1410" stroke-width="2" stroke-dasharray="3,3"/></svg>
+        </div>
+        <div class="edge-hop">
+          <i data-lucide="user" class="lc" style="stroke:var(--green)"></i>
+          <span>Response returns to user</span>
+          <span class="edge-hop-time" style="color:var(--green);">+120ms</span>
+        </div>
+        <div class="edge-total" style="background:rgba(63,163,77,.1);border-color:var(--green);color:var(--green);">
+          ~245ms total <span style="font-size:.8rem;">(+rejected invalid: 5ms)</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <p>The latency saving for valid requests is small (5ms). The win is when requests are <em>rejected</em>: invalid auth is blocked in 5ms at the edge instead of sending a full 250ms round-trip to origin only to be rejected there. For high-traffic APIs under load, this means your origin only sees authenticated traffic.</p>
+</div>
+
+<!-- ───────────────────────────────────────
+     SECTION 08: Interactive CDN Simulator
+─────────────────────────────────────────── -->
+<div class="panel">
+  <div class="section-head">
+    <span class="section-num">08</span>
+    <h2>Interactive: CDN Request Simulator</h2>
+  </div>
+  <p>Select a user location below, then fire cache-miss and cache-hit requests. Watch the animated dot travel through the network, see the latency counter tick up, and observe which PoP serves the request.</p>
+
+  <div class="cdn-sim-wrap">
+    <div class="cdn-sim-bar">
+      <span style="width:12px;height:12px;border-radius:50%;background:#ff5f56;display:inline-block;"></span>
+      <span style="width:12px;height:12px;border-radius:50%;background:#ffbd2e;display:inline-block;margin-left:4px;"></span>
+      <span style="width:12px;height:12px;border-radius:50%;background:#27c93f;display:inline-block;margin-left:4px;"></span>
+      <i data-lucide="globe" class="lc" style="stroke:var(--teal);margin-left:8px;"></i>
+      CDN REQUEST SIMULATOR — Pick a User, Fire a Request
+      <span style="margin-left:auto;font-family:'Space Mono',monospace;font-size:.75rem;color:#7d8590;">origin server: Mumbai</span>
+    </div>
+    <div class="cdn-sim-body">
+      <canvas id="cdn-canvas" width="600" height="380"></canvas>
+      <div class="cdn-side-panel">
+        <div style="background:#161b22;border:2px solid #30363d;border-radius:6px;padding:12px;">
+          <div style="font-family:'Bangers',cursive;font-size:.9rem;letter-spacing:2px;color:#7d8590;margin-bottom:8px;">SELECT USER LOCATION</div>
+          <div id="user-select-btns" style="display:flex;flex-direction:column;gap:6px;">
+            <button class="cdn-btn user-loc-btn" data-loc="ny" onclick="cdnSelectUser('ny')">New York, USA</button>
+            <button class="cdn-btn user-loc-btn" data-loc="london" onclick="cdnSelectUser('london')">London, UK</button>
+            <button class="cdn-btn user-loc-btn" data-loc="sao_paulo" onclick="cdnSelectUser('sao_paulo')">São Paulo, Brazil</button>
+            <button class="cdn-btn user-loc-btn" data-loc="singapore" onclick="cdnSelectUser('singapore')">Singapore</button>
+            <button class="cdn-btn user-loc-btn" data-loc="tokyo" onclick="cdnSelectUser('tokyo')">Tokyo, Japan</button>
+            <button class="cdn-btn user-loc-btn" data-loc="sydney" onclick="cdnSelectUser('sydney')">Sydney, Australia</button>
+          </div>
+        </div>
+        <div class="cdn-info-box">
+          <span class="label">NEAREST PoP</span>
+          <span class="value" id="cdn-pop-display">— select a user —</span>
+        </div>
+        <div class="cdn-info-box">
+          <span class="label">CACHE STATUS</span>
+          <span class="value" id="cdn-cache-status">—</span>
+        </div>
+        <div class="cdn-latency-bar">
+          <div class="lat-label"><i data-lucide="timer" class="lc" style="stroke:var(--yellow)"></i> RESPONSE TIME</div>
+          <div class="cdn-latency-num" id="cdn-latency-num" style="color:var(--yellow);">—</div>
+          <div class="cdn-latency-track">
+            <div class="cdn-latency-fill" id="cdn-latency-fill" style="width:0%;background:var(--yellow);"></div>
+          </div>
+        </div>
+        <button class="cdn-btn miss-btn" onclick="cdnFireRequest('miss')">
+          <i data-lucide="x-circle" class="lc" style="stroke:#ff7b72"></i> New Request (Cache Miss)
+        </button>
+        <button class="cdn-btn hit-btn" onclick="cdnFireRequest('hit')">
+          <i data-lucide="zap" class="lc" style="stroke:#7ee787"></i> Same Request (Cache Hit)
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- CDN Provider Comparison Table -->
+  <h3 style="margin-top:28px;">CDN Provider Comparison</h3>
+  <div style="overflow-x:auto;">
+    <table class="data-table">
+      <thead>
+        <tr>
+          <th><i data-lucide="server" class="lc" style="stroke:#fff"></i> Provider</th>
+          <th><i data-lucide="map-pin" class="lc" style="stroke:#fff"></i> PoPs</th>
+          <th><i data-lucide="target" class="lc" style="stroke:#fff"></i> Best For</th>
+          <th><i data-lucide="trash-2" class="lc" style="stroke:#fff"></i> Purge Speed</th>
+          <th><i data-lucide="cpu" class="lc" style="stroke:#fff"></i> Edge Compute</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>Cloudflare</strong></td>
+          <td>330+</td>
+          <td>General purpose, DDoS protection, Workers at edge, free tier</td>
+          <td>~150ms global</td>
+          <td>Workers (V8 isolates, ~0ms cold start)</td>
+        </tr>
+        <tr>
+          <td><strong>AWS CloudFront</strong></td>
+          <td>600+ (incl. regional edge)</td>
+          <td>AWS-native apps, S3/EC2 origins, deep IAM integration</td>
+          <td>1–10 seconds</td>
+          <td>Lambda@Edge (Node.js/Python, 100ms+ cold start)</td>
+        </tr>
+        <tr>
+          <td><strong>Fastly</strong></td>
+          <td>88+</td>
+          <td>Real-time purge, streaming media, Surrogate-Key invalidation</td>
+          <td>~150ms instant</td>
+          <td>Compute@Edge (Wasm, sub-ms cold start)</td>
+        </tr>
+        <tr>
+          <td><strong>Akamai</strong></td>
+          <td>4,200+</td>
+          <td>Enterprise, media streaming, highest PoP density worldwide</td>
+          <td>~5 seconds</td>
+          <td>EdgeWorkers (JavaScript)</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<div class="chapter-divider"><span>END OF HOW-10</span></div>
+</div><!-- /page-wrap -->
+
+<script src="hero-banner.js"></script>
+<script src="masthead.js"></script>
+<script src="author-card.js"></script>
+
+<script>
+/* ============================================================
+   WORLD ARCHITECTURE MAP (Section 02)
+   ============================================================ */
+(function () {
+  var canvas = document.getElementById('world-arch-canvas');
+  if (!canvas) return;
+  var ctx = canvas.getContext('2d');
+  var W = 700, H = 280;
+  canvas.width = W; canvas.height = H;
+
+  // Continent blobs (simple filled shapes, dark)
+  var continents = [
+    // North America
+    [[100,50],[90,58],[95,70],[115,75],[140,65],[160,58],[165,72],[155,90],[140,105],[120,112],[100,105],[88,90],[90,70]],
+    // South America
+    [[148,135],[138,142],[140,158],[150,178],[148,198],[152,215],[163,218],[170,200],[172,175],[165,155],[158,142]],
+    // Europe
+    [[295,40],[305,32],[320,30],[340,35],[352,48],[348,62],[332,68],[310,66],[298,55]],
+    // Africa
+    [[310,75],[298,88],[295,108],[300,135],[310,158],[322,172],[338,178],[352,168],[358,148],[355,120],[348,98],[338,80],[322,72]],
+    // Asia (main)
+    [[375,32],[400,22],[440,18],[490,22],[530,28],[560,38],[575,55],[570,80],[550,95],[520,100],[490,98],[460,90],[430,85],[400,80],[380,65],[370,48]],
+    // India peninsula
+    [[475,100],[490,96],[505,102],[512,118],[508,135],[498,148],[487,148],[476,135],[470,118]],
+    // Japan
+    [[588,52],[594,46],[604,50],[608,62],[600,70],[590,64]],
+    // Australia
+    [[545,175],[558,168],[580,170],[598,180],[608,198],[605,218],[588,228],[566,224],[550,210],[542,192]],
+  ];
+
+  var ORIGIN = { x: 487, y: 148, label: 'ORIGIN\nMumbai', color: '#e63946' };
+
+  var POPS = [
+    { x: 128, y: 80,  label: 'New York',   color: '#0d9488', region: 'N. America' },
+    { x: 163, y: 185, label: 'São Paulo',  color: '#0d9488', region: 'S. America' },
+    { x: 320, y: 50,  label: 'London',     color: '#0d9488', region: 'Europe' },
+    { x: 355, y: 55,  label: 'Frankfurt',  color: '#0d9488', region: 'Europe' },
+    { x: 548, y: 110, label: 'Singapore',  color: '#0d9488', region: 'SEA' },
+    { x: 596, y: 60,  label: 'Tokyo',      color: '#0d9488', region: 'APAC' },
+    { x: 568, y: 210, label: 'Sydney',     color: '#0d9488', region: 'ANZ' },
+  ];
+
+  var animOffset = 0;
+  var hoveredPop = null;
+
+  function drawScene() {
+    ctx.clearRect(0, 0, W, H);
+    ctx.fillStyle = '#0d1117';
+    ctx.fillRect(0, 0, W, H);
+
+    // Draw subtle grid
+    ctx.strokeStyle = 'rgba(255,255,255,0.025)';
+    ctx.lineWidth = 1;
+    for (var gx = 0; gx < W; gx += 50) { ctx.beginPath(); ctx.moveTo(gx, 0); ctx.lineTo(gx, H); ctx.stroke(); }
+    for (var gy = 0; gy < H; gy += 40) { ctx.beginPath(); ctx.moveTo(0, gy); ctx.lineTo(W, gy); ctx.stroke(); }
+
+    // Draw continents
+    continents.forEach(function(pts) {
+      ctx.beginPath();
+      ctx.moveTo(pts[0][0], pts[0][1]);
+      pts.forEach(function(p) { ctx.lineTo(p[0], p[1]); });
+      ctx.closePath();
+      ctx.fillStyle = '#1a2814';
+      ctx.fill();
+      ctx.strokeStyle = '#2a3a20';
+      ctx.lineWidth = 1;
+      ctx.stroke();
+    });
+
+    // Draw backbone connections from origin to each PoP
+    POPS.forEach(function(pop) {
+      ctx.beginPath();
+      ctx.moveTo(ORIGIN.x, ORIGIN.y);
+
+      // Control point for bezier
+      var mx = (ORIGIN.x + pop.x) / 2;
+      var my = Math.min(ORIGIN.y, pop.y) - 40;
+      ctx.quadraticCurveTo(mx, my, pop.x, pop.y);
+
+      ctx.strokeStyle = 'rgba(13,148,136,0.25)';
+      ctx.lineWidth = 1.5;
+      ctx.setLineDash([5, 5]);
+      ctx.lineDashOffset = -animOffset;
+      ctx.stroke();
+      ctx.setLineDash([]);
+    });
+
+    // Draw PoP nodes
+    POPS.forEach(function(pop) {
+      var isHovered = hoveredPop === pop;
+      var r = isHovered ? 9 : 6;
+
+      ctx.beginPath();
+      ctx.arc(pop.x, pop.y, r + 5, 0, Math.PI * 2);
+      ctx.fillStyle = 'rgba(13,148,136,' + (isHovered ? 0.2 : 0.1) + ')';
+      ctx.fill();
+
+      ctx.beginPath();
+      ctx.arc(pop.x, pop.y, r, 0, Math.PI * 2);
+      ctx.fillStyle = pop.color;
+      ctx.fill();
+      ctx.strokeStyle = isHovered ? '#fff' : 'rgba(255,255,255,0.4)';
+      ctx.lineWidth = isHovered ? 2 : 1.5;
+      ctx.stroke();
+
+      if (isHovered) {
+        ctx.fillStyle = 'rgba(13,148,136,0.9)';
+        var tw = ctx.measureText(pop.label).width + 16;
+        var bx = Math.min(pop.x - tw/2, W - tw - 5);
+        bx = Math.max(bx, 5);
+        ctx.beginPath();
+        ctx.roundRect(bx, pop.y - 28, tw, 20, 4);
+        ctx.fill();
+        ctx.strokeStyle = '#0d9488';
+        ctx.lineWidth = 1;
+        ctx.stroke();
+        ctx.fillStyle = '#fff';
+        ctx.font = 'bold 10px Space Mono, monospace';
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+        ctx.fillText(pop.label, bx + tw/2, pop.y - 18);
+      } else {
+        ctx.fillStyle = 'rgba(13,148,136,0.7)';
+        ctx.font = '9px Space Mono, monospace';
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'top';
+        ctx.fillText(pop.label, pop.x, pop.y + 10);
+      }
+    });
+
+    // Draw origin
+    ctx.beginPath();
+    ctx.arc(ORIGIN.x, ORIGIN.y, 14, 0, Math.PI * 2);
+    ctx.fillStyle = '#e63946';
+    ctx.fill();
+    ctx.strokeStyle = '#fff';
+    ctx.lineWidth = 2;
+    ctx.stroke();
+
+    ctx.fillStyle = '#fff';
+    ctx.font = 'bold 7px Space Mono, monospace';
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    ctx.fillText('ORIGIN', ORIGIN.x, ORIGIN.y - 3);
+    ctx.fillText('Mumbai', ORIGIN.x, ORIGIN.y + 5);
+
+    animOffset = (animOffset + 0.5) % 20;
+  }
+
+  function loop() {
+    drawScene();
+    requestAnimationFrame(loop);
+  }
+
+  canvas.addEventListener('mousemove', function(e) {
+    var rect = canvas.getBoundingClientRect();
+    var mx = (e.clientX - rect.left) * (W / rect.width);
+    var my = (e.clientY - rect.top)  * (H / rect.height);
+    hoveredPop = null;
+    POPS.forEach(function(pop) {
+      var d = Math.sqrt((pop.x - mx)*(pop.x - mx) + (pop.y - my)*(pop.y - my));
+      if (d < 14) hoveredPop = pop;
+    });
+  });
+
+  canvas.addEventListener('mouseleave', function() { hoveredPop = null; });
+
+  loop();
+})();
+
+/* ============================================================
+   CDN REQUEST SIMULATOR (Section 08)
+   ============================================================ */
+(function () {
+  var canvas = document.getElementById('cdn-canvas');
+  if (!canvas) return;
+  var ctx = canvas.getContext('2d');
+  var CW = 600, CH = 380;
+  canvas.width = CW; canvas.height = CH;
+
+  // Node positions on canvas
+  var ORIGIN_NODE = { x: 490, y: 190, label: 'ORIGIN\nMumbai', color: '#e63946' };
+
+  var POP_NODES = {
+    ny:        { x: 105, y: 85,  label: 'NYC PoP',       color: '#0d9488' },
+    london:    { x: 260, y: 68,  label: 'London PoP',    color: '#0d9488' },
+    sao_paulo: { x: 138, y: 255, label: 'São Paulo PoP', color: '#0d9488' },
+    singapore: { x: 450, y: 270, label: 'Singapore PoP', color: '#0d9488' },
+    tokyo:     { x: 540, y: 95,  label: 'Tokyo PoP',     color: '#0d9488' },
+    sydney:    { x: 520, y: 300, label: 'Sydney PoP',    color: '#0d9488' },
+  };
+
+  var USER_NODES = {
+    ny:        { x: 45,  y: 85,  label: 'New York' },
+    london:    { x: 195, y: 50,  label: 'London' },
+    sao_paulo: { x: 75,  y: 255, label: 'São Paulo' },
+    singapore: { x: 385, y: 285, label: 'Singapore' },
+    tokyo:     { x: 570, y: 55,  label: 'Tokyo' },
+    sydney:    { x: 555, y: 345, label: 'Sydney' },
+  };
+
+  // Continent blobs
+  var contBlobs = [
+    [[70,40],[60,52],[62,65],[80,72],[105,65],[125,58],[128,70],[120,88],[105,98],[88,102],[70,96],[58,82],[60,65]],
+    [[118,130],[108,140],[110,156],[120,175],[118,194],[122,210],[130,212],[138,196],[140,172],[134,152],[127,140]],
+    [[230,32],[240,24],[255,22],[268,28],[278,42],[272,54],[258,58],[242,56],[232,46]],
+    [[245,65],[232,76],[228,94],[234,120],[244,140],[255,150],[268,155],[280,147],[285,128],[282,104],[275,84],[265,70],[252,62]],
+    [[300,25],[320,16],[355,14],[390,18],[420,23],[440,34],[450,50],[445,68],[428,78],[403,82],[375,80],[345,74],[316,68],[300,52]],
+    [[378,82],[390,78],[402,84],[408,98],[404,112],[394,120],[383,120],[373,108],[370,93]],
+    [[466,158],[478,150],[490,155],[498,168],[495,183],[484,190],[472,188],[463,175]],
+    [[432,200],[442,193],[458,195],[472,204],[480,218],[478,232],[464,238],[448,234],[436,222]],
+    [[515,72],[522,64],[530,68],[533,78],[527,84],[519,80]],
+  ];
+
+  // Animation state
+  var currentUser = null;
+  var animation = null;
+  var animT = 0;
+  var animDuration = 0;
+  var animPath = [];
+  var animType = 'miss'; // 'miss' or 'hit'
+  var dotPos = null;
+  var dotPhase = 0; // 0=idle, 1=user->pop, 2=pop->origin, 3=origin->pop, 4=pop->user
+  var phaseProgress = 0;
+  var cacheHotPops = {}; // which pops have been "warmed" by a miss
+
+  var latencyCounterEl = document.getElementById('cdn-latency-num');
+  var latencyFillEl = document.getElementById('cdn-latency-fill');
+  var popDisplayEl = document.getElementById('cdn-pop-display');
+  var cacheStatusEl = document.getElementById('cdn-cache-status');
+
+  // Latency configs (ms, visual)
+  var MISS_LATENCIES = { ny:150, london:130, sao_paulo:165, singapore:55, tokyo:115, sydney:85 };
+  var HIT_LATENCIES  = { ny:8,   london:7,   sao_paulo:9,   singapore:3,  tokyo:5,   sydney:4 };
+
+  function lerp(a, b, t) { return a + (b - a) * t; }
+  function lerpPt(a, b, t) { return { x: lerp(a.x, b.x, t), y: lerp(a.y, b.y, t) }; }
+
+  function drawContinent(pts) {
+    ctx.beginPath();
+    ctx.moveTo(pts[0][0], pts[0][1]);
+    pts.forEach(function(p) { ctx.lineTo(p[0], p[1]); });
+    ctx.closePath();
+    ctx.fillStyle = '#1a2814';
+    ctx.fill();
+    ctx.strokeStyle = '#2a3a20';
+    ctx.lineWidth = 1;
+    ctx.stroke();
+  }
+
+  function drawNode(node, r, labelBelow) {
+    ctx.beginPath();
+    ctx.arc(node.x, node.y, r + 4, 0, Math.PI * 2);
+    ctx.fillStyle = node.color + '22';
+    ctx.fill();
+
+    ctx.beginPath();
+    ctx.arc(node.x, node.y, r, 0, Math.PI * 2);
+    ctx.fillStyle = node.color;
+    ctx.fill();
+    ctx.strokeStyle = 'rgba(255,255,255,0.5)';
+    ctx.lineWidth = 1.5;
+    ctx.stroke();
+
+    ctx.fillStyle = '#e6edf3';
+    ctx.font = '8px Space Mono, monospace';
+    ctx.textAlign = 'center';
+    ctx.textBaseline = labelBelow ? 'top' : 'bottom';
+    ctx.fillText(node.label, node.x, labelBelow ? node.y + r + 3 : node.y - r - 3);
+  }
+
+  function drawConnection(a, b, alpha, dashed) {
+    ctx.beginPath();
+    ctx.moveTo(a.x, a.y);
+    ctx.lineTo(b.x, b.y);
+    if (dashed) ctx.setLineDash([4, 4]);
+    ctx.strokeStyle = 'rgba(13,148,136,' + alpha + ')';
+    ctx.lineWidth = 1;
+    ctx.stroke();
+    ctx.setLineDash([]);
+  }
+
+  function drawScene() {
+    ctx.clearRect(0, 0, CW, CH);
+    ctx.fillStyle = '#0d1117';
+    ctx.fillRect(0, 0, CW, CH);
+
+    // Grid
+    ctx.strokeStyle = 'rgba(255,255,255,0.02)';
+    ctx.lineWidth = 1;
+    for (var gx = 0; gx < CW; gx += 50) { ctx.beginPath(); ctx.moveTo(gx, 0); ctx.lineTo(gx, CH); ctx.stroke(); }
+    for (var gy = 0; gy < CH; gy += 40) { ctx.beginPath(); ctx.moveTo(0, gy); ctx.lineTo(CW, gy); ctx.stroke(); }
+
+    contBlobs.forEach(drawContinent);
+
+    // Draw CDN backbone lines (origin to all PoPs)
+    Object.values(POP_NODES).forEach(function(pop) {
+      drawConnection(ORIGIN_NODE, pop, 0.15, true);
+    });
+
+    // Highlight selected user's pop connection
+    if (currentUser) {
+      var pop = POP_NODES[currentUser];
+      var user = USER_NODES[currentUser];
+      drawConnection(user, pop, 0.5, false);
+      if (animType === 'miss' || dotPhase >= 2) {
+        drawConnection(pop, ORIGIN_NODE, 0.5, false);
+      }
+    }
+
+    // Draw all PoP nodes
+    Object.keys(POP_NODES).forEach(function(key) {
+      var pop = POP_NODES[key];
+      var isSelected = currentUser === key;
+      var isWarm = cacheHotPops[key];
+      var r = isSelected ? 8 : 5;
+      ctx.beginPath();
+      ctx.arc(pop.x, pop.y, r + 4, 0, Math.PI * 2);
+      ctx.fillStyle = isSelected ? 'rgba(13,148,136,0.25)' : 'rgba(13,148,136,0.08)';
+      ctx.fill();
+      ctx.beginPath();
+      ctx.arc(pop.x, pop.y, r, 0, Math.PI * 2);
+      ctx.fillStyle = isWarm ? '#7ee787' : pop.color;
+      ctx.fill();
+      ctx.strokeStyle = isSelected ? '#fff' : 'rgba(255,255,255,0.3)';
+      ctx.lineWidth = isSelected ? 2 : 1;
+      ctx.stroke();
+      if (isWarm && !isSelected) {
+        ctx.fillStyle = '#6e7681';
+        ctx.font = '8px Space Mono, monospace';
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'top';
+        ctx.fillText(pop.label, pop.x, pop.y + r + 3);
+      } else if (isSelected) {
+        ctx.fillStyle = '#e6edf3';
+        ctx.font = 'bold 9px Space Mono, monospace';
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'top';
+        ctx.fillText(pop.label, pop.x, pop.y + r + 3);
+      }
+    });
+
+    // Draw Origin
+    ctx.beginPath();
+    ctx.arc(ORIGIN_NODE.x, ORIGIN_NODE.y, 13, 0, Math.PI * 2);
+    ctx.fillStyle = '#e63946';
+    ctx.fill();
+    ctx.strokeStyle = '#fff';
+    ctx.lineWidth = 2;
+    ctx.stroke();
+    ctx.fillStyle = '#fff';
+    ctx.font = 'bold 7px Space Mono, monospace';
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    ctx.fillText('ORIGIN', ORIGIN_NODE.x, ORIGIN_NODE.y - 3);
+    ctx.fillText('Mumbai', ORIGIN_NODE.x, ORIGIN_NODE.y + 5);
+
+    // Draw user nodes
+    Object.keys(USER_NODES).forEach(function(key) {
+      var u = USER_NODES[key];
+      var isSelected = currentUser === key;
+      ctx.beginPath();
+      ctx.arc(u.x, u.y, isSelected ? 9 : 5, 0, Math.PI * 2);
+      ctx.fillStyle = isSelected ? '#1d6fb8' : '#1d3a5a';
+      ctx.fill();
+      ctx.strokeStyle = isSelected ? '#79c0ff' : 'rgba(121,192,255,0.3)';
+      ctx.lineWidth = isSelected ? 2 : 1;
+      ctx.stroke();
+      if (isSelected) {
+        ctx.fillStyle = '#79c0ff';
+        ctx.font = 'bold 9px Space Mono, monospace';
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'bottom';
+        ctx.fillText(u.label, u.x, u.y - 12);
+      }
+    });
+
+    // Draw animated dot
+    if (dotPos) {
+      // Glow
+      var grad = ctx.createRadialGradient(dotPos.x, dotPos.y, 0, dotPos.x, dotPos.y, 18);
+      var dotColor = animType === 'miss' ? '#ff7b72' : '#7ee787';
+      grad.addColorStop(0, dotColor + 'aa');
+      grad.addColorStop(1, 'transparent');
+      ctx.beginPath();
+      ctx.arc(dotPos.x, dotPos.y, 18, 0, Math.PI * 2);
+      ctx.fillStyle = grad;
+      ctx.fill();
+
+      ctx.beginPath();
+      ctx.arc(dotPos.x, dotPos.y, 6, 0, Math.PI * 2);
+      ctx.fillStyle = dotColor;
+      ctx.fill();
+      ctx.strokeStyle = '#fff';
+      ctx.lineWidth = 1.5;
+      ctx.stroke();
+    }
+  }
+
+  var animFrame = null;
+  var latCountInterval = null;
+
+  function animateLatency(target, color) {
+    var current = 0;
+    var duration = 600;
+    var start = performance.now();
+    if (latCountInterval) clearInterval(latCountInterval);
+    latCountInterval = setInterval(function() {
+      var elapsed = performance.now() - start;
+      var t = Math.min(elapsed / duration, 1);
+      var val = Math.round(current + (target - current) * t);
+      latencyCounterEl.textContent = val + 'ms';
+      latencyCounterEl.style.color = color;
+      // Progress bar
+      var pct = Math.min((target / 200) * 100, 100);
+      latencyFillEl.style.width = (pct * t) + '%';
+      latencyFillEl.style.background = color;
+      if (t >= 1) clearInterval(latCountInterval);
+    }, 16);
+  }
+
+  function runMissAnimation(userKey) {
+    var user = USER_NODES[userKey];
+    var pop  = POP_NODES[userKey];
+    var origin = ORIGIN_NODE;
+    var totalTime = 1800; // ms for full animation
+    var phase1End = 0.2;  // user -> pop
+    var phase2End = 0.5;  // pop -> origin
+    var phase3End = 0.7;  // origin -> pop
+    var phase4End = 1.0;  // pop -> user
+    var startTime = performance.now();
+    var targetLatency = MISS_LATENCIES[userKey] || 150;
+
+    cacheStatusEl.textContent = 'MISS — fetching from origin';
+    cacheStatusEl.className = 'value miss';
+    animateLatency(targetLatency, '#ff7b72');
+
+    function step(now) {
+      var t = Math.min((now - startTime) / totalTime, 1);
+      if (t < phase1End) {
+        var lt = t / phase1End;
+        dotPos = lerpPt(user, pop, lt);
+      } else if (t < phase2End) {
+        var lt = (t - phase1End) / (phase2End - phase1End);
+        dotPos = lerpPt(pop, origin, lt);
+      } else if (t < phase3End) {
+        var lt = (t - phase2End) / (phase3End - phase2End);
+        dotPos = lerpPt(origin, pop, lt);
+      } else {
+        var lt = (t - phase3End) / (phase4End - phase3End);
+        dotPos = lerpPt(pop, user, lt);
+      }
+      drawScene();
+      if (t < 1) {
+        animFrame = requestAnimationFrame(step);
+      } else {
+        dotPos = null;
+        cacheHotPops[userKey] = true;
+        drawScene();
+      }
+    }
+    if (animFrame) cancelAnimationFrame(animFrame);
+    animFrame = requestAnimationFrame(step);
+  }
+
+  function runHitAnimation(userKey) {
+    var user = USER_NODES[userKey];
+    var pop  = POP_NODES[userKey];
+    var totalTime = 600;
+    var startTime = performance.now();
+    var targetLatency = HIT_LATENCIES[userKey] || 8;
+
+    cacheStatusEl.textContent = 'HIT — served from PoP cache';
+    cacheStatusEl.className = 'value hit';
+    animateLatency(targetLatency, '#7ee787');
+
+    function step(now) {
+      var t = Math.min((now - startTime) / totalTime, 1);
+      if (t < 0.45) {
+        dotPos = lerpPt(user, pop, t / 0.45);
+      } else {
+        dotPos = lerpPt(pop, user, (t - 0.45) / 0.55);
+      }
+      drawScene();
+      if (t < 1) {
+        animFrame = requestAnimationFrame(step);
+      } else {
+        dotPos = null;
+        drawScene();
+      }
+    }
+    if (animFrame) cancelAnimationFrame(animFrame);
+    animFrame = requestAnimationFrame(step);
+  }
+
+  window.cdnSelectUser = function(key) {
+    currentUser = key;
+    var pop = POP_NODES[key];
+    popDisplayEl.textContent = pop.label;
+    popDisplayEl.className = 'value';
+    cacheStatusEl.textContent = '— fire a request —';
+    cacheStatusEl.className = 'value';
+    latencyCounterEl.textContent = '—';
+    latencyFillEl.style.width = '0%';
+
+    document.querySelectorAll('.user-loc-btn').forEach(function(btn) {
+      btn.style.borderColor = '#30363d';
+      btn.style.color = '#e6edf3';
+    });
+    var activeBtn = document.querySelector('[data-loc="' + key + '"]');
+    if (activeBtn) {
+      activeBtn.style.borderColor = '#0d9488';
+      activeBtn.style.color = '#0d9488';
+    }
+    if (animFrame) cancelAnimationFrame(animFrame);
+    dotPos = null;
+    drawScene();
+  };
+
+  window.cdnFireRequest = function(type) {
+    if (!currentUser) {
+      popDisplayEl.textContent = 'Select a user first!';
+      return;
+    }
+    animType = type;
+    if (type === 'miss') {
+      runMissAnimation(currentUser);
+    } else {
+      if (!cacheHotPops[currentUser]) {
+        cacheStatusEl.textContent = 'TIP: Fire a miss first to warm the cache!';
+        cacheStatusEl.className = 'value';
+        runHitAnimation(currentUser);
+      } else {
+        runHitAnimation(currentUser);
+      }
+    }
+  };
+
+  // Initial draw
+  drawScene();
+})();
+
+/* ============================================================
+   CACHE FLOW ANIMATION (Section 03 — auto-cycles)
+   ============================================================ */
+(function() {
+  var missSteps = ['miss-1','miss-2','miss-3','miss-4','miss-5'];
+  var hitSteps  = ['hit-1','hit-2','hit-3'];
+  var idx = 0;
+  var phase = 'miss';
+
+  function clearAll() {
+    missSteps.concat(hitSteps).forEach(function(id) {
+      var el = document.getElementById(id);
+      if (el) el.classList.remove('active');
+    });
+  }
+
+  function tick() {
+    clearAll();
+    var steps = phase === 'miss' ? missSteps : hitSteps;
+    var el = document.getElementById(steps[idx]);
+    if (el) el.classList.add('active');
+    idx++;
+    if (idx >= steps.length) {
+      idx = 0;
+      phase = phase === 'miss' ? 'hit' : 'miss';
+    }
+    setTimeout(tick, 900);
+  }
+
+  setTimeout(tick, 1200);
+})();
+
+/* ============================================================
+   LUCIDE ICONS — initialize after DOM is ready
+   ============================================================ */
+if (typeof lucide !== 'undefined') {
+  lucide.createIcons();
+}
+</script>
+</body>
+</html>

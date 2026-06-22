@@ -1,0 +1,1304 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>How Object Storage Works — DevDunia</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bangers&family=Comic+Neue:ital,wght@0,400;0,700;1,400&family=Space+Mono:wght@400;700&display=swap">
+<script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
+<style>
+:root {
+  --ink: #1a1410; --paper: #fdf3e3; --paper2: #fbe9cc;
+  --red: #e63946; --blue: #1d6fb8; --yellow: #ffd23f;
+  --green: #3fa34d; --pink: #ff6b9d; --purple: #8a4fff;
+  --orange: #ff8c42; --teal: #0d9488;
+}
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  font-family: 'Comic Neue', cursive;
+  color: var(--ink);
+  background-color: var(--paper);
+  background-image: radial-gradient(var(--ink) 0.5px, transparent 0.6px);
+  background-size: 14px 14px;
+  background-attachment: fixed;
+  line-height: 1.65;
+}
+.page-wrap { position: relative; z-index: 1; max-width: 1240px; margin: 0 auto; padding: 20px 32px 60px; }
+.panel {
+  border: 4px solid var(--ink); border-radius: 6px;
+  box-shadow: 7px 7px 0 var(--ink);
+  background: var(--paper); padding: 28px 32px; margin-bottom: 32px;
+}
+h2 { font-family: 'Bangers', cursive; font-size: 2.4rem; letter-spacing: 2px; margin-bottom: 16px; line-height: 1; }
+h3 { font-family: 'Bangers', cursive; font-size: 1.6rem; letter-spacing: 1px; margin-bottom: 12px; }
+h4 { font-family: 'Bangers', cursive; font-size: 1.2rem; letter-spacing: 1px; margin-bottom: 8px; }
+p  { margin-bottom: 14px; font-size: 1.05rem; }
+p:last-child { margin-bottom: 0; }
+ul { padding-left: 22px; margin-bottom: 14px; }
+li { margin-bottom: 6px; font-size: 1rem; }
+code { font-family: 'Space Mono', monospace; font-size: .85em; background: var(--paper2); padding: 1px 5px; border-radius: 3px; }
+.section-head { display: flex; align-items: center; gap: 14px; margin-bottom: 22px; flex-wrap: wrap; }
+.section-num {
+  font-family: 'Bangers', cursive; font-size: 1.1rem; letter-spacing: 2px;
+  background: var(--blue); color: #fff; padding: 4px 14px;
+  border-radius: 4px; border: 2px solid var(--ink); box-shadow: 2px 2px 0 var(--ink);
+}
+.chip {
+  display: inline-block; font-family: 'Bangers', cursive; font-size: .85rem;
+  letter-spacing: 1.5px; padding: 3px 12px; border-radius: 4px;
+  border: 2px solid var(--ink); margin-right: 6px; margin-bottom: 6px; vertical-align: middle;
+}
+.chip-green  { background: var(--green);  color: #fff; }
+.chip-red    { background: var(--red);    color: #fff; }
+.chip-blue   { background: var(--blue);   color: #fff; }
+.chip-yellow { background: var(--yellow); color: var(--ink); }
+.chip-orange { background: var(--orange); color: #fff; }
+.chip-teal   { background: var(--teal);   color: #fff; }
+.hbox {
+  border: 3px solid var(--ink); border-radius: 5px; padding: 18px 22px;
+  margin: 16px 0; position: relative;
+}
+.hbox-label {
+  font-family: 'Bangers', cursive; font-size: .9rem; letter-spacing: 2px;
+  position: absolute; top: -14px; left: 16px; padding: 2px 12px;
+  border: 2px solid var(--ink); border-radius: 4px;
+}
+.hbox-orange { background: rgba(255,140,66,.1); border-color: var(--orange); }
+.hbox-orange .hbox-label { background: var(--orange); color: #fff; }
+.hbox-red { background: rgba(230,57,70,.08); border-color: var(--red); }
+.hbox-red .hbox-label { background: var(--red); color: #fff; }
+.hbox-green { background: rgba(63,163,77,.1); border-color: var(--green); }
+.hbox-green .hbox-label { background: var(--green); color: #fff; }
+.hbox-blue { background: rgba(29,111,184,.1); border-color: var(--blue); }
+.hbox-blue .hbox-label { background: var(--blue); color: #fff; }
+.hbox-yellow { background: rgba(255,210,63,.15); border-color: var(--yellow); }
+.hbox-yellow .hbox-label { background: var(--yellow); color: var(--ink); }
+.hbox-teal { background: rgba(13,148,136,.1); border-color: var(--teal); }
+.hbox-teal .hbox-label { background: var(--teal); color: #fff; }
+.hbox-purple { background: rgba(138,79,255,.1); border-color: var(--purple); }
+.hbox-purple .hbox-label { background: var(--purple); color: #fff; }
+.data-table { width: 100%; border-collapse: collapse; margin: 16px 0; font-size: .93rem; }
+.data-table th {
+  font-family: 'Bangers', cursive; font-size: 1rem; letter-spacing: 1px;
+  background: var(--ink); color: #fff; padding: 10px 14px; text-align: left; border: 2px solid var(--ink);
+}
+.data-table td { padding: 10px 14px; border: 2px solid var(--ink); vertical-align: top; }
+.data-table tr:nth-child(odd)  td { background: var(--paper2); }
+.data-table tr:nth-child(even) td { background: var(--paper); }
+.grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin: 16px 0; }
+.grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 16px; margin: 16px 0; }
+@media (max-width: 640px) { .grid-2, .grid-3 { grid-template-columns: 1fr; } }
+.card {
+  border: 3px solid var(--ink); border-radius: 5px;
+  box-shadow: 4px 4px 0 var(--ink); padding: 18px; background: var(--paper);
+}
+.card-head { font-family: 'Bangers', cursive; font-size: 1.1rem; letter-spacing: 1px; margin-bottom: 10px; padding-bottom: 8px; border-bottom: 2px solid var(--ink); }
+.sfx-row { display: flex; gap: 16px; flex-wrap: wrap; margin: 20px 0; }
+.sfx {
+  font-family: 'Bangers', cursive; font-size: 1.8rem; letter-spacing: 3px;
+  color: var(--ink); text-shadow: 3px 3px 0 var(--yellow); transform: rotate(-2deg); display: inline-block;
+}
+.sfx:nth-child(even) { transform: rotate(2deg); text-shadow: 3px 3px 0 var(--orange); }
+.chapter-divider { text-align: center; margin: 40px 0 28px; position: relative; }
+.chapter-divider::before { content: ''; position: absolute; top: 50%; left: 0; right: 0; height: 3px; background: var(--ink); }
+.chapter-divider span { position: relative; background: var(--paper); font-family: 'Bangers', cursive; font-size: 1rem; letter-spacing: 3px; padding: 0 16px; }
+/* Lucide icon helpers */
+.lc { width: 20px; height: 20px; vertical-align: middle; stroke-width: 2; display: inline-block; }
+.lc-lg { width: 32px; height: 32px; stroke-width: 2; }
+.lc svg { display: block; }
+
+/* ── PIPELINE ──────────────────────────────── */
+.pipeline-wrap { overflow-x: auto; margin: 20px 0; }
+.pipeline { display: flex; align-items: stretch; gap: 0; min-width: 700px; }
+.pipe-node {
+  flex: 1; border: 3px solid var(--ink); border-radius: 6px;
+  padding: 14px 10px; text-align: center; background: var(--paper);
+  font-family: 'Bangers', cursive; font-size: .85rem; letter-spacing: 1px;
+  box-shadow: 4px 4px 0 var(--ink); position: relative;
+}
+.pipe-node + .pipe-node { margin-left: -3px; }
+.pipe-node:first-child { border-radius: 6px 0 0 6px; }
+.pipe-node:last-child  { border-radius: 0 6px 6px 0; }
+.pipe-icon { margin-bottom: 8px; display: flex; justify-content: center; }
+.pipe-label { display: block; font-size: .75rem; margin-top: 4px; }
+.pipe-connector {
+  display: flex; align-items: center; justify-content: center;
+  padding: 0 4px; z-index: 2;
+}
+.pipe-arrow {
+  width: 28px; height: 3px; background: var(--ink); position: relative; flex-shrink: 0;
+}
+.pipe-arrow::after {
+  content: ''; position: absolute; right: -1px; top: 50%;
+  transform: translateY(-50%);
+  border-top: 7px solid transparent;
+  border-bottom: 7px solid transparent;
+  border-left: 10px solid var(--ink);
+}
+
+/* ── VERTICAL STEP FLOW ─────────────────────── */
+.vflow { display: flex; flex-direction: column; gap: 0; margin: 20px 0; }
+.vflow-step {
+  border: 3px solid var(--ink); border-radius: 6px;
+  padding: 14px 18px; background: var(--paper);
+  font-family: 'Bangers', cursive; font-size: .95rem; letter-spacing: 1px;
+  box-shadow: 4px 4px 0 var(--ink); display: flex; align-items: center; gap: 14px;
+}
+.vflow-connector {
+  display: flex; justify-content: flex-start; padding-left: 28px; margin: 0;
+}
+.vflow-bar {
+  width: 3px; height: 22px; background: var(--ink); position: relative;
+}
+.vflow-bar::after {
+  content: ''; position: absolute; bottom: -1px; left: 50%;
+  transform: translateX(-50%);
+  border-left: 6px solid transparent;
+  border-right: 6px solid transparent;
+  border-top: 9px solid var(--ink);
+}
+
+/* ── S3 SIMULATOR WIDGET ───────────────────── */
+.sim-wrap {
+  background: #0d1117; border: 4px solid var(--ink); border-radius: 8px;
+  box-shadow: 7px 7px 0 var(--ink); overflow: hidden; margin: 24px 0;
+}
+.sim-bar {
+  background: #161b22; border-bottom: 2px solid #30363d; padding: 10px 16px;
+  font-family: 'Bangers', cursive; font-size: 1rem; letter-spacing: 2px;
+  color: #e6edf3; display: flex; align-items: center; gap: 12px; flex-wrap: wrap;
+}
+.sim-body { padding: 20px; display: grid; grid-template-columns: 1fr 300px; gap: 20px; }
+@media(max-width:760px){ .sim-body { grid-template-columns: 1fr; } }
+#s3-canvas { display: block; border: 2px solid #30363d; border-radius: 4px; width: 100%; max-width: 580px; }
+.sim-side { display: flex; flex-direction: column; gap: 10px; }
+.sim-btn {
+  font-family: 'Bangers', cursive; font-size: 1rem; letter-spacing: 1.5px;
+  padding: 10px 14px; border: 2px solid #30363d; border-radius: 5px;
+  background: #161b22; color: #e6edf3; cursor: pointer; transition: background .15s;
+  text-align: left;
+}
+.sim-btn:hover { background: #21262d; border-color: #8b949e; }
+.sim-info-box {
+  background: #161b22; border: 2px solid #30363d; border-radius: 6px;
+  padding: 12px; font-family: 'Space Mono', monospace; font-size: .8rem; color: #adbac7; line-height: 1.7;
+}
+.sim-slider-wrap { padding: 0 20px 20px; }
+.sim-slider-wrap label { font-family: 'Bangers', cursive; font-size: .9rem; letter-spacing: 2px; color: #7d8590; display: block; margin-bottom: 8px; }
+#day-slider { width: 100%; accent-color: var(--blue); cursor: pointer; }
+</style>
+</head>
+<body>
+<div data-masthead></div>
+<div class="page-wrap">
+
+<div data-tool-hero
+  data-title="How Object Storage Works"
+  data-chapter="DATA-07"
+  data-category="Data &amp; Storage"
+  data-icon="&#x2601;"
+  data-desc="Block vs file vs object storage, how S3 stores and replicates billions of objects, presigned URLs, multipart uploads — the full guide."
+  data-color="blue"
+  data-badges="S3,OBJECT STORAGE,DISTRIBUTED STORAGE,AWS"
+  data-badge-colors="blue,orange,green,yellow">
+</div>
+
+<!-- ───────────────────────────────────────
+     SECTION 01: Three Storage Paradigms
+─────────────────────────────────────────── -->
+<div class="panel">
+  <div class="section-head">
+    <span class="section-num">01</span>
+    <h2>Three Storage Paradigms: Block, File, and Object</h2>
+  </div>
+
+  <p>Not all storage is created equal. The way data is organised on disk — and the interface you use to read and write it — has enormous implications for performance, scalability, and cost. There are three fundamental models, and they exist because different workloads need different trade-offs.</p>
+
+  <div class="grid-3" style="margin: 28px 0;">
+
+    <!-- Block Storage -->
+    <div class="card" style="border-color: var(--orange);">
+      <div class="card-head" style="color: var(--orange); border-color: var(--orange); display: flex; align-items: center; gap: 8px;">
+        <i data-lucide="hard-drive" style="width:22px;height:22px;color:var(--orange);"></i> Block Storage
+      </div>
+      <div style="text-align:center;margin:14px 0;">
+        <div style="background:rgba(255,140,66,.12);border:3px solid var(--orange);border-radius:8px;padding:14px;display:inline-block;min-width:120px;">
+          <i data-lucide="server" style="width:36px;height:36px;color:var(--orange);display:block;margin:0 auto 8px;"></i>
+          <div style="font-family:'Bangers',cursive;font-size:.9rem;letter-spacing:1px;color:var(--orange);">ONE SERVER</div>
+          <div style="margin-top:8px;display:flex;flex-direction:column;gap:4px;">
+            <div style="background:rgba(255,140,66,.2);border:2px solid var(--orange);border-radius:3px;height:14px;font-family:'Space Mono',monospace;font-size:.58rem;display:flex;align-items:center;padding:0 4px;color:var(--orange);">BLOCK 0–511</div>
+            <div style="background:rgba(255,140,66,.2);border:2px solid var(--orange);border-radius:3px;height:14px;font-family:'Space Mono',monospace;font-size:.58rem;display:flex;align-items:center;padding:0 4px;color:var(--orange);">BLOCK 512–1023</div>
+            <div style="background:rgba(255,140,66,.2);border:2px solid var(--orange);border-radius:3px;height:14px;font-family:'Space Mono',monospace;font-size:.58rem;display:flex;align-items:center;padding:0 4px;color:var(--orange);">BLOCK 1024–1535</div>
+          </div>
+        </div>
+      </div>
+      <ul style="font-size:.9rem;">
+        <li>Raw fixed-size blocks — no concept of files or names</li>
+        <li>OS formats it into a filesystem (ext4, NTFS, etc.)</li>
+        <li>Volume attached to <strong>one server</strong> at a time</li>
+        <li>Ultra-low latency, random read/write</li>
+      </ul>
+      <div style="margin-top:12px;">
+        <div style="font-family:'Bangers',cursive;font-size:.85rem;letter-spacing:1px;color:var(--orange);margin-bottom:6px;">EXAMPLES</div>
+        <span class="chip chip-orange" style="font-size:.75rem;">AWS EBS</span>
+        <span class="chip chip-orange" style="font-size:.75rem;">Local SSD</span>
+        <span class="chip chip-orange" style="font-size:.75rem;">Azure Disk</span>
+      </div>
+      <div style="margin-top:10px;">
+        <div style="font-family:'Bangers',cursive;font-size:.85rem;letter-spacing:1px;color:var(--orange);margin-bottom:6px;">BEST FOR</div>
+        <div style="font-family:'Space Mono',monospace;font-size:.78rem;color:#555;line-height:1.8;">Databases, VMs, OS volumes, anything needing raw IOPS</div>
+      </div>
+    </div>
+
+    <!-- File Storage -->
+    <div class="card" style="border-color: var(--teal);">
+      <div class="card-head" style="color: var(--teal); border-color: var(--teal); display: flex; align-items: center; gap: 8px;">
+        <i data-lucide="folder-open" style="width:22px;height:22px;color:var(--teal);"></i> File Storage
+      </div>
+      <div style="text-align:center;margin:14px 0;">
+        <div style="background:rgba(13,148,136,.1);border:3px solid var(--teal);border-radius:8px;padding:14px;display:inline-block;min-width:120px;">
+          <i data-lucide="network" style="width:36px;height:36px;color:var(--teal);display:block;margin:0 auto 8px;"></i>
+          <div style="font-family:'Bangers',cursive;font-size:.9rem;letter-spacing:1px;color:var(--teal);">MANY SERVERS</div>
+          <div style="margin-top:8px;font-family:'Space Mono',monospace;font-size:.6rem;color:#555;text-align:left;line-height:1.8;">
+            /home/alice/resume.pdf<br>
+            /shared/config.yaml<br>
+            /data/reports/q4.xlsx
+          </div>
+        </div>
+      </div>
+      <ul style="font-size:.9rem;">
+        <li>Hierarchical directories and files — like a normal filesystem</li>
+        <li>Network-mounted via NFS or SMB protocols</li>
+        <li><strong>Multiple servers</strong> can access the same filesystem</li>
+        <li>POSIX semantics: file locks, permissions, etc.</li>
+      </ul>
+      <div style="margin-top:12px;">
+        <div style="font-family:'Bangers',cursive;font-size:.85rem;letter-spacing:1px;color:var(--teal);margin-bottom:6px;">EXAMPLES</div>
+        <span class="chip chip-teal" style="font-size:.75rem;">AWS EFS</span>
+        <span class="chip chip-teal" style="font-size:.75rem;">NFS</span>
+        <span class="chip chip-teal" style="font-size:.75rem;">GCP Filestore</span>
+      </div>
+      <div style="margin-top:10px;">
+        <div style="font-family:'Bangers',cursive;font-size:.85rem;letter-spacing:1px;color:var(--teal);margin-bottom:6px;">BEST FOR</div>
+        <div style="font-family:'Space Mono',monospace;font-size:.78rem;color:#555;line-height:1.8;">Shared config, home directories, ML training datasets</div>
+      </div>
+    </div>
+
+    <!-- Object Storage -->
+    <div class="card" style="border-color: var(--blue);">
+      <div class="card-head" style="color: var(--blue); border-color: var(--blue); display: flex; align-items: center; gap: 8px;">
+        <i data-lucide="cloud" style="width:22px;height:22px;color:var(--blue);"></i> Object Storage
+      </div>
+      <div style="text-align:center;margin:14px 0;">
+        <div style="background:rgba(29,111,184,.1);border:3px solid var(--blue);border-radius:8px;padding:14px;display:inline-block;min-width:120px;">
+          <i data-lucide="globe" style="width:36px;height:36px;color:var(--blue);display:block;margin:0 auto 8px;"></i>
+          <div style="font-family:'Bangers',cursive;font-size:.9rem;letter-spacing:1px;color:var(--blue);">FLAT NAMESPACE</div>
+          <div style="margin-top:8px;font-family:'Space Mono',monospace;font-size:.56rem;color:#555;text-align:left;line-height:1.8;">
+            key: photos/jan/img001.jpg<br>
+            key: videos/tour.mp4<br>
+            key: backups/2024-01.tar.gz
+          </div>
+        </div>
+      </div>
+      <ul style="font-size:.9rem;">
+        <li>Flat key/value store — no real directories</li>
+        <li>HTTP API (PUT, GET, DELETE) — no mounting required</li>
+        <li><strong>Unlimited scale</strong> — billions of objects, petabytes</li>
+        <li>Built-in replication, durability, lifecycle policies</li>
+      </ul>
+      <div style="margin-top:12px;">
+        <div style="font-family:'Bangers',cursive;font-size:.85rem;letter-spacing:1px;color:var(--blue);margin-bottom:6px;">EXAMPLES</div>
+        <span class="chip chip-blue" style="font-size:.75rem;">AWS S3</span>
+        <span class="chip chip-blue" style="font-size:.75rem;">GCS</span>
+        <span class="chip chip-blue" style="font-size:.75rem;">Azure Blob</span>
+      </div>
+      <div style="margin-top:10px;">
+        <div style="font-family:'Bangers',cursive;font-size:.85rem;letter-spacing:1px;color:var(--blue);margin-bottom:6px;">BEST FOR</div>
+        <div style="font-family:'Space Mono',monospace;font-size:.78rem;color:#555;line-height:1.8;">Images, videos, backups, static sites, data lakes</div>
+      </div>
+    </div>
+
+  </div>
+
+  <table class="data-table">
+    <thead><tr>
+      <th><i data-lucide="layers" class="lc"></i> Attribute</th>
+      <th><i data-lucide="hard-drive" class="lc" style="color:var(--orange);"></i> Block</th>
+      <th><i data-lucide="folder" class="lc" style="color:var(--teal);"></i> File</th>
+      <th><i data-lucide="cloud" class="lc" style="color:var(--blue);"></i> Object</th>
+    </tr></thead>
+    <tbody>
+      <tr>
+        <td><strong>Interface</strong></td>
+        <td>Raw device (lsblk, iSCSI)</td>
+        <td>POSIX filesystem (NFS, SMB)</td>
+        <td>HTTP REST API (PUT/GET)</td>
+      </tr>
+      <tr>
+        <td><strong>Hierarchy</strong></td>
+        <td>None (raw blocks)</td>
+        <td>Tree (directories)</td>
+        <td>Flat (key prefixes simulate folders)</td>
+      </tr>
+      <tr>
+        <td><strong>Max scale</strong></td>
+        <td>Terabytes (single volume)</td>
+        <td>Petabytes (distributed)</td>
+        <td>Exabytes (no practical limit)</td>
+      </tr>
+      <tr>
+        <td><strong>Multi-server access</strong></td>
+        <td>No (one mount at a time)</td>
+        <td>Yes (network share)</td>
+        <td>Yes (HTTP — any machine anywhere)</td>
+      </tr>
+      <tr>
+        <td><strong>Latency</strong></td>
+        <td>Sub-millisecond (local)</td>
+        <td>Low (LAN)</td>
+        <td>Higher (HTTP overhead, WAN)</td>
+      </tr>
+      <tr>
+        <td><strong>Mutability</strong></td>
+        <td>Fully mutable (byte-level)</td>
+        <td>Fully mutable (file-level)</td>
+        <td>Immutable (overwrite = new version)</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div class="sfx-row">
+    <span class="sfx">BLOCK FOR SPEED</span>
+    <span class="sfx">FILE FOR SHARING</span>
+    <span class="sfx">OBJECT FOR SCALE</span>
+  </div>
+</div>
+
+<!-- ───────────────────────────────────────
+     SECTION 02: How S3 Is Architected
+─────────────────────────────────────────── -->
+<div class="panel">
+  <div class="section-head">
+    <span class="section-num">02</span>
+    <h2>How S3 Is Architected Internally</h2>
+  </div>
+
+  <p>S3 is not a simple file server. Under the hood it is a <strong>Dynamo-style distributed storage system</strong> — a consistent hashing ring of thousands of storage nodes, spread across multiple availability zones, with automatic replication and self-healing. Here is what happens when you call <code>PutObject</code>.</p>
+
+  <div class="grid-2" style="margin: 24px 0;">
+    <div>
+      <div class="hbox hbox-blue" style="margin: 0 0 16px 0;">
+        <div class="hbox-label">CONSISTENT HASHING RING</div>
+        <div style="margin-top: 14px;">
+          <div style="background: #0d1117; border: 2px solid #30363d; border-radius: 6px; padding: 14px; font-family: 'Space Mono', monospace; font-size: .8rem; color: #adbac7; line-height: 1.9;">
+            <div style="color: #7ee787; font-family: 'Bangers', cursive; font-size: .95rem; letter-spacing: 1px; margin-bottom: 8px;">OBJECT PLACEMENT FORMULA</div>
+            <div style="color: #ffd23f;">object_key = hash(bucket_name + "/" + key)</div>
+            <div style="margin-top: 8px; color: #79c0ff;">node_id = ring.lookup(object_key)</div>
+            <div style="margin-top: 8px; color: #888;">// Replicated on 3 nodes by default</div>
+            <div style="color: #888;">// Adjacent nodes on the ring</div>
+          </div>
+          <p style="margin-top: 12px; font-size: .9rem;">The hash of <code>bucket/key</code> maps to a position on a virtual ring. The primary storage node for that position — and the two next nodes on the ring — each store a replica. This means no central directory is needed to find any object.</p>
+        </div>
+      </div>
+      <div class="hbox hbox-orange" style="margin: 0;">
+        <div class="hbox-label">CONTENT-ADDRESSED BLOCKS</div>
+        <p style="margin-top: 12px; font-size: .9rem;">Large objects are split into content-addressed chunks. Each chunk's ID is the hash of its contents — identical chunks across different objects are stored only once. This provides free deduplication at the block level and makes integrity verification trivial (re-hash and compare).</p>
+      </div>
+    </div>
+    <div>
+      <h3 style="margin-bottom: 16px;">PUT Request Flow</h3>
+      <div class="vflow">
+        <div class="vflow-step" style="background: rgba(255,107,157,.1); border-color: var(--pink);">
+          <i data-lucide="monitor" style="width:24px;height:24px;color:var(--pink);flex-shrink:0;"></i>
+          <div>
+            <div style="color:var(--pink);">Client PUT Request</div>
+            <div style="font-family:'Space Mono',monospace;font-size:.72rem;color:#888;margin-top:3px;">PUT /bucket/photos/img001.jpg + object bytes</div>
+          </div>
+        </div>
+        <div class="vflow-connector"><div class="vflow-bar"></div></div>
+        <div class="vflow-step" style="background: rgba(29,111,184,.1); border-color: var(--blue);">
+          <i data-lucide="route" style="width:24px;height:24px;color:var(--blue);flex-shrink:0;"></i>
+          <div>
+            <div style="color:var(--blue);">S3 API + Routing Layer</div>
+            <div style="font-family:'Space Mono',monospace;font-size:.72rem;color:#888;margin-top:3px;">Auth check, computes hash(bucket+key), routes to primary node</div>
+          </div>
+        </div>
+        <div class="vflow-connector"><div class="vflow-bar"></div></div>
+        <div class="vflow-step" style="background: rgba(63,163,77,.1); border-color: var(--green);">
+          <i data-lucide="database" style="width:24px;height:24px;color:var(--green);flex-shrink:0;"></i>
+          <div>
+            <div style="color:var(--green);">Primary Storage Node</div>
+            <div style="font-family:'Space Mono',monospace;font-size:.72rem;color:#888;margin-top:3px;">Writes object to local disk, triggers async replication</div>
+          </div>
+        </div>
+        <div class="vflow-connector"><div class="vflow-bar"></div></div>
+        <div class="vflow-step" style="background: rgba(138,79,255,.1); border-color: var(--purple);">
+          <i data-lucide="copy" style="width:24px;height:24px;color:var(--purple);flex-shrink:0;"></i>
+          <div>
+            <div style="color:var(--purple);">Replica Nodes (x2)</div>
+            <div style="font-family:'Space Mono',monospace;font-size:.72rem;color:#888;margin-top:3px;">Each writes its copy, confirms back to primary</div>
+          </div>
+        </div>
+        <div class="vflow-connector"><div class="vflow-bar"></div></div>
+        <div class="vflow-step" style="background: rgba(255,210,63,.15); border-color: var(--yellow);">
+          <i data-lucide="check-circle" style="width:24px;height:24px;color:var(--orange);flex-shrink:0;"></i>
+          <div>
+            <div style="color:var(--orange);">200 OK to Client</div>
+            <div style="font-family:'Space Mono',monospace;font-size:.72rem;color:#888;margin-top:3px;">ETag (MD5 of content) returned. Object durably stored.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="hbox hbox-green">
+    <div class="hbox-label">S3 STANDARD: 3+ AVAILABILITY ZONES</div>
+    <p style="margin-top: 12px;">Unlike a naive replication approach that stores 3 replicas in the same datacenter, S3 Standard distributes replicas across <strong>at least 3 separate Availability Zones</strong> within a region. A whole datacenter can burn down and your data survives intact. Each AZ has independent power, cooling, and networking — they are physically separated by miles.</p>
+  </div>
+</div>
+
+<!-- ───────────────────────────────────────
+     SECTION 03: The Object Data Model
+─────────────────────────────────────────── -->
+<div class="panel">
+  <div class="section-head">
+    <span class="section-num">03</span>
+    <h2>The Object Data Model: Buckets, Keys, and Metadata</h2>
+  </div>
+
+  <p>Understanding S3's data model precisely prevents a lot of confusion. There are no real folders. There is no rename. An "object" is not just a file — it is a bundle of data, metadata, and identity attributes.</p>
+
+  <!-- Visual model -->
+  <div style="border: 3px solid var(--ink); border-radius: 8px; overflow: hidden; box-shadow: 6px 6px 0 var(--ink); margin: 24px 0;">
+    <div style="background: var(--ink); color: #fff; padding: 10px 20px; font-family: 'Bangers', cursive; font-size: 1rem; letter-spacing: 2px;">
+      S3 DATA MODEL ANATOMY
+    </div>
+    <div style="padding: 24px; background: var(--paper);">
+      <!-- Bucket -->
+      <div style="border: 3px solid var(--orange); border-radius: 8px; padding: 20px; background: rgba(255,140,66,.06); margin-bottom: 16px;">
+        <div style="display:flex;align-items:center;gap:10px;margin-bottom:16px;">
+          <i data-lucide="box" style="width:28px;height:28px;color:var(--orange);flex-shrink:0;"></i>
+          <div>
+            <div style="font-family:'Bangers',cursive;font-size:1.2rem;letter-spacing:1px;color:var(--orange);">BUCKET</div>
+            <div style="font-family:'Space Mono',monospace;font-size:.75rem;color:#888;">my-app-assets &nbsp;·&nbsp; Region: us-east-1 &nbsp;·&nbsp; Globally unique name</div>
+          </div>
+        </div>
+        <!-- Objects inside bucket -->
+        <div style="display:flex;flex-direction:column;gap:10px;">
+          <!-- Object 1 -->
+          <div style="border: 3px solid var(--blue); border-radius: 6px; padding: 14px; background: rgba(29,111,184,.07);">
+            <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px;">
+              <i data-lucide="file-image" style="width:22px;height:22px;color:var(--blue);flex-shrink:0;"></i>
+              <div style="font-family:'Bangers',cursive;font-size:1rem;letter-spacing:1px;color:var(--blue);">OBJECT</div>
+            </div>
+            <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;">
+              <div style="background:var(--paper2);border:2px solid var(--ink);border-radius:4px;padding:8px 10px;">
+                <div style="font-family:'Bangers',cursive;font-size:.8rem;letter-spacing:1px;color:var(--orange);margin-bottom:4px;">KEY</div>
+                <div style="font-family:'Space Mono',monospace;font-size:.72rem;color:#333;">photos/2024/january/img001.jpg</div>
+                <div style="font-family:'Space Mono',monospace;font-size:.65rem;color:#888;margin-top:4px;">Full path including prefix. No real directories exist.</div>
+              </div>
+              <div style="background:var(--paper2);border:2px solid var(--ink);border-radius:4px;padding:8px 10px;">
+                <div style="font-family:'Bangers',cursive;font-size:.8rem;letter-spacing:1px;color:var(--blue);margin-bottom:4px;">DATA</div>
+                <div style="font-family:'Space Mono',monospace;font-size:.72rem;color:#333;">3.2 MB binary bytes</div>
+                <div style="font-family:'Space Mono',monospace;font-size:.65rem;color:#888;margin-top:4px;">ETag: "d41d8cd98f00b204..." (MD5 checksum)</div>
+              </div>
+              <div style="background:var(--paper2);border:2px solid var(--ink);border-radius:4px;padding:8px 10px;">
+                <div style="font-family:'Bangers',cursive;font-size:.8rem;letter-spacing:1px;color:var(--purple);margin-bottom:4px;">METADATA</div>
+                <div style="font-family:'Space Mono',monospace;font-size:.65rem;color:#333;line-height:1.8;">
+                  Content-Type: image/jpeg<br>
+                  Content-Length: 3276800<br>
+                  Last-Modified: 2024-01-15<br>
+                  x-amz-meta-author: alice
+                </div>
+              </div>
+            </div>
+          </div>
+          <!-- Object 2 condensed -->
+          <div style="border: 2px dashed var(--ink); border-radius: 6px; padding: 10px 14px; background: rgba(255,255,255,.5); display:flex;align-items:center;gap:10px;">
+            <i data-lucide="file-video" style="width:18px;height:18px;color:var(--teal);"></i>
+            <div style="font-family:'Space Mono',monospace;font-size:.78rem;color:#555;">KEY: videos/tour.mp4 &nbsp;|&nbsp; 142 MB &nbsp;|&nbsp; ETag: "a3f..." &nbsp;|&nbsp; Version: gEU5vf...</div>
+          </div>
+          <div style="border: 2px dashed var(--ink); border-radius: 6px; padding: 10px 14px; background: rgba(255,255,255,.5); display:flex;align-items:center;gap:10px;">
+            <i data-lucide="file-archive" style="width:18px;height:18px;color:var(--orange);"></i>
+            <div style="font-family:'Space Mono',monospace;font-size:.78rem;color:#555;">KEY: backups/2024-01.tar.gz &nbsp;|&nbsp; 890 MB &nbsp;|&nbsp; Storage class: GLACIER</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="grid-2">
+    <div class="hbox hbox-teal" style="margin: 0;">
+      <div class="hbox-label">THE FLAT NAMESPACE ILLUSION</div>
+      <p style="margin-top: 12px; font-size: .9rem;">When you see <code>photos/2024/january/</code> in the S3 console, you are seeing a <strong>simulation</strong>. There is no directory object. There is no inode. The slash is just a character in the key string. When you "list a folder", S3 finds all keys with that prefix and groups them by the delimiter <code>/</code>. There is no rename operation — you copy the object to a new key and delete the old one.</p>
+    </div>
+    <div class="hbox hbox-purple" style="margin: 0;">
+      <div class="hbox-label">METADATA: TWO KINDS</div>
+      <p style="margin-top: 12px; font-size: .9rem;"><strong>System metadata</strong> is set by S3: <code>Content-Type</code>, <code>Content-Length</code>, <code>Last-Modified</code>, <code>ETag</code>. You can influence some of these on upload.</p>
+      <p style="font-size: .9rem;"><strong>User-defined metadata</strong> must start with <code>x-amz-meta-</code>. Maximum 2 KB total. Stored alongside the object and returned in GET response headers. Use it for tags, author info, processing state — anything your application needs without downloading the object itself.</p>
+    </div>
+  </div>
+</div>
+
+<!-- ───────────────────────────────────────
+     SECTION 04: Multipart Upload
+─────────────────────────────────────────── -->
+<div class="panel">
+  <div class="section-head">
+    <span class="section-num">04</span>
+    <h2>Multipart Upload: Handling Giant Files Reliably</h2>
+  </div>
+
+  <p>Uploading a 10 GB file in a single HTTP request is a bad idea. A network hiccup after 9.9 GB means starting over from scratch. Multipart upload solves this: split the file into independently uploadable parts, upload them in parallel, then tell S3 to assemble them. You only need to retry the one failed part.</p>
+
+  <div class="grid-2" style="margin: 24px 0;">
+    <div class="hbox hbox-red" style="margin: 0;">
+      <div class="hbox-label">WITHOUT MULTIPART</div>
+      <div style="margin-top: 14px; display: flex; flex-direction: column; gap: 6px;">
+        <div style="border: 2px solid var(--red); border-radius: 5px; background: rgba(230,57,70,.1); padding: 10px 14px; display: flex; align-items: center; gap: 10px;">
+          <i data-lucide="upload-cloud" style="width:22px;height:22px;color:var(--red);flex-shrink:0;"></i>
+          <div style="font-family:'Space Mono',monospace;font-size:.8rem;">Single PUT request: 10 GB body</div>
+        </div>
+        <div style="background:rgba(230,57,70,.08);border:2px dashed var(--red);border-radius:4px;padding:10px 14px;font-family:'Space Mono',monospace;font-size:.78rem;color:var(--red);text-align:center;">
+          Network drops at 9.7 GB... restart from 0
+        </div>
+        <ul style="font-size:.88rem;margin-top:6px;">
+          <li>No resume capability</li>
+          <li>No parallelism — one sequential stream</li>
+          <li>Timeout risk on slow connections</li>
+          <li>Wastes bandwidth on retry</li>
+        </ul>
+      </div>
+    </div>
+    <div class="hbox hbox-green" style="margin: 0;">
+      <div class="hbox-label">WITH MULTIPART</div>
+      <div style="margin-top: 14px;">
+        <!-- 5 parts visual -->
+        <div style="display: flex; gap: 6px; margin-bottom: 10px; flex-wrap: wrap;">
+          <div style="flex:1;min-width:44px;border:2px solid var(--green);border-radius:4px;background:rgba(63,163,77,.15);padding:6px;text-align:center;">
+            <div style="font-family:'Bangers',cursive;font-size:.85rem;color:var(--green);">P1</div>
+            <div style="font-family:'Space Mono',monospace;font-size:.62rem;color:#888;">2 GB</div>
+          </div>
+          <div style="flex:1;min-width:44px;border:2px solid var(--green);border-radius:4px;background:rgba(63,163,77,.15);padding:6px;text-align:center;">
+            <div style="font-family:'Bangers',cursive;font-size:.85rem;color:var(--green);">P2</div>
+            <div style="font-family:'Space Mono',monospace;font-size:.62rem;color:#888;">2 GB</div>
+          </div>
+          <div style="flex:1;min-width:44px;border:2px solid var(--green);border-radius:4px;background:rgba(63,163,77,.15);padding:6px;text-align:center;">
+            <div style="font-family:'Bangers',cursive;font-size:.85rem;color:var(--green);">P3</div>
+            <div style="font-family:'Space Mono',monospace;font-size:.62rem;color:#888;">2 GB</div>
+          </div>
+          <div style="flex:1;min-width:44px;border:2px solid var(--red);border-radius:4px;background:rgba(230,57,70,.15);padding:6px;text-align:center;">
+            <div style="font-family:'Bangers',cursive;font-size:.85rem;color:var(--red);">P4</div>
+            <div style="font-family:'Space Mono',monospace;font-size:.62rem;color:var(--red);">FAIL</div>
+          </div>
+          <div style="flex:1;min-width:44px;border:2px solid var(--green);border-radius:4px;background:rgba(63,163,77,.15);padding:6px;text-align:center;">
+            <div style="font-family:'Bangers',cursive;font-size:.85rem;color:var(--green);">P5</div>
+            <div style="font-family:'Space Mono',monospace;font-size:.62rem;color:#888;">2 GB</div>
+          </div>
+        </div>
+        <div style="background:rgba(255,210,63,.15);border:2px solid var(--yellow);border-radius:4px;padding:8px 12px;font-family:'Space Mono',monospace;font-size:.75rem;color:#333;text-align:center;">
+          Retry only Part 4 — all others already done
+        </div>
+        <ul style="font-size:.88rem;margin-top:10px;">
+          <li>Parts: 5 MB min, 5 GB max each</li>
+          <li>Upload parts in parallel — 5x faster</li>
+          <li>Resume on failure — retry one part</li>
+          <li>Assemble server-side, no re-upload</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <h3>Multipart Upload API Flow</h3>
+  <div class="pipeline-wrap">
+    <div class="pipeline">
+      <div class="pipe-node" style="background: rgba(29,111,184,.1);">
+        <div class="pipe-icon"><i data-lucide="play-circle" style="width:28px;height:28px;color:var(--blue);"></i></div>
+        <div style="font-size: .82rem;">CreateMultipart<br>Upload</div>
+        <span class="pipe-label" style="color:#888;font-family:'Space Mono',monospace;">returns<br>uploadId</span>
+      </div>
+      <div class="pipe-connector"><div class="pipe-arrow"></div></div>
+      <div class="pipe-node" style="background: rgba(63,163,77,.1);">
+        <div class="pipe-icon"><i data-lucide="upload" style="width:28px;height:28px;color:var(--green);"></i></div>
+        <div style="font-size: .82rem;">UploadPart<br>(x N)</div>
+        <span class="pipe-label" style="color:#888;font-family:'Space Mono',monospace;">parallel,<br>each has ETag</span>
+      </div>
+      <div class="pipe-connector"><div class="pipe-arrow"></div></div>
+      <div class="pipe-node" style="background: rgba(255,140,66,.1);">
+        <div class="pipe-icon"><i data-lucide="refresh-cw" style="width:28px;height:28px;color:var(--orange);"></i></div>
+        <div style="font-size: .82rem;">Retry Failed<br>Parts</div>
+        <span class="pipe-label" style="color:#888;font-family:'Space Mono',monospace;">use same<br>uploadId</span>
+      </div>
+      <div class="pipe-connector"><div class="pipe-arrow"></div></div>
+      <div class="pipe-node" style="background: rgba(138,79,255,.1);">
+        <div class="pipe-icon"><i data-lucide="check-square" style="width:28px;height:28px;color:var(--purple);"></i></div>
+        <div style="font-size: .82rem;">CompleteMultipart<br>Upload</div>
+        <span class="pipe-label" style="color:#888;font-family:'Space Mono',monospace;">send ETags<br>list to S3</span>
+      </div>
+      <div class="pipe-connector"><div class="pipe-arrow"></div></div>
+      <div class="pipe-node" style="background: rgba(13,148,136,.1);">
+        <div class="pipe-icon"><i data-lucide="package" style="width:28px;height:28px;color:var(--teal);"></i></div>
+        <div style="font-size: .82rem;">S3 Assembles<br>Object</div>
+        <span class="pipe-label" style="color:#888;font-family:'Space Mono',monospace;">server-side<br>join of parts</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="hbox hbox-yellow">
+    <div class="hbox-label">PART SIZE RULES</div>
+    <p style="margin-top: 12px;">Minimum part size is <strong>5 MB</strong> (except the last part). Maximum part size is <strong>5 GB</strong>. Maximum number of parts is <strong>10,000</strong>. This means the maximum object size is 5 GB × 10,000 = <strong>5 TB</strong>. The AWS SDK handles all of this automatically — it splits your file at the right boundaries and issues parallel UploadPart requests.</p>
+  </div>
+</div>
+
+<!-- ───────────────────────────────────────
+     SECTION 05: Presigned URLs
+─────────────────────────────────────────── -->
+<div class="panel">
+  <div class="section-head">
+    <span class="section-num">05</span>
+    <h2>Presigned URLs: Direct Access Without Exposing Credentials</h2>
+  </div>
+
+  <p>Your S3 bucket is private. But you need users to upload profile pictures or download invoice PDFs. You do not want to stream those gigabytes through your app server — that wastes your bandwidth and adds latency. Presigned URLs solve this by embedding temporary, scoped credentials directly in a URL.</p>
+
+  <!-- Two-path diagram -->
+  <div style="border: 3px solid var(--ink); border-radius: 8px; overflow: hidden; box-shadow: 6px 6px 0 var(--ink); margin: 24px 0;">
+    <div style="background: var(--ink); color: #fff; padding: 10px 20px; font-family: 'Bangers', cursive; font-size: 1rem; letter-spacing: 2px;">
+      WITHOUT vs WITH PRESIGNED URL
+    </div>
+    <div style="padding: 24px; background: var(--paper); display: grid; grid-template-columns: 1fr 1fr; gap: 24px;">
+
+      <!-- Without -->
+      <div style="border: 3px solid var(--red); border-radius: 6px; background: rgba(230,57,70,.05); padding: 16px;">
+        <div style="font-family:'Bangers',cursive;font-size:1.1rem;letter-spacing:1px;color:var(--red);margin-bottom:16px;display:flex;align-items:center;gap:8px;">
+          <i data-lucide="x-circle" style="width:20px;height:20px;"></i> Without Presigned URL
+        </div>
+        <!-- Client -->
+        <div style="border:2px solid var(--ink);border-radius:5px;padding:10px;text-align:center;background:rgba(255,107,157,.08);margin-bottom:8px;">
+          <i data-lucide="smartphone" style="width:20px;height:20px;color:var(--pink);display:block;margin:0 auto 4px;"></i>
+          <div style="font-family:'Bangers',cursive;font-size:.85rem;">Client</div>
+          <div style="font-family:'Space Mono',monospace;font-size:.65rem;color:#888;">wants to upload 50 MB photo</div>
+        </div>
+        <!-- Arrow down -->
+        <div style="display:flex;justify-content:center;margin:4px 0;">
+          <div style="width:3px;height:20px;background:var(--red);position:relative;">
+            <div style="position:absolute;bottom:-1px;left:50%;transform:translateX(-50%);border-left:5px solid transparent;border-right:5px solid transparent;border-top:8px solid var(--red);"></div>
+          </div>
+        </div>
+        <!-- Your Server -->
+        <div style="border:2px solid var(--orange);border-radius:5px;padding:10px;text-align:center;background:rgba(255,140,66,.08);margin-bottom:4px;">
+          <i data-lucide="server" style="width:20px;height:20px;color:var(--orange);display:block;margin:0 auto 4px;"></i>
+          <div style="font-family:'Bangers',cursive;font-size:.85rem;color:var(--orange);">Your App Server</div>
+          <div style="font-family:'Space Mono',monospace;font-size:.65rem;color:var(--red);margin-top:3px;">50 MB flows through here!</div>
+          <div style="font-family:'Space Mono',monospace;font-size:.62rem;color:#888;margin-top:2px;">Bandwidth cost. Memory pressure. Latency.</div>
+        </div>
+        <!-- Arrow down -->
+        <div style="display:flex;justify-content:center;margin:4px 0;">
+          <div style="width:3px;height:20px;background:var(--red);position:relative;">
+            <div style="position:absolute;bottom:-1px;left:50%;transform:translateX(-50%);border-left:5px solid transparent;border-right:5px solid transparent;border-top:8px solid var(--red);"></div>
+          </div>
+        </div>
+        <!-- S3 -->
+        <div style="border:2px solid var(--blue);border-radius:5px;padding:10px;text-align:center;background:rgba(29,111,184,.08);">
+          <i data-lucide="cloud" style="width:20px;height:20px;color:var(--blue);display:block;margin:0 auto 4px;"></i>
+          <div style="font-family:'Bangers',cursive;font-size:.85rem;color:var(--blue);">S3</div>
+        </div>
+      </div>
+
+      <!-- With -->
+      <div style="border: 3px solid var(--green); border-radius: 6px; background: rgba(63,163,77,.05); padding: 16px;">
+        <div style="font-family:'Bangers',cursive;font-size:1.1rem;letter-spacing:1px;color:var(--green);margin-bottom:16px;display:flex;align-items:center;gap:8px;">
+          <i data-lucide="check-circle" style="width:20px;height:20px;"></i> With Presigned URL
+        </div>
+        <!-- Client -->
+        <div style="border:2px solid var(--ink);border-radius:5px;padding:8px;text-align:center;background:rgba(255,107,157,.08);margin-bottom:4px;">
+          <i data-lucide="smartphone" style="width:18px;height:18px;color:var(--pink);display:block;margin:0 auto 3px;"></i>
+          <div style="font-family:'Bangers',cursive;font-size:.8rem;">Client</div>
+        </div>
+        <div style="display:flex;gap:6px;margin:4px 0;align-items:center;">
+          <!-- Arrow to server -->
+          <div style="flex:1;height:3px;background:var(--ink);position:relative;">
+            <div style="position:absolute;right:-1px;top:50%;transform:translateY(-50%);border-top:5px solid transparent;border-bottom:5px solid transparent;border-left:8px solid var(--ink);"></div>
+          </div>
+          <div style="border:2px solid var(--orange);border-radius:5px;padding:6px 10px;background:rgba(255,140,66,.08);text-align:center;flex-shrink:0;">
+            <i data-lucide="server" style="width:18px;height:18px;color:var(--orange);display:block;margin:0 auto 3px;"></i>
+            <div style="font-family:'Bangers',cursive;font-size:.75rem;color:var(--orange);">App Server</div>
+            <div style="font-family:'Space Mono',monospace;font-size:.6rem;color:var(--green);margin-top:2px;">generates URL only</div>
+            <div style="font-family:'Space Mono',monospace;font-size:.58rem;color:#888;">no data flows here</div>
+          </div>
+          <!-- Arrow back -->
+          <div style="flex:1;height:3px;background:var(--ink);position:relative;">
+            <div style="position:absolute;left:-1px;top:50%;transform:translateY(-50%);border-top:5px solid transparent;border-bottom:5px solid transparent;border-right:8px solid var(--ink);"></div>
+          </div>
+        </div>
+        <div style="margin:4px 0;background:rgba(63,163,77,.12);border:2px solid var(--green);border-radius:4px;padding:6px 10px;font-family:'Space Mono',monospace;font-size:.65rem;color:#333;text-align:center;">
+          https://s3.amazonaws.com/bucket/key?X-Amz-Signature=...&amp;X-Amz-Expires=900
+        </div>
+        <!-- Direct arrow to S3 -->
+        <div style="display:flex;justify-content:center;margin:4px 0;">
+          <div style="width:3px;height:20px;background:var(--green);position:relative;">
+            <div style="position:absolute;bottom:-1px;left:50%;transform:translateX(-50%);border-left:5px solid transparent;border-right:5px solid transparent;border-top:8px solid var(--green);"></div>
+          </div>
+        </div>
+        <!-- S3 -->
+        <div style="border:2px solid var(--blue);border-radius:5px;padding:10px;text-align:center;background:rgba(29,111,184,.08);">
+          <i data-lucide="cloud" style="width:20px;height:20px;color:var(--blue);display:block;margin:0 auto 4px;"></i>
+          <div style="font-family:'Bangers',cursive;font-size:.85rem;color:var(--blue);">S3</div>
+          <div style="font-family:'Space Mono',monospace;font-size:.62rem;color:var(--green);margin-top:3px;">Client uploads directly</div>
+          <div style="font-family:'Space Mono',monospace;font-size:.62rem;color:#888;">S3 validates signature</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="grid-2">
+    <div class="hbox hbox-blue" style="margin: 0;">
+      <div class="hbox-label">WHAT'S IN A PRESIGNED URL</div>
+      <div style="margin-top: 14px; background: #0d1117; border: 2px solid #30363d; border-radius: 5px; padding: 12px; font-family: 'Space Mono', monospace; font-size: .72rem; color: #adbac7; line-height: 1.9;">
+        <div style="color:#7ee787;">https://bucket.s3.amazonaws.com/key.jpg</div>
+        <div style="color:#79c0ff;">?X-Amz-Algorithm=AWS4-HMAC-SHA256</div>
+        <div style="color:#79c0ff;">&amp;X-Amz-Credential=AKIAIOSFODNN7%2F20240115%2Fus-east-1%2Fs3%2Faws4_request</div>
+        <div style="color:#ffd700;">&amp;X-Amz-Date=20240115T120000Z</div>
+        <div style="color:#ff6b9d;">&amp;X-Amz-Expires=900</div>
+        <div style="color:#ff8c42;">&amp;X-Amz-SignedHeaders=host</div>
+        <div style="color:#d2a8ff;">&amp;X-Amz-Signature=abc123...</div>
+      </div>
+      <p style="margin-top: 10px; font-size: .88rem;">S3 validates the signature on every request. If the expiry has passed or the URL has been tampered with, S3 returns 403.</p>
+    </div>
+    <div class="hbox hbox-orange" style="margin: 0;">
+      <div class="hbox-label">GET vs PUT PRESIGNED URLS</div>
+      <p style="margin-top: 12px; font-size: .9rem;"><strong>GET presigned URL:</strong> lets a user download a specific object directly from S3 without authentication. Share it in an email, embed in an <code>&lt;img&gt;</code> tag — it works until expiry (1 min to 7 days). The object stays private — only holders of the URL can access it.</p>
+      <p style="font-size: .9rem;"><strong>PUT presigned URL:</strong> lets a user upload to a specific key. Your server generates it, client PUTs directly to S3. Bandwidth cost: zero on your servers. You can constrain the allowed Content-Type and max object size with a presigned POST policy.</p>
+    </div>
+  </div>
+</div>
+
+<!-- ───────────────────────────────────────
+     SECTION 06: Versioning and Lifecycle
+─────────────────────────────────────────── -->
+<div class="panel">
+  <div class="section-head">
+    <span class="section-num">06</span>
+    <h2>Versioning and Lifecycle Policies: Automate Your Storage Costs</h2>
+  </div>
+
+  <p>S3 can automatically keep previous versions of every object, and it can automatically move objects to cheaper storage tiers as they age. Together these features mean you can set it and forget it — your old data costs a fraction of a cent per GB while still being recoverable.</p>
+
+  <div class="grid-2" style="margin: 20px 0;">
+    <div>
+      <h3>Versioning</h3>
+      <p style="font-size: .9rem;">When versioning is enabled on a bucket, every <code>PUT</code> creates a new version rather than overwriting. Every <code>DELETE</code> creates a <strong>delete marker</strong> (a special version that hides the object without destroying it). Previous versions remain accessible by version ID.</p>
+      <div style="border: 3px solid var(--ink); border-radius: 6px; overflow: hidden; box-shadow: 4px 4px 0 var(--ink); margin-top: 14px;">
+        <div style="background: var(--blue); color: #fff; padding: 8px 14px; font-family: 'Bangers', cursive; font-size: .9rem; letter-spacing: 1px;">VERSION HISTORY: report.pdf</div>
+        <div style="background: rgba(63,163,77,.1); padding: 10px 14px; border-bottom: 2px solid var(--ink); display: flex; align-items: center; justify-content: space-between;">
+          <div style="font-family:'Space Mono',monospace;font-size:.75rem;"><strong style="color:var(--green);">LATEST</strong>&nbsp; version-id: gEU5vf3J...</div>
+          <div style="font-family:'Space Mono',monospace;font-size:.72rem;color:#888;">2024-03-01 · 2.1 MB</div>
+        </div>
+        <div style="padding: 10px 14px; border-bottom: 2px solid var(--ink); display: flex; align-items: center; justify-content: space-between; background:var(--paper);">
+          <div style="font-family:'Space Mono',monospace;font-size:.75rem;">version-id: aB3kL9mP...</div>
+          <div style="font-family:'Space Mono',monospace;font-size:.72rem;color:#888;">2024-02-14 · 1.9 MB</div>
+        </div>
+        <div style="padding: 10px 14px; display: flex; align-items: center; justify-content: space-between; background:var(--paper2);">
+          <div style="font-family:'Space Mono',monospace;font-size:.75rem;">version-id: xC7nR2sQ...</div>
+          <div style="font-family:'Space Mono',monospace;font-size:.72rem;color:#888;">2024-01-05 · 1.7 MB</div>
+        </div>
+      </div>
+    </div>
+    <div>
+      <h3>Storage Class Ladder</h3>
+      <div style="display: flex; flex-direction: column; gap: 6px; margin-top: 8px;">
+        <div style="border: 3px solid var(--blue); border-radius: 6px; padding: 12px 16px; background: rgba(29,111,184,.1); display: flex; align-items: center; justify-content: space-between;">
+          <div style="display:flex;align-items:center;gap:10px;">
+            <i data-lucide="zap" style="width:20px;height:20px;color:var(--blue);"></i>
+            <div>
+              <div style="font-family:'Bangers',cursive;font-size:.95rem;letter-spacing:1px;color:var(--blue);">S3 STANDARD</div>
+              <div style="font-family:'Space Mono',monospace;font-size:.68rem;color:#888;">Millisecond access · Day 0+</div>
+            </div>
+          </div>
+          <div style="font-family:'Bangers',cursive;font-size:1.1rem;color:var(--blue);">$0.023<span style="font-size:.7rem;font-family:'Space Mono',monospace;">/GB/mo</span></div>
+        </div>
+        <div style="display:flex;justify-content:center;"><div style="width:3px;height:16px;background:var(--ink);position:relative;"><div style="position:absolute;bottom:-1px;left:50%;transform:translateX(-50%);border-left:5px solid transparent;border-right:5px solid transparent;border-top:8px solid var(--ink);"></div></div></div>
+        <div style="border: 3px solid var(--teal); border-radius: 6px; padding: 12px 16px; background: rgba(13,148,136,.1); display: flex; align-items: center; justify-content: space-between;">
+          <div style="display:flex;align-items:center;gap:10px;">
+            <i data-lucide="clock" style="width:20px;height:20px;color:var(--teal);"></i>
+            <div>
+              <div style="font-family:'Bangers',cursive;font-size:.95rem;letter-spacing:1px;color:var(--teal);">STANDARD-IA</div>
+              <div style="font-family:'Space Mono',monospace;font-size:.68rem;color:#888;">Millisecond access · After 30 days</div>
+            </div>
+          </div>
+          <div style="font-family:'Bangers',cursive;font-size:1.1rem;color:var(--teal);">$0.0125<span style="font-size:.7rem;font-family:'Space Mono',monospace;">/GB/mo</span></div>
+        </div>
+        <div style="display:flex;justify-content:center;"><div style="width:3px;height:16px;background:var(--ink);position:relative;"><div style="position:absolute;bottom:-1px;left:50%;transform:translateX(-50%);border-left:5px solid transparent;border-right:5px solid transparent;border-top:8px solid var(--ink);"></div></div></div>
+        <div style="border: 3px solid var(--purple); border-radius: 6px; padding: 12px 16px; background: rgba(138,79,255,.1); display: flex; align-items: center; justify-content: space-between;">
+          <div style="display:flex;align-items:center;gap:10px;">
+            <i data-lucide="snowflake" style="width:20px;height:20px;color:var(--purple);"></i>
+            <div>
+              <div style="font-family:'Bangers',cursive;font-size:.95rem;letter-spacing:1px;color:var(--purple);">GLACIER INSTANT</div>
+              <div style="font-family:'Space Mono',monospace;font-size:.68rem;color:#888;">Millisecond retrieval · After 90 days</div>
+            </div>
+          </div>
+          <div style="font-family:'Bangers',cursive;font-size:1.1rem;color:var(--purple);">$0.004<span style="font-size:.7rem;font-family:'Space Mono',monospace;">/GB/mo</span></div>
+        </div>
+        <div style="display:flex;justify-content:center;"><div style="width:3px;height:16px;background:var(--ink);position:relative;"><div style="position:absolute;bottom:-1px;left:50%;transform:translateX(-50%);border-left:5px solid transparent;border-right:5px solid transparent;border-top:8px solid var(--ink);"></div></div></div>
+        <div style="border: 3px solid var(--ink); border-radius: 6px; padding: 12px 16px; background: rgba(26,20,16,.06); display: flex; align-items: center; justify-content: space-between;">
+          <div style="display:flex;align-items:center;gap:10px;">
+            <i data-lucide="archive" style="width:20px;height:20px;color:#666;"></i>
+            <div>
+              <div style="font-family:'Bangers',cursive;font-size:.95rem;letter-spacing:1px;color:#444;">DEEP ARCHIVE</div>
+              <div style="font-family:'Space Mono',monospace;font-size:.68rem;color:#888;">12-hour retrieval · After 365 days</div>
+            </div>
+          </div>
+          <div style="font-family:'Bangers',cursive;font-size:1.1rem;color:#444;">$0.00099<span style="font-size:.7rem;font-family:'Space Mono',monospace;">/GB/mo</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="hbox hbox-yellow">
+    <div class="hbox-label">LIFECYCLE RULE EXAMPLE</div>
+    <div style="margin-top: 14px; background: #0d1117; border: 2px solid #30363d; border-radius: 5px; padding: 12px; font-family: 'Space Mono', monospace; font-size: .78rem; color: #adbac7; line-height: 2;">
+      <div style="color:#7ee787;">// Move logs/ prefix through the tiers automatically</div>
+      <div style="color:#ffd700;">Prefix: "logs/"</div>
+      <div style="color:#79c0ff;">Day 30  : transition to STANDARD_IA</div>
+      <div style="color:#79c0ff;">Day 90  : transition to GLACIER_IR</div>
+      <div style="color:#79c0ff;">Day 365 : transition to DEEP_ARCHIVE</div>
+      <div style="color:#ff6b9d;">Day 730 : expire (delete permanently)</div>
+    </div>
+  </div>
+</div>
+
+<!-- ───────────────────────────────────────
+     SECTION 07: Consistency and Durability
+─────────────────────────────────────────── -->
+<div class="panel">
+  <div class="section-head">
+    <span class="section-num">07</span>
+    <h2>Consistency Model and Durability: 11 Nines</h2>
+  </div>
+
+  <p>S3 switched to <strong>strong consistency</strong> in December 2020. Before that, it was eventually consistent — you could write an object and immediately read a stale version back. Today, every successful PUT is immediately visible to subsequent reads. Let us also untangle the difference between <em>durability</em> and <em>availability</em> — they are often confused.</p>
+
+  <div class="grid-2" style="margin: 24px 0;">
+
+    <div>
+      <div class="hbox hbox-green" style="margin: 0 0 16px 0;">
+        <div class="hbox-label">STRONG CONSISTENCY (DEC 2020)</div>
+        <ul style="margin-top: 14px; font-size: .9rem;">
+          <li>After a successful <code>PUT</code> returns 200, any subsequent <code>GET</code> returns the new version — no stale reads</li>
+          <li>After a <code>DELETE</code>, any subsequent <code>GET</code> returns 404 — no ghost reads</li>
+          <li>List operations also strongly consistent — new objects show up immediately in listings</li>
+          <li>No extra cost or configuration — it is the default for all buckets</li>
+        </ul>
+      </div>
+      <div class="hbox hbox-red" style="margin: 0;">
+        <div class="hbox-label">BEFORE 2020: EVENTUAL CONSISTENCY</div>
+        <div style="margin-top: 12px; background: #0d1117; border: 2px solid #30363d; border-radius: 5px; padding: 10px; font-family: 'Space Mono', monospace; font-size: .75rem; color: #adbac7; line-height: 1.9;">
+          <div style="color:#ff6b9d;">// Overwrite PUT bug (pre-2020)</div>
+          <div>1. PUT object version A  → 200 OK</div>
+          <div>2. PUT object version B  → 200 OK</div>
+          <div>3. GET object            → might return A!</div>
+          <div style="color:#ff6b9d;">// Replica not yet propagated</div>
+        </div>
+        <p style="margin-top: 10px; font-size: .88rem;">This forced developers to add retry logic, sleep-and-poll patterns, and version-check loops. All of that is unnecessary today.</p>
+      </div>
+    </div>
+
+    <div>
+      <h3 style="margin-bottom: 14px;">Durability vs Availability</h3>
+      <!-- Durability pyramid -->
+      <div style="border: 3px solid var(--ink); border-radius: 6px; overflow: hidden; box-shadow: 4px 4px 0 var(--ink); margin-bottom: 16px;">
+        <div style="background: var(--green); color: #fff; padding: 8px 14px; font-family: 'Bangers', cursive; font-size: .9rem; letter-spacing: 1px; border-bottom: 2px solid var(--ink); display: flex; align-items: center; gap: 8px;">
+          <i data-lucide="shield" style="width:18px;height:18px;"></i> DURABILITY: 99.999999999%
+        </div>
+        <div style="padding: 14px; background: rgba(63,163,77,.06);">
+          <div style="font-family:'Space Mono',monospace;font-size:.8rem;color:#333;line-height:2;">
+            <div>= 1 object lost per 10 billion objects per year</div>
+            <div style="color:var(--green);margin-top:4px;">HOW:</div>
+            <div style="padding-left:12px;color:#555;">• 3+ replicas across 3+ AZs</div>
+            <div style="padding-left:12px;color:#555;">• Erasure coding for large objects</div>
+            <div style="padding-left:12px;color:#555;">• CRC checksums on every block</div>
+            <div style="padding-left:12px;color:#555;">• Background scrubbing and healing</div>
+          </div>
+        </div>
+      </div>
+      <!-- Availability -->
+      <div style="border: 3px solid var(--blue); border-radius: 6px; overflow: hidden; box-shadow: 4px 4px 0 var(--ink);">
+        <div style="background: var(--blue); color: #fff; padding: 8px 14px; font-family: 'Bangers', cursive; font-size: .9rem; letter-spacing: 1px; border-bottom: 2px solid var(--ink); display: flex; align-items: center; gap: 8px;">
+          <i data-lucide="activity" style="width:18px;height:18px;"></i> AVAILABILITY: 99.99%
+        </div>
+        <div style="padding: 14px; background: rgba(29,111,184,.06);">
+          <div style="font-family:'Space Mono',monospace;font-size:.8rem;color:#333;line-height:2;">
+            <div>= ~52 minutes downtime per year</div>
+            <div style="color:var(--blue);margin-top:4px;">MEANING:</div>
+            <div style="padding-left:12px;color:#555;">• Your data is NOT lost during downtime</div>
+            <div style="padding-left:12px;color:#555;">• S3 API may briefly return 503</div>
+            <div style="padding-left:12px;color:#555;">• Durability and availability are separate SLAs</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="hbox hbox-teal">
+    <div class="hbox-label">THE ERASURE CODING UPGRADE</div>
+    <p style="margin-top: 12px;">S3 does not simply store 3 full copies anymore for large objects. It uses <strong>erasure coding</strong> (Reed-Solomon) — similar to RAID-6. Data is split into N chunks plus M parity chunks. Any N chunks are sufficient to reconstruct the object, even if M chunks are lost. This achieves higher durability with less storage overhead than naive 3x replication.</p>
+  </div>
+
+  <div class="sfx-row">
+    <span class="sfx">11 NINES DURABLE</span>
+    <span class="sfx">STRONG READS</span>
+    <span class="sfx">ALWAYS THERE</span>
+  </div>
+</div>
+
+<!-- ───────────────────────────────────────
+     SECTION 08: Interactive S3 Lifecycle Simulator
+─────────────────────────────────────────── -->
+<div class="panel">
+  <div class="section-head">
+    <span class="section-num">08</span>
+    <h2>Interactive: S3 Object Lifecycle Simulator</h2>
+  </div>
+
+  <p>Drag the timeline slider to watch an object move through S3 storage tiers as it ages. Toggle versioning to see multiple version cards stack. Hit "Generate Presigned URL" to animate URL creation. The cost calculator updates in real time based on the current storage tier.</p>
+
+  <div class="sim-wrap">
+    <div class="sim-bar">
+      <span style="width:12px;height:12px;border-radius:50%;background:#ff5f56;display:inline-block;"></span>
+      <span style="width:12px;height:12px;border-radius:50%;background:#ffbd2e;display:inline-block;"></span>
+      <span style="width:12px;height:12px;border-radius:50%;background:#27c93f;display:inline-block;"></span>
+      <span>S3 LIFECYCLE SIMULATOR</span>
+      <button id="sim-version-btn" onclick="simToggleVersioning()" style="margin-left:auto;font-family:'Bangers',cursive;font-size:.85rem;padding:4px 12px;background:#21262d;color:#e6edf3;border:2px solid #30363d;border-radius:4px;cursor:pointer;letter-spacing:1px;">VERSIONING: OFF</button>
+      <button onclick="simPresign()" style="font-family:'Bangers',cursive;font-size:.85rem;padding:4px 12px;background:#21262d;color:#ffd23f;border:2px solid #ffd23f;border-radius:4px;cursor:pointer;letter-spacing:1px;">PRESIGN URL</button>
+    </div>
+    <div class="sim-body">
+      <canvas id="s3-canvas" width="580" height="380"></canvas>
+      <div class="sim-side">
+        <div class="sim-info-box" id="sim-tier-box">
+          <div style="color:var(--blue);font-family:'Bangers',cursive;font-size:1rem;letter-spacing:1px;margin-bottom:6px;" id="sim-tier-name">S3 STANDARD</div>
+          <div id="sim-tier-desc">Hot tier. Millisecond access. Ideal for frequently accessed data. Data stored in 3+ AZs.</div>
+        </div>
+        <div class="sim-info-box">
+          <div style="color:#7ee787;font-family:'Bangers',cursive;font-size:.9rem;letter-spacing:1px;margin-bottom:8px;">COST CALCULATOR (1 TB)</div>
+          <div style="font-size:.85rem;">
+            <div style="display:flex;justify-content:space-between;margin-bottom:4px;">
+              <span>Storage tier:</span>
+              <span id="sim-cost-tier" style="color:var(--yellow);">Standard</span>
+            </div>
+            <div style="display:flex;justify-content:space-between;margin-bottom:4px;">
+              <span>Price per GB:</span>
+              <span id="sim-cost-pgb" style="color:var(--green);">$0.023</span>
+            </div>
+            <div style="height:1px;background:#30363d;margin:8px 0;"></div>
+            <div style="display:flex;justify-content:space-between;">
+              <span>Monthly cost (1TB):</span>
+              <span id="sim-cost-total" style="color:var(--yellow);font-family:'Bangers',cursive;font-size:1.1rem;">$23.55</span>
+            </div>
+          </div>
+        </div>
+        <div class="sim-info-box" id="sim-presign-box" style="display:none;">
+          <div style="color:#ffd23f;font-family:'Bangers',cursive;font-size:.9rem;letter-spacing:1px;margin-bottom:8px;">PRESIGNED URL GENERATED</div>
+          <div style="font-size:.72rem;word-break:break-all;color:#79c0ff;line-height:1.7;" id="sim-presign-url"></div>
+          <div style="margin-top:8px;display:flex;align-items:center;gap:6px;">
+            <i data-lucide="clock" style="width:14px;height:14px;color:var(--orange);flex-shrink:0;"></i>
+            <span id="sim-presign-ttl" style="font-size:.78rem;color:var(--orange);">Expires in 15:00</span>
+          </div>
+        </div>
+        <div class="sim-info-box">
+          <div style="color:#7d8590;font-family:'Bangers',cursive;font-size:.85rem;letter-spacing:1px;margin-bottom:6px;">LIFECYCLE TRIGGERS</div>
+          <div style="font-size:.75rem;line-height:1.9;">
+            <div id="lc-day0"  style="color:#3fa34d;">Day 0   : Object created in Standard</div>
+            <div id="lc-day30" style="color:#555;">Day 30  : Move to Standard-IA</div>
+            <div id="lc-day90" style="color:#555;">Day 90  : Move to Glacier Instant</div>
+            <div id="lc-day365" style="color:#555;">Day 365 : Move to Deep Archive</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="sim-slider-wrap">
+      <label>TIMELINE: DAY <span id="day-label">0</span> of 400</label>
+      <input type="range" id="day-slider" min="0" max="400" value="0" oninput="simSlider(this.value)">
+    </div>
+  </div>
+
+  <div class="hbox hbox-blue" style="margin-top: 16px;">
+    <div class="hbox-label">READING THE SIMULATOR</div>
+    <p style="margin-top: 12px;">Each coloured lane represents a storage tier — warm colours at the top (expensive, fast access), cool at the bottom (cheap, slow retrieval). The file card moves down as the timeline advances past lifecycle rule thresholds. With versioning enabled, older versions stack behind the latest. The cost panel shows the real AWS pricing for 1 TB of data in each tier.</p>
+  </div>
+</div>
+
+<div class="chapter-divider"><span>END OF DATA-07</span></div>
+</div><!-- /page-wrap -->
+
+<script src="hero-banner.js"></script>
+<script src="masthead.js"></script>
+<script src="author-card.js"></script>
+
+<script>
+/* ================================================================
+   SECTION 08: S3 Lifecycle Simulator Canvas
+   ================================================================ */
+(function() {
+  var canvas = document.getElementById('s3-canvas');
+  if (!canvas) return;
+  var ctx = canvas.getContext('2d');
+  var W = 580, H = 380;
+
+  var versioningEnabled = false;
+  var currentDay = 0;
+  var presignActive = false;
+  var presignTimer = 0;
+  var presignTTL = 900; // seconds
+  var presignElapsed = 0;
+  var presignInterval = null;
+
+  // Tier definitions
+  var tiers = [
+    { name: 'S3 STANDARD',    color: '#1d6fb8', bg: 'rgba(29,111,184,.18)',    priceGB: 0.023,   y: 40,  threshold: 0   },
+    { name: 'STANDARD-IA',    color: '#0d9488', bg: 'rgba(13,148,136,.18)',    priceGB: 0.0125,  y: 120, threshold: 30  },
+    { name: 'GLACIER INSTANT',color: '#8a4fff', bg: 'rgba(138,79,255,.18)',    priceGB: 0.004,   y: 200, threshold: 90  },
+    { name: 'DEEP ARCHIVE',   color: '#555555', bg: 'rgba(80,80,80,.18)',      priceGB: 0.00099, y: 280, threshold: 365 },
+  ];
+
+  var LANE_H = 70;
+
+  function getCurrentTier(day) {
+    if (day >= 365) return 3;
+    if (day >= 90)  return 2;
+    if (day >= 30)  return 1;
+    return 0;
+  }
+
+  function drawLanes() {
+    tiers.forEach(function(t, i) {
+      // Lane background
+      ctx.fillStyle = t.bg;
+      ctx.fillRect(0, t.y, W, LANE_H);
+      // Lane border
+      ctx.strokeStyle = t.color;
+      ctx.lineWidth = 2;
+      ctx.setLineDash([6, 4]);
+      ctx.strokeRect(2, t.y + 2, W - 4, LANE_H - 4);
+      ctx.setLineDash([]);
+
+      // Tier label on left
+      ctx.fillStyle = t.color;
+      ctx.font = '700 11px Bangers, cursive';
+      ctx.textAlign = 'left';
+      ctx.fillText(t.name, 10, t.y + 22);
+
+      // Price label
+      ctx.fillStyle = '#adbac7';
+      ctx.font = '9px Space Mono, monospace';
+      ctx.fillText('$' + t.priceGB + '/GB/mo', 10, t.y + 38);
+
+      // Threshold label
+      if (i > 0) {
+        ctx.fillStyle = t.color;
+        ctx.font = '9px Space Mono, monospace';
+        ctx.textAlign = 'right';
+        ctx.fillText('day ' + t.threshold + '+', W - 10, t.y + 22);
+        ctx.textAlign = 'left';
+      }
+    });
+  }
+
+  function drawFileCard(tierIdx, versions) {
+    var t = tiers[tierIdx];
+    var cardW = 160, cardH = 56;
+    var cardX = W / 2 - cardW / 2;
+    var cardY = t.y + (LANE_H - cardH) / 2;
+
+    // Draw stacked version cards if versioning on
+    if (versioningEnabled && versions > 1) {
+      for (var v = Math.min(versions - 1, 3); v >= 1; v--) {
+        var ox = v * -5, oy = v * -4;
+        ctx.fillStyle = 'rgba(40,40,60,.55)';
+        ctx.strokeStyle = '#444';
+        ctx.lineWidth = 2;
+        ctx.beginPath();
+        if (ctx.roundRect) ctx.roundRect(cardX + ox, cardY + oy, cardW, cardH, 6);
+        else ctx.rect(cardX + ox, cardY + oy, cardW, cardH);
+        ctx.fill(); ctx.stroke();
+      }
+    }
+
+    // Main card
+    ctx.fillStyle = '#1a1a2e';
+    ctx.strokeStyle = t.color;
+    ctx.lineWidth = 3;
+    ctx.shadowColor = t.color;
+    ctx.shadowBlur = 12;
+    ctx.beginPath();
+    if (ctx.roundRect) ctx.roundRect(cardX, cardY, cardW, cardH, 6);
+    else ctx.rect(cardX, cardY, cardW, cardH);
+    ctx.fill(); ctx.stroke();
+    ctx.shadowBlur = 0;
+
+    // File icon lines
+    ctx.strokeStyle = '#30363d';
+    ctx.lineWidth = 1;
+    ctx.beginPath(); ctx.moveTo(cardX + 14, cardY + 14); ctx.lineTo(cardX + 44, cardY + 14); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(cardX + 14, cardY + 22); ctx.lineTo(cardX + 44, cardY + 22); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(cardX + 14, cardY + 30); ctx.lineTo(cardX + 38, cardY + 30); ctx.stroke();
+
+    // Card text
+    ctx.fillStyle = t.color;
+    ctx.font = '700 11px Bangers, cursive';
+    ctx.textAlign = 'left';
+    ctx.fillText('report.pdf', cardX + 52, cardY + 20);
+    ctx.fillStyle = '#adbac7';
+    ctx.font = '9px Space Mono, monospace';
+    ctx.fillText('v' + versions + (versioningEnabled ? ' versions' : ''), cardX + 52, cardY + 34);
+    ctx.fillText('Day ' + currentDay, cardX + 52, cardY + 46);
+  }
+
+  function drawPresignOverlay() {
+    if (!presignActive) return;
+    var alpha = Math.min(1, presignElapsed / 30);
+    var fadeOut = presignTTL - presignElapsed < 60 ? (presignTTL - presignElapsed) / 60 : 1;
+    var a = alpha * fadeOut;
+    if (a <= 0) return;
+
+    // Animated URL bubble
+    ctx.globalAlpha = a;
+    ctx.fillStyle = '#0d1117';
+    ctx.strokeStyle = '#ffd23f';
+    ctx.lineWidth = 2;
+    var bx = 20, by = 340, bw = W - 40, bh = 28;
+    ctx.beginPath();
+    if (ctx.roundRect) ctx.roundRect(bx, by, bw, bh, 4);
+    else ctx.rect(bx, by, bw, bh);
+    ctx.fill(); ctx.stroke();
+
+    ctx.fillStyle = '#ffd23f';
+    ctx.font = '8px Space Mono, monospace';
+    ctx.textAlign = 'left';
+    var url = 'https://bucket.s3.amazonaws.com/report.pdf?X-Amz-Expires=900&X-Amz-Signature=a3f9c...';
+    // Animate URL appearing character by character
+    var chars = Math.min(url.length, Math.floor(presignElapsed * 3));
+    ctx.fillText(url.substring(0, chars), bx + 8, by + 17);
+    ctx.globalAlpha = 1;
+  }
+
+  function draw() {
+    ctx.clearRect(0, 0, W, H);
+    ctx.fillStyle = '#0d1117';
+    ctx.fillRect(0, 0, W, H);
+
+    drawLanes();
+
+    var tierIdx = getCurrentTier(currentDay);
+    var versions = versioningEnabled ? Math.min(1 + Math.floor(currentDay / 15), 5) : 1;
+    drawFileCard(tierIdx, versions);
+    drawPresignOverlay();
+
+    // Day timeline tick
+    var tickX = Math.round((currentDay / 400) * (W - 40)) + 20;
+    ctx.strokeStyle = 'rgba(255,210,63,.5)';
+    ctx.lineWidth = 1;
+    ctx.setLineDash([3, 3]);
+    ctx.beginPath(); ctx.moveTo(tickX, 0); ctx.lineTo(tickX, H - 30); ctx.stroke();
+    ctx.setLineDash([]);
+    // Tick label
+    ctx.fillStyle = '#ffd23f';
+    ctx.font = '700 10px Bangers, cursive';
+    ctx.textAlign = 'center';
+    ctx.fillText('DAY ' + currentDay, tickX, H - 10);
+  }
+
+  function updateSidebar(day) {
+    var tierIdx = getCurrentTier(day);
+    var t = tiers[tierIdx];
+    var names = ['S3 Standard', 'Standard-IA', 'Glacier Instant', 'Deep Archive'];
+    var descs = [
+      'Hot tier. Millisecond access. Ideal for frequently accessed data. Stored in 3+ AZs.',
+      'Infrequent Access tier. Same millisecond latency. 46% cheaper than Standard. Minimum 30-day storage.',
+      'Archive tier with millisecond retrieval. Great for quarterly reports. 82% cheaper than Standard.',
+      'Coldest archive. 12-hour retrieval time. 96% cheaper than Standard. For compliance and long-term backups.'
+    ];
+    document.getElementById('sim-tier-name').textContent = names[tierIdx];
+    document.getElementById('sim-tier-name').style.color = t.color;
+    document.getElementById('sim-tier-desc').textContent = descs[tierIdx];
+    document.getElementById('sim-cost-tier').textContent = names[tierIdx];
+    document.getElementById('sim-cost-pgb').textContent = '$' + t.priceGB;
+    var monthly = (t.priceGB * 1024).toFixed(2);
+    document.getElementById('sim-cost-total').textContent = '$' + monthly;
+
+    // Lifecycle trigger highlights
+    var days = [0, 30, 90, 365];
+    var ids = ['lc-day0', 'lc-day30', 'lc-day90', 'lc-day365'];
+    ids.forEach(function(id, i) {
+      var el = document.getElementById(id);
+      if (!el) return;
+      el.style.color = i === tierIdx ? tiers[i].color : '#555';
+      el.style.fontWeight = i === tierIdx ? 'bold' : 'normal';
+    });
+  }
+
+  window.simSlider = function(val) {
+    currentDay = parseInt(val, 10);
+    document.getElementById('day-label').textContent = currentDay;
+    updateSidebar(currentDay);
+    draw();
+  };
+
+  window.simToggleVersioning = function() {
+    versioningEnabled = !versioningEnabled;
+    var btn = document.getElementById('sim-version-btn');
+    if (btn) btn.textContent = 'VERSIONING: ' + (versioningEnabled ? 'ON' : 'OFF');
+    if (btn) btn.style.borderColor = versioningEnabled ? '#3fa34d' : '#30363d';
+    if (btn) btn.style.color = versioningEnabled ? '#3fa34d' : '#e6edf3';
+    draw();
+  };
+
+  window.simPresign = function() {
+    presignActive = true;
+    presignElapsed = 0;
+    presignTTL = 900;
+    var box = document.getElementById('sim-presign-box');
+    if (box) {
+      box.style.display = 'block';
+      var urlEl = document.getElementById('sim-presign-url');
+      if (urlEl) urlEl.textContent = 'https://bucket.s3.amazonaws.com/report.pdf?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Expires=900&X-Amz-Signature=a3f9c...';
+    }
+    if (presignInterval) clearInterval(presignInterval);
+    presignInterval = setInterval(function() {
+      presignElapsed++;
+      var remaining = presignTTL - presignElapsed;
+      var mins = Math.floor(remaining / 60);
+      var secs = remaining % 60;
+      var ttlEl = document.getElementById('sim-presign-ttl');
+      if (ttlEl) ttlEl.textContent = 'Expires in ' + mins + ':' + (secs < 10 ? '0' : '') + secs;
+      if (remaining <= 0) {
+        clearInterval(presignInterval);
+        presignActive = false;
+        var box2 = document.getElementById('sim-presign-box');
+        if (box2) box2.style.display = 'none';
+      }
+      draw();
+    }, 100); // fast for demo
+  };
+
+  // Initial draw
+  updateSidebar(0);
+  draw();
+
+  // Animate presign overlay continuously when active
+  function animLoop() {
+    if (presignActive) draw();
+    requestAnimationFrame(animLoop);
+  }
+  animLoop();
+})();
+
+/* ================================================================
+   Lucide icon initialization
+   ================================================================ */
+if (typeof lucide !== 'undefined') {
+  lucide.createIcons();
+}
+</script>
+</body>
+</html>
