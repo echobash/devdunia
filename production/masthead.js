@@ -122,7 +122,7 @@
         '<a href="../index.html">' +
           '<img src="../images/logo.png" alt="DevDunia">' +
         '</a>' +
-        '<a href="../index.html" class="dd-brand">DEV<span>DUNIA</span> COMICS</a>' +
+        '<a href="../index.html" class="dd-brand">DEV<span>DUNIA</span></a>' +
       '</div>' +
       '<div style="text-align:center">' +
         '<span class="dd-issue-pill">DEVDUNIA &middot; JUNE 2026</span>' +
