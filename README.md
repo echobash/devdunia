@@ -57,6 +57,8 @@ Perfect for JSON formatting, Base64 encoding, hash generation, password creation
 | 🧠 *VAPT Security* | OWASP Top 10, Clickjacking Checker, Security Headers |
 | 🌐 *API Tools* | cURL Describer, API Tester, JWT Decoder |
 | 🐍 *Python* | Requests, Flask, Pandas, OpenAI Examples |
+| 🐍 *How Thigs work* | DNS, HTTPS |
+
 
 ---
 
