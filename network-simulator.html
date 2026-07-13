@@ -1,0 +1,676 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Packet Journey — Network Simulator</title>
+<style>
+  :root{
+    --bg:#0b1220; --panel:#111a2e; --panel-2:#0e1626; --line:#24314d;
+    --text:#dce6f5; --muted:#8fa3c4;
+    --cyan:#4fd8eb; --amber:#ffb454; --green:#5be38b; --red:#ff6b7a; --violet:#a48bff;
+    --mono:'JetBrains Mono','SF Mono',Consolas,Menlo,monospace;
+    --sans:-apple-system,'Segoe UI',Inter,Roboto,sans-serif;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{background:var(--bg);color:var(--text);font-family:var(--sans);min-height:100vh}
+  header{padding:20px 28px 13px;border-bottom:1px solid var(--line);display:flex;align-items:baseline;gap:14px;flex-wrap:wrap}
+  header h1{font-size:20px;font-weight:650}
+  header .sub{color:var(--muted);font-size:13px}
+  .pulse{display:inline-block;width:8px;height:8px;border-radius:50%;background:var(--green);margin-right:8px;animation:pulse 2s infinite}
+  @keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
+
+  main{max-width:1120px;margin:0 auto;padding:18px 20px 60px;display:flex;flex-direction:column;gap:16px}
+  .panel{background:var(--panel);border:1px solid var(--line);border-radius:10px;overflow:hidden}
+  .panel h2{font-size:11px;text-transform:uppercase;letter-spacing:1.4px;color:var(--muted);
+    padding:10px 14px;border-bottom:1px solid var(--line);background:var(--panel-2);font-weight:600}
+
+  /* controls + legend */
+  .controls{display:flex;gap:10px;flex-wrap:wrap;align-items:center;padding:12px 14px}
+  .controls label{font-size:12px;color:var(--muted)}
+  select{background:var(--panel-2);color:var(--text);border:1px solid var(--line);border-radius:6px;padding:7px 10px;font-family:var(--mono);font-size:13px}
+  button{background:var(--panel-2);color:var(--text);border:1px solid var(--line);border-radius:6px;
+    padding:8px 16px;font-size:13px;cursor:pointer;transition:border-color .15s,background .15s}
+  button:hover{border-color:var(--cyan)}
+  button.primary{background:var(--cyan);color:#062028;border-color:var(--cyan);font-weight:650}
+  button.primary:hover{background:#6ee2f1}
+  .speed{display:flex;align-items:center;gap:6px;margin-left:auto}
+  input[type=range]{accent-color:var(--cyan)}
+  .legend{display:flex;gap:16px;flex-wrap:wrap;padding:0 14px 10px;font-size:12.5px;color:var(--muted)}
+  .legend span{display:flex;align-items:center;gap:6px}
+  .dot{width:13px;height:13px;border-radius:4px;display:inline-block}
+
+  /* topology */
+  #topo{width:100%;display:block;background:radial-gradient(ellipse at 50% 0%,#13203a 0%,var(--panel) 60%)}
+  .subnet-box{fill:none;stroke:var(--line);stroke-dasharray:6 5}
+  .subnet-label{font-family:var(--mono);font-size:13px;fill:var(--muted)}
+  .wire{stroke:#33445f;stroke-width:3}
+  .node{cursor:pointer}
+  .node text{fill:var(--text);font-family:var(--sans);font-size:13px;font-weight:700;text-anchor:middle}
+  .node .ip{fill:var(--muted);font-family:var(--mono);font-size:10.5px;font-weight:400}
+  .node .box{stroke-width:2.5}
+  .node.pc .box{fill:#0f4a75;stroke:var(--cyan)}
+  .node.server .box{fill:#0e5233;stroke:var(--green)}
+  .node.switch .box{fill:#7a4a12;stroke:var(--amber)}
+  .node.router .box{fill:#3f2f8f;stroke:var(--violet)}
+  .node.lit .box{filter:drop-shadow(0 0 10px rgba(79,216,235,.8))}
+  .node.lit-amber .box{filter:drop-shadow(0 0 10px rgba(255,180,84,.8))}
+  #packet{filter:drop-shadow(0 0 7px rgba(79,216,235,.9))}
+  #arrows line{stroke-width:3.5;stroke-dasharray:10 7;animation:flow .7s linear infinite;stroke-linecap:round}
+  @keyframes flow{to{stroke-dashoffset:-17}}
+  .device-info{margin:0 14px 14px;padding:12px 14px;background:var(--panel-2);border:1px solid var(--line);
+    border-radius:8px;font-size:13px;line-height:1.65;color:var(--muted)}
+  .device-info b{color:var(--text)}
+  .device-info code{font-family:var(--mono);font-size:12px;color:var(--cyan);background:rgba(79,216,235,.08);padding:1px 4px;border-radius:4px}
+  .device-info .ana{color:var(--cyan);font-style:italic}
+
+  /* explainer — the ONE block */
+  .explainer{padding:14px 16px;display:flex;flex-direction:column;gap:12px}
+  .step-head{display:flex;align-items:baseline;gap:12px;flex-wrap:wrap}
+  .step-count{font-family:var(--mono);font-size:11.5px;color:var(--bg);background:var(--cyan);
+    border-radius:5px;padding:2px 9px;font-weight:700;white-space:nowrap}
+  .step-title{font-size:15.5px;font-weight:700}
+  .what{font-size:13.5px;line-height:1.65;color:var(--text)}
+  .what code{font-family:var(--mono);font-size:12.5px;color:var(--cyan);background:rgba(79,216,235,.08);padding:1px 5px;border-radius:4px}
+  .what .bin{display:block;font-family:var(--mono);font-size:11.5px;white-space:pre;color:var(--muted);
+    margin-top:8px;overflow-x:auto;background:var(--panel-2);border:1px solid var(--line);border-radius:6px;padding:8px 10px}
+  .what .bin b{color:var(--cyan);font-weight:700}
+  .plainline{font-size:13px;color:var(--muted);line-height:1.6;border-left:3px solid var(--line);padding-left:10px}
+  .plainline b{color:var(--text)}
+  .whygrid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+  @media(max-width:720px){.whygrid{grid-template-columns:1fr}}
+  .whycol{background:var(--panel-2);border:1px solid var(--line);border-radius:8px;padding:10px 12px}
+  .whycol h4{font-size:10.5px;text-transform:uppercase;letter-spacing:1.2px;margin-bottom:6px}
+  .whycol.yes h4{color:var(--green)} .whycol.no h4{color:var(--red)}
+  .whycol p{font-size:12.5px;color:var(--muted);line-height:1.6}
+  .whycol p b{color:var(--text)}
+  .pktstrip{display:flex;gap:10px;flex-wrap:wrap;font-family:var(--mono);font-size:12px}
+  .pktbox{border:1px solid var(--line);border-radius:7px;padding:7px 11px;background:var(--panel-2);flex:1;min-width:260px}
+  .pktbox .t{font-size:9.5px;letter-spacing:1.1px;text-transform:uppercase;display:block;margin-bottom:3px}
+  .pktbox.l2 .t{color:var(--amber)} .pktbox.l3 .t{color:var(--cyan)}
+  .pktbox .chg{color:var(--amber);font-weight:700}
+  .osichips{display:flex;gap:6px;flex-wrap:wrap}
+  .chip{font-family:var(--mono);font-size:10.5px;border:1px solid var(--line);border-radius:5px;
+    padding:3px 8px;color:var(--muted);opacity:.45}
+  .chip.on{opacity:1;color:var(--text);border-color:var(--cyan);background:rgba(79,216,235,.1)}
+
+  /* calculator */
+  .calc{display:grid;grid-template-columns:minmax(240px,320px) 1fr}
+  @media(max-width:760px){.calc{grid-template-columns:1fr}}
+  .calc-in{padding:16px;border-right:1px solid var(--line);display:flex;flex-direction:column;gap:12px}
+  .calc-in label{font-size:12px;color:var(--muted)}
+  .calc-in input[type=text]{background:var(--panel-2);border:1px solid var(--line);color:var(--text);
+    border-radius:6px;padding:8px 10px;font-family:var(--mono);font-size:14px;width:100%}
+  .cidr-row{display:flex;align-items:center;gap:10px}
+  .cidr-row output{font-family:var(--mono);font-size:15px;color:var(--cyan);min-width:44px}
+  .calc-out{padding:16px;font-family:var(--mono);font-size:12.5px;overflow-x:auto}
+  .calc-grid{display:grid;grid-template-columns:auto 1fr;gap:6px 18px;margin-bottom:14px}
+  .calc-grid .k{color:var(--muted)} .calc-grid .v{color:var(--text)} .calc-grid .v.hl{color:var(--green);font-weight:700}
+  .binrows{white-space:pre;line-height:1.7;font-size:12px}
+  .binrows .lbl{color:var(--muted)} .binrows .net{color:var(--cyan)} .binrows .host{color:var(--amber)}
+  .calc-note{font-family:var(--sans);font-size:12.5px;color:var(--muted);line-height:1.5}
+
+  /* zero-to-hero guide */
+  .guide{padding:14px;display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:10px}
+  .card{background:var(--panel-2);border:1px solid var(--line);border-radius:8px;padding:12px 14px}
+  .card h3{font-size:13.5px;margin-bottom:6px}
+  .card p{font-size:12.5px;color:var(--muted);line-height:1.6}
+  .card p b{color:var(--text)}
+  .card code{font-family:var(--mono);font-size:11.5px;color:var(--cyan);background:rgba(79,216,235,.08);padding:1px 4px;border-radius:4px}
+  .card .ana{display:block;margin-top:7px;font-size:12px;color:var(--cyan);font-style:italic;line-height:1.5}
+</style>
+</head>
+<body>
+
+<header>
+  <h1><span class="pulse"></span>Packet Journey</h1>
+  <span class="sub">One diagram, one explanation — every hop, every reason</span>
+</header>
+
+<main>
+  <!-- ============ 1. THE DIAGRAM ============ -->
+  <section class="panel">
+    <h2>Topology</h2>
+    <div class="controls">
+      <label>From</label>
+      <select id="src">
+        <option value="pcA">PC-A (192.168.1.10)</option>
+        <option value="pcB">PC-B (192.168.1.20)</option>
+        <option value="srvC">Server-C (10.0.2.50)</option>
+        <option value="pcD">PC-D (10.0.2.60)</option>
+      </select>
+      <label>To</label>
+      <select id="dst">
+        <option value="pcB">PC-B (192.168.1.20)</option>
+        <option value="pcA">PC-A (192.168.1.10)</option>
+        <option value="srvC" selected>Server-C (10.0.2.50)</option>
+        <option value="pcD">PC-D (10.0.2.60)</option>
+      </select>
+      <button id="playBtn" class="primary">▶ Play</button>
+      <button id="stepBtn">Step ▸</button>
+      <button id="backBtn">◂ Back</button>
+      <button id="resetBtn">Reset</button>
+      <div class="speed"><label for="speed">Speed</label><input type="range" id="speed" min="0.5" max="3" step="0.5" value="1"></div>
+    </div>
+    <div class="legend">
+      <span><span class="dot" style="background:#3f2f8f;border:2px solid var(--violet)"></span>Router — connects different networks</span>
+      <span><span class="dot" style="background:#7a4a12;border:2px solid var(--amber)"></span>Switch — connects devices inside one network</span>
+      <span><span class="dot" style="background:#0f4a75;border:2px solid var(--cyan)"></span>PC — end device</span>
+      <span><span class="dot" style="background:#0e5233;border:2px solid var(--green)"></span>Server — end device that answers requests</span>
+      <span>→ arrows show where the data is flowing right now</span>
+    </div>
+    <svg id="topo" viewBox="0 0 1000 490" xmlns="http://www.w3.org/2000/svg"></svg>
+    <div class="device-info" id="deviceInfo">👆 <b>Click any device</b> in the diagram to learn what it is and what job it does.</div>
+  </section>
+
+  <!-- ============ 2. THE ONE EXPLANATION BLOCK ============ -->
+  <section class="panel">
+    <h2>What is happening — and why this way, not another</h2>
+    <div class="explainer">
+      <div class="step-head">
+        <span class="step-count" id="stepCount">READY</span>
+        <span class="step-title" id="stepTitle">Press Play — the journey will pause here to explain itself</span>
+      </div>
+      <div class="what" id="stepWhat">Choose a source and destination above. Same-subnet pairs (PC-A → PC-B) show pure switching; cross-subnet pairs (PC-A → Server-C) show ARP, routing, TTL and MAC rewriting.</div>
+      <div class="plainline" id="stepPlain" hidden></div>
+      <div class="whygrid" id="whyGrid" hidden>
+        <div class="whycol yes"><h4>✓ Why this way</h4><p id="whyThis"></p></div>
+        <div class="whycol no"><h4>✗ Why not another way</h4><p id="whyNot"></p></div>
+      </div>
+      <div class="pktstrip" id="pktStrip" hidden></div>
+      <div class="osichips" id="osiChips"></div>
+    </div>
+  </section>
+
+  <!-- ============ 3. SUBNET CALCULATOR ============ -->
+  <section class="panel">
+    <h2>Subnetting — why the sender checks "same network or not?"</h2>
+    <div class="calc">
+      <div class="calc-in">
+        <div><label for="calcIp">IP address</label>
+          <input type="text" id="calcIp" value="192.168.1.10" spellcheck="false"></div>
+        <div><label for="cidr">Prefix length (CIDR)</label>
+          <div class="cidr-row"><input type="range" id="cidr" min="1" max="31" value="24" style="flex:1"><output id="cidrOut">/24</output></div></div>
+        <div class="calc-note">A device ANDs its own IP with the subnet mask, then ANDs the destination IP with the same mask. Both results match → destination is local. They differ → send to the <b>default gateway</b>. This one bitwise check is the fork in the road for every packet.</div>
+      </div>
+      <div class="calc-out">
+        <div class="calc-grid" id="calcGrid"></div>
+        <div class="binrows" id="binRows"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ 4. ZERO TO HERO ============ -->
+  <section class="panel">
+    <h2>Networking zero to hero — the concepts behind the diagram</h2>
+    <div class="guide">
+      <div class="card"><h3>🌐 What is a network?</h3>
+        <p>Just <b>devices connected so they can exchange data</b>. Data never travels as one big blob — it's chopped into small chunks called <b>packets</b>, each carrying addressing info so the network knows where to deliver it.</p>
+        <span class="ana">Like sending a book through the post one page at a time, each page in its own addressed envelope.</span></div>
+      <div class="card"><h3>📮 IP address</h3>
+        <p>A device's <b>postal address</b>, e.g. <code>192.168.1.10</code>. It's <i>logical</i>: it tells which neighborhood (network) and which house (host) a device is, and it <b>changes when the device moves</b> to another network.</p>
+        <span class="ana">Move to a new city → you get a new postal address.</span></div>
+      <div class="card"><h3>🏷️ MAC address</h3>
+        <p>A <b>permanent serial number</b> burned into every network card at the factory, e.g. <code>3C:7A:8B:11:00:0A</code>. It never changes and only reaches the <b>next directly-connected device</b> — it can't find anything across the world.</p>
+        <span class="ana">Your name vs your address: the address (IP) gets the letter to the right house, the name (MAC) says who inside picks it up.</span></div>
+      <div class="card"><h3>🔀 Switch</h3>
+        <p>Connects devices <b>inside one network</b>. It only reads <b>MAC addresses</b> and keeps a <b>MAC table</b>: "PC-A is on port 1, PC-B on port 2" — then delivers each frame out exactly one port. It never looks at IP addresses.</p>
+        <span class="ana">A mailroom clerk inside one building: knows every desk, never leaves the building.</span></div>
+      <div class="card"><h3>📦 Router</h3>
+        <p>Connects <b>different networks</b> — every one of its ports sits in a different subnet. It reads the <b>destination IP</b>, checks its <b>routing table</b> (a map of which networks lie in which direction), and forwards the packet one network closer. Your home "WiFi router" does exactly this.</p>
+        <span class="ana">A post office: reads the city on the envelope, picks the right road.</span></div>
+      <div class="card"><h3>🏘️ Subnet — and why we split networks</h3>
+        <p>A <b>neighborhood of IP addresses</b>, e.g. <code>192.168.1.0/24</code> = everything starting 192.168.1. We split because: <b>1)</b> broadcasts ("who has this IP?!") are heard by <i>everyone</i> on a subnet — a million devices on one network would drown in shouting; <b>2)</b> organization — like postcodes, they make delivery decisions fast; <b>3)</b> security — office and guest WiFi can be walled off.</p>
+        <span class="ana">A city split into neighborhoods instead of one endless street.</span></div>
+      <div class="card"><h3>🚪 Default gateway</h3>
+        <p>The <b>router's address on your own subnet</b> — the exit door. The rule every device follows: destination on my subnet → deliver directly; anywhere else → hand to the gateway and let the router worry.</p>
+        <span class="ana">The one door out of your neighborhood; you don't need a world map, just the way to the door.</span></div>
+      <div class="card"><h3>✉️ Packet vs frame</h3>
+        <p>The <b>packet</b> (IP layer) is the letter — it carries the <i>final</i> destination and survives the whole journey unchanged. The <b>frame</b> (Ethernet layer) is the delivery van carrying it <i>one hop</i> — a fresh van, with fresh MACs, on every link.</p>
+        <span class="ana">Same letter, three different vans. The packet strip above proves it.</span></div>
+      <div class="card"><h3>📢 ARP</h3>
+        <p>The bridge between the two address types. A device knows the IP it wants but needs a MAC to build the frame, so it <b>broadcasts</b>: "who has 192.168.1.20? tell me your MAC!" The owner replies; the answer is cached in an <b>ARP table</b>.</p>
+        <span class="ana">Shouting a name in a room and waiting for a raised hand.</span></div>
+      <div class="card"><h3>⏳ TTL (Time To Live)</h3>
+        <p>A <b>countdown</b> in every packet (starts ≈64). Each router subtracts 1; at 0 the packet is destroyed. Without it, a misconfigured network could make packets loop forever.</p>
+        <span class="ana">A self-destruct timer so lost mail doesn't circle the post system for eternity.</span></div>
+      <div class="card"><h3>🧅 OSI layers (the chips above)</h3>
+        <p>A mental model splitting networking into 7 jobs: <b>7–5</b> the app and its data, <b>4</b> which program (ports, TCP), <b>3</b> which machine in the world (IP, routers), <b>2</b> next hop on this cable (MAC, switches), <b>1</b> raw electrical/optical signals. Each device only reads up to the layer it needs — that's why switches are fast and routers are smart.</p>
+        <span class="ana">Layers of an onion: each hop peels only as deep as its job requires.</span></div>
+    </div>
+  </section>
+</main>
+
+<script>
+/* ============================================================
+   Packet Journey v3 — vanilla JS, no dependencies
+   ============================================================ */
+
+/* ---------- network definition ---------- */
+const NODES = {
+  pcA :{kind:'pc',     x:110, y:135, name:'PC-A',     ip:'192.168.1.10', prefix:24, mac:'3C:7A:8B:11:00:0A', gw:'r1', side:'A'},
+  pcB :{kind:'pc',     x:110, y:355, name:'PC-B',     ip:'192.168.1.20', prefix:24, mac:'3C:7A:8B:11:00:0B', gw:'r1', side:'A'},
+  sw1 :{kind:'switch', x:255, y:245, name:'Switch-1', side:'A'},
+  r1  :{kind:'router', x:415, y:245, name:'Router-1',
+        lan:{ip:'192.168.1.1', mac:'00:1B:2C:A1:E0:01'}, wan:{ip:'203.0.113.1', mac:'00:1B:2C:A1:E1:01'}},
+  r2  :{kind:'router', x:585, y:245, name:'Router-2',
+        lan:{ip:'10.0.2.1',    mac:'00:1B:2C:B2:E0:01'}, wan:{ip:'203.0.113.2', mac:'00:1B:2C:B2:E1:01'}},
+  sw2 :{kind:'switch', x:745, y:245, name:'Switch-2', side:'B'},
+  srvC:{kind:'server', x:890, y:130, name:'Server-C', ip:'10.0.2.50',  prefix:24, mac:'D4:5E:0C:22:00:5C', gw:'r2', side:'B'},
+  pcD :{kind:'pc',     x:890, y:355, name:'PC-D',     ip:'10.0.2.60',  prefix:24, mac:'D4:5E:0C:22:00:5D', gw:'r2', side:'B'},
+};
+const LINKS = [['pcA','sw1'],['pcB','sw1'],['sw1','r1'],['r1','r2'],['r2','sw2'],['sw2','srvC'],['sw2','pcD']];
+const ADJ = {};
+LINKS.forEach(([a,b])=>{(ADJ[a]=ADJ[a]||[]).push(b);(ADJ[b]=ADJ[b]||[]).push(a);});
+const MAC_NAMES = {
+  '3C:7A:8B:11:00:0A':'PC-A','3C:7A:8B:11:00:0B':'PC-B',
+  'D4:5E:0C:22:00:5C':'Server-C','D4:5E:0C:22:00:5D':'PC-D',
+  '00:1B:2C:A1:E0:01':'R1 LAN','00:1B:2C:A1:E1:01':'R1 WAN',
+  '00:1B:2C:B2:E0:01':'R2 LAN','00:1B:2C:B2:E1:01':'R2 WAN',
+  'FF:FF:FF:FF:FF:FF':'EVERYONE'
+};
+
+/* ---------- big, color-coded hardware art ---------- */
+function art(kind){
+  if(kind==='pc') return `
+    <g transform="scale(1.25)">
+      <rect class="box" x="-34" y="-34" width="68" height="46" rx="6"/>
+      <rect x="-28" y="-28" width="56" height="34" rx="2" fill="#081524"/>
+      <rect x="-24" y="-23" width="28" height="3.5" rx="1.5" fill="#3a6ea5"/>
+      <rect x="-24" y="-16" width="42" height="3.5" rx="1.5" fill="#28517d"/>
+      <rect x="-24" y="-9"  width="20" height="3.5" rx="1.5" fill="#28517d"/>
+      <rect x="-6" y="12" width="12" height="7" fill="#0d3a5c" stroke="#2f74ab"/>
+      <rect x="-20" y="19" width="40" height="4.5" rx="2" fill="#0d3a5c" stroke="#2f74ab"/>
+    </g>`;
+  if(kind==='server') return `
+    <g transform="scale(1.25)">
+      <rect class="box" x="-24" y="-38" width="48" height="72" rx="4"/>
+      ${[-30,-19,-8,3].map(y=>`
+        <rect x="-19" y="${y}" width="38" height="8" rx="1.5" fill="#07271a" stroke="#1f7a4c" stroke-width="1"/>
+        <circle cx="13" cy="${y+4}" r="1.8" fill="#5be38b"/>
+        <rect x="-16" y="${y+2.5}" width="14" height="3" rx="1" fill="#1a5c3a"/>`).join('')}
+      <rect x="-19" y="16" width="38" height="12" rx="1.5" fill="#07271a" stroke="#1f7a4c" stroke-width="1"/>
+      <circle cx="-11" cy="22" r="2" fill="#4fd8eb"><animate attributeName="opacity" values="1;.2;1" dur="1.3s" repeatCount="indefinite"/></circle>
+      <circle cx="-3"  cy="22" r="2" fill="#5be38b"><animate attributeName="opacity" values=".2;1;.2" dur="1.7s" repeatCount="indefinite"/></circle>
+    </g>`;
+  if(kind==='switch') return `
+    <g transform="scale(1.35)">
+      <rect class="box" x="-42" y="-16" width="84" height="32" rx="5"/>
+      ${[0,1,2,3,4,5].map(i=>`
+        <rect x="${-34+i*12}" y="-6" width="8" height="8" fill="#2b1a05" stroke="#c98a3a" stroke-width="1"/>
+        <circle cx="${-30+i*12}" cy="8" r="1.7" fill="${i%2?'#5be38b':'#ffe9c9'}">
+          <animate attributeName="opacity" values="1;.15;1" dur="${(0.7+i*0.23).toFixed(2)}s" repeatCount="indefinite"/>
+        </circle>`).join('')}
+      <rect x="24" y="-12" width="12" height="4" rx="1" fill="#c98a3a"/>
+    </g>`;
+  /* router */ return `
+    <g transform="scale(1.4)">
+      <line x1="-16" y1="-20" x2="-24" y2="-38" stroke="#a48bff" stroke-width="2.5" stroke-linecap="round"/>
+      <line x1="16"  y1="-20" x2="24"  y2="-38" stroke="#a48bff" stroke-width="2.5" stroke-linecap="round"/>
+      <circle cx="-24" cy="-38" r="2.6" fill="#cbbcff"/><circle cx="24" cy="-38" r="2.6" fill="#cbbcff"/>
+      <rect class="box" x="-36" y="-20" width="72" height="40" rx="10"/>
+      <circle cx="-22" cy="0" r="2.4" fill="#5be38b"><animate attributeName="opacity" values="1;.2;1" dur="1.1s" repeatCount="indefinite"/></circle>
+      <circle cx="-13" cy="0" r="2.4" fill="#4fd8eb"><animate attributeName="opacity" values=".2;1;.2" dur="1.5s" repeatCount="indefinite"/></circle>
+      <circle cx="-4"  cy="0" r="2.4" fill="#ffe9c9"><animate attributeName="opacity" values="1;.3;1" dur="0.9s" repeatCount="indefinite"/></circle>
+      <rect x="8" y="-4" width="20" height="8" rx="2" fill="#241a5e" stroke="#8b74e8"/>
+    </g>`;
+}
+
+/* ---------- build topology SVG ---------- */
+const svg = document.getElementById('topo');
+function nodeSubLabel(n){
+  if(n.kind==='router') return `${n.lan.ip} | ${n.wan.ip}`;
+  if(n.ip) return `${n.ip}/${n.prefix}`;
+  return 'no IP — Layer 2 only';
+}
+function labelY(n){ return n.kind==='router'?46 : n.kind==='server'?62 : n.kind==='switch'?42 : 48; }
+svg.innerHTML = `
+  <defs>
+    <marker id="arrData" markerWidth="9" markerHeight="9" refX="7" refY="3.5" orient="auto">
+      <path d="M0,0 L8,3.5 L0,7 z" fill="#4fd8eb"/></marker>
+    <marker id="arrArp" markerWidth="9" markerHeight="9" refX="7" refY="3.5" orient="auto">
+      <path d="M0,0 L8,3.5 L0,7 z" fill="#ffb454"/></marker>
+  </defs>
+  <rect class="subnet-box" x="28"  y="42" width="330" height="412" rx="12"/>
+  <rect class="subnet-box" x="642" y="42" width="330" height="412" rx="12"/>
+  <text class="subnet-label" x="44"  y="68">Subnet A — 192.168.1.0/24</text>
+  <text class="subnet-label" x="658" y="68">Subnet B — 10.0.2.0/24</text>
+  <text class="subnet-label" x="500" y="205" text-anchor="middle">WAN — 203.0.113.0/30</text>
+  ${LINKS.map(([a,b])=>{const A=NODES[a],B=NODES[b];
+    return `<line class="wire" x1="${A.x}" y1="${A.y}" x2="${B.x}" y2="${B.y}"/>`;}).join('')}
+  <g id="arrows"></g>
+  ${Object.entries(NODES).map(([id,n])=>`
+    <g class="node ${n.kind}" id="n-${id}" transform="translate(${n.x},${n.y})">
+      ${art(n.kind)}
+      <text y="${labelY(n)}">${n.name}</text>
+      <text class="ip" y="${labelY(n)+15}">${nodeSubLabel(n)}</text>
+    </g>`).join('')}
+  <g id="packet" style="visibility:hidden">
+    <rect x="-12" y="-8" width="24" height="16" rx="3" fill="#4fd8eb"/>
+    <rect x="-12" y="-8" width="8" height="16" rx="3" fill="#ffb454" id="pktHdr"/>
+  </g>`;
+
+/* ---------- helpers ---------- */
+const $ = id => document.getElementById(id);
+const ipToInt = ip => ip.split('.').reduce((a,o)=>(a<<8)+(+o),0)>>>0;
+const intToIp = n => [24,16,8,0].map(s=>(n>>>s)&255).join('.');
+const maskOf  = p => p===0?0:(~0 << (32-p))>>>0;
+function ipBin(n, prefix){
+  let out='';
+  for(let i=0;i<32;i++){
+    const bit=(n>>>(31-i))&1;
+    out += (i<prefix?`<b>${bit}</b>`:bit);
+    if(i%8===7 && i<31) out+='.';
+  }
+  return out;
+}
+const macLabel = m => MAC_NAMES[m]||m;
+
+/* ---------- flow arrows ("what is going where") ---------- */
+function drawArrows(pathIds, kind){
+  const g=$('arrows'); g.innerHTML='';
+  if(!pathIds) return;
+  const col = kind==='arp' ? '#ffb454' : '#4fd8eb';
+  const mk  = kind==='arp' ? 'url(#arrArp)' : 'url(#arrData)';
+  for(let i=0;i<pathIds.length-1;i++){
+    const A=NODES[pathIds[i]], B=NODES[pathIds[i+1]];
+    const dx=B.x-A.x, dy=B.y-A.y, d=Math.hypot(dx,dy);
+    const off=52, ux=dx/d, uy=dy/d;                 // clear the device art
+    const x1=A.x+ux*off, y1=A.y+uy*off, x2=B.x-ux*off, y2=B.y-uy*off;
+    g.innerHTML += `<line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" stroke="${col}" marker-end="${mk}"/>`;
+  }
+}
+
+/* ---------- packet animation ---------- */
+const pktEl=$('packet');
+let aborted=false;
+const speedMult=()=>+$('speed').value;
+function moveAlong(pathIds, kind){
+  pktEl.querySelector('rect').setAttribute('fill', kind==='arp' ? '#ffb454' : '#4fd8eb');
+  $('pktHdr').setAttribute('fill', kind==='arp' ? '#ff8f3d' : '#ffb454');
+  pktEl.style.visibility='visible';
+  return new Promise(resolve=>{
+    let seg=0;
+    function runSeg(){
+      if(seg>=pathIds.length-1){pktEl.style.visibility='hidden';resolve();return;}
+      const A=NODES[pathIds[seg]],B=NODES[pathIds[seg+1]];
+      light([pathIds[seg+1]], kind==='arp');
+      const dur=Math.hypot(B.x-A.x,B.y-A.y)/(0.14*speedMult());
+      const t0=performance.now();
+      function frame(t){
+        if(aborted){pktEl.style.visibility='hidden';resolve();return;}
+        const k=Math.min((t-t0)/dur,1);
+        const e=k<.5?2*k*k:1-Math.pow(-2*k+2,2)/2;
+        pktEl.setAttribute('transform',`translate(${A.x+(B.x-A.x)*e},${A.y+(B.y-A.y)*e})`);
+        if(k<1)requestAnimationFrame(frame);else{seg++;runSeg();}
+      }
+      requestAnimationFrame(frame);
+    }
+    runSeg();
+  });
+}
+function light(ids, amber){
+  document.querySelectorAll('.node').forEach(n=>n.classList.remove('lit','lit-amber'));
+  (ids||[]).forEach(id=>$('n-'+id).classList.add(amber?'lit-amber':'lit'));
+}
+
+/* ---------- the ONE explainer block ---------- */
+const OSI_NAMES={1:'L1 Physical',2:'L2 Data Link',3:'L3 Network',4:'L4 Transport',5:'L5 Session',6:'L6 Presentation',7:'L7 Application'};
+$('osiChips').innerHTML=[1,2,3,4,5,6,7].map(l=>`<span class="chip" data-l="${l}">${OSI_NAMES[l]}</span>`).join('');
+let prevPkt=null;
+function renderStep(st, i, total){
+  $('stepCount').textContent=`STEP ${i} / ${total}`;
+  $('stepTitle').textContent=st.title;
+  $('stepWhat').innerHTML=st.what;
+  $('stepPlain').hidden=!st.plain;
+  if(st.plain)$('stepPlain').innerHTML=`💡 <b>In plain words:</b> ${st.plain}`;
+  $('whyGrid').hidden=!(st.whyThis||st.whyNot);
+  $('whyThis').innerHTML=st.whyThis||'';
+  $('whyNot').innerHTML=st.whyNot||'';
+  const p=st.pkt;
+  $('pktStrip').hidden=!p;
+  if(p){
+    const ch=k=>prevPkt&&prevPkt[k]!==p[k]?' class="chg"':'';
+    $('pktStrip').innerHTML=`
+      <div class="pktbox l2"><span class="t">Frame (Layer 2) — rewritten every hop</span>
+        MAC <span${ch('l2s')}>${macLabel(p.l2s)}</span> → <span${ch('l2d')}>${macLabel(p.l2d)}</span></div>
+      <div class="pktbox l3"><span class="t">Packet (Layer 3) — same end to end</span>
+        IP <span${ch('l3s')}>${p.l3s}</span> → <span${ch('l3d')}>${p.l3d}</span> &nbsp; TTL <span${ch('ttl')}>${p.ttl}</span></div>`;
+    prevPkt={...p};
+  }
+  document.querySelectorAll('.chip').forEach(c=>c.classList.toggle('on',(st.layers||[]).includes(+c.dataset.l)));
+  drawArrows(st.move, st.kind||'data');
+}
+
+/* ---------- step generation ---------- */
+function subnetCheckHTML(S,D){
+  const sN=(ipToInt(S.ip)&maskOf(S.prefix))>>>0, dN=(ipToInt(D.ip)&maskOf(S.prefix))>>>0;
+  const same=sN===dN;
+  return {same, html:`${S.name} ANDs both IPs with its mask <code>/${S.prefix}</code>:
+    <span class="bin">my IP   ${S.ip.padEnd(15)} ${ipBin(ipToInt(S.ip),S.prefix)}
+mask    /${String(S.prefix).padEnd(14)} ${ipBin(maskOf(S.prefix),S.prefix)}
+my net  ${intToIp(sN).padEnd(15)} ${ipBin(sN,S.prefix)}
+dst net ${intToIp(dN).padEnd(15)} ${ipBin(dN,S.prefix)}</span>
+    Networks ${same?'<b style="color:var(--green)">match — destination is local</b>, deliver directly.'
+                   :'<b style="color:var(--amber)">differ — destination is remote</b>, send to the default gateway.'}`};
+}
+
+function buildSteps(srcId,dstId){
+  const S=NODES[srcId], D=NODES[dstId];
+  const steps=[];
+  const push=o=>steps.push(o);
+
+  push({title:'The app hands data down the stack (encapsulation)',layers:[7,6,5,4],
+    what:`${S.name} has data for ${D.name}. TCP wraps it with <code>port numbers</code> — now it's a <b>segment</b>, ready to receive an IP envelope. Next question: where does it physically go?`,
+    plain:`envelopes inside envelopes: TCP envelope (which app opens it) → IP envelope (which machine in the world) → Ethernet "van" (only knows the next stop).`,
+    whyThis:`Each layer solves exactly <b>one problem</b> (which app? which machine? which next hop?), independently — so WiFi, fiber or 4G can carry the same TCP/IP unchanged.`,
+    whyNot:`Why not send raw data with just a name? Hardware only moves bits between neighbors. Without layered addressing, every app would need to understand every cable, and nothing would interoperate.`});
+
+  const chk=subnetCheckHTML(S,D);
+  push({title:'Subnet check — is the destination on my street?',layers:[3],
+    what:chk.html,
+    plain:`${S.name} compares the street-name part of both addresses. Same street → walk it over. Different street → hand it to the post office (router).`,
+    whyThis:`One bitwise AND is a single CPU instruction — the fastest possible local-vs-remote decision, and it happens for <b>every packet</b> your machine sends.`,
+    whyNot:`Why not just send everything to the router? Local traffic would take 2 hops instead of 1 and the router would drown. Why not ask some server? There's no time — and you'd need networking to reach it anyway.`});
+
+  const mkPkt=(l2s,l2d,ttl)=>({l2s,l2d,l3s:S.ip,l3d:D.ip,ttl});
+
+  if(chk.same){
+    const sw = S.side==='A'?'sw1':'sw2';
+    push({title:`ARP — ${S.name} shouts for ${D.name}'s MAC`,layers:[2],kind:'arp',
+      move:[srcId,sw,dstId],
+      what:`${S.name} knows the IP but frames need a MAC. It broadcasts <code>who has ${D.ip}?</code> — ${NODES[sw].name} floods it out every port; only ${D.name} answers.`,
+      plain:`shouting into the room: "who owns ${D.ip}? show your name tag!" Everyone hears a broadcast; only the owner replies.`,
+      pkt:{l2s:S.mac,l2d:'FF:FF:FF:FF:FF:FF',l3s:S.ip,l3d:D.ip,ttl:'—'},
+      whyThis:`Broadcast is the only way to reach a device whose MAC you don't know yet — you can't address a letter to an unknown name.`,
+      whyNot:`Why not ask the router? It isn't needed for local delivery and doesn't keep everyone's MAC for you. Local questions get local answers.`});
+    push({title:`${D.name} replies with its MAC`,layers:[2],kind:'arp',
+      move:[dstId,sw,srcId],
+      what:`${D.name} answers unicast: <code>${D.ip} is at ${D.mac}</code>. ${S.name} caches it in its ARP table.`,
+      plain:`the owner raises a hand: "that's me — here's my name tag." ${S.name} memorizes it so it won't shout again.`,
+      pkt:{l2s:D.mac,l2d:S.mac,l3s:D.ip,l3d:S.ip,ttl:'—'},
+      whyThis:`The reply is unicast (direct) — no need to shout back — and caching means one shout serves thousands of packets.`,
+      whyNot:`Why not configure all MACs by hand? Devices join and leave networks constantly; ARP makes discovery automatic.`});
+    push({title:'The switch delivers the frame — no router involved',layers:[1,2],kind:'data',
+      move:[srcId,sw,dstId],
+      what:`Frame built with dst MAC <code>${D.mac}</code>. ${NODES[sw].name} finds that MAC in its <b>MAC table</b> and forwards out exactly one port. TTL stays 64 — no router touched this.`,
+      plain:`the mailroom clerk has memorized which desk everyone sits at — hands the frame to one port, disturbing nobody else.`,
+      pkt:mkPkt(S.mac,D.mac,64),
+      whyThis:`Forwarding on MAC alone, out one learned port, is why switches are fast, cheap and private — other devices never see this traffic.`,
+      whyNot:`Why not broadcast the data too? Everyone could read everyone's traffic and the network would drown in noise. Flooding is only the fallback for unknown MACs.`});
+    push({title:`Delivered — ${D.name} unwraps and replies`,layers:[1,2,3,4,5,6,7],kind:'data',
+      move:[dstId,sw,srcId],
+      what:`${D.name} de-encapsulates bottom-up: bits → frame → packet → segment → data. The reply retraces the same switched path. <b>Routers used: 0. TTL never decremented.</b>`,
+      plain:`open the envelopes in reverse and read the message. Both devices share a street, so no post office was ever needed.`,
+      pkt:{l2s:D.mac,l2d:S.mac,l3s:D.ip,l3d:S.ip,ttl:64},
+      whyThis:`Same street = the van's address (MAC) is enough for the whole trip. This is the cheapest, fastest case in networking.`,
+      whyNot:`Why does routing exist at all, then? Because MAC-only delivery can't scale past one subnet — try PC-A → Server-C next and watch the difference.`});
+    return steps;
+  }
+
+  /* ----- cross-subnet ----- */
+  const gwR = NODES[S.gw];
+  const farRid = S.gw==='r1' ? 'r2' : 'r1';
+  const farR = NODES[farRid];
+  const nearSw = S.side==='A'?'sw1':'sw2';
+  const farSw  = D.side=='A'?'sw1':'sw2';
+  const dNet = intToIp((ipToInt(D.ip)&maskOf(24))>>>0);
+
+  push({title:`ARP — ${S.name} shouts for the GATEWAY, not for ${D.name}`,layers:[2],kind:'arp',
+    move:[srcId,nearSw,S.gw],
+    what:`${D.ip} is remote, so ${S.name} needs the MAC of its default gateway <code>${gwR.lan.ip}</code> and broadcasts for it.`,
+    plain:`${S.name} does NOT shout for ${D.name} — shouts never cross routers. It shouts for the exit door of its own street.`,
+    pkt:{l2s:S.mac,l2d:'FF:FF:FF:FF:FF:FF',l3s:S.ip,l3d:gwR.lan.ip,ttl:'—'},
+    whyThis:`For remote destinations, the next hop is always the gateway — so that's whose MAC is needed. This is the rule your laptop applies for every website you visit.`,
+    whyNot:`Why not ARP for ${D.name} directly? Broadcasts stop dead at routers — ${D.name} would never hear it. And its MAC would be useless here anyway: MACs only work on the local link.`});
+  push({title:`${gwR.name} replies: "the exit door is me"`,layers:[2],kind:'arp',
+    move:[S.gw,nearSw,srcId],
+    what:`${gwR.name} answers: <code>${gwR.lan.ip} is at ${gwR.lan.mac}</code>. Now watch the packet strip closely on the next steps.`,
+    plain:`the router raises its hand and shows its name tag.`,
+    pkt:{l2s:gwR.lan.mac,l2d:S.mac,l3s:gwR.lan.ip,l3d:S.ip,ttl:'—'},
+    whyThis:`Cached once, used for all remote traffic — every packet ${S.name} ever sends off-street will use this one MAC.`,
+    whyNot:`Why doesn't the router announce itself constantly instead? Unsolicited announcements would be noise (and a spoofing risk); on-demand question/answer is quieter and safer.`});
+  push({title:'The trick of routing: MAC says next stop, IP says final stop',layers:[1,2,3],kind:'data',
+    move:[srcId,nearSw,S.gw],
+    what:`Frame sent with dst MAC <code>${gwR.lan.mac}</code> (R1) but dst IP <code>${D.ip}</code> (${D.name}). TTL starts at <b>64</b>. ${NODES[nearSw].name} switches it on MAC alone.`,
+    plain:`the van is addressed to the router (next stop), the letter inside to ${D.name} (final stop). The van's address changes every hop; the letter's never does.`,
+    pkt:mkPkt(S.mac,gwR.lan.mac,64),
+    whyThis:`This two-address split is <b>the</b> core idea of the internet: it lets one unchanging packet ride many different local links.`,
+    whyNot:`Why not put ${D.name}'s MAC in the frame? The switch would search its ports for that MAC, find nothing, and the frame would die on this street. MACs cannot route.`});
+  push({title:`${gwR.name} routes: read IP → check map → TTL−1 → new frame`,layers:[3],
+    what:`${gwR.name} strips the frame, reads dst IP, finds <code>${dNet}/24 → via ${farR.wan.ip}</code> in its routing table. TTL <b>64 → 63</b>. Both MACs rewritten for the WAN link — IPs untouched.`,
+    plain:`the post office opens the van, reads the letter's final address, checks its map, stamps the letter, and loads it into a fresh van.`,
+    pkt:{l2s:gwR.wan.mac,l2d:farR.wan.mac,l3s:S.ip,l3d:D.ip,ttl:63},
+    whyThis:`Routing tables list <b>networks, not devices</b> — one entry covers 254 hosts. That compression is why the internet's map fits in router memory.`,
+    whyNot:`Why not keep the old MACs? They identify devices on the previous street only — on the WAN they point at nobody. Why not skip TTL? One routing mistake would make packets loop and multiply until the network chokes.`});
+  push({title:'Across the WAN link between the routers',layers:[1,2],kind:'data',
+    move:[S.gw,farRid],
+    what:`The packet crosses <code>203.0.113.0/30</code>. A /30 has exactly 2 usable addresses — a perfect fit for a 2-router link.`,
+    plain:`the highway between two post offices. Scaled up through many post offices, this is exactly how your home reaches any server on the internet.`,
+    pkt:{l2s:gwR.wan.mac,l2d:farR.wan.mac,l3s:S.ip,l3d:D.ip,ttl:63},
+    whyThis:`Point-to-point links get tiny subnets (/30 or /31) because there will only ever be two devices on them.`,
+    whyNot:`Why not use a /24 here? 252 addresses would sit wasted. On the real internet, address space is scarce and rationed.`});
+  push({title:`${farR.name} is on ${D.name}'s street — it ARPs locally`,layers:[2,3],kind:'arp',
+    move:[farRid,farSw,dstId],
+    what:`${farR.name}'s table says <code>${dNet}/24</code> is <b>directly connected</b> — no more routers. TTL <b>63 → 62</b>. It broadcasts for <code>${D.ip}</code>; ${D.name} replies with <code>${D.mac}</code>.`,
+    plain:`the second post office is on the destination street, so now it can shout locally to find the exact house.`,
+    pkt:{l2s:farR.lan.mac,l2d:'FF:FF:FF:FF:FF:FF',l3s:farR.lan.ip,l3d:D.ip,ttl:'—'},
+    whyThis:`"Directly connected" is the terminal case of routing — the router switches from map-reading to hand-delivery.`,
+    whyNot:`Why didn't ${S.name} do this ARP at the start? It physically couldn't — its broadcast can't cross ${gwR.name}. Each street's shouting stays on that street; that's the whole point of subnets.`});
+  push({title:'Final delivery — third van, same letter',layers:[1,2],kind:'data',
+    move:[farRid,farSw,dstId],
+    what:`New frame: <code>${farR.lan.mac}</code> → <code>${D.mac}</code>. ${NODES[farSw].name} switches it straight to ${D.name}. Compare the strip below: a third pair of MACs, identical IPs.`,
+    plain:`a third, brand-new van carries the very same letter its last few meters.`,
+    pkt:mkPkt(farR.lan.mac,D.mac,62),
+    whyThis:`The switch forwards on MAC alone, out one port — Layer 2 hardware never even reads the IP or TTL. Division of labor keeps every box simple and fast.`,
+    whyNot:`Why shouldn't the switch double-check the IP? It can't — the IP packet is opaque cargo to it. If every device inspected every layer, networks would be slow and every box expensive.`});
+  push({title:`Delivered — and the reply repeats everything in reverse`,layers:[1,2,3,4,5,6,7],kind:'data',
+    move:[dstId,farSw,farRid,S.gw,nearSw,srcId],
+    what:`${D.name} unwraps bits → frame → packet → segment → data. Journey stats: <b>2 router hops, 3 different frames, 1 unchanged packet, TTL 64 → 62</b>. The reply flows back: ${D.name} also sees ${S.ip} as remote and uses <i>its</i> gateway ${farR.name}.`,
+    plain:`${D.name} reads the message; its answer makes the whole journey backwards — it too must use its own exit door.`,
+    pkt:{l2s:D.mac,l2d:farR.lan.mac,l3s:D.ip,l3d:S.ip,ttl:64},
+    whyThis:`Each direction is decided independently, hop by hop — every device only ever answers "what's my next hop?" That simplicity is what scales to billions of machines.`,
+    whyNot:`Why not remember the route from the request? Links fail and load shifts mid-conversation; per-packet decisions let traffic route around damage automatically — the internet's famous self-healing.`});
+  return steps;
+}
+
+/* ---------- run control ---------- */
+let steps=[], idx=0, playing=false, busy=false;
+function resetSim(){
+  aborted=true; playing=false; idx=0; steps=[]; prevPkt=null;
+  $('stepCount').textContent='READY';
+  $('stepTitle').textContent='Press Play — the journey will pause here to explain itself';
+  $('stepWhat').innerHTML='Choose a source and destination above. Same-subnet pairs (PC-A → PC-B) show pure switching; cross-subnet pairs (PC-A → Server-C) show ARP, routing, TTL and MAC rewriting.';
+  $('stepPlain').hidden=true; $('whyGrid').hidden=true; $('pktStrip').hidden=true;
+  document.querySelectorAll('.chip').forEach(c=>c.classList.remove('on'));
+  light([]); drawArrows(null); pktEl.style.visibility='hidden';
+  $('playBtn').textContent='▶ Play';
+  setTimeout(()=>aborted=false,50);
+}
+async function doStep(){
+  if(busy) return;
+  if(idx===0){
+    const s=$('src').value,d=$('dst').value;
+    if(s===d){$('stepTitle').textContent='Pick two different devices';$('stepWhat').textContent='Source and destination are the same machine — choose another one.';return;}
+    steps=buildSteps(s,d); prevPkt=null;
+  }
+  if(idx>=steps.length){playing=false;$('playBtn').textContent='▶ Play';return;}
+  busy=true;
+  const st=steps[idx++];
+  renderStep(st, idx, steps.length);
+  if(st.move) await moveAlong(st.move, st.kind||'data');
+  busy=false;
+  if(idx>=steps.length){playing=false;$('playBtn').textContent='▶ Play';light([]);}
+  else if(playing) setTimeout(()=>{if(playing)doStep();}, 900/speedMult());
+}
+$('playBtn').onclick=()=>{
+  if(playing){playing=false;$('playBtn').textContent='▶ Play';return;}
+  if(idx>=steps.length&&idx!==0)resetSim();
+  playing=true;$('playBtn').textContent='⏸ Pause';doStep();
+};
+$('stepBtn').onclick=()=>{playing=false;$('playBtn').textContent='▶ Play';doStep();};
+$('backBtn').onclick=()=>{
+  if(busy||idx<2)return;
+  playing=false;$('playBtn').textContent='▶ Play';
+  idx--; prevPkt=null;
+  renderStep(steps[idx-1], idx, steps.length);
+};
+$('resetBtn').onclick=resetSim;
+$('src').onchange=$('dst').onchange=resetSim;
+
+/* ---------- clickable device explanations ---------- */
+function explainDevice(id){
+  const n=NODES[id];
+  if(n.kind==='pc') return `<b>${n.name} — a computer (end device).</b> This is where data journeys begin and end; at home, your laptop or phone plays this role. Two identities: IP <code>${n.ip}</code> — its <i>postal address</i>, saying which subnet ("street") and which host ("house") — and MAC <code>${n.mac}</code>, a permanent serial number burned into its network card. Its default gateway is <code>${NODES[n.gw].lan.ip}</code>: anything not on its own street goes there. <span class="ana">A house: street address on the mailbox (IP), family name on the door (MAC).</span>`;
+  if(n.kind==='server') return `<b>${n.name} — a server.</b> Just a computer whose job is to <i>answer</i> requests — websites, files, APIs live on machines like this. Network-wise it behaves exactly like a PC: IP <code>${n.ip}</code>, MAC <code>${n.mac}</code>, gateway <code>${NODES[n.gw].lan.ip}</code>. When you "visit a website", packets make this exact journey to a server and back. <span class="ana">A shop that never writes first — it only replies to customers.</span>`;
+  if(n.kind==='switch') return `<b>${n.name} — a switch (orange, Layer 2).</b> Connects devices <i>inside one subnet</i>; invisible to IP — notice it has no IP address here. It reads only <b>MAC addresses</b> and learns a <b>MAC table</b> by watching traffic: "that MAC lives on port 3". Known destination → forward out one port. Unknown or broadcast → flood all ports. <span class="ana">The mailroom clerk of one building: knows every desk, never steps outside.</span>`;
+  return `<b>${n.name} — a router (purple, Layer 3).</b> The only device here that connects <i>different</i> networks — that's why it has two IPs: <code>${n.lan.ip}</code> on the LAN side and <code>${n.wan.ip}</code> on the WAN link. For every packet: strip the old frame → read destination IP → look up the <b>routing table</b> → TTL−1 → wrap in a brand-new frame for the next link. Broadcasts stop dead here — exactly why subnets keep networks quiet. <span class="ana">A post office: reads the city on the envelope, picks the road.</span>`;
+}
+Object.keys(NODES).forEach(id=>{
+  $('n-'+id).addEventListener('click',()=>{
+    $('deviceInfo').innerHTML=explainDevice(id);
+    light([id]);
+  });
+});
+
+/* ---------- subnet calculator ---------- */
+function ipBinSplit(n,prefix){
+  let out='';
+  for(let i=0;i<32;i++){
+    const bit=(n>>>(31-i))&1;
+    out+= i<prefix ? `<span class="net">${bit}</span>` : `<span class="host">${bit}</span>`;
+    if(i%8===7&&i<31)out+='<span class="lbl">.</span>';
+  }
+  return out;
+}
+function renderCalc(){
+  const raw=$('calcIp').value.trim();
+  const p=+$('cidr').value;
+  $('cidrOut').textContent='/'+p;
+  const parts=raw.split('.');
+  const ok=parts.length===4&&parts.every(o=>/^\d{1,3}$/.test(o)&&+o<=255);
+  if(!ok){$('calcGrid').innerHTML='<span class="k">status</span><span class="v" style="color:var(--red)">enter a valid IPv4 address</span>';$('binRows').innerHTML='';return;}
+  const ip=ipToInt(raw), m=maskOf(p);
+  const net=(ip&m)>>>0, bcast=(net|(~m>>>0))>>>0;
+  const hosts=p>=31?(p===31?2:1):Math.pow(2,32-p)-2;
+  const first=p>=31?net:net+1, last=p>=31?bcast:bcast-1;
+  $('calcGrid').innerHTML=`
+    <span class="k">Subnet mask</span><span class="v">${intToIp(m)}</span>
+    <span class="k">Network address</span><span class="v hl">${intToIp(net)}</span>
+    <span class="k">Broadcast</span><span class="v">${intToIp(bcast)}</span>
+    <span class="k">Host range</span><span class="v">${intToIp(first)} – ${intToIp(last)}</span>
+    <span class="k">Usable hosts</span><span class="v">${hosts.toLocaleString()}</span>
+    <span class="k">Wildcard</span><span class="v">${intToIp(~m>>>0)}</span>`;
+  $('binRows').innerHTML=
+`<span class="lbl">IP      </span>${ipBinSplit(ip,p)}
+<span class="lbl">Mask    </span>${ipBinSplit(m,p)}
+<span class="lbl">Network </span>${ipBinSplit(net,p)}
+<span class="lbl">          cyan = network bits · orange = host bits</span>`;
+}
+$('calcIp').addEventListener('input',renderCalc);
+$('cidr').addEventListener('input',renderCalc);
+renderCalc();
+
+</script>
+</body>
+</html>

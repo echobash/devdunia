@@ -1,0 +1,874 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>What happens when you type google.com — a 3D journey</title>
+<style>
+  :root{
+    --bg0:#070A18; --bg1:#131B3B;
+    --ink:#EAEFFF; --muted:#97A1CE; --faint:#5A6494;
+    --panel:#0E1430; --line:#273059;
+    --dns:#FFB449; --tcp:#41D9E4; --tls:#77E8A6; --http:#FF8672; --node:#7D8CFF;
+    --sans:"Segoe UI","Avenir Next",-apple-system,BlinkMacSystemFont,"Helvetica Neue",Arial,sans-serif;
+    --mono:ui-monospace,"SF Mono","Cascadia Mono",Menlo,Consolas,monospace;
+  }
+  *{box-sizing:border-box; margin:0; padding:0; -webkit-tap-highlight-color:transparent;}
+  html,body{height:100%; overflow:hidden;}
+  body{
+    background:radial-gradient(120% 90% at 50% 10%, var(--bg1) 0%, var(--bg0) 65%);
+    color:var(--ink); font-family:var(--sans);
+  }
+  #scene{position:fixed; inset:0; display:block; cursor:grab; touch-action:none;}
+  #scene.dragging{cursor:grabbing;}
+
+  /* ---- top browser chrome (part of the lesson) ---- */
+  #chrome{
+    position:fixed; top:12px; left:50%; transform:translateX(-50%);
+    width:min(560px, calc(100vw - 24px));
+    background:rgba(14,20,48,.85); border:1px solid var(--line); border-radius:14px;
+    padding:9px 12px; display:flex; align-items:center; gap:10px;
+    backdrop-filter:blur(8px); z-index:5;
+  }
+  #chrome .dots{display:flex; gap:5px;}
+  #chrome .dots i{width:9px; height:9px; border-radius:50%; background:#39426E; display:block;}
+  #addr{
+    flex:1; display:flex; align-items:center; gap:8px;
+    background:#080C20; border:1px solid var(--line); border-radius:999px;
+    padding:6px 14px; font-family:var(--mono); font-size:13px; min-height:31px;
+  }
+  #lock{display:none; color:var(--tls); font-size:12px;}
+  #addr.locked #lock{display:inline;}
+  #addrtext{white-space:nowrap; overflow:hidden;}
+  #caret{display:inline-block; width:7px; height:14px; background:var(--ink);
+    vertical-align:-2px; animation:blink 1s steps(1) infinite;}
+  @keyframes blink{50%{opacity:0;}}
+
+  /* ---- legend ---- */
+  #legend{
+    position:fixed; top:76px; right:14px; z-index:4;
+    display:flex; flex-direction:column; gap:6px;
+    font-family:var(--mono); font-size:11px; color:var(--muted);
+  }
+  #legend span{display:flex; align-items:center; gap:7px;}
+  #legend i{width:9px;height:9px;border-radius:50%;display:block;
+    box-shadow:0 0 8px currentColor;}
+
+  /* ---- narration panel ---- */
+  #panel{
+    position:fixed; left:14px; bottom:14px; z-index:6;
+    width:min(430px, calc(100vw - 28px));
+    background:rgba(14,20,48,.92); border:1px solid var(--line); border-radius:18px;
+    padding:18px 20px 14px; backdrop-filter:blur(10px);
+    box-shadow:0 18px 50px rgba(0,0,0,.45);
+  }
+  #eyebrow{font-family:var(--mono); font-size:11px; letter-spacing:.14em;
+    color:var(--faint); text-transform:uppercase; display:flex; justify-content:space-between;}
+  #eyebrow b{color:var(--tag, var(--node)); font-weight:600;}
+  #title{font-size:21px; font-weight:700; margin:7px 0 8px; letter-spacing:-.01em;}
+  #body{font-size:13.5px; line-height:1.55; color:var(--muted);}
+  #body strong{color:var(--ink); font-weight:600;}
+  #analogy{
+    margin-top:11px; padding:9px 12px; border-left:3px solid var(--tag, var(--node));
+    background:rgba(255,255,255,.035); border-radius:0 10px 10px 0;
+    font-size:12.5px; line-height:1.5; color:var(--muted); font-style:italic;
+  }
+  #analogy::before{content:"💡 "; font-style:normal;}
+  #chips{display:flex; flex-wrap:wrap; gap:6px; margin-top:12px;}
+  .chip{
+    font-family:var(--mono); font-size:11px; color:var(--muted);
+    border:1px solid var(--line); background:transparent; border-radius:999px;
+    padding:4px 11px; cursor:pointer; transition:all .15s;
+  }
+  .chip:hover{color:var(--ink); border-color:var(--faint);}
+  .chip.open{color:var(--bg0); background:var(--ink); border-color:var(--ink);}
+  #def{
+    display:none; margin-top:9px; font-size:12px; line-height:1.5; color:var(--muted);
+    background:#080C20; border:1px solid var(--line); border-radius:10px; padding:9px 12px;
+  }
+  #def.show{display:block;}
+  #def b{color:var(--ink); font-family:var(--mono); font-weight:600;}
+
+  /* ---- controls ---- */
+  #controls{display:flex; align-items:center; gap:8px; margin-top:14px;}
+  .btn{
+    border:1px solid var(--line); background:#080C20; color:var(--ink);
+    border-radius:10px; padding:8px 12px; font-size:13px; cursor:pointer;
+    font-family:var(--sans); transition:border-color .15s, background .15s;
+    display:flex; align-items:center; gap:6px;
+  }
+  .btn:hover{border-color:var(--faint);}
+  .btn:focus-visible{outline:2px solid var(--node); outline-offset:2px;}
+  #play{min-width:86px; justify-content:center; background:var(--node);
+    border-color:var(--node); color:#0A0D1E; font-weight:600;}
+  #play:hover{filter:brightness(1.1);}
+  #speed{font-family:var(--mono); font-size:12px; min-width:44px; justify-content:center;}
+  #dots{display:flex; gap:6px; margin-left:auto;}
+  #dots button{
+    width:8px; height:8px; border-radius:50%; border:none; cursor:pointer;
+    background:#2B3563; padding:0; transition:all .2s;
+  }
+  #dots button.on{background:var(--ink); transform:scale(1.3);}
+  #dots button.done{background:var(--faint);}
+
+  /* ---- node info card ---- */
+  #card{
+    position:fixed; z-index:7; display:none;
+    width:230px; background:rgba(10,14,34,.96); border:1px solid var(--line);
+    border-radius:12px; padding:11px 13px; font-size:12px; line-height:1.5;
+    color:var(--muted); box-shadow:0 12px 34px rgba(0,0,0,.5);
+  }
+  #card b{display:block; color:var(--ink); font-size:12.5px; margin-bottom:3px;}
+  #card.show{display:block;}
+
+  #hint{
+    position:fixed; top:76px; left:14px; z-index:4;
+    font-family:var(--mono); font-size:11px; color:var(--faint);
+  }
+
+  @media (max-width:640px){
+    #legend{display:none;}
+    #title{font-size:18px;}
+    #body{font-size:12.5px;}
+    #panel{padding:14px 15px 12px;}
+    #hint{display:none;}
+  }
+  @media (prefers-reduced-motion:reduce){
+    #caret{animation:none;}
+  }
+</style>
+</head>
+<body>
+
+<canvas id="scene" aria-label="3D animation of data traveling across the internet"></canvas>
+
+<div id="chrome" aria-hidden="true">
+  <div class="dots"><i></i><i></i><i></i></div>
+  <div id="addr"><span id="lock">&#128274;</span><span id="addrtext"></span><span id="caret"></span></div>
+</div>
+
+<div id="legend" aria-hidden="true">
+  <span><i style="color:var(--dns);background:var(--dns)"></i>DNS · finding the address</span>
+  <span><i style="color:var(--tcp);background:var(--tcp)"></i>TCP · connecting</span>
+  <span><i style="color:var(--tls);background:var(--tls)"></i>TLS · encrypting</span>
+  <span><i style="color:var(--http);background:var(--http)"></i>HTTP · the page itself</span>
+</div>
+
+<div id="hint">drag to orbit · scroll to zoom · click a machine</div>
+
+<div id="panel">
+  <div id="eyebrow"><span id="stepnum">STEP 1 / 8</span><b id="tag">URL</b></div>
+  <h2 id="title"></h2>
+  <p id="body"></p>
+  <div id="analogy"></div>
+  <div id="chips"></div>
+  <div id="def"></div>
+  <div id="controls">
+    <button class="btn" id="prev" aria-label="Previous step">&#9664;</button>
+    <button class="btn" id="play"></button>
+    <button class="btn" id="next" aria-label="Next step">&#9654;</button>
+    <button class="btn" id="speed" aria-label="Playback speed">1&times;</button>
+    <div id="dots" role="tablist"></div>
+  </div>
+</div>
+
+<div id="card" role="dialog"></div>
+
+<script>
+"use strict";
+/* ============================================================
+   What happens when you type google.com — a tiny 3D engine,
+   a packet animator, and an 8-step guided lesson.
+   Zero dependencies. Everything below is plain browser JS.
+   ============================================================ */
+
+const canvas = document.getElementById('scene');
+const ctx = canvas.getContext('2d');
+const reduceMotion = matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+let W = 0, H = 0, DPR = 1;
+function resize(){
+  DPR = Math.min(devicePixelRatio || 1, 2);
+  W = innerWidth; H = innerHeight;
+  canvas.width = W * DPR; canvas.height = H * DPR;
+  canvas.style.width = W + 'px'; canvas.style.height = H + 'px';
+  ctx.setTransform(DPR, 0, 0, DPR, 0, 0);
+}
+addEventListener('resize', resize); resize();
+
+/* ---------------- colors ---------------- */
+const C = {
+  dns:'#FFB449', tcp:'#41D9E4', tls:'#77E8A6', http:'#FF8672',
+  node:'#7D8CFF', ink:'#EAEFFF', muted:'#97A1CE', grid:'#1E2750'
+};
+function shade(hex, f){ // f<1 darker, f>1 lighter
+  const n = parseInt(hex.slice(1), 16);
+  let r = (n>>16)&255, g = (n>>8)&255, b = n&255;
+  if (f <= 1){ r*=f; g*=f; b*=f; }
+  else { r += (255-r)*(f-1); g += (255-g)*(f-1); b += (255-b)*(f-1); }
+  return `rgb(${r|0},${g|0},${b|0})`;
+}
+
+/* ---------------- world ---------------- */
+const NODES = {
+  laptop:{x:-300, z:120, label:'Your laptop', kind:'laptop', base:'#8F9BFF',
+    info:'<b>Your laptop</b>Where it all starts. Runs your browser and keeps a cache — a memory of recent answers — so it can skip work it already did.'},
+  router:{x:-150, z:-15, label:'Wi-Fi router', kind:'router', base:'#7D8CFF',
+    info:'<b>Wi-Fi router</b>Your home&rsquo;s front door to the internet. Every packet you send or receive passes through here first.'},
+  isp:{x:15, z:105, label:'Internet provider', kind:'building', base:'#6E7DF2',
+    info:'<b>Your internet provider</b>Owns the cables and equipment carrying your traffic. Usually also runs the DNS resolver — the helper that answers &ldquo;what number is this name?&rdquo;'},
+  dns:{x:95, z:-175, label:'DNS servers', kind:'rack', base:'#C99A4B',
+    info:'<b>DNS servers</b>A worldwide team of machines that together store the internet&rsquo;s phone book: which names map to which IP addresses.'},
+  google:{x:305, z:-25, label:'google.com server', kind:'datacenter', base:'#8A79E8',
+    info:'<b>google.com server</b>One of thousands of Google machines. The name google.com points you to whichever one is closest and least busy right now.'}
+};
+const LINKS = [['laptop','router'],['router','isp'],['isp','dns'],['isp','google']];
+
+/* ---------------- camera ---------------- */
+const cam = { th:-0.55, tilt:0.62, zoom: W < 640 ? 0.72 : 1, f:1050, dist:520, auto:!reduceMotion };
+let lastDrag = -1e9;
+
+function project(x, y, z){
+  const c = Math.cos(cam.th), s = Math.sin(cam.th);
+  const rx = x*c - z*s;
+  const rz = x*s + z*c;
+  const ct = Math.cos(cam.tilt), st = Math.sin(cam.tilt);
+  const ry  = y*ct + rz*st;
+  const rz2 = rz*ct - y*st;
+  const sc = cam.f / (cam.f + rz2 + cam.dist);
+  return {
+    x: W/2 + rx*sc*cam.zoom,
+    y: H*0.46 - ry*sc*cam.zoom,
+    s: sc*cam.zoom,
+    d: rz2
+  };
+}
+
+/* ---------------- glossary ---------------- */
+const TERMS = {
+  'URL':'The full address you type — like <b>https://www.google.com/</b>. It says <b>how</b> to connect (https), <b>who</b> to talk to (google.com), and <b>which page</b> you want (/).',
+  'HTTPS':'The secure version of HTTP, the language browsers and websites speak. The <b>S</b> means everything sent is encrypted.',
+  'cache':'A small stash of recently-used answers your browser and computer keep, so they don&rsquo;t have to fetch the same thing twice.',
+  'IP address':'A device&rsquo;s phone number on the internet — for example <b>142.250.72.14</b>. Computers can only call numbers, never names.',
+  'DNS':'The <b>Domain Name System</b> — the worldwide service that turns names like google.com into IP addresses.',
+  'resolver':'The DNS helper your computer asks first. It does the detective work of finding the number, and remembers the answer for next time.',
+  'packet':'A tiny chunk of data. Big messages get chopped into many packets that travel separately and are reassembled at the other end.',
+  'TCP':'<b>Transmission Control Protocol</b> — the rulebook that makes sure packets arrive complete, in order, with nothing missing.',
+  'handshake':'A quick back-and-forth two computers use to agree they&rsquo;re both ready to talk before real data flows.',
+  'TLS':'<b>Transport Layer Security</b> — the encryption layer that puts the S in HTTPS and the padlock in your address bar.',
+  'encryption':'Scrambling data with a secret code so that only the two ends of the conversation can read it.',
+  'HTTP':'<b>HyperText Transfer Protocol</b> — the request/response language of the web. Your browser asks; a server answers.',
+  'GET':'The HTTP way of saying &ldquo;please send me this page.&rdquo; The single most common message on the web.',
+  'response':'The server&rsquo;s reply: a status code like <b>200 OK</b> (&ldquo;here you go!&rdquo;) plus the content itself.',
+  'render':'Turning code into pixels — working out layout, colors, text, and images, then painting them on your screen.',
+  'HTML':'The skeleton of a page: its headings, text, links, and structure.',
+  'CSS':'The styling of a page: colors, fonts, spacing — how the skeleton looks.',
+  'JavaScript':'The behavior of a page: what happens when you click, type, or scroll.'
+};
+
+/* ---------------- lesson steps ---------------- */
+const STEPS = [
+  {
+    tag:'URL', color:C.node, title:'You press Enter',
+    body:'Before anything touches the internet, your browser reads what you typed and splits it into pieces: <strong>https</strong> (how to talk — the secure way), <strong>google.com</strong> (who to talk to), and <strong>/</strong> (which page you want).',
+    analogy:'It&rsquo;s like addressing an envelope. The name and address get read before the letter ever leaves your desk.',
+    terms:['URL','HTTPS'], screen:'typing', focus:['laptop'],
+    packets:[], period:1, playDur:8500
+  },
+  {
+    tag:'CACHE', color:C.node, title:'First, check for shortcuts',
+    body:'Computers hate repeating work. Your browser asks itself: <strong>&ldquo;Do I already know google.com&rsquo;s number?&rdquo;</strong> It checks its own memory, then your computer&rsquo;s. If the answer is saved, whole steps get skipped. Today, let&rsquo;s assume it isn&rsquo;t.',
+    analogy:'Like checking your recent calls before reaching for the phone book.',
+    terms:['cache','IP address'], screen:'typed', focus:['laptop'],
+    packets:[], period:1, playDur:8500
+  },
+  {
+    tag:'DNS', color:C.dns, title:'DNS: the internet&rsquo;s phone book',
+    body:'The internet doesn&rsquo;t understand names — only numbers called <strong>IP addresses</strong>. So your computer asks a <strong>DNS resolver</strong> (usually at your internet provider): &ldquo;What number is google.com?&rdquo; The answer comes back: <strong>142.250.72.14</strong>.',
+    analogy:'You know the name. DNS looks up the phone number.',
+    terms:['DNS','IP address','resolver'], screen:'ip', focus:['laptop','isp','dns'],
+    packets:[
+      {path:['laptop','router','isp'], color:C.dns, label:'who is google.com?', dur:1500, delay:0},
+      {path:['isp','dns'],             color:C.dns, label:'?',                  dur:900,  delay:1600},
+      {path:['dns','isp'],             color:C.dns, label:'142.250.72.14',      dur:900,  delay:2650},
+      {path:['isp','router','laptop'], color:C.dns, label:'142.250.72.14',      dur:1500, delay:3700}
+    ],
+    period:6200, playDur:13000
+  },
+  {
+    tag:'TCP', color:C.tcp, title:'The handshake: knock, knock',
+    body:'Now your computer calls that number. Before any real data flows, both sides run a quick three-message ritual: <strong>&ldquo;Can we talk?&rdquo;</strong> &rarr; <strong>&ldquo;Yes — can you hear me?&rdquo;</strong> &rarr; <strong>&ldquo;Loud and clear.&rdquo;</strong> A reliable line is now open.',
+    analogy:'Every phone call starts the same way: &ldquo;Hello?&rdquo; — &ldquo;Hi, can you hear me?&rdquo; — &ldquo;Yep!&rdquo;',
+    terms:['TCP','handshake','packet'], screen:'busy', focus:['laptop','google'],
+    packets:[
+      {path:['laptop','router','isp','google'], color:C.tcp, label:'SYN — can we talk?', dur:1700, delay:0},
+      {path:['google','isp','router','laptop'], color:C.tcp, label:'SYN-ACK — yes, you?', dur:1700, delay:1850},
+      {path:['laptop','router','isp','google'], color:C.tcp, label:'ACK — loud &amp; clear', dur:1700, delay:3700}
+    ],
+    period:6300, playDur:12000
+  },
+  {
+    tag:'TLS / HTTPS', color:C.tls, title:'Locking the line', lock:true,
+    body:'Because you typed <strong>https</strong>, your browser and Google now agree on a secret code. They swap keys so everything after this point is <strong>scrambled</strong> — anyone eavesdropping on the wires in between sees only gibberish. This is the moment the padlock appears.',
+    analogy:'Switching from postcards — which anyone handling them can read — to sealed envelopes.',
+    terms:['TLS','encryption','HTTPS'], screen:'busy', focus:['laptop','google'],
+    packets:[
+      {path:['laptop','router','isp','google'], color:C.tls, label:'hello, let&rsquo;s encrypt', dur:1700, delay:0},
+      {path:['google','isp','router','laptop'], color:C.tls, label:'here&rsquo;s my ID + key', dur:1700, delay:1850},
+      {path:['laptop','router','isp','google'], color:C.tls, label:'\uD83D\uDD12 secret agreed', dur:1700, delay:3700}
+    ],
+    period:6300, playDur:12000
+  },
+  {
+    tag:'HTTP', color:C.http, title:'Finally — asking for the page',
+    body:'Everything so far was setup. Now the <strong>actual request</strong> goes out over the encrypted line — one small message: <strong>&ldquo;GET / — please send me your homepage.&rdquo;</strong>',
+    analogy:'You&rsquo;ve dialed, said hello, and agreed on a secret language. Now you finally ask your question.',
+    terms:['HTTP','GET'], screen:'busy', focus:['laptop','google'],
+    packets:[
+      {path:['laptop','router','isp','google'], color:C.http, label:'GET / HTTP', dur:1700, delay:0}
+    ],
+    period:3400, playDur:9500
+  },
+  {
+    tag:'RESPONSE', color:C.http, title:'Google answers',
+    body:'Google&rsquo;s server replies <strong>&ldquo;200 OK&rdquo;</strong> and streams the page back — not in one piece, but chopped into many small <strong>packets</strong>: the HTML skeleton first, then styles, scripts, and images. Your computer reassembles them in order.',
+    analogy:'Flat-pack furniture: it doesn&rsquo;t arrive built. It arrives as numbered parts, plus instructions.',
+    terms:['response','packet'], screen:'busy', focus:['google','laptop'],
+    packets:[
+      {path:['google','isp','router','laptop'], color:C.http, label:'200 OK + HTML', dur:1600, delay:0},
+      {path:['google','isp','router','laptop'], color:C.http, label:'styles.css',    dur:1600, delay:700},
+      {path:['google','isp','router','laptop'], color:C.http, label:'script.js',     dur:1600, delay:1400},
+      {path:['google','isp','router','laptop'], color:C.http, label:'logo.png',      dur:1600, delay:2100}
+    ],
+    period:4600, playDur:12000
+  },
+  {
+    tag:'RENDER', color:C.node, title:'Your browser builds the page',
+    body:'The browser reads the <strong>HTML</strong> to build the page&rsquo;s structure, applies <strong>CSS</strong> to make it look right, runs <strong>JavaScript</strong> to make it interactive — and paints pixels on your screen. Total time for all eight steps? Usually <strong>well under a second</strong>.',
+    analogy:'An architect (HTML), a decorator (CSS), and an electrician (JavaScript) — finishing the whole house in the blink of an eye.',
+    terms:['render','HTML','CSS','JavaScript'], screen:'page', focus:['laptop'],
+    packets:[], period:1, playDur:13000
+  }
+];
+
+/* ---------------- state ---------------- */
+let stepIdx = 0;
+let simTime = 0;          // virtual clock (ms), respects speed
+let stepStart = 0;        // simTime when current step began
+let playing = true;
+let speed = 1;
+let lockOn = false;
+
+/* ---------------- panel DOM ---------------- */
+const $ = id => document.getElementById(id);
+const dotsEl = $('dots');
+STEPS.forEach((_, i) => {
+  const b = document.createElement('button');
+  b.setAttribute('aria-label', 'Go to step ' + (i+1));
+  b.addEventListener('click', () => gotoStep(i, true));
+  dotsEl.appendChild(b);
+});
+
+function renderPanel(){
+  const st = STEPS[stepIdx];
+  document.documentElement.style.setProperty('--tag', st.color);
+  $('panel').style.setProperty('--tag', st.color);
+  $('stepnum').textContent = 'STEP ' + (stepIdx+1) + ' / ' + STEPS.length;
+  $('tag').innerHTML = st.tag;
+  $('title').innerHTML = st.title;
+  $('body').innerHTML = st.body;
+  $('analogy').innerHTML = st.analogy;
+  const chips = $('chips'); chips.innerHTML = '';
+  st.terms.forEach(t => {
+    const c = document.createElement('button');
+    c.className = 'chip'; c.textContent = t;
+    c.addEventListener('click', () => toggleDef(t, c));
+    chips.appendChild(c);
+  });
+  $('def').classList.remove('show');
+  [...dotsEl.children].forEach((d, i) => {
+    d.className = i === stepIdx ? 'on' : (i < stepIdx ? 'done' : '');
+  });
+  $('play').innerHTML = playing ? '&#10073;&#10073; Pause' : '&#9654; Play';
+}
+function toggleDef(term, chip){
+  const def = $('def');
+  const open = chip.classList.contains('open');
+  [...$('chips').children].forEach(c => c.classList.remove('open'));
+  if (open){ def.classList.remove('show'); return; }
+  chip.classList.add('open');
+  def.innerHTML = '<b>' + term + '</b> — ' + TERMS[term];
+  def.classList.add('show');
+}
+
+function gotoStep(i, manual){
+  stepIdx = Math.max(0, Math.min(STEPS.length - 1, i));
+  stepStart = simTime;
+  lockOn = STEPS.slice(0, stepIdx + 1).some(s => s.lock);
+  $('addr').classList.toggle('locked', lockOn);
+  if (manual && stepIdx === STEPS.length - 1) {} // let it play out
+  renderPanel();
+  hideCard();
+}
+
+$('prev').addEventListener('click', () => gotoStep(stepIdx - 1, true));
+$('next').addEventListener('click', () => gotoStep(stepIdx + 1, true));
+$('play').addEventListener('click', () => {
+  if (!playing && stepIdx === STEPS.length - 1 && simTime - stepStart > STEPS[stepIdx].playDur){
+    gotoStep(0, true); // replay from the end
+  }
+  playing = !playing; renderPanel();
+});
+$('speed').addEventListener('click', () => {
+  speed = speed === 1 ? 2 : 1;
+  $('speed').innerHTML = speed + '&times;';
+});
+addEventListener('keydown', e => {
+  if (e.key === 'ArrowRight') gotoStep(stepIdx + 1, true);
+  else if (e.key === 'ArrowLeft') gotoStep(stepIdx - 1, true);
+  else if (e.key === ' '){ e.preventDefault(); playing = !playing; renderPanel(); }
+});
+
+/* ---------------- address bar animation ---------------- */
+const FULL_ADDR = 'https://www.google.com';
+function updateAddressBar(){
+  const el = $('addrtext');
+  if (stepIdx === 0){
+    const t = simTime - stepStart;
+    const n = Math.min(FULL_ADDR.length, Math.floor(t / 120));
+    el.textContent = FULL_ADDR.slice(0, n);
+    $('caret').style.display = 'inline-block';
+  } else {
+    el.textContent = FULL_ADDR;
+    $('caret').style.display = 'none';
+  }
+}
+
+/* ---------------- camera interaction ---------------- */
+let drag = null, moved = 0;
+canvas.addEventListener('pointerdown', e => {
+  drag = {x:e.clientX, y:e.clientY, th:cam.th, tilt:cam.tilt};
+  moved = 0; canvas.classList.add('dragging');
+  canvas.setPointerCapture(e.pointerId);
+});
+canvas.addEventListener('pointermove', e => {
+  if (!drag) return;
+  const dx = e.clientX - drag.x, dy = e.clientY - drag.y;
+  moved += Math.abs(dx) + Math.abs(dy);
+  cam.th = drag.th + dx * 0.005;
+  cam.tilt = Math.max(0.25, Math.min(1.15, drag.tilt + dy * 0.004));
+  lastDrag = simTime;
+});
+canvas.addEventListener('pointerup', e => {
+  canvas.classList.remove('dragging');
+  if (drag && moved < 6) handleClick(e.clientX, e.clientY);
+  drag = null;
+});
+canvas.addEventListener('wheel', e => {
+  e.preventDefault();
+  cam.zoom = Math.max(0.45, Math.min(2.2, cam.zoom * (e.deltaY > 0 ? 0.92 : 1.08)));
+}, {passive:false});
+
+/* node click → info card */
+function handleClick(px, py){
+  let best = null, bd = 55;
+  for (const k in NODES){
+    const n = NODES[k];
+    const p = project(n.x, 30, n.z);
+    const d = Math.hypot(p.x - px, p.y - py);
+    if (d < bd){ bd = d; best = n; }
+  }
+  const card = $('card');
+  if (best){
+    card.innerHTML = best.info;
+    card.classList.add('show');
+    const cw = 230;
+    card.style.left = Math.min(W - cw - 12, Math.max(12, px - cw/2)) + 'px';
+    card.style.top = Math.max(12, py - 110) + 'px';
+  } else hideCard();
+}
+function hideCard(){ $('card').classList.remove('show'); }
+
+/* ---------------- drawing helpers ---------------- */
+function roundRect(x, y, w, h, r){
+  ctx.beginPath();
+  ctx.moveTo(x + r, y);
+  ctx.arcTo(x + w, y, x + w, y + h, r);
+  ctx.arcTo(x + w, y + h, x, y + h, r);
+  ctx.arcTo(x, y + h, x, y, r);
+  ctx.arcTo(x, y, x + w, y, r);
+  ctx.closePath();
+}
+
+function drawGrid(){
+  ctx.lineWidth = 1;
+  const R = 480, STEP = 60;
+  for (let x = -R; x <= R; x += STEP){
+    const a = project(x, 0, -R), b = project(x, 0, R);
+    ctx.strokeStyle = 'rgba(41,52,99,' + (0.28 - Math.abs(x)/R*0.16) + ')';
+    ctx.beginPath(); ctx.moveTo(a.x, a.y); ctx.lineTo(b.x, b.y); ctx.stroke();
+  }
+  for (let z = -R; z <= R; z += STEP){
+    const a = project(-R, 0, z), b = project(R, 0, z);
+    ctx.strokeStyle = 'rgba(41,52,99,' + (0.28 - Math.abs(z)/R*0.16) + ')';
+    ctx.beginPath(); ctx.moveTo(a.x, a.y); ctx.lineTo(b.x, b.y); ctx.stroke();
+  }
+}
+
+function drawLinks(){
+  ctx.setLineDash([4, 7]);
+  ctx.lineWidth = 1.4;
+  ctx.strokeStyle = 'rgba(125,140,255,0.24)';
+  for (const [a, b] of LINKS){
+    const pa = project(NODES[a].x, 2, NODES[a].z);
+    const pb = project(NODES[b].x, 2, NODES[b].z);
+    ctx.beginPath(); ctx.moveTo(pa.x, pa.y); ctx.lineTo(pb.x, pb.y); ctx.stroke();
+  }
+  ctx.setLineDash([]);
+}
+
+function drawFocusGlows(){
+  const st = STEPS[stepIdx];
+  const pulse = 0.55 + 0.45 * Math.sin(simTime / 350);
+  for (const k of st.focus){
+    const n = NODES[k];
+    const p = project(n.x, 0, n.z);
+    const r = 62 * p.s;
+    const g = ctx.createRadialGradient(p.x, p.y, 0, p.x, p.y, r);
+    g.addColorStop(0, hexA(st.color, 0.22 * pulse));
+    g.addColorStop(1, hexA(st.color, 0));
+    ctx.fillStyle = g;
+    ctx.beginPath(); ctx.ellipse(p.x, p.y, r, r * 0.45, 0, 0, Math.PI * 2); ctx.fill();
+  }
+}
+function hexA(hex, a){
+  const n = parseInt(hex.slice(1), 16);
+  return `rgba(${(n>>16)&255},${(n>>8)&255},${n&255},${a})`;
+}
+
+/* generic 3D box → list of faces pushed into renderables */
+function boxFaces(cx, cz, w, d, h, base, yBase){
+  const y0 = yBase || 0, y1 = y0 + h;
+  const xs = [cx - w/2, cx + w/2], zs = [cz - d/2, cz + d/2];
+  const P = {};
+  for (let xi = 0; xi < 2; xi++) for (let zi = 0; zi < 2; zi++){
+    P['b'+xi+zi] = project(xs[xi], y0, zs[zi]);
+    P['t'+xi+zi] = project(xs[xi], y1, zs[zi]);
+  }
+  const faces = [
+    {pts:[P.t00, P.t10, P.t11, P.t01], f:1.28},           // top
+    {pts:[P.b00, P.b10, P.t10, P.t00], f:0.62},           // -z
+    {pts:[P.b01, P.b11, P.t11, P.t01], f:0.88},           // +z
+    {pts:[P.b00, P.b01, P.t01, P.t00], f:0.52},           // -x
+    {pts:[P.b10, P.b11, P.t11, P.t10], f:0.75}            // +x
+  ];
+  return faces.map(fa => ({
+    depth: fa.pts.reduce((s, p) => s + p.d, 0) / 4,
+    draw(){
+      ctx.beginPath();
+      ctx.moveTo(fa.pts[0].x, fa.pts[0].y);
+      for (let i = 1; i < 4; i++) ctx.lineTo(fa.pts[i].x, fa.pts[i].y);
+      ctx.closePath();
+      ctx.fillStyle = shade(base, fa.f);
+      ctx.strokeStyle = 'rgba(7,10,24,0.55)';
+      ctx.lineWidth = 1;
+      ctx.fill(); ctx.stroke();
+    }
+  }));
+}
+
+function nodeRenderables(){
+  const out = [];
+  for (const k in NODES){
+    const n = NODES[k];
+    if (n.kind === 'laptop'){
+      out.push(...boxFaces(n.x, n.z, 58, 40, 6, n.base));
+      out.push(...boxFaces(n.x, n.z - 17, 58, 5, 34, shade(n.base, 0.8), 0)); // lid
+    } else if (n.kind === 'router'){
+      out.push(...boxFaces(n.x, n.z, 48, 34, 11, n.base));
+      // antennas
+      const a1 = project(n.x - 14, 11, n.z), a2 = project(n.x - 14, 40, n.z);
+      const b1 = project(n.x + 14, 11, n.z), b2 = project(n.x + 14, 40, n.z);
+      out.push({depth:(a1.d + b1.d)/2 - 1, draw(){
+        ctx.strokeStyle = shade(n.base, 1.15); ctx.lineWidth = 2;
+        ctx.beginPath(); ctx.moveTo(a1.x, a1.y); ctx.lineTo(a2.x, a2.y);
+        ctx.moveTo(b1.x, b1.y); ctx.lineTo(b2.x, b2.y); ctx.stroke();
+        ctx.fillStyle = C.ink;
+        ctx.beginPath(); ctx.arc(a2.x, a2.y, 2.2, 0, 7); ctx.arc(b2.x, b2.y, 2.2, 0, 7); ctx.fill();
+      }});
+    } else if (n.kind === 'building'){
+      out.push(...boxFaces(n.x, n.z, 66, 50, 62, n.base));
+      out.push(...boxFaces(n.x, n.z, 30, 24, 76, shade(n.base, 0.85)));
+    } else if (n.kind === 'rack'){
+      out.push(...boxFaces(n.x, n.z, 36, 36, 86, n.base));
+      // blinking status lights
+      const blink = Math.sin(simTime / 180 + n.x) > 0;
+      const lp = project(n.x, 78, n.z - 19);
+      out.push({depth:lp.d - 2, draw(){
+        ctx.fillStyle = blink ? C.dns : 'rgba(255,180,73,0.25)';
+        ctx.beginPath(); ctx.arc(lp.x, lp.y, 2.4, 0, 7); ctx.fill();
+      }});
+    } else if (n.kind === 'datacenter'){
+      out.push(...boxFaces(n.x, n.z, 110, 72, 46, n.base));
+      out.push(...boxFaces(n.x - 22, n.z, 40, 44, 66, shade(n.base, 0.9)));
+      out.push(...boxFaces(n.x + 34, n.z + 6, 26, 26, 58, shade(n.base, 0.8)));
+    }
+  }
+  return out;
+}
+
+function drawNodeLabels(){
+  ctx.textAlign = 'center';
+  for (const k in NODES){
+    const n = NODES[k];
+    const hMap = {laptop:52, router:56, building:92, rack:102, datacenter:82};
+    const p = project(n.x, hMap[n.kind], n.z);
+    const fs = Math.max(10, 12 * p.s);
+    ctx.font = '600 ' + fs + 'px ' + getComputedStyle(document.body).getPropertyValue('--mono');
+    const tw = ctx.measureText(n.label).width;
+    ctx.fillStyle = 'rgba(7,10,24,0.65)';
+    roundRect(p.x - tw/2 - 7, p.y - fs - 5, tw + 14, fs + 9, 6); ctx.fill();
+    ctx.fillStyle = C.muted;
+    ctx.fillText(n.label, p.x, p.y - 3);
+  }
+}
+
+/* ---------------- packets ---------------- */
+function pathPoints(spec){
+  if (!spec._pts){
+    spec._pts = spec.path.map(k => ({x:NODES[k].x, z:NODES[k].z}));
+    let L = 0; const cum = [0];
+    for (let i = 1; i < spec._pts.length; i++){
+      L += Math.hypot(spec._pts[i].x - spec._pts[i-1].x, spec._pts[i].z - spec._pts[i-1].z);
+      cum.push(L);
+    }
+    spec._cum = cum; spec._len = L;
+  }
+  return spec;
+}
+function posOnPath(spec, tt){
+  pathPoints(spec);
+  const dist = tt * spec._len;
+  let i = 1;
+  while (i < spec._cum.length - 1 && spec._cum[i] < dist) i++;
+  const segLen = spec._cum[i] - spec._cum[i-1];
+  const u = segLen ? (dist - spec._cum[i-1]) / segLen : 0;
+  const a = spec._pts[i-1], b = spec._pts[i];
+  return {
+    x: a.x + (b.x - a.x) * u,
+    z: a.z + (b.z - a.z) * u,
+    y: 12 + Math.sin(Math.PI * u) * 30
+  };
+}
+
+function packetRenderables(){
+  const st = STEPS[stepIdx];
+  const out = [];
+  const elapsed = simTime - stepStart;
+  for (const spec of st.packets){
+    const local = elapsed - spec.delay;
+    if (local < 0) continue;
+    const t = local % st.period;
+    if (t > spec.dur) continue;
+    const tt = t / spec.dur;
+    const w = posOnPath(spec, tt);
+    const p = project(w.x, w.y, w.z);
+    // trail samples
+    const trail = [];
+    if (!reduceMotion){
+      for (let k = 1; k <= 7; k++){
+        const t2 = tt - k * 0.028;
+        if (t2 <= 0) break;
+        const w2 = posOnPath(spec, t2);
+        trail.push(project(w2.x, w2.y, w2.z));
+      }
+    }
+    out.push({depth: p.d, draw(){
+      // trail
+      if (trail.length){
+        for (let k = 0; k < trail.length; k++){
+          ctx.fillStyle = hexA(spec.color, 0.32 * (1 - k / trail.length));
+          ctx.beginPath();
+          ctx.arc(trail[k].x, trail[k].y, (4.5 - k * 0.45) * p.s, 0, 7);
+          ctx.fill();
+        }
+      }
+      // glow
+      const r = 16 * p.s;
+      const g = ctx.createRadialGradient(p.x, p.y, 0, p.x, p.y, r);
+      g.addColorStop(0, hexA(spec.color, 0.85));
+      g.addColorStop(0.4, hexA(spec.color, 0.35));
+      g.addColorStop(1, hexA(spec.color, 0));
+      ctx.fillStyle = g;
+      ctx.beginPath(); ctx.arc(p.x, p.y, r, 0, 7); ctx.fill();
+      // core
+      ctx.fillStyle = '#fff';
+      ctx.beginPath(); ctx.arc(p.x, p.y, 3.4 * p.s, 0, 7); ctx.fill();
+      // label
+      if (spec.label && p.s > 0.55){
+        const fs = 11 * Math.min(p.s, 1.2);
+        ctx.font = '600 ' + fs + 'px ' + getComputedStyle(document.body).getPropertyValue('--mono');
+        ctx.textAlign = 'center';
+        const label = spec.label.replace(/&amp;/g, '&').replace(/&rsquo;/g, '\u2019');
+        const tw = ctx.measureText(label).width;
+        ctx.fillStyle = 'rgba(7,10,24,0.78)';
+        roundRect(p.x - tw/2 - 7, p.y - r - fs - 10, tw + 14, fs + 9, 6); ctx.fill();
+        ctx.fillStyle = spec.color;
+        ctx.fillText(label, p.x, p.y - r - 8);
+      }
+    }});
+  }
+  return out;
+}
+
+/* ---------------- laptop screen billboard ---------------- */
+function drawScreenBillboard(){
+  const n = NODES.laptop;
+  const anchor = project(n.x, 46, n.z);
+  const s = Math.max(0.55, Math.min(1.5, anchor.s));
+  const w = 196 * s, h = 128 * s;
+  const x = anchor.x - w/2, y = anchor.y - h - 18 * s;
+  const st = STEPS[stepIdx];
+  const elapsed = simTime - stepStart;
+  const mono = getComputedStyle(document.body).getPropertyValue('--mono');
+
+  // connector
+  ctx.strokeStyle = 'rgba(125,140,255,0.35)'; ctx.lineWidth = 1;
+  ctx.beginPath(); ctx.moveTo(anchor.x, anchor.y); ctx.lineTo(anchor.x, y + h); ctx.stroke();
+
+  // window
+  ctx.fillStyle = 'rgba(11,16,38,0.94)';
+  ctx.strokeStyle = 'rgba(58,70,130,0.9)'; ctx.lineWidth = 1.2;
+  roundRect(x, y, w, h, 10 * s); ctx.fill(); ctx.stroke();
+
+  // title dots
+  ctx.fillStyle = '#39426E';
+  for (let i = 0; i < 3; i++){
+    ctx.beginPath(); ctx.arc(x + (12 + i * 11) * s, y + 11 * s, 3 * s, 0, 7); ctx.fill();
+  }
+
+  // address pill
+  const ax = x + 10 * s, ay = y + 20 * s, aw = w - 20 * s, ah = 18 * s;
+  ctx.fillStyle = '#080C20';
+  roundRect(ax, ay, aw, ah, ah/2); ctx.fill();
+  ctx.font = '600 ' + (10.5 * s) + 'px ' + mono;
+  ctx.textAlign = 'left';
+  let addr = 'google.com';
+  if (st.screen === 'typing'){
+    addr = 'google.com'.slice(0, Math.min(10, Math.floor(elapsed / 220)));
+    if (Math.floor(simTime / 500) % 2 === 0) addr += '\u258F';
+  }
+  let tx = ax + 10 * s;
+  if (lockOn){
+    ctx.fillStyle = C.tls;
+    ctx.fillText('\uD83D\uDD12', tx, ay + 13 * s);
+    tx += 15 * s;
+  }
+  ctx.fillStyle = C.ink;
+  ctx.fillText(addr, tx, ay + 13 * s);
+
+  // content area
+  const cy = ay + ah + 8 * s, ch = y + h - cy - 8 * s, cx0 = x + 12 * s, cw = w - 24 * s;
+  ctx.textAlign = 'center';
+
+  if (st.screen === 'typing' || st.screen === 'typed'){
+    ctx.fillStyle = 'rgba(151,161,206,0.6)';
+    ctx.font = (10 * s) + 'px ' + mono;
+    ctx.fillText(st.screen === 'typing' ? 'waiting for Enter\u2026' : 'checking cache\u2026', x + w/2, cy + ch/2 + 3*s);
+  }
+  else if (st.screen === 'ip'){
+    ctx.fillStyle = 'rgba(151,161,206,0.7)';
+    ctx.font = (9.5 * s) + 'px ' + mono;
+    ctx.fillText('google.com lives at', x + w/2, cy + ch/2 - 10 * s);
+    const a = Math.min(1, Math.max(0, (elapsed % STEPS[2].period - 4900) / 600));
+    ctx.fillStyle = hexA(C.dns, 0.25 + 0.75 * a);
+    ctx.font = '700 ' + (14 * s) + 'px ' + mono;
+    ctx.fillText('142.250.72.14', x + w/2, cy + ch/2 + 10 * s);
+  }
+  else if (st.screen === 'busy'){
+    for (let i = 0; i < 3; i++){
+      const b = Math.sin(simTime / 220 - i * 0.9) * 0.5 + 0.5;
+      ctx.fillStyle = hexA(st.color, 0.25 + 0.75 * b);
+      ctx.beginPath();
+      ctx.arc(x + w/2 + (i - 1) * 14 * s, cy + ch/2, 3.4 * s, 0, 7);
+      ctx.fill();
+    }
+  }
+  else if (st.screen === 'page'){
+    const t = elapsed / 1000;
+    // logo
+    if (t > 0.4){
+      ctx.globalAlpha = Math.min(1, (t - 0.4) / 0.5);
+      ctx.fillStyle = C.ink;
+      ctx.font = '700 ' + (17 * s) + 'px ' + getComputedStyle(document.body).getPropertyValue('--sans');
+      ctx.fillText('Google', x + w/2, cy + 24 * s);
+      ctx.globalAlpha = 1;
+    }
+    // search bar
+    if (t > 1.1){
+      ctx.globalAlpha = Math.min(1, (t - 1.1) / 0.5);
+      ctx.strokeStyle = 'rgba(151,161,206,0.7)'; ctx.lineWidth = 1.2;
+      roundRect(cx0 + cw * 0.08, cy + 34 * s, cw * 0.84, 16 * s, 8 * s); ctx.stroke();
+      ctx.globalAlpha = 1;
+    }
+    // buttons
+    if (t > 1.8){
+      ctx.globalAlpha = Math.min(1, (t - 1.8) / 0.5);
+      ctx.fillStyle = 'rgba(151,161,206,0.25)';
+      roundRect(x + w/2 - 44 * s, cy + 58 * s, 40 * s, 11 * s, 3 * s); ctx.fill();
+      roundRect(x + w/2 + 6 * s, cy + 58 * s, 40 * s, 11 * s, 3 * s); ctx.fill();
+      ctx.globalAlpha = 1;
+    }
+    // done badge
+    if (t > 2.6){
+      ctx.globalAlpha = Math.min(1, (t - 2.6) / 0.5);
+      ctx.fillStyle = C.tls;
+      ctx.font = '600 ' + (9 * s) + 'px ' + mono;
+      ctx.fillText('\u2713 loaded in ~200 ms', x + w/2, y + h - 10 * s);
+      ctx.globalAlpha = 1;
+    }
+  }
+}
+
+/* ---------------- main loop ---------------- */
+let lastNow = performance.now();
+function frame(now){
+  const dt = Math.min(50, now - lastNow);
+  lastNow = now;
+  simTime += dt * speed;
+
+  // auto-orbit (gentle, pauses after user drags)
+  if (cam.auto && !drag && simTime - lastDrag > 4000){
+    cam.th += dt * 0.000045;
+  }
+
+  // auto-advance
+  const st = STEPS[stepIdx];
+  if (playing && simTime - stepStart > st.playDur){
+    if (stepIdx < STEPS.length - 1) gotoStep(stepIdx + 1, false);
+    else { playing = false; renderPanel(); }
+  }
+
+  updateAddressBar();
+
+  ctx.clearRect(0, 0, W, H);
+  drawGrid();
+  drawLinks();
+  drawFocusGlows();
+
+  const renderables = [...nodeRenderables(), ...packetRenderables()];
+  renderables.sort((a, b) => b.depth - a.depth);
+  for (const r of renderables) r.draw();
+
+  drawNodeLabels();
+  drawScreenBillboard();
+
+  requestAnimationFrame(frame);
+}
+
+gotoStep(0, false);
+renderPanel();
+requestAnimationFrame(frame);
+</script>
+</body>
+</html>

@@ -1,0 +1,1244 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>What Happens When You Type google.com?</title>
+<style>
+  :root {
+    --bg: #0b1220;
+    --bg2: #0f1a2e;
+    --bg3: #162035;
+    --border: #1e3050;
+    --text: #c8d8f0;
+    --text-dim: #6080a0;
+    --cyan: #00e5ff;
+    --orange: #ff9500;
+    --green: #00e676;
+    --amber: #ffb300;
+    --purple: #ce93d8;
+    --teal: #26c6da;
+    --blue: #42a5f5;
+    --red: #ef5350;
+
+    /* Device colors */
+    --c-browser: #42a5f5;
+    --c-os: #5c9ee0;
+    --c-nic: #7e57c2;
+    --c-router: #ab47bc;
+    --c-isp: #8d6e63;
+    --c-rootdns: #ef6c00;
+    --c-tlddns: #ffa726;
+    --c-authdns: #ffb300;
+    --c-cdn: #26c6da;
+    --c-server: #00e676;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Segoe UI', system-ui, sans-serif;
+    font-size: 14px;
+    line-height: 1.5;
+    min-height: 100vh;
+  }
+
+  /* ── HEADER ── */
+  header {
+    text-align: center;
+    padding: 28px 20px 16px;
+    border-bottom: 1px solid var(--border);
+    background: linear-gradient(180deg, #0d1830 0%, var(--bg) 100%);
+  }
+  header h1 {
+    font-size: clamp(1.2rem, 3vw, 1.9rem);
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    color: #fff;
+  }
+  header h1 span { color: var(--cyan); }
+  header p {
+    margin-top: 6px;
+    color: var(--text-dim);
+    font-size: 0.82rem;
+    max-width: 600px;
+    margin-inline: auto;
+  }
+
+  /* ── STEP PROGRESS BAR ── */
+  #step-bar {
+    display: flex;
+    overflow-x: auto;
+    gap: 0;
+    padding: 0 12px;
+    background: var(--bg2);
+    border-bottom: 1px solid var(--border);
+    scrollbar-width: none;
+  }
+  #step-bar::-webkit-scrollbar { display: none; }
+  .sb-dot {
+    flex-shrink: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 8px 6px;
+    cursor: pointer;
+    position: relative;
+    transition: opacity .2s;
+    opacity: .45;
+    min-width: 44px;
+  }
+  .sb-dot.active { opacity: 1; }
+  .sb-dot.done { opacity: .75; }
+  .sb-dot::after {
+    content: '';
+    position: absolute;
+    right: -1px; top: 50%;
+    transform: translateY(-50%);
+    width: 1px; height: 60%;
+    background: var(--border);
+  }
+  .sb-dot:last-child::after { display:none; }
+  .sb-num {
+    width: 22px; height: 22px;
+    border-radius: 50%;
+    background: var(--bg3);
+    border: 1px solid var(--border);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 0.68rem; font-weight: 700;
+    transition: background .2s, border-color .2s;
+  }
+  .sb-dot.active .sb-num { background: var(--cyan); border-color: var(--cyan); color: #000; }
+  .sb-dot.done .sb-num { background: var(--green); border-color: var(--green); color: #000; }
+  .sb-label { font-size: 0.55rem; color: var(--text-dim); margin-top: 3px; text-align: center; width: 50px; }
+
+  /* ── MAIN LAYOUT ── */
+  #main { display: flex; flex-direction: column; gap: 0; }
+
+  /* ── DIAGRAM ── */
+  #diagram-wrap {
+    background: var(--bg2);
+    border-bottom: 1px solid var(--border);
+    padding: 16px 8px 8px;
+    overflow-x: auto;
+  }
+  #diagram-wrap h2 { font-size: .72rem; color: var(--text-dim); text-transform: uppercase; letter-spacing: .1em; text-align: center; margin-bottom: 10px; }
+
+  #net-svg {
+    display: block;
+    margin: 0 auto;
+    min-width: 780px;
+  }
+
+  /* SVG device labels */
+  .dev-label { font-size: 10px; fill: #a0b8d8; font-family: 'Segoe UI', system-ui, sans-serif; text-anchor: middle; }
+  .dev-sub { font-size: 8.5px; fill: #506888; font-family: 'Segoe UI', system-ui, sans-serif; text-anchor: middle; }
+
+  /* Animated flow arrow */
+  @keyframes dashflow {
+    to { stroke-dashoffset: -24; }
+  }
+  .flow-arrow {
+    fill: none;
+    stroke-width: 2;
+    stroke-dasharray: 8 4;
+    animation: dashflow .6s linear infinite;
+    opacity: 0;
+    transition: opacity .3s;
+    pointer-events: none;
+  }
+  .flow-arrow.active { opacity: 1; }
+  .flow-arrow.dns { stroke: var(--orange); }
+  .flow-arrow.tcp { stroke: var(--cyan); }
+  .flow-arrow.tls { stroke: var(--green); }
+  .flow-arrow.http { stroke: var(--teal); }
+  .flow-arrow.ret { stroke: var(--amber); }
+
+  .dev-box {
+    rx: 10; ry: 10;
+    transition: filter .3s;
+  }
+  .dev-box.active {
+    filter: drop-shadow(0 0 8px currentColor);
+  }
+
+  /* ── EXPLANATION BLOCK ── */
+  #explain {
+    padding: 16px 20px;
+    background: var(--bg2);
+    border-bottom: 1px solid var(--border);
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+  }
+  @media (max-width: 680px) { #explain { grid-template-columns: 1fr; } }
+
+  #explain-left {}
+  .step-badge {
+    display: inline-block;
+    background: var(--cyan);
+    color: #000;
+    font-weight: 700;
+    font-size: .72rem;
+    padding: 2px 8px;
+    border-radius: 4px;
+    margin-bottom: 8px;
+  }
+  #step-title {
+    font-size: 1.05rem;
+    font-weight: 700;
+    color: #fff;
+    margin-bottom: 6px;
+  }
+  #step-tech {
+    font-size: .82rem;
+    color: var(--text);
+    line-height: 1.6;
+    margin-bottom: 8px;
+  }
+  .analogy-line {
+    background: var(--bg3);
+    border-left: 3px solid var(--amber);
+    padding: 7px 10px;
+    font-size: .8rem;
+    color: var(--amber);
+    border-radius: 0 6px 6px 0;
+    font-style: italic;
+  }
+
+  .why-panel {
+    background: var(--bg3);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 12px 14px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+  .why-panel h4 { font-size: .72rem; text-transform: uppercase; letter-spacing: .08em; color: var(--text-dim); margin-bottom: 4px; }
+  .why-good { color: var(--green); font-size: .82rem; }
+  .why-good::before { content: "✓ "; font-weight: 700; }
+  .why-bad { color: var(--red); font-size: .82rem; }
+  .why-bad::before { content: "✗ "; font-weight: 700; }
+
+  /* ── PACKET INSPECTOR ── */
+  #packet-wrap {
+    background: #070e1a;
+    border-bottom: 1px solid var(--border);
+    padding: 12px 16px;
+  }
+  #packet-wrap h2 { font-size: .72rem; color: var(--text-dim); text-transform: uppercase; letter-spacing: .1em; margin-bottom: 8px; }
+  #packet-strip {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+  }
+  .pkt-field {
+    background: var(--bg3);
+    border: 1px solid var(--border);
+    border-radius: 5px;
+    padding: 4px 8px;
+    font-family: 'Consolas', 'Courier New', monospace;
+    font-size: .75rem;
+    transition: background .3s, border-color .3s, color .3s;
+  }
+  .pkt-field .pf-label { color: var(--text-dim); font-size: .65rem; display: block; margin-bottom: 1px; }
+  .pkt-field .pf-val { color: var(--cyan); font-weight: 600; }
+  .pkt-field.highlight {
+    background: #1a2a10;
+    border-color: var(--green);
+  }
+  .pkt-field.highlight .pf-val { color: var(--green); }
+  .pkt-field.dns-hi { background: #1f1500; border-color: var(--orange); }
+  .pkt-field.dns-hi .pf-val { color: var(--orange); }
+
+  /* ── CONTROLS ── */
+  #controls {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 12px 20px;
+    background: var(--bg2);
+    border-bottom: 1px solid var(--border);
+    flex-wrap: wrap;
+  }
+  .btn {
+    background: var(--bg3);
+    border: 1px solid var(--border);
+    color: var(--text);
+    border-radius: 6px;
+    padding: 6px 14px;
+    cursor: pointer;
+    font-size: .82rem;
+    font-family: inherit;
+    transition: background .15s, border-color .15s, color .15s;
+    display: flex; align-items: center; gap: 5px;
+  }
+  .btn:hover { background: #1e3050; border-color: var(--cyan); color: var(--cyan); }
+  .btn.primary { background: var(--cyan); color: #000; border-color: var(--cyan); font-weight: 700; }
+  .btn.primary:hover { background: #00b0cc; }
+  #speed-wrap { display: flex; align-items: center; gap: 8px; margin-left: auto; font-size: .78rem; color: var(--text-dim); }
+  #speed-slider { accent-color: var(--cyan); width: 90px; }
+  #status-text { font-size: .78rem; color: var(--cyan); font-weight: 600; min-width: 80px; }
+
+  /* ── WATERFALL (step 15) ── */
+  #waterfall-wrap {
+    display: none;
+    padding: 0 16px 12px;
+    background: var(--bg2);
+  }
+  #waterfall-wrap.visible { display: block; }
+  #waterfall-wrap h3 { font-size: .78rem; color: var(--text-dim); margin-bottom: 8px; }
+  .wf-row {
+    display: grid;
+    grid-template-columns: 140px 1fr 60px;
+    gap: 8px;
+    align-items: center;
+    margin-bottom: 4px;
+    font-size: .75rem;
+  }
+  .wf-name { color: var(--text); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .wf-bar-wrap { background: var(--bg3); border-radius: 3px; height: 12px; overflow: hidden; }
+  .wf-bar { height: 100%; border-radius: 3px; transition: width 1s ease; width: 0; }
+  .wf-ms { color: var(--text-dim); text-align: right; }
+
+  /* ── REFERENCE SECTION ── */
+  #reference {
+    padding: 24px 20px 40px;
+    max-width: 1100px;
+    margin: 0 auto;
+    width: 100%;
+  }
+  #reference h2 {
+    font-size: 1rem;
+    font-weight: 700;
+    color: #fff;
+    border-bottom: 1px solid var(--border);
+    padding-bottom: 8px;
+    margin-bottom: 16px;
+    letter-spacing: -0.01em;
+  }
+  .ref-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 14px;
+  }
+  .ref-card {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 14px 16px;
+  }
+  .ref-card h3 {
+    font-size: .88rem;
+    font-weight: 700;
+    margin-bottom: 6px;
+    display: flex; align-items: center; gap: 6px;
+  }
+  .ref-tag {
+    font-size: .6rem;
+    padding: 1px 5px;
+    border-radius: 3px;
+    font-weight: 600;
+    letter-spacing: .06em;
+  }
+  .ref-card p { font-size: .78rem; color: var(--text-dim); line-height: 1.6; }
+  .ref-card .ref-code {
+    background: #070e1a;
+    border: 1px solid var(--border);
+    border-radius: 5px;
+    padding: 6px 10px;
+    font-family: monospace;
+    font-size: .72rem;
+    color: var(--cyan);
+    margin-top: 8px;
+    white-space: pre-wrap;
+  }
+
+  footer {
+    text-align: center;
+    padding: 16px;
+    color: var(--text-dim);
+    font-size: .72rem;
+    border-top: 1px solid var(--border);
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>What happens when you type <span>google.com</span> and press Enter?</h1>
+  <p>A step-by-step visual journey through DNS, TCP, TLS, and HTTP — explained for absolute beginners.</p>
+</header>
+
+<!-- STEP BAR -->
+<div id="step-bar"></div>
+
+<div id="main">
+
+  <!-- DIAGRAM -->
+  <div id="diagram-wrap">
+    <h2>Network Path</h2>
+    <svg id="net-svg" viewBox="0 0 860 240" xmlns="http://www.w3.org/2000/svg" width="860" height="240">
+      <!-- ── DEVICE DEFINITIONS (defs for reuse) ── -->
+      <defs>
+        <marker id="arr" markerWidth="6" markerHeight="6" refX="5" refY="3" orient="auto">
+          <path d="M0,0 L6,3 L0,6 Z" fill="currentColor"/>
+        </marker>
+        <!-- glow filter -->
+        <filter id="glow" x="-30%" y="-30%" width="160%" height="160%">
+          <feGaussianBlur stdDeviation="3" result="blur"/>
+          <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+        </filter>
+      </defs>
+
+      <!-- ──────────────────── DEVICES ──────────────────── -->
+      <!-- Browser (x=30) -->
+      <g id="dev-browser" class="device-g">
+        <rect x="10" y="60" width="60" height="48" rx="8" fill="#0d1e3a" stroke="#42a5f5" stroke-width="1.5" class="dev-box"/>
+        <!-- screen -->
+        <rect x="16" y="66" width="48" height="32" rx="4" fill="#1a2d4a"/>
+        <line x1="16" y1="72" x2="64" y2="72" stroke="#42a5f5" stroke-width="1"/>
+        <circle cx="20" cy="69" r="1.5" fill="#ef5350"/><circle cx="25" cy="69" r="1.5" fill="#ffb300"/><circle cx="30" cy="69" r="1.5" fill="#00e676"/>
+        <rect x="19" y="75" width="30" height="2" rx="1" fill="#2a4a6a"/>
+        <rect x="19" y="80" width="22" height="2" rx="1" fill="#2a4a6a"/>
+        <rect x="19" y="85" width="26" height="2" rx="1" fill="#2a4a6a"/>
+        <!-- base -->
+        <rect x="32" y="108" width="16" height="4" rx="2" fill="#1a2d4a"/>
+        <text x="40" y="128" class="dev-label" fill="#42a5f5">Browser</text>
+        <text x="40" y="138" class="dev-sub">Chrome/FF</text>
+      </g>
+
+      <!-- OS (x=130) -->
+      <g id="dev-os" class="device-g">
+        <rect x="110" y="65" width="52" height="44" rx="8" fill="#0d1e3a" stroke="#5c9ee0" stroke-width="1.5" class="dev-box"/>
+        <rect x="116" y="71" width="40" height="24" rx="3" fill="#162035"/>
+        <rect x="116" y="71" width="40" height="6" rx="3" fill="#1a2d4a"/>
+        <text x="136" y="76" class="dev-sub" fill="#5c9ee0" font-size="6">OS</text>
+        <rect x="119" y="80" width="12" height="8" rx="2" fill="#0d1e3a" stroke="#5c9ee0" stroke-width="0.5"/>
+        <rect x="134" y="80" width="19" height="3" rx="1" fill="#1e3050"/>
+        <rect x="134" y="85" width="14" height="3" rx="1" fill="#1e3050"/>
+        <rect x="128" y="95" width="16" height="4" rx="2" fill="#1a2d4a"/>
+        <text x="136" y="128" class="dev-label" fill="#5c9ee0">OS / Stack</text>
+        <text x="136" y="138" class="dev-sub">DNS cache</text>
+      </g>
+
+      <!-- NIC (x=220) -->
+      <g id="dev-nic" class="device-g">
+        <rect x="202" y="70" width="52" height="38" rx="6" fill="#0d1430" stroke="#7e57c2" stroke-width="1.5" class="dev-box"/>
+        <rect x="208" y="76" width="40" height="6" rx="2" fill="#1a1040"/>
+        <rect x="208" y="85" width="8" height="8" rx="1" fill="#2a1a50" stroke="#7e57c2" stroke-width="0.5"/>
+        <rect x="220" y="85" width="8" height="8" rx="1" fill="#2a1a50" stroke="#7e57c2" stroke-width="0.5"/>
+        <rect x="232" y="85" width="8" height="8" rx="1" fill="#2a1a50" stroke="#7e57c2" stroke-width="0.5"/>
+        <rect x="208" y="96" width="40" height="4" rx="1" fill="#1a1040"/>
+        <text x="228" y="128" class="dev-label" fill="#7e57c2">NIC</text>
+        <text x="228" y="138" class="dev-sub">Network card</text>
+      </g>
+
+      <!-- Router (x=315) -->
+      <g id="dev-router" class="device-g">
+        <rect x="295" y="65" width="56" height="44" rx="8" fill="#1a0a2a" stroke="#ab47bc" stroke-width="1.5" class="dev-box"/>
+        <!-- antenna -->
+        <line x1="310" y1="65" x2="308" y2="52" stroke="#ab47bc" stroke-width="1.5"/>
+        <line x1="323" y1="65" x2="323" y2="50" stroke="#ab47bc" stroke-width="1.5"/>
+        <line x1="336" y1="65" x2="338" y2="52" stroke="#ab47bc" stroke-width="1.5"/>
+        <circle cx="308" cy="51" r="2" fill="#ab47bc"/>
+        <circle cx="323" cy="49" r="2" fill="#ab47bc"/>
+        <circle cx="338" cy="51" r="2" fill="#ab47bc"/>
+        <!-- body -->
+        <rect x="301" y="72" width="44" height="28" rx="4" fill="#240e34"/>
+        <circle cx="312" cy="82" r="3" fill="#00e676" opacity=".8"/>
+        <circle cx="322" cy="82" r="3" fill="#00e676" opacity=".6"/>
+        <circle cx="332" cy="82" r="3" fill="#ffb300" opacity=".7"/>
+        <rect x="304" y="89" width="38" height="4" rx="2" fill="#1a0a2a"/>
+        <text x="323" y="128" class="dev-label" fill="#ab47bc">Home</text>
+        <text x="323" y="138" class="dev-sub">Router</text>
+      </g>
+
+      <!-- ISP (x=410) -->
+      <g id="dev-isp" class="device-g">
+        <rect x="390" y="58" width="56" height="56" rx="8" fill="#1a1008" stroke="#8d6e63" stroke-width="1.5" class="dev-box"/>
+        <!-- tower icon -->
+        <line x1="418" y1="72" x2="418" y2="100" stroke="#8d6e63" stroke-width="1.5"/>
+        <line x1="418" y1="72" x2="408" y2="80" stroke="#8d6e63" stroke-width="1"/>
+        <line x1="418" y1="72" x2="428" y2="80" stroke="#8d6e63" stroke-width="1"/>
+        <line x1="412" y1="86" x2="418" y2="80" stroke="#8d6e63" stroke-width="1"/>
+        <line x1="424" y1="86" x2="418" y2="80" stroke="#8d6e63" stroke-width="1"/>
+        <rect x="413" y="100" width="10" height="6" rx="1" fill="#2a1808"/>
+        <!-- wifi rings -->
+        <path d="M405,68 A16,10 0 0,1 431,68" fill="none" stroke="#8d6e63" stroke-width="1" opacity=".6"/>
+        <path d="M410,64 A11,7 0 0,1 426,64" fill="none" stroke="#8d6e63" stroke-width="1" opacity=".4"/>
+        <text x="418" y="128" class="dev-label" fill="#8d6e63">ISP</text>
+        <text x="418" y="138" class="dev-sub">Your ISP</text>
+      </g>
+
+      <!-- Root DNS (x=500) -->
+      <g id="dev-rootdns" class="device-g">
+        <rect x="478" y="58" width="56" height="56" rx="8" fill="#1a0c00" stroke="#ef6c00" stroke-width="1.5" class="dev-box"/>
+        <!-- server icon -->
+        <rect x="484" y="65" width="44" height="9" rx="3" fill="#2a1400" stroke="#ef6c00" stroke-width="0.8"/>
+        <rect x="484" y="77" width="44" height="9" rx="3" fill="#2a1400" stroke="#ef6c00" stroke-width="0.8"/>
+        <rect x="484" y="89" width="44" height="9" rx="3" fill="#2a1400" stroke="#ef6c00" stroke-width="0.8"/>
+        <circle cx="488" cy="69" r="2" fill="#ef6c00"/><circle cx="488" cy="81" r="2" fill="#ef6c00" opacity=".6"/><circle cx="488" cy="93" r="2" fill="#ef6c00" opacity=".4"/>
+        <text x="506" y="128" class="dev-label" fill="#ef6c00">Root DNS</text>
+        <text x="506" y="138" class="dev-sub">13 clusters</text>
+      </g>
+
+      <!-- TLD DNS (x=590) -->
+      <g id="dev-tlddns" class="device-g">
+        <rect x="568" y="58" width="56" height="56" rx="8" fill="#1a1000" stroke="#ffa726" stroke-width="1.5" class="dev-box"/>
+        <rect x="574" y="65" width="44" height="9" rx="3" fill="#2a1a00" stroke="#ffa726" stroke-width="0.8"/>
+        <rect x="574" y="77" width="44" height="9" rx="3" fill="#2a1a00" stroke="#ffa726" stroke-width="0.8"/>
+        <rect x="574" y="89" width="44" height="9" rx="3" fill="#2a1a00" stroke="#ffa726" stroke-width="0.8"/>
+        <circle cx="578" cy="69" r="2" fill="#ffa726"/><circle cx="578" cy="81" r="2" fill="#ffa726" opacity=".6"/><circle cx="578" cy="93" r="2" fill="#ffa726" opacity=".4"/>
+        <text x="596" y="128" class="dev-label" fill="#ffa726">.com TLD</text>
+        <text x="596" y="138" class="dev-sub">Verisign NS</text>
+      </g>
+
+      <!-- Auth DNS (x=680) -->
+      <g id="dev-authdns" class="device-g">
+        <rect x="658" y="58" width="60" height="56" rx="8" fill="#1a1400" stroke="#ffb300" stroke-width="1.5" class="dev-box"/>
+        <rect x="664" y="65" width="48" height="9" rx="3" fill="#2a2000" stroke="#ffb300" stroke-width="0.8"/>
+        <rect x="664" y="77" width="48" height="9" rx="3" fill="#2a2000" stroke="#ffb300" stroke-width="0.8"/>
+        <rect x="664" y="89" width="48" height="9" rx="3" fill="#2a2000" stroke="#ffb300" stroke-width="0.8"/>
+        <circle cx="668" cy="69" r="2" fill="#ffb300"/><circle cx="668" cy="81" r="2" fill="#ffb300" opacity=".6"/><circle cx="668" cy="93" r="2" fill="#ffb300" opacity=".4"/>
+        <text x="688" y="128" class="dev-label" fill="#ffb300">Auth DNS</text>
+        <text x="688" y="138" class="dev-sub">google.com NS</text>
+      </g>
+
+      <!-- CDN/LB (x=775) -->
+      <g id="dev-cdn" class="device-g">
+        <rect x="754" y="58" width="60" height="56" rx="8" fill="#001a1a" stroke="#26c6da" stroke-width="1.5" class="dev-box"/>
+        <!-- cloud shape -->
+        <ellipse cx="784" cy="78" rx="20" ry="11" fill="#002828"/>
+        <ellipse cx="772" cy="82" rx="13" ry="8" fill="#002828"/>
+        <ellipse cx="796" cy="82" rx="11" ry="7" fill="#002828"/>
+        <rect x="764" y="82" width="40" height="10" rx="0" fill="#002828"/>
+        <!-- lines on cloud -->
+        <line x1="770" y1="78" x2="798" y2="78" stroke="#26c6da" stroke-width="0.8" opacity=".5"/>
+        <line x1="768" y1="83" x2="800" y2="83" stroke="#26c6da" stroke-width="0.8" opacity=".3"/>
+        <text x="784" y="128" class="dev-label" fill="#26c6da">CDN / LB</text>
+        <text x="784" y="138" class="dev-sub">~10ms away</text>
+      </g>
+
+      <!-- Google Server (x=775 bottom row) — drawn as a separate row? Let's keep single row and add a server below CDN -->
+      <!-- Actually we'll show CDN leads to server within the same box area with an arrow down -->
+      <!-- Server below CDN -->
+      <g id="dev-server" class="device-g">
+        <rect x="754" y="158" width="60" height="46" rx="8" fill="#001a08" stroke="#00e676" stroke-width="1.5" class="dev-box"/>
+        <rect x="760" y="164" width="48" height="8" rx="3" fill="#002010" stroke="#00e676" stroke-width="0.7"/>
+        <rect x="760" y="175" width="48" height="8" rx="3" fill="#002010" stroke="#00e676" stroke-width="0.7"/>
+        <rect x="760" y="186" width="48" height="8" rx="3" fill="#002010" stroke="#00e676" stroke-width="0.7"/>
+        <circle cx="764" cy="168" r="2" fill="#00e676"/><circle cx="764" cy="179" r="2" fill="#00e676" opacity=".6"/>
+        <text x="784" y="218" class="dev-label" fill="#00e676">Google</text>
+        <text x="784" y="228" class="dev-sub">Web Server</text>
+      </g>
+
+      <!-- CDN→Server arrow (always visible, dim) -->
+      <line x1="784" y1="114" x2="784" y2="158" stroke="#26c6da" stroke-width="1" stroke-dasharray="3,3" opacity=".3"/>
+
+      <!-- ──────────────────── FLOW ARROWS ──────────────────── -->
+      <!-- Each arrow: path between device centers at y=86 -->
+      <!-- Browser→OS -->
+      <path id="arr-b-os" class="flow-arrow" d="M70,86 L110,86" marker-end="url(#arr-b-os-m)"/>
+      <defs><marker id="arr-b-os-m" markerWidth="6" markerHeight="6" refX="5" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6 Z" fill="var(--cyan)"/></marker></defs>
+
+      <!-- OS→NIC -->
+      <path id="arr-os-nic" class="flow-arrow" d="M162,86 L202,86" marker-end="url(#arr-os-nic-m)"/>
+      <defs><marker id="arr-os-nic-m" markerWidth="6" markerHeight="6" refX="5" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6 Z" fill="var(--orange)"/></marker></defs>
+
+      <!-- NIC→Router -->
+      <path id="arr-nic-rtr" class="flow-arrow" d="M254,86 L295,86" marker-end="url(#arr-nic-rtr-m)"/>
+      <defs><marker id="arr-nic-rtr-m" markerWidth="6" markerHeight="6" refX="5" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6 Z" fill="var(--orange)"/></marker></defs>
+
+      <!-- Router→ISP -->
+      <path id="arr-rtr-isp" class="flow-arrow" d="M351,86 L390,86" marker-end="url(#arr-rtr-isp-m)"/>
+      <defs><marker id="arr-rtr-isp-m" markerWidth="6" markerHeight="6" refX="5" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6 Z" fill="var(--orange)"/></marker></defs>
+
+      <!-- ISP→RootDNS -->
+      <path id="arr-isp-root" class="flow-arrow" d="M446,86 L478,86" marker-end="url(#arr-isp-root-m)"/>
+      <defs><marker id="arr-isp-root-m" markerWidth="6" markerHeight="6" refX="5" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6 Z" fill="var(--orange)"/></marker></defs>
+
+      <!-- RootDNS→TLD -->
+      <path id="arr-root-tld" class="flow-arrow" d="M534,86 L568,86" marker-end="url(#arr-root-tld-m)"/>
+      <defs><marker id="arr-root-tld-m" markerWidth="6" markerHeight="6" refX="5" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6 Z" fill="var(--orange)"/></marker></defs>
+
+      <!-- TLD→AuthDNS -->
+      <path id="arr-tld-auth" class="flow-arrow" d="M624,86 L658,86" marker-end="url(#arr-tld-auth-m)"/>
+      <defs><marker id="arr-tld-auth-m" markerWidth="6" markerHeight="6" refX="5" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6 Z" fill="var(--orange)"/></marker></defs>
+
+      <!-- AuthDNS reply → back to ISP (curved return) -->
+      <path id="arr-auth-back" class="flow-arrow ret" d="M688,104 C688,160 418,180 418,104" marker-end="url(#arr-auth-back-m)"/>
+      <defs><marker id="arr-auth-back-m" markerWidth="6" markerHeight="6" refX="5" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6 Z" fill="var(--amber)"/></marker></defs>
+
+      <!-- ISP→Browser (IP returned) -->
+      <path id="arr-isp-brw" class="flow-arrow ret" d="M390,104 C390,180 40,180 40,104" marker-end="url(#arr-isp-brw-m)"/>
+      <defs><marker id="arr-isp-brw-m" markerWidth="6" markerHeight="6" refX="5" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6 Z" fill="var(--amber)"/></marker></defs>
+
+      <!-- Browser→CDN (TCP - goes right across top) -->
+      <path id="arr-brw-cdn" class="flow-arrow tcp" d="M70,76 C200,30 650,30 754,76" marker-end="url(#arr-brw-cdn-m)"/>
+      <defs><marker id="arr-brw-cdn-m" markerWidth="6" markerHeight="6" refX="5" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6 Z" fill="var(--cyan)"/></marker></defs>
+
+      <!-- CDN→Browser (SYN-ACK) -->
+      <path id="arr-cdn-brw" class="flow-arrow tcp" d="M754,68 C650,22 200,22 70,68" marker-end="url(#arr-cdn-brw-m)"/>
+      <defs><marker id="arr-cdn-brw-m" markerWidth="6" markerHeight="6" refX="5" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6 Z" fill="var(--cyan)"/></marker></defs>
+
+      <!-- Browser→CDN TLS -->
+      <path id="arr-brw-cdn-tls" class="flow-arrow tls" d="M70,74 C200,26 650,26 754,74" marker-end="url(#arr-brw-cdn-tls-m)"/>
+      <defs><marker id="arr-brw-cdn-tls-m" markerWidth="6" markerHeight="6" refX="5" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6 Z" fill="var(--green)"/></marker></defs>
+
+      <!-- CDN→Browser TLS reply -->
+      <path id="arr-cdn-brw-tls" class="flow-arrow tls" d="M754,66 C650,18 200,18 70,66" marker-end="url(#arr-cdn-brw-tls-m)"/>
+      <defs><marker id="arr-cdn-brw-tls-m" markerWidth="6" markerHeight="6" refX="5" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6 Z" fill="var(--green)"/></marker></defs>
+
+      <!-- Browser→Server HTTP GET -->
+      <path id="arr-brw-srv" class="flow-arrow http" d="M70,72 C400,10 650,10 754,70" marker-end="url(#arr-brw-srv-m)"/>
+      <defs><marker id="arr-brw-srv-m" markerWidth="6" markerHeight="6" refX="5" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6 Z" fill="var(--teal)"/></marker></defs>
+
+      <!-- Server→Browser HTTP response -->
+      <path id="arr-srv-brw" class="flow-arrow http" d="M754,62 C650,6 400,6 70,62" marker-end="url(#arr-srv-brw-m)"/>
+      <defs><marker id="arr-srv-brw-m" markerWidth="6" markerHeight="6" refX="5" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6 Z" fill="var(--teal)"/></marker></defs>
+
+      <!-- CDN→Server internal -->
+      <path id="arr-cdn-srv" class="flow-arrow http" d="M784,114 L784,158" marker-end="url(#arr-cdn-srv-m)"/>
+      <defs><marker id="arr-cdn-srv-m" markerWidth="6" markerHeight="6" refX="5" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6 Z" fill="var(--teal)"/></marker></defs>
+
+      <!-- highlight ring for active devices -->
+      <circle id="ring-browser" cx="40" cy="86" r="38" fill="none" stroke="var(--c-browser)" stroke-width="2" opacity="0" style="pointer-events:none"/>
+      <circle id="ring-os" cx="136" cy="87" r="32" fill="none" stroke="var(--c-os)" stroke-width="2" opacity="0" style="pointer-events:none"/>
+      <circle id="ring-nic" cx="228" cy="89" r="30" fill="none" stroke="var(--c-nic)" stroke-width="2" opacity="0" style="pointer-events:none"/>
+      <circle id="ring-router" cx="323" cy="87" r="35" fill="none" stroke="var(--c-router)" stroke-width="2" opacity="0" style="pointer-events:none"/>
+      <circle id="ring-isp" cx="418" cy="86" r="35" fill="none" stroke="var(--c-isp)" stroke-width="2" opacity="0" style="pointer-events:none"/>
+      <circle id="ring-rootdns" cx="506" cy="86" r="35" fill="none" stroke="var(--c-rootdns)" stroke-width="2" opacity="0" style="pointer-events:none"/>
+      <circle id="ring-tlddns" cx="596" cy="86" r="35" fill="none" stroke="var(--c-tlddns)" stroke-width="2" opacity="0" style="pointer-events:none"/>
+      <circle id="ring-authdns" cx="688" cy="86" r="35" fill="none" stroke="var(--c-authdns)" stroke-width="2" opacity="0" style="pointer-events:none"/>
+      <circle id="ring-cdn" cx="784" cy="86" r="35" fill="none" stroke="var(--c-cdn)" stroke-width="2" opacity="0" style="pointer-events:none"/>
+      <circle id="ring-server" cx="784" cy="181" r="32" fill="none" stroke="var(--c-server)" stroke-width="2" opacity="0" style="pointer-events:none"/>
+    </svg>
+  </div>
+
+  <!-- CONTROLS -->
+  <div id="controls">
+    <button class="btn primary" id="btn-play">▶ Play</button>
+    <button class="btn" id="btn-back">◀ Back</button>
+    <button class="btn" id="btn-fwd">▶ Step</button>
+    <button class="btn" id="btn-reset">↺ Reset</button>
+    <span id="status-text">Step 0 / 16</span>
+    <div id="speed-wrap">
+      <span>Speed</span>
+      <input type="range" id="speed-slider" min="0.5" max="4" step="0.5" value="1.5"/>
+      <span id="speed-val">1.5×</span>
+    </div>
+  </div>
+
+  <!-- EXPLANATION -->
+  <div id="explain">
+    <div id="explain-left">
+      <div class="step-badge" id="step-badge">Step 0</div>
+      <div id="step-title">Ready — press Play</div>
+      <div id="step-tech">This simulator walks you through every layer of what happens from the moment you press Enter on google.com until the page appears. Click Play to begin or use the Step buttons.</div>
+      <div class="analogy-line" id="step-analogy">📞 Think of it like trying to call someone whose number you don't know...</div>
+    </div>
+    <div class="why-panel">
+      <div>
+        <h4>✓ Why this way</h4>
+        <div class="why-good" id="why-good">Hit play to see each step's design rationale.</div>
+      </div>
+      <div>
+        <h4>✗ Why not another way</h4>
+        <div class="why-bad" id="why-bad">Alternatives and their trade-offs appear here.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- PACKET INSPECTOR -->
+  <div id="packet-wrap">
+    <h2>📦 Packet / Message Inspector</h2>
+    <div id="packet-strip">
+      <div class="pkt-field"><span class="pf-label">Layer</span><span class="pf-val" id="pf-layer">—</span></div>
+      <div class="pkt-field"><span class="pf-label">Protocol</span><span class="pf-val" id="pf-proto">—</span></div>
+      <div class="pkt-field"><span class="pf-label">Src IP</span><span class="pf-val" id="pf-src">—</span></div>
+      <div class="pkt-field"><span class="pf-label">Dst IP</span><span class="pf-val" id="pf-dst">—</span></div>
+      <div class="pkt-field"><span class="pf-label">Src Port</span><span class="pf-val" id="pf-sport">—</span></div>
+      <div class="pkt-field"><span class="pf-label">Dst Port</span><span class="pf-val" id="pf-dport">—</span></div>
+      <div class="pkt-field"><span class="pf-label">Flags / Type</span><span class="pf-val" id="pf-flags">—</span></div>
+      <div class="pkt-field"><span class="pf-label">Payload / Query</span><span class="pf-val" id="pf-payload">—</span></div>
+      <div class="pkt-field"><span class="pf-label">Seq / ID</span><span class="pf-val" id="pf-seq">—</span></div>
+      <div class="pkt-field"><span class="pf-label">Special Field</span><span class="pf-val" id="pf-special">—</span></div>
+    </div>
+  </div>
+
+  <!-- WATERFALL -->
+  <div id="waterfall-wrap">
+    <h3>Resource Waterfall (browser fires parallel requests)</h3>
+    <div id="waterfall-rows"></div>
+  </div>
+
+</div><!-- /main -->
+
+<!-- REFERENCE SECTION -->
+<div id="reference">
+  <h2>🎓 Zero-to-Hero Reference: Everything You Just Saw Explained</h2>
+  <div class="ref-grid">
+
+    <div class="ref-card">
+      <h3 style="color:var(--orange)">DNS <span class="ref-tag" style="background:#2a1400;color:var(--orange)">UDP 53</span></h3>
+      <p>DNS is the internet's phone book. You know a name (google.com) but computers need an IP address (142.250.x.x) to connect. DNS translates names → numbers. It's hierarchical: root → TLD → authoritative, like country → city → street.</p>
+      <div class="ref-code">Query:  google.com  type A  class IN
+Answer: google.com  300s  A  142.250.80.46</div>
+    </div>
+
+    <div class="ref-card">
+      <h3 style="color:var(--cyan)">TCP 3-Way Handshake <span class="ref-tag" style="background:#001a2a;color:var(--cyan)">Layer 4</span></h3>
+      <p>Before any data flows, both sides must agree to talk. TCP uses a 3-step dance: SYN (I want to connect), SYN-ACK (OK, I'm ready), ACK (great, let's go). This ensures both sides are alive and agree on sequence numbers.</p>
+      <div class="ref-code">→ SYN  seq=1000
+← SYN-ACK  seq=5000  ack=1001
+→ ACK  ack=5001</div>
+    </div>
+
+    <div class="ref-card">
+      <h3 style="color:var(--green)">TLS 1.3 <span class="ref-tag" style="background:#001a08;color:var(--green)">HTTPS</span></h3>
+      <p>TLS encrypts everything so nobody on the network can read your traffic. TLS 1.3 does it in <strong>1 round trip</strong> (TLS 1.2 needed 2). The browser sends the domain name in the SNI field so the server knows which certificate to use — since many sites share one IP.</p>
+      <div class="ref-code">ClientHello + SNI: google.com
+ServerHello + Certificate
+{Finished} — encrypted from here!</div>
+    </div>
+
+    <div class="ref-card">
+      <h3 style="color:var(--teal)">HTTP vs HTTPS</h3>
+      <p>HTTP is the language browsers and servers use to ask for and deliver web pages. HTTPS = HTTP + TLS encryption. Without TLS, anyone on your WiFi can read your exact request and response. With TLS, they see only encrypted bytes.</p>
+      <div class="ref-code">GET / HTTP/2
+Host: www.google.com
+Accept: text/html
+Cookie: ...</div>
+    </div>
+
+    <div class="ref-card">
+      <h3 style="color:var(--teal)">HTTP/2 & Multiplexing <span class="ref-tag" style="background:#001a1a;color:var(--teal)">What Google Uses</span></h3>
+      <p>HTTP/1.1 sent one request at a time per connection. HTTP/2 sends dozens of requests simultaneously over one connection — called multiplexing. This is why modern pages (with 50+ resources) load so much faster than they did in 2005.</p>
+      <div class="ref-code">Stream 1: GET /   → 200 HTML
+Stream 3: GET /style.css → 200
+Stream 5: GET /logo.png → 200
+(all happening at once!)</div>
+    </div>
+
+    <div class="ref-card">
+      <h3 style="color:var(--c-cdn)">CDN — Content Delivery Network</h3>
+      <p>Google doesn't serve your request from California. They have hundreds of edge servers worldwide. The CDN picks the nearest one (maybe 10ms away). Without a CDN, a user in India might wait 200ms just for the TCP handshake to reach a US server.</p>
+    </div>
+
+    <div class="ref-card">
+      <h3 style="color:var(--purple)">IP Routing</h3>
+      <p>Your packet doesn't jump directly to Google. It hops through 10-20 routers along the way, each reading the destination IP and deciding the next hop — like a postal relay system where each post office reads the address and forwards it onward.</p>
+      <div class="ref-code">traceroute google.com
+1. 192.168.1.1  (home router)
+2. 10.x.x.x    (ISP)
+3. 72.x.x.x    (upstream)
+...
+14. 142.250.80.46 (Google)</div>
+    </div>
+
+    <div class="ref-card">
+      <h3 style="color:var(--blue)">What the Browser Actually Renders</h3>
+      <p>The browser receives raw HTML text, parses it into a DOM tree, fetches linked CSS/JS/images, applies styles to build the Render Tree, lays out element positions, then paints pixels to the screen. This whole process is called the Critical Rendering Path.</p>
+      <div class="ref-code">HTML → DOM
+CSS  → CSSOM
+DOM + CSSOM → Render Tree
+Layout → Paint → Composite</div>
+    </div>
+
+    <div class="ref-card">
+      <h3 style="color:var(--amber)">DNS Caching — Why It's Fast Next Time</h3>
+      <p>DNS answers come with a TTL (Time To Live) — typically 300s to 86400s. Your browser, OS, and ISP all cache the answer. Second visit? You skip all those DNS hops and go straight to TCP. Google's TTL is usually 300 seconds (5 minutes).</p>
+      <div class="ref-code">google.com  TTL=300  A 142.250.80.46
+;; Cached — no DNS lookup needed!</div>
+    </div>
+
+  </div>
+</div>
+
+<footer>Built for learning · All traffic simulated · No external dependencies</footer>
+
+<script>
+// ═══════════════════════════════════════════════════════════════
+//  STEP DATA
+// ═══════════════════════════════════════════════════════════════
+const STEPS = [
+  {
+    label: "Press Enter",
+    title: "You press Enter — Browser checks its DNS cache",
+    tech: "The instant you press Enter, Chrome looks in its own internal DNS cache. If you visited google.com recently (within its TTL), the IP is already known and DNS is skipped entirely. The browser also checks for any pending connections to reuse.",
+    analogy: "📞 You're about to call Google — first you check if their number is already in your own contacts.",
+    good: "In-process cache lookup is near-instant (microseconds). No network round trip needed.",
+    bad: "Without caching, every page load would need multiple DNS round trips, adding 50–200ms every time.",
+    arrows: [],
+    activeDevs: ["browser"],
+    packet: { layer: "Application", proto: "DNS (cache check)", src: "127.0.0.1", dst: "127.0.0.1 (local)", sport: "—", dport: "—", flags: "CACHE MISS", payload: "google.com ?", seq: "—", special: "TTL expired or absent" },
+    highlightPkt: ["pf-flags","pf-payload"]
+  },
+  {
+    label: "OS cache",
+    title: "OS checks its DNS cache and the hosts file",
+    tech: "If the browser has no cached answer, it asks the operating system. The OS checks: (1) /etc/hosts — a local override file where you can manually map names to IPs. (2) The OS-level DNS cache. If still no match, it forwards the query to the configured DNS resolver.",
+    analogy: "📞 Your phone's OS looks in a special notebook (hosts file) and its own phonebook (OS cache) before asking the operator.",
+    good: "The hosts file lets you override DNS locally — useful for development or blocking sites. OS cache prevents duplicate queries from multiple apps.",
+    bad: "Without the OS cache layer, every browser tab and every app would flood the network DNS resolver independently.",
+    arrows: ["arr-b-os"],
+    activeDevs: ["browser","os"],
+    packet: { layer: "Application", proto: "DNS stub resolver", src: "192.168.1.100", dst: "OS resolver", sport: "—", dport: "—", flags: "CACHE MISS", payload: "google.com A?", seq: "—", special: "Checks /etc/hosts first" },
+    highlightPkt: ["pf-proto","pf-special"]
+  },
+  {
+    label: "DNS query",
+    title: "OS sends a DNS query to the configured resolver (e.g. 8.8.8.8)",
+    tech: "The OS sends a UDP packet to the DNS resolver — often 8.8.8.8 (Google Public DNS) or 1.1.1.1 (Cloudflare), set by your router. DNS uses UDP port 53. The query is tiny: 'What is the IP address for google.com?' This is a recursive query — we're asking the resolver to figure it out for us.",
+    analogy: "📞 You call the operator (8.8.8.8) and ask: 'Can you find me the number for Google?' — a recursive request.",
+    good: "UDP is connectionless — no handshake, low overhead. Perfect for tiny DNS queries that expect fast replies. Fallback to TCP for large responses.",
+    bad: "If we used TCP for DNS, every lookup would need a 3-way handshake (60ms+) just to ask a question. UDP keeps it under 10ms.",
+    arrows: ["arr-os-nic","arr-nic-rtr","arr-rtr-isp"],
+    activeDevs: ["os","nic","router","isp"],
+    packet: { layer: "Transport (UDP)", proto: "DNS", src: "192.168.1.100", dst: "8.8.8.8", sport: "random >1024", dport: "53", flags: "QUERY RD=1", payload: "google.com A?", seq: "TxID: 0xA4F2", special: "Recursion Desired bit set" },
+    highlightPkt: ["pf-dport","pf-flags","pf-seq"]
+  },
+  {
+    label: "Resolver cache",
+    title: "Recursive resolver checks its cache, then queries Root DNS",
+    tech: "Google's 8.8.8.8 first checks its own cache — it handles millions of queries and google.com is almost always cached. On a cache miss, it starts the recursion: asking the Root DNS servers. There are 13 root server clusters (a.root-servers.net through m.root-servers.net) operated by different organizations worldwide.",
+    analogy: "📞 The operator checks their big phonebook. Not there? They start calling the top-level directory — the root of all directories.",
+    good: "Shared resolvers like 8.8.8.8 cache extremely effectively — most popular domains are always in cache, so Root DNS is rarely actually hit.",
+    bad: "If every DNS query actually hit Root DNS, the 13 root clusters would be overwhelmed. Caching is what makes the global DNS system scale.",
+    arrows: ["arr-isp-root"],
+    activeDevs: ["isp","rootdns"],
+    packet: { layer: "Transport (UDP)", proto: "DNS", src: "8.8.8.8", dst: "198.41.0.4", sport: "random", dport: "53", flags: "QUERY RD=0", payload: "google.com A?", seq: "new TxID", special: "Iterative query to root" },
+    highlightPkt: ["pf-dst","pf-flags","pf-special"]
+  },
+  {
+    label: "Root → .com",
+    title: "Root DNS replies: 'Ask the .com TLD nameserver'",
+    tech: "The Root DNS server doesn't know google.com's IP — it only knows who runs the .com TLD. It replies with a referral: 'I don't know, but here are the .com nameservers (operated by Verisign).' This is called a delegation. The resolver now sends the same question to the .com TLD servers.",
+    analogy: "📞 The top directory says: 'I only handle national listings. For .com names, call Verisign's directory.'",
+    good: "Hierarchical DNS means no single server needs to know every domain. Root only needs 13 TLD delegations; .com TLD only stores 2nd-level domains.",
+    bad: "If Root DNS stored every record, it would need to update billions of times per day. Delegation keeps zones small and manageable.",
+    arrows: ["arr-root-tld"],
+    activeDevs: ["rootdns","tlddns"],
+    packet: { layer: "Transport (UDP)", proto: "DNS", src: "198.41.0.4", dst: "8.8.8.8", sport: "53", dport: "resolver port", flags: "REFERRAL", payload: "NS: a.gtld-servers.net", seq: "same TxID", special: "No RCODE error — referral" },
+    highlightPkt: ["pf-flags","pf-payload"]
+  },
+  {
+    label: ".com → Auth",
+    title: "Resolver queries .com TLD → 'Ask Google's nameserver'",
+    tech: "The .com TLD nameserver (Verisign) knows every .com domain's authoritative nameserver. It replies: 'I don't have google.com's IP, but Google's own nameservers are ns1.google.com, ns2.google.com...' Another delegation. The resolver makes one more hop.",
+    analogy: "📞 Verisign's directory says: 'I know Google has their own internal operator. Here's their number. Call them directly.'",
+    good: "Domain owners control their own authoritative DNS. Google can update their own IPs without asking Verisign or ICANN.",
+    bad: "Flat DNS where one entity controls all records would be a catastrophic single point of failure and a censorship risk.",
+    arrows: ["arr-tld-auth"],
+    activeDevs: ["tlddns","authdns"],
+    packet: { layer: "Transport (UDP)", proto: "DNS", src: "192.5.6.30", dst: "8.8.8.8", sport: "53", dport: "resolver port", flags: "REFERRAL", payload: "NS: ns1.google.com", seq: "same TxID", special: ".com TLD → authoritative NS" },
+    highlightPkt: ["pf-src","pf-payload"]
+  },
+  {
+    label: "IP resolved",
+    title: "Authoritative DNS returns google.com → 142.250.x.x",
+    tech: "Google's own authoritative nameserver finally answers with the actual A record: the IP address. It also includes a TTL (e.g. 300 seconds). The resolver caches this answer, returns it to your OS, which caches it, and returns it to your browser, which caches it.",
+    analogy: "📞 Google's own operator picks up and gives you the real phone number: 142.250.80.46. You write it down (cache it).",
+    good: "Short TTLs (300s) let Google rotate IPs quickly for load balancing and failover. Long TTLs reduce DNS load.",
+    bad: "If TTL were 0, every request would require a full DNS lookup chain. If TTL were 1 year, Google couldn't change their IPs without breaking everyone for a year.",
+    arrows: ["arr-auth-back","arr-isp-brw"],
+    activeDevs: ["authdns","isp","os","browser"],
+    packet: { layer: "Transport (UDP)", proto: "DNS", src: "ns1.google.com", dst: "8.8.8.8 → you", sport: "53", dport: "your resolver", flags: "ANSWER", payload: "142.250.80.46", seq: "same TxID", special: "TTL=300s  A record" },
+    highlightPkt: ["pf-payload","pf-special","pf-flags"]
+  },
+  {
+    label: "TCP SYN",
+    title: "Browser initiates TCP 3-way handshake — SYN",
+    tech: "Now that we have an IP, the browser opens a TCP connection. Step 1: send a SYN (synchronize) packet. This contains the browser's Initial Sequence Number (ISN) — a random number used to track byte ordering. No data is in this packet — it's purely connection setup.",
+    analogy: "📞 You dial Google's number. The phone is ringing. SYN = 'ring ring'.",
+    good: "TCP's sequence numbers prevent duplicate/reordered packets from corrupting data. The SYN's randomness prevents session hijacking.",
+    bad: "UDP has no handshake (which is why DNS is fast). But for web pages where order and reliability matter, TCP's overhead is justified. (HTTP/3 uses QUIC — UDP-based with built-in reliability.)",
+    arrows: ["arr-brw-cdn"],
+    activeDevs: ["browser","cdn"],
+    packet: { layer: "Transport (TCP)", proto: "TCP", src: "192.168.1.100", dst: "142.250.80.46", sport: "54321 (random)", dport: "443", flags: "SYN", payload: "(none)", seq: "ISN=1000000", special: "Window size: 65535" },
+    highlightPkt: ["pf-flags","pf-dport","pf-seq"]
+  },
+  {
+    label: "SYN-ACK",
+    title: "Google's CDN replies with SYN-ACK",
+    tech: "The nearest Google CDN edge server (which intercepted our TCP) responds with its own SYN-ACK. This means: 'I accept your connection (ACK of your SYN), and here is MY initial sequence number (SYN).' The server is likely 10-20ms away — not in California!",
+    analogy: "📞 Google picks up: 'Hello! I hear you (ACK), and I'm ready to talk (SYN). My reference number is 5000000.'",
+    good: "CDN edge servers are geographically close, so the TCP handshake round trip is 10-30ms instead of 100-200ms to a distant origin.",
+    bad: "Without CDN, TCP's handshake (and TLS) adds 3-4 round trips. From India to California, each RTT is ~200ms — you'd wait 600ms before seeing a byte of page.",
+    arrows: ["arr-cdn-brw"],
+    activeDevs: ["cdn","browser"],
+    packet: { layer: "Transport (TCP)", proto: "TCP", src: "142.250.80.46", dst: "192.168.1.100", sport: "443", dport: "54321", flags: "SYN-ACK", payload: "(none)", seq: "ISN=5000000  ACK=1000001", special: "Server's Window size sent" },
+    highlightPkt: ["pf-flags","pf-seq"]
+  },
+  {
+    label: "ACK",
+    title: "Browser sends ACK — TCP connection established!",
+    tech: "The browser sends a bare ACK packet: 'I acknowledge your SYN-ACK.' The TCP handshake is complete. Both sides now know each other's sequence numbers and the connection is live. Immediately after (often in the same packet), the browser starts the TLS handshake.",
+    analogy: "📞 You say 'Got it!' — the line is now open. But you need to agree on a secure language before you start talking (TLS).",
+    good: "Three packets, three messages, both sides confirmed alive. This takes just one round-trip (the SYN starts it, SYN-ACK comes back, ACK sent = done).",
+    bad: "TCP Fast Open (TFO) can send data in the SYN itself, saving a round trip. But it has security trade-offs and isn't universally used.",
+    arrows: ["arr-brw-cdn"],
+    activeDevs: ["browser","cdn"],
+    packet: { layer: "Transport (TCP)", proto: "TCP", src: "192.168.1.100", dst: "142.250.80.46", sport: "54321", dport: "443", flags: "ACK", payload: "(none, or TLS ClientHello)", seq: "seq=1000001  ACK=5000001", special: "Connection ESTABLISHED ✓" },
+    highlightPkt: ["pf-flags","pf-seq","pf-special"]
+  },
+  {
+    label: "TLS Hello",
+    title: "TLS 1.3 Handshake — ClientHello with SNI",
+    tech: "The browser sends a ClientHello: 'I support TLS 1.3, here are my cipher suites, and my SNI (Server Name Indication) is google.com.' SNI is critical — Google's CDN IP serves thousands of domains. Without SNI, the server wouldn't know which certificate to use. TLS 1.3 also sends its key share in the first message, enabling 1-RTT completion.",
+    analogy: "📞 You say: 'I want to speak in a secret code. I can do AES-256 or ChaCha20. Also, I'm calling for GOOGLE specifically (SNI).'",
+    good: "SNI lets one IP serve millions of HTTPS sites. TLS 1.3's 1-RTT design (vs 1.2's 2-RTT) saves 50-100ms per connection.",
+    bad: "Without SNI, each domain would need its own IP address — we'd have run out of IPv4 addresses even faster. SNI is why shared hosting with HTTPS works at all.",
+    arrows: ["arr-brw-cdn-tls"],
+    activeDevs: ["browser","cdn"],
+    packet: { layer: "TLS 1.3", proto: "TLS ClientHello", src: "192.168.1.100", dst: "142.250.80.46", sport: "54321", dport: "443", flags: "Handshake", payload: "cipher_suites, key_share", seq: "TLS record #1", special: "SNI: google.com ← KEY FIELD" },
+    highlightPkt: ["pf-proto","pf-payload","pf-special"]
+  },
+  {
+    label: "TLS Done",
+    title: "TLS 1.3 completes in 1 round trip — Encrypted!",
+    tech: "Google's server responds with: ServerHello (cipher chosen, its own key share), Certificate (proving it IS google.com, signed by a CA), and Finished — all encrypted from this point forward. The browser verifies the certificate, computes the shared secret, and sends its own Finished. TLS 1.3 is done — everything after is encrypted.",
+    analogy: "📞 Google replies: 'Let's use AES-256. Here's my passport (certificate) to prove I'm really Google. Now let's talk in code — no one else can listen.'",
+    good: "TLS 1.3 removed weak algorithms (RSA key exchange, MD5) and added 0-RTT resumption for returning users. Much more secure than 1.2.",
+    bad: "TLS 1.2 required 2 round trips. TLS 1.3's 1-RTT was a major performance win. 0-RTT (session resumption) has replay-attack risks but Google uses it for idempotent GETs.",
+    arrows: ["arr-cdn-brw-tls"],
+    activeDevs: ["cdn","browser"],
+    packet: { layer: "TLS 1.3", proto: "ServerHello + Cert + Finished", src: "142.250.80.46", dst: "192.168.1.100", sport: "443", dport: "54321", flags: "Handshake → Encrypted", payload: "Certificate (2048-bit RSA)", seq: "TLS record #2", special: "ENCRYPTED from here on 🔒" },
+    highlightPkt: ["pf-proto","pf-special"]
+  },
+  {
+    label: "HTTP GET",
+    title: "Browser sends HTTP GET / over encrypted connection",
+    tech: "With TLS established, the browser sends its HTTP/2 request — encrypted inside the TLS tunnel. HTTP/2 is what Google actually uses. The request includes headers: GET / (root page), Host: www.google.com, Accept-Encoding: gzip, Cookie: (your preferences), Accept-Language: en-US. HTTP/2 sends this as binary frames, not plain text.",
+    analogy: "📞 You finally say (in secret code): 'Please give me Google's homepage, in English, I prefer compressed delivery.'",
+    good: "HTTP/2 binary framing is more efficient than HTTP/1.1's text-based headers. Header compression (HPACK) reduces repeated headers to a few bytes on subsequent requests.",
+    bad: "HTTP/1.1 sent headers as plain text every time — 800+ bytes per request. With 50 resources on a page, that's 40KB of redundant headers. HTTP/2 HPACK compresses repeat headers to ~5 bytes.",
+    arrows: ["arr-brw-srv"],
+    activeDevs: ["browser","cdn","server"],
+    packet: { layer: "HTTP/2 (in TLS)", proto: "HTTP/2 HEADERS frame", src: "192.168.1.100", dst: "142.250.80.46", sport: "54321", dport: "443", flags: "END_HEADERS", payload: "GET / HTTP/2", seq: "Stream ID: 1", special: "Host: www.google.com + HPACK" },
+    highlightPkt: ["pf-proto","pf-payload","pf-seq","pf-special"]
+  },
+  {
+    label: "LB Route",
+    title: "Google's load balancer routes to a backend server",
+    tech: "The CDN edge (which terminated our TCP and TLS) forwards the decrypted request to Google's internal network. The load balancer picks a backend web server from a pool — based on health, load, and locality. This hop is on Google's private fiber network, so it's extremely fast (sub-millisecond).",
+    analogy: "📞 The Google receptionist (CDN) has picked up your call and now transfers you to the right department — whichever agent is free.",
+    good: "Load balancers distribute traffic to prevent any one server from being overwhelmed. They also handle failover: if a server dies, traffic goes elsewhere.",
+    bad: "If there were no load balancer, one server would receive all traffic and immediately collapse. Google gets ~8.5 billion searches per day.",
+    arrows: ["arr-cdn-srv"],
+    activeDevs: ["cdn","server"],
+    packet: { layer: "Internal HTTP", proto: "HTTP/2 (internal)", src: "CDN edge", dst: "backend:8080", sport: "internal", dport: "8080", flags: "GET /", payload: "Forwarded-For: your IP", seq: "LB stream", special: "Via: Google Frontend (GFE)" },
+    highlightPkt: ["pf-dst","pf-special"]
+  },
+  {
+    label: "HTTP 200",
+    title: "Server responds — HTTP 200 OK with HTML",
+    tech: "The backend server generates the response: HTTP 200 OK, Content-Type: text/html, Content-Encoding: gzip (compressed), plus the HTML body. For google.com this is a ~15KB HTML file (compressed). The CDN may also cache this response for future requests. The data flows back: server → CDN → your browser.",
+    analogy: "📞 The agent says: 'Here's what you asked for!' and faxes over the Google homepage (compressed, encrypted).",
+    good: "Gzip/Brotli compression reduces 80KB of HTML to ~15KB — 5x less data. Content-Security-Policy headers protect against XSS attacks.",
+    bad: "Without compression, page payloads would be 5-10x larger. On a slow mobile connection that's the difference between 0.3s and 3s load time.",
+    arrows: ["arr-srv-brw"],
+    activeDevs: ["server","cdn","browser"],
+    packet: { layer: "HTTP/2 (in TLS)", proto: "HTTP/2 DATA frame", src: "142.250.80.46", dst: "192.168.1.100", sport: "443", dport: "54321", flags: "200 OK", payload: "text/html gzip ~15KB", seq: "Stream 1 DATA", special: "Strict-Transport-Security: 2yr" },
+    highlightPkt: ["pf-flags","pf-payload","pf-special"]
+  },
+  {
+    label: "Waterfall",
+    title: "Browser fires parallel requests — CSS, JS, images",
+    tech: "The browser parses HTML as it arrives (streaming). It discovers links to CSS, JavaScript, images, fonts. HTTP/2 multiplexing lets it fire all these requests on the SAME connection simultaneously — no need to open new TCP connections per resource. Critical CSS blocks rendering; JS may be deferred. The browser builds DOM + CSSOM → Render Tree → Layout → Paint.",
+    analogy: "📞 You got the recipe (HTML). Now you send someone for flour (CSS), eggs (JS), and sugar (images) — all at the same time, not one by one.",
+    good: "HTTP/2 multiplexing means 50 resources load over 1 TCP connection simultaneously. HTTP/1.1 browsers opened 6 connections per domain to fake parallelism.",
+    bad: "HTTP/1.1 with one connection per request: 50 resources × 50ms avg = 2500ms sequential. HTTP/2 parallel: same 50 resources in ~200ms total.",
+    arrows: ["arr-brw-srv","arr-srv-brw"],
+    activeDevs: ["browser","cdn","server"],
+    waterfall: true,
+    packet: { layer: "HTTP/2", proto: "Multiple streams", src: "192.168.1.100", dst: "142.250.80.46", sport: "54321", dport: "443", flags: "HEADERS + DATA", payload: "50+ resources parallel", seq: "Streams 1,3,5,7...", special: "HTTP/2 PUSH possible" },
+    highlightPkt: ["pf-proto","pf-payload","pf-seq"]
+  },
+  {
+    label: "Rendered!",
+    title: "🎉 Page renders — google.com is live!",
+    tech: "The browser has painted pixels to your screen. Total time from Enter to first paint: typically 200-800ms on a good connection. Google's own goal (Core Web Vitals) is Largest Contentful Paint < 2.5 seconds. The browser continues loading non-critical resources in the background. You can now type a search query.",
+    analogy: "📞 The conversation is done — you got everything you needed, and the Google page is live in front of you. What took hundreds of packets happened in under a second.",
+    good: "Modern browsers use speculative prefetching: while you're still reading google.com, Chrome may pre-resolve DNS and pre-connect TCP for links you might click next.",
+    bad: "Without all these optimizations (caching, CDN, HTTP/2, compression, TLS 1.3), the same page load would take 3-5 seconds. This is literally the engineering behind why the web feels instant.",
+    arrows: [],
+    activeDevs: ["browser"],
+    packet: { layer: "Browser", proto: "Render Pipeline", src: "localhost", dst: "screen", sport: "—", dport: "—", flags: "PAINTED", payload: "DOM ready + pixels drawn", seq: "—", special: "LCP < 2.5s (Google's goal)" },
+    highlightPkt: ["pf-flags","pf-payload","pf-special"]
+  }
+];
+
+// ═══════════════════════════════════════════════════════════════
+//  STATE
+// ═══════════════════════════════════════════════════════════════
+let currentStep = -1;
+let playing = false;
+let playTimer = null;
+let speed = 1.5;
+
+// ═══════════════════════════════════════════════════════════════
+//  STEP BAR BUILD
+// ═══════════════════════════════════════════════════════════════
+const stepBar = document.getElementById('step-bar');
+STEPS.forEach((s,i) => {
+  const d = document.createElement('div');
+  d.className = 'sb-dot';
+  d.innerHTML = `<div class="sb-num">${i+1}</div><div class="sb-label">${s.label}</div>`;
+  d.onclick = () => goToStep(i);
+  stepBar.appendChild(d);
+});
+
+// ═══════════════════════════════════════════════════════════════
+//  ARROW ACTIVATION MAP
+// ═══════════════════════════════════════════════════════════════
+// arrow-id → color class
+const ARROW_TYPES = {
+  'arr-b-os': 'dns', 'arr-os-nic': 'dns', 'arr-nic-rtr': 'dns',
+  'arr-rtr-isp': 'dns', 'arr-isp-root': 'dns', 'arr-root-tld': 'dns',
+  'arr-tld-auth': 'dns', 'arr-auth-back': 'ret', 'arr-isp-brw': 'ret',
+  'arr-brw-cdn': 'tcp', 'arr-cdn-brw': 'tcp',
+  'arr-brw-cdn-tls': 'tls', 'arr-cdn-brw-tls': 'tls',
+  'arr-brw-srv': 'http', 'arr-srv-brw': 'http', 'arr-cdn-srv': 'http'
+};
+
+// All arrow ids
+const ALL_ARROWS = Object.keys(ARROW_TYPES);
+
+function setArrows(activeList) {
+  ALL_ARROWS.forEach(id => {
+    const el = document.getElementById(id);
+    if (!el) return;
+    el.className = 'flow-arrow ' + (ARROW_TYPES[id] || 'tcp');
+    if (activeList.includes(id)) el.classList.add('active');
+  });
+}
+
+// ═══════════════════════════════════════════════════════════════
+//  DEVICE RINGS
+// ═══════════════════════════════════════════════════════════════
+const DEV_RINGS = {
+  browser:'ring-browser', os:'ring-os', nic:'ring-nic', router:'ring-router',
+  isp:'ring-isp', rootdns:'ring-rootdns', tlddns:'ring-tlddns',
+  authdns:'ring-authdns', cdn:'ring-cdn', server:'ring-server'
+};
+function setActiveDevs(list) {
+  Object.values(DEV_RINGS).forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.setAttribute('opacity','0');
+  });
+  list.forEach(dev => {
+    const el = document.getElementById(DEV_RINGS[dev]);
+    if (el) {
+      el.setAttribute('opacity','0.8');
+    }
+  });
+}
+
+// ═══════════════════════════════════════════════════════════════
+//  PACKET INSPECTOR
+// ═══════════════════════════════════════════════════════════════
+function updatePacket(pkt, hiList) {
+  const fields = {
+    'pf-layer': pkt.layer,
+    'pf-proto': pkt.proto,
+    'pf-src': pkt.src,
+    'pf-dst': pkt.dst,
+    'pf-sport': pkt.sport,
+    'pf-dport': pkt.dport,
+    'pf-flags': pkt.flags,
+    'pf-payload': pkt.payload,
+    'pf-seq': pkt.seq,
+    'pf-special': pkt.special
+  };
+  Object.entries(fields).forEach(([id,val]) => {
+    const el = document.getElementById(id);
+    if (el) el.textContent = val;
+    const field = el?.closest('.pkt-field');
+    if (field) {
+      field.className = 'pkt-field';
+      if (hiList.includes(id)) {
+        // DNS-related steps use dns-hi
+        if (pkt.proto && pkt.proto.toLowerCase().includes('dns')) {
+          field.classList.add('dns-hi');
+        } else {
+          field.classList.add('highlight');
+        }
+      }
+    }
+  });
+}
+
+// ═══════════════════════════════════════════════════════════════
+//  WATERFALL
+// ═══════════════════════════════════════════════════════════════
+const waterfallWrap = document.getElementById('waterfall-wrap');
+const waterfallRows = document.getElementById('waterfall-rows');
+const WF_RESOURCES = [
+  { name: '/ (HTML)', color: '#42a5f5', delay: 0, duration: 180, ms: '180ms' },
+  { name: 'style.css', color: '#ce93d8', delay: 80, duration: 120, ms: '120ms' },
+  { name: 'main.js', color: '#ffb300', delay: 90, duration: 200, ms: '200ms' },
+  { name: 'logo.png', color: '#26c6da', delay: 100, duration: 80, ms: '80ms' },
+  { name: 'font.woff2', color: '#00e676', delay: 110, duration: 150, ms: '150ms' },
+  { name: 'analytics.js', color: '#ef9a9a', delay: 200, duration: 300, ms: '300ms' },
+  { name: 'icons.svg', color: '#80cbc4', delay: 120, duration: 60, ms: '60ms' },
+];
+function buildWaterfall() {
+  waterfallRows.innerHTML = '';
+  const total = 500;
+  WF_RESOURCES.forEach(r => {
+    const row = document.createElement('div');
+    row.className = 'wf-row';
+    const leftPct = (r.delay/total*100).toFixed(1);
+    const widPct = (r.duration/total*100).toFixed(1);
+    row.innerHTML = `
+      <div class="wf-name">${r.name}</div>
+      <div class="wf-bar-wrap">
+        <div class="wf-bar" style="margin-left:${leftPct}%;background:${r.color};width:0;" data-w="${widPct}"></div>
+      </div>
+      <div class="wf-ms">${r.ms}</div>`;
+    waterfallRows.appendChild(row);
+  });
+  // Animate bars after a tick
+  setTimeout(() => {
+    waterfallRows.querySelectorAll('.wf-bar').forEach(bar => {
+      bar.style.width = bar.dataset.w + '%';
+    });
+  }, 50);
+}
+
+// ═══════════════════════════════════════════════════════════════
+//  STEP NAVIGATION
+// ═══════════════════════════════════════════════════════════════
+function goToStep(idx) {
+  if (idx < 0 || idx >= STEPS.length) return;
+  currentStep = idx;
+  const s = STEPS[idx];
+
+  // Step bar update
+  document.querySelectorAll('.sb-dot').forEach((d,i) => {
+    d.className = 'sb-dot' + (i < idx ? ' done' : '') + (i === idx ? ' active' : '');
+  });
+  // Scroll step into view
+  const activeDot = stepBar.querySelectorAll('.sb-dot')[idx];
+  if (activeDot) activeDot.scrollIntoView({behavior:'smooth',block:'nearest',inline:'center'});
+
+  // Diagram
+  setArrows(s.arrows || []);
+  setActiveDevs(s.activeDevs || []);
+
+  // Explain
+  document.getElementById('step-badge').textContent = `Step ${idx+1} of ${STEPS.length}`;
+  document.getElementById('step-title').textContent = s.title;
+  document.getElementById('step-tech').textContent = s.tech;
+  document.getElementById('step-analogy').textContent = s.analogy;
+  document.getElementById('why-good').textContent = s.good;
+  document.getElementById('why-bad').textContent = s.bad;
+
+  // Packet
+  updatePacket(s.packet, s.highlightPkt || []);
+
+  // Status
+  document.getElementById('status-text').textContent = `Step ${idx+1} / ${STEPS.length}`;
+
+  // Waterfall
+  if (s.waterfall) {
+    waterfallWrap.classList.add('visible');
+    buildWaterfall();
+  } else {
+    waterfallWrap.classList.remove('visible');
+  }
+
+  // Play button state
+  if (idx === STEPS.length - 1 && playing) stopPlay();
+}
+
+function stepForward() {
+  if (currentStep < STEPS.length - 1) goToStep(currentStep + 1);
+  else stopPlay();
+}
+function stepBack() {
+  if (currentStep > 0) goToStep(currentStep - 1);
+}
+function reset() {
+  stopPlay();
+  currentStep = -1;
+  document.querySelectorAll('.sb-dot').forEach(d => d.className='sb-dot');
+  setArrows([]);
+  setActiveDevs([]);
+  document.getElementById('step-badge').textContent = 'Step 0';
+  document.getElementById('step-title').textContent = 'Ready — press Play';
+  document.getElementById('step-tech').textContent = 'This simulator walks you through every layer of what happens from the moment you press Enter on google.com until the page appears. Click Play to begin or use the Step buttons.';
+  document.getElementById('step-analogy').textContent = '📞 Think of it like trying to call someone whose number you don\'t know...';
+  document.getElementById('why-good').textContent = 'Hit play to see each step\'s design rationale.';
+  document.getElementById('why-bad').textContent = 'Alternatives and their trade-offs appear here.';
+  ['pf-layer','pf-proto','pf-src','pf-dst','pf-sport','pf-dport','pf-flags','pf-payload','pf-seq','pf-special'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.textContent = '—';
+    const field = el?.closest('.pkt-field');
+    if (field) field.className = 'pkt-field';
+  });
+  document.getElementById('status-text').textContent = 'Step 0 / 16';
+  waterfallWrap.classList.remove('visible');
+  document.getElementById('btn-play').textContent = '▶ Play';
+}
+
+function startPlay() {
+  playing = true;
+  document.getElementById('btn-play').textContent = '⏸ Pause';
+  if (currentStep >= STEPS.length - 1) { reset(); }
+  scheduleNext();
+}
+function stopPlay() {
+  playing = false;
+  document.getElementById('btn-play').textContent = '▶ Play';
+  clearTimeout(playTimer);
+}
+function scheduleNext() {
+  if (!playing) return;
+  const delay = 2200 / speed;
+  playTimer = setTimeout(() => {
+    stepForward();
+    if (playing && currentStep < STEPS.length - 1) scheduleNext();
+    else stopPlay();
+  }, delay);
+}
+
+// ═══════════════════════════════════════════════════════════════
+//  CONTROLS
+// ═══════════════════════════════════════════════════════════════
+document.getElementById('btn-play').onclick = () => {
+  if (playing) stopPlay(); else startPlay();
+};
+document.getElementById('btn-fwd').onclick = () => { stopPlay(); stepForward(); };
+document.getElementById('btn-back').onclick = () => { stopPlay(); stepBack(); };
+document.getElementById('btn-reset').onclick = reset;
+
+const slider = document.getElementById('speed-slider');
+const speedVal = document.getElementById('speed-val');
+slider.oninput = () => {
+  speed = parseFloat(slider.value);
+  speedVal.textContent = speed + '×';
+};
+
+// ═══════════════════════════════════════════════════════════════
+//  RING PULSE ANIMATION (CSS injection)
+// ═══════════════════════════════════════════════════════════════
+const style = document.createElement('style');
+style.textContent = `
+  @keyframes ring-pulse {
+    0%,100%{opacity:.5;r:35px}
+    50%{opacity:1;r:40px}
+  }
+  circle[id^=ring-][opacity="0.8"] {
+    animation: ring-pulse 1.2s ease-in-out infinite;
+  }
+`;
+document.head.appendChild(style);
+</script>
+</body>
+</html>
