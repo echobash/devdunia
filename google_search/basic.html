@@ -3,7 +3,16 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>What happens when you type google.com — a 3D journey</title>
+<title>What Happens When You Type google.com? — 3D Journey · DevDunia</title>
+<meta name="description" content="Drag, zoom, and click through a playable 3D map of the internet — watch DNS, TCP, TLS, and HTTP packets fly from your laptop to Google and back.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://devdunia.com/google_search/basic.html">
+<meta property="og:title" content="What Happens When You Type google.com? — 3D Journey — DevDunia">
+<meta property="og:description" content="A playable 3D map of the internet — drag to orbit, click a machine, watch the packets fly.">
+<meta property="og:image" content="https://devdunia.com/images/logo.png">
+<link rel="icon" type="image/png" href="../images/logo.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Bangers&family=Comic+Neue:wght@400;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
 <style>
   :root{
     --bg0:#070A18; --bg1:#131B3B;
@@ -14,17 +23,51 @@
     --mono:ui-monospace,"SF Mono","Cascadia Mono",Menlo,Consolas,monospace;
   }
   *{box-sizing:border-box; margin:0; padding:0; -webkit-tap-highlight-color:transparent;}
-  html,body{height:100%; overflow:hidden;}
   body{
+    font-family:'Comic Neue',cursive;font-weight:400;color:#1a1410;
+    background-color:#fdf3e3;
+    background-image:radial-gradient(#1a1410 0.5px, transparent 0.6px);
+    background-size:14px 14px; background-attachment:fixed; min-height:100vh;
+  }
+  .dd-paper-overlay{position:fixed;inset:0;background:rgba(253,243,227,.78);pointer-events:none;z-index:0}
+  .dd-page-wrap{position:relative;z-index:1;max-width:1240px;margin:0 auto;padding:20px 32px 60px}
+
+  /* ── comic panel chrome (shared house style, dd- namespaced to avoid clashing with the simulator's own classes) ── */
+  .dd-panel{background:#fdf3e3;border:4px solid #1a1410;border-radius:6px;box-shadow:7px 7px 0 #1a1410;overflow:hidden;margin-bottom:22px}
+  .dd-panel-header{background:#1a1410;color:#ffd23f;font-family:'Bangers',cursive;font-size:1.2rem;letter-spacing:2px;padding:8px 16px;display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap}
+  .dd-panel-tag{font-family:'Space Mono',monospace;font-size:.65rem;font-weight:700;background:#ffd23f;color:#1a1410;padding:2px 7px;border-radius:3px;white-space:nowrap}
+  .dd-panel-body{padding:20px 22px}
+  .dd-panel-body.flush{padding:0}
+
+  .dd-step{display:flex;gap:14px;align-items:flex-start;margin-bottom:16px}
+  .dd-step:last-child{margin-bottom:0}
+  .dd-step-num{width:40px;height:40px;border-radius:50%;border:3px solid #1a1410;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-family:'Bangers',cursive;font-size:1.15rem;color:#fff;box-shadow:3px 3px 0 #1a1410}
+  .dd-step-box{flex:1;border:3px solid #1a1410;border-radius:8px;overflow:hidden;box-shadow:5px 5px 0 #1a1410}
+  .dd-step-head{padding:8px 14px;font-family:'Bangers',cursive;font-size:1.05rem;letter-spacing:1px;color:#fff;display:flex;align-items:center;gap:8px}
+  .dd-step-txt{padding:12px 14px;background:#fdf3e3;font-size:.86rem;line-height:1.55;color:#1a1410}
+  .dd-step-txt strong{color:#1a1410}
+  .dd-bubble{position:relative;background:#fff;border:2px solid #1a1410;border-radius:8px;padding:8px 12px;font-family:'Comic Neue',cursive;font-style:italic;font-size:.82rem;line-height:1.5;box-shadow:3px 3px 0 #1a1410;margin-top:10px;color:#1a1410}
+
+  .dd-term-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:12px}
+  .dd-term-card{border:3px solid #1a1410;border-radius:6px;box-shadow:4px 4px 0 #1a1410;overflow:hidden}
+  .dd-term-head{font-family:'Bangers',cursive;font-size:.95rem;letter-spacing:1px;padding:5px 10px;color:#fff}
+  .dd-term-body{padding:8px 10px;background:#fdf3e3;font-size:.78rem;line-height:1.5;color:#1a1410}
+
+  .dd-crosslink{font-family:'Space Mono',monospace;font-size:.72rem;font-weight:700;color:#1a1410;background:#fbe9cc;border:2px solid #1a1410;border-radius:20px;padding:6px 14px;text-decoration:none;display:inline-flex;align-items:center;gap:6px;box-shadow:2px 2px 0 #1a1410;transition:transform .1s,box-shadow .1s}
+  .dd-crosslink:hover{transform:translate(-1px,-1px);box-shadow:3px 3px 0 #1a1410}
+
+  /* ── the 3D scene, kept as a dark "screen" inside the comic panel ── */
+  #sim-stage{
+    position:relative; overflow:hidden; height:600px;
     background:radial-gradient(120% 90% at 50% 10%, var(--bg1) 0%, var(--bg0) 65%);
     color:var(--ink); font-family:var(--sans);
   }
-  #scene{position:fixed; inset:0; display:block; cursor:grab; touch-action:none;}
+  #scene{position:absolute; inset:0; display:block; cursor:grab; touch-action:none;}
   #scene.dragging{cursor:grabbing;}
 
   /* ---- top browser chrome (part of the lesson) ---- */
   #chrome{
-    position:fixed; top:12px; left:50%; transform:translateX(-50%);
+    position:absolute; top:12px; left:50%; transform:translateX(-50%);
     width:min(560px, calc(100vw - 24px));
     background:rgba(14,20,48,.85); border:1px solid var(--line); border-radius:14px;
     padding:9px 12px; display:flex; align-items:center; gap:10px;
@@ -46,7 +89,7 @@
 
   /* ---- legend ---- */
   #legend{
-    position:fixed; top:76px; right:14px; z-index:4;
+    position:absolute; top:76px; right:14px; z-index:4;
     display:flex; flex-direction:column; gap:6px;
     font-family:var(--mono); font-size:11px; color:var(--muted);
   }
@@ -56,7 +99,7 @@
 
   /* ---- narration panel ---- */
   #panel{
-    position:fixed; left:14px; bottom:14px; z-index:6;
+    position:absolute; left:14px; bottom:14px; z-index:6;
     width:min(430px, calc(100vw - 28px));
     background:rgba(14,20,48,.92); border:1px solid var(--line); border-radius:18px;
     padding:18px 20px 14px; backdrop-filter:blur(10px);
@@ -113,7 +156,7 @@
 
   /* ---- node info card ---- */
   #card{
-    position:fixed; z-index:7; display:none;
+    position:absolute; z-index:7; display:none;
     width:230px; background:rgba(10,14,34,.96); border:1px solid var(--line);
     border-radius:12px; padding:11px 13px; font-size:12px; line-height:1.5;
     color:var(--muted); box-shadow:0 12px 34px rgba(0,0,0,.5);
@@ -122,16 +165,20 @@
   #card.show{display:block;}
 
   #hint{
-    position:fixed; top:76px; left:14px; z-index:4;
+    position:absolute; top:76px; left:14px; z-index:4;
     font-family:var(--mono); font-size:11px; color:var(--faint);
   }
 
+  @media (max-width:860px){
+    #sim-stage{height:460px;}
+  }
   @media (max-width:640px){
     #legend{display:none;}
     #title{font-size:18px;}
     #body{font-size:12.5px;}
     #panel{padding:14px 15px 12px;}
     #hint{display:none;}
+    .dd-page-wrap{padding:20px 16px 60px;}
   }
   @media (prefers-reduced-motion:reduce){
     #caret{animation:none;}
