@@ -68,28 +68,6 @@
   .dd-crosslink{font-family:'Space Mono',monospace;font-size:.72rem;font-weight:700;color:#1a1410;background:var(--bg2);border:2px solid #1a1410;border-radius:20px;padding:6px 14px;text-decoration:none;display:inline-flex;align-items:center;gap:6px;box-shadow:2px 2px 0 #1a1410;transition:transform .1s,box-shadow .1s}
   .dd-crosslink:hover{transform:translate(-1px,-1px);box-shadow:3px 3px 0 #1a1410}
 
-  /* ── HEADER ── */
-  header {
-    text-align: center;
-    padding: 28px 20px 16px;
-    border-bottom: 1px solid var(--border);
-    background: linear-gradient(180deg, #0d1830 0%, var(--bg) 100%);
-  }
-  header h1 {
-    font-size: clamp(1.2rem, 3vw, 1.9rem);
-    font-weight: 700;
-    letter-spacing: -0.02em;
-    color: #fff;
-  }
-  header h1 span { color: var(--cyan); }
-  header p {
-    margin-top: 6px;
-    color: var(--text-dim);
-    font-size: 0.82rem;
-    max-width: 600px;
-    margin-inline: auto;
-  }
-
   /* ── STEP PROGRESS BAR ── */
   #step-bar {
     display: flex;
@@ -133,12 +111,12 @@
     font-size: 0.68rem; font-weight: 700;
     transition: background .2s, border-color .2s;
   }
-  .sb-dot.active .sb-num { background: var(--cyan); border-color: var(--cyan); color: #000; }
-  .sb-dot.done .sb-num { background: var(--green); border-color: var(--green); color: #000; }
+  .sb-dot.active .sb-num { background: var(--cyan); border-color: var(--cyan); color: #fff; }
+  .sb-dot.done .sb-num { background: var(--green); border-color: var(--green); color: #fff; }
   .sb-label { font-size: 0.55rem; color: var(--text-dim); margin-top: 3px; text-align: center; width: 50px; }
 
   /* ── MAIN LAYOUT ── */
-  #main { display: flex; flex-direction: column; gap: 0; }
+  #main, #flow-wrap { display: flex; flex-direction: column; gap: 0; }
 
   /* ── DIAGRAM ── */
   #diagram-wrap {
@@ -202,7 +180,7 @@
   .step-badge {
     display: inline-block;
     background: var(--cyan);
-    color: #000;
+    color: #fff;
     font-weight: 700;
     font-size: .72rem;
     padding: 2px 8px;
@@ -210,9 +188,11 @@
     margin-bottom: 8px;
   }
   #step-title {
-    font-size: 1.05rem;
-    font-weight: 700;
-    color: #fff;
+    font-family: 'Bangers', cursive;
+    font-size: 1.3rem;
+    letter-spacing: 1px;
+    font-weight: 400;
+    color: var(--text);
     margin-bottom: 6px;
   }
   #step-tech {
@@ -252,7 +232,7 @@
     border-bottom: 1px solid var(--border);
     padding: 12px 16px;
   }
-  #packet-wrap h2 { font-size: .72rem; color: var(--text-dim); text-transform: uppercase; letter-spacing: .1em; margin-bottom: 8px; }
+  #packet-wrap h2 { font-size: .72rem; color: rgba(255,255,255,.55); text-transform: uppercase; letter-spacing: .1em; margin-bottom: 8px; }
   #packet-strip {
     display: flex;
     flex-wrap: wrap;
@@ -273,8 +253,10 @@
     background: #1a2a10;
     border-color: var(--green);
   }
+  .pkt-field.highlight .pf-label { color: rgba(255,255,255,.55); }
   .pkt-field.highlight .pf-val { color: var(--green); }
   .pkt-field.dns-hi { background: #1f1500; border-color: var(--orange); }
+  .pkt-field.dns-hi .pf-label { color: rgba(255,255,255,.55); }
   .pkt-field.dns-hi .pf-val { color: var(--orange); }
 
   /* ── CONTROLS ── */
@@ -299,9 +281,9 @@
     transition: background .15s, border-color .15s, color .15s;
     display: flex; align-items: center; gap: 5px;
   }
-  .btn:hover { background: #1e3050; border-color: var(--cyan); color: var(--cyan); }
-  .btn.primary { background: var(--cyan); color: #000; border-color: var(--cyan); font-weight: 700; }
-  .btn.primary:hover { background: #00b0cc; }
+  .btn:hover { background: var(--bg2); border-color: var(--cyan); color: var(--cyan); }
+  .btn.primary { background: var(--cyan); color: #fff; border-color: var(--cyan); font-weight: 700; }
+  .btn.primary:hover { background: #17588f; }
   #speed-wrap { display: flex; align-items: center; gap: 8px; margin-left: auto; font-size: .78rem; color: var(--text-dim); }
   #speed-slider { accent-color: var(--cyan); width: 90px; }
   #status-text { font-size: .78rem; color: var(--cyan); font-weight: 600; min-width: 80px; }
@@ -328,12 +310,6 @@
   .wf-ms { color: var(--text-dim); text-align: right; }
 
   /* ── REFERENCE SECTION ── */
-  #reference {
-    padding: 24px 20px 40px;
-    max-width: 1100px;
-    margin: 0 auto;
-    width: 100%;
-  }
   .ref-grid {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
@@ -384,16 +360,33 @@
 </style>
 </head>
 <body>
+<div class="dd-paper-overlay"></div>
 
-<header>
-  <h1>What happens when you type <span>google.com</span> and press Enter?</h1>
-  <p>A step-by-step visual journey through DNS, TCP, TLS, and HTTP — explained for absolute beginners.</p>
-</header>
+<div data-masthead></div>
+
+<div class="dd-page-wrap">
+
+  <!-- HERO: config drives title, chapter, icon, desc, badges, color -->
+  <div data-tool-hero
+       data-title="google.com — Deep Dive"
+       data-chapter="NET-02"
+       data-category="How The Internet Works"
+       data-icon="&#x1F52C;"
+       data-desc="Every hop from DNS root servers to Google's load balancer — packet inspector, resource waterfall, and a full protocol cheat sheet. 16 steps, interactive."
+       data-color="purple"
+       data-badges="16 STEPS,PACKET INSPECTOR,WATERFALL,FREE"
+       data-badge-colors="green,yellow,orange,white">
+  </div>
+
+  <!-- INFOGRAPHIC FLOW: the network path diagram + step bar -->
+  <div class="dd-panel">
+    <div class="dd-panel-header">&#x1F5FA; FULL NETWORK PATH <span class="dd-panel-tag">INFOGRAPHIC &middot; 16 STEPS</span></div>
+    <div class="dd-panel-body flush">
 
 <!-- STEP BAR -->
 <div id="step-bar"></div>
 
-<div id="main">
+<div id="flow-wrap">
 
   <!-- DIAGRAM -->
   <div id="diagram-wrap">
@@ -634,7 +627,19 @@
       <circle id="ring-cdn" cx="784" cy="86" r="35" fill="none" stroke="var(--c-cdn)" stroke-width="2" opacity="0" style="pointer-events:none"/>
       <circle id="ring-server" cx="784" cy="181" r="32" fill="none" stroke="var(--c-server)" stroke-width="2" opacity="0" style="pointer-events:none"/>
     </svg>
-  </div>
+  </div><!-- /diagram-wrap -->
+
+</div><!-- /step-diagram wrapper -->
+
+    </div>
+  </div><!-- /infographic-flow dd-panel -->
+
+  <!-- COMIC INTERACTIVE ELEMENT: play it step by step -->
+  <div class="dd-panel">
+    <div class="dd-panel-header">&#x1F3AE; PLAY IT STEP BY STEP <span class="dd-panel-tag">INTERACTIVE</span></div>
+    <div class="dd-panel-body flush">
+
+<div id="main">
 
   <!-- CONTROLS -->
   <div id="controls">
@@ -695,9 +700,13 @@
 
 </div><!-- /main -->
 
-<!-- REFERENCE SECTION -->
-<div id="reference">
-  <h2>🎓 Zero-to-Hero Reference: Everything You Just Saw Explained</h2>
+    </div>
+  </div><!-- /interactive dd-panel -->
+
+  <!-- REFERENCE SECTION -->
+  <div class="dd-panel">
+    <div class="dd-panel-header">&#x1F393; ZERO-TO-HERO REFERENCE <span class="dd-panel-tag">CHEAT SHEET</span></div>
+    <div class="dd-panel-body">
   <div class="ref-grid">
 
     <div class="ref-card">
@@ -774,10 +783,18 @@ Layout → Paint → Composite</div>
     </div>
 
   </div>
-</div>
+    </div>
+  </div><!-- /reference dd-panel -->
 
-<footer>Built for learning · All traffic simulated · No external dependencies</footer>
+  <div style="text-align:center;margin-top:4px;">
+    <a class="dd-crosslink" href="basic.html">&#x1F30D; New to this? Try the simpler 3D Journey version &rarr;</a>
+  </div>
 
+</div><!-- /page-wrap -->
+
+<script src="masthead.js"></script>
+<script src="hero-banner.js"></script>
+<script src="author-card.js"></script>
 <script>
 // ═══════════════════════════════════════════════════════════════
 //  STEP DATA
