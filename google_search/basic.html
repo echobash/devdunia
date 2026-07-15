@@ -186,41 +186,182 @@
 </style>
 </head>
 <body>
+<div class="dd-paper-overlay"></div>
 
-<canvas id="scene" aria-label="3D animation of data traveling across the internet"></canvas>
+<div data-masthead></div>
 
-<div id="chrome" aria-hidden="true">
-  <div class="dots"><i></i><i></i><i></i></div>
-  <div id="addr"><span id="lock">&#128274;</span><span id="addrtext"></span><span id="caret"></span></div>
-</div>
+<div class="dd-page-wrap">
 
-<div id="legend" aria-hidden="true">
-  <span><i style="color:var(--dns);background:var(--dns)"></i>DNS · finding the address</span>
-  <span><i style="color:var(--tcp);background:var(--tcp)"></i>TCP · connecting</span>
-  <span><i style="color:var(--tls);background:var(--tls)"></i>TLS · encrypting</span>
-  <span><i style="color:var(--http);background:var(--http)"></i>HTTP · the page itself</span>
-</div>
-
-<div id="hint">drag to orbit · scroll to zoom · click a machine</div>
-
-<div id="panel">
-  <div id="eyebrow"><span id="stepnum">STEP 1 / 8</span><b id="tag">URL</b></div>
-  <h2 id="title"></h2>
-  <p id="body"></p>
-  <div id="analogy"></div>
-  <div id="chips"></div>
-  <div id="def"></div>
-  <div id="controls">
-    <button class="btn" id="prev" aria-label="Previous step">&#9664;</button>
-    <button class="btn" id="play"></button>
-    <button class="btn" id="next" aria-label="Next step">&#9654;</button>
-    <button class="btn" id="speed" aria-label="Playback speed">1&times;</button>
-    <div id="dots" role="tablist"></div>
+  <!-- HERO: config drives title, chapter, icon, desc, badges, color -->
+  <div data-tool-hero
+       data-title="google.com — 3D Journey"
+       data-chapter="NET-01"
+       data-category="How The Internet Works"
+       data-icon="&#x1F30D;"
+       data-desc="Drag, zoom, and click through a playable 3D map of the internet — watch DNS, TCP, TLS, and HTTP packets fly from your laptop to Google and back, one step at a time."
+       data-color="blue"
+       data-badges="8 STEPS,3D INTERACTIVE,DRAG TO ORBIT,FREE"
+       data-badge-colors="green,yellow,orange,white">
   </div>
-</div>
 
-<div id="card" role="dialog"></div>
+  <!-- COMIC INTERACTIVE ELEMENT: the playable 3D scene, framed like every other tool panel -->
+  <div class="dd-panel">
+    <div class="dd-panel-header">&#x1F6F0; TYPE GOOGLE.COM — WATCH THE PACKETS FLY <span class="dd-panel-tag">INTERACTIVE &middot; 3D</span></div>
+    <div class="dd-panel-body flush">
+      <div id="sim-stage">
 
+        <canvas id="scene" aria-label="3D animation of data traveling across the internet"></canvas>
+
+        <div id="chrome" aria-hidden="true">
+          <div class="dots"><i></i><i></i><i></i></div>
+          <div id="addr"><span id="lock">&#128274;</span><span id="addrtext"></span><span id="caret"></span></div>
+        </div>
+
+        <div id="legend" aria-hidden="true">
+          <span><i style="color:var(--dns);background:var(--dns)"></i>DNS · finding the address</span>
+          <span><i style="color:var(--tcp);background:var(--tcp)"></i>TCP · connecting</span>
+          <span><i style="color:var(--tls);background:var(--tls)"></i>TLS · encrypting</span>
+          <span><i style="color:var(--http);background:var(--http)"></i>HTTP · the page itself</span>
+        </div>
+
+        <div id="hint">drag to orbit · scroll to zoom · click a machine</div>
+
+        <div id="panel">
+          <div id="eyebrow"><span id="stepnum">STEP 1 / 8</span><b id="tag">URL</b></div>
+          <h2 id="title"></h2>
+          <p id="body"></p>
+          <div id="analogy"></div>
+          <div id="chips"></div>
+          <div id="def"></div>
+          <div id="controls">
+            <button class="btn" id="prev" aria-label="Previous step">&#9664;</button>
+            <button class="btn" id="play"></button>
+            <button class="btn" id="next" aria-label="Next step">&#9654;</button>
+            <button class="btn" id="speed" aria-label="Playback speed">1&times;</button>
+            <div id="dots" role="tablist"></div>
+          </div>
+        </div>
+
+        <div id="card" role="dialog"></div>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- INFOGRAPHIC FLOW: static overview of the 8 steps, for anyone skimming before they play it -->
+  <div class="dd-panel">
+    <div class="dd-panel-header">&#x1F5FA; THE 8-STEP JOURNEY <span class="dd-panel-tag">OVERVIEW</span></div>
+    <div class="dd-panel-body">
+
+      <div class="dd-step">
+        <div class="dd-step-num" style="background:#8a4fff;">1</div>
+        <div class="dd-step-box">
+          <div class="dd-step-head" style="background:#8a4fff;">URL &mdash; You press Enter</div>
+          <div class="dd-step-txt">The browser reads what you typed and splits it into pieces: <strong>https</strong> (how to talk), <strong>google.com</strong> (who to talk to), and <strong>/</strong> (which page).
+            <div class="dd-bubble">It&rsquo;s like addressing an envelope &mdash; the name and address get read before the letter ever leaves your desk.</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="dd-step">
+        <div class="dd-step-num" style="background:#1d6fb8;">2</div>
+        <div class="dd-step-box">
+          <div class="dd-step-head" style="background:#1d6fb8;">CACHE &mdash; First, check for shortcuts</div>
+          <div class="dd-step-txt">Your browser asks itself: &ldquo;Do I already know google.com&rsquo;s number?&rdquo; It checks its own memory, then your computer&rsquo;s.
+            <div class="dd-bubble">Like checking your recent calls before reaching for the phone book.</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="dd-step">
+        <div class="dd-step-num" style="background:#ff8c42;">3</div>
+        <div class="dd-step-box">
+          <div class="dd-step-head" style="background:#ff8c42;">DNS &mdash; The internet&rsquo;s phone book</div>
+          <div class="dd-step-txt">The internet only understands numbers. Your computer asks a <strong>DNS resolver</strong>: &ldquo;What number is google.com?&rdquo; The answer: <strong>142.250.72.14</strong>.
+            <div class="dd-bubble">You know the name. DNS looks up the phone number.</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="dd-step">
+        <div class="dd-step-num" style="background:#0d9488;">4</div>
+        <div class="dd-step-box">
+          <div class="dd-step-head" style="background:#0d9488;">TCP &mdash; The handshake: knock, knock</div>
+          <div class="dd-step-txt">Before real data flows, both sides run a three-message ritual: &ldquo;Can we talk?&rdquo; &rarr; &ldquo;Yes, can you hear me?&rdquo; &rarr; &ldquo;Loud and clear.&rdquo;
+            <div class="dd-bubble">Every phone call starts the same way: &ldquo;Hello?&rdquo; &mdash; &ldquo;Hi, can you hear me?&rdquo; &mdash; &ldquo;Yep!&rdquo;</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="dd-step">
+        <div class="dd-step-num" style="background:#3fa34d;">5</div>
+        <div class="dd-step-box">
+          <div class="dd-step-head" style="background:#3fa34d;">TLS / HTTPS &mdash; Locking the line</div>
+          <div class="dd-step-txt">Your browser and Google swap keys so everything after this point is scrambled &mdash; anyone eavesdropping sees only gibberish. This is when the padlock appears.
+            <div class="dd-bubble">Switching from postcards &mdash; which anyone can read &mdash; to sealed envelopes.</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="dd-step">
+        <div class="dd-step-num" style="background:#e63946;">6</div>
+        <div class="dd-step-box">
+          <div class="dd-step-head" style="background:#e63946;">HTTP &mdash; Finally, asking for the page</div>
+          <div class="dd-step-txt">Everything so far was setup. Now the actual request goes out over the encrypted line: &ldquo;GET / &mdash; please send me your homepage.&rdquo;
+            <div class="dd-bubble">You&rsquo;ve dialed, said hello, and agreed on a secret language. Now you finally ask your question.</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="dd-step">
+        <div class="dd-step-num" style="background:#ff6b9d;">7</div>
+        <div class="dd-step-box">
+          <div class="dd-step-head" style="background:#ff6b9d;">RESPONSE &mdash; Google answers</div>
+          <div class="dd-step-txt">Google&rsquo;s server replies &ldquo;200 OK&rdquo; and streams the page back in many small packets: HTML first, then styles, scripts, and images.
+            <div class="dd-bubble">Flat-pack furniture: it doesn&rsquo;t arrive built. It arrives as numbered parts, plus instructions.</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="dd-step">
+        <div class="dd-step-num" style="background:#1a1410;">8</div>
+        <div class="dd-step-box">
+          <div class="dd-step-head" style="background:#1a1410;color:#ffd23f;">RENDER &mdash; Your browser builds the page</div>
+          <div class="dd-step-txt">The browser reads the HTML, applies CSS, runs JavaScript &mdash; and paints pixels on your screen. All eight steps? Usually well under a second.
+            <div class="dd-bubble">An architect (HTML), a decorator (CSS), and an electrician (JavaScript) &mdash; finishing the whole house in the blink of an eye.</div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- GLOSSARY -->
+  <div class="dd-panel">
+    <div class="dd-panel-header">&#x1F4D6; KEY TERMS <span class="dd-panel-tag">GLOSSARY</span></div>
+    <div class="dd-panel-body">
+      <div class="dd-term-grid">
+        <div class="dd-term-card"><div class="dd-term-head" style="background:#8a4fff;">URL</div><div class="dd-term-body">The full address you type. It says <strong>how</strong> to connect, <strong>who</strong> to talk to, and <strong>which page</strong> you want.</div></div>
+        <div class="dd-term-card"><div class="dd-term-head" style="background:#1d6fb8;">Cache</div><div class="dd-term-body">A small stash of recently-used answers your browser keeps, so it doesn&rsquo;t fetch the same thing twice.</div></div>
+        <div class="dd-term-card"><div class="dd-term-head" style="background:#ff8c42;">IP Address</div><div class="dd-term-body">A device&rsquo;s phone number on the internet, e.g. <strong>142.250.72.14</strong>. Computers only call numbers, never names.</div></div>
+        <div class="dd-term-card"><div class="dd-term-head" style="background:#ff8c42;">DNS</div><div class="dd-term-body">The Domain Name System &mdash; the worldwide service that turns names like google.com into IP addresses.</div></div>
+        <div class="dd-term-card"><div class="dd-term-head" style="background:#0d9488;">TCP</div><div class="dd-term-body">Transmission Control Protocol &mdash; the rulebook that makes sure packets arrive complete, in order, with nothing missing.</div></div>
+        <div class="dd-term-card"><div class="dd-term-head" style="background:#3fa34d;">TLS</div><div class="dd-term-body">Transport Layer Security &mdash; the encryption layer that puts the S in HTTPS and the padlock in your address bar.</div></div>
+        <div class="dd-term-card"><div class="dd-term-head" style="background:#e63946;">HTTP / GET</div><div class="dd-term-body">The request/response language of the web. GET is the HTTP way of saying &ldquo;please send me this page.&rdquo;</div></div>
+        <div class="dd-term-card"><div class="dd-term-head" style="background:#1a1410;color:#ffd23f;">Render</div><div class="dd-term-body">Turning code into pixels &mdash; layout, colors, text, and images, then painting them on your screen.</div></div>
+      </div>
+    </div>
+  </div>
+
+  <div style="text-align:center;margin-top:4px;">
+    <a class="dd-crosslink" href="advance.html">&#x1F52C; Want every packet, DNS root server, and the load balancer too? See the Deep Dive version &rarr;</a>
+  </div>
+
+</div><!-- /page-wrap -->
+
+<script src="masthead.js"></script>
+<script src="hero-banner.js"></script>
+<script src="author-card.js"></script>
 <script>
 "use strict";
 /* ============================================================
@@ -229,6 +370,7 @@
    Zero dependencies. Everything below is plain browser JS.
    ============================================================ */
 
+const stage = document.getElementById('sim-stage');
 const canvas = document.getElementById('scene');
 const ctx = canvas.getContext('2d');
 const reduceMotion = matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -236,7 +378,8 @@ const reduceMotion = matchMedia('(prefers-reduced-motion: reduce)').matches;
 let W = 0, H = 0, DPR = 1;
 function resize(){
   DPR = Math.min(devicePixelRatio || 1, 2);
-  W = innerWidth; H = innerHeight;
+  const rect = stage.getBoundingClientRect();
+  W = rect.width; H = rect.height;
   canvas.width = W * DPR; canvas.height = H * DPR;
   canvas.style.width = W + 'px'; canvas.style.height = H + 'px';
   ctx.setTransform(DPR, 0, 0, DPR, 0, 0);
@@ -508,7 +651,10 @@ canvas.addEventListener('pointermove', e => {
 });
 canvas.addEventListener('pointerup', e => {
   canvas.classList.remove('dragging');
-  if (drag && moved < 6) handleClick(e.clientX, e.clientY);
+  if (drag && moved < 6){
+    const rect = canvas.getBoundingClientRect();
+    handleClick(e.clientX - rect.left, e.clientY - rect.top);
+  }
   drag = null;
 });
 canvas.addEventListener('wheel', e => {

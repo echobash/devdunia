@@ -3,47 +3,70 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>What Happens When You Type google.com?</title>
+<title>What Happens When You Type google.com? — Deep Dive · DevDunia</title>
+<meta name="description" content="Every hop from DNS root servers to Google's load balancer — packet inspector, resource waterfall, and a full protocol cheat sheet. 16 steps, interactive.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://devdunia.com/google_search/advance.html">
+<meta property="og:title" content="What Happens When You Type google.com? — Deep Dive — DevDunia">
+<meta property="og:description" content="Every hop from DNS root servers to Google's load balancer — packet inspector, resource waterfall, and a full protocol cheat sheet.">
+<meta property="og:image" content="https://devdunia.com/images/logo.png">
+<link rel="icon" type="image/png" href="../images/logo.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Bangers&family=Comic+Neue:wght@400;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
 <style>
   :root {
-    --bg: #0b1220;
-    --bg2: #0f1a2e;
-    --bg3: #162035;
-    --border: #1e3050;
-    --text: #c8d8f0;
-    --text-dim: #6080a0;
-    --cyan: #00e5ff;
-    --orange: #ff9500;
-    --green: #00e676;
-    --amber: #ffb300;
-    --purple: #ce93d8;
-    --teal: #26c6da;
-    --blue: #42a5f5;
-    --red: #ef5350;
+    --bg: #fdf3e3;
+    --bg2: #fbe9cc;
+    --bg3: #ffffff;
+    --border: #1a1410;
+    --text: #1a1410;
+    --text-dim: rgba(26,20,16,.65);
+    --cyan: #1d6fb8;
+    --orange: #ff8c42;
+    --green: #3fa34d;
+    --amber: #c47a00;
+    --purple: #8a4fff;
+    --teal: #0d9488;
+    --blue: #1d6fb8;
+    --red: #e63946;
 
     /* Device colors */
-    --c-browser: #42a5f5;
-    --c-os: #5c9ee0;
-    --c-nic: #7e57c2;
-    --c-router: #ab47bc;
+    --c-browser: #1d6fb8;
+    --c-os: #3fa34d;
+    --c-nic: #8a4fff;
+    --c-router: #ff6b9d;
     --c-isp: #8d6e63;
-    --c-rootdns: #ef6c00;
-    --c-tlddns: #ffa726;
-    --c-authdns: #ffb300;
-    --c-cdn: #26c6da;
-    --c-server: #00e676;
+    --c-rootdns: #ff8c42;
+    --c-tlddns: #c47a00;
+    --c-authdns: #e63946;
+    --c-cdn: #0d9488;
+    --c-server: #3fa34d;
   }
 
   * { box-sizing: border-box; margin: 0; padding: 0; }
 
   body {
     background: var(--bg);
+    background-image: radial-gradient(#1a1410 0.5px, transparent 0.6px);
+    background-size: 14px 14px;
+    background-attachment: fixed;
     color: var(--text);
-    font-family: 'Segoe UI', system-ui, sans-serif;
+    font-family: 'Comic Neue', 'Segoe UI', system-ui, sans-serif;
     font-size: 14px;
     line-height: 1.5;
     min-height: 100vh;
   }
+  .dd-paper-overlay{position:fixed;inset:0;background:rgba(253,243,227,.78);pointer-events:none;z-index:0}
+  .dd-page-wrap{position:relative;z-index:1;max-width:1240px;margin:0 auto;padding:20px 32px 60px}
+
+  /* ── comic panel chrome (shared house style, dd- namespaced to avoid clashing with the simulator's own classes) ── */
+  .dd-panel{background:var(--bg);border:4px solid #1a1410;border-radius:6px;box-shadow:7px 7px 0 #1a1410;overflow:hidden;margin-bottom:22px}
+  .dd-panel-header{background:#1a1410;color:#ffd23f;font-family:'Bangers',cursive;font-size:1.2rem;letter-spacing:2px;padding:8px 16px;display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap}
+  .dd-panel-tag{font-family:'Space Mono',monospace;font-size:.65rem;font-weight:700;background:#ffd23f;color:#1a1410;padding:2px 7px;border-radius:3px;white-space:nowrap}
+  .dd-panel-body{padding:20px 22px}
+  .dd-panel-body.flush{padding:0}
+  .dd-crosslink{font-family:'Space Mono',monospace;font-size:.72rem;font-weight:700;color:#1a1410;background:var(--bg2);border:2px solid #1a1410;border-radius:20px;padding:6px 14px;text-decoration:none;display:inline-flex;align-items:center;gap:6px;box-shadow:2px 2px 0 #1a1410;transition:transform .1s,box-shadow .1s}
+  .dd-crosslink:hover{transform:translate(-1px,-1px);box-shadow:3px 3px 0 #1a1410}
 
   /* ── HEADER ── */
   header {
@@ -133,8 +156,8 @@
   }
 
   /* SVG device labels */
-  .dev-label { font-size: 10px; fill: #a0b8d8; font-family: 'Segoe UI', system-ui, sans-serif; text-anchor: middle; }
-  .dev-sub { font-size: 8.5px; fill: #506888; font-family: 'Segoe UI', system-ui, sans-serif; text-anchor: middle; }
+  .dev-label { font-size: 10px; font-weight: 700; fill: #1a1410; font-family: 'Segoe UI', system-ui, sans-serif; text-anchor: middle; }
+  .dev-sub { font-size: 8.5px; fill: rgba(26,20,16,.6); font-family: 'Segoe UI', system-ui, sans-serif; text-anchor: middle; }
 
   /* Animated flow arrow */
   @keyframes dashflow {
@@ -240,7 +263,7 @@
     border: 1px solid var(--border);
     border-radius: 5px;
     padding: 4px 8px;
-    font-family: 'Consolas', 'Courier New', monospace;
+    font-family: 'Space Mono', 'Consolas', 'Courier New', monospace;
     font-size: .75rem;
     transition: background .3s, border-color .3s, color .3s;
   }
@@ -311,15 +334,6 @@
     margin: 0 auto;
     width: 100%;
   }
-  #reference h2 {
-    font-size: 1rem;
-    font-weight: 700;
-    color: #fff;
-    border-bottom: 1px solid var(--border);
-    padding-bottom: 8px;
-    margin-bottom: 16px;
-    letter-spacing: -0.01em;
-  }
   .ref-grid {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
@@ -327,13 +341,16 @@
   }
   .ref-card {
     background: var(--bg2);
-    border: 1px solid var(--border);
-    border-radius: 10px;
+    border: 3px solid var(--border);
+    border-radius: 8px;
+    box-shadow: 4px 4px 0 var(--border);
     padding: 14px 16px;
   }
   .ref-card h3 {
-    font-size: .88rem;
-    font-weight: 700;
+    font-family: 'Bangers', cursive;
+    font-size: 1.05rem;
+    letter-spacing: 1px;
+    font-weight: 400;
     margin-bottom: 6px;
     display: flex; align-items: center; gap: 6px;
   }
@@ -350,9 +367,9 @@
     border: 1px solid var(--border);
     border-radius: 5px;
     padding: 6px 10px;
-    font-family: monospace;
+    font-family: 'Space Mono', monospace;
     font-size: .72rem;
-    color: var(--cyan);
+    color: #7ee787;
     margin-top: 8px;
     white-space: pre-wrap;
   }
