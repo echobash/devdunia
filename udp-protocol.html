@@ -11,54 +11,10 @@
 <meta property="og:description" content="UDP protocol reference. Learn how UDP works, its use cases, and differences from TCP.">
 <meta property="og:image" content="https://devdunia.com/images/logo.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="css/comic.css">
 <link href="https://fonts.googleapis.com/css2?family=Bangers&family=Comic+Neue:wght@400;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
 <style>
-:root {
-  --ink: #1a1410;
-  --paper: #fdf3e3;
-  --paper2: #fbe9cc;
-  --red: #e63946;
-  --blue: #1d6fb8;
-  --yellow: #ffd23f;
-  --green: #3fa34d;
-  --pink: #ff6b9d;
-  --purple: #8a4fff;
-  --orange: #ff8c42;
-}
-
-*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-
-body {
-  font-family: 'Comic Neue', cursive;
-  font-weight: 400;
-  color: var(--ink);
-  background-color: var(--paper);
-  background-image: radial-gradient(var(--ink) 0.5px, transparent 0.6px);
-  background-size: 14px 14px;
-  background-attachment: fixed;
-  min-height: 100vh;
-}
-
-.paper-overlay {
-  position: fixed;
-  inset: 0;
-  background: rgba(253,243,227,.78);
-  pointer-events: none;
-  z-index: 0;
-}
-
-.page-wrap {
-  position: relative;
-  z-index: 1;
-  max-width: 1240px;
-  margin: 0 auto;
-  padding: 20px 32px 60px;
-}
-
-
-
-
-
+/* ---- TODO migrate: page-specific overrides, not yet centralized in css/comic.css ---- */
 .masthead-logo-text {
   font-family: 'Bangers', cursive;
   font-size: 1.9rem;
@@ -68,25 +24,6 @@ body {
   line-height: 1;
 }
 .masthead-logo-text span { color: var(--yellow); }
-
-
-
-
-
-/* HERO */
-.hero {
-  display: flex;
-  align-items: flex-start;
-  gap: 20px;
-  background: var(--paper2);
-  border: 4px solid var(--ink);
-  border-radius: 6px;
-  box-shadow: 7px 7px 0 var(--ink);
-  padding: 20px 24px;
-  margin-bottom: 28px;
-  transform: rotate(-0.4deg);
-}
-.hero-icon { font-size: 3rem; line-height: 1; flex-shrink: 0; filter: drop-shadow(3px 3px 0 var(--ink)); }
 .hero-text h1 {
   font-family: 'Bangers', cursive;
   font-size: 2.8rem;
@@ -98,53 +35,6 @@ body {
   text-transform: uppercase;
 }
 .hero-text p { font-size: .95rem; margin-top: 6px; line-height: 1.5; max-width: 500px; }
-.hero-badges { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 10px; }
-.badge {
-  font-family: 'Space Mono', monospace;
-  font-size: .65rem;
-  font-weight: 700;
-  padding: 3px 8px;
-  border: 2px solid var(--ink);
-  border-radius: 4px;
-  box-shadow: 2px 2px 0 var(--ink);
-}
-.badge-blue   { background: var(--blue);   color: #fff; }
-.badge-green  { background: var(--green);  color: #fff; }
-.badge-yellow { background: var(--yellow); color: var(--ink); }
-.badge-orange { background: var(--orange); color: #fff; }
-.badge-red    { background: var(--red);    color: #fff; }
-
-/* PANEL */
-.panel {
-  background: var(--paper);
-  border: 4px solid var(--ink);
-  border-radius: 6px;
-  box-shadow: 7px 7px 0 var(--ink);
-  overflow: hidden;
-  margin-bottom: 22px;
-}
-.panel-header {
-  background: var(--ink);
-  color: var(--yellow);
-  font-family: 'Bangers', cursive;
-  font-size: 1.2rem;
-  letter-spacing: 2px;
-  padding: 8px 16px;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 10px;
-}
-.panel-header .panel-tag {
-  font-family: 'Space Mono', monospace;
-  font-size: .65rem;
-  font-weight: 700;
-  background: var(--yellow);
-  color: var(--ink);
-  padding: 2px 7px;
-  border-radius: 3px;
-}
-.panel-body { padding: 18px 20px; }
 
 /* INFO GRID */
 .info-grid {
@@ -428,8 +318,6 @@ body {
   .compare-grid { grid-template-columns: 1fr; }
   .code-pair { grid-template-columns: 1fr; }
   .pro-con-grid { grid-template-columns: 1fr; }
-  .hero { flex-direction: column; gap: 10px; }
-  .hero-text h1 { font-size: 2rem; }
   .udp-header-visual { grid-template-columns: 1fr; }
   .header-data { grid-column: span 1; }
 }
