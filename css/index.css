@@ -1,0 +1,296 @@
+/* ==========================================================================
+   DevDunia — Homepage (index.html only)
+   Page-specific layout: hero, live mini-demo, tiered content hierarchy,
+   card grid, footer. Shared tokens/components (panel, badge, caption-box,
+   speech-bubble, action-burst, chapter-hue tokens) come from comic.css —
+   see CLAUDE.md.
+   ========================================================================== */
+
+html { scroll-behavior: smooth; }
+body { overflow-x: hidden; }
+.page-wrap { padding: 0 28px 60px; }
+
+/* ---- HERO ---- */
+.hero-panel {
+  border: 4px solid var(--ink);
+  border-radius: 8px;
+  box-shadow: 9px 9px 0 var(--ink);
+  overflow: hidden;
+  margin: 24px 0 20px;
+  background: var(--blue);
+  background-image: radial-gradient(rgba(255, 255, 255, .15) 1px, transparent 1px);
+  background-size: 12px 12px;
+  padding: 32px 40px;
+  position: relative;
+}
+.hero-panel::before {
+  content: '';
+  position: absolute;
+  top: -80px;
+  right: -80px;
+  width: 300px;
+  height: 300px;
+  background: rgba(255, 255, 255, .05);
+  border-radius: 50%;
+}
+
+.hero-logo-row { display: flex; align-items: center; gap: 14px; position: relative; z-index: 1; margin-bottom: 14px; }
+.hero-logo-img {
+  width: 64px; height: 64px; border: 4px solid #fff; border-radius: 12px;
+  box-shadow: 4px 4px 0 var(--ink); background: #fff; object-fit: contain; flex-shrink: 0;
+}
+.hero-brand {
+  font-family: 'Bangers', cursive; font-size: 3.6rem; letter-spacing: 3px;
+  color: #fff; text-shadow: 4px 4px 0 var(--ink); line-height: .9;
+}
+.hero-brand span { color: var(--yellow); }
+
+.hero-pitch {
+  position: relative; z-index: 1;
+  font-family: 'Comic Neue', cursive; font-weight: 700; font-size: 1.15rem;
+  color: #fff; line-height: 1.5; max-width: 640px; margin-bottom: 20px;
+  text-shadow: 1px 1px 0 rgba(0, 0, 0, .25);
+}
+.hero-pitch em { font-style: normal; color: var(--yellow); }
+
+.hero-lower { position: relative; z-index: 1; display: grid; grid-template-columns: 1fr 300px; gap: 20px; align-items: start; }
+
+/* Mini live demo */
+.demo-panel {
+  background: var(--paper); border: 4px solid var(--ink); border-radius: 6px;
+  box-shadow: 6px 6px 0 var(--ink); overflow: hidden;
+}
+.demo-tabs { display: flex; background: var(--ink); }
+.demo-tab {
+  flex: 1; font-family: 'Comic Neue', cursive; font-weight: 700; font-size: .85rem;
+  color: rgba(255, 255, 255, .6); background: transparent; border: none;
+  padding: 10px 8px; cursor: pointer; border-right: 2px solid rgba(255, 255, 255, .15);
+  transition: background .15s, color .15s;
+}
+.demo-tab:last-child { border-right: none; }
+.demo-tab.active { background: var(--paper); color: var(--ink); }
+.demo-tab:focus-visible, .demo-run:focus-visible, .cat-pill:focus-visible,
+.tool-card:focus-visible, .feature-card:focus-visible, .search-input:focus-visible {
+  outline: 3px solid var(--ink); outline-offset: 2px;
+}
+.demo-body { padding: 14px 16px; }
+.demo-io { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.demo-io textarea {
+  width: 100%; min-height: 78px; resize: vertical; background: #fff;
+  border: 3px solid var(--ink); border-radius: 6px; padding: 8px 10px;
+  font-family: 'Space Mono', monospace; font-size: .74rem; color: var(--ink);
+  outline: none;
+}
+.demo-io textarea[readonly] { background: var(--paper2); }
+.demo-foot { display: flex; align-items: center; justify-content: space-between; margin-top: 10px; gap: 8px; }
+.demo-run {
+  font-family: 'Comic Neue', cursive; font-weight: 700; font-size: .82rem;
+  background: var(--green); color: #fff; border: 3px solid var(--ink); border-radius: 6px;
+  padding: 6px 16px; cursor: pointer; box-shadow: 3px 3px 0 var(--ink);
+  transition: transform .1s, box-shadow .1s;
+}
+.demo-run:active { transform: translate(1px, 1px); box-shadow: 1px 1px 0 var(--ink); }
+.demo-error { font-family: 'Space Mono', monospace; font-size: .7rem; color: #ffe1e1; display: none; }
+.demo-error.show { display: block; }
+.demo-cta { font-family: 'Space Mono', monospace; font-size: .68rem; color: rgba(26, 20, 16, .7); }
+.demo-cta a { color: var(--blue); }
+
+/* Count + category chips (right column of hero) */
+.hero-side { display: flex; flex-direction: column; gap: 10px; }
+.hero-count {
+  background: var(--yellow); border: 3px solid var(--ink); border-radius: 6px;
+  box-shadow: 3px 3px 0 var(--ink); padding: 10px 14px; text-align: center;
+}
+.hero-count-n { font-family: 'Bangers', cursive; font-size: 2.2rem; color: var(--ink); line-height: 1; }
+.hero-count-l { font-family: 'Space Mono', monospace; font-size: .62rem; font-weight: 700; letter-spacing: 1px; color: rgba(26, 20, 16, .7); text-transform: uppercase; }
+.cat-chips { display: flex; flex-wrap: wrap; gap: 6px; }
+.cat-pill {
+  font-family: 'Comic Neue', cursive; font-weight: 700; font-size: .74rem;
+  padding: 4px 10px; border: 2px solid var(--ink); border-radius: 20px;
+  background: var(--paper); color: var(--ink); text-decoration: none;
+  transition: transform .1s, box-shadow .1s; box-shadow: 2px 2px 0 var(--ink);
+}
+.cat-pill:hover { transform: translate(-1px, -1px); box-shadow: 3px 3px 0 var(--ink); }
+.cat-pill-dot { display: inline-block; width: 8px; height: 8px; border-radius: 50%; background: var(--dot); margin-right: 5px; }
+
+/* ---- SEARCH (speech bubble) ---- */
+.search-panel { margin-bottom: 22px; }
+.search-panel .speech-bubble-bg path { stroke-width: 4; }
+.search-inner {
+  display: flex; align-items: center; gap: 12px; padding: 16px 24px 22px;
+  flex-wrap: wrap;
+}
+.search-label {
+  font-family: 'Bangers', cursive; font-size: 1.25rem; letter-spacing: 1px;
+  white-space: nowrap; flex-shrink: 0;
+}
+.search-input {
+  flex: 1; min-width: 220px; background: transparent; border: none;
+  font-family: 'Comic Neue', cursive; font-weight: 700; font-size: 1.1rem;
+  color: var(--ink); outline: none; padding: 6px 4px;
+}
+.search-input::placeholder { color: rgba(26, 20, 16, .4); font-style: italic; }
+.search-count {
+  font-family: 'Space Mono', monospace; font-size: .72rem; font-weight: 700;
+  background: var(--ink); color: var(--yellow); padding: 5px 12px;
+  border-radius: 4px; white-space: nowrap;
+}
+
+/* ---- ACTION BURST DIVIDER ---- */
+.burst-row { display: flex; justify-content: center; margin: 4px 0 30px; }
+
+/* ---- TIER 1 — FEATURED HOW X WORKS ---- */
+.tier1-panel {
+  border: 4px solid var(--ink); border-radius: 8px; margin-bottom: 34px; overflow: hidden;
+  background: var(--paper);
+}
+.tier1-head { padding: 20px 24px 4px; }
+.tier1-title {
+  font-family: 'Bangers', cursive; font-size: 2rem; letter-spacing: 2px;
+  color: var(--ink); margin: 10px 0 4px; text-transform: uppercase;
+}
+.tier1-sub { font-size: .9rem; color: var(--ink); opacity: .7; max-width: 640px; margin-bottom: 16px; }
+
+.feature-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; padding: 0 24px; }
+.feature-card {
+  background: var(--paper); border: 3px solid var(--ink); border-radius: 6px;
+  border-top: 6px solid var(--hue-how);
+  box-shadow: 5px 5px 0 var(--ink); padding: 16px 18px; text-decoration: none; color: var(--ink);
+  display: flex; flex-direction: column; gap: 6px; transition: transform .12s, box-shadow .12s;
+}
+.feature-card:hover { transform: translate(-2px, -3px); box-shadow: 8px 8px 0 var(--ink); }
+.feature-icon { font-size: 1.7rem; line-height: 1; }
+.feature-icon svg { width: 30px; height: 30px; }
+.feature-name { font-family: 'Comic Neue', cursive; font-weight: 700; font-size: 1.05rem; }
+.feature-desc { font-size: .82rem; line-height: 1.4; opacity: .8; flex: 1; }
+.feature-arrow { font-family: 'Comic Neue', cursive; font-weight: 700; font-size: .78rem; color: var(--blue); }
+
+.tier1-secondary {
+  display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px;
+  padding: 18px 24px 22px; border-top: 3px dashed rgba(26, 20, 16, .2); margin-top: 18px;
+}
+
+/* ---- CHAPTER HEADER (Tier 2 & 3) ---- */
+.chapter-section { margin-bottom: 40px; }
+.chapter-section.hidden, .tier1-panel.hidden { display: none; }
+.chapter-banner {
+  display: flex; align-items: stretch; border: 4px solid var(--ink); border-radius: 6px;
+  box-shadow: 7px 7px 0 var(--ink); overflow: hidden; margin-bottom: 16px;
+}
+.chapter-section-tier3 .chapter-banner { border-width: 2px; box-shadow: none; }
+.chapter-num-block {
+  font-family: 'Bangers', cursive; font-size: 2.2rem; min-width: 64px;
+  display: flex; align-items: center; justify-content: center;
+  /* Default ink text passes AA (>=3:1 large-text) against every chapter
+     hue except dns's purple (#6C4AB6, 2.86:1) — that section overrides
+     --num-text to white (6.38:1) via inline style. See verification notes. */
+  color: var(--num-text, var(--ink));
+  border-right: 4px solid var(--ink); flex-shrink: 0; background: var(--hue);
+}
+.chapter-section-tier3 .chapter-num-block { border-right-width: 2px; font-size: 1.7rem; min-width: 52px; }
+.chapter-info { flex: 1; min-width: 0; padding: 10px 18px; display: flex; flex-direction: column; justify-content: center; gap: 3px; background: var(--paper); }
+.chapter-title { font-family: 'Bangers', cursive; font-size: 1.8rem; letter-spacing: 1px; color: var(--ink); line-height: 1; text-transform: uppercase; }
+/* NOTE: title text is always solid ink, never the chapter hue — several
+   hues (cyan, yellow, pink) fail AA contrast against paper even at large
+   text size. Hue stays confined to chapter-num-block bg (ink text on a
+   large hue chip, verified >=3:1 for every hue), card top-border, and
+   icon tint, per the card-discipline rule. */
+.chapter-sub { font-size: .82rem; color: var(--ink); opacity: .65; line-height: 1.4; }
+.chapter-count {
+  font-family: 'Comic Neue', cursive; font-weight: 700; font-size: 1.2rem;
+  padding: 8px 16px; display: flex; align-items: center; justify-content: center;
+  flex-direction: column; border-left: 4px solid var(--ink); flex-shrink: 0;
+  background: var(--paper2); color: var(--ink);
+}
+.chapter-count span { font-size: .55rem; font-family: 'Space Mono', monospace; letter-spacing: 1px; opacity: .6; }
+
+/* ---- CARD GRID (Tier 2) ---- */
+.tool-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; }
+.tool-card {
+  background: var(--paper);
+  border: 3px solid var(--ink);
+  border-top: 4px solid var(--cc);
+  border-radius: 6px;
+  box-shadow: 5px 5px 0 var(--ink);
+  text-decoration: none; color: var(--ink);
+  overflow: hidden; display: flex; flex-direction: column;
+  transition: transform .12s, box-shadow .12s; position: relative;
+  padding: 12px 14px;
+}
+.tool-card:hover { transform: translate(-2px, -3px); box-shadow: 8px 8px 0 var(--ink); }
+.tool-card.filtered-out { display: none; }
+.tc-icon { margin-bottom: 6px; color: var(--ink); }
+.tc-icon svg { width: 26px; height: 26px; }
+.tc-icon svg .ic-accent { stroke: var(--cc); }
+.tc-icon-emoji { font-size: 1.5rem; line-height: 1; }
+.tc-body { flex: 1; }
+.tc-name { font-family: 'Comic Neue', cursive; font-weight: 700; font-size: .98rem; line-height: 1.2; color: var(--ink); }
+.tc-desc { font-size: .8rem; color: var(--ink); opacity: .72; line-height: 1.35; margin-top: 4px; }
+.tc-arrow { align-self: flex-end; font-size: .95rem; color: var(--ink); opacity: .72; margin-top: 6px; }
+
+/* Tier-1 secondary + Tier-3 cards reuse .tool-card but lighter */
+.tool-card-compact { padding: 10px 12px; box-shadow: 3px 3px 0 var(--ink); }
+.tool-card-compact:hover { box-shadow: 5px 5px 0 var(--ink); }
+.tool-card-compact .tc-name { font-size: .88rem; }
+.tool-card-compact .tc-desc { font-size: .74rem; -webkit-line-clamp: 2; display: -webkit-box; -webkit-box-orient: vertical; overflow: hidden; }
+
+.chapter-section-tier3 .tool-card { border-width: 2px; box-shadow: none; border-top-width: 3px; }
+.chapter-section-tier3 .tool-card:hover { transform: none; box-shadow: 3px 3px 0 var(--ink); }
+
+/* Rotation budget: at most 2 rotated elements per viewport — the hero
+   brand block leans via its own transform below, and this single row is
+   the only other one. Nothing else in the page rotates. */
+.hero-brand-row { transform: rotate(-0.6deg); }
+.tier1-head { transform: rotate(-0.3deg); }
+
+/* ---- NO RESULTS ---- */
+.no-results { display: none; text-align: center; padding: 48px 0; font-family: 'Bangers', cursive; font-size: 2rem; letter-spacing: 2px; color: var(--red); text-shadow: 3px 3px 0 var(--ink); }
+.no-results.show { display: block; }
+
+/* ---- FOOTER (unchanged visuals, kept as page-specific) ---- */
+.site-footer { background: var(--ink); border-top: 4px solid var(--ink); margin-top: 48px; padding: 36px 28px 24px; position: relative; z-index: 1; }
+.footer-inner { max-width: 1240px; margin: 0 auto 28px; display: grid; grid-template-columns: 2fr 1fr 1fr; gap: 36px; }
+.footer-brand { font-family: 'Bangers', cursive; font-size: 2.2rem; letter-spacing: 3px; color: var(--yellow); text-shadow: 3px 3px 0 var(--red); display: flex; align-items: center; gap: 12px; margin-bottom: 10px; }
+.footer-logo { width: 38px; height: 38px; border: 3px solid var(--yellow); border-radius: 8px; background: #fff; object-fit: contain; }
+.footer-bio { font-size: .88rem; color: rgba(255, 255, 255, .65); line-height: 1.6; margin-bottom: 16px; max-width: 340px; }
+.footer-links-col { display: flex; flex-direction: column; gap: 7px; }
+.footer-link-auth { display: flex; align-items: center; gap: 8px; font-family: 'Space Mono', monospace; font-size: .75rem; font-weight: 700; text-decoration: none; color: #fff; padding: 5px 12px; border: 2px solid rgba(255, 255, 255, .2); border-radius: 5px; transition: border-color .15s, background .15s; max-width: 260px; }
+.footer-link-auth:hover { border-color: var(--yellow); background: rgba(255, 211, 63, .08); }
+.footer-link-auth svg { width: 14px; height: 14px; fill: currentColor; flex-shrink: 0; }
+.footer-col-h { font-family: 'Bangers', cursive; font-size: 1.1rem; letter-spacing: 2px; color: var(--yellow); margin-bottom: 10px; }
+.footer-nav { display: flex; flex-direction: column; gap: 6px; }
+.footer-nav a { font-family: 'Comic Neue', cursive; font-size: .88rem; color: rgba(255, 255, 255, .6); text-decoration: none; transition: color .15s; }
+.footer-nav a:hover { color: var(--yellow); }
+.footer-bottom { max-width: 1240px; margin: 0 auto; padding-top: 20px; border-top: 2px solid rgba(255, 255, 255, .12); display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 10px; }
+.footer-copy { font-family: 'Comic Neue', cursive; font-size: .85rem; color: rgba(255, 255, 255, .4); }
+.footer-copy a { color: var(--yellow); text-decoration: none; }
+.footer-end { font-family: 'Bangers', cursive; font-size: 1.2rem; letter-spacing: 2px; color: var(--red); text-shadow: 2px 2px 0 var(--yellow); }
+
+/* ---- RESPONSIVE ---- */
+@media (max-width: 960px) {
+  .hero-lower { grid-template-columns: 1fr; }
+  .tool-grid { grid-template-columns: repeat(3, 1fr); }
+  .feature-grid { grid-template-columns: repeat(2, 1fr); }
+  .tier1-secondary { grid-template-columns: repeat(3, 1fr); }
+  .footer-inner { grid-template-columns: 1fr 1fr; }
+}
+@media (max-width: 640px) {
+  .tool-grid { grid-template-columns: repeat(2, 1fr); }
+  .feature-grid { grid-template-columns: 1fr; }
+  .tier1-secondary { grid-template-columns: repeat(2, 1fr); }
+  .page-wrap { padding: 0 16px 40px; }
+  .hero-panel { padding: 22px 20px; margin: 16px 0 16px; }
+  .hero-brand { font-size: 2.6rem; }
+  .hero-pitch { font-size: .95rem; }
+  .footer-inner { grid-template-columns: 1fr; }
+}
+@media (max-width: 380px) {
+  .tool-grid { grid-template-columns: 1fr; }
+  .tier1-secondary { grid-template-columns: 1fr; }
+  .search-inner { padding: 14px 16px 18px; }
+  .demo-io { grid-template-columns: 1fr; }
+  .chapter-num-block { min-width: 48px; font-size: 1.6rem; }
+  .chapter-title { font-size: 1.4rem; }
+  .chapter-count { padding: 6px 10px; font-size: 1rem; }
+  .hero-brand { font-size: 2.1rem; }
+}

@@ -1,0 +1,634 @@
+/* ==========================================================================
+   DevDunia — Comic Theme
+   Single source of truth for the shared comic-book styling used across
+   tool/article pages. See CLAUDE.md for the design law this implements.
+
+   Organized: tokens -> base -> components -> utilities.
+   Extracted from the rules that were byte-identical (modulo formatting)
+   across the majority of pages; anything that varied page-to-page was left
+   in place inline rather than guessed at here.
+   ========================================================================== */
+
+/* ---- TOKENS ---- */
+:root {
+  --ink: #1a1410;
+  --paper: #fdf3e3;
+  --paper2: #fbe9cc;
+  --red: #e63946;
+  --blue: #1d6fb8;
+  --yellow: #ffd23f;
+  --green: #3fa34d;
+  --pink: #ff6b9d;
+  --purple: #8a4fff;
+  --orange: #ff8c42;
+  --teal: #0d9488;
+
+  /* Chapter hues (CLAUDE.md "Design tokens" — one hue per chapter, used
+     ONLY as accent: caption box, card top-border, icon tint. Named
+     separately from the generic UI tokens above so they never collide
+     with existing usage across the other pages (e.g. CLAUDE.md's
+     dns-purple #6C4AB6 is a different color from the generic --purple
+     #8A4FFF, which CLAUDE.md calls "violet" and assigns to python). */
+  --hue-encoders: #00a6d6;
+  --hue-security: #ed2939;
+  --hue-generators: #3fa34d;
+  --hue-devtools: #1d6fb8;
+  --hue-network: #ff8c42;
+  --hue-dns: #6c4ab6;
+  --hue-how: #ffd23f;
+  --hue-text: #ff6b9d;
+  --hue-database: #0d9488;
+  --hue-python: #8a4fff;
+}
+
+/* ---- BASE ---- */
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: 'Comic Neue', cursive;
+  font-weight: 400;
+  color: var(--ink);
+  background-color: var(--paper);
+  background-image: radial-gradient(var(--ink) 0.5px, transparent 0.6px);
+  background-size: 14px 14px;
+  background-attachment: fixed;
+  min-height: 100vh;
+}
+
+.paper-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(253, 243, 227, .78);
+  pointer-events: none;
+  z-index: 0;
+}
+
+.page-wrap {
+  position: relative;
+  z-index: 1;
+  max-width: 1240px;
+  margin: 0 auto;
+  padding: 20px 32px 60px;
+}
+
+/* ---- COMPONENTS ---- */
+
+/* Panel */
+.panel {
+  background: var(--paper);
+  border: 4px solid var(--ink);
+  border-radius: 6px;
+  box-shadow: 7px 7px 0 var(--ink);
+  overflow: hidden;
+  margin-bottom: 22px;
+}
+.panel-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  background: var(--ink);
+  color: var(--yellow);
+  font-family: 'Bangers', cursive;
+  font-size: 1.2rem;
+  letter-spacing: 2px;
+  padding: 8px 16px;
+}
+.panel-header .panel-tag {
+  font-family: 'Space Mono', monospace;
+  font-size: .65rem;
+  font-weight: 700;
+  background: var(--yellow);
+  color: var(--ink);
+  padding: 2px 7px;
+  border-radius: 3px;
+}
+.panel-body {
+  padding: 18px 20px;
+}
+
+/* Hero (legacy inline hero markup — most pages now render this via
+   hero-banner.js's [data-tool-hero] instead; kept for pages still using
+   the static markup) */
+.hero {
+  display: flex;
+  align-items: flex-start;
+  gap: 20px;
+  background: var(--paper2);
+  border: 4px solid var(--ink);
+  border-radius: 6px;
+  box-shadow: 7px 7px 0 var(--ink);
+  padding: 20px 24px;
+  margin-bottom: 28px;
+  transform: rotate(-0.4deg);
+}
+.hero-icon {
+  font-size: 3rem;
+  line-height: 1;
+  flex-shrink: 0;
+  filter: drop-shadow(3px 3px 0 var(--ink));
+}
+.hero-text p {
+  font-size: .95rem;
+  line-height: 1.5;
+  margin-top: 6px;
+  max-width: 480px;
+}
+.hero-badges {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 10px;
+}
+
+/* Badges */
+.badge {
+  font-family: 'Space Mono', monospace;
+  font-size: .65rem;
+  font-weight: 700;
+  padding: 3px 8px;
+  border: 2px solid var(--ink);
+  border-radius: 4px;
+  box-shadow: 2px 2px 0 var(--ink);
+}
+.badge-blue   { background: var(--blue);   color: #fff; }
+.badge-green  { background: var(--green);  color: #fff; }
+.badge-red    { background: var(--red);    color: #fff; }
+.badge-purple { background: var(--purple); color: #fff; }
+.badge-orange { background: var(--orange); color: #fff; }
+.badge-yellow { background: var(--yellow); color: var(--ink); }
+
+/* Buttons */
+.btn-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 14px;
+}
+.btn {
+  font-family: 'Bangers', cursive;
+  font-size: 1.1rem;
+  letter-spacing: 1px;
+  border: 3px solid var(--ink);
+  border-radius: 6px;
+  padding: 8px 20px;
+  cursor: pointer;
+  box-shadow: 4px 4px 0 var(--ink);
+  transition: transform .1s, box-shadow .1s;
+  text-transform: uppercase;
+}
+.btn:active {
+  transform: translate(2px, 2px);
+  box-shadow: 2px 2px 0 var(--ink);
+}
+.btn-danger  { background: var(--red);    color: #fff; }
+.btn-neutral { background: var(--paper2); color: var(--ink); }
+.btn-success { background: var(--green);  color: #fff; }
+
+/* Text input/output */
+.comic-textarea {
+  width: 100%;
+  background: #fff;
+  border: 3px solid var(--ink);
+  border-radius: 6px;
+  padding: 12px 14px;
+  font-family: 'Space Mono', monospace;
+  font-size: .82rem;
+  color: var(--ink);
+  line-height: 1.6;
+  resize: vertical;
+  min-height: 130px;
+  box-shadow: inset 3px 3px 0 rgba(0, 0, 0, .06);
+  outline: none;
+  transition: border-color .15s;
+}
+.comic-textarea::placeholder {
+  color: #aaa;
+  font-style: italic;
+}
+.comic-textarea[readonly] {
+  background: var(--paper2);
+  cursor: default;
+}
+
+.section-label {
+  font-family: 'Bangers', cursive;
+  font-size: .95rem;
+  letter-spacing: 1px;
+  color: var(--ink);
+  margin-bottom: 6px;
+  text-transform: uppercase;
+}
+
+/* Error bubble (speech-bubble style) */
+.error-bubble {
+  display: none;
+  position: relative;
+  background: #fff0f0;
+  border: 3px solid var(--red);
+  border-radius: 14px;
+  padding: 10px 14px;
+  margin-top: 12px;
+  font-size: .9rem;
+  font-weight: 700;
+  color: var(--red);
+}
+.error-bubble::before {
+  content: '';
+  position: absolute;
+  top: -16px;
+  left: 22px;
+  border-width: 0 10px 16px;
+  border-style: solid;
+  border-color: transparent transparent var(--red);
+}
+.error-bubble::after {
+  content: '';
+  position: absolute;
+  top: -11px;
+  left: 24px;
+  border-width: 0 8px 12px;
+  border-style: solid;
+  border-color: transparent transparent #fff0f0;
+}
+.error-bubble.show {
+  display: block;
+}
+
+/* Output copy button */
+.output-wrap {
+  position: relative;
+}
+.copy-btn {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  font-family: 'Bangers', cursive;
+  font-size: .95rem;
+  letter-spacing: 1px;
+  background: var(--ink);
+  color: var(--yellow);
+  border: 2px solid var(--ink);
+  border-radius: 4px;
+  padding: 3px 10px;
+  cursor: pointer;
+  box-shadow: 2px 2px 0 rgba(0, 0, 0, .4);
+  transition: transform .1s, box-shadow .1s;
+}
+.copy-btn:active {
+  transform: translate(1px, 1px);
+  box-shadow: 1px 1px 0 rgba(0, 0, 0, .4);
+}
+
+/* Stat chips */
+.stat-chip {
+  font-family: 'Space Mono', monospace;
+  font-size: .72rem;
+  font-weight: 700;
+  padding: 4px 10px;
+  border: 2px solid var(--ink);
+  border-radius: 4px;
+  box-shadow: 2px 2px 0 var(--ink);
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+.stat-chip .stat-label { opacity: .65; font-weight: 400; }
+.chip-blue   { background: var(--blue);   color: #fff; }
+.chip-green  { background: var(--green);  color: #fff; }
+.chip-yellow { background: var(--yellow); color: var(--ink); }
+
+/* "How it works" step list */
+.how-steps {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.how-step {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+}
+.how-step p {
+  font-size: .88rem;
+  line-height: 1.5;
+  padding-top: 2px;
+}
+.how-step code {
+  font-family: 'Space Mono', monospace;
+  font-size: .75rem;
+  background: var(--ink);
+  color: var(--yellow);
+  padding: 1px 5px;
+  border-radius: 3px;
+}
+.step-dot {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  border: 3px solid var(--ink);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: 'Bangers', cursive;
+  font-size: 1rem;
+  color: #fff;
+  flex-shrink: 0;
+  box-shadow: 2px 2px 0 var(--ink);
+}
+
+/* Caption box — yellow comic caption tag, top-left of a panel/section */
+.caption-box {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  width: fit-content;
+  background: var(--yellow);
+  color: var(--ink);
+  font-family: 'Comic Neue', cursive;
+  font-weight: 700;
+  font-size: .95rem;
+  letter-spacing: .5px;
+  border: 3px solid var(--ink);
+  border-radius: 6px;
+  padding: 4px 14px;
+  box-shadow: 3px 3px 0 var(--ink);
+}
+
+/* Speech bubble — inline SVG shape (rounded rect + tail), used as a
+   background layer behind an interactive element (e.g. the hero search
+   input). Structure:
+     <div class="speech-bubble">
+       <svg class="speech-bubble-bg" viewBox="0 0 100 40" preserveAspectRatio="none">
+         <path d="..."/>
+       </svg>
+       <div class="speech-bubble-content"> ... real content ... </div>
+     </div>
+*/
+.speech-bubble {
+  position: relative;
+}
+.speech-bubble-bg {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 0;
+  overflow: visible;
+}
+.speech-bubble-bg path {
+  fill: var(--paper);
+  stroke: var(--ink);
+  stroke-width: 3;
+  vector-effect: non-scaling-stroke;
+}
+.speech-bubble-content {
+  position: relative;
+  z-index: 1;
+}
+
+/* Action burst — small inline-SVG starburst behind short divider text.
+   Text color is always ink (never a hue) so contrast can never fail; the
+   chapter/section hue is used only for the burst outline behind it.
+     <span class="action-burst" style="--burst-hue:var(--hue-encoders)">
+       <svg class="action-burst-bg" viewBox="0 0 100 100"><path d="..."/></svg>
+       <span class="action-burst-text">POW!</span>
+     </span>
+*/
+.action-burst {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 6px 16px;
+}
+.action-burst-bg {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 0;
+}
+.action-burst-bg path {
+  fill: var(--paper);
+  stroke: var(--burst-hue, var(--ink));
+  stroke-width: 3;
+}
+.action-burst-text {
+  position: relative;
+  z-index: 1;
+  font-family: 'Bangers', cursive;
+  letter-spacing: 2px;
+  color: var(--ink);
+  font-size: 1.1rem;
+  line-height: 1;
+}
+
+/* Action-burst "pop" — a transient variant of .action-burst anchored next
+   to a control (e.g. a copy button) that appears/disappears on demand via
+   JS, rather than sitting statically in the page. Toggle with the "show"
+   class; the pop animation is skipped under prefers-reduced-motion (JS
+   should also gate whether it's added at all — see workspace copy logic).
+     <span class="action-burst-pop" style="--burst-hue:var(--hue-encoders)">
+       <svg class="action-burst-bg" viewBox="0 0 100 100"><path d="..."/></svg>
+       <span class="action-burst-text">KA-CHUNK!</span>
+     </span>
+*/
+.action-burst-pop {
+  position: absolute;
+  top: -10px;
+  right: 64px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 4px 12px;
+  pointer-events: none;
+  opacity: 0;
+  transform: scale(.7);
+  z-index: 20;
+}
+.action-burst-pop.show {
+  animation: burst-pop .9s ease-out forwards;
+}
+.action-burst-pop .action-burst-text { font-size: .8rem; }
+@keyframes burst-pop {
+  0%   { opacity: 0; transform: scale(.5) rotate(-6deg); }
+  25%  { opacity: 1; transform: scale(1.08) rotate(2deg); }
+  40%  { opacity: 1; transform: scale(1) rotate(0deg); }
+  75%  { opacity: 1; }
+  100% { opacity: 0; transform: scale(.95) rotate(0deg); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .action-burst-pop.show { animation: none; opacity: 0; }
+}
+
+/* Tool-page mini header — logo + jump-search (speech-bubble) + chapter
+   chips. Lighter than the homepage hero; meant to sit directly under the
+   masthead on every tool page (this is the reusable template piece). */
+.tool-header {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  flex-wrap: wrap;
+  margin: 18px 0 20px;
+}
+.tool-search { flex: 1; min-width: 220px; }
+.tool-search .speech-bubble-bg path { stroke-width: 3; }
+.tool-search-inner {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 9px 16px 13px;
+}
+.tool-search-input {
+  flex: 1;
+  background: transparent;
+  border: none;
+  font-family: 'Comic Neue', cursive;
+  font-weight: 700;
+  font-size: .92rem;
+  color: var(--ink);
+  outline: none;
+}
+.tool-search-input::placeholder { color: rgba(26, 20, 16, .45); font-style: italic; }
+.tool-chips {
+  display: flex;
+  gap: 6px;
+  overflow-x: auto;
+  padding-bottom: 2px;
+}
+.tool-chip {
+  flex-shrink: 0;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-family: 'Comic Neue', cursive;
+  font-weight: 700;
+  font-size: .72rem;
+  padding: 4px 10px;
+  border: 2px solid var(--ink);
+  border-radius: 16px;
+  background: var(--paper);
+  color: var(--ink);
+  text-decoration: none;
+  white-space: nowrap;
+}
+/* border gives the dot a defined boundary regardless of fill contrast —
+   several chapter hues (encoders cyan, network orange, how yellow) fall
+   below the 3:1 non-text contrast minimum against paper on their own. */
+.tool-chip-dot { width: 7px; height: 7px; border-radius: 50%; background: var(--dot); border: 1px solid var(--ink); flex-shrink: 0; }
+.tool-chip.current { background: var(--ink); color: var(--paper); }
+.tool-chip.current .tool-chip-dot { background: var(--dot); }
+
+/* Tool-page title block (replaces the old hero-banner.js gradient hero) */
+.tool-title-block { margin-bottom: 22px; }
+.tool-title-block .caption-box { margin-bottom: 10px; }
+.tool-title {
+  font-family: 'Comic Neue', cursive;
+  font-weight: 700;
+  font-size: 2rem;
+  color: var(--ink);
+  margin: 4px 0 8px;
+}
+.tool-desc { font-size: 1rem; line-height: 1.55; max-width: 640px; margin-bottom: 12px; }
+
+/* Workspace interior controls — used ONLY inside a .panel-body that holds
+   an actual tool (CLAUDE.md: no comic fonts / no decoration inside the
+   workspace). Comic Neue, not Bangers; flat 2px shadow, not the bold
+   comic offset. */
+.workspace-label {
+  font-family: 'Comic Neue', cursive;
+  font-weight: 700;
+  font-size: .78rem;
+  letter-spacing: .5px;
+  text-transform: uppercase;
+  color: var(--ink);
+  opacity: .7;
+  margin-bottom: 6px;
+}
+.workspace-btn {
+  font-family: 'Comic Neue', cursive;
+  font-weight: 700;
+  font-size: .88rem;
+  border: 2px solid var(--ink);
+  border-radius: 5px;
+  padding: 7px 16px;
+  cursor: pointer;
+  box-shadow: 2px 2px 0 var(--ink);
+  transition: transform .1s, box-shadow .1s;
+  background: var(--paper);
+  color: var(--ink);
+}
+.workspace-btn:active { transform: translate(1px, 1px); box-shadow: 1px 1px 0 var(--ink); }
+/* Ink text throughout, not white-on-fill: white on this green is 3.2:1 and
+   white/ink on this red are both under 4.5:1 — neither clears AA normal-text
+   contrast. Ink-on-green (5.7:1) passes; red stays an outline accent
+   instead of a fill so its border (3.8:1) carries the "danger" signal
+   without needing red as a text color anywhere. */
+.workspace-btn-primary { background: var(--green); color: var(--ink); }
+.workspace-btn-danger  { background: var(--paper); color: var(--ink); border-color: var(--red); }
+.workspace-select {
+  font-family: 'Space Mono', monospace;
+  font-size: .82rem;
+  border: 2px solid var(--ink);
+  border-radius: 5px;
+  background: #fff;
+  color: var(--ink);
+  padding: 5px 10px;
+  outline: none;
+  cursor: pointer;
+}
+.workspace-row { display: flex; flex-wrap: wrap; gap: 12px; align-items: center; margin: 14px 0; }
+.workspace-hint {
+  font-family: 'Space Mono', monospace;
+  font-size: .68rem;
+  color: rgba(26, 20, 16, .7);
+}
+.workspace-hint kbd {
+  font-family: 'Space Mono', monospace;
+  border: 1px solid rgba(26, 20, 16, .3);
+  border-radius: 3px;
+  padding: 0 4px;
+  background: var(--paper2);
+}
+.workspace-divider {
+  border: none;
+  border-top: 2px dashed rgba(26, 20, 16, .2);
+  margin: 18px 0;
+}
+
+/* Related-tools compact card (paper+ink, hue as top-border accent only) */
+.related-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; }
+.related-card {
+  background: var(--paper);
+  border: 2px solid var(--ink);
+  border-top: 3px solid var(--cc, var(--hue-encoders));
+  border-radius: 6px;
+  padding: 10px 12px;
+  text-decoration: none;
+  color: var(--ink);
+  display: block;
+  transition: transform .1s, box-shadow .1s;
+  box-shadow: 3px 3px 0 var(--ink);
+}
+.related-card:hover { transform: translate(-1px, -2px); box-shadow: 5px 5px 0 var(--ink); }
+.related-card-name { font-family: 'Comic Neue', cursive; font-weight: 700; font-size: .9rem; }
+.related-card-desc { font-size: .76rem; opacity: .7; margin-top: 3px; line-height: 1.35; }
+
+@media (max-width: 760px) {
+  .related-grid { grid-template-columns: repeat(2, 1fr); }
+  .tool-header { gap: 10px; }
+}
+@media (max-width: 420px) {
+  .related-grid { grid-template-columns: 1fr; }
+}
+
+/* ---- UTILITIES ---- */
+@media (max-width: 760px) {
+  .hero { flex-direction: column; gap: 10px; }
+  .hero-text h1 { font-size: 2rem; }
+}
