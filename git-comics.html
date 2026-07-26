@@ -6,42 +6,10 @@
 <title>Git Comics — DevDunia</title>
 <meta name="description" content="Learn Git version control the comic-book way! Branches, commits, merges and more explained through panels, characters and epic adventures.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="css/comic.css">
 <link href="https://fonts.googleapis.com/css2?family=Bangers&family=Comic+Neue:wght@400;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
 <style>
-:root {
-  --ink: #1a1410;
-  --paper: #fdf3e3;
-  --paper2: #fbe9cc;
-  --red: #e63946;
-  --blue: #1d6fb8;
-  --yellow: #ffd23f;
-  --green: #3fa34d;
-  --pink: #ff6b9d;
-  --purple: #8a4fff;
-  --orange: #ff8c42;
-}
-
-*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-
-body {
-  font-family: 'Comic Neue', cursive;
-  font-weight: 400;
-  color: var(--ink);
-  background-color: var(--paper);
-  background-image: radial-gradient(var(--ink) 0.5px, transparent 0.6px);
-  background-size: 14px 14px;
-  background-attachment: fixed;
-  min-height: 100vh;
-}
-
-.paper-overlay {
-  position: fixed;
-  inset: 0;
-  background: rgba(253,243,227,.78);
-  pointer-events: none;
-  z-index: 0;
-}
-
+/* ---- TODO migrate: page-specific overrides, not yet centralized in css/comic.css ---- */
 .page-wrap {
   position: relative;
   z-index: 1;
@@ -164,12 +132,6 @@ body {
   box-shadow: 3px 3px 0 var(--ink);
   white-space: nowrap;
 }
-
-.badge-green  { background: var(--green);  color: #fff; }
-.badge-orange { background: var(--orange); color: #fff; }
-.badge-red    { background: var(--red);    color: #fff; }
-.badge-yellow { background: var(--yellow); color: var(--ink); }
-.badge-purple { background: var(--purple); color: #fff; }
 
 .hero-cta {
   font-family: 'Bangers', cursive;

@@ -6,172 +6,14 @@
 <title>JSON Beautifier — DevDunia</title>
 <meta name="description" content="Beautify and format JSON data with proper indentation and structure. Free online JSON beautifier tool for developers.">
 <meta property="og:type" content="website">
-<meta property="og:url" content="https://devdunia.com/production/json-beautifier.html">
+<meta property="og:url" content="https://devdunia.com/json-beautifier.html">
 <meta property="og:title" content="JSON Beautifier — DevDunia">
 <meta property="og:description" content="Beautify and format JSON data with proper indentation and structure. Free online JSON beautifier tool.">
 <meta property="og:image" content="https://devdunia.com/images/logo.png">
 <link rel="icon" type="image/png" href="images/logo.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="css/comic.css">
 <link href="https://fonts.googleapis.com/css2?family=Bangers&family=Comic+Neue:wght@400;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
-<style>
-:root {
-  --ink: #1a1410;
-  --paper: #fdf3e3;
-  --paper2: #fbe9cc;
-  --red: #e63946;
-  --blue: #1d6fb8;
-  --yellow: #ffd23f;
-  --green: #3fa34d;
-  --pink: #ff6b9d;
-  --purple: #8a4fff;
-  --orange: #ff8c42;
-}
-*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-body {
-  font-family: 'Comic Neue', cursive;
-  font-weight: 400;
-  color: var(--ink);
-  background-color: var(--paper);
-  background-image: radial-gradient(var(--ink) 0.5px, transparent 0.6px);
-  background-size: 14px 14px;
-  background-attachment: fixed;
-  min-height: 100vh;
-}
-.paper-overlay {
-  position: fixed; inset: 0;
-  background: rgba(253,243,227,.78);
-  pointer-events: none; z-index: 0;
-}
-.page-wrap {
-  position: relative; z-index: 1;
-  max-width: 1240px; margin: 0 auto;
-  padding: 20px 32px 60px;
-}
-
-
-
-.masthead-logo-text {
-  font-family: 'Bangers', cursive;
-  font-size: 1.9rem; letter-spacing: 2px;
-  color: #fff; text-shadow: 3px 3px 0 var(--ink); line-height: 1;
-}
-.masthead-logo-text span { color: var(--yellow); }
-
-
-
-
-.panel {
-  background: var(--paper);
-  border: 4px solid var(--ink); border-radius: 6px;
-  box-shadow: 7px 7px 0 var(--ink);
-  overflow: hidden; margin-bottom: 22px;
-}
-.panel-header {
-  background: var(--ink); color: var(--yellow);
-  font-family: 'Bangers', cursive; font-size: 1.2rem;
-  letter-spacing: 2px; padding: 8px 16px;
-  display: flex; align-items: center;
-  justify-content: space-between; gap: 10px;
-}
-.panel-header .panel-tag {
-  font-family: 'Space Mono', monospace; font-size: .65rem; font-weight: 700;
-  background: var(--yellow); color: var(--ink);
-  padding: 2px 7px; border-radius: 3px;
-}
-.panel-body { padding: 18px 20px; }
-.section-label {
-  font-family: 'Bangers', cursive; font-size: .95rem;
-  letter-spacing: 1px; color: var(--ink);
-  margin-bottom: 6px; text-transform: uppercase;
-}
-.comic-textarea {
-  width: 100%; background: #fff;
-  border: 3px solid var(--ink); border-radius: 6px;
-  padding: 12px 14px;
-  font-family: 'Space Mono', monospace; font-size: .82rem;
-  color: var(--ink); line-height: 1.6; resize: vertical;
-  min-height: 130px; box-shadow: inset 3px 3px 0 rgba(0,0,0,.06);
-  outline: none; transition: border-color .15s;
-}
-.comic-textarea:focus { border-color: var(--blue); box-shadow: inset 3px 3px 0 rgba(29,111,184,.1); }
-.comic-textarea::placeholder { color: #aaa; font-style: italic; }
-.comic-textarea[readonly] { background: var(--paper2); cursor: default; }
-.options-row {
-  display: flex; flex-wrap: wrap; gap: 14px;
-  margin: 14px 0; align-items: center;
-}
-.indent-label {
-  font-family: 'Bangers', cursive; font-size: 1rem;
-  letter-spacing: 1px; color: var(--ink);
-}
-.indent-select {
-  font-family: 'Space Mono', monospace; font-size: .85rem;
-  border: 3px solid var(--ink); border-radius: 6px;
-  background: #fff; color: var(--ink);
-  padding: 5px 10px; box-shadow: 3px 3px 0 var(--ink);
-  outline: none; cursor: pointer;
-}
-.btn-row { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 14px; }
-.btn {
-  font-family: 'Bangers', cursive; font-size: 1.1rem;
-  letter-spacing: 1px; border: 3px solid var(--ink);
-  border-radius: 6px; padding: 8px 20px; cursor: pointer;
-  box-shadow: 4px 4px 0 var(--ink);
-  transition: transform .1s, box-shadow .1s;
-  text-transform: uppercase;
-}
-.btn:active { transform: translate(2px,2px); box-shadow: 2px 2px 0 var(--ink); }
-.btn-primary { background: var(--blue);   color: #fff; }
-.btn-success { background: var(--green);  color: #fff; }
-.btn-danger  { background: var(--red);    color: #fff; }
-.btn-neutral { background: var(--paper2); color: var(--ink); }
-.btn-purple  { background: var(--purple); color: #fff; }
-.error-bubble {
-  display: none; position: relative;
-  background: #fff0f0; border: 3px solid var(--red);
-  border-radius: 14px; padding: 10px 14px; margin-top: 12px;
-  font-size: .9rem; font-weight: 700; color: var(--red);
-}
-.error-bubble::before {
-  content: ''; position: absolute; top: -16px; left: 22px;
-  border-width: 0 10px 16px; border-style: solid;
-  border-color: transparent transparent var(--red);
-}
-.error-bubble::after {
-  content: ''; position: absolute; top: -11px; left: 24px;
-  border-width: 0 8px 12px; border-style: solid;
-  border-color: transparent transparent #fff0f0;
-}
-.error-bubble.show { display: block; }
-.output-wrap { position: relative; }
-.copy-btn {
-  position: absolute; top: 8px; right: 8px;
-  font-family: 'Bangers', cursive; font-size: .95rem;
-  letter-spacing: 1px; background: var(--ink);
-  color: var(--yellow); border: 2px solid var(--ink);
-  border-radius: 4px; padding: 3px 10px; cursor: pointer;
-  box-shadow: 2px 2px 0 rgba(0,0,0,.4);
-  transition: transform .1s, box-shadow .1s;
-}
-.copy-btn:active { transform: translate(1px,1px); box-shadow: 1px 1px 0 rgba(0,0,0,.4); }
-.stats-row { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 14px; }
-.stat-chip {
-  font-family: 'Space Mono', monospace; font-size: .72rem; font-weight: 700;
-  padding: 4px 10px; border: 2px solid var(--ink); border-radius: 4px;
-  box-shadow: 2px 2px 0 var(--ink);
-  display: flex; align-items: center; gap: 5px;
-}
-.stat-chip .stat-label { opacity: .65; font-weight: 400; }
-.stat-chip.chip-blue   { background: var(--blue);   color: #fff; }
-.stat-chip.chip-green  { background: var(--green);  color: #fff; }
-.stat-chip.chip-purple { background: var(--purple); color: #fff; }
-.stat-chip.chip-yellow { background: var(--yellow); color: var(--ink); }
-.divider { border: none; border-top: 3px solid var(--ink); margin: 16px 0; }
-@media (max-width: 760px) {
-  .stats-row { gap: 6px; }
-  .options-row { flex-direction: column; align-items: flex-start; }
-}
-</style>
 </head>
 <body>
 <div class="paper-overlay"></div>
@@ -179,99 +21,230 @@ body {
 
 <div class="page-wrap">
 
-  <!-- MASTHEAD -->
-
-  <div data-tool-hero
-       data-title="JSON Beautifier"
-       data-chapter="01"
-       data-category="API &amp; Dev Tools"
-       data-icon="&#x1F4C4;"
-       data-desc="Paste minified JSON and format it with proper indentation and syntax highlighting. Validates structure too."
-       data-color="orange"
-       data-badges="JSON,FORMAT,VALIDATE,FREE"
-       data-badge-colors="orange,green,blue,yellow">
+  <!-- TOOL HEADER: logo + jump-search + chapter chips (canonical template piece) -->
+  <div class="tool-header">
+    <a href="index.html" aria-label="DevDunia home">
+      <img src="images/logo.png" alt="DevDunia" style="width:34px;height:34px;border:2px solid var(--ink);border-radius:6px;background:#fff;object-fit:contain;display:block">
+    </a>
+    <div class="tool-search speech-bubble">
+      <svg class="speech-bubble-bg" viewBox="0 0 100 24" preserveAspectRatio="none" aria-hidden="true">
+        <path d="M3,2 L97,2 Q99,2 99,4 L99,18 Q99,20 97,20 L14,20 L8,23 L9,20 L3,20 Q1,20 1,18 L1,4 Q1,2 3,2 Z"/>
+      </svg>
+      <div class="speech-bubble-content tool-search-inner">
+        <span aria-hidden="true">&#x1F50D;</span>
+        <input type="text" id="tool-search-input" class="tool-search-input" placeholder="Jump to another tool...">
+      </div>
+    </div>
+    <nav class="tool-chips" aria-label="Chapters">
+      <a class="tool-chip current" href="index.html#encoders" style="--dot:var(--hue-encoders)"><span class="tool-chip-dot"></span>Encoders</a>
+      <a class="tool-chip" href="index.html#security" style="--dot:var(--hue-security)"><span class="tool-chip-dot"></span>Security</a>
+      <a class="tool-chip" href="index.html#generators" style="--dot:var(--hue-generators)"><span class="tool-chip-dot"></span>Generators</a>
+      <a class="tool-chip" href="index.html#devtools" style="--dot:var(--hue-devtools)"><span class="tool-chip-dot"></span>Dev Tools</a>
+      <a class="tool-chip" href="index.html#network" style="--dot:var(--hue-network)"><span class="tool-chip-dot"></span>Network</a>
+      <a class="tool-chip" href="index.html#dns" style="--dot:var(--hue-dns)"><span class="tool-chip-dot"></span>DNS Tools</a>
+      <a class="tool-chip" href="index.html#how" style="--dot:var(--hue-how)"><span class="tool-chip-dot"></span>How X Works</a>
+      <a class="tool-chip" href="index.html#text" style="--dot:var(--hue-text)"><span class="tool-chip-dot"></span>Text Tools</a>
+      <a class="tool-chip" href="index.html#database" style="--dot:var(--hue-database)"><span class="tool-chip-dot"></span>Database</a>
+      <a class="tool-chip" href="index.html#python" style="--dot:var(--hue-python)"><span class="tool-chip-dot"></span>Python</a>
+    </nav>
   </div>
 
-  <!-- INPUT PANEL -->
+  <!-- TITLE BLOCK: caption-box + tool name (replaces the old gradient hero) -->
+  <div class="tool-title-block">
+    <span class="caption-box" style="--dot:var(--hue-encoders)"><span class="tool-chip-dot"></span>Encoders &amp; Decoders</span>
+    <h1 class="tool-title">JSON Beautifier</h1>
+    <p class="tool-desc">Paste minified JSON and format it with proper indentation and syntax highlighting. Validates structure too.</p>
+    <div class="hero-badges">
+      <span class="badge badge-blue">JSON</span>
+      <span class="badge badge-purple">FORMAT</span>
+      <span class="badge badge-yellow">VALIDATE</span>
+      <span class="badge badge-blue">FREE</span>
+    </div>
+  </div>
+
+  <!-- WORKSPACE PANEL: comic chrome outside, clean function-only interior -->
   <div class="panel">
     <div class="panel-header">
-      &#x1F4E5; PASTE YOUR JSON HERE
-      <span class="panel-tag">INPUT</span>
+      &#x1F4E5; JSON BEAUTIFIER
+      <span class="panel-tag">WORKSPACE</span>
     </div>
     <div class="panel-body">
-      <div class="section-label">Raw JSON Input</div>
+
+      <div class="workspace-label">Input</div>
       <textarea id="json-input" class="comic-textarea" rows="8"
         placeholder='Paste your JSON here... e.g. {"name":"DevDunia","tools":["beautifier"]}'></textarea>
 
-      <div class="options-row">
-        <span class="indent-label">Indent size:</span>
-        <select id="indent-select" class="indent-select">
+      <div class="workspace-row">
+        <label class="workspace-hint" for="indent-select">Indent size:</label>
+        <select id="indent-select" class="workspace-select">
           <option value="2" selected>2 spaces</option>
           <option value="4">4 spaces</option>
           <option value="tab">Tab</option>
         </select>
       </div>
 
-      <div class="btn-row">
-        <button id="beautify-btn" class="btn btn-success">&#x2728; Beautify!</button>
-        <button id="clear-btn" class="btn btn-danger">&#x1F5D1; Clear</button>
+      <div class="btn-row" style="align-items:center">
+        <button id="beautify-btn" class="workspace-btn workspace-btn-primary">&#x2728; Beautify</button>
+        <button id="clear-btn" class="workspace-btn workspace-btn-danger">&#x1F5D1; Clear</button>
+        <span class="workspace-hint"><kbd>&#8984;</kbd>/<kbd>Ctrl</kbd>+<kbd>Enter</kbd> to run &middot; <kbd>&#8984;</kbd>/<kbd>Ctrl</kbd>+<kbd>C</kbd> on output to copy</span>
       </div>
 
       <div id="error-bubble" class="error-bubble">
         &#x1F4A5; <span id="error-msg">Invalid JSON!</span>
       </div>
+
+      <hr class="workspace-divider" id="output-divider" style="display:none">
+
+      <div id="output-section" style="display:none">
+        <div class="workspace-label">Output</div>
+        <div class="output-wrap">
+          <textarea id="json-output" class="comic-textarea" rows="12" readonly></textarea>
+          <button id="copy-btn" class="copy-btn">&#x1F4CB; COPY</button>
+          <span class="action-burst-pop" id="copy-burst" style="--burst-hue:var(--hue-encoders)">
+            <svg class="action-burst-bg" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true">
+              <path d="M50,6 L58,22 L74,12 L68,30 L86,28 L74,42 L90,52 L72,54 L80,72 L62,62 L58,80 L48,64 L34,78 L32,60 L14,64 L24,48 L8,40 L26,32 L16,16 L36,24 Z"/>
+            </svg>
+            <span class="action-burst-text">KA-CHUNK!</span>
+          </span>
+        </div>
+
+        <div class="stats-row">
+          <div class="stat-chip chip-blue">
+            <span class="stat-label">CHARS</span>
+            <span id="stat-chars">&mdash;</span>
+          </div>
+          <div class="stat-chip chip-yellow">
+            <span class="stat-label">LINES</span>
+            <span id="stat-lines">&mdash;</span>
+          </div>
+          <div class="stat-chip" style="background:var(--purple);color:#fff">
+            <span class="stat-label">SIZE</span>
+            <span id="stat-size">&mdash;</span>
+          </div>
+        </div>
+      </div>
+
     </div>
   </div>
 
-  <!-- OUTPUT PANEL -->
-  <div class="panel" id="output-panel" style="display:none;">
-    <div class="panel-header">
-      &#x1F4E4; BEAUTIFIED OUTPUT
-      <span class="panel-tag">OUTPUT</span>
-    </div>
+  <!-- SEO / USEFULNESS COPY -->
+  <div class="panel" style="box-shadow:none;border-width:2px">
     <div class="panel-body">
-      <div class="section-label">Formatted JSON</div>
-      <div class="output-wrap">
-        <textarea id="json-output" class="comic-textarea" rows="12" readonly></textarea>
-        <button id="copy-btn" class="copy-btn">&#x1F4CB; COPY</button>
-      </div>
-
-      <div class="stats-row">
-        <div class="stat-chip chip-blue">
-          <span class="stat-label">CHARS</span>
-          <span id="stat-chars">—</span>
-        </div>
-        <div class="stat-chip chip-green">
-          <span class="stat-label">LINES</span>
-          <span id="stat-lines">—</span>
-        </div>
-        <div class="stat-chip chip-purple">
-          <span class="stat-label">SIZE</span>
-          <span id="stat-size">—</span>
-        </div>
-      </div>
+      <div class="workspace-label" style="font-size:.95rem;opacity:1;margin-bottom:8px">What is JSON beautifying, and when do you need it?</div>
+      <p style="font-size:.95rem;line-height:1.6;max-width:760px">
+        JSON beautifying (or "pretty-printing") takes minified or inconsistently-formatted
+        JSON &mdash; often a single unreadable line returned by an API or logged by a
+        server &mdash; and re-indents it into a structured, human-readable shape. You'll
+        reach for it whenever you're debugging an API response, reading a config file
+        someone minified, or pasting JSON into a code review and want to actually see
+        what's in it. This tool also validates the JSON as it formats it, so a syntax
+        error (a trailing comma, an unquoted key, a missing bracket) surfaces immediately
+        with a clear message instead of silently failing. Everything runs client-side in
+        your browser &mdash; nothing you paste here is sent anywhere.
+      </p>
     </div>
+  </div>
+
+  <!-- RELATED TOOLS (tools.json-driven) -->
+  <div id="related-section" style="display:none">
+    <div class="workspace-label" style="font-size:.95rem;opacity:1;margin:24px 0 10px">Related tools</div>
+    <div class="related-grid" id="related-grid"></div>
   </div>
 
 </div><!-- /page-wrap -->
 
+<!-- ════════════════ FOOTER ════════════════ -->
+<footer class="site-footer">
+  <div class="footer-inner">
+
+    <div>
+      <div class="footer-brand">
+        <img src="images/logo.png" alt="DevDunia" class="footer-logo">
+        DevDunia
+      </div>
+      <p class="footer-bio">70+ free developer tools in your browser. No login, no tracking, no fluff. Built by Ali Anwar (@echobash) &mdash; open to contributions from the community.</p>
+      <div class="footer-links-col">
+        <a href="https://echobash.com" target="_blank" rel="noopener" class="footer-link-auth">
+          <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 17.93c-3.95-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93zm6.9-2.54c-.26-.81-1-1.39-1.9-1.39h-1v-3c0-.55-.45-1-1-1H8v-2h2c.55 0 1-.45 1-1V7h2c1.1 0 2-.9 2-2v-.41c2.93 1.19 5 4.06 5 7.41 0 2.08-.8 3.97-2.1 5.39z"/></svg>
+          Ali Anwar &mdash; echobash.com
+        </a>
+        <a href="https://github.com/echobash" target="_blank" rel="noopener" class="footer-link-auth">
+          <svg viewBox="0 0 24 24"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.3 3.44 9.8 8.2 11.38.6.1.82-.26.82-.58v-2.03c-3.34.72-4.04-1.61-4.04-1.61-.54-1.38-1.33-1.75-1.33-1.75-1.09-.74.08-.73.08-.73 1.2.08 1.84 1.24 1.84 1.24 1.07 1.83 2.8 1.3 3.49 1 .1-.78.42-1.3.76-1.6-2.67-.3-5.47-1.33-5.47-5.93 0-1.31.47-2.38 1.24-3.22-.13-.3-.54-1.52.12-3.18 0 0 1.01-.32 3.3 1.23a11.5 11.5 0 013-.4c1.02 0 2.04.13 3 .4 2.28-1.55 3.29-1.23 3.29-1.23.66 1.66.25 2.88.12 3.18.77.84 1.24 1.91 1.24 3.22 0 4.61-2.81 5.63-5.48 5.92.43.37.81 1.1.81 2.22v3.29c0 .32.22.69.83.57C20.57 21.8 24 17.3 24 12c0-6.63-5.37-12-12-12z"/></svg>
+          github.com/echobash
+        </a>
+        <a href="https://linkedin.com/in/echobash" target="_blank" rel="noopener" class="footer-link-auth">
+          <svg viewBox="0 0 24 24"><path d="M20.45 20.45h-3.55v-5.57c0-1.33-.03-3.04-1.85-3.04-1.85 0-2.14 1.45-2.14 2.94v5.67H9.36V9h3.41v1.56h.05c.47-.9 1.63-1.85 3.36-1.85 3.59 0 4.25 2.36 4.25 5.43v6.31zM5.34 7.43a2.06 2.06 0 110-4.12 2.06 2.06 0 010 4.12zM3.56 20.45h3.55V9H3.56v11.45zM22.22 0H1.77C.79 0 0 .77 0 1.72v20.56C0 23.23.79 24 1.77 24h20.45c.98 0 1.78-.77 1.78-1.72V1.72C24 .77 23.2 0 22.22 0z"/></svg>
+          linkedin.com/in/echobash
+        </a>
+      </div>
+    </div>
+
+    <div>
+      <div class="footer-col-h">CHAPTERS</div>
+      <nav class="footer-nav">
+        <a href="index.html#encoders">01 &mdash; Encoders / Decoders</a>
+        <a href="index.html#security">02 &mdash; Security &amp; VAPT</a>
+        <a href="index.html#generators">03 &mdash; Generators</a>
+        <a href="index.html#devtools">04 &mdash; API &amp; Dev Tools</a>
+        <a href="index.html#network">05 &mdash; Network Protocols</a>
+        <a href="index.html#dns">05b &mdash; DNS Tools</a>
+        <a href="index.html#how">HOW &mdash; How X Works</a>
+        <a href="index.html#text">06 &mdash; Text Tools</a>
+        <a href="index.html#database">07 &mdash; Database</a>
+        <a href="index.html#python">08 &mdash; Python Toolkit</a>
+      </nav>
+    </div>
+
+    <div>
+      <div class="footer-col-h">PROJECT</div>
+      <nav class="footer-nav">
+        <a href="https://github.com/echobash/devdunia" target="_blank" rel="noopener">GitHub Repo</a>
+        <a href="https://github.com/echobash/devdunia/blob/main/CONTRIBUTING.md" target="_blank" rel="noopener">Contribute</a>
+        <a href="https://github.com/echobash/devdunia/blob/main/CODE_OF_CONDUCT.md" target="_blank" rel="noopener">Code of Conduct</a>
+        <a href="support.html">Support DevDunia</a>
+        <a href="contact.html">Contact</a>
+        <a href="privacy/">Privacy Policy</a>
+      </nav>
+    </div>
+
+  </div>
+
+  <div class="footer-bottom">
+    <span class="footer-copy">Made with &#x2665; by <a href="https://echobash.com" target="_blank" rel="noopener">Ali Anwar</a> &mdash; Free, private, open source.</span>
+    <span class="footer-end">THE END! ...FOR NOW</span>
+  </div>
+</footer>
+
 <script src="masthead.js"></script>
-<script src="hero-banner.js"></script>
-<script src="author-card.js"></script>
 <script>
-(function() {
+(function () {
+  // ---- Jump-search: redirects to index.html, optionally with a ?q= hint ----
+  var jumpInput = document.getElementById('tool-search-input');
+  jumpInput.addEventListener('keydown', function (e) {
+    if (e.key !== 'Enter') return;
+    var q = jumpInput.value.trim();
+    window.location.href = q ? 'index.html?q=' + encodeURIComponent(q) : 'index.html';
+  });
+})();
+</script>
+<script>
+(function () {
   var inputEl    = document.getElementById('json-input');
   var outputEl   = document.getElementById('json-output');
   var beautifyBtn= document.getElementById('beautify-btn');
   var clearBtn   = document.getElementById('clear-btn');
   var copyBtn    = document.getElementById('copy-btn');
-  var outPanel   = document.getElementById('output-panel');
+  var outSection = document.getElementById('output-section');
+  var outDivider = document.getElementById('output-divider');
   var errBubble  = document.getElementById('error-bubble');
   var errMsg     = document.getElementById('error-msg');
   var indentSel  = document.getElementById('indent-select');
   var statChars  = document.getElementById('stat-chars');
   var statLines  = document.getElementById('stat-lines');
   var statSize   = document.getElementById('stat-size');
+  var copyBurst  = document.getElementById('copy-burst');
+
+  var prefersReducedMotion = !!(window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches);
 
   function showError(msg) { errMsg.textContent = msg; errBubble.classList.add('show'); }
   function hideError() { errBubble.classList.remove('show'); }
@@ -287,6 +260,11 @@ body {
     return v === 'tab' ? '\t' : parseInt(v, 10);
   }
 
+  function showOutput(show) {
+    outSection.style.display = show ? 'block' : 'none';
+    outDivider.style.display = show ? 'block' : 'none';
+  }
+
   function beautify() {
     var input = inputEl.value.trim();
     if (!input) { showError('Please enter some JSON data first!'); return; }
@@ -294,7 +272,7 @@ body {
       var parsed = JSON.parse(input);
       var beautified = JSON.stringify(parsed, null, getIndent());
       outputEl.value = beautified;
-      outPanel.style.display = 'block';
+      showOutput(true);
       hideError();
       var bytes = new Blob([beautified]).size;
       statChars.textContent = beautified.length.toLocaleString();
@@ -302,7 +280,7 @@ body {
       statSize.textContent  = formatBytes(bytes);
     } catch (error) {
       showError('Invalid JSON: ' + error.message);
-      outPanel.style.display = 'none';
+      showOutput(false);
     }
   }
 
@@ -311,25 +289,48 @@ body {
   clearBtn.addEventListener('click', function() {
     inputEl.value = '';
     outputEl.value = '';
-    outPanel.style.display = 'none';
+    showOutput(false);
     hideError();
   });
 
-  copyBtn.addEventListener('click', function() {
+  function doCopy() {
     outputEl.select();
     try { document.execCommand('copy'); } catch(e) {}
     if (navigator.clipboard) navigator.clipboard.writeText(outputEl.value).catch(function(){});
+
+    // Accessible state change — always happens, not gated by motion prefs.
     var orig = copyBtn.textContent;
-    copyBtn.textContent = '✔ COPIED!';
+    copyBtn.textContent = '✔ Copied';
     copyBtn.style.background = 'var(--green)';
     setTimeout(function() {
       copyBtn.textContent = orig;
       copyBtn.style.background = 'var(--ink)';
     }, 1800);
-  });
+
+    // Decorative KA-CHUNK! burst — skipped under prefers-reduced-motion.
+    if (!prefersReducedMotion) {
+      copyBurst.classList.remove('show');
+      void copyBurst.offsetWidth; // restart the CSS animation
+      copyBurst.classList.add('show');
+    }
+  }
+
+  copyBtn.addEventListener('click', doCopy);
 
   inputEl.addEventListener('keydown', function(e) {
     if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') { beautify(); }
+  });
+
+  // Ctrl/Cmd+C on the output copies the whole thing via the burst path —
+  // but only when nothing is already selected, so a deliberate partial
+  // selection still copies normally instead of being hijacked.
+  outputEl.addEventListener('keydown', function(e) {
+    if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'c') {
+      if (outputEl.selectionStart === outputEl.selectionEnd) {
+        e.preventDefault();
+        doCopy();
+      }
+    }
   });
 
   // Example on load
@@ -337,6 +338,31 @@ body {
     var ex = {"name":"DevDunia","description":"Your world of developer tools","tools":[{"name":"JSON Beautifier","category":"Encoding/Decoding","popular":true}],"features":{"free":true,"offline":true,"simple":true}};
     inputEl.value = JSON.stringify(ex);
   });
+})();
+</script>
+<script>
+(function () {
+  var CURRENT_SLUG = 'json-beautifier';
+  var CURRENT_CATEGORY = 'encoders';
+  var grid = document.getElementById('related-grid');
+  var section = document.getElementById('related-section');
+  if (!window.fetch) return;
+
+  fetch('tools.json').then(function (r) { return r.json(); }).then(function (data) {
+    var pool = data.tools.filter(function (t) { return t.slug !== CURRENT_SLUG; });
+    var sameChapter = pool.filter(function (t) { return t.category === CURRENT_CATEGORY; });
+    var rest = pool.filter(function (t) { return t.category !== CURRENT_CATEGORY; });
+    var picks = sameChapter.concat(rest).slice(0, 4);
+    if (picks.length < 3) return; // not enough data to be useful — stay hidden
+
+    grid.innerHTML = picks.map(function (t) {
+      return '<a class="related-card" href="' + t.url + '" style="--cc:var(--hue-' + t.category + ')">' +
+        '<div class="related-card-name">' + t.name + '</div>' +
+        '<div class="related-card-desc">' + t.description + '</div>' +
+        '</a>';
+    }).join('');
+    section.style.display = 'block';
+  }).catch(function () { /* tools.json unreachable (e.g. file://) — omit the section */ });
 })();
 </script>
 </body>

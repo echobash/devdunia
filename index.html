@@ -5,351 +5,18 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <link rel="icon" type="image/png" href="images/logo.png">
 <link rel="apple-touch-icon" href="images/logo.png">
-<title>DevDunia — 100+ Free Developer Tools</title>
-<meta name="description" content="100+ free developer tools in comic-book style. Encode, decode, format, generate, test — all in your browser. No signup, no server, instant results.">
+<title>DevDunia — 70+ Free Developer Tools</title>
+<meta name="description" content="70+ free developer tools in comic-book style. Encode, decode, format, generate, test — all in your browser. No signup, no server, instant results.">
 <meta property="og:type" content="website">
 <meta property="og:url" content="https://devdunia.com/">
-<meta property="og:title" content="DevDunia — 100+ Free Developer Tools">
-<meta property="og:description" content="100+ free developer tools. No login, no server, instant results.">
+<meta property="og:title" content="DevDunia — 70+ Free Developer Tools">
+<meta property="og:description" content="70+ free developer tools. No login, no server, instant results.">
 <meta property="og:image" content="https://devdunia.com/images/logo.png">
 <meta name="twitter:card" content="summary_large_image">
 <link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="css/comic.css">
+<link rel="stylesheet" href="css/index.css">
 <link href="https://fonts.googleapis.com/css2?family=Bangers&family=Comic+Neue:wght@400;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
-<style>
-:root {
-  --ink:#1a1410; --paper:#fdf3e3; --paper2:#fbe9cc;
-  --red:#e63946; --blue:#1d6fb8; --yellow:#ffd23f;
-  --green:#3fa34d; --pink:#ff6b9d; --purple:#8a4fff;
-  --orange:#ff8c42; --teal:#0d9488;
-}
-*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
-html{scroll-behavior:smooth}
-body{
-  font-family:'Comic Neue',cursive;font-weight:400;color:var(--ink);
-  background-color:var(--paper);
-  background-image:radial-gradient(var(--ink) 0.5px,transparent 0.6px);
-  background-size:14px 14px;background-attachment:fixed;
-  min-height:100vh;overflow-x:hidden;
-}
-.paper-overlay{position:fixed;inset:0;background:rgba(253,243,227,.78);pointer-events:none;z-index:0}
-
-/* masthead injected by masthead.js */
-
-.page-wrap{position:relative;z-index:1;max-width:1240px;margin:0 auto;padding:0 28px 60px}
-
-/* ── COVER SPLASH ── */
-.cover-splash{
-  display:grid;grid-template-columns:auto 340px;
-  border:4px solid var(--ink);border-radius:8px;
-  box-shadow:9px 9px 0 var(--ink);
-  overflow:hidden;margin:24px 0 28px;
-}
-/* Right author-card column */
-.cover-splash>[data-author-card]{
-  background:#0f3d70;
-  background-image:radial-gradient(rgba(255,255,255,.1) 1px,transparent 1px);
-  background-size:12px 12px;
-  border-left:4px solid rgba(0,0,0,.25);
-}
-.cover-splash .acard{
-  background:transparent;border-left:none;
-  padding:24px 22px;gap:16px;
-}
-.cover-splash .acard-eyebrow{font-size:.65rem;letter-spacing:4px}
-.cover-splash .acard-avatar{width:72px;height:72px;border-width:4px}
-.cover-splash .acard-name{font-size:2rem;letter-spacing:2px}
-.cover-splash .acard-handle{font-size:.8rem;margin-top:3px}
-.cover-splash .acard-bio{font-size:1rem;line-height:1.5}
-.cover-splash .acard-stats{margin-top:4px}
-.cover-splash .acard-stat{padding:12px 6px}
-.cover-splash .acard-stat-n{font-size:1.6rem}
-.cover-splash .acard-stat-l{font-size:.62rem;margin-top:3px}
-.cover-splash .acard-links{margin-top:16px;gap:9px}
-.cover-splash .acard-link{font-size:1rem;padding:7px 12px}
-.cover-splash .acard-link svg{width:16px;height:16px}
-
-.splash-left{
-  background:var(--blue);
-  background-image:radial-gradient(rgba(255,255,255,.15) 1px,transparent 1px);
-  background-size:12px 12px;
-  padding:36px 44px 36px 40px;
-  display:flex;flex-direction:column;justify-content:center;gap:18px;
-  position:relative;overflow:hidden;width:100%;
-}
-.splash-left::before{
-  content:'';position:absolute;top:-80px;right:-80px;
-  width:300px;height:300px;background:rgba(255,255,255,.05);border-radius:50%;
-}
-.splash-left::after{
-  content:'';position:absolute;bottom:-60px;left:-60px;
-  width:200px;height:200px;background:rgba(0,0,0,.07);border-radius:50%;
-}
-
-/* Brand row */
-.splash-logo-row{display:flex;align-items:center;gap:14px;position:relative;z-index:1}
-.splash-logo-img{
-  width:88px;height:88px;border:4px solid #fff;border-radius:14px;
-  box-shadow:5px 5px 0 var(--ink);background:#fff;object-fit:contain;flex-shrink:0;
-}
-.splash-brand-name{
-  font-family:'Bangers',cursive;font-size:7rem;letter-spacing:4px;
-  color:#fff;text-shadow:6px 6px 0 var(--ink);line-height:.88;
-}
-.splash-brand-name span{color:var(--yellow)}
-
-/* Comic-fun badge */
-.splash-comic-tag{
-  position:relative;z-index:1;
-  display:inline-flex;align-items:center;gap:7px;width:fit-content;
-  background:var(--yellow);color:var(--ink);
-  font-family:'Bangers',cursive;font-size:1rem;letter-spacing:2px;
-  border:3px solid var(--ink);border-radius:6px;
-  padding:4px 14px;box-shadow:3px 3px 0 var(--ink);
-  transform:rotate(-1.5deg);
-}
-.splash-comic-tag-white{
-  background:#fff;color:var(--ink);
-  transform:rotate(1deg);
-  box-shadow:3px 3px 0 var(--ink);
-}
-
-/* Big multi-line headline */
-.splash-headline{
-  position:relative;z-index:1;
-  font-family:'Bangers',cursive;letter-spacing:2px;
-  color:#fff;text-shadow:5px 5px 0 var(--ink);line-height:1;
-}
-.splash-headline .hl-line{display:block;font-size:3.6rem}
-.splash-headline .hl-line-y{display:block;font-size:3.6rem;color:var(--yellow)}
-.splash-headline .hl-line-sm{
-  display:block;font-size:1.1rem;color:rgba(255,255,255,.75);
-  text-shadow:1px 1px 0 var(--ink);letter-spacing:1px;
-  font-family:'Comic Neue',cursive;font-weight:700;font-style:italic;
-  margin-bottom:4px;
-}
-
-/* Pitch text */
-.splash-pitch{
-  position:relative;z-index:1;
-  font-family:'Comic Neue',cursive;font-size:1.05rem;
-  color:rgba(255,255,255,.88);line-height:1.6;max-width:480px;
-}
-.splash-pitch strong{color:var(--yellow);font-weight:700}
-
-/* Tool example chips */
-.splash-tools{
-  position:relative;z-index:1;
-  display:flex;flex-wrap:wrap;gap:7px;
-}
-.splash-tool-chip{
-  font-family:'Space Mono',monospace;font-size:.65rem;font-weight:700;
-  background:rgba(255,255,255,.13);color:#fff;
-  border:2px solid rgba(255,255,255,.3);border-radius:4px;
-  padding:4px 10px;box-shadow:2px 2px 0 rgba(0,0,0,.2);
-  letter-spacing:.5px;text-transform:uppercase;
-}
-.splash-tool-chip-more{
-  background:var(--yellow);color:var(--ink);
-  border-color:var(--ink);box-shadow:2px 2px 0 var(--ink);
-}
-
-.splash-cta{display:flex;gap:10px;flex-wrap:wrap;position:relative;z-index:1}
-.btn{
-  font-family:'Bangers',cursive;font-size:1.1rem;letter-spacing:1px;
-  border:3px solid var(--ink);border-radius:6px;padding:9px 22px;
-  cursor:pointer;box-shadow:4px 4px 0 var(--ink);
-  transition:transform .1s,box-shadow .1s;text-decoration:none;display:inline-block;
-}
-.btn:hover{transform:translate(-1px,-2px);box-shadow:5px 6px 0 var(--ink)}
-.btn:active{transform:translate(2px,2px);box-shadow:2px 2px 0 var(--ink)}
-.btn-yellow{background:var(--yellow);color:var(--ink)}
-.btn-white{background:#fff;color:var(--ink)}
-
-/* ── SEARCH ── */
-.search-panel{
-  background:var(--paper);border:4px solid var(--ink);border-radius:6px;
-  box-shadow:7px 7px 0 var(--ink);padding:14px 20px;margin-bottom:20px;
-  display:flex;gap:12px;align-items:center;flex-wrap:wrap;
-}
-.search-label{
-  font-family:'Bangers',cursive;font-size:1.3rem;letter-spacing:1px;
-  white-space:nowrap;flex-shrink:0;
-}
-.search-input{
-  flex:1;min-width:180px;background:#fff;border:3px solid var(--ink);
-  border-radius:6px;padding:8px 14px;font-family:'Space Mono',monospace;
-  font-size:.88rem;color:var(--ink);outline:none;box-shadow:3px 3px 0 var(--ink);
-  transition:border-color .15s;
-}
-.search-input:focus{border-color:var(--blue)}
-.search-input::placeholder{color:#aaa;font-style:italic}
-.search-count{
-  font-family:'Space Mono',monospace;font-size:.75rem;font-weight:700;
-  background:var(--yellow);color:var(--ink);padding:5px 12px;
-  border:2px solid var(--ink);border-radius:4px;box-shadow:2px 2px 0 var(--ink);white-space:nowrap;
-}
-
-/* ── CATEGORY PILLS ── */
-.cat-pills{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:30px}
-.cat-pill{
-  font-family:'Bangers',cursive;font-size:.95rem;letter-spacing:1px;
-  padding:5px 14px;border:3px solid var(--ink);border-radius:6px;
-  box-shadow:3px 3px 0 var(--ink);text-decoration:none;color:#fff;
-  transition:transform .1s,box-shadow .1s;
-}
-.cat-pill:hover{transform:translate(-1px,-2px);box-shadow:4px 5px 0 var(--ink)}
-.cat-pill:active{transform:translate(1px,1px);box-shadow:2px 2px 0 var(--ink)}
-.cat-pill-ink{background:var(--ink);color:var(--yellow)}
-
-/* ── CHAPTER HEADER ── */
-.chapter-section{margin-bottom:44px}
-.chapter-section.hidden{display:none}
-.chapter-banner{
-  display:flex;align-items:stretch;
-  border:4px solid var(--ink);border-radius:6px;
-  box-shadow:7px 7px 0 var(--ink);
-  overflow:hidden;margin-bottom:18px;
-}
-.chapter-num-block{
-  font-family:'Bangers',cursive;font-size:2.8rem;
-  min-width:72px;display:flex;align-items:center;justify-content:center;
-  color:#fff;text-shadow:3px 3px 0 rgba(0,0,0,.3);
-  border-right:4px solid var(--ink);flex-shrink:0;letter-spacing:1px;
-  line-height:1;padding:12px 0;
-}
-.chapter-info{
-  flex:1;padding:12px 20px;display:flex;flex-direction:column;
-  justify-content:center;gap:4px;
-  background:var(--paper);
-}
-.chapter-kicker{
-  font-family:'Space Mono',monospace;font-size:.58rem;font-weight:700;
-  color:rgba(26,20,16,.5);letter-spacing:3px;text-transform:uppercase;
-}
-.chapter-title{
-  font-family:'Bangers',cursive;font-size:2.2rem;letter-spacing:2px;
-  color:var(--ink);line-height:1;text-transform:uppercase;
-}
-.chapter-sub{font-size:.85rem;color:var(--ink);opacity:.65;line-height:1.4}
-.chapter-count{
-  font-family:'Bangers',cursive;font-size:1.4rem;letter-spacing:1px;
-  padding:8px 18px;display:flex;align-items:center;justify-content:center;
-  gap:4px;flex-direction:column;border-left:4px solid var(--ink);
-  flex-shrink:0;background:var(--paper2);
-  color:var(--ink);
-}
-.chapter-count span{font-size:.55rem;font-family:'Space Mono',monospace;letter-spacing:1px;opacity:.6}
-
-/* ── TOOL GRID ── */
-.tool-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px}
-.tool-card{
-  --cc:var(--blue);
-  background-color:color-mix(in srgb, var(--cc) 72%, #1a1410);
-  background-image:radial-gradient(rgba(255,255,255,.25) 0.6px,transparent 1px);
-  background-size:12px 12px;
-  border:4px solid var(--ink);border-radius:6px;
-  box-shadow:6px 6px 0 var(--ink);text-decoration:none;color:#fff;
-  overflow:hidden;display:flex;flex-direction:column;
-  transition:transform .15s,box-shadow .15s;position:relative;
-}
-.tool-card:nth-child(3n+1){transform:rotate(-0.6deg)}
-.tool-card:nth-child(3n+2){transform:rotate(0.4deg)}
-.tool-card:nth-child(3n){transform:rotate(-0.2deg)}
-.tool-card:hover{transform:rotate(0deg) translate(-2px,-4px)!important;box-shadow:9px 9px 0 var(--ink)}
-.tool-card.filtered-out{display:none}
-.tc-stripe{height:8px;flex-shrink:0;background:rgba(255,255,255,.25)}
-.tc-body{padding:12px 14px;flex:1;display:flex;flex-direction:column;gap:5px}
-.tc-icon{font-size:1.8rem;line-height:1;margin-bottom:2px}
-.tc-name{font-family:'Bangers',cursive;font-size:1.45rem;letter-spacing:.5px;line-height:1.1;color:#ffd23f;text-shadow:1px 2px 0 rgba(0,0,0,.5)}
-.tc-desc{font-size:1rem;color:#fff;line-height:1.4;flex:1;margin-top:.75em}
-.tc-arrow{
-  padding:5px 14px 9px;font-family:'Bangers',cursive;font-size:1.2rem;
-  color:rgba(255,255,255,.65);align-self:flex-end;
-}
-
-/* ── SOUND EFFECT DIVIDERS ── */
-.sfx-row{
-  display:flex;justify-content:center;align-items:center;
-  gap:28px;flex-wrap:wrap;margin:6px 0 32px;pointer-events:none;
-}
-.sfx{
-  font-family:'Bangers',cursive;letter-spacing:3px;display:inline-block;
-  line-height:1;user-select:none;
-}
-
-/* ── NO RESULTS ── */
-.no-results{
-  display:none;text-align:center;padding:48px 0;
-  font-family:'Bangers',cursive;font-size:2.2rem;letter-spacing:2px;
-  color:var(--red);text-shadow:3px 3px 0 var(--ink);
-}
-.no-results.show{display:block}
-
-/* ── FOOTER ── */
-.site-footer{
-  background:var(--ink);border-top:4px solid var(--ink);
-  margin-top:48px;padding:36px 28px 24px;position:relative;z-index:1;
-}
-.footer-inner{
-  max-width:1240px;margin:0 auto 28px;
-  display:grid;grid-template-columns:2fr 1fr 1fr;gap:36px;
-}
-.footer-brand{
-  font-family:'Bangers',cursive;font-size:2.2rem;letter-spacing:3px;
-  color:var(--yellow);text-shadow:3px 3px 0 var(--red);
-  display:flex;align-items:center;gap:12px;margin-bottom:10px;
-}
-.footer-logo{width:38px;height:38px;border:3px solid var(--yellow);border-radius:8px;background:#fff;object-fit:contain}
-.footer-bio{font-size:.88rem;color:rgba(255,255,255,.65);line-height:1.6;margin-bottom:16px;max-width:340px}
-.footer-links-col{display:flex;flex-direction:column;gap:7px}
-.footer-link-auth{
-  display:flex;align-items:center;gap:8px;
-  font-family:'Space Mono',monospace;font-size:.75rem;font-weight:700;
-  text-decoration:none;color:#fff;padding:5px 12px;
-  border:2px solid rgba(255,255,255,.2);border-radius:5px;
-  transition:border-color .15s,background .15s;max-width:260px;
-}
-.footer-link-auth:hover{border-color:var(--yellow);background:rgba(255,211,63,.08)}
-.footer-link-auth svg{width:14px;height:14px;fill:currentColor;flex-shrink:0}
-.footer-col-h{
-  font-family:'Bangers',cursive;font-size:1.1rem;letter-spacing:2px;
-  color:var(--yellow);margin-bottom:10px;
-}
-.footer-nav{display:flex;flex-direction:column;gap:6px}
-.footer-nav a{
-  font-family:'Comic Neue',cursive;font-size:.88rem;
-  color:rgba(255,255,255,.6);text-decoration:none;transition:color .15s;
-}
-.footer-nav a:hover{color:var(--yellow)}
-.footer-bottom{
-  max-width:1240px;margin:0 auto;padding-top:20px;
-  border-top:2px solid rgba(255,255,255,.12);
-  display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;
-}
-.footer-copy{font-family:'Comic Neue',cursive;font-size:.85rem;color:rgba(255,255,255,.4)}
-.footer-copy a{color:var(--yellow);text-decoration:none}
-.footer-end{
-  font-family:'Bangers',cursive;font-size:1.2rem;letter-spacing:2px;
-  color:var(--red);text-shadow:2px 2px 0 var(--yellow);
-}
-
-/* ── RESPONSIVE ── */
-@media(max-width:960px){
-  .cover-splash{grid-template-columns:1fr}
-  .tool-grid{grid-template-columns:repeat(3,1fr)}
-  .footer-inner{grid-template-columns:1fr 1fr}
-}
-@media(max-width:640px){
-  .tool-grid{grid-template-columns:repeat(2,1fr)}
-  .page-wrap{padding:0 16px 40px}
-  .splash-brand-name{font-size:4rem}
-  .splash-headline .hl-line,.splash-headline .hl-line-y{font-size:2.4rem}
-  .splash-left{padding:28px 24px}
-  .cover-splash{margin:16px 0 20px;min-height:auto}
-  .footer-inner{grid-template-columns:1fr}
-}
-@media(max-width:380px){.tool-grid{grid-template-columns:1fr}}
-</style>
 </head>
 <body>
 <div class="paper-overlay"></div>
@@ -359,1086 +26,865 @@ body{
 
 <div class="page-wrap">
 
-  <!-- ═══════════════ COVER SPLASH ═══════════════ -->
-  <div class="cover-splash">
+  <!-- ═══════════════ HERO ═══════════════ -->
+  <div class="hero-panel">
+    <div class="hero-logo-row hero-brand-row">
+      <img src="images/logo.png" alt="DevDunia" class="hero-logo-img">
+      <div class="hero-brand">DEV<span>DUNIA</span></div>
+    </div>
+    <p class="hero-pitch"><em>100% in your browser.</em> Your data never leaves your machine. No signup, no ads, open source.</p>
 
-    <!-- LEFT: BRAND + CTA -->
-    <div class="splash-left">
-
-      <!-- Brand -->
-      <div class="splash-logo-row">
-        <img src="images/logo.png" alt="DevDunia" class="splash-logo-img">
-        <div class="splash-brand-name">DEV<span>DUNIA</span></div>
+    <div class="hero-lower">
+      <!-- LIVE MINI-DEMO -->
+      <div class="demo-panel">
+        <div class="demo-tabs" role="tablist" aria-label="Live demo">
+          <button class="demo-tab active" data-demo="json" type="button" role="tab" aria-selected="true">JSON format</button>
+          <button class="demo-tab" data-demo="base64" type="button" role="tab" aria-selected="false">Base64</button>
+          <button class="demo-tab" data-demo="jwt" type="button" role="tab" aria-selected="false">JWT decode</button>
+        </div>
+        <div class="demo-body">
+          <div class="demo-io">
+            <textarea id="demo-input" aria-label="Demo input"></textarea>
+            <textarea id="demo-output" readonly aria-label="Demo output" placeholder="Output appears here..."></textarea>
+          </div>
+          <div class="demo-error" id="demo-error"></div>
+          <div class="demo-foot">
+            <button class="demo-run" id="demo-run" type="button">&#x26A1; Run</button>
+            <span class="demo-cta">Full tool: <a href="json-beautifier.html" id="demo-cta-link">JSON beautifier &#x2192;</a></span>
+          </div>
+        </div>
       </div>
 
-      <!-- Comic-fun tag -->
-      <div class="splash-comic-tag">
-        &#x1F4DA;&nbsp; Dev Tools — but make it fun &amp; comic!
+      <!-- COUNT + CATEGORY CHIPS -->
+      <div class="hero-side">
+        <div class="hero-count">
+          <div class="hero-count-n" id="hero-count-n">&mdash;</div>
+          <div class="hero-count-l">Free tools</div>
+        </div>
+        <div class="cat-chips" id="cat-chips"></div>
       </div>
+    </div>
+  </div>
 
-      <!-- Setup line — same badge style, white variant -->
-      <div class="splash-comic-tag splash-comic-tag-white">
-        &#x1F44B;&nbsp; No more multiple tabs for multiple tools.
-      </div>
+  <!-- ═══════════════ SEARCH (speech bubble) ═══════════════ -->
+  <div class="search-panel speech-bubble">
+    <svg class="speech-bubble-bg" viewBox="0 0 100 40" preserveAspectRatio="none" aria-hidden="true">
+      <path d="M4,2 L96,2 Q98,2 98,4 L98,30 Q98,32 96,32 L22,32 L13,39 L15,32 L4,32 Q2,32 2,30 L2,4 Q2,2 4,2 Z"/>
+    </svg>
+    <div class="speech-bubble-content search-inner">
+      <span class="search-label">&#x1F5E8;</span>
+      <input type="text" id="search-input" class="search-input" placeholder="What do you need, hero? Try base64, jwt, regex, docker, qr...">
+      <span class="search-count" id="search-count">&mdash; tools</span>
+    </div>
+  </div>
 
-      <!-- Big headline -->
-      <div class="splash-headline">
-        <span class="hl-line">100+ Dev Tools,</span>
-        <span class="hl-line-y">One Tab.</span>
-      </div>
+  <div class="burst-row">
+    <span class="action-burst" style="--burst-hue:var(--hue-how)">
+      <svg class="action-burst-bg" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true">
+        <path d="M50,6 L58,22 L74,12 L68,30 L86,28 L74,42 L90,52 L72,54 L80,72 L62,62 L58,80 L48,64 L34,78 L32,60 L14,64 L24,48 L8,40 L26,32 L16,16 L36,24 Z"/>
+      </svg>
+      <span class="action-burst-text">POW!</span>
+    </span>
+  </div>
 
-      <!-- CTA -->
-      <div class="splash-cta">
-        <a href="#encoders" class="btn btn-yellow">&#x26A1; START EXPLORING</a>
-        <a href="https://github.com/echobash/devdunia" target="_blank" rel="noopener" class="btn btn-white">&#x2605; STAR ON GITHUB</a>
-      </div>
-
+  <!-- ═══════════════ TIER 1 — HOW X WORKS (FEATURED) ═══════════════ -->
+  <div class="tier1-panel" id="how" data-hide-when-empty>
+    <div class="tier1-head">
+      <span class="caption-box">&#x1F4A1; Deep dives &mdash; backend internals</span>
+      <div class="tier1-title">How X Works</div>
+      <div class="tier1-sub">Step-by-step visual explainers of what really happens under the hood &mdash; every actor, every packet, every decision.</div>
     </div>
 
-    <!-- RIGHT: AUTHOR CARD (dynamic via author-card.js) -->
-    <div data-author-card></div>
+    <div class="feature-grid">
+      <a href="google_search/basic.html" class="feature-card" data-keywords="google.com dns tcp tls http 3d journey browser packet animation interactive" style="--cc:var(--hue-how)">
+        <div class="feature-icon"><span class="tc-icon-emoji"><!-- TODO: icon --> 🌍</span></div>
+        <div class="feature-name">google.com — 3D journey</div>
+        <div class="feature-desc">Drag, zoom, and click through a playable 3D map of the internet — DNS, TCP, TLS, and HTTP packets flying in real time</div>
+        <div class="feature-arrow">Open &#x2192;</div>
+      </a>
+      <a href="dns/index.html" class="feature-card" data-keywords="dns museum domain name system records comics educational interactive" style="--cc:var(--hue-how)">
+        <div class="feature-icon"><span class="tc-icon-emoji"><!-- TODO: icon --> &#x1F3DB;&#xFE0F;</span></div>
+        <div class="feature-name">DNS museum</div>
+        <div class="feature-desc">DNS concepts explained in a comic-book interactive format</div>
+        <div class="feature-arrow">Open &#x2192;</div>
+      </a>
+      <a href="how-url-works.html" class="feature-card" data-keywords="url browser dns tcp tls http request response load balancer backend server" style="--cc:var(--hue-how)">
+        <div class="feature-icon"><span class="tc-icon-emoji"><!-- TODO: icon --> 🌐</span></div>
+        <div class="feature-name">You type a URL</div>
+        <div class="feature-desc">DNS → TCP → TLS → Load Balancer → App Server → DB → response — every hop visualized</div>
+        <div class="feature-arrow">Open &#x2192;</div>
+      </a>
+      <a href="how-rate-limiting-works.html" class="feature-card" data-keywords="rate limiting token bucket leaky bucket sliding window fixed counter throttle api" style="--cc:var(--hue-how)">
+        <div class="feature-icon"><span class="tc-icon-emoji"><!-- TODO: icon --> 🚦</span></div>
+        <div class="feature-name">Rate limiting</div>
+        <div class="feature-desc">Token bucket, leaky bucket, sliding window — all 4 algorithms with live interactive demos</div>
+        <div class="feature-arrow">Open &#x2192;</div>
+      </a>
+      <a href="how-uber-nearby-drivers.html" class="feature-card" data-keywords="uber geohash geospatial redis georadius h3 nearby drivers spatial index dispatch location" style="--cc:var(--hue-how)">
+        <div class="feature-icon"><span class="tc-icon-emoji"><!-- TODO: icon --> 🚗</span></div>
+        <div class="feature-name">Uber nearby drivers</div>
+        <div class="feature-desc">Geohash, Redis GEORADIUS, H3 hexagonal grid — how Uber finds 8 drivers in 15ms</div>
+        <div class="feature-arrow">Open &#x2192;</div>
+      </a>
+    </div>
 
-  </div><!-- /cover-splash -->
-
-  <!-- ═══════════════ SEARCH ═══════════════ -->
-  <div class="search-panel">
-    <span class="search-label">&#x1F50D; SEARCH:</span>
-    <input type="text" id="search-input" class="search-input" placeholder="Filter tools... base64, jwt, regex, docker, qr...">
-    <span class="search-count" id="search-count">— tools</span>
+    <div class="tier1-secondary">
+      <a href="how-oauth2-works.html" class="tool-card tool-card-compact" data-keywords="oauth2 oauth authorization code flow jwt token refresh access grant" style="--cc:var(--hue-how)">
+        <div class="tc-icon"><span class="tc-icon-emoji"><!-- TODO: icon --> 🔐</span></div>
+        <div class="tc-body">
+          <div class="tc-name">OAuth 2.0</div>
+          <div class="tc-desc">Authorization Code flow, tokens, refresh — who talks to whom and exactly what they say</div>
+        </div>
+        <div class="tc-arrow">&#x2192;</div>
+      </a>
+      <a href="how-db-query-works.html" class="tool-card tool-card-compact" data-keywords="database query sql execution plan parser optimizer index scan buffer pool postgres mysql" style="--cc:var(--hue-how)">
+        <div class="tc-icon"><span class="tc-icon-emoji"><!-- TODO: icon --> 🗄️</span></div>
+        <div class="tc-body">
+          <div class="tc-name">Database query</div>
+          <div class="tc-desc">SQL parser → query planner → optimizer → index scan → buffer pool → disk I/O</div>
+        </div>
+        <div class="tc-arrow">&#x2192;</div>
+      </a>
+      <a href="how-mac-boots.html" class="tool-card tool-card-compact" data-keywords="macbook boot startup uefi firmware kernel launchd process init macos" style="--cc:var(--hue-how)">
+        <div class="tc-icon"><span class="tc-icon-emoji"><!-- TODO: icon --> 💻</span></div>
+        <div class="tc-body">
+          <div class="tc-name">MacBook boot</div>
+          <div class="tc-desc">Power button → firmware → bootloader → kernel → launchd — every millisecond explained</div>
+        </div>
+        <div class="tc-arrow">&#x2192;</div>
+      </a>
+      <a href="how-docker-works.html" class="tool-card tool-card-compact" data-keywords="docker container image layers build dockerfile namespaces cgroups overlay filesystem" style="--cc:var(--hue-how)">
+        <div class="tc-icon"><span class="tc-icon-emoji"><!-- TODO: icon --> 🐳</span></div>
+        <div class="tc-body">
+          <div class="tc-name">Docker</div>
+          <div class="tc-desc">Images, layers, containers, builds — namespaces and cgroups without the hand-waving</div>
+        </div>
+        <div class="tc-arrow">&#x2192;</div>
+      </a>
+      <a href="how-uber-eta-works.html" class="tool-card tool-card-compact" data-keywords="uber eta routing astar dijkstra contraction hierarchies speed profile probe data ml machine learning travel time" style="--cc:var(--hue-how)">
+        <div class="tc-icon"><span class="tc-icon-emoji"><!-- TODO: icon --> ⏱</span></div>
+        <div class="tc-body">
+          <div class="tc-name">Uber ETA</div>
+          <div class="tc-desc">Road graphs, A* pathfinding, Contraction Hierarchies, real-time probe data and ML — the full ETA stack</div>
+        </div>
+        <div class="tc-arrow">&#x2192;</div>
+      </a>
+      <a href="how-nginx-works.html" class="tool-card tool-card-compact" data-keywords="nginx reverse proxy load balancing ssl termination event loop worker process sendfile c10k system design" style="--cc:var(--hue-how)">
+        <div class="tc-icon"><span class="tc-icon-emoji"><!-- TODO: icon --> ⚡</span></div>
+        <div class="tc-body">
+          <div class="tc-name">How Nginx works</div>
+          <div class="tc-desc">Event-driven architecture, reverse proxy, load balancing, SSL termination — how Nginx handles millions of requests with 4 worker processes</div>
+        </div>
+        <div class="tc-arrow">&#x2192;</div>
+      </a>
+      <a href="how-cdn-works.html" class="tool-card tool-card-compact" data-keywords="cdn content delivery network edge nodes pop anycast caching cache-control cloudflare fastly aws cloudfront latency" style="--cc:var(--hue-how)">
+        <div class="tc-icon"><span class="tc-icon-emoji"><!-- TODO: icon --> 🌐</span></div>
+        <div class="tc-body">
+          <div class="tc-name">How CDN works</div>
+          <div class="tc-desc">Edge nodes, PoPs, anycast routing, cache-control headers — how a CDN turns a 150ms request into an 8ms one</div>
+        </div>
+        <div class="tc-arrow">&#x2192;</div>
+      </a>
+      <a href="google_search/advance.html" class="tool-card tool-card-compact" data-keywords="google.com dns root tld authoritative tcp tls http2 load balancer packet inspector waterfall deep dive" style="--cc:var(--hue-how)">
+        <div class="tc-icon"><span class="tc-icon-emoji"><!-- TODO: icon --> 🔬</span></div>
+        <div class="tc-body">
+          <div class="tc-name">google.com — deep dive</div>
+          <div class="tc-desc">Every hop from DNS root servers to Google's load balancer — packet inspector, resource waterfall, 16-step cheat sheet</div>
+        </div>
+        <div class="tc-arrow">&#x2192;</div>
+      </a>
+    </div>
   </div>
 
-  <!-- CATEGORY PILLS -->
-  <div class="cat-pills">
-    <a href="#encoders"   class="cat-pill" style="background:var(--blue)">&#x1F527; Encoders</a>
-    <a href="#security"   class="cat-pill" style="background:var(--red)">&#x1F6E1; Security</a>
-    <a href="#generators" class="cat-pill" style="background:var(--green)">&#x26A1; Generators</a>
-    <a href="#devtools"   class="cat-pill" style="background:var(--orange)">&#x1F6E0; Dev Tools</a>
-    <a href="#network"    class="cat-pill" style="background:var(--purple)">&#x1F310; Network</a>
-    <a href="#dns"        class="cat-pill" style="background:var(--blue)">&#x1F50D; DNS Tools</a>
-    <a href="#how"        class="cat-pill" style="background:var(--red)">&#x1F4A1; How X Works</a>
-    <a href="#text"       class="cat-pill" style="background:var(--pink)">&#x1F4DD; Text</a>
-    <a href="#database"   class="cat-pill" style="background:var(--teal)">&#x1F5C4; Database</a>
-    <a href="#python"     class="cat-pill cat-pill-ink">&#x1F40D; Python</a>
+  <div class="burst-row">
+    <span class="action-burst" style="--burst-hue:var(--hue-devtools)">
+      <svg class="action-burst-bg" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true">
+        <path d="M50,6 L58,22 L74,12 L68,30 L86,28 L74,42 L90,52 L72,54 L80,72 L62,62 L58,80 L48,64 L34,78 L32,60 L14,64 L24,48 L8,40 L26,32 L16,16 L36,24 Z"/>
+      </svg>
+      <span class="action-burst-text">ZAP!</span>
+    </span>
   </div>
-
-  <div class="no-results" id="no-results">&#x1F4A5; NO TOOLS MATCH — TRY ANOTHER KEYWORD!</div>
 
   <!-- ═══════════════════════════════════════
        CH 1 — ENCODERS & DECODERS
   ═══════════════════════════════════════ -->
-  <section class="chapter-section" id="encoders" data-chapter>
-    <div class="chapter-banner">
-      <div class="chapter-num-block" style="background:var(--blue)">01</div>
+  <section class="chapter-section" id="encoders" data-chapter data-hide-when-empty>
+    <div class="chapter-banner" style="--hue:var(--hue-encoders)">
+      <div class="chapter-num-block">01</div>
       <div class="chapter-info">
         <div class="chapter-kicker">&#x1F4DA; Chapter One</div>
-        <div class="chapter-title">Encoders &amp; <span style="color:var(--blue)">Decoders</span></div>
-        <div class="chapter-sub">Base64, URL, JWT, JSON, YAML, XML, CSV and more — transform data any way you need.</div>
+        <div class="chapter-title">Encoders &amp; Decoders</div>
+        <div class="chapter-sub">Base64, URL, JWT, JSON, YAML, XML, CSV and more &mdash; transform data any way you need.</div>
       </div>
-      <div class="chapter-count" style="color:var(--blue)">16<span>TOOLS</span></div>
+      <div class="chapter-count" data-count-cat="encoders">16 <span>TOOLS</span></div>
     </div>
     <div class="tool-grid">
-
-      <a href="base64-encoder.html" class="tool-card" data-keywords="base64 encoder encode btoa binary text" style="--cc:var(--blue)">
-        <div class="tc-stripe"></div>
+      <a href="base64-encoder.html" class="tool-card" data-keywords="base64 encoder encode btoa binary text" style="--cc:var(--hue-encoders)">
+        <div class="tc-icon"><svg class="tc-icon-svg" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 12h9M9 8l4 4-4 4"/><path class="ic-accent" d="M17 6v12"/></svg></div>
         <div class="tc-body">
-          <div class="tc-icon">&#x1F4E4;</div>
-          <div class="tc-name">Base64 Encoder</div>
+          <div class="tc-name">Base64 encoder</div>
           <div class="tc-desc">Encode text or binary data to Base64 format</div>
         </div>
         <div class="tc-arrow">&#x2192;</div>
       </a>
-
-      <a href="base64-decoder.html" class="tool-card" data-keywords="base64 decoder decode atob binary text" style="--cc:var(--blue)">
-        <div class="tc-stripe"></div>
+      <a href="base64-decoder.html" class="tool-card" data-keywords="base64 decoder decode atob binary text" style="--cc:var(--hue-encoders)">
+        <div class="tc-icon"><svg class="tc-icon-svg" viewBox="0 0 24 24" aria-hidden="true"><path d="M21 12h-9M11 16l-4-4 4-4"/><path class="ic-accent" d="M7 6v12"/></svg></div>
         <div class="tc-body">
-          <div class="tc-icon">&#x1F4E5;</div>
-          <div class="tc-name">Base64 Decoder</div>
+          <div class="tc-name">Base64 decoder</div>
           <div class="tc-desc">Decode Base64 strings back to plain text</div>
         </div>
         <div class="tc-arrow">&#x2192;</div>
       </a>
-
-      <a href="base62-encoder.html" class="tool-card" data-keywords="base62 encoder encode alphanumeric short url" style="--cc:var(--purple)">
-        <div class="tc-stripe"></div>
+      <a href="base62-encoder.html" class="tool-card" data-keywords="base62 encoder encode alphanumeric short url" style="--cc:var(--hue-encoders)">
+        <div class="tc-icon"><span class="tc-icon-emoji"><!-- TODO: icon --> &#x1F4E4;</span></div>
         <div class="tc-body">
-          <div class="tc-icon">&#x1F4E4;</div>
-          <div class="tc-name">Base62 Encoder</div>
+          <div class="tc-name">Base62 encoder</div>
           <div class="tc-desc">Encode numbers to compact Base62 alphanumeric strings</div>
         </div>
         <div class="tc-arrow">&#x2192;</div>
       </a>
-
-      <a href="base62-decoder.html" class="tool-card" data-keywords="base62 decoder decode alphanumeric" style="--cc:var(--purple)">
-        <div class="tc-stripe"></div>
+      <a href="base62-decoder.html" class="tool-card" data-keywords="base62 decoder decode alphanumeric" style="--cc:var(--hue-encoders)">
+        <div class="tc-icon"><span class="tc-icon-emoji"><!-- TODO: icon --> &#x1F4E5;</span></div>
         <div class="tc-body">
-          <div class="tc-icon">&#x1F4E5;</div>
-          <div class="tc-name">Base62 Decoder</div>
+          <div class="tc-name">Base62 decoder</div>
           <div class="tc-desc">Decode Base62 strings back to their numeric value</div>
         </div>
         <div class="tc-arrow">&#x2192;</div>
       </a>
-
-      <a href="base58-encoder.html" class="tool-card" data-keywords="base58 encoder bitcoin ipfs alphabet" style="--cc:var(--orange)">
-        <div class="tc-stripe"></div>
+      <a href="base58-encoder.html" class="tool-card" data-keywords="base58 encoder bitcoin ipfs alphabet" style="--cc:var(--hue-encoders)">
+        <div class="tc-icon"><span class="tc-icon-emoji"><!-- TODO: icon --> &#x20BF;</span></div>
         <div class="tc-body">
-          <div class="tc-icon">&#x20BF;</div>
-          <div class="tc-name">Base58 Encoder</div>
+          <div class="tc-name">Base58 encoder</div>
           <div class="tc-desc">Bitcoin/IPFS standard Base58 encoding — no ambiguous chars</div>
         </div>
         <div class="tc-arrow">&#x2192;</div>
       </a>
-
-      <a href="base58-decoder.html" class="tool-card" data-keywords="base58 decoder bitcoin ipfs" style="--cc:var(--orange)">
-        <div class="tc-stripe"></div>
+      <a href="base58-decoder.html" class="tool-card" data-keywords="base58 decoder bitcoin ipfs" style="--cc:var(--hue-encoders)">
+        <div class="tc-icon"><span class="tc-icon-emoji"><!-- TODO: icon --> &#x20BF;</span></div>
         <div class="tc-body">
-          <div class="tc-icon">&#x20BF;</div>
-          <div class="tc-name">Base58 Decoder</div>
+          <div class="tc-name">Base58 decoder</div>
           <div class="tc-desc">Decode Base58 encoded strings back to plain text</div>
         </div>
         <div class="tc-arrow">&#x2192;</div>
       </a>
-
-      <a href="url-encoder.html" class="tool-card" data-keywords="url encoder encode percent encoding urlencode" style="--cc:var(--teal)">
-        <div class="tc-stripe"></div>
+      <a href="url-encoder.html" class="tool-card" data-keywords="url encoder encode percent encoding urlencode" style="--cc:var(--hue-encoders)">
+        <div class="tc-icon"><svg class="tc-icon-svg" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 12h9M9 8l4 4-4 4"/><path class="ic-accent" d="M17 6v12"/></svg></div>
         <div class="tc-body">
-          <div class="tc-icon">&#x1F517;</div>
-          <div class="tc-name">URL Encoder</div>
+          <div class="tc-name">URL encoder</div>
           <div class="tc-desc">Percent-encode URLs and query parameters safely</div>
         </div>
         <div class="tc-arrow">&#x2192;</div>
       </a>
-
-      <a href="url-decoder.html" class="tool-card" data-keywords="url decoder decode percent urldecode" style="--cc:var(--teal)">
-        <div class="tc-stripe"></div>
+      <a href="url-decoder.html" class="tool-card" data-keywords="url decoder decode percent urldecode" style="--cc:var(--hue-encoders)">
+        <div class="tc-icon"><svg class="tc-icon-svg" viewBox="0 0 24 24" aria-hidden="true"><path d="M21 12h-9M11 16l-4-4 4-4"/><path class="ic-accent" d="M7 6v12"/></svg></div>
         <div class="tc-body">
-          <div class="tc-icon">&#x1F513;</div>
-          <div class="tc-name">URL Decoder</div>
+          <div class="tc-name">URL decoder</div>
           <div class="tc-desc">Decode percent-encoded URLs back to readable form</div>
         </div>
         <div class="tc-arrow">&#x2192;</div>
       </a>
-
-      <a href="jwt-decoder.html" class="tool-card" data-keywords="jwt json web token decode header payload claims" style="--cc:var(--red)">
-        <div class="tc-stripe"></div>
+      <a href="jwt-decoder.html" class="tool-card" data-keywords="jwt json web token decode header payload claims" style="--cc:var(--hue-encoders)">
+        <div class="tc-icon"><svg class="tc-icon-svg" viewBox="0 0 24 24" aria-hidden="true"><circle cx="8" cy="12" r="4"/><path class="ic-accent" d="M12 12h9M17 12v4M20 12v3"/></svg></div>
         <div class="tc-body">
-          <div class="tc-icon">&#x1F3AB;</div>
-          <div class="tc-name">JWT Decoder</div>
+          <div class="tc-name">JWT decoder</div>
           <div class="tc-desc">Decode and inspect JWT tokens — header, payload, claims</div>
         </div>
         <div class="tc-arrow">&#x2192;</div>
       </a>
-
-      <a href="json-beautifier.html" class="tool-card" data-keywords="json beautifier formatter pretty print format" style="--cc:var(--green)">
-        <div class="tc-stripe"></div>
+      <a href="json-beautifier.html" class="tool-card" data-keywords="json beautifier formatter pretty print format" style="--cc:var(--hue-encoders)">
+        <div class="tc-icon"><svg class="tc-icon-svg" viewBox="0 0 24 24" aria-hidden="true"><path d="M8 3c-2 0-3 1-3 3v3c0 1-1 2-2 2 1 0 2 1 2 2v3c0 2 1 3 3 3"/><path class="ic-accent" d="M16 3c2 0 3 1 3 3v3c0 1 1 2 2 2-1 0-2 1-2 2v3c0 2-1 3-3 3"/></svg></div>
         <div class="tc-body">
-          <div class="tc-icon">&#x2728;</div>
-          <div class="tc-name">JSON Beautifier</div>
+          <div class="tc-name">JSON beautifier</div>
           <div class="tc-desc">Format and pretty-print JSON with syntax highlighting</div>
         </div>
         <div class="tc-arrow">&#x2192;</div>
       </a>
-
-      <a href="json-minifier.html" class="tool-card" data-keywords="json minifier compress uglify minify" style="--cc:var(--green)">
-        <div class="tc-stripe"></div>
+      <a href="json-minifier.html" class="tool-card" data-keywords="json minifier compress uglify minify" style="--cc:var(--hue-encoders)">
+        <div class="tc-icon"><svg class="tc-icon-svg" viewBox="0 0 24 24" aria-hidden="true"><path d="M8 3c-2 0-3 1-3 3v3c0 1-1 2-2 2 1 0 2 1 2 2v3c0 2 1 3 3 3"/><path class="ic-accent" d="M16 3c2 0 3 1 3 3v3c0 1 1 2 2 2-1 0-2 1-2 2v3c0 2-1 3-3 3"/></svg></div>
         <div class="tc-body">
-          <div class="tc-icon">&#x1F4E6;</div>
-          <div class="tc-name">JSON Minifier</div>
+          <div class="tc-name">JSON minifier</div>
           <div class="tc-desc">Compress JSON by stripping all whitespace instantly</div>
         </div>
         <div class="tc-arrow">&#x2192;</div>
       </a>
-
-      <a href="csv-json-converter.html" class="tool-card" data-keywords="csv json converter convert spreadsheet data table" style="--cc:var(--yellow)">
-        <div class="tc-stripe"></div>
+      <a href="csv-json-converter.html" class="tool-card" data-keywords="csv json converter convert spreadsheet data table" style="--cc:var(--hue-encoders)">
+        <div class="tc-icon"><svg class="tc-icon-svg" viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="4" width="18" height="16" rx="1.5"/><path d="M3 10h18M3 16h18M9 4v16"/><path class="ic-accent" d="M15 4v16"/></svg></div>
         <div class="tc-body">
-          <div class="tc-icon">&#x1F4CA;</div>
           <div class="tc-name">CSV to JSON</div>
           <div class="tc-desc">Convert CSV spreadsheet data to JSON instantly</div>
         </div>
         <div class="tc-arrow">&#x2192;</div>
       </a>
-
-      <a href="yaml-json-converter.html" class="tool-card" data-keywords="yaml json converter convert interchange devops config" style="--cc:var(--blue)">
-        <div class="tc-stripe"></div>
+      <a href="yaml-json-converter.html" class="tool-card" data-keywords="yaml json converter convert interchange devops config" style="--cc:var(--hue-encoders)">
+        <div class="tc-icon"><span class="tc-icon-emoji"><!-- TODO: icon --> &#x2696;&#xFE0F;</span></div>
         <div class="tc-body">
-          <div class="tc-icon">&#x2696;&#xFE0F;</div>
           <div class="tc-name">YAML ⇄ JSON</div>
           <div class="tc-desc">Bidirectional conversion between YAML and JSON</div>
         </div>
         <div class="tc-arrow">&#x2192;</div>
       </a>
-
-      <a href="xml-formatter.html" class="tool-card" data-keywords="xml formatter pretty print indent parse format" style="--cc:var(--orange)">
-        <div class="tc-stripe"></div>
+      <a href="xml-formatter.html" class="tool-card" data-keywords="xml formatter pretty print indent parse format" style="--cc:var(--hue-encoders)">
+        <div class="tc-icon"><span class="tc-icon-emoji"><!-- TODO: icon --> &#x1F4C4;</span></div>
         <div class="tc-body">
-          <div class="tc-icon">&#x1F4C4;</div>
-          <div class="tc-name">XML Formatter</div>
+          <div class="tc-name">XML formatter</div>
           <div class="tc-desc">Format and indent XML documents for readability</div>
         </div>
         <div class="tc-arrow">&#x2192;</div>
       </a>
-
-      <a href="php-to-json.html" class="tool-card" data-keywords="json php converter transform array associative" style="--cc:var(--purple)">
-        <div class="tc-stripe"></div>
+      <a href="php-to-json.html" class="tool-card" data-keywords="json php converter transform array associative" style="--cc:var(--hue-encoders)">
+        <div class="tc-icon"><span class="tc-icon-emoji"><!-- TODO: icon --> &#x1F504;</span></div>
         <div class="tc-body">
-          <div class="tc-icon">&#x1F504;</div>
           <div class="tc-name">PHP ⇄ JSON</div>
           <div class="tc-desc">Convert between JSON data and PHP array syntax</div>
         </div>
         <div class="tc-arrow">&#x2192;</div>
       </a>
-
-      <a href="string-transformer.html" class="tool-card" data-keywords="string transformer case upper lower camelcase snake kebab" style="--cc:var(--pink)">
-        <div class="tc-stripe"></div>
+      <a href="string-transformer.html" class="tool-card" data-keywords="string transformer case upper lower camelcase snake kebab" style="--cc:var(--hue-encoders)">
+        <div class="tc-icon"><span class="tc-icon-emoji"><!-- TODO: icon --> &#x1F4AC;</span></div>
         <div class="tc-body">
-          <div class="tc-icon">&#x1F4AC;</div>
-          <div class="tc-name">String Transformer</div>
+          <div class="tc-name">String transformer</div>
           <div class="tc-desc">camelCase, snake_case, UPPER, kebab-case and more</div>
         </div>
         <div class="tc-arrow">&#x2192;</div>
       </a>
-
     </div>
   </section>
-
-  <div class="sfx-row">
-    <span class="sfx" style="font-size:2.8rem;transform:rotate(-9deg);color:var(--red);text-shadow:4px 4px 0 var(--ink)">POW!</span>
-    <span class="sfx" style="font-size:1.6rem;transform:rotate(5deg);color:var(--blue);text-shadow:3px 3px 0 var(--ink)">NO SIGNUP NEEDED!</span>
-    <span class="sfx" style="font-size:2rem;transform:rotate(-4deg);color:var(--green);text-shadow:3px 3px 0 var(--ink)">ZAP!</span>
-    <span class="sfx" style="font-size:1.4rem;transform:rotate(7deg);color:var(--purple);text-shadow:3px 3px 0 var(--ink)">100% CLIENT-SIDE!</span>
-  </div>
 
   <!-- ═══════════════════════════════════════
        CH 2 — SECURITY
   ═══════════════════════════════════════ -->
-  <section class="chapter-section" id="security" data-chapter>
-    <div class="chapter-banner">
-      <div class="chapter-num-block" style="background:var(--red)">02</div>
+  <section class="chapter-section" id="security" data-chapter data-hide-when-empty>
+    <div class="chapter-banner" style="--hue:var(--hue-security)">
+      <div class="chapter-num-block">02</div>
       <div class="chapter-info">
         <div class="chapter-kicker">&#x1F4DA; Chapter Two</div>
-        <div class="chapter-title">Security &amp; <span style="color:var(--red)">VAPT</span></div>
+        <div class="chapter-title">Security &amp; VAPT</div>
         <div class="chapter-sub">Clickjacking detection, HTTP header analysis, OWASP checks, hashing and email forensics.</div>
       </div>
-      <div class="chapter-count" style="color:var(--red)">6<span>TOOLS</span></div>
+      <div class="chapter-count" data-count-cat="security">6 <span>TOOLS</span></div>
     </div>
     <div class="tool-grid">
-
-      <a href="clickjacking-checker.html" class="tool-card" data-keywords="clickjacking checker x-frame-options security test vulnerability" style="--cc:var(--red)">
-        <div class="tc-stripe"></div>
+      <a href="clickjacking-checker.html" class="tool-card" data-keywords="clickjacking checker x-frame-options security test vulnerability" style="--cc:var(--hue-security)">
+        <div class="tc-icon"><span class="tc-icon-emoji"><!-- TODO: icon --> &#x1F512;</span></div>
         <div class="tc-body">
-          <div class="tc-icon">&#x1F512;</div>
-          <div class="tc-name">Clickjacking Checker</div>
+          <div class="tc-name">Clickjacking checker</div>
           <div class="tc-desc">Test if a site is vulnerable to clickjacking attacks</div>
         </div>
         <div class="tc-arrow">&#x2192;</div>
       </a>
-
-      <a href="http-response-header-printer.html" class="tool-card" data-keywords="http headers response security check inspect misconfiguration" style="--cc:var(--orange)">
-        <div class="tc-stripe"></div>
+      <a href="http-response-header-printer.html" class="tool-card" data-keywords="http headers response security check inspect misconfiguration" style="--cc:var(--hue-security)">
+        <div class="tc-icon"><span class="tc-icon-emoji"><!-- TODO: icon --> &#x1F4CB;</span></div>
         <div class="tc-body">
-          <div class="tc-icon">&#x1F4CB;</div>
-          <div class="tc-name">HTTP Headers</div>
+          <div class="tc-name">HTTP headers</div>
           <div class="tc-desc">Inspect HTTP response headers for security misconfigs</div>
         </div>
         <div class="tc-arrow">&#x2192;</div>
       </a>
-
-      <a href="owasp-top10.html" class="tool-card" data-keywords="owasp top 10 vulnerabilities security checklist injection xss" style="--cc:var(--red)">
-        <div class="tc-stripe"></div>
+      <a href="owasp-top10.html" class="tool-card" data-keywords="owasp top 10 vulnerabilities security checklist injection xss" style="--cc:var(--hue-security)">
+        <div class="tc-icon"><span class="tc-icon-emoji"><!-- TODO: icon --> &#x1F41B;</span></div>
         <div class="tc-body">
-          <div class="tc-icon">&#x1F41B;</div>
           <div class="tc-name">OWASP Top 10</div>
           <div class="tc-desc">Interactive reference for OWASP Top 10 web vulnerabilities</div>
         </div>
         <div class="tc-arrow">&#x2192;</div>
       </a>
-
-      <a href="hash-generator.html" class="tool-card" data-keywords="hash generator md5 sha1 sha256 sha512 checksum crypto" style="--cc:var(--purple)">
-        <div class="tc-stripe"></div>
+      <a href="hash-generator.html" class="tool-card" data-keywords="hash generator md5 sha1 sha256 sha512 checksum crypto" style="--cc:var(--hue-security)">
+        <div class="tc-icon"><svg class="tc-icon-svg" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 3L7 21M4 9h17"/><path class="ic-accent" d="M17 3l-2 18M3 15h17"/></svg></div>
         <div class="tc-body">
-          <div class="tc-icon">&#x1F510;</div>
-          <div class="tc-name">Hash Generator</div>
+          <div class="tc-name">Hash generator</div>
           <div class="tc-desc">Generate MD5, SHA-1, SHA-256, SHA-512 hashes instantly</div>
         </div>
         <div class="tc-arrow">&#x2192;</div>
       </a>
-
-      <a href="caesar-cipher.html" class="tool-card" data-keywords="caesar cipher encrypt decrypt rot13 shift classic" style="--cc:var(--pink)">
-        <div class="tc-stripe"></div>
+      <a href="caesar-cipher.html" class="tool-card" data-keywords="caesar cipher encrypt decrypt rot13 shift classic" style="--cc:var(--hue-security)">
+        <div class="tc-icon"><span class="tc-icon-emoji"><!-- TODO: icon --> &#x1F511;</span></div>
         <div class="tc-body">
-          <div class="tc-icon">&#x1F511;</div>
-          <div class="tc-name">Caesar Cipher</div>
+          <div class="tc-name">Caesar cipher</div>
           <div class="tc-desc">Encrypt and decrypt with the classic Caesar shift cipher</div>
         </div>
         <div class="tc-arrow">&#x2192;</div>
       </a>
-
-      <a href="email-header-analyzer.html" class="tool-card" data-keywords="email header analyzer forensics phishing spam spf dkim" style="--cc:var(--purple)">
-        <div class="tc-stripe"></div>
+      <a href="email-header-analyzer.html" class="tool-card" data-keywords="email header analyzer forensics phishing spam spf dkim" style="--cc:var(--hue-security)">
+        <div class="tc-icon"><span class="tc-icon-emoji"><!-- TODO: icon --> &#x1F4E7;</span></div>
         <div class="tc-body">
-          <div class="tc-icon">&#x1F4E7;</div>
-          <div class="tc-name">Email Header Analyzer</div>
+          <div class="tc-name">Email header analyzer</div>
           <div class="tc-desc">Parse email headers for forensics and phishing detection</div>
         </div>
         <div class="tc-arrow">&#x2192;</div>
       </a>
-
     </div>
   </section>
 
   <!-- ═══════════════════════════════════════
        CH 3 — GENERATORS
   ═══════════════════════════════════════ -->
-  <section class="chapter-section" id="generators" data-chapter>
-    <div class="chapter-banner">
-      <div class="chapter-num-block" style="background:var(--green)">03</div>
+  <section class="chapter-section" id="generators" data-chapter data-hide-when-empty>
+    <div class="chapter-banner" style="--hue:var(--hue-generators)">
+      <div class="chapter-num-block">03</div>
       <div class="chapter-info">
         <div class="chapter-kicker">&#x1F4DA; Chapter Three</div>
-        <div class="chapter-title"><span style="color:var(--green)">Generators</span></div>
-        <div class="chapter-sub">Passwords, UUIDs, QR codes, barcodes, Lorem Ipsum, emoji — generate what you need, instantly.</div>
+        <div class="chapter-title">Generators</div>
+        <div class="chapter-sub">Passwords, UUIDs, QR codes, barcodes, Lorem Ipsum, emoji &mdash; generate what you need, instantly.</div>
       </div>
-      <div class="chapter-count" style="color:var(--green)">8<span>TOOLS</span></div>
+      <div class="chapter-count" data-count-cat="generators">8 <span>TOOLS</span></div>
     </div>
     <div class="tool-grid">
-
-      <a href="password-generator.html" class="tool-card" data-keywords="password generator secure random strong entropy" style="--cc:var(--green)">
-        <div class="tc-stripe"></div>
+      <a href="password-generator.html" class="tool-card" data-keywords="password generator secure random strong entropy" style="--cc:var(--hue-generators)">
+        <div class="tc-icon"><svg class="tc-icon-svg" viewBox="0 0 24 24" aria-hidden="true"><rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/><circle class="ic-accent" cx="12" cy="15.5" r="1.5"/></svg></div>
         <div class="tc-body">
-          <div class="tc-icon">&#x1F511;</div>
-          <div class="tc-name">Password Generator</div>
+          <div class="tc-name">Password generator</div>
           <div class="tc-desc">Generate strong random passwords with custom rules</div>
         </div>
         <div class="tc-arrow">&#x2192;</div>
       </a>
-
-      <a href="guid-generator.html" class="tool-card" data-keywords="uuid guid generator unique id random v4 rfc4122" style="--cc:var(--blue)">
-        <div class="tc-stripe"></div>
+      <a href="guid-generator.html" class="tool-card" data-keywords="uuid guid generator unique id random v4 rfc4122" style="--cc:var(--hue-generators)">
+        <div class="tc-icon"><svg class="tc-icon-svg" viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="5" width="16" height="14" rx="2"/><circle class="ic-accent" cx="9" cy="11" r="2"/><path d="M6 17c0-2 1.5-3 3-3s3 1 3 3M14 9h5M14 13h5"/></svg></div>
         <div class="tc-body">
-          <div class="tc-icon">&#x1F194;</div>
-          <div class="tc-name">UUID / GUID Generator</div>
+          <div class="tc-name">UUID / GUID generator</div>
           <div class="tc-desc">Generate RFC 4122 v4 UUIDs and GUIDs in bulk</div>
         </div>
         <div class="tc-arrow">&#x2192;</div>
       </a>
-
-      <a href="qr-generator.html" class="tool-card" data-keywords="qr code generator barcode scan url text wifi email" style="--cc:var(--ink)">
-        <div class="tc-stripe"></div>
+      <a href="qr-generator.html" class="tool-card" data-keywords="qr code generator barcode scan url text wifi email" style="--cc:var(--hue-generators)">
+        <div class="tc-icon"><svg class="tc-icon-svg" viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="3" width="6" height="6" rx="1"/><rect x="15" y="3" width="6" height="6" rx="1"/><rect x="3" y="15" width="6" height="6" rx="1"/><g class="ic-accent"><rect x="15" y="15" width="2" height="2"/><rect x="19" y="15" width="2" height="2"/><rect x="15" y="19" width="2" height="2"/><rect x="19" y="19" width="2" height="2"/></g></svg></div>
         <div class="tc-body">
-          <div class="tc-icon">&#x1F4F1;</div>
-          <div class="tc-name">QR Generator</div>
+          <div class="tc-name">QR generator</div>
           <div class="tc-desc">Generate QR codes from any URL, text or WiFi data</div>
         </div>
         <div class="tc-arrow">&#x2192;</div>
       </a>
-
-      <a href="barcode-generator.html" class="tool-card" data-keywords="barcode generator code128 ean isbn 1d" style="--cc:var(--ink)">
-        <div class="tc-stripe"></div>
+      <a href="barcode-generator.html" class="tool-card" data-keywords="barcode generator code128 ean isbn 1d" style="--cc:var(--hue-generators)">
+        <div class="tc-icon"><span class="tc-icon-emoji"><!-- TODO: icon --> &#x1F4CA;</span></div>
         <div class="tc-body">
-          <div class="tc-icon">&#x1F4CA;</div>
-          <div class="tc-name">Barcode Generator</div>
+          <div class="tc-name">Barcode generator</div>
           <div class="tc-desc">Generate 1D barcodes — Code128, EAN, ISBN and more</div>
         </div>
         <div class="tc-arrow">&#x2192;</div>
       </a>
-
-      <a href="lorem-ipsum-generator.html" class="tool-card" data-keywords="lorem ipsum placeholder text dummy content mockup layout" style="--cc:var(--orange)">
-        <div class="tc-stripe"></div>
+      <a href="lorem-ipsum-generator.html" class="tool-card" data-keywords="lorem ipsum placeholder text dummy content mockup layout" style="--cc:var(--hue-generators)">
+        <div class="tc-icon"><span class="tc-icon-emoji"><!-- TODO: icon --> &#x1F4DC;</span></div>
         <div class="tc-body">
-          <div class="tc-icon">&#x1F4DC;</div>
           <div class="tc-name">Lorem Ipsum</div>
           <div class="tc-desc">Generate dummy placeholder text for layouts and mockups</div>
         </div>
         <div class="tc-arrow">&#x2192;</div>
       </a>
-
-      <a href="emoji-picker.html" class="tool-card" data-keywords="emoji picker search copy unicode symbols icons" style="--cc:var(--yellow)">
-        <div class="tc-stripe"></div>
+      <a href="emoji-picker.html" class="tool-card" data-keywords="emoji picker search copy unicode symbols icons" style="--cc:var(--hue-generators)">
+        <div class="tc-icon"><span class="tc-icon-emoji"><!-- TODO: icon --> &#x1F60A;</span></div>
         <div class="tc-body">
-          <div class="tc-icon">&#x1F60A;</div>
-          <div class="tc-name">Emoji Picker</div>
+          <div class="tc-name">Emoji picker</div>
           <div class="tc-desc">Search and copy any emoji — by name, category or keyword</div>
         </div>
         <div class="tc-arrow">&#x2192;</div>
       </a>
-
-      <a href="github-contributors.html" class="tool-card" data-keywords="github contributors open source project team visualize" style="--cc:var(--purple)">
-        <div class="tc-stripe"></div>
+      <a href="github-contributors.html" class="tool-card" data-keywords="github contributors open source project team visualize" style="--cc:var(--hue-generators)">
+        <div class="tc-icon"><span class="tc-icon-emoji"><!-- TODO: icon --> &#x1F465;</span></div>
         <div class="tc-body">
-          <div class="tc-icon">&#x1F465;</div>
-          <div class="tc-name">GitHub Contributors</div>
+          <div class="tc-name">GitHub contributors</div>
           <div class="tc-desc">Visualize contributors for any GitHub repository</div>
         </div>
         <div class="tc-arrow">&#x2192;</div>
       </a>
-
-      <a href="env-generator.html" class="tool-card" data-keywords="env generator environment variable dotenv config template" style="--cc:var(--green)">
-        <div class="tc-stripe"></div>
+      <a href="env-generator.html" class="tool-card" data-keywords="env generator environment variable dotenv config template" style="--cc:var(--hue-generators)">
+        <div class="tc-icon"><span class="tc-icon-emoji"><!-- TODO: icon --> &#x1F30D;</span></div>
         <div class="tc-body">
-          <div class="tc-icon">&#x1F30D;</div>
-          <div class="tc-name">Env Generator</div>
+          <div class="tc-name">Env generator</div>
           <div class="tc-desc">Generate .env file templates for various project types</div>
         </div>
         <div class="tc-arrow">&#x2192;</div>
       </a>
-
     </div>
   </section>
-
-  <div class="sfx-row">
-    <span class="sfx" style="font-size:2.2rem;transform:rotate(-7deg);color:var(--orange);text-shadow:4px 4px 0 var(--ink)">BAAM!</span>
-    <span class="sfx" style="font-size:1.5rem;transform:rotate(4deg);color:var(--ink);text-shadow:2px 2px 0 var(--yellow)">INSTANT RESULTS!</span>
-    <span class="sfx" style="font-size:1.9rem;transform:rotate(-5deg);color:var(--purple);text-shadow:3px 3px 0 var(--ink)">WHAM!</span>
-    <span class="sfx" style="font-size:1.3rem;transform:rotate(8deg);color:var(--teal);text-shadow:2px 2px 0 var(--ink)">ZERO ADS!</span>
-  </div>
 
   <!-- ═══════════════════════════════════════
        CH 4 — API & DEV TOOLS
   ═══════════════════════════════════════ -->
-  <section class="chapter-section" id="devtools" data-chapter>
-    <div class="chapter-banner">
-      <div class="chapter-num-block" style="background:var(--orange)">04</div>
+  <section class="chapter-section" id="devtools" data-chapter data-hide-when-empty>
+    <div class="chapter-banner" style="--hue:var(--hue-devtools)">
+      <div class="chapter-num-block">04</div>
       <div class="chapter-info">
         <div class="chapter-kicker">&#x1F4DA; Chapter Four</div>
-        <div class="chapter-title">API &amp; <span style="color:var(--orange)">Dev Tools</span></div>
+        <div class="chapter-title">API &amp; Dev Tools</div>
         <div class="chapter-sub">cURL, cron, regex, SQL, markdown, diff, Docker, NFC and everyday developer utilities.</div>
       </div>
-      <div class="chapter-count" style="color:var(--orange)">16<span>TOOLS</span></div>
+      <div class="chapter-count" data-count-cat="devtools">15 <span>TOOLS</span></div>
     </div>
     <div class="tool-grid">
-
-      <a href="curl-describer.html" class="tool-card" data-keywords="curl describer http request describe explain parse command" style="--cc:var(--orange)">
-        <div class="tc-stripe"></div>
+      <a href="curl-describer.html" class="tool-card" data-keywords="curl describer http request describe explain parse command" style="--cc:var(--hue-devtools)">
+        <div class="tc-icon"><svg class="tc-icon-svg" viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="4" width="18" height="16" rx="2"/><path class="ic-accent" d="M7 9l3 3-3 3"/><path d="M13 15h4"/></svg></div>
         <div class="tc-body">
-          <div class="tc-icon">&#x1F504;</div>
-          <div class="tc-name">cURL Describer</div>
+          <div class="tc-name">cURL describer</div>
           <div class="tc-desc">Paste a cURL command and get a plain-English explanation</div>
         </div>
         <div class="tc-arrow">&#x2192;</div>
       </a>
-
-      <a href="cron-describer.html" class="tool-card" data-keywords="cron describer expression schedule explain parser human readable" style="--cc:var(--blue)">
-        <div class="tc-stripe"></div>
+      <a href="cron-describer.html" class="tool-card" data-keywords="cron describer expression schedule explain parser human readable" style="--cc:var(--hue-devtools)">
+        <div class="tc-icon"><svg class="tc-icon-svg" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8"/><path class="ic-accent" d="M12 8v4l3 2"/></svg></div>
         <div class="tc-body">
-          <div class="tc-icon">&#x23F0;</div>
-          <div class="tc-name">Cron Describer</div>
+          <div class="tc-name">Cron describer</div>
           <div class="tc-desc">Translate cron expressions into human-readable schedules</div>
         </div>
         <div class="tc-arrow">&#x2192;</div>
       </a>
-
-      <a href="regex-tester.html" class="tool-card" data-keywords="regex tester regular expression match test debug live" style="--cc:var(--red)">
-        <div class="tc-stripe"></div>
+      <a href="regex-tester.html" class="tool-card" data-keywords="regex tester regular expression match test debug live" style="--cc:var(--hue-devtools)">
+        <div class="tc-icon"><svg class="tc-icon-svg" viewBox="0 0 24 24" aria-hidden="true"><path d="M8 3L6 21"/><g class="ic-accent"><path d="M15 8v8M11 12h8M12.5 9.5l6 6M17.5 9.5l-6 6"/></g></svg></div>
         <div class="tc-body">
-          <div class="tc-icon">&#x1F50D;</div>
-          <div class="tc-name">Regex Tester</div>
+          <div class="tc-name">Regex tester</div>
           <div class="tc-desc">Test and debug regular expressions with live highlighting</div>
         </div>
         <div class="tc-arrow">&#x2192;</div>
       </a>
-
-      <a href="sql-formatter.html" class="tool-card" data-keywords="sql formatter beautifier query pretty print format" style="--cc:var(--green)">
-        <div class="tc-stripe"></div>
+      <a href="sql-formatter.html" class="tool-card" data-keywords="sql formatter beautifier query pretty print format" style="--cc:var(--hue-devtools)">
+        <div class="tc-icon"><svg class="tc-icon-svg" viewBox="0 0 24 24" aria-hidden="true"><ellipse cx="12" cy="6" rx="7" ry="3"/><path d="M5 6v12c0 1.7 3.1 3 7 3s7-1.3 7-3V6"/><path class="ic-accent" d="M5 12c0 1.7 3.1 3 7 3s7-1.3 7-3"/></svg></div>
         <div class="tc-body">
-          <div class="tc-icon">&#x1F5C4;&#xFE0F;</div>
-          <div class="tc-name">SQL Formatter</div>
+          <div class="tc-name">SQL formatter</div>
           <div class="tc-desc">Format and beautify SQL queries for readability</div>
         </div>
         <div class="tc-arrow">&#x2192;</div>
       </a>
-
-      <a href="markdown-editor.html" class="tool-card" data-keywords="markdown editor preview render live md write" style="--cc:var(--purple)">
-        <div class="tc-stripe"></div>
+      <a href="markdown-editor.html" class="tool-card" data-keywords="markdown editor preview render live md write" style="--cc:var(--hue-devtools)">
+        <div class="tc-icon"><svg class="tc-icon-svg" viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="4" width="12" height="16" rx="1.5"/><path d="M7 9h6M7 13h6M7 17h3"/><path class="ic-accent" d="M15 15l5-5 2 2-5 5-2 .5.5-2z"/></svg></div>
         <div class="tc-body">
-          <div class="tc-icon">&#x1F4DD;</div>
-          <div class="tc-name">Markdown Editor</div>
+          <div class="tc-name">Markdown editor</div>
           <div class="tc-desc">Write Markdown with live preview side by side</div>
         </div>
         <div class="tc-arrow">&#x2192;</div>
       </a>
-
-      <a href="diff-checker.html" class="tool-card" data-keywords="diff checker compare text file changes line" style="--cc:var(--orange)">
-        <div class="tc-stripe"></div>
+      <a href="diff-checker.html" class="tool-card" data-keywords="diff checker compare text file changes line" style="--cc:var(--hue-devtools)">
+        <div class="tc-icon"><svg class="tc-icon-svg" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 8h9M13 8l-3-3M13 8l-3 3"/><path class="ic-accent" d="M20 16h-9M11 16l3-3M11 16l3 3"/></svg></div>
         <div class="tc-body">
-          <div class="tc-icon">&#x1F4D6;</div>
-          <div class="tc-name">Diff Checker</div>
+          <div class="tc-name">Diff checker</div>
           <div class="tc-desc">Compare two texts and highlight differences line by line</div>
         </div>
         <div class="tc-arrow">&#x2192;</div>
       </a>
-
-      <a href="mermaid-renderer.html" class="tool-card" data-keywords="mermaid diagram flowchart sequence erd render" style="--cc:var(--blue)">
-        <div class="tc-stripe"></div>
+      <a href="mermaid-renderer.html" class="tool-card" data-keywords="mermaid diagram flowchart sequence erd render" style="--cc:var(--hue-devtools)">
+        <div class="tc-icon"><span class="tc-icon-emoji"><!-- TODO: icon --> &#x1F30A;</span></div>
         <div class="tc-body">
-          <div class="tc-icon">&#x1F30A;</div>
-          <div class="tc-name">Mermaid Renderer</div>
+          <div class="tc-name">Mermaid renderer</div>
           <div class="tc-desc">Render Mermaid diagrams — flowcharts, sequence, ERD</div>
         </div>
         <div class="tc-arrow">&#x2192;</div>
       </a>
-
-      <a href="docker-comprehensive.html" class="tool-card" data-keywords="docker guide reference commands containers cheat sheet" style="--cc:var(--blue)">
-        <div class="tc-stripe"></div>
+      <a href="docker-comprehensive.html" class="tool-card" data-keywords="docker guide reference commands containers cheat sheet" style="--cc:var(--hue-devtools)">
+        <div class="tc-icon"><span class="tc-icon-emoji"><!-- TODO: icon --> &#x1F433;</span></div>
         <div class="tc-body">
-          <div class="tc-icon">&#x1F433;</div>
-          <div class="tc-name">Docker Guide</div>
+          <div class="tc-name">Docker guide</div>
           <div class="tc-desc">Comprehensive Docker commands reference and cheat sheet</div>
         </div>
         <div class="tc-arrow">&#x2192;</div>
       </a>
-
-      <a href="html-viewer.html" class="tool-card" data-keywords="html viewer preview render live browser sandbox" style="--cc:var(--orange)">
-        <div class="tc-stripe"></div>
+      <a href="html-viewer.html" class="tool-card" data-keywords="html viewer preview render live browser sandbox" style="--cc:var(--hue-devtools)">
+        <div class="tc-icon"><span class="tc-icon-emoji"><!-- TODO: icon --> &#x1F441;&#xFE0F;</span></div>
         <div class="tc-body">
-          <div class="tc-icon">&#x1F441;&#xFE0F;</div>
-          <div class="tc-name">HTML Viewer</div>
+          <div class="tc-name">HTML viewer</div>
           <div class="tc-desc">Paste HTML and preview it rendered live in the browser</div>
         </div>
         <div class="tc-arrow">&#x2192;</div>
       </a>
-
-      <a href="payment-tester.html" class="tool-card" data-keywords="api response tester payment mock http webhook test" style="--cc:var(--green)">
-        <div class="tc-stripe"></div>
+      <a href="payment-tester.html" class="tool-card" data-keywords="api response tester payment mock http webhook test" style="--cc:var(--hue-devtools)">
+        <div class="tc-icon"><span class="tc-icon-emoji"><!-- TODO: icon --> &#x1F9EA;</span></div>
         <div class="tc-body">
-          <div class="tc-icon">&#x1F9EA;</div>
-          <div class="tc-name">API Response Tester</div>
+          <div class="tc-name">API response tester</div>
           <div class="tc-desc">Test and inspect API responses and payment webhooks</div>
         </div>
         <div class="tc-arrow">&#x2192;</div>
       </a>
-
-      <a href="nfc-reader.html" class="tool-card" data-keywords="nfc reader tag scan web nfc browser" style="--cc:var(--pink)">
-        <div class="tc-stripe"></div>
+      <a href="nfc-reader.html" class="tool-card" data-keywords="nfc reader tag scan web nfc browser" style="--cc:var(--hue-devtools)">
+        <div class="tc-icon"><span class="tc-icon-emoji"><!-- TODO: icon --> &#x1F4F6;</span></div>
         <div class="tc-body">
-          <div class="tc-icon">&#x1F4F6;</div>
-          <div class="tc-name">NFC Reader</div>
+          <div class="tc-name">NFC reader</div>
           <div class="tc-desc">Read NFC tags directly in the browser via Web NFC API</div>
         </div>
         <div class="tc-arrow">&#x2192;</div>
       </a>
-
-      <a href="text-sharer.html" class="tool-card" data-keywords="text sharer share snippet link copy paste url" style="--cc:var(--purple)">
-        <div class="tc-stripe"></div>
+      <a href="text-sharer.html" class="tool-card" data-keywords="text sharer share snippet link copy paste url" style="--cc:var(--hue-devtools)">
+        <div class="tc-icon"><span class="tc-icon-emoji"><!-- TODO: icon --> &#x1F517;</span></div>
         <div class="tc-body">
-          <div class="tc-icon">&#x1F517;</div>
-          <div class="tc-name">Text Sharer</div>
+          <div class="tc-name">Text sharer</div>
           <div class="tc-desc">Share text snippets via a shareable link instantly</div>
         </div>
         <div class="tc-arrow">&#x2192;</div>
       </a>
-
-      <a href="elasticsearch-tools.html" class="tool-card" data-keywords="elasticsearch query dsl search index tools builder" style="--cc:var(--yellow)">
-        <div class="tc-stripe"></div>
+      <a href="epoch-converter.html" class="tool-card" data-keywords="epoch timestamp converter unix date time human readable" style="--cc:var(--hue-devtools)">
+        <div class="tc-icon"><svg class="tc-icon-svg" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="13" r="7"/><path d="M9 3h6"/><path class="ic-accent" d="M12 9v4l2.5 2"/></svg></div>
         <div class="tc-body">
-          <div class="tc-icon">&#x1F50D;</div>
-          <div class="tc-name">Elasticsearch Tools</div>
-          <div class="tc-desc">Build and test Elasticsearch DSL queries</div>
-        </div>
-        <div class="tc-arrow">&#x2192;</div>
-      </a>
-
-      <a href="epoch-converter.html" class="tool-card" data-keywords="epoch timestamp converter unix date time human readable" style="--cc:var(--teal)">
-        <div class="tc-stripe"></div>
-        <div class="tc-body">
-          <div class="tc-icon">&#x23F1;</div>
-          <div class="tc-name">Epoch Converter</div>
+          <div class="tc-name">Epoch converter</div>
           <div class="tc-desc">Convert Unix timestamps to human-readable dates and back</div>
         </div>
         <div class="tc-arrow">&#x2192;</div>
       </a>
-
-      <a href="timezone-converter.html" class="tool-card" data-keywords="timezone converter world clock time zone utc gmt" style="--cc:var(--teal)">
-        <div class="tc-stripe"></div>
+      <a href="timezone-converter.html" class="tool-card" data-keywords="timezone converter world clock time zone utc gmt" style="--cc:var(--hue-devtools)">
+        <div class="tc-icon"><svg class="tc-icon-svg" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8"/><path d="M4 12h16"/><path class="ic-accent" d="M12 4c3 3.5 3 12.5 0 16-3-3.5-3-12.5 0-16z"/></svg></div>
         <div class="tc-body">
-          <div class="tc-icon">&#x1F30F;</div>
-          <div class="tc-name">Timezone Converter</div>
+          <div class="tc-name">Timezone converter</div>
           <div class="tc-desc">Convert times between any world timezones instantly</div>
         </div>
         <div class="tc-arrow">&#x2192;</div>
       </a>
-
-      <a href="bash-zero-to-hero.html" class="tool-card" data-keywords="bash shell script zero hero guide reference commands linux" style="--cc:var(--ink)">
-        <div class="tc-stripe"></div>
+      <a href="bash-zero-to-hero.html" class="tool-card" data-keywords="bash shell script zero hero guide reference commands linux" style="--cc:var(--hue-devtools)">
+        <div class="tc-icon"><span class="tc-icon-emoji"><!-- TODO: icon --> &#x1F4BB;</span></div>
         <div class="tc-body">
-          <div class="tc-icon">&#x1F4BB;</div>
-          <div class="tc-name">Bash Zero to Hero</div>
+          <div class="tc-name">Bash zero to hero</div>
           <div class="tc-desc">Complete Bash scripting reference from beginner to pro</div>
         </div>
         <div class="tc-arrow">&#x2192;</div>
       </a>
-
     </div>
   </section>
 
   <!-- ═══════════════════════════════════════
        CH 5 — NETWORK PROTOCOLS
   ═══════════════════════════════════════ -->
-  <section class="chapter-section" id="network" data-chapter>
-    <div class="chapter-banner">
-      <div class="chapter-num-block" style="background:var(--purple)">05</div>
+  <section class="chapter-section" id="network" data-chapter data-hide-when-empty>
+    <div class="chapter-banner" style="--hue:var(--hue-network)">
+      <div class="chapter-num-block">05</div>
       <div class="chapter-info">
         <div class="chapter-kicker">&#x1F4DA; Chapter Five</div>
-        <div class="chapter-title">Network <span style="color:var(--purple)">Protocols</span></div>
+        <div class="chapter-title">Network Protocols</div>
         <div class="chapter-sub">Deep-dive references for HTTP, TCP, UDP, OSI model, DNS and networking fundamentals.</div>
       </div>
-      <div class="chapter-count" style="color:var(--purple)">5<span>TOOLS</span></div>
+      <div class="chapter-count" data-count-cat="network">5 <span>TOOLS</span></div>
     </div>
     <div class="tool-grid">
-
-      <a href="network-protocols.html" class="tool-card" data-keywords="network protocols reference overview guide fundamentals" style="--cc:var(--purple)">
-        <div class="tc-stripe"></div>
+      <a href="network-protocols.html" class="tool-card" data-keywords="network protocols reference overview guide fundamentals" style="--cc:var(--hue-network)">
+        <div class="tc-icon"><span class="tc-icon-emoji"><!-- TODO: icon --> &#x1F310;</span></div>
         <div class="tc-body">
-          <div class="tc-icon">&#x1F310;</div>
-          <div class="tc-name">Network Protocols</div>
+          <div class="tc-name">Network protocols</div>
           <div class="tc-desc">Overview of common network protocols and use cases</div>
         </div>
         <div class="tc-arrow">&#x2192;</div>
       </a>
-
-      <a href="http-protocol.html" class="tool-card" data-keywords="http protocol reference methods status codes headers 1.1 2" style="--cc:var(--blue)">
-        <div class="tc-stripe"></div>
+      <a href="http-protocol.html" class="tool-card" data-keywords="http protocol reference methods status codes headers 1.1 2" style="--cc:var(--hue-network)">
+        <div class="tc-icon"><span class="tc-icon-emoji"><!-- TODO: icon --> &#x1F30D;</span></div>
         <div class="tc-body">
-          <div class="tc-icon">&#x1F30D;</div>
-          <div class="tc-name">HTTP Protocol</div>
+          <div class="tc-name">HTTP protocol</div>
           <div class="tc-desc">Complete HTTP reference — methods, status codes, headers</div>
         </div>
         <div class="tc-arrow">&#x2192;</div>
       </a>
-
-      <a href="tcp-protocol.html" class="tool-card" data-keywords="tcp protocol handshake connection reliable transport flow control" style="--cc:var(--green)">
-        <div class="tc-stripe"></div>
+      <a href="tcp-protocol.html" class="tool-card" data-keywords="tcp protocol handshake connection reliable transport flow control" style="--cc:var(--hue-network)">
+        <div class="tc-icon"><span class="tc-icon-emoji"><!-- TODO: icon --> &#x1F517;</span></div>
         <div class="tc-body">
-          <div class="tc-icon">&#x1F517;</div>
-          <div class="tc-name">TCP Protocol</div>
+          <div class="tc-name">TCP protocol</div>
           <div class="tc-desc">TCP internals — handshake, flow control, reliability</div>
         </div>
         <div class="tc-arrow">&#x2192;</div>
       </a>
-
-      <a href="udp-protocol.html" class="tool-card" data-keywords="udp protocol datagram fast lightweight streaming connectionless" style="--cc:var(--orange)">
-        <div class="tc-stripe"></div>
+      <a href="udp-protocol.html" class="tool-card" data-keywords="udp protocol datagram fast lightweight streaming connectionless" style="--cc:var(--hue-network)">
+        <div class="tc-icon"><span class="tc-icon-emoji"><!-- TODO: icon --> &#x26A1;</span></div>
         <div class="tc-body">
-          <div class="tc-icon">&#x26A1;</div>
-          <div class="tc-name">UDP Protocol</div>
+          <div class="tc-name">UDP protocol</div>
           <div class="tc-desc">UDP — connectionless, fast, datagram-based communication</div>
         </div>
         <div class="tc-arrow">&#x2192;</div>
       </a>
-
-      <a href="osi-model.html" class="tool-card" data-keywords="osi model layers network physical data link transport session" style="--cc:var(--red)">
-        <div class="tc-stripe"></div>
+      <a href="osi-model.html" class="tool-card" data-keywords="osi model layers network physical data link transport session" style="--cc:var(--hue-network)">
+        <div class="tc-icon"><span class="tc-icon-emoji"><!-- TODO: icon --> &#x1F3D7;&#xFE0F;</span></div>
         <div class="tc-body">
-          <div class="tc-icon">&#x1F3D7;&#xFE0F;</div>
-          <div class="tc-name">OSI Model</div>
+          <div class="tc-name">OSI model</div>
           <div class="tc-desc">Interactive OSI 7-layer model reference with examples</div>
         </div>
         <div class="tc-arrow">&#x2192;</div>
       </a>
-
     </div>
   </section>
 
-  <div class="sfx-row">
-    <span class="sfx" style="font-size:2.4rem;transform:rotate(-8deg);color:var(--red);text-shadow:4px 4px 0 var(--ink)">KA-POW!</span>
-    <span class="sfx" style="font-size:1.4rem;transform:rotate(6deg);color:var(--green);text-shadow:3px 3px 0 var(--ink)">OPEN SOURCE!</span>
-    <span class="sfx" style="font-size:1.8rem;transform:rotate(-3deg);color:var(--blue);text-shadow:3px 3px 0 var(--ink)">ZZZAP!</span>
-  </div>
-
   <!-- ═══════════════════════════════════════
-       CH 5b — DNS TOOLS
+       CH 5b — DNS TOOLS  (DNS Museum lives in Tier 1 now)
   ═══════════════════════════════════════ -->
-  <section class="chapter-section" id="dns" data-chapter>
-    <div class="chapter-banner">
-      <div class="chapter-num-block" style="background:var(--blue)">DNS</div>
+  <section class="chapter-section" id="dns" data-chapter data-hide-when-empty>
+    <div class="chapter-banner" style="--hue:var(--hue-dns);--num-text:#fff">
+      <div class="chapter-num-block">DNS</div>
       <div class="chapter-info">
-        <div class="chapter-kicker">&#x1F4DA; Chapter Five — Part II</div>
-        <div class="chapter-title">DNS <span style="color:var(--blue)">Tools</span></div>
-        <div class="chapter-sub">dig, nslookup and traceroute — query DNS records, inspect network paths and debug connectivity like a pro.</div>
+        <div class="chapter-kicker">&#x1F4DA; Chapter Five &mdash; Part II</div>
+        <div class="chapter-title">DNS Tools</div>
+        <div class="chapter-sub">dig, nslookup and traceroute &mdash; query DNS records, inspect network paths and debug connectivity like a pro.</div>
       </div>
-      <div class="chapter-count" style="color:var(--blue)">5<span>TOOLS</span></div>
+      <div class="chapter-count" data-count-cat="dns">4 <span>TOOLS</span></div>
     </div>
     <div class="tool-grid">
-
-      <a href="dns-resolver.html" class="tool-card" data-keywords="dns resolver resolution flow infographic echobash root tld authoritative nameserver" style="--cc:var(--purple)">
-        <div class="tc-stripe"></div>
+      <a href="dns-resolver.html" class="tool-card" data-keywords="dns resolver resolution flow infographic echobash root tld authoritative nameserver" style="--cc:var(--hue-dns)">
+        <div class="tc-icon"><span class="tc-icon-emoji"><!-- TODO: icon --> 🌐</span></div>
         <div class="tc-body">
-          <div class="tc-icon">🌐</div>
-          <div class="tc-name">DNS Resolver</div>
+          <div class="tc-name">DNS resolver</div>
           <div class="tc-desc">Full visual flow: how echobash.com resolves from root → TLD → authoritative NS → IP</div>
         </div>
         <div class="tc-arrow">&#x2192;</div>
       </a>
-
-      <a href="dig.html" class="tool-card" data-keywords="dig dns lookup query records A AAAA MX NS TXT CNAME resolve" style="--cc:var(--blue)">
-        <div class="tc-stripe"></div>
+      <a href="dig.html" class="tool-card" data-keywords="dig dns lookup query records A AAAA MX NS TXT CNAME resolve" style="--cc:var(--hue-dns)">
+        <div class="tc-icon"><span class="tc-icon-emoji"><!-- TODO: icon --> &#x1F50D;</span></div>
         <div class="tc-body">
-          <div class="tc-icon">&#x1F50D;</div>
           <div class="tc-name">dig</div>
           <div class="tc-desc">Live DNS lookups — query A, MX, NS, TXT and more via Cloudflare DoH</div>
         </div>
         <div class="tc-arrow">&#x2192;</div>
       </a>
-
-      <a href="nslookup.html" class="tool-card" data-keywords="nslookup dns query name server lookup windows mac linux resolve" style="--cc:var(--green)">
-        <div class="tc-stripe"></div>
+      <a href="nslookup.html" class="tool-card" data-keywords="nslookup dns query name server lookup windows mac linux resolve" style="--cc:var(--hue-dns)">
+        <div class="tc-icon"><span class="tc-icon-emoji"><!-- TODO: icon --> &#x1F50E;</span></div>
         <div class="tc-body">
-          <div class="tc-icon">&#x1F50E;</div>
           <div class="tc-name">nslookup</div>
           <div class="tc-desc">Classic DNS query tool available built-in on Windows, macOS and Linux</div>
         </div>
         <div class="tc-arrow">&#x2192;</div>
       </a>
-
-      <a href="traceroute.html" class="tool-card" data-keywords="traceroute tracert network path hops latency routing TTL ICMP debug" style="--cc:var(--orange)">
-        <div class="tc-stripe"></div>
+      <a href="traceroute.html" class="tool-card" data-keywords="traceroute tracert network path hops latency routing TTL ICMP debug" style="--cc:var(--hue-dns)">
+        <div class="tc-icon"><span class="tc-icon-emoji"><!-- TODO: icon --> &#x1F5FA;&#xFE0F;</span></div>
         <div class="tc-body">
-          <div class="tc-icon">&#x1F5FA;&#xFE0F;</div>
           <div class="tc-name">traceroute</div>
           <div class="tc-desc">Map every network hop to a destination — debug routing and latency</div>
         </div>
         <div class="tc-arrow">&#x2192;</div>
       </a>
-
-      <a href="dns/index.html" class="tool-card" data-keywords="dns museum domain name system records comics educational interactive" style="--cc:var(--yellow)">
-        <div class="tc-stripe"></div>
-        <div class="tc-body">
-          <div class="tc-icon">&#x1F3DB;&#xFE0F;</div>
-          <div class="tc-name">DNS Museum</div>
-          <div class="tc-desc">DNS concepts explained in a comic-book interactive format</div>
-        </div>
-        <div class="tc-arrow">&#x2192;</div>
-      </a>
-
     </div>
   </section>
-
-  <div class="sfx-row">
-    <span class="sfx" style="font-size:1.6rem;transform:rotate(5deg);color:var(--blue);text-shadow:3px 3px 0 var(--ink)">RESOLVED!</span>
-    <span class="sfx" style="font-size:2.2rem;transform:rotate(-4deg);color:var(--orange);text-shadow:4px 4px 0 var(--ink)">BOOM!</span>
-    <span class="sfx" style="font-size:1.4rem;transform:rotate(7deg);color:var(--green);text-shadow:3px 3px 0 var(--ink)">TTL=0!</span>
-  </div>
-
-  <!-- ═══════════════════════════════════════
-       HOW X WORKS — DEEP DIVE ARTICLES
-  ═══════════════════════════════════════ -->
-  <section class="chapter-section" id="how" data-chapter>
-    <div class="chapter-banner">
-      <div class="chapter-num-block" style="background:var(--red)">HOW</div>
-      <div class="chapter-info">
-        <div class="chapter-kicker">&#x1F4A1; Deep Dives — Backend Internals</div>
-        <div class="chapter-title">How <span style="color:var(--red)">X Works</span></div>
-        <div class="chapter-sub">Step-by-step visual explainers of what really happens under the hood — every actor, every packet, every decision.</div>
-      </div>
-      <div class="chapter-count" style="color:var(--red)">12<span>ARTICLES</span></div>
-    </div>
-    <div class="tool-grid">
-
-      <a href="how-url-works.html" class="tool-card" data-keywords="url browser dns tcp tls http request response load balancer backend server" style="--cc:var(--blue)">
-        <div class="tc-stripe"></div>
-        <div class="tc-body">
-          <div class="tc-icon">🌐</div>
-          <div class="tc-name">You Type a URL</div>
-          <div class="tc-desc">DNS → TCP → TLS → Load Balancer → App Server → DB → response — every hop visualized</div>
-        </div>
-        <div class="tc-arrow">&#x2192;</div>
-      </a>
-
-      <a href="how-rate-limiting-works.html" class="tool-card" data-keywords="rate limiting token bucket leaky bucket sliding window fixed counter throttle api" style="--cc:var(--orange)">
-        <div class="tc-stripe"></div>
-        <div class="tc-body">
-          <div class="tc-icon">🚦</div>
-          <div class="tc-name">Rate Limiting</div>
-          <div class="tc-desc">Token bucket, leaky bucket, sliding window — all 4 algorithms with live interactive demos</div>
-        </div>
-        <div class="tc-arrow">&#x2192;</div>
-      </a>
-
-      <a href="how-oauth2-works.html" class="tool-card" data-keywords="oauth2 oauth authorization code flow jwt token refresh access grant" style="--cc:var(--purple)">
-        <div class="tc-stripe"></div>
-        <div class="tc-body">
-          <div class="tc-icon">🔐</div>
-          <div class="tc-name">OAuth 2.0</div>
-          <div class="tc-desc">Authorization Code flow, tokens, refresh — who talks to whom and exactly what they say</div>
-        </div>
-        <div class="tc-arrow">&#x2192;</div>
-      </a>
-
-      <a href="how-db-query-works.html" class="tool-card" data-keywords="database query sql execution plan parser optimizer index scan buffer pool postgres mysql" style="--cc:var(--teal)">
-        <div class="tc-stripe"></div>
-        <div class="tc-body">
-          <div class="tc-icon">🗄️</div>
-          <div class="tc-name">Database Query</div>
-          <div class="tc-desc">SQL parser → query planner → optimizer → index scan → buffer pool → disk I/O</div>
-        </div>
-        <div class="tc-arrow">&#x2192;</div>
-      </a>
-
-      <a href="how-mac-boots.html" class="tool-card" data-keywords="macbook boot startup uefi firmware kernel launchd process init macos" style="--cc:var(--ink)">
-        <div class="tc-stripe"></div>
-        <div class="tc-body">
-          <div class="tc-icon">💻</div>
-          <div class="tc-name">MacBook Boot</div>
-          <div class="tc-desc">Power button → firmware → bootloader → kernel → launchd — every millisecond explained</div>
-        </div>
-        <div class="tc-arrow">&#x2192;</div>
-      </a>
-
-      <a href="how-docker-works.html" class="tool-card" data-keywords="docker container image layers build dockerfile namespaces cgroups overlay filesystem" style="--cc:var(--blue)">
-        <div class="tc-stripe"></div>
-        <div class="tc-body">
-          <div class="tc-icon">🐳</div>
-          <div class="tc-name">Docker</div>
-          <div class="tc-desc">Images, layers, containers, builds — namespaces and cgroups without the hand-waving</div>
-        </div>
-        <div class="tc-arrow">&#x2192;</div>
-      </a>
-
-      <a href="how-uber-nearby-drivers.html" class="tool-card" data-keywords="uber geohash geospatial redis georadius h3 nearby drivers spatial index dispatch location" style="--cc:var(--green)">
-        <div class="tc-stripe"></div>
-        <div class="tc-body">
-          <div class="tc-icon">🚗</div>
-          <div class="tc-name">Uber Nearby Drivers</div>
-          <div class="tc-desc">Geohash, Redis GEORADIUS, H3 hexagonal grid — how Uber finds 8 drivers in 15ms</div>
-        </div>
-        <div class="tc-arrow">&#x2192;</div>
-      </a>
-
-      <a href="how-uber-eta-works.html" class="tool-card" data-keywords="uber eta routing astar dijkstra contraction hierarchies speed profile probe data ml machine learning travel time" style="--cc:var(--blue)">
-        <div class="tc-stripe"></div>
-        <div class="tc-body">
-          <div class="tc-icon">⏱</div>
-          <div class="tc-name">Uber ETA</div>
-          <div class="tc-desc">Road graphs, A* pathfinding, Contraction Hierarchies, real-time probe data and ML — the full ETA stack</div>
-        </div>
-        <div class="tc-arrow">&#x2192;</div>
-      </a>
-
-      <a href="how-nginx-works.html" class="tool-card" data-keywords="nginx reverse proxy load balancing ssl termination event loop worker process sendfile c10k system design" style="--cc:var(--blue)">
-        <div class="tc-stripe"></div>
-        <div class="tc-body">
-          <div class="tc-icon">⚡</div>
-          <div class="tc-name">How Nginx Works</div>
-          <div class="tc-desc">Event-driven architecture, reverse proxy, load balancing, SSL termination — how Nginx handles millions of requests with 4 worker processes</div>
-        </div>
-        <div class="tc-arrow">&#x2192;</div>
-      </a>
-
-      <a href="how-cdn-works.html" class="tool-card" data-keywords="cdn content delivery network edge nodes pop anycast caching cache-control cloudflare fastly aws cloudfront latency" style="--cc:var(--teal)">
-        <div class="tc-stripe"></div>
-        <div class="tc-body">
-          <div class="tc-icon">🌐</div>
-          <div class="tc-name">How CDN Works</div>
-          <div class="tc-desc">Edge nodes, PoPs, anycast routing, cache-control headers — how a CDN turns a 150ms request into an 8ms one</div>
-        </div>
-        <div class="tc-arrow">&#x2192;</div>
-      </a>
-
-      <a href="google_search/basic.html" class="tool-card" data-keywords="google.com dns tcp tls http 3d journey browser packet animation interactive" style="--cc:var(--blue)">
-        <div class="tc-stripe"></div>
-        <div class="tc-body">
-          <div class="tc-icon">🌍</div>
-          <div class="tc-name">google.com — 3D Journey</div>
-          <div class="tc-desc">Drag, zoom, and click through a playable 3D map of the internet — DNS, TCP, TLS, and HTTP packets flying in real time</div>
-        </div>
-        <div class="tc-arrow">&#x2192;</div>
-      </a>
-
-      <a href="google_search/advance.html" class="tool-card" data-keywords="google.com dns root tld authoritative tcp tls http2 load balancer packet inspector waterfall deep dive" style="--cc:var(--purple)">
-        <div class="tc-stripe"></div>
-        <div class="tc-body">
-          <div class="tc-icon">🔬</div>
-          <div class="tc-name">google.com — Deep Dive</div>
-          <div class="tc-desc">Every hop from DNS root servers to Google's load balancer — packet inspector, resource waterfall, 16-step cheat sheet</div>
-        </div>
-        <div class="tc-arrow">&#x2192;</div>
-      </a>
-
-    </div>
-  </section>
-
-  <div class="sfx-row">
-    <span class="sfx" style="font-size:2rem;transform:rotate(-3deg);color:var(--red);text-shadow:4px 4px 0 var(--ink)">BUT WHY?!</span>
-    <span class="sfx" style="font-size:1.5rem;transform:rotate(5deg);color:var(--orange);text-shadow:3px 3px 0 var(--ink)">DEEP DIVE!</span>
-    <span class="sfx" style="font-size:1.8rem;transform:rotate(-5deg);color:var(--purple);text-shadow:4px 4px 0 var(--ink)">AHA!</span>
-  </div>
 
   <!-- ═══════════════════════════════════════
        CH 6 — TEXT TOOLS
   ═══════════════════════════════════════ -->
-  <section class="chapter-section" id="text" data-chapter>
-    <div class="chapter-banner">
-      <div class="chapter-num-block" style="background:var(--pink)">06</div>
+  <section class="chapter-section" id="text" data-chapter data-hide-when-empty>
+    <div class="chapter-banner" style="--hue:var(--hue-text)">
+      <div class="chapter-num-block">06</div>
       <div class="chapter-info">
         <div class="chapter-kicker">&#x1F4DA; Chapter Six</div>
-        <div class="chapter-title">Text <span style="color:var(--pink)">Tools</span></div>
-        <div class="chapter-sub">Count words, convert ASCII, handle HTML entities and analyze text — all instantly.</div>
+        <div class="chapter-title">Text Tools</div>
+        <div class="chapter-sub">Count words, convert ASCII, handle HTML entities and analyze text &mdash; all instantly.</div>
       </div>
-      <div class="chapter-count" style="color:var(--pink)">4<span>TOOLS</span></div>
+      <div class="chapter-count" data-count-cat="text">4 <span>TOOLS</span></div>
     </div>
     <div class="tool-grid">
-
-      <a href="word-counter.html" class="tool-card" data-keywords="word counter character count sentences reading time text analyze" style="--cc:var(--pink)">
-        <div class="tc-stripe"></div>
+      <a href="word-counter.html" class="tool-card" data-keywords="word counter character count sentences reading time text analyze" style="--cc:var(--hue-text)">
+        <div class="tc-icon"><svg class="tc-icon-svg" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 6h16M4 12h16M4 18h10"/><circle class="ic-accent" cx="19" cy="18" r="1.4"/></svg></div>
         <div class="tc-body">
-          <div class="tc-icon">&#x1F4DD;</div>
-          <div class="tc-name">Word Counter</div>
+          <div class="tc-name">Word counter</div>
           <div class="tc-desc">Count words, characters, sentences and reading time</div>
         </div>
         <div class="tc-arrow">&#x2192;</div>
       </a>
-
-      <a href="html-entities.html" class="tool-card" data-keywords="html entities encode decode escape unescape special characters" style="--cc:var(--orange)">
-        <div class="tc-stripe"></div>
+      <a href="html-entities.html" class="tool-card" data-keywords="html entities encode decode escape unescape special characters" style="--cc:var(--hue-text)">
+        <div class="tc-icon"><span class="tc-icon-emoji"><!-- TODO: icon --> &#x1F5A5;&#xFE0F;</span></div>
         <div class="tc-body">
-          <div class="tc-icon">&#x1F5A5;&#xFE0F;</div>
-          <div class="tc-name">HTML Entities</div>
+          <div class="tc-name">HTML entities</div>
           <div class="tc-desc">Encode/decode HTML special characters and entities</div>
         </div>
         <div class="tc-arrow">&#x2192;</div>
       </a>
-
-      <a href="ascii-converter.html" class="tool-card" data-keywords="ascii converter text binary decimal hex character code" style="--cc:var(--blue)">
-        <div class="tc-stripe"></div>
+      <a href="ascii-converter.html" class="tool-card" data-keywords="ascii converter text binary decimal hex character code" style="--cc:var(--hue-text)">
+        <div class="tc-icon"><span class="tc-icon-emoji"><!-- TODO: icon --> &#x1F522;</span></div>
         <div class="tc-body">
-          <div class="tc-icon">&#x1F522;</div>
-          <div class="tc-name">ASCII Converter</div>
+          <div class="tc-name">ASCII converter</div>
           <div class="tc-desc">Convert between text, ASCII codes, binary and hex</div>
         </div>
         <div class="tc-arrow">&#x2192;</div>
       </a>
-
-      <a href="rot13-encoder.html" class="tool-card" data-keywords="rot13 cipher rotate encode decode text obfuscate" style="--cc:var(--purple)">
-        <div class="tc-stripe"></div>
+      <a href="rot13-encoder.html" class="tool-card" data-keywords="rot13 cipher rotate encode decode text obfuscate" style="--cc:var(--hue-text)">
+        <div class="tc-icon"><span class="tc-icon-emoji"><!-- TODO: icon --> &#x1F504;</span></div>
         <div class="tc-body">
-          <div class="tc-icon">&#x1F504;</div>
-          <div class="tc-name">ROT13 Encoder</div>
+          <div class="tc-name">ROT13 encoder</div>
           <div class="tc-desc">Apply ROT13 substitution cipher to any text instantly</div>
         </div>
         <div class="tc-arrow">&#x2192;</div>
       </a>
-
     </div>
   </section>
 
-  <!-- ═══════════════════════════════════════
-       CH 7 — DATABASE
-  ═══════════════════════════════════════ -->
-  <section class="chapter-section" id="database" data-chapter>
-    <div class="chapter-banner">
-      <div class="chapter-num-block" style="background:var(--teal)">07</div>
+  <!-- ═══════════════ TIER 3 — GUIDES & REFERENCES (lighter) ═══════════════ -->
+
+  <!-- CH 7 — DATABASE -->
+  <section class="chapter-section chapter-section-tier3" id="database" data-chapter data-hide-when-empty>
+    <div class="chapter-banner" style="--hue:var(--hue-database)">
+      <div class="chapter-num-block">07</div>
       <div class="chapter-info">
         <div class="chapter-kicker">&#x1F4DA; Chapter Seven</div>
-        <div class="chapter-title">Database <span style="color:var(--teal)">References</span></div>
+        <div class="chapter-title">Database References</div>
         <div class="chapter-sub">Comprehensive guides and command references for PostgreSQL, Redis, Elasticsearch and more.</div>
       </div>
-      <div class="chapter-count" style="color:var(--teal)">3<span>TOOLS</span></div>
+      <div class="chapter-count" data-count-cat="database">3 <span>TOOLS</span></div>
     </div>
     <div class="tool-grid">
-
-      <a href="postgresql-guide.html" class="tool-card" data-keywords="postgresql postgres guide reference sql database queries functions" style="--cc:var(--blue)">
-        <div class="tc-stripe"></div>
+      <a href="postgresql-guide.html" class="tool-card" data-keywords="postgresql postgres guide reference sql database queries functions" style="--cc:var(--hue-database)">
+        <div class="tc-icon"><span class="tc-icon-emoji"><!-- TODO: icon --> &#x1F418;</span></div>
         <div class="tc-body">
-          <div class="tc-icon">&#x1F418;</div>
-          <div class="tc-name">PostgreSQL Guide</div>
+          <div class="tc-name">PostgreSQL guide</div>
           <div class="tc-desc">Complete PostgreSQL reference — queries, functions, admin</div>
         </div>
         <div class="tc-arrow">&#x2192;</div>
       </a>
-
-      <a href="redis-command-explorer.html" class="tool-card" data-keywords="redis commands explorer cache key value memory database" style="--cc:var(--red)">
-        <div class="tc-stripe"></div>
+      <a href="redis-command-explorer.html" class="tool-card" data-keywords="redis commands explorer cache key value memory database" style="--cc:var(--hue-database)">
+        <div class="tc-icon"><span class="tc-icon-emoji"><!-- TODO: icon --> &#x1F4DA;</span></div>
         <div class="tc-body">
-          <div class="tc-icon">&#x1F4DA;</div>
-          <div class="tc-name">Redis Commands</div>
+          <div class="tc-name">Redis commands</div>
           <div class="tc-desc">Interactive Redis command reference with syntax and examples</div>
         </div>
         <div class="tc-arrow">&#x2192;</div>
       </a>
-
-      <a href="elasticsearch-tools.html" class="tool-card" data-keywords="elasticsearch dsl query search aggregation filter index" style="--cc:var(--yellow)">
-        <div class="tc-stripe"></div>
+      <a href="elasticsearch-tools.html" class="tool-card" data-keywords="elasticsearch dsl query search aggregation filter index" style="--cc:var(--hue-database)">
+        <div class="tc-icon"><span class="tc-icon-emoji"><!-- TODO: icon --> &#x1F50D;</span></div>
         <div class="tc-body">
-          <div class="tc-icon">&#x1F50D;</div>
-          <div class="tc-name">Elasticsearch Tools</div>
+          <div class="tc-name">Elasticsearch tools</div>
           <div class="tc-desc">Build, test and explore Elasticsearch DSL queries</div>
         </div>
         <div class="tc-arrow">&#x2192;</div>
       </a>
-
     </div>
   </section>
 
-  <!-- ═══════════════════════════════════════
-       CH 8 — PYTHON TOOLKIT
-  ═══════════════════════════════════════ -->
-  <section class="chapter-section" id="python" data-chapter>
-    <div class="chapter-banner">
-      <div class="chapter-num-block" style="background:var(--ink)">08</div>
+  <!-- CH 8 — PYTHON TOOLKIT -->
+  <section class="chapter-section chapter-section-tier3" id="python" data-chapter data-hide-when-empty>
+    <div class="chapter-banner" style="--hue:var(--hue-python)">
+      <div class="chapter-num-block">08</div>
       <div class="chapter-info">
         <div class="chapter-kicker">&#x1F4DA; Chapter Eight</div>
-        <div class="chapter-title">Python <span style="color:var(--yellow)">Toolkit</span></div>
+        <div class="chapter-title">Python Toolkit</div>
         <div class="chapter-sub">Interactive code references for Python requests, Flask, Pandas, OpenAI, urllib and more.</div>
       </div>
-      <div class="chapter-count">5<span>TOOLS</span></div>
+      <div class="chapter-count" data-count-cat="python">5 <span>TOOLS</span></div>
     </div>
     <div class="tool-grid">
-
-      <a href="python-requests.html" class="tool-card" data-keywords="python requests library http get post api headers auth" style="--cc:var(--blue)">
-        <div class="tc-stripe"></div>
+      <a href="python-requests.html" class="tool-card" data-keywords="python requests library http get post api headers auth" style="--cc:var(--hue-python)">
+        <div class="tc-icon"><span class="tc-icon-emoji"><!-- TODO: icon --> &#x1F310;</span></div>
         <div class="tc-body">
-          <div class="tc-icon">&#x1F310;</div>
-          <div class="tc-name">Requests Library</div>
+          <div class="tc-name">Requests library</div>
           <div class="tc-desc">Python requests — HTTP GET, POST, headers, authentication</div>
         </div>
         <div class="tc-arrow">&#x2192;</div>
       </a>
-
-      <a href="python-flask.html" class="tool-card" data-keywords="flask python web framework api routes micro blueprint" style="--cc:var(--red)">
-        <div class="tc-stripe"></div>
+      <a href="python-flask.html" class="tool-card" data-keywords="flask python web framework api routes micro blueprint" style="--cc:var(--hue-python)">
+        <div class="tc-icon"><span class="tc-icon-emoji"><!-- TODO: icon --> &#x1F336;&#xFE0F;</span></div>
         <div class="tc-body">
-          <div class="tc-icon">&#x1F336;&#xFE0F;</div>
-          <div class="tc-name">Flask Guide</div>
+          <div class="tc-name">Flask guide</div>
           <div class="tc-desc">Flask web framework — routes, templates, API patterns</div>
         </div>
         <div class="tc-arrow">&#x2192;</div>
       </a>
-
-      <a href="python-pandas.html" class="tool-card" data-keywords="pandas python dataframe data analysis csv read filter" style="--cc:var(--purple)">
-        <div class="tc-stripe"></div>
+      <a href="python-pandas.html" class="tool-card" data-keywords="pandas python dataframe data analysis csv read filter" style="--cc:var(--hue-python)">
+        <div class="tc-icon"><span class="tc-icon-emoji"><!-- TODO: icon --> &#x1F43C;</span></div>
         <div class="tc-body">
-          <div class="tc-icon">&#x1F43C;</div>
-          <div class="tc-name">Pandas Guide</div>
+          <div class="tc-name">Pandas guide</div>
           <div class="tc-desc">Pandas DataFrames — read, filter, group, transform data</div>
         </div>
         <div class="tc-arrow">&#x2192;</div>
       </a>
-
-      <a href="python-openai.html" class="tool-card" data-keywords="python openai gpt api llm chat completions prompt" style="--cc:var(--green)">
-        <div class="tc-stripe"></div>
+      <a href="python-openai.html" class="tool-card" data-keywords="python openai gpt api llm chat completions prompt" style="--cc:var(--hue-python)">
+        <div class="tc-icon"><span class="tc-icon-emoji"><!-- TODO: icon --> &#x1F916;</span></div>
         <div class="tc-body">
-          <div class="tc-icon">&#x1F916;</div>
-          <div class="tc-name">OpenAI Library</div>
+          <div class="tc-name">OpenAI library</div>
           <div class="tc-desc">Python OpenAI SDK — chat completions, prompts, API patterns</div>
         </div>
         <div class="tc-arrow">&#x2192;</div>
       </a>
-
-      <a href="python-urllib.html" class="tool-card" data-keywords="urllib python standard library url http request built-in" style="--cc:var(--orange)">
-        <div class="tc-stripe"></div>
+      <a href="python-urllib.html" class="tool-card" data-keywords="urllib python standard library url http request built-in" style="--cc:var(--hue-python)">
+        <div class="tc-icon"><span class="tc-icon-emoji"><!-- TODO: icon --> &#x1F517;</span></div>
         <div class="tc-body">
-          <div class="tc-icon">&#x1F517;</div>
           <div class="tc-name">urllib</div>
           <div class="tc-desc">Python's built-in urllib for URL handling and HTTP requests</div>
         </div>
         <div class="tc-arrow">&#x2192;</div>
       </a>
-
     </div>
   </section>
 
-  <div class="sfx-row" style="margin-bottom:16px">
-    <span class="sfx" style="font-size:3rem;transform:rotate(-10deg);color:var(--red);text-shadow:5px 5px 0 var(--ink)">THE END!</span>
-    <span class="sfx" style="font-size:1.3rem;transform:rotate(5deg);color:var(--ink);text-shadow:2px 2px 0 var(--yellow)">...UNTIL THE NEXT TOOL IS BORN!</span>
-  </div>
+  <div class="no-results" id="no-results">&#x1F614; NO TOOLS FOUND!</div>
 
 </div><!-- /page-wrap -->
 
@@ -1449,13 +895,13 @@ body{
     <div>
       <div class="footer-brand">
         <img src="images/logo.png" alt="DevDunia" class="footer-logo">
-        DEV<span style="color:var(--red)">DUNIA</span>
+        DevDunia
       </div>
-      <p class="footer-bio">100+ free developer tools in your browser. No login, no tracking, no fluff. Built by Ali Anwar (@echobash) — open to contributions from the community.</p>
+      <p class="footer-bio">70+ free developer tools in your browser. No login, no tracking, no fluff. Built by Ali Anwar (@echobash) &mdash; open to contributions from the community.</p>
       <div class="footer-links-col">
         <a href="https://echobash.com" target="_blank" rel="noopener" class="footer-link-auth">
           <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 17.93c-3.95-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93zm6.9-2.54c-.26-.81-1-1.39-1.9-1.39h-1v-3c0-.55-.45-1-1-1H8v-2h2c.55 0 1-.45 1-1V7h2c1.1 0 2-.9 2-2v-.41c2.93 1.19 5 4.06 5 7.41 0 2.08-.8 3.97-2.1 5.39z"/></svg>
-          Ali Anwar — echobash.com
+          Ali Anwar &mdash; echobash.com
         </a>
         <a href="https://github.com/echobash" target="_blank" rel="noopener" class="footer-link-auth">
           <svg viewBox="0 0 24 24"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.3 3.44 9.8 8.2 11.38.6.1.82-.26.82-.58v-2.03c-3.34.72-4.04-1.61-4.04-1.61-.54-1.38-1.33-1.75-1.33-1.75-1.09-.74.08-.73.08-.73 1.2.08 1.84 1.24 1.84 1.24 1.07 1.83 2.8 1.3 3.49 1 .1-.78.42-1.3.76-1.6-2.67-.3-5.47-1.33-5.47-5.93 0-1.31.47-2.38 1.24-3.22-.13-.3-.54-1.52.12-3.18 0 0 1.01-.32 3.3 1.23a11.5 11.5 0 013-.4c1.02 0 2.04.13 3 .4 2.28-1.55 3.29-1.23 3.29-1.23.66 1.66.25 2.88.12 3.18.77.84 1.24 1.91 1.24 3.22 0 4.61-2.81 5.63-5.48 5.92.43.37.81 1.1.81 2.22v3.29c0 .32.22.69.83.57C20.57 21.8 24 17.3 24 12c0-6.63-5.37-12-12-12z"/></svg>
@@ -1471,16 +917,16 @@ body{
     <div>
       <div class="footer-col-h">CHAPTERS</div>
       <nav class="footer-nav">
-        <a href="#encoders">01 — Encoders / Decoders</a>
-        <a href="#security">02 — Security &amp; VAPT</a>
-        <a href="#generators">03 — Generators</a>
-        <a href="#devtools">04 — API &amp; Dev Tools</a>
-        <a href="#network">05 — Network Protocols</a>
-        <a href="#dns">05b — DNS Tools</a>
-        <a href="#how">HOW — How X Works</a>
-        <a href="#text">06 — Text Tools</a>
-        <a href="#database">07 — Database</a>
-        <a href="#python">08 — Python Toolkit</a>
+        <a href="#encoders">01 &mdash; Encoders / Decoders</a>
+        <a href="#security">02 &mdash; Security &amp; VAPT</a>
+        <a href="#generators">03 &mdash; Generators</a>
+        <a href="#devtools">04 &mdash; API &amp; Dev Tools</a>
+        <a href="#network">05 &mdash; Network Protocols</a>
+        <a href="#dns">05b &mdash; DNS Tools</a>
+        <a href="#how">HOW &mdash; How X Works</a>
+        <a href="#text">06 &mdash; Text Tools</a>
+        <a href="#database">07 &mdash; Database</a>
+        <a href="#python">08 &mdash; Python Toolkit</a>
       </nav>
     </div>
 
@@ -1499,55 +945,187 @@ body{
   </div>
 
   <div class="footer-bottom">
-    <span class="footer-copy">Made with &#x2665; by <a href="https://echobash.com" target="_blank" rel="noopener">Ali Anwar</a> — Free, private, open source.</span>
+    <span class="footer-copy">Made with &#x2665; by <a href="https://echobash.com" target="_blank" rel="noopener">Ali Anwar</a> &mdash; Free, private, open source.</span>
     <span class="footer-end">THE END! ...FOR NOW</span>
   </div>
 </footer>
 
 <script src="masthead.js"></script>
-<script src="author-card.js"></script>
 <script>
-(function() {
-  var inp    = document.getElementById('search-input');
-  var cnt    = document.getElementById('search-count');
-  var noRes  = document.getElementById('no-results');
-  var cards  = document.querySelectorAll('.tool-card');
-  var secs   = document.querySelectorAll('.chapter-section[data-chapter]');
+(function () {
+  var CAT_LABELS = {
+    encoders: 'Encoders', security: 'Security', generators: 'Generators',
+    devtools: 'Dev Tools', network: 'Network', dns: 'DNS Tools',
+    how: 'How X Works', text: 'Text Tools', database: 'Database', python: 'Python'
+  };
 
-  cnt.textContent = cards.length + ' tools';
+  var cards = Array.prototype.slice.call(document.querySelectorAll('.tool-card, .feature-card'));
+  var sections = Array.prototype.slice.call(document.querySelectorAll('[data-hide-when-empty]'));
+  var tier1Panel = document.querySelector('.tier1-panel');
+  var inp = document.getElementById('search-input');
+  var cnt = document.getElementById('search-count');
+  var noRes = document.getElementById('no-results');
+  var heroCountN = document.getElementById('hero-count-n');
+  var catChips = document.getElementById('cat-chips');
 
-  inp.addEventListener('input', function() {
+  function setCount(n) { cnt.textContent = n + (n === 1 ? ' tool' : ' tools'); }
+  setCount(cards.length);
+  heroCountN.textContent = cards.length + '+';
+
+  // Category chips: prefer tools.json (per CLAUDE.md, the source of
+  // truth for counts/categories); fall back to a DOM count if the fetch
+  // fails (e.g. under file://), so the page still works either way.
+  function renderChips(byCategory) {
+    var html = '';
+    for (var key in CAT_LABELS) {
+      if (!byCategory[key]) continue;
+      html += '<a class="cat-pill" href="#' + key + '" style="--dot:var(--hue-' + key + ')">' +
+        '<span class="cat-pill-dot"></span>' + CAT_LABELS[key] + ' (' + byCategory[key] + ')</a>';
+    }
+    catChips.innerHTML = html;
+  }
+
+  function domCategoryCounts() {
+    var out = {};
+    sections.forEach(function (sec) {
+      var id = sec.id;
+      if (!id) return;
+      out[id] = sec.querySelectorAll('.tool-card, .feature-card').length;
+    });
+    return out;
+  }
+
+  if (window.fetch) {
+    fetch('tools.json').then(function (r) { return r.json(); }).then(function (data) {
+      heroCountN.textContent = data.total + '+';
+      renderChips(data.byCategory);
+    }).catch(function () { renderChips(domCategoryCounts()); });
+  } else {
+    renderChips(domCategoryCounts());
+  }
+
+  // Chapter/tier1 counts derived from the DOM so they can never drift
+  // from what's actually on the page (see CLAUDE.md: never hardcode a
+  // tool count). The numbers in the HTML source are a correct-at-commit
+  // fallback for no-JS contexts.
+  sections.forEach(function (sec) {
+    var countEl = sec.querySelector('.chapter-count[data-count-cat]');
+    if (!countEl || !countEl.firstChild) return;
+    var n = sec.querySelectorAll('.tool-card, .feature-card').length;
+    countEl.firstChild.nodeValue = n + ' ';
+  });
+
+  // ---- Search / filter ----
+  inp.addEventListener('input', function () {
     var q = this.value.trim().toLowerCase();
 
     if (!q) {
-      for (var i = 0; i < cards.length; i++) cards[i].classList.remove('filtered-out');
-      for (var j = 0; j < secs.length; j++) secs[j].classList.remove('hidden');
-      cnt.textContent = cards.length + ' tools';
+      cards.forEach(function (c) { c.classList.remove('filtered-out'); });
+      sections.forEach(function (s) { s.classList.remove('hidden'); });
+      setCount(cards.length);
       noRes.classList.remove('show');
       return;
     }
 
     var vis = 0;
-    for (var i = 0; i < cards.length; i++) {
-      var c = cards[i];
-      var kw   = (c.dataset.keywords || '').toLowerCase();
-      var name = (c.querySelector('.tc-name') || {}).textContent || '';
-      var desc = (c.querySelector('.tc-desc') || {}).textContent || '';
-      var hit  = kw.includes(q) || name.toLowerCase().includes(q) || desc.toLowerCase().includes(q);
+    cards.forEach(function (c) {
+      var kw = (c.dataset.keywords || '').toLowerCase();
+      var name = (c.querySelector('.tc-name, .feature-name') || {}).textContent || '';
+      var desc = (c.querySelector('.tc-desc, .feature-desc') || {}).textContent || '';
+      var hit = kw.indexOf(q) !== -1 || name.toLowerCase().indexOf(q) !== -1 || desc.toLowerCase().indexOf(q) !== -1;
       c.classList.toggle('filtered-out', !hit);
       if (hit) vis++;
-    }
+    });
 
-    for (var j = 0; j < secs.length; j++) {
-      var sc = secs[j].querySelectorAll('.tool-card');
-      var any = false;
-      for (var k = 0; k < sc.length; k++) if (!sc[k].classList.contains('filtered-out')) { any = true; break; }
-      secs[j].classList.toggle('hidden', !any);
-    }
+    sections.forEach(function (s) {
+      var any = Array.prototype.some.call(s.querySelectorAll('.tool-card, .feature-card'), function (c) {
+        return !c.classList.contains('filtered-out');
+      });
+      s.classList.toggle('hidden', !any);
+    });
 
-    cnt.textContent = vis + ' tool' + (vis !== 1 ? 's' : '');
+    setCount(vis);
     noRes.classList.toggle('show', vis === 0);
   });
+})();
+</script>
+<script>
+(function () {
+  var DEMOS = {
+    json: {
+      placeholder: '{"hello":"world","n":1}',
+      cta: { href: 'json-beautifier.html', label: 'JSON beautifier' },
+      run: function (v) { return JSON.stringify(JSON.parse(v), null, 2); }
+    },
+    base64: {
+      placeholder: 'Hello from DevDunia!',
+      cta: { href: 'base64-encoder.html', label: 'Base64 encoder' },
+      run: function (v) { return btoa(unescape(encodeURIComponent(v))); }
+    },
+    jwt: {
+      placeholder: 'eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIxMjM0NTY3ODkwIn0.dozjgNryP4J3jVmNHl0w5N_XgL0n3I9PlFUP0THsR8U',
+      cta: { href: 'jwt-decoder.html', label: 'JWT decoder' },
+      run: function (v) {
+        var parts = v.trim().split('.');
+        if (parts.length < 2) throw new Error('Not a JWT — expected header.payload.signature');
+        function b64urlDecode(s) {
+          s = s.replace(/-/g, '+').replace(/_/g, '/');
+          while (s.length % 4) s += '=';
+          return decodeURIComponent(escape(atob(s)));
+        }
+        var header = JSON.parse(b64urlDecode(parts[0]));
+        var payload = JSON.parse(b64urlDecode(parts[1]));
+        return 'HEADER\n' + JSON.stringify(header, null, 2) + '\n\nPAYLOAD\n' + JSON.stringify(payload, null, 2);
+      }
+    }
+  };
+
+  var tabs = Array.prototype.slice.call(document.querySelectorAll('.demo-tab'));
+  var input = document.getElementById('demo-input');
+  var output = document.getElementById('demo-output');
+  var runBtn = document.getElementById('demo-run');
+  var errEl = document.getElementById('demo-error');
+  var ctaLink = document.getElementById('demo-cta-link');
+  var active = 'json';
+
+  function showError(msg) { errEl.textContent = '⚠ ' + msg; errEl.classList.add('show'); }
+  function hideError() { errEl.classList.remove('show'); }
+
+  function run() {
+    hideError();
+    try {
+      output.value = DEMOS[active].run(input.value);
+    } catch (e) {
+      output.value = '';
+      showError(e.message);
+    }
+  }
+
+  function setActive(key) {
+    active = key;
+    tabs.forEach(function (t) {
+      var on = t.dataset.demo === key;
+      t.classList.toggle('active', on);
+      t.setAttribute('aria-selected', on ? 'true' : 'false');
+    });
+    input.value = DEMOS[key].placeholder;
+    input.placeholder = DEMOS[key].placeholder;
+    output.value = '';
+    hideError();
+    ctaLink.href = DEMOS[key].cta.href;
+    ctaLink.textContent = DEMOS[key].cta.label + ' →';
+    run();
+  }
+
+  tabs.forEach(function (t) {
+    t.addEventListener('click', function () { setActive(t.dataset.demo); });
+  });
+  runBtn.addEventListener('click', run);
+  input.addEventListener('keydown', function (e) {
+    if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') run();
+  });
+
+  setActive('json');
 })();
 </script>
 </body>

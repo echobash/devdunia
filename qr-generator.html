@@ -11,64 +11,10 @@
 <meta property="og:description" content="Generate QR codes from any URL, text, email, WiFi or phone number. Download PNG instantly.">
 <meta property="og:image" content="https://devdunia.com/images/logo.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="css/comic.css">
 <link href="https://fonts.googleapis.com/css2?family=Bangers&family=Comic+Neue:wght@400;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
 <style>
-:root {
-  --ink: #1a1410;
-  --paper: #fdf3e3;
-  --paper2: #fbe9cc;
-  --red: #e63946;
-  --blue: #1d6fb8;
-  --yellow: #ffd23f;
-  --green: #3fa34d;
-  --pink: #ff6b9d;
-  --purple: #8a4fff;
-  --orange: #ff8c42;
-}
-
-*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-
-body {
-  font-family: 'Comic Neue', cursive;
-  font-weight: 400;
-  color: var(--ink);
-  background-color: var(--paper);
-  background-image: radial-gradient(var(--ink) 0.5px, transparent 0.6px);
-  background-size: 14px 14px;
-  background-attachment: fixed;
-  min-height: 100vh;
-}
-
-.paper-overlay {
-  position: fixed;
-  inset: 0;
-  background: rgba(253,243,227,.78);
-  pointer-events: none;
-  z-index: 0;
-}
-
-.page-wrap {
-  position: relative;
-  z-index: 1;
-  max-width: 1240px;
-  margin: 0 auto;
-  padding: 20px 32px 60px;
-}
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+/* ---- TODO migrate: page-specific overrides, not yet centralized in css/comic.css ---- */
 /* ── HERO ── */
 .hero {
   display: flex;
@@ -83,13 +29,6 @@ body {
   transform: rotate(0.4deg);
 }
 
-.hero-icon {
-  font-size: 3rem;
-  line-height: 1;
-  flex-shrink: 0;
-  filter: drop-shadow(3px 3px 0 var(--ink));
-}
-
 .hero-text h1 {
   font-family: 'Bangers', cursive;
   font-size: 2.8rem;
@@ -101,52 +40,12 @@ body {
   text-transform: uppercase;
 }
 
-.hero-text p {
-  font-size: .95rem;
-  margin-top: 6px;
-  line-height: 1.5;
-  max-width: 480px;
-}
-
-.hero-badges {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 6px;
-  margin-top: 10px;
-}
-
-.badge {
-  font-family: 'Space Mono', monospace;
-  font-size: .65rem;
-  font-weight: 700;
-  padding: 3px 8px;
-  border: 2px solid var(--ink);
-  border-radius: 4px;
-  box-shadow: 2px 2px 0 var(--ink);
-}
-.badge-blue   { background: var(--blue);   color: #fff; }
-.badge-green  { background: var(--green);  color: #fff; }
-.badge-yellow { background: var(--yellow); color: var(--ink); }
-.badge-red    { background: var(--red);    color: #fff; }
-.badge-purple { background: var(--purple); color: #fff; }
-.badge-orange { background: var(--orange); color: #fff; }
-
 /* ── LAYOUT GRID ── */
 .tool-grid {
   display: grid;
   grid-template-columns: 1fr 320px;
   gap: 22px;
   align-items: start;
-}
-
-/* ── PANEL ── */
-.panel {
-  background: var(--paper);
-  border: 4px solid var(--ink);
-  border-radius: 6px;
-  box-shadow: 7px 7px 0 var(--ink);
-  overflow: hidden;
-  margin-bottom: 22px;
 }
 
 .panel-header {
@@ -191,7 +90,6 @@ body {
   transition: border-color .15s;
 }
 .comic-textarea:focus { border-color: var(--green); }
-.comic-textarea::placeholder { color: #aaa; font-style: italic; }
 
 /* ── SECTION LABEL ── */
 .section-label {
@@ -266,34 +164,10 @@ body {
   box-shadow: 3px 3px 0 var(--ink);
 }
 .color-text:focus { border-color: var(--green); }
-
-/* ── BUTTONS ── */
-.btn-row {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 10px;
-  margin-top: 14px;
-}
-
-.btn {
-  font-family: 'Bangers', cursive;
-  font-size: 1.1rem;
-  letter-spacing: 1px;
-  border: 3px solid var(--ink);
-  border-radius: 6px;
-  padding: 8px 20px;
-  cursor: pointer;
-  box-shadow: 4px 4px 0 var(--ink);
-  transition: transform .1s, box-shadow .1s;
-  text-transform: uppercase;
-}
-.btn:active { transform: translate(2px,2px); box-shadow: 2px 2px 0 var(--ink); }
 .btn:disabled { opacity: .45; cursor: not-allowed; transform: none !important; }
 
 .btn-primary { background: var(--green);  color: #fff; }
 .btn-success { background: var(--blue);   color: #fff; }
-.btn-danger  { background: var(--red);    color: #fff; }
-.btn-neutral { background: var(--paper2); color: var(--ink); }
 
 /* ── QR DISPLAY ── */
 .qr-display {
@@ -348,9 +222,6 @@ body {
   border-radius: 4px;
   box-shadow: 2px 2px 0 var(--ink);
 }
-.chip-green  { background: var(--green);  color: #fff; }
-.chip-blue   { background: var(--blue);   color: #fff; }
-.chip-yellow { background: var(--yellow); color: var(--ink); }
 
 .qr-download-row {
   display: flex;
@@ -396,25 +267,9 @@ body {
   font-weight: 700;
   color: var(--red);
 }
-.error-bubble.show { display: block; }
 
 /* ── DIVIDER ── */
 .divider { border: none; border-top: 3px solid var(--ink); margin: 12px 0; }
-
-/* ── HOW IT WORKS ── */
-.how-steps { display: flex; flex-direction: column; gap: 10px; }
-.how-step  { display: flex; align-items: flex-start; gap: 12px; }
-.step-dot  {
-  width: 28px; height: 28px; border-radius: 50%; border: 3px solid var(--ink);
-  display: flex; align-items: center; justify-content: center;
-  font-family: 'Bangers', cursive; font-size: 1rem; color: #fff;
-  flex-shrink: 0; box-shadow: 2px 2px 0 var(--ink);
-}
-.how-step p { font-size: .88rem; line-height: 1.5; padding-top: 2px; }
-.how-step code {
-  font-family: 'Space Mono', monospace; font-size: .75rem;
-  background: var(--ink); color: var(--yellow); padding: 1px 5px; border-radius: 3px;
-}
 
 /* ── MOBILE ── */
 @media (max-width: 720px) {

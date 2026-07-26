@@ -10,44 +10,16 @@
 <meta property="og:title" content="Text Sharer — DevDunia">
 <meta property="og:image" content="https://devdunia.com/images/logo.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="css/comic.css">
 <link href="https://fonts.googleapis.com/css2?family=Bangers&family=Comic+Neue:wght@400;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
 <style>
-:root{--ink:#1a1410;--paper:#fdf3e3;--paper2:#fbe9cc;--red:#e63946;--blue:#1d6fb8;--yellow:#ffd23f;--green:#3fa34d;--pink:#ff6b9d;--purple:#8a4fff;--orange:#ff8c42;}
-*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
-body{font-family:'Comic Neue',cursive;font-weight:400;color:var(--ink);background-color:var(--paper);background-image:radial-gradient(var(--ink) 0.5px,transparent 0.6px);background-size:14px 14px;background-attachment:fixed;min-height:100vh;}
-.paper-overlay{position:fixed;inset:0;background:rgba(253,243,227,.78);pointer-events:none;z-index:0;}
-.page-wrap{position:relative;z-index:1;max-width: 1240px;margin:0 auto;padding: 20px 32px 60px;}
-
-
-
-
-
-
-
-.hero{display:flex;align-items:flex-start;gap:20px;background:var(--paper2);border:4px solid var(--ink);border-radius:6px;box-shadow:7px 7px 0 var(--ink);padding:20px 24px;margin-bottom:28px;transform:rotate(-0.4deg);}
-.hero-icon{font-size:3rem;line-height:1;flex-shrink:0;filter:drop-shadow(3px 3px 0 var(--ink));}
+/* ---- TODO migrate: page-specific overrides, not yet centralized in css/comic.css ---- */
 .hero-text h1{font-family:'Bangers',cursive;font-size:2.8rem;letter-spacing:2px;color:var(--blue);-webkit-text-stroke:1px var(--ink);text-shadow:4px 4px 0 var(--ink);line-height:1;text-transform:uppercase;}
-.hero-text p{font-size:.95rem;margin-top:6px;line-height:1.5;max-width:480px;}
-.hero-badges{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px;}
-.badge{font-family:'Space Mono',monospace;font-size:.65rem;font-weight:700;padding:3px 8px;border:2px solid var(--ink);border-radius:4px;box-shadow:2px 2px 0 var(--ink);}
-.badge-blue{background:var(--blue);color:#fff;}.badge-green{background:var(--green);color:#fff;}.badge-yellow{background:var(--yellow);color:var(--ink);}.badge-red{background:var(--red);color:#fff;}
-.panel{background:var(--paper);border:4px solid var(--ink);border-radius:6px;box-shadow:7px 7px 0 var(--ink);overflow:hidden;margin-bottom:22px;}
-.panel-header{background:var(--ink);color:var(--yellow);font-family:'Bangers',cursive;font-size:1.2rem;letter-spacing:2px;padding:8px 16px;display:flex;align-items:center;justify-content:space-between;gap:10px;}
-.panel-header .panel-tag{font-family:'Space Mono',monospace;font-size:.65rem;font-weight:700;background:var(--yellow);color:var(--ink);padding:2px 7px;border-radius:3px;}
-.panel-body{padding:18px 20px;}
 .comic-textarea{width:100%;background:#fff;border:3px solid var(--ink);border-radius:6px;padding:12px 14px;font-family:'Space Mono',monospace;font-size:.82rem;color:var(--ink);line-height:1.6;resize:vertical;min-height:200px;box-shadow:inset 3px 3px 0 rgba(0,0,0,.06);outline:none;transition:border-color .15s;word-wrap:break-word;overflow-wrap:break-word;}
 .comic-textarea:focus{border-color:var(--blue);box-shadow:inset 3px 3px 0 rgba(29,111,184,.1);}
-.comic-textarea::placeholder{color:#aaa;font-style:italic;}
 .comic-textarea[readonly]{background:var(--paper2);cursor:default;white-space:pre-wrap;}
-.section-label{font-family:'Bangers',cursive;font-size:.95rem;letter-spacing:1px;color:var(--ink);margin-bottom:6px;text-transform:uppercase;}
 .char-count{font-family:'Space Mono',monospace;font-size:.72rem;color:var(--ink);opacity:.6;margin-top:4px;}
-.btn-row{display:flex;flex-wrap:wrap;gap:10px;margin-top:14px;}
-.btn{font-family:'Bangers',cursive;font-size:1.1rem;letter-spacing:1px;border:3px solid var(--ink);border-radius:6px;padding:8px 20px;cursor:pointer;box-shadow:4px 4px 0 var(--ink);transition:transform .1s,box-shadow .1s;text-transform:uppercase;}
-.btn:active{transform:translate(2px,2px);box-shadow:2px 2px 0 var(--ink);}
 .btn-primary{background:var(--blue);color:#fff;}
-.btn-success{background:var(--green);color:#fff;}
-.btn-danger{background:var(--red);color:#fff;}
-.btn-neutral{background:var(--paper2);color:var(--ink);}
 .qr-wrap{display:flex;flex-direction:column;align-items:center;gap:16px;padding:10px 0;}
 .qr-box{background:#fff;border:4px solid var(--ink);border-radius:6px;box-shadow:6px 6px 0 var(--ink);padding:16px;display:inline-block;}
 .qr-box canvas{display:block;max-width:100%;height:auto;}
