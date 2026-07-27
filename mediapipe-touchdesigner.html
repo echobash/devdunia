@@ -1,0 +1,656 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MediaPipe × TouchDesigner: Hand Detection — DevDunia</title>
+<meta name="description" content="Step-by-step guide to real-time hand detection in TouchDesigner with MediaPipe — the 21 landmarks, the two-model pipeline, plugin and Python/OSC setups, gesture math, and an interactive playground.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="css/comic.css">
+<link rel="stylesheet" href="css/mediapipe-hands.css">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bangers&family=Comic+Neue:ital,wght@0,400;0,700;1,400&family=Space+Mono:wght@400;700&display=swap">
+<script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
+</head>
+<body>
+<div data-masthead></div>
+<div class="page-wrap">
+
+<div data-tool-hero
+  data-title="MediaPipe × TouchDesigner: Hand Detection"
+  data-chapter="HOW-14"
+  data-category="How X Works"
+  data-icon="🖐️"
+  data-desc="Turn your webcam into a 21-point hand controller — how MediaPipe finds your hand, how the data lands in TouchDesigner CHOPs, and how pinch math drives real-time visuals."
+  data-color="purple"
+  data-badges="MEDIAPIPE,TOUCHDESIGNER,HAND TRACKING,CREATIVE CODING"
+  data-badge-colors="purple,pink,green,orange">
+</div>
+
+<!-- ───────────────────────────────────────
+     SECTION 01: The Big Picture
+─────────────────────────────────────────── -->
+<div class="panel">
+  <div class="section-head">
+    <span class="section-num">01</span>
+    <h2>The Big Picture: Camera In, Magic Out</h2>
+  </div>
+
+  <p><strong>MediaPipe</strong> is Google's open-source framework of ready-made, real-time ML perception models — hands, face, pose, objects — tuned to run at 30+ FPS on ordinary laptops, phones, and even in the browser. Its <strong>Hand Landmarker</strong> takes a plain RGB webcam frame and returns <strong>21 precise 3D points</strong> per hand, every frame, no depth camera and no gloves required.</p>
+
+  <p><strong>TouchDesigner</strong> is a node-based visual programming environment used for live visuals, installations, and stage shows. It thinks in operator families: <strong>TOPs</strong> (textures/images), <strong>CHOPs</strong> (channels of numbers), <strong>SOPs</strong> (3D geometry), <strong>DATs</strong> (tables/text). The moment hand landmarks become <em>CHOP channels</em>, they can drive anything — particle systems, shader uniforms, lights, sound.</p>
+
+  <p>The whole trick of this chapter is one pipeline:</p>
+
+  <div class="pipe-flow" aria-label="Hand tracking pipeline: webcam frame to palm detector to landmark model to 21 points to CHOP channels to visuals">
+    <div class="pipe-node pulse" style="--pd:0s">
+      <span class="pn-step">STEP 1</span>
+      <i data-lucide="camera" class="lc"></i>
+      <div class="pn-name">Webcam frame</div>
+      <div class="pn-desc">Plain RGB image, e.g. 1280×720 @ 30 FPS</div>
+    </div>
+    <div class="pipe-arrow"><div class="pipe-arrow-line"></div></div>
+    <div class="pipe-node pulse" style="--pd:.4s">
+      <span class="pn-step">STEP 2</span>
+      <i data-lucide="scan" class="lc"></i>
+      <div class="pn-name">Palm detector</div>
+      <div class="pn-desc">Finds a box around each palm (not the fingers!)</div>
+    </div>
+    <div class="pipe-arrow"><div class="pipe-arrow-line"></div></div>
+    <div class="pipe-node pulse" style="--pd:.8s">
+      <span class="pn-step">STEP 3</span>
+      <i data-lucide="git-branch" class="lc"></i>
+      <div class="pn-name">Landmark model</div>
+      <div class="pn-desc">Regresses 21 keypoints inside the cropped box</div>
+    </div>
+    <div class="pipe-arrow"><div class="pipe-arrow-line"></div></div>
+    <div class="pipe-node pulse" style="--pd:1.2s">
+      <span class="pn-step">STEP 4</span>
+      <i data-lucide="hand" class="lc"></i>
+      <div class="pn-name">21 × (x, y, z)</div>
+      <div class="pn-desc">Normalized 0–1 coords + relative depth</div>
+    </div>
+    <div class="pipe-arrow"><div class="pipe-arrow-line"></div></div>
+    <div class="pipe-node pulse" style="--pd:1.6s">
+      <span class="pn-step">STEP 5</span>
+      <i data-lucide="activity" class="lc"></i>
+      <div class="pn-name">CHOP channels</div>
+      <div class="pn-desc">63 numbers per hand living inside TouchDesigner</div>
+    </div>
+    <div class="pipe-arrow"><div class="pipe-arrow-line"></div></div>
+    <div class="pipe-node pulse" style="--pd:2s">
+      <span class="pn-step">STEP 6</span>
+      <i data-lucide="sparkles" class="lc"></i>
+      <div class="pn-name">Visuals</div>
+      <div class="pn-desc">Pinch scales a circle, palm position steers particles…</div>
+    </div>
+  </div>
+
+  <div class="hbox hbox-purple">
+    <div class="hbox-label">WHY THIS COMBO</div>
+    <p style="margin-top: 10px;">MediaPipe answers <em>"where is the hand?"</em> extremely well but draws nothing. TouchDesigner draws <em>anything</em> but has no idea what a hand is. Wire them together and you get touchless interfaces, theremin-style instruments, and gallery installations — all from a laptop webcam.</p>
+  </div>
+</div>
+
+<!-- ───────────────────────────────────────
+     SECTION 02: The 21 Landmarks
+─────────────────────────────────────────── -->
+<div class="panel">
+  <div class="section-head">
+    <span class="section-num">02</span>
+    <h2>Meet the 21 Landmarks</h2>
+  </div>
+
+  <p>Every tracked hand comes back as the <strong>same 21 points in the same order</strong>, whether the hand is open, fisted, or waving. Index <code>0</code> is the wrist; each finger then gets 4 points from knuckle to tip. Memorize just two of them and you can already build gestures: <strong>4 = thumb tip</strong>, <strong>8 = index tip</strong>.</p>
+
+  <p><strong>👉 Hover or tab over any dot</strong> in the diagram to see its index and official MediaPipe name:</p>
+
+  <div class="hand-stage">
+    <svg id="lmExplorer" viewBox="0 0 300 340" role="img" aria-label="Interactive diagram of the 21 MediaPipe hand landmarks on an open hand"></svg>
+    <div class="lm-readout" id="lmReadout" aria-live="polite">hover a landmark…</div>
+  </div>
+
+  <div class="table-scroll">
+  <table class="data-table">
+    <thead><tr><th>Indices</th><th>Region</th><th>Names (knuckle → tip)</th></tr></thead>
+    <tbody>
+      <tr><td><code>0</code></td><td>Wrist</td><td>WRIST — the anchor every distance is measured against</td></tr>
+      <tr><td><code>1–4</code></td><td>Thumb</td><td>THUMB_CMC → THUMB_MCP → THUMB_IP → <strong>THUMB_TIP</strong></td></tr>
+      <tr><td><code>5–8</code></td><td>Index</td><td>INDEX_MCP → INDEX_PIP → INDEX_DIP → <strong>INDEX_TIP</strong></td></tr>
+      <tr><td><code>9–12</code></td><td>Middle</td><td>MIDDLE_MCP → MIDDLE_PIP → MIDDLE_DIP → MIDDLE_TIP</td></tr>
+      <tr><td><code>13–16</code></td><td>Ring</td><td>RING_MCP → RING_PIP → RING_DIP → RING_TIP</td></tr>
+      <tr><td><code>17–20</code></td><td>Pinky</td><td>PINKY_MCP → PINKY_PIP → PINKY_DIP → PINKY_TIP</td></tr>
+    </tbody>
+  </table>
+  </div>
+
+  <div class="hbox hbox-blue">
+    <div class="hbox-label">COORDINATES DECODED</div>
+    <ul style="margin-top: 10px; margin-bottom: 0;">
+      <li><code>x</code>, <code>y</code> — normalized <strong>0 to 1</strong> across the image. (0,0) is the <em>top-left</em>; TouchDesigner UVs use bottom-left, so you'll often compute <code>1 - y</code>.</li>
+      <li><code>z</code> — depth <em>relative to the wrist</em>, roughly the same scale as x. Smaller = closer to camera. It is not millimeters!</li>
+      <li>A second output, <em>world landmarks</em>, gives approximate meters centered on the hand — better for physics, worse for screen mapping.</li>
+    </ul>
+  </div>
+</div>
+
+<!-- ───────────────────────────────────────
+     SECTION 03: Under the Hood
+─────────────────────────────────────────── -->
+<div class="panel">
+  <div class="section-head">
+    <span class="section-num">03</span>
+    <h2>Under the Hood: Two Models, One Sneaky Shortcut</h2>
+  </div>
+
+  <p>Hand detection sounds like one neural network, but MediaPipe splits it into <strong>two specialists</strong> — and that split is why it's fast enough for live visuals.</p>
+
+  <div class="grid-2">
+    <div class="card" style="border-color: var(--purple);">
+      <div class="card-head" style="color: var(--purple); border-color: var(--purple);">
+        <i data-lucide="scan" class="lc"></i> Model 1: Palm detector
+      </div>
+      <p style="font-size: .95rem;">A single-shot detector (BlazePalm) scans the <em>whole frame</em> for palms. Palms are rigid squares — way easier to detect than wiggly fingers — so the model stays tiny. It outputs an oriented bounding box.</p>
+      <p style="font-size: .95rem; margin-bottom: 0;"><strong>Cost:</strong> the expensive step. Runs on the full image.</p>
+    </div>
+    <div class="card" style="border-color: var(--green);">
+      <div class="card-head" style="color: var(--green); border-color: var(--green);">
+        <i data-lucide="git-branch" class="lc"></i> Model 2: Landmark model
+      </div>
+      <p style="font-size: .95rem;">Takes only the <em>cropped, rotated</em> palm box and regresses the 21 keypoint positions directly — no per-pixel heatmaps. It also outputs a confidence score and left/right handedness.</p>
+      <p style="font-size: .95rem; margin-bottom: 0;"><strong>Cost:</strong> cheap. The crop is small and pre-aligned.</p>
+    </div>
+  </div>
+
+  <div class="hbox hbox-yellow">
+    <div class="hbox-label">THE SHORTCUT</div>
+    <p style="margin-top: 10px; margin-bottom: 0;">Here's the trick that buys the frame rate: once a hand is found, MediaPipe <strong>stops running the palm detector</strong>. On the next frame it simply predicts the crop box <em>from the previous frame's landmarks</em> and jumps straight to Model 2. The full-frame detector only wakes up again when the landmark model's confidence drops — i.e., the hand left the frame or got occluded. Tracking a steady hand is therefore dramatically cheaper than finding a new one.</p>
+  </div>
+
+  <div class="sfx-row">
+    <span class="sfx">DETECT ONCE</span>
+    <span class="sfx">TRACK FOREVER*</span>
+    <span class="sfx">30+ FPS</span>
+  </div>
+  <p style="font-size: .85rem;">*until you hide your hand behind your coffee mug, at which point the palm detector clocks back in.</p>
+</div>
+
+<!-- ───────────────────────────────────────
+     SECTION 04: Setup Path A — the plugin
+─────────────────────────────────────────── -->
+<div class="panel">
+  <div class="section-head">
+    <span class="section-num">04</span>
+    <h2>Setup Path A: The MediaPipe Plugin (Recommended)</h2>
+  </div>
+
+  <p>The fastest route is the free, open-source <strong>MediaPipe TouchDesigner plugin</strong> by Torin Blankensmith &amp; Dom Scott (<code>github.com/torinmb/mediapipe-touchdesigner</code>). It runs MediaPipe's GPU web runtime inside a Web Render TOP, so there is <strong>zero Python installation pain</strong>. Steps:</p>
+
+  <ol>
+    <li><strong>Download</strong> the latest <code>release.zip</code> from the plugin's GitHub Releases page and unzip it. Keep the <code>.tox</code> files together with their folders.</li>
+    <li><strong>Drag <code>MediaPipe.tox</code></strong> into your TouchDesigner network. A component appears with its own camera selector.</li>
+    <li>On the MediaPipe COMP's parameter page, <strong>pick your webcam</strong> and wait for the preview — you should see your camera feed with landmark overlays.</li>
+    <li><strong>Drag <code>hand_tracking.tox</code></strong> in next to it, and wire the MediaPipe COMP's output into it.</li>
+    <li>Attach a <strong>Null CHOP</strong> to the hand tracking output and turn on its viewer. Wave. Numbers dance. 🎉</li>
+  </ol>
+
+  <p>Because real TouchDesigner screenshots don't survive our comic printing press, here are faithful <strong>redrawn network views</strong> of what you'll see at each step:</p>
+
+  <div class="td-shot">
+    <svg viewBox="0 0 760 300" role="img" aria-label="Redrawn TouchDesigner network: a Video Device In TOP wired into the MediaPipe component, whose viewer shows a webcam frame with a detected hand overlay">
+      <rect width="760" height="300" fill="#262626"/>
+      <g stroke="#303030" stroke-width="1">
+        <path d="M0 60H760M0 120H760M0 180H760M0 240H760M80 0V300M160 0V300M240 0V300M320 0V300M400 0V300M480 0V300M560 0V300M640 0V300M720 0V300"/>
+      </g>
+      <!-- videodevin1 TOP -->
+      <rect x="60" y="110" width="150" height="80" rx="6" fill="#3a3a3a" stroke="#b57edc" stroke-width="3"/>
+      <rect x="68" y="118" width="134" height="44" rx="3" fill="#1b1b1b"/>
+      <circle cx="135" cy="140" r="14" fill="none" stroke="#777" stroke-width="3"/>
+      <circle cx="135" cy="140" r="5" fill="#777"/>
+      <text x="70" y="180" font-family="'Space Mono',monospace" font-size="14" fill="#e8e8e8">videodevin1</text>
+      <!-- wire -->
+      <path d="M210 150 C260 150 260 150 310 150" fill="none" stroke="#b57edc" stroke-width="3"/>
+      <!-- MediaPipe COMP -->
+      <rect x="310" y="70" width="380" height="170" rx="6" fill="#3a3a3a" stroke="#e0c04c" stroke-width="3"/>
+      <rect x="322" y="82" width="270" height="120" rx="3" fill="#141414"/>
+      <!-- webcam preview: hand overlay -->
+      <g stroke="#3fa34d" stroke-width="2.5" fill="none" stroke-linecap="round">
+        <path d="M450 190 L430 168 L416 148 L406 132"/>
+        <path d="M450 190 L452 150 L452 126 L452 106"/>
+        <path d="M450 190 L470 152 L476 130 L480 112"/>
+        <path d="M450 190 L488 160 L498 142 L506 128"/>
+        <path d="M450 190 L504 172 L516 158 L524 146"/>
+      </g>
+      <g fill="#ff6b9d">
+        <circle cx="450" cy="190" r="4"/><circle cx="406" cy="132" r="4"/><circle cx="452" cy="106" r="4"/>
+        <circle cx="480" cy="112" r="4"/><circle cx="506" cy="128" r="4"/><circle cx="524" cy="146" r="4"/>
+      </g>
+      <rect x="340" y="92" width="120" height="20" rx="3" fill="#1f1f1f"/>
+      <text x="346" y="107" font-family="'Space Mono',monospace" font-size="12" fill="#9ccb3b">hand detected ✓</text>
+      <text x="322" y="228" font-family="'Space Mono',monospace" font-size="14" fill="#e8e8e8">MediaPipe</text>
+      <!-- param hint -->
+      <rect x="600" y="82" width="82" height="52" rx="3" fill="#1f1f1f"/>
+      <text x="608" y="102" font-family="'Space Mono',monospace" font-size="11" fill="#bbb">Camera:</text>
+      <text x="608" y="120" font-family="'Space Mono',monospace" font-size="11" fill="#ffc46b">Webcam-01</text>
+    </svg>
+    <div class="td-shot-caption">📸 Step 2–3 — MediaPipe.tox dropped into the network. Its built-in viewer confirms the camera and draws the landmark overlay for free.</div>
+  </div>
+
+  <div class="td-shot">
+    <svg viewBox="0 0 760 300" role="img" aria-label="Redrawn TouchDesigner network: MediaPipe component wired to the hand tracking component, wired to a Null CHOP whose viewer lists landmark channels with live values">
+      <rect width="760" height="300" fill="#262626"/>
+      <g stroke="#303030" stroke-width="1">
+        <path d="M0 60H760M0 120H760M0 180H760M0 240H760M80 0V300M160 0V300M240 0V300M320 0V300M400 0V300M480 0V300M560 0V300M640 0V300M720 0V300"/>
+      </g>
+      <!-- MediaPipe COMP (collapsed) -->
+      <rect x="40" y="120" width="150" height="70" rx="6" fill="#3a3a3a" stroke="#e0c04c" stroke-width="3"/>
+      <text x="52" y="160" font-family="'Space Mono',monospace" font-size="14" fill="#e8e8e8">MediaPipe</text>
+      <path d="M190 155 C225 155 225 155 258 155" fill="none" stroke="#e0c04c" stroke-width="3"/>
+      <!-- hand_tracking COMP -->
+      <rect x="258" y="120" width="170" height="70" rx="6" fill="#3a3a3a" stroke="#e0c04c" stroke-width="3"/>
+      <text x="268" y="160" font-family="'Space Mono',monospace" font-size="14" fill="#e8e8e8">hand_tracking</text>
+      <path d="M428 155 C460 155 460 155 490 155" fill="none" stroke="#9ccb3b" stroke-width="3"/>
+      <!-- null CHOP with channel viewer -->
+      <rect x="490" y="55" width="230" height="200" rx="6" fill="#3a3a3a" stroke="#9ccb3b" stroke-width="3"/>
+      <rect x="500" y="65" width="210" height="160" rx="3" fill="#141414"/>
+      <g font-family="'Space Mono',monospace" font-size="12">
+        <text x="508" y="85"  fill="#9ccb3b">h1:wrist_x</text><text x="640" y="85"  fill="#ffc46b">0.512</text>
+        <text x="508" y="105" fill="#9ccb3b">h1:wrist_y</text><text x="640" y="105" fill="#ffc46b">0.684</text>
+        <text x="508" y="125" fill="#9ccb3b">h1:thumb_tip_x</text><text x="640" y="125" fill="#ffc46b">0.431</text>
+        <text x="508" y="145" fill="#9ccb3b">h1:index_tip_x</text><text x="640" y="145" fill="#ffc46b">0.445</text>
+        <text x="508" y="165" fill="#9ccb3b">h1:index_tip_y</text><text x="640" y="165" fill="#ffc46b">0.322</text>
+        <text x="508" y="185" fill="#9ccb3b">h1:pinch</text><text x="640" y="185" fill="#ffc46b">0.061</text>
+        <text x="508" y="205" fill="#777">… 63 channels/hand</text>
+      </g>
+      <text x="500" y="246" font-family="'Space Mono',monospace" font-size="14" fill="#e8e8e8">null_hands</text>
+    </svg>
+    <div class="td-shot-caption">📸 Step 4–5 — hand_tracking.tox wired in, with a Null CHOP viewer showing the live landmark channels. This Null is the tap everything else drinks from.</div>
+  </div>
+
+  <div class="hbox hbox-green">
+    <div class="hbox-label">WHY A NULL CHOP?</div>
+    <p style="margin-top: 10px; margin-bottom: 0;">TouchDesigner convention: always export from a <strong>Null</strong>, never from the source operator. When you later swap the tracker or insert a filter, every downstream reference keeps working because it points at <code>null_hands</code>, not at whatever sits behind it.</p>
+  </div>
+</div>
+
+<!-- ───────────────────────────────────────
+     SECTION 05: Setup Path B — Python + OSC
+─────────────────────────────────────────── -->
+<div class="panel">
+  <div class="section-head">
+    <span class="section-num">05</span>
+    <h2>Setup Path B: Python Script + OSC (Full Control)</h2>
+  </div>
+
+  <p>Prefer to own the whole pipeline, tweak model options, or run detection on a second machine? Run MediaPipe in a <strong>plain Python process</strong> and beam landmarks into TouchDesigner over <strong>OSC</strong> (a tiny UDP protocol TouchDesigner speaks natively). Don't try to <code>pip install mediapipe</code> into TouchDesigner's bundled Python — version mismatches make that a rabbit hole; a separate process sidesteps it entirely.</p>
+
+  <p><strong>Step 1 — install the sender's dependencies</strong> (system Python 3.10+):</p>
+  <div class="code-title">TERMINAL</div>
+  <div class="code-block">pip install mediapipe opencv-python python-osc</div>
+
+  <p><strong>Step 2 — the sender script.</strong> Capture, detect, send each landmark as <code>/hand/&lt;index&gt;</code>:</p>
+  <div class="code-title">hands_osc.py</div>
+  <div class="code-block"><span class="cm"># Detect hands with MediaPipe, stream landmarks to TouchDesigner via OSC.</span>
+<span class="kw">import</span> cv2
+<span class="kw">import</span> mediapipe <span class="kw">as</span> mp
+<span class="kw">from</span> pythonosc.udp_client <span class="kw">import</span> SimpleUDPClient
+
+client = SimpleUDPClient(<span class="st">"127.0.0.1"</span>, <span class="nb">7000</span>)
+hands = mp.solutions.hands.Hands(
+    max_num_hands=<span class="nb">1</span>,
+    model_complexity=<span class="nb">1</span>,
+    min_detection_confidence=<span class="nb">0.6</span>,
+    min_tracking_confidence=<span class="nb">0.5</span>)
+
+cap = cv2.VideoCapture(<span class="nb">0</span>)
+<span class="kw">while</span> cap.isOpened():
+    ok, frame = cap.read()
+    <span class="kw">if not</span> ok:
+        <span class="kw">break</span>
+    <span class="cm"># MediaPipe wants RGB; OpenCV gives BGR</span>
+    result = hands.process(cv2.cvtColor(frame, cv2.COLOR_BGR2RGB))
+    <span class="kw">if</span> result.multi_hand_landmarks:
+        lm = result.multi_hand_landmarks[<span class="nb">0</span>].landmark
+        <span class="kw">for</span> i, p <span class="kw">in</span> <span class="nb">enumerate</span>(lm):
+            client.send_message(<span class="st">f"/hand/{i}"</span>, [p.x, <span class="nb">1.0</span> - p.y, p.z])
+        client.send_message(<span class="st">"/hand/found"</span>, <span class="nb">1</span>)
+    <span class="kw">else</span>:
+        client.send_message(<span class="st">"/hand/found"</span>, <span class="nb">0</span>)</div>
+
+  <p style="font-size: .95rem;">Note the <code>1.0 - p.y</code> — that single subtraction converts MediaPipe's top-left origin into TouchDesigner's bottom-left world, saving you a Math CHOP later.</p>
+
+  <p><strong>Step 3 — receive in TouchDesigner.</strong> Drop an <strong>OSC In CHOP</strong>, set <em>Network Port</em> to <code>7000</code>, and run the script. Channels named <code>hand/0:0</code>, <code>hand/0:1</code>… appear the instant data flows. Wire it to a Null, same convention as before.</p>
+
+  <div class="td-shot">
+    <svg viewBox="0 0 760 240" role="img" aria-label="Redrawn TouchDesigner network: an OSC In CHOP on port 7000 receiving hand landmark channels from the external Python script">
+      <rect width="760" height="240" fill="#262626"/>
+      <g stroke="#303030" stroke-width="1">
+        <path d="M0 60H760M0 120H760M0 180H760M80 0V240M160 0V240M240 0V240M320 0V240M400 0V240M480 0V240M560 0V240M640 0V240M720 0V240"/>
+      </g>
+      <!-- python process -->
+      <rect x="40" y="80" width="180" height="86" rx="6" fill="#1f1f1f" stroke="#8a4fff" stroke-width="3" stroke-dasharray="8 5"/>
+      <text x="56" y="115" font-family="'Space Mono',monospace" font-size="13" fill="#c9a6ff">hands_osc.py</text>
+      <text x="56" y="136" font-family="'Space Mono',monospace" font-size="11" fill="#888">(external process)</text>
+      <text x="56" y="156" font-family="'Space Mono',monospace" font-size="11" fill="#ffc46b">UDP → :7000</text>
+      <path d="M220 123 C260 123 260 123 300 123" fill="none" stroke="#8a4fff" stroke-width="3" stroke-dasharray="8 5"/>
+      <!-- oscin CHOP -->
+      <rect x="300" y="88" width="150" height="70" rx="6" fill="#3a3a3a" stroke="#9ccb3b" stroke-width="3"/>
+      <text x="312" y="128" font-family="'Space Mono',monospace" font-size="14" fill="#e8e8e8">oscin1</text>
+      <path d="M450 123 C485 123 485 123 520 123" fill="none" stroke="#9ccb3b" stroke-width="3"/>
+      <!-- null -->
+      <rect x="520" y="88" width="150" height="70" rx="6" fill="#3a3a3a" stroke="#9ccb3b" stroke-width="3"/>
+      <text x="532" y="128" font-family="'Space Mono',monospace" font-size="14" fill="#e8e8e8">null_hands</text>
+      <rect x="300" y="176" width="230" height="24" rx="3" fill="#1f1f1f"/>
+      <text x="308" y="193" font-family="'Space Mono',monospace" font-size="12" fill="#bbb">Network Port: <tspan fill="#ffc46b">7000</tspan></text>
+    </svg>
+    <div class="td-shot-caption">📸 Path B — the external Python process (dashed) streams over UDP into an OSC In CHOP. TouchDesigner never has to load MediaPipe itself.</div>
+  </div>
+
+  <div class="grid-2">
+    <div class="card" style="border-color: var(--green);">
+      <div class="card-head" style="color: var(--green); border-color: var(--green);">✅ Pick Path A when…</div>
+      <ul style="margin-bottom: 0; font-size: .95rem;">
+        <li>You want results in 10 minutes</li>
+        <li>One machine, GPU available</li>
+        <li>You also want face/pose/objects — the plugin bundles them all</li>
+      </ul>
+    </div>
+    <div class="card" style="border-color: var(--blue);">
+      <div class="card-head" style="color: var(--blue); border-color: var(--blue);">🔧 Pick Path B when…</div>
+      <ul style="margin-bottom: 0; font-size: .95rem;">
+        <li>You need custom model options or preprocessing</li>
+        <li>Detection should run on a different machine than visuals</li>
+        <li>You want to log/replay landmark data yourself</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<!-- ───────────────────────────────────────
+     SECTION 06: Gesture math
+─────────────────────────────────────────── -->
+<div class="panel">
+  <div class="section-head">
+    <span class="section-num">06</span>
+    <h2>Gesture Math: From 63 Numbers to "They Pinched!"</h2>
+  </div>
+
+  <p>Raw landmarks are just coordinates. Gestures are <strong>relationships between landmarks</strong> — and the three classics need nothing fancier than a distance formula.</p>
+
+  <h3>🤏 Pinch = thumb tip close to index tip</h3>
+  <div class="code-title">PINCH</div>
+  <div class="code-block"><span class="kw">import</span> math
+
+<span class="kw">def</span> pinch_amount(lm):
+    <span class="cm"># distance between THUMB_TIP (4) and INDEX_TIP (8)</span>
+    d = math.hypot(lm[<span class="nb">4</span>].x - lm[<span class="nb">8</span>].x, lm[<span class="nb">4</span>].y - lm[<span class="nb">8</span>].y)
+    <span class="cm"># normalize by palm size so it works near AND far from camera</span>
+    palm = math.hypot(lm[<span class="nb">0</span>].x - lm[<span class="nb">9</span>].x, lm[<span class="nb">0</span>].y - lm[<span class="nb">9</span>].y)
+    <span class="kw">return</span> d / palm          <span class="cm"># &lt; 0.25 → pinching</span></div>
+
+  <p style="font-size: .95rem;">That <strong>normalization by palm size</strong> (wrist 0 → middle knuckle 9) is the single most-forgotten trick: without it, stepping toward the camera reads as "un-pinching".</p>
+
+  <h3>✊ Fist = all fingertips curled below their knuckles</h3>
+  <div class="code-title">FIST</div>
+  <div class="code-block"><span class="kw">def</span> is_fist(lm):
+    <span class="cm"># tip landmark vs its PIP joint, per finger (y grows downward)</span>
+    <span class="kw">return</span> <span class="nb">all</span>(lm[tip].y &gt; lm[pip].y
+               <span class="kw">for</span> tip, pip <span class="kw">in</span> [(<span class="nb">8</span>, <span class="nb">6</span>), (<span class="nb">12</span>, <span class="nb">10</span>), (<span class="nb">16</span>, <span class="nb">14</span>), (<span class="nb">20</span>, <span class="nb">18</span>)])</div>
+
+  <h3>🖐️ Open palm = the exact opposite</h3>
+  <p>Same comparison, flipped: every tip <em>above</em> its PIP joint. Combine with a stable pinch value of ~1.0 and you have a reliable "reset" gesture.</p>
+
+  <div class="hbox hbox-orange">
+    <div class="hbox-label">SMOOTH IT OR REGRET IT</div>
+    <p style="margin-top: 10px; margin-bottom: 0;">Raw landmarks jitter a few pixels every frame. Before driving visuals, pass channels through a <strong>Lag CHOP</strong> (0.1–0.2 s) or a <strong>Filter CHOP</strong>. For on/off gestures add <strong>hysteresis</strong>: trigger pinch below 0.22 but only release above 0.32 — one threshold means flicker at the boundary.</p>
+  </div>
+</div>
+
+<!-- ───────────────────────────────────────
+     SECTION 07: Interactive playground
+─────────────────────────────────────────── -->
+<div class="panel">
+  <div class="section-head">
+    <span class="section-num">07</span>
+    <h2>Playground: Drive a Circle TOP With Your (Virtual) Hand</h2>
+  </div>
+
+  <p>No webcam handy? Same math, simulated. Pick a pose — the skeleton animates between real landmark configurations, the pinch formula from Section 06 runs live on those 21 points, and its output drives the "Circle TOP" on the right, exactly the way a CHOP export would in TouchDesigner.</p>
+
+  <div class="gesture-btns" role="group" aria-label="Choose a hand pose">
+    <button class="gesture-btn" data-pose="open" aria-pressed="true">🖐️ OPEN</button>
+    <button class="gesture-btn" data-pose="point" aria-pressed="false">☝️ POINT</button>
+    <button class="gesture-btn" data-pose="pinch" aria-pressed="false">🤏 PINCH</button>
+    <button class="gesture-btn" data-pose="fist" aria-pressed="false">✊ FIST</button>
+  </div>
+
+  <div class="lab-grid">
+    <div class="hand-stage" style="margin: 0;">
+      <svg id="labHand" viewBox="0 0 300 340" role="img" aria-label="Animated hand skeleton showing the selected pose"></svg>
+    </div>
+    <div class="lab-output">
+      <svg id="labCircle" viewBox="0 0 300 260" role="img" aria-label="Simulated Circle TOP whose radius follows the pinch value">
+        <rect width="300" height="260" fill="#14120e"/>
+        <circle id="labCircleShape" cx="150" cy="118" r="70" fill="none" stroke="#8a4fff" stroke-width="6"/>
+        <text x="150" y="122" id="labGestureName" text-anchor="middle" font-family="'Bangers',cursive" font-size="26" fill="#f2ead8" letter-spacing="2">OPEN</text>
+      </svg>
+      <div class="lab-channels" aria-live="polite">
+        <div>chan <b>pinch_raw</b>&nbsp;&nbsp;= <span id="chPinch">1.000</span></div>
+        <div>chan <b>circle_r</b>&nbsp;&nbsp;&nbsp;= <span id="chRadius">70.0</span></div>
+        <div>chan <b>is_fist</b>&nbsp;&nbsp;&nbsp;&nbsp;= <span id="chFist">0</span></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="hbox hbox-purple" style="margin-top: 22px;">
+    <div class="hbox-label">IN REAL TOUCHDESIGNER</div>
+    <p style="margin-top: 10px; margin-bottom: 0;">This wiring is literally: <code>null_hands</code> → <strong>Select CHOP</strong> (grab thumb/index tips) → <strong>Script CHOP</strong> or Expression CHOP (pinch formula) → <strong>Lag CHOP</strong> (smoothing) → export to the Circle TOP's <em>Radius</em> parameter. Five nodes, touchless volume knob.</p>
+  </div>
+</div>
+
+<!-- ───────────────────────────────────────
+     SECTION 08: Performance + troubleshooting
+─────────────────────────────────────────── -->
+<div class="panel">
+  <div class="section-head">
+    <span class="section-num">08</span>
+    <h2>Performance Tips &amp; Troubleshooting</h2>
+  </div>
+
+  <ul>
+    <li><strong>Feed the model less.</strong> Detection quality barely changes between 720p and 1080p input, but cost does. 640×360 is often plenty.</li>
+    <li><strong>Cap <code>max_num_hands</code></strong> at what you actually need — each extra hand is another landmark-model pass per frame.</li>
+    <li><strong>model_complexity 0 vs 1:</strong> 0 is noticeably faster on weak hardware, at some accuracy cost on fast motion.</li>
+    <li><strong>Keep light on your hands.</strong> The palm detector fails first in backlit scenes; a cheap desk lamp beats an hour of threshold tuning.</li>
+    <li><strong>One writer per parameter.</strong> If a CHOP export and a manual value fight over the same TouchDesigner parameter, the export wins and the UI looks "stuck" — that's the export, not a bug.</li>
+  </ul>
+
+  <div class="table-scroll">
+  <table class="data-table">
+    <thead><tr><th>Symptom</th><th>Likely cause</th><th>Fix</th></tr></thead>
+    <tbody>
+      <tr><td>No channels appear (Path A)</td><td>Camera claimed by another app, or plugin files separated from their folders</td><td>Close Zoom/browser tabs using the cam; re-unzip the release keeping folder structure</td></tr>
+      <tr><td>No channels appear (Path B)</td><td>Port mismatch or firewall</td><td>OSC In CHOP port must equal the script's (7000); allow Python through the firewall</td></tr>
+      <tr><td>Hand found, landmarks jittery</td><td>Normal sensor noise</td><td>Lag/Filter CHOP downstream; never smooth <em>before</em> gesture thresholds with hysteresis</td></tr>
+      <tr><td>Tracking dies on fast motion</td><td>Tracker lost the hand; detector re-arming</td><td>Raise camera FPS, lower resolution, raise <code>min_tracking_confidence</code> slightly</td></tr>
+      <tr><td>Y axis feels upside-down</td><td>MediaPipe origin is top-left, TouchDesigner is bottom-left</td><td>Use <code>1 - y</code> in the sender, or a Math CHOP: multiply −1, add 1</td></tr>
+      <tr><td>Everything works, then FPS tanks over minutes</td><td>Unthrottled viewer windows and probe overlays</td><td>Close operator viewers you're not watching; overlays cost real GPU time</td></tr>
+    </tbody>
+  </table>
+  </div>
+
+  <div class="sfx-row" style="margin-top: 20px;">
+    <span class="sfx">21 POINTS</span>
+    <span class="sfx">ZERO GLOVES</span>
+    <span class="sfx">PINCH → PIXELS</span>
+  </div>
+</div>
+
+<div class="chapter-divider"><span>END OF HOW-14</span></div>
+</div><!-- /page-wrap -->
+
+<script src="hero-banner.js"></script>
+<script src="masthead.js"></script>
+<script src="author-card.js"></script>
+
+<script>
+lucide.createIcons();
+
+// ── MediaPipe hand model: 21 landmarks, standard bone graph ──
+const LM_NAMES = [
+  'WRIST',
+  'THUMB_CMC','THUMB_MCP','THUMB_IP','THUMB_TIP',
+  'INDEX_FINGER_MCP','INDEX_FINGER_PIP','INDEX_FINGER_DIP','INDEX_FINGER_TIP',
+  'MIDDLE_FINGER_MCP','MIDDLE_FINGER_PIP','MIDDLE_FINGER_DIP','MIDDLE_FINGER_TIP',
+  'RING_FINGER_MCP','RING_FINGER_PIP','RING_FINGER_DIP','RING_FINGER_TIP',
+  'PINKY_MCP','PINKY_PIP','PINKY_DIP','PINKY_TIP'
+];
+const BONES = [
+  [0,1],[1,2],[2,3],[3,4],
+  [0,5],[5,6],[6,7],[7,8],
+  [5,9],[9,10],[10,11],[11,12],
+  [9,13],[13,14],[14,15],[15,16],
+  [13,17],[17,18],[18,19],[19,20],[0,17]
+];
+
+// Landmark positions per pose (SVG viewBox 0 0 300 340)
+const POSES = {
+  open: [
+    [150,310],
+    [112,286],[84,254],[62,226],[44,200],
+    [118,208],[108,158],[102,124],[97,92],
+    [148,200],[146,142],[145,104],[144,68],
+    [178,206],[184,152],[188,118],[191,86],
+    [206,220],[220,180],[228,152],[235,126]
+  ],
+  fist: [
+    [150,310],
+    [112,288],[92,262],[96,238],[112,224],
+    [118,208],[112,178],[114,204],[118,226],
+    [148,200],[146,166],[146,196],[146,222],
+    [178,206],[180,172],[179,200],[178,224],
+    [206,220],[212,192],[209,214],[206,234]
+  ],
+  pinch: [
+    [150,310],
+    [112,286],[90,254],[88,214],[100,178],
+    [118,208],[108,168],[104,172],[104,178],
+    [148,200],[146,142],[145,104],[144,68],
+    [178,206],[184,152],[188,118],[191,86],
+    [206,220],[220,180],[228,152],[235,126]
+  ],
+  point: [
+    [150,310],
+    [112,288],[90,258],[88,234],[90,212],
+    [118,208],[108,158],[102,124],[97,92],
+    [148,200],[146,166],[146,196],[146,222],
+    [178,206],[180,172],[179,200],[178,224],
+    [206,220],[212,192],[209,214],[206,234]
+  ]
+};
+
+const SVGNS = 'http://www.w3.org/2000/svg';
+const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+function buildHand(svg, pts, interactive) {
+  const bones = BONES.map(([a, b]) => {
+    const l = document.createElementNS(SVGNS, 'line');
+    l.setAttribute('class', 'hand-bone');
+    l.setAttribute('x1', pts[a][0]); l.setAttribute('y1', pts[a][1]);
+    l.setAttribute('x2', pts[b][0]); l.setAttribute('y2', pts[b][1]);
+    svg.appendChild(l);
+    return l;
+  });
+  const dots = pts.map((p, i) => {
+    const c = document.createElementNS(SVGNS, 'circle');
+    c.setAttribute('class', 'hand-dot' + ((i === 4 || i === 8) ? ' hot' : ''));
+    c.setAttribute('cx', p[0]); c.setAttribute('cy', p[1]); c.setAttribute('r', 7);
+    if (interactive) {
+      c.setAttribute('tabindex', '0');
+      c.setAttribute('role', 'img');
+      c.setAttribute('aria-label', 'Landmark ' + i + ': ' + LM_NAMES[i]);
+      c.dataset.idx = i;
+    }
+    svg.appendChild(c);
+    return c;
+  });
+  return { bones, dots };
+}
+
+// ── Section 02: landmark explorer ──
+const explorerSvg = document.getElementById('lmExplorer');
+const readout = document.getElementById('lmReadout');
+const explorer = buildHand(explorerSvg, POSES.open, true);
+function showLm(i) {
+  const p = POSES.open[i];
+  readout.innerHTML = '<b>' + i + '</b> · ' + LM_NAMES[i] +
+    ' &nbsp;→&nbsp; x=' + (p[0] / 300).toFixed(3) + ' y=' + (p[1] / 340).toFixed(3);
+}
+explorer.dots.forEach(dot => {
+  ['mouseenter', 'focus'].forEach(ev =>
+    dot.addEventListener(ev, () => showLm(+dot.dataset.idx)));
+});
+
+// ── Section 07: gesture lab ──
+const labSvg = document.getElementById('labHand');
+const lab = buildHand(labSvg, POSES.open, false);
+let current = POSES.open.map(p => p.slice());
+let target = POSES.open;
+let animId = null;
+
+const circleShape = document.getElementById('labCircleShape');
+const gestureName = document.getElementById('labGestureName');
+const chPinch = document.getElementById('chPinch');
+const chRadius = document.getElementById('chRadius');
+const chFist = document.getElementById('chFist');
+
+function dist(a, b) { return Math.hypot(a[0] - b[0], a[1] - b[1]); }
+
+function updateFromPoints(pts) {
+  lab.bones.forEach((l, k) => {
+    const [a, b] = BONES[k];
+    l.setAttribute('x1', pts[a][0]); l.setAttribute('y1', pts[a][1]);
+    l.setAttribute('x2', pts[b][0]); l.setAttribute('y2', pts[b][1]);
+  });
+  lab.dots.forEach((c, i) => { c.setAttribute('cx', pts[i][0]); c.setAttribute('cy', pts[i][1]); });
+
+  // Same formula as Section 06: dist(4,8) normalized by palm size dist(0,9)
+  const pinch = dist(pts[4], pts[8]) / dist(pts[0], pts[9]);
+  const fist = [[8,6],[12,10],[16,14],[20,18]].every(([tip, pip]) => pts[tip][1] > pts[pip][1]);
+  const r = Math.max(12, Math.min(95, pinch * 62));
+  circleShape.setAttribute('r', r.toFixed(1));
+  chPinch.textContent = pinch.toFixed(3);
+  chRadius.textContent = r.toFixed(1);
+  chFist.textContent = fist ? '1' : '0';
+}
+
+function animate() {
+  let settled = true;
+  current = current.map((p, i) => {
+    const nx = p[0] + (target[i][0] - p[0]) * 0.18;
+    const ny = p[1] + (target[i][1] - p[1]) * 0.18;
+    if (Math.abs(nx - target[i][0]) > 0.3 || Math.abs(ny - target[i][1]) > 0.3) settled = false;
+    return [nx, ny];
+  });
+  updateFromPoints(current);
+  animId = settled ? null : requestAnimationFrame(animate);
+}
+
+document.querySelectorAll('.gesture-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.gesture-btn').forEach(b => b.setAttribute('aria-pressed', 'false'));
+    btn.setAttribute('aria-pressed', 'true');
+    target = POSES[btn.dataset.pose];
+    gestureName.textContent = btn.dataset.pose.toUpperCase();
+    if (reducedMotion) {
+      current = target.map(p => p.slice());
+      updateFromPoints(current);
+    } else if (!animId) {
+      animId = requestAnimationFrame(animate);
+    }
+  });
+});
+
+updateFromPoints(current);
+</script>
+</body>
+</html>
