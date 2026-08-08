@@ -1,0 +1,385 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" type="image/png" href="images/logo.png">
+    <link rel="apple-touch-icon" href="images/logo.png">
+    <title>Base64 to Image - Developer Toolkit | DevDunia</title>
+    <meta name="description" content="Convert Base64 encoded image data into a real image preview and download it. Free Base64 to Image tool for developers.">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body {
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #0f172a 100%);
+        }
+    </style>
+</head>
+
+<body class="h-screen lg:ml-72">
+    <!-- Background -->
+    <div class="fixed inset-0 -z-10 bg-gradient-to-br from-gray-900 via-slate-900 to-gray-900"></div>
+
+    <!-- Main Container -->
+    <div class="main-content">
+        <div class="relative z-10 container mx-auto px-4 pt-16 pb-24 sm:px-6 lg:px-8">
+
+            <!-- Page Header -->
+            <div class="text-center mb-12">
+                <h1 class="text-3xl sm:text-4xl font-bold mb-4 tracking-tight text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-cyan-500">
+                    Base64 to Image
+                </h1>
+                <p class="text-lg text-gray-400 max-w-2xl mx-auto">
+                    Paste Base64 image data to preview it and download as an image file.
+                </p>
+            </div>
+
+            <!-- Tool Container -->
+            <div class="max-w-5xl mx-auto">
+                <div class="bg-slate-800/70 backdrop-blur-md rounded-lg shadow-lg border border-slate-700/60 p-6">
+
+                    <!-- Input Section -->
+                    <div class="mb-6">
+                        <label for="base64-input" class="block text-sm font-medium text-gray-300 mb-2">
+                            Input Base64 Image Data
+                        </label>
+                        <textarea
+                            id="base64-input"
+                            rows="7"
+                            class="w-full px-4 py-3 bg-slate-700/50 border border-slate-600 rounded-lg text-gray-200 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-none font-mono text-sm"
+                            placeholder="Paste base64 here...\n\nSupports:\n- Raw base64: iVBORw0KGgo...\n- Data URL: data:image/png;base64,iVBORw0KGgo..."
+                        ></textarea>
+
+                        <div class="mt-4 grid grid-cols-1 md:grid-cols-3 gap-4">
+                            <div>
+                                <label for="mime-type" class="block text-sm font-medium text-gray-300 mb-2">Image Type</label>
+                                <select id="mime-type" class="w-full px-4 py-3 bg-slate-700/50 border border-slate-600 rounded-lg text-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                                    <option value="image/png">PNG (.png)</option>
+                                    <option value="image/jpeg">JPEG (.jpg)</option>
+                                    <option value="image/webp">WEBP (.webp)</option>
+                                    <option value="image/gif">GIF (.gif)</option>
+                                    <option value="image/svg+xml">SVG (.svg)</option>
+                                </select>
+                                <p class="mt-1 text-xs text-gray-500">If you paste a data URL, type is auto-detected.</p>
+                            </div>
+                            <div>
+                                <label for="file-name" class="block text-sm font-medium text-gray-300 mb-2">File Name</label>
+                                <input id="file-name" type="text" value="image" class="w-full px-4 py-3 bg-slate-700/50 border border-slate-600 rounded-lg text-gray-200 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500" />
+                                <p class="mt-1 text-xs text-gray-500">No spaces needed. Example: my_logo</p>
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-300 mb-2">Quick Actions</label>
+                                <div class="flex flex-wrap gap-3">
+                                    <button id="convert-btn" class="px-5 py-3 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-lg transition-colors duration-200 flex items-center space-x-2">
+                                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 7v10c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V7M16 3H8M12 3v10m0 0l-3-3m3 3l3-3"></path>
+                                        </svg>
+                                        <span>Preview</span>
+                                    </button>
+                                    <button id="clear-btn" class="px-5 py-3 bg-slate-600 hover:bg-slate-700 text-white font-medium rounded-lg transition-colors duration-200 flex items-center space-x-2">
+                                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
+                                        </svg>
+                                        <span>Clear</span>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Error Display -->
+                    <div id="error-display" class="hidden mb-6 p-4 bg-red-900/50 border border-red-600/50 rounded-lg">
+                        <div class="flex items-center space-x-2">
+                            <svg class="w-5 h-5 text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                            </svg>
+                            <span id="error-message" class="text-red-300"></span>
+                        </div>
+                    </div>
+
+                    <!-- Output Section -->
+                    <div id="output-section" class="hidden">
+                        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                            <!-- Preview -->
+                            <div class="bg-slate-700/30 rounded-lg border border-slate-600/50 p-4">
+                                <div class="flex items-center justify-between mb-3">
+                                    <h3 class="text-lg font-semibold text-cyan-400">Preview</h3>
+                                    <span id="img-meta" class="text-xs text-gray-400"></span>
+                                </div>
+                                <div class="bg-slate-900/30 border border-slate-700 rounded-lg p-3 flex items-center justify-center min-h-[240px]">
+                                    <img id="preview-img" alt="Base64 Preview" class="max-h-[360px] max-w-full rounded" />
+                                </div>
+                            </div>
+
+                            <!-- Actions -->
+                            <div class="bg-slate-700/30 rounded-lg border border-slate-600/50 p-4">
+                                <h3 class="text-lg font-semibold text-cyan-400 mb-3">Download</h3>
+                                <p class="text-sm text-gray-400 mb-4">After preview, you can download the image to your device.</p>
+
+                                <div class="flex flex-wrap gap-3">
+                                    <a id="download-btn" href="#" download class="px-6 py-3 bg-emerald-600 hover:bg-emerald-700 text-white font-medium rounded-lg transition-colors duration-200 inline-flex items-center space-x-2">
+                                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v2a2 2 0 002 2h12a2 2 0 002-2v-2M7 10l5 5m0 0l5-5m-5 5V4"></path>
+                                        </svg>
+                                        <span>Download Image</span>
+                                    </a>
+
+                                    <button id="copy-dataurl-btn" class="px-6 py-3 bg-slate-600 hover:bg-slate-700 text-white font-medium rounded-lg transition-colors duration-200 inline-flex items-center space-x-2">
+                                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v8a2 2 0 01-2 2h-2"></path>
+                                        </svg>
+                                        <span>Copy Data URL</span>
+                                    </button>
+                                </div>
+
+                                <div class="mt-4 text-sm text-gray-400 space-y-2">
+                                    <div class="flex items-center space-x-2">
+                                        <span>Detected Type:</span>
+                                        <span id="detected-type" class="text-blue-400 font-medium">—</span>
+                                    </div>
+                                    <div class="flex items-center space-x-2">
+                                        <span>Estimated Size:</span>
+                                        <span id="estimated-size" class="text-green-400 font-medium">—</span>
+                                    </div>
+                                    <div class="flex items-center space-x-2">
+                                        <span>Base64 Length:</span>
+                                        <span id="base64-length" class="text-purple-400 font-medium">—</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Tips -->
+                        <div class="mt-8 p-4 bg-slate-700/30 rounded-lg border border-slate-600/50">
+                            <h3 class="text-lg font-semibold text-cyan-400 mb-2">Tips</h3>
+                            <ul class="text-sm text-gray-400 list-disc pl-5 space-y-1">
+                                <li>If your Base64 already starts with <span class="text-gray-300 font-mono">data:image/...;base64,</span> you can paste it directly.</li>
+                                <li>If you paste raw Base64, choose the correct image type from the dropdown.</li>
+                                <li>For very large images, preview might take a few seconds.</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer include -->
+    <div id="footer"></div>
+    <script>
+        fetch("footer.html")
+            .then(response => response.text())
+            .then(data => {
+                document.getElementById("footer").innerHTML = data;
+            })
+            .catch(err => console.error("Failed to load footer:", err));
+    </script>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const base64Input = document.getElementById('base64-input');
+            const mimeTypeSelect = document.getElementById('mime-type');
+            const fileNameInput = document.getElementById('file-name');
+            const convertBtn = document.getElementById('convert-btn');
+            const clearBtn = document.getElementById('clear-btn');
+
+            const errorDisplay = document.getElementById('error-display');
+            const errorMessage = document.getElementById('error-message');
+
+            const outputSection = document.getElementById('output-section');
+            const previewImg = document.getElementById('preview-img');
+            const downloadBtn = document.getElementById('download-btn');
+            const copyDataUrlBtn = document.getElementById('copy-dataurl-btn');
+            const detectedTypeEl = document.getElementById('detected-type');
+            const estimatedSizeEl = document.getElementById('estimated-size');
+            const base64LengthEl = document.getElementById('base64-length');
+            const imgMetaEl = document.getElementById('img-meta');
+
+            let currentObjectUrl = null;
+            let currentDataUrl = null;
+            let currentMime = null;
+
+            function showError(msg) {
+                errorMessage.textContent = msg;
+                errorDisplay.classList.remove('hidden');
+            }
+
+            function hideError() {
+                errorDisplay.classList.add('hidden');
+                errorMessage.textContent = '';
+            }
+
+            function showOutput() {
+                outputSection.classList.remove('hidden');
+            }
+
+            function hideOutput() {
+                outputSection.classList.add('hidden');
+            }
+
+            function cleanupObjectUrl() {
+                if (currentObjectUrl) {
+                    URL.revokeObjectURL(currentObjectUrl);
+                    currentObjectUrl = null;
+                }
+            }
+
+            function formatBytes(bytes) {
+                if (!Number.isFinite(bytes) || bytes <= 0) return '0 B';
+                const k = 1024;
+                const sizes = ['B', 'KB', 'MB', 'GB'];
+                const i = Math.floor(Math.log(bytes) / Math.log(k));
+                return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+            }
+
+            function guessExtension(mime) {
+                const map = {
+                    'image/png': 'png',
+                    'image/jpeg': 'jpg',
+                    'image/webp': 'webp',
+                    'image/gif': 'gif',
+                    'image/svg+xml': 'svg'
+                };
+                return map[mime] || 'png';
+            }
+
+            function parseBase64Input(input) {
+                const trimmed = (input || '').trim();
+                if (!trimmed) {
+                    throw new Error('Please paste Base64 image data.');
+                }
+
+                // If user pasted a data URL, extract mime and data.
+                const dataUrlMatch = trimmed.match(/^data:([^;]+);base64,(.*)$/i);
+                if (dataUrlMatch) {
+                    return {
+                        mime: dataUrlMatch[1].toLowerCase(),
+                        base64: dataUrlMatch[2].replace(/\s/g, ''),
+                        isDataUrl: true
+                    };
+                }
+
+                // Otherwise treat it as raw base64.
+                return {
+                    mime: mimeTypeSelect.value,
+                    base64: trimmed.replace(/\s/g, ''),
+                    isDataUrl: false
+                };
+            }
+
+            function isProbablyBase64(str) {
+                // Accept base64url too? For images usually classic base64.
+                // Quick validation: only base64 chars and proper padding.
+                if (!str || str.length < 10) return false;
+                if (!/^[A-Za-z0-9+/=]+$/.test(str)) return false;
+                if (str.length % 4 !== 0) return false;
+                return true;
+            }
+
+            async function base64ToBlob(base64, mime) {
+                // Validate by attempting decode.
+                try {
+                    atob(base64);
+                } catch (e) {
+                    throw new Error('Base64 data looks invalid. Please check you copied the full string.');
+                }
+
+                const byteChars = atob(base64);
+                const byteNumbers = new Array(byteChars.length);
+                for (let i = 0; i < byteChars.length; i++) {
+                    byteNumbers[i] = byteChars.charCodeAt(i);
+                }
+                const byteArray = new Uint8Array(byteNumbers);
+                return new Blob([byteArray], { type: mime });
+            }
+
+            async function handleConvert() {
+                hideError();
+                cleanupObjectUrl();
+
+                const parsed = parseBase64Input(base64Input.value);
+                const mime = parsed.mime || mimeTypeSelect.value;
+                const base64 = parsed.base64;
+
+                if (!isProbablyBase64(base64)) {
+                    throw new Error('This does not look like a valid Base64 string for an image.');
+                }
+
+                const blob = await base64ToBlob(base64, mime);
+                const url = URL.createObjectURL(blob);
+
+                currentObjectUrl = url;
+                currentMime = mime;
+                currentDataUrl = `data:${mime};base64,${base64}`;
+
+                previewImg.src = currentDataUrl;
+                previewImg.onload = () => {
+                    imgMetaEl.textContent = `${previewImg.naturalWidth}×${previewImg.naturalHeight}`;
+                };
+
+                const baseName = (fileNameInput.value || 'image').trim() || 'image';
+                const ext = guessExtension(mime);
+                downloadBtn.download = `${baseName}.${ext}`;
+                downloadBtn.href = url;
+
+                detectedTypeEl.textContent = mime;
+                estimatedSizeEl.textContent = formatBytes(blob.size);
+                base64LengthEl.textContent = base64.length.toLocaleString() + ' chars';
+
+                showOutput();
+            }
+
+            convertBtn.addEventListener('click', async function () {
+                try {
+                    await handleConvert();
+                } catch (err) {
+                    showError(err.message || 'Failed to convert Base64 to image.');
+                    hideOutput();
+                    cleanupObjectUrl();
+                }
+            });
+
+            clearBtn.addEventListener('click', function () {
+                base64Input.value = '';
+                fileNameInput.value = 'image';
+                imgMetaEl.textContent = '';
+                hideError();
+                hideOutput();
+                cleanupObjectUrl();
+            });
+
+            copyDataUrlBtn.addEventListener('click', async function () {
+                try {
+                    if (!currentDataUrl) throw new Error('Nothing to copy. Please preview an image first.');
+                    await navigator.clipboard.writeText(currentDataUrl);
+                    const original = copyDataUrlBtn.textContent;
+                    copyDataUrlBtn.textContent = 'Copied!';
+                    setTimeout(() => { copyDataUrlBtn.textContent = original; }, 1200);
+                } catch (err) {
+                    showError(err.message || 'Failed to copy.');
+                }
+            });
+
+            // Simple demo base64 (1x1 transparent png)
+            window.addEventListener('load', () => {
+                base64Input.value = 'iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAwMCAO6JqJ0AAAAASUVORK5CYII=';
+                mimeTypeSelect.value = 'image/png';
+            });
+
+            window.addEventListener('beforeunload', cleanupObjectUrl);
+        });
+    </script>
+
+    <!-- Include Final Sidebar -->
+    <div id="sidebar-container"></div>
+    <script>
+        fetch('final_sidebar.html')
+            .then(response => response.text())
+            .then(html => {
+                document.getElementById('sidebar-container').innerHTML = html;
+            })
+            .catch(error => {
+                console.error('Error loading sidebar:', error);
+            });
+    </script>
+</body>
+</html>
