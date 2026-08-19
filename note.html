@@ -580,6 +580,7 @@
     }
 
     if(currentTool==='text'){
+      e.preventDefault(); // keep the pointerdown from stealing focus back from the textarea
       openTextInput(pt);
       return;
     }
@@ -707,14 +708,14 @@
   function openTextInput(pt, existing){
     editingTextShape = existing || null;
     textInput.style.display = 'block';
-    textInput.style.left = (pt.x*scale) + 'px';
-    textInput.style.top = (pt.y*scale) + 'px';
+    textInput.style.left = (pt.x*scale + panX) + 'px';
+    textInput.style.top = (pt.y*scale + panY) + 'px';
     textInput.style.fontSize = (20*scale)+'px';
     textInput.style.color = strokeColor;
     textInput.value = existing ? existing.text : '';
     textInput.dataset.x = pt.x;
     textInput.dataset.y = pt.y;
-    textInput.focus();
+    setTimeout(()=>{ textInput.focus(); }, 0);
   }
   function commitTextInput(){
     const val = textInput.value;
