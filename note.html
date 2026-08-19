@@ -934,11 +934,25 @@
     minX -= pad; minY -= pad; maxX += pad; maxY += pad;
     const w = Math.max(Math.round(maxX-minX), 1), h = Math.max(Math.round(maxY-minY), 1);
 
+    // Pasted images are shrunk to fit the viewport, so exporting at 1x throws
+    // away their native pixels. Supersample: enough to restore every image to
+    // its native resolution, and never below a 4K (3840px) long edge.
+    let k = 3840 / Math.max(w, h);
+    shapes.forEach(s=>{
+      if(s.type==='image' && s.img.naturalWidth && s.w > 0){
+        k = Math.max(k, s.img.naturalWidth / s.w);
+      }
+    });
+    k = Math.max(1, Math.min(k, 16384 / Math.max(w, h))); // stay under browser canvas limits
+
     const out = document.createElement('canvas');
-    out.width = w; out.height = h;
+    out.width = Math.round(w * k); out.height = Math.round(h * k);
     const octx = out.getContext('2d');
+    octx.imageSmoothingEnabled = true;
+    octx.imageSmoothingQuality = 'high';
     octx.fillStyle = '#0b1020';
-    octx.fillRect(0,0,w,h);
+    octx.fillRect(0,0,out.width,out.height);
+    octx.scale(k, k);
     octx.translate(-minX, -minY);
     shapes.forEach(s=> drawShapeOn(octx, s));
 
