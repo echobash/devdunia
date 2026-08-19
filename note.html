@@ -706,6 +706,8 @@
   // ---------- text editing ----------
   let editingTextShape = null;
   function openTextInput(pt, existing){
+    // commit any text still being typed before opening a new box, otherwise it's lost
+    if(textInput.style.display === 'block') commitTextInput();
     editingTextShape = existing || null;
     textInput.style.display = 'block';
     textInput.style.left = (pt.x*scale + panX) + 'px';
