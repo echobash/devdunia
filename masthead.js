@@ -7,12 +7,53 @@
   background: #1a1410;
   border-bottom: 4px solid #1a1410;
   box-shadow: 0 6px 0 rgba(0,0,0,.3);
+}
+.dd-mast-bar {
   padding: 0 28px;
   height: 54px;
   display: grid;
   grid-template-columns: 1fr auto 1fr;
   align-items: center;
   gap: 12px;
+}
+.dd-tabs {
+  display: flex;
+  align-items: flex-end;
+  gap: 6px;
+  padding: 8px 28px 0;
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+.dd-tabs::-webkit-scrollbar { display: none; }
+.dd-tab {
+  font-family: 'Bangers', cursive;
+  font-size: .95rem;
+  letter-spacing: 1.5px;
+  white-space: nowrap;
+  text-decoration: none;
+  color: rgba(255,255,255,.85);
+  background: rgba(255,255,255,.08);
+  border: 2px solid rgba(255,210,63,.5);
+  border-bottom: none;
+  border-radius: 8px 8px 0 0;
+  padding: 6px 16px 5px;
+  transition: background .15s, color .15s, transform .1s;
+}
+.dd-tab:hover {
+  background: rgba(255,210,63,.2);
+  color: #fff;
+  transform: translateY(-1px);
+}
+.dd-tab[aria-current="page"] {
+  background: #ffd23f;
+  color: #1a1410;
+  border-color: #ffd23f;
+  padding-top: 8px;
+  text-shadow: none;
+}
+.dd-tab:focus-visible {
+  outline: 3px solid #ffd23f;
+  outline-offset: -1px;
 }
 .dd-mast-left {
   display: flex;
@@ -101,9 +142,11 @@
 }
 .dd-back-link:hover { opacity: .85; }
 @media (max-width: 860px) {
-  .dd-masthead { grid-template-columns: 1fr 1fr; height: auto; padding: 10px 16px; gap: 8px; }
+  .dd-mast-bar { grid-template-columns: 1fr 1fr; height: auto; padding: 10px 16px; gap: 8px; }
   .dd-issue-pill { display: none; }
   .dd-by-label, .dd-author-link { display: none; }
+  .dd-tabs { padding: 6px 16px 0; }
+  .dd-tab { font-size: .85rem; padding: 5px 12px 4px; }
 }
 `;
 
@@ -115,9 +158,31 @@
     document.head.appendChild(s);
   }
 
+  var TABS = [
+    { href: 'index.html', label: '&#x1F6E0; ALL TOOLS', match: ['index.html', ''] },
+    { href: 'practise-data-structure.html', label: '&#x1F9E0; PRACTISE DATA STRUCTURE', match: ['practise-data-structure.html'] }
+  ];
+
+  function currentPage() {
+    var parts = window.location.pathname.split('/');
+    return parts[parts.length - 1] || '';
+  }
+
+  function renderTabs() {
+    var page = currentPage();
+    return '<nav class="dd-tabs" aria-label="Site sections">' +
+      TABS.map(function (t) {
+        var current = t.match.indexOf(page) !== -1;
+        return '<a href="' + t.href + '" class="dd-tab"' +
+          (current ? ' aria-current="page"' : '') + '>' + t.label + '</a>';
+      }).join('') +
+      '</nav>';
+  }
+
   function render(el) {
     el.className = 'dd-masthead';
     el.innerHTML =
+      '<div class="dd-mast-bar">' +
       '<div class="dd-mast-left">' +
         '<a href="index.html">' +
           '<img src="images/logo.png" alt="DevDunia">' +

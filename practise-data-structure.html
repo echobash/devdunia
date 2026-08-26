@@ -1,0 +1,533 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Practise Data Structure — DevDunia</title>
+<meta name="description" content="Practise data structures and algorithms: 20 LeetCode patterns with how to spot them, trigger words, Python skeletons and curated problems.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://devdunia.com/practise-data-structure.html">
+<meta property="og:title" content="Practise Data Structure — DevDunia">
+<meta property="og:description" content="Practise data structures and algorithms: 20 LeetCode patterns with how to spot them, trigger words, Python skeletons and curated problems.">
+<meta property="og:image" content="https://devdunia.com/images/logo.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="css/comic.css">
+<link rel="stylesheet" href="css/practise-ds.css">
+<link href="https://fonts.googleapis.com/css2?family=Bangers&family=Comic+Neue:wght@400;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+</head>
+<body>
+<div class="paper-overlay"></div>
+<div data-masthead></div>
+
+<div class="page-wrap">
+
+  <div data-tool-hero
+     data-title="Practise Data Structure"
+     data-chapter="09"
+     data-category="Practise Data Structure"
+     data-icon="&#x1F9E0;"
+     data-desc="Read the tells, not the topic label — in a real interview nobody tells you the category. 20 LeetCode patterns with trigger words, Python skeletons and curated problems to drill."
+     data-color="purple"
+     data-badges="20 PATTERNS,PYTHON SKELETONS,INTERVIEW READY"
+     data-badge-colors="yellow,green,red">
+  </div>
+
+  <!-- HOW TO DRILL — infographic flow -->
+  <div class="panel">
+    <div class="panel-header">
+      &#x1F5FA;&#xFE0F; HOW TO DRILL A PATTERN
+      <span class="panel-tag">4 STEPS</span>
+    </div>
+    <div class="panel-body">
+      <div class="how-steps">
+        <div class="how-step">
+          <div class="step-dot" style="background:var(--blue)">1</div>
+          <p><strong>Read the tells.</strong> Every pattern below starts with "How to spot it" — the structural clues hiding in a problem statement.</p>
+        </div>
+        <div class="how-step">
+          <div class="step-dot" style="background:var(--green)">2</div>
+          <p><strong>Match the trigger words.</strong> Phrases like <code>sorted array</code>, <code>k largest</code> or <code>minimize the maximum</code> give the pattern away instantly.</p>
+        </div>
+        <div class="how-step">
+          <div class="step-dot" style="background:var(--orange)">3</div>
+          <p><strong>Recall the skeleton.</strong> Each pattern has one short Python template. Learn it once, adapt it everywhere.</p>
+        </div>
+        <div class="how-step">
+          <div class="step-dot" style="background:var(--red)">4</div>
+          <p><strong>Drill the problems.</strong> Solve the linked LeetCode problems and read <em>why</em> the pattern fires on each one.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- PATTERN ATLAS — interactive widget -->
+  <div class="panel">
+    <div class="panel-header">
+      &#x1F9ED; PATTERN ATLAS
+      <span class="panel-tag">20 PATTERNS</span>
+    </div>
+    <div class="pa-shell">
+      <aside class="pa-rail">
+        <div class="pa-find">
+          <label class="workspace-label" for="pa-q">Search a signal</label>
+          <input id="pa-q" placeholder="'sorted', 'k largest'..." autocomplete="off">
+        </div>
+        <nav class="pa-nav" id="pa-nav" aria-label="Patterns"></nav>
+        <p class="pa-rail-note">Tip: use <strong>j</strong> / <strong>k</strong> or the arrow keys to jump between patterns.</p>
+      </aside>
+      <main class="pa-main" id="pa-main"></main>
+    </div>
+  </div>
+
+  <!-- MORE PRACTISE SETS — coming soon -->
+  <div class="panel">
+    <div class="panel-header">
+      &#x1F4AA; MORE PRACTISE SETS
+      <span class="panel-tag">COMING SOON</span>
+    </div>
+    <div class="panel-body">
+      <div class="pds-grid">
+        <div class="pds-card" style="--cc:var(--green)">
+          <span class="pds-soon">SOON!</span>
+          <div class="pds-icon">&#x1F4CA;</div>
+          <h3>Arrays &amp; Strings Drills</h3>
+          <p>Timed reps on traversal, in-place edits, rotation and string parsing fundamentals.</p>
+        </div>
+        <div class="pds-card" style="--cc:var(--blue)">
+          <span class="pds-soon">SOON!</span>
+          <div class="pds-icon">&#x1F517;</div>
+          <h3>Linked List Lab</h3>
+          <p>Pointer surgery practice — reversals, merges, cycle games and dummy-node tricks.</p>
+        </div>
+        <div class="pds-card" style="--cc:var(--orange)">
+          <span class="pds-soon">SOON!</span>
+          <div class="pds-icon">&#x1F4DA;</div>
+          <h3>Stack &amp; Queue Gym</h3>
+          <p>Monotonic stacks, deques and design problems built from LIFO and FIFO parts.</p>
+        </div>
+        <div class="pds-card" style="--cc:var(--purple)">
+          <span class="pds-soon">SOON!</span>
+          <div class="pds-icon">&#x1F333;</div>
+          <h3>Tree Traversal Trails</h3>
+          <p>DFS, BFS, BST invariants and recursion-with-return-values, step by step.</p>
+        </div>
+        <div class="pds-card" style="--cc:var(--red)">
+          <span class="pds-soon">SOON!</span>
+          <div class="pds-icon">&#x1F578;&#xFE0F;</div>
+          <h3>Graph Expeditions</h3>
+          <p>Flood fill, topological sort, union-find and shortest-path adventures.</p>
+        </div>
+        <div class="pds-card" style="--cc:var(--teal)">
+          <span class="pds-soon">SOON!</span>
+          <div class="pds-icon">&#x1F3AF;</div>
+          <h3>Dynamic Programming Dojo</h3>
+          <p>From recursive brute force to memoisation to tables — graded DP katas.</p>
+        </div>
+        <div class="pds-card" style="--cc:var(--pink)">
+          <span class="pds-soon">SOON!</span>
+          <div class="pds-icon">&#x2696;&#xFE0F;</div>
+          <h3>Heap &amp; Priority Queue</h3>
+          <p>Top-k, streaming medians and scheduling problems with heaps.</p>
+        </div>
+        <div class="pds-card" style="--cc:var(--yellow)">
+          <span class="pds-soon">SOON!</span>
+          <div class="pds-icon">&#x1F50D;</div>
+          <h3>Binary Search Bootcamp</h3>
+          <p>Boundary templates, rotated arrays and searching the answer space.</p>
+        </div>
+        <div class="pds-card" style="--cc:var(--ink)">
+          <span class="pds-soon">SOON!</span>
+          <div class="pds-icon">&#x1F9EE;</div>
+          <h3>Bit Manipulation Basics</h3>
+          <p>XOR tricks, masks and counting bits without fear.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div><!-- /page-wrap -->
+<script src="masthead.js"></script>
+<script src="hero-banner.js"></script>
+<script src="author-card.js"></script>
+<script>
+(function(){
+"use strict";
+var LC="https://leetcode.com/problems/";
+var P=[
+{
+n:"Two Pointers",
+ess:"Two indices start at opposite ends of ordered data and walk toward each other. Each step throws away a whole set of candidates you can prove are useless.",
+tell:[
+"The array is sorted — or nothing stops you from sorting it first.",
+"You're hunting a pair, triplet, or symmetric property, not a contiguous run.",
+"The brute force is a double loop over all pairs, and sortedness tells you which side to move.",
+"You need O(1) extra space."],
+trig:["sorted array","find two numbers","pair sums to target","palindrome","maximum area","without extra space"],
+code:["l, r = 0, len(a) - 1","while l < r:","    s = a[l] + a[r]","    if s == target: return [l, r]","    if s < target: l += 1   # need bigger — only the left side can grow","    else:           r -= 1   # need smaller — only the right side can shrink"],
+cx:"O(n) after sorting · O(1) extra space",
+key:"The whole pattern rests on one question: <b>when I move a pointer, can I prove the discarded options were all worse?</b> In Container With Most Water you move the shorter wall, because keeping it and shrinking the width can never beat what you just had.",
+warn:"If the problem needs original indices and you can't sort, this dies. Use a hash map instead — that's why Two Sum is a hash problem and Two Sum II is a pointer problem.",
+ex:[["Two Sum II","two-sum-ii-input-array-is-sorted","Sorted + find a pair. The textbook trigger."],["3Sum","3sum","Sort, fix one number, converge on the remaining two."],["Container With Most Water","container-with-most-water","Move the shorter wall — the taller one can't improve."],["Valid Palindrome","valid-palindrome","Symmetric comparison from both ends."],["Trapping Rain Water","trapping-rain-water","Converge while carrying the running max on each side."]],
+near:[2,7]
+},
+{
+n:"Fast & Slow Pointers",
+ess:"Two pointers move forward at different speeds through a sequence you can only walk one way. The gap between them is what encodes the answer.",
+tell:[
+"A linked list whose length you don't know and can't cheaply measure.",
+"It asks for the middle, a cycle, or the k-th node from the end.",
+"It insists on O(1) extra space, ruling out dumping nodes into a list.",
+"An array where values double as indices — that's secretly a linked list."],
+trig:["cycle","middle of the list","nth node from the end","O(1) space","duplicate number, read-only"],
+code:["slow = fast = head","while fast and fast.next:","    slow = slow.next","    fast = fast.next.next","    if slow is fast:","        break            # cycle detected","# if the loop ended naturally, slow sits on the middle"],
+cx:"O(n) time · O(1) space",
+key:"Two configurations cover almost everything. <b>Speed gap</b> (1× and 2×) finds middles and cycles. <b>Distance gap</b> (start one pointer n nodes ahead) finds the n-th from the end in a single pass.",
+warn:"Find the Duplicate Number looks like an array problem. It isn't — treat index i as a pointer to index nums[i] and a duplicate becomes a cycle entrance. That reframing is the entire trick.",
+ex:[["Linked List Cycle","linked-list-cycle","Speeds differ, so they meet if and only if a loop exists."],["Find the Duplicate Number","find-the-duplicate-number","Values as pointers turns it into cycle detection."],["Reorder List","reorder-list","Find the middle, reverse the tail, interleave."],["Remove Nth Node From End of List","remove-nth-node-from-end-of-list","Fixed gap of n, one pass."],["Happy Number","happy-number","The digit-square sequence either terminates or cycles."]],
+near:[11]
+},
+{
+n:"Sliding Window",
+ess:"A contiguous run that grows on the right and shrinks on the left, carrying a running summary so you never recompute the window from scratch.",
+tell:[
+"The words <b>substring</b> or <b>subarray</b> appear — contiguous, not scattered.",
+"You want the longest, shortest, or count of runs meeting a condition.",
+"The condition is monotone: once a window is too big it stays too big as you extend it.",
+"Brute force is 'try every start and every end', which is O(n²)."],
+trig:["longest substring","subarray of size k","at most k distinct","minimum window containing","without repeating characters"],
+code:["from collections import Counter","l, best, cnt = 0, 0, Counter()","for r, ch in enumerate(s):","    cnt[ch] += 1","    while <window is invalid>:      # shrink until legal again","        cnt[s[l]] -= 1","        if not cnt[s[l]]: del cnt[s[l]]","        l += 1","    best = max(best, r - l + 1)"],
+cx:"O(n) — every index enters and leaves exactly once",
+key:"<b>Fixed size k</b>: no while loop, just drop index r−k as you add r. <b>Variable size</b>: the while loop is the whole algorithm, and what goes in the condition is the real work.",
+warn:"Two traps. <b>Subsequence</b> is not a substring — scattered picks mean DP, not a window. And with negative numbers, 'sum at least k' stops being monotone, so the window breaks; reach for prefix sums instead.",
+ex:[["Longest Substring Without Repeating Characters","longest-substring-without-repeating-characters","Shrink whenever a duplicate enters."],["Longest Repeating Character Replacement","longest-repeating-character-replacement","Valid while (length − most frequent count) ≤ k."],["Permutation in String","permutation-in-string","Fixed window the size of the pattern; compare counts."],["Minimum Window Substring","minimum-window-substring","Expand to become valid, then shrink to minimal."],["Best Time to Buy and Sell Stock","best-time-to-buy-and-sell-stock","A degenerate window — track the lowest left edge seen."]],
+near:[0,3]
+},
+{
+n:"Prefix Sum",
+ess:"Precompute cumulative totals once, so the answer to any range question becomes a single subtraction.",
+tell:[
+"Repeated range-sum queries over data that doesn't change.",
+"'Subarrays summing to k' where values can be negative — which kills sliding window.",
+"Counting subarrays with a property you can write as prefix[j] − prefix[i].",
+"Anything about balance: equal zeros and ones, equal counts of two things."],
+trig:["sum of subarray","range query","equals k","equal number of 0s and 1s","divisible by k","pivot index"],
+code:["pre, ans = 0, 0","seen = {0: 1}                     # empty prefix, seen once","for x in nums:","    pre += x","    ans += seen.get(pre - k, 0)   # every earlier prefix that closes a valid range","    seen[pre] = seen.get(pre, 0) + 1"],
+cx:"O(n) time · O(n) space",
+key:"The move that unlocks the hard versions: store prefixes in a <b>hash map</b>, not an array. Then 'how many subarrays sum to k' becomes 'how many times have I seen prefix − k before'.",
+warn:"For divisibility problems, store <code>pre % k</code> rather than <code>pre</code>. For zeros-and-ones balance, map 0 to −1 first and the problem collapses into 'longest subarray summing to zero'.",
+ex:[["Subarray Sum Equals K","subarray-sum-equals-k","Negatives allowed, so windows fail and prefixes win."],["Product of Array Except Self","product-of-array-except-self","Same idea with prefix and suffix products."],["Contiguous Array","contiguous-array","Map 0 to −1, then look for repeated prefixes."],["Find Pivot Index","find-pivot-index","Left sum equals total minus left minus current."],["Range Sum Query - Immutable","range-sum-query-immutable","Build once, answer every query in O(1)."]],
+near:[2,4]
+},
+{
+n:"Hash Map / Frequency",
+ess:"Spend memory to make 'have I seen this' and 'how many of these' cost O(1), collapsing a nested loop into one pass.",
+tell:[
+"You're counting occurrences, or grouping things that share a property.",
+"You need a complement lookup: for each x, does target − x exist?",
+"Membership testing against a growing set of things already visited.",
+"Order doesn't matter — anagrams, dedupe, first unique."],
+trig:["anagram","group by","have we seen","frequency","first unique","consecutive sequence"],
+code:["seen = {}","for i, x in enumerate(nums):","    if target - x in seen:","        return [seen[target - x], i]","    seen[x] = i"],
+cx:"O(n) time · O(n) space",
+key:"When grouping, the design problem is the <b>key</b>, not the map. Anagrams key on the sorted string or a 26-length count tuple. Anything that shares a canonical form groups by that form.",
+warn:"Longest Consecutive Sequence is the one people brute-force into O(n²). Dump everything in a set, then only start counting a run at a number whose predecessor is absent. That guard makes it linear.",
+ex:[["Two Sum","two-sum","Complement lookup in a single pass."],["Valid Anagram","valid-anagram","Compare character counts."],["Group Anagrams","group-anagrams","Canonical key, then bucket."],["Longest Consecutive Sequence","longest-consecutive-sequence","Set membership plus a start-of-run guard."],["Top K Frequent Elements","top-k-frequent-elements","Count first, then bucket-sort by count."]],
+near:[3,10]
+},
+{
+n:"Binary Search on Input",
+ess:"The data carries an ordering invariant, so you can throw away half the search space on every comparison.",
+tell:[
+"The input is sorted, or sorted then rotated.",
+"O(log n) is demanded explicitly, or n is up to 10⁵–10⁹.",
+"You need a boundary: the first element ≥ x, the last occurrence, an insertion point.",
+"A 2-D matrix whose rows are sorted and each row starts above the previous one's end."],
+trig:["sorted","O(log n)","find the index","rotated","first/last position","insert position"],
+code:["lo, hi = 0, len(a) - 1","while lo <= hi:","    mid = (lo + hi) // 2","    if a[mid] == target: return mid","    if a[mid] < target:  lo = mid + 1","    else:                hi = mid - 1","return -1"],
+cx:"O(log n) time · O(1) space",
+key:"For rotated arrays the invariant survives in halves: at any mid, <b>one side is always properly sorted</b>. Work out which, check whether the target lies inside its range, and recurse into that side.",
+warn:"Off-by-one bugs come from mixing templates. Pick one and keep it: <code>while lo &lt;= hi</code> with <code>mid ± 1</code> for exact matches, <code>while lo &lt; hi</code> with <code>hi = mid</code> for boundaries. Never blend them.",
+ex:[["Binary Search","binary-search","The base case."],["Search in Rotated Sorted Array","search-in-rotated-sorted-array","Identify the sorted half, then decide."],["Find Minimum in Rotated Sorted Array","find-minimum-in-rotated-sorted-array","Compare mid against the right edge."],["Search a 2D Matrix","search-a-2d-matrix","Treat it as one flat sorted array of length m×n."],["Time Based Key-Value Store","time-based-key-value-store","Binary search timestamps for the latest ≤ target."]],
+near:[6]
+},
+{
+n:"Binary Search on the Answer",
+ess:"You can't search the input, but you can search the range of possible answers — because 'is x good enough?' flips from false to true exactly once.",
+tell:[
+"The wording is <b>minimize the maximum</b> or <b>maximize the minimum</b>.",
+"The answer is a number in a range you can bound (1 to max, 0 to total).",
+"Checking a candidate answer is easy and linear, even though finding it isn't.",
+"That check is monotone: if speed 7 works, so does 8."],
+trig:["minimize the maximum","smallest k such that","within h hours","capacity to ship","split into m subarrays","minimum speed"],
+code:["def feasible(x):","    ...                        # write this first — it's the real work","    return total <= limit","","lo, hi = 1, max(nums)","while lo < hi:","    mid = (lo + hi) // 2","    if feasible(mid): hi = mid      # x works — try smaller","    else:             lo = mid + 1  # x fails — must go bigger","return lo"],
+cx:"O(n log(range))",
+key:"Write <code>feasible(x)</code> before anything else. If its output over the range reads false, false, …, true, true, the pattern applies. If it flickers, it doesn't.",
+warn:"Easy to miss because the input is often unsorted and the words 'binary search' never appear. The giveaway is a superlative on a superlative — the largest sum being made as small as possible.",
+ex:[["Koko Eating Bananas","koko-eating-bananas","Search over speeds; higher speed is always at least as feasible."],["Capacity To Ship Packages Within D Days","capacity-to-ship-packages-within-d-days","Search over capacities."],["Split Array Largest Sum","split-array-largest-sum","Minimise the maximum subarray sum."],["Minimum Number of Days to Make m Bouquets","minimum-number-of-days-to-make-m-bouquets","Search over days."],["Find the Smallest Divisor Given a Threshold","find-the-smallest-divisor-given-a-threshold","Search over divisors."]],
+near:[5,9]
+},
+{
+n:"Monotonic Stack",
+ess:"Keep a stack whose values stay strictly increasing or decreasing. Every pop is a subproblem being answered at exactly the right moment.",
+tell:[
+"You need the <b>next</b> or <b>previous</b> element that is greater or smaller.",
+"Spans: how many days until it's warmer, how far back until something taller.",
+"Rectangles under a histogram — each bar needs its first shorter neighbour on both sides.",
+"Brute force scans forward from every index looking for the first thing that beats it."],
+trig:["next greater element","how many days until","previous smaller","largest rectangle","stock span","trapping"],
+code:["st, ans = [], [0] * len(a)        # stack holds indices","for i, x in enumerate(a):","    while st and a[st[-1]] < x:   # x resolves everything smaller below it","        j = st.pop()","        ans[j] = i - j","    st.append(i)"],
+cx:"O(n) amortised — each index pushes once and pops once",
+key:"Choose direction by what you need. <b>Decreasing stack</b> answers next-greater. <b>Increasing stack</b> answers next-smaller. Store indices rather than values when the answer involves distance.",
+warn:"Largest Rectangle in Histogram is the one to learn properly — the pop must compute width using the new stack top after popping, not the popped index. Get that once and Maximal Rectangle comes free.",
+ex:[["Daily Temperatures","daily-temperatures","Next warmer day is next-greater with distance."],["Next Greater Element I","next-greater-element-i","The pattern in its plainest form."],["Largest Rectangle in Histogram","largest-rectangle-in-histogram","Each bar extends until a shorter one stops it."],["Car Fleet","car-fleet","Sort by position, stack arrival times, absorb slower cars ahead."],["Trapping Rain Water","trapping-rain-water","Stack alternative to the two-pointer solution."]],
+near:[0,10]
+},
+{
+n:"Intervals",
+ess:"Sort the pairs by the right key, then a single sweep comparing only adjacent items answers everything.",
+tell:[
+"The input is a list of [start, end] pairs.",
+"Merging, counting overlaps, removing the fewest, or finding how many resources are needed at peak.",
+"Calendar and booking language: meetings, rooms, flights, ranges."],
+trig:["intervals","meetings","overlap","merge","minimum rooms","non-overlapping"],
+code:["iv.sort(key=lambda x: x[0])       # by START for merging","out = [iv[0]]","for s, e in iv[1:]:","    if s <= out[-1][1]:           # touching or overlapping","        out[-1][1] = max(out[-1][1], e)","    else:","        out.append([s, e])"],
+cx:"O(n log n), dominated by the sort",
+key:"The single most useful distinction in this pattern: <b>sort by start to merge</b>, <b>sort by end to keep the most non-overlapping intervals</b>. Getting that backwards is the classic wrong answer on Non-overlapping Intervals.",
+warn:"'Minimum meeting rooms' is a different shape. Either push end times into a min-heap and pop whatever has finished, or split every interval into +1 at start and −1 at end, sort those events, and track the running peak.",
+ex:[["Merge Intervals","merge-intervals","Sort by start, extend or append."],["Insert Interval","insert-interval","Already sorted — three phases: before, overlapping, after."],["Non-overlapping Intervals","non-overlapping-intervals","Sort by end and greedily keep the earliest finisher."],["Meeting Rooms II","meeting-rooms-ii","Heap of end times, or a +1/−1 sweep."],["Minimum Number of Arrows to Burst Balloons","minimum-number-of-arrows-to-burst-balloons","Same greedy as non-overlapping, counted differently."]],
+near:[9,10]
+},
+{
+n:"Greedy Sort & Scan",
+ess:"Sort by the correct key, then apply one local rule in a single pass — and the locally best choice turns out to be globally optimal.",
+tell:[
+"An optimisation with a superlative: minimum number of, maximum count of.",
+"You can argue an exchange: swapping toward the greedy choice never makes things worse.",
+"n is large enough that DP would be too slow, hinting a linear rule exists.",
+"Scheduling, assigning, or reaching an end position."],
+trig:["minimum number of","maximum number of","can you reach","assign","cover"],
+code:["reach = 0","for i, jump in enumerate(nums):","    if i > reach: return False      # this index is unreachable","    reach = max(reach, i + jump)","return True"],
+cx:"O(n log n) with the sort, O(n) without",
+key:"Before writing anything, try to break your own rule with a small counterexample. If you can't build one in two minutes, greedy is probably safe. If you can, you're in DP territory.",
+warn:"This is where greedy and DP get confused. If a choice made now can be invalidated by information that arrives later — as in Coin Change with awkward denominations — greedy is wrong and you need DP.",
+ex:[["Jump Game","jump-game","Track the furthest reachable index."],["Jump Game II","jump-game-ii","Count level boundaries — a greedy BFS in disguise."],["Gas Station","gas-station","If total gas ≥ total cost, restart from the point after any deficit."],["Partition Labels","partition-labels","Record each letter's last index, close the block when you reach it."],["Hand of Straights","hand-of-straights","Always build the group starting at the smallest remaining card."]],
+near:[8,18]
+},
+{
+n:"Heap / Top-K",
+ess:"You need the current extreme repeatedly but never the full ordering, so you pay log k per operation instead of sorting everything.",
+tell:[
+"The letter <b>k</b> in the statement: k largest, k closest, k most frequent.",
+"Data arrives as a stream and the answer must stay current.",
+"Merging several sorted sources by always taking the smallest head.",
+"Repeatedly grabbing the biggest remaining item and putting a reduced version back."],
+trig:["kth largest","k closest","top k","merge k sorted","median of a stream","most frequent task"],
+code:["import heapq","h = []","for x in nums:","    heapq.heappush(h, x)","    if len(h) > k:","        heapq.heappop(h)     # evict the smallest; heap holds the k largest","return h[0]                  # the kth largest"],
+cx:"O(n log k) — beats O(n log n) sorting when k is small",
+key:"The inversion trips everyone up: to keep the <b>k largest</b> you need a <b>min</b>-heap of size k, because you must be able to evict the weakest survivor. Python has no max-heap — push negatives.",
+warn:"Running median needs <b>two</b> heaps: a max-heap for the lower half, a min-heap for the upper, rebalanced so their sizes differ by at most one. That two-heap trick is its own mini-pattern worth memorising.",
+ex:[["Kth Largest Element in an Array","kth-largest-element-in-an-array","Size-k min-heap, or quickselect for O(n) average."],["K Closest Points to Origin","k-closest-points-to-origin","Same shape, keyed on squared distance."],["Top K Frequent Elements","top-k-frequent-elements","Count with a map, then heap on counts."],["Task Scheduler","task-scheduler","Always schedule the most frequent remaining task."],["Find Median from Data Stream","find-median-from-data-stream","The two-heap balance."]],
+near:[4,8]
+},
+{
+n:"In-Place Linked List Reversal",
+ess:"Rewire next pointers with three moving references. No new nodes, no array copy, constant space.",
+tell:[
+"The word reverse, applied to a whole list, a sublist, or every k nodes.",
+"O(1) space is required, so you can't dump values into a list and re-emit them.",
+"Palindrome or reorder problems where you need the tail walked backwards."],
+trig:["reverse","in-place","k-group","reorder","palindrome linked list"],
+code:["prev, cur = None, head","while cur:","    nxt = cur.next     # save","    cur.next = prev    # flip","    prev = cur         # advance","    cur = nxt","return prev            # new head"],
+cx:"O(n) time · O(1) space",
+key:"Compound problems decompose into this plus pattern 2. Reorder List is: find the middle with fast/slow, reverse the second half, then zip the halves together. Three known moves, no new ideas.",
+warn:"For partial reversals, keep an explicit pointer to the node <b>before</b> the section and the node <b>after</b> it before you start flipping — otherwise you can't reattach. A dummy head node removes the special case at index 0.",
+ex:[["Reverse Linked List","reverse-linked-list","The base move."],["Reverse Linked List II","reverse-linked-list-ii","Same loop bounded to a window, with careful reattachment."],["Reverse Nodes in k-Group","reverse-nodes-in-k-group","Count k ahead, reverse the block, recurse or loop."],["Reorder List","reorder-list","Middle, reverse, merge."],["Palindrome Linked List","palindrome-linked-list","Reverse the second half and compare."]],
+near:[1]
+},
+{
+n:"Tree DFS (return values)",
+ess:"Recursion where every node hands its parent a small summary of its subtree, and the parent combines the two summaries.",
+tell:[
+"The answer at a node depends on answers for its subtrees.",
+"Depth, diameter, balance, path sums, validity, subtree comparisons.",
+"You'd naturally describe the solution with 'for each node, look at its left and right'."],
+trig:["depth","diameter","balanced","path sum","validate BST","lowest common ancestor","longest path"],
+code:["def dfs(node):","    if not node: return 0","    l, r = dfs(node.left), dfs(node.right)","","    self.best = max(self.best, l + r)   # best path THROUGH this node","    return 1 + max(l, r)                # best path STARTING at this node"],
+cx:"O(n) time · O(h) stack, h = height",
+key:"The idea that unlocks the hard ones: the value you <b>return upward</b> is not the answer you <b>record</b>. A parent can only use a single downward path, but the answer might bend through a node using both children. Keep them separate and diameter, max path sum, and longest univalue path all fall out of one template.",
+warn:"Validate BST is not a local check. Comparing each node only to its children passes invalid trees — you have to thread a (min, max) range down the recursion. Any 'is this a valid BST' variant needs bounds, not neighbours.",
+ex:[["Diameter of Binary Tree","diameter-of-binary-tree","Record through-node, return from-node."],["Balanced Binary Tree","balanced-binary-tree","Return height, or a sentinel once imbalance is found."],["Binary Tree Maximum Path Sum","binary-tree-maximum-path-sum","Same split, clamping negative contributions to zero."],["Validate Binary Search Tree","validate-binary-search-tree","Pass min/max bounds downward."],["Lowest Common Ancestor of a Binary Tree","lowest-common-ancestor-of-a-binary-tree","Return whichever side found a target; both sides means this node."]],
+near:[13,14]
+},
+{
+n:"Tree BFS (level order)",
+ess:"A queue processes the tree one complete level at a time, so anything phrased in terms of rows or nearest depth is direct.",
+tell:[
+"The word <b>level</b>, or per-row output like a list of lists.",
+"Right side view, zigzag order, widest level, level averages.",
+"Shortest depth to something — BFS reaches it before any deeper node."],
+trig:["level order","each row","right side view","zigzag","minimum depth","level averages"],
+code:["from collections import deque","q, out = deque([root]), []","while q:","    level = []","    for _ in range(len(q)):        # snapshot: this is what makes levels","        n = q.popleft()","        level.append(n.val)","        if n.left:  q.append(n.left)","        if n.right: q.append(n.right)","    out.append(level)"],
+cx:"O(n) time · O(w) space, w = widest level",
+key:"Everything hinges on capturing <code>len(q)</code> <b>before</b> the inner loop. Skip it and you blur levels together; that one line is the difference between level-order and a plain queue walk.",
+warn:"For minimum depth, BFS returns as soon as it meets a leaf and beats DFS, which must explore everything. For maximum depth the reverse holds. Match the traversal to which end of the tree the answer lives at.",
+ex:[["Binary Tree Level Order Traversal","binary-tree-level-order-traversal","The template itself."],["Binary Tree Right Side View","binary-tree-right-side-view","Take the last node of each level."],["Zigzag Level Order Traversal","binary-tree-zigzag-level-order-traversal","Same loop, reverse alternate levels."],["Minimum Depth of Binary Tree","minimum-depth-of-binary-tree","Stop at the first leaf encountered."],["Populating Next Right Pointers","populating-next-right-pointers-in-each-node","Link neighbours within a level as you go."]],
+near:[12,15]
+},
+{
+n:"Backtracking",
+ess:"Build a partial candidate one choice at a time, recurse, then undo the choice. You're walking a tree of decisions and pruning branches that can't work.",
+tell:[
+"It asks for <b>all</b> results, not a count and not the best one.",
+"Combinations, permutations, subsets, partitions, board placements.",
+"n is small — usually under about 20 — because the output itself is exponential.",
+"Constraints can be checked as you build, letting you abandon branches early."],
+trig:["all possible","generate all","combinations","permutations","partition","n-queens","word search"],
+code:["def bt(start, path):","    if <goal reached>:","        out.append(path[:])        # copy! path keeps mutating","        return","    for i in range(start, len(nums)):","        if <invalid choice>: continue","        path.append(nums[i])","        bt(i + 1, path)            # i to allow reuse, i+1 to forbid it","        path.pop()                 # undo"],
+cx:"Exponential by nature — O(2ⁿ) for subsets, O(n!) for permutations",
+key:"Two dials control almost every variant. The <b>start index</b> decides whether an element can be reused. Sorting first, plus <code>if i &gt; start and nums[i] == nums[i-1]: continue</code>, removes duplicate results.",
+warn:"Two habitual bugs: appending <code>path</code> instead of <code>path[:]</code>, so every stored answer mutates into the same thing; and forgetting to unmark a visited grid cell on the way out of a Word Search branch.",
+ex:[["Subsets","subsets","Take or skip each index."],["Combination Sum","combination-sum","Pass i, not i+1 — reuse allowed."],["Combination Sum II","combination-sum-ii","Pass i+1 and skip duplicate siblings."],["Permutations","permutations","Order matters, so track used elements instead of a start index."],["Word Search","word-search","DFS from every cell, mark and unmark as you go."],["N-Queens","n-queens","Prune columns and both diagonals before descending."]],
+near:[15,18]
+},
+{
+n:"Grid & Graph Traversal",
+ess:"Flood outward from one or many starting cells, marking what you've seen. DFS to explore, BFS when distance matters.",
+tell:[
+"A 2-D grid of land and water, rot, walls, or regions.",
+"Counting connected components, or measuring how far something spreads.",
+"Shortest path in an <b>unweighted</b> graph — BFS gives it for free.",
+"Multiple sources spreading at once, one step per unit of time."],
+trig:["number of islands","connected regions","surrounded","minutes until all rotten","shortest path","reachable from"],
+code:["from collections import deque","q = deque(sources); seen = set(sources)","steps = 0","while q:","    for _ in range(len(q)):          # one full ring = one time step","        r, c = q.popleft()","        for dr, dc in ((1,0),(-1,0),(0,1),(0,-1)):","            nr, nc = r + dr, c + dc","            if 0 <= nr < R and 0 <= nc < C and (nr,nc) not in seen and grid[nr][nc] == 1:","                seen.add((nr, nc)); q.append((nr, nc))","    steps += 1"],
+cx:"O(R×C) for grids · O(V+E) for adjacency lists",
+key:"Three set-ups cover the field. <b>Count regions</b>: loop every cell, flood each unvisited one, increment. <b>Simultaneous spread</b>: push all sources into the queue before the loop starts. <b>Reverse thinking</b>: for Pacific Atlantic, don't ask which cells drain to the ocean — flood inward from each ocean and intersect.",
+warn:"Use BFS the moment 'shortest' or 'fewest steps' appears; DFS finds a path, not the shortest one. And with weights involved you've left this pattern — that's Dijkstra.",
+ex:[["Number of Islands","number-of-islands","Flood each unvisited land cell, count the floods."],["Rotting Oranges","rotting-oranges","Multi-source BFS; the step count is the answer."],["Pacific Atlantic Water Flow","pacific-atlantic-water-flow","Flood inward from both oceans, intersect the sets."],["Surrounded Regions","surrounded-regions","Start from the border — anything unreached is enclosed."],["Clone Graph","clone-graph","DFS with a map from original node to copy."]],
+near:[16,17]
+},
+{
+n:"Topological Sort",
+ess:"Order the nodes of a directed graph so every edge points forward. Repeatedly take whatever has no remaining prerequisites.",
+tell:[
+"Prerequisites, dependencies, build order, task ordering.",
+"'Can you finish' — which is really 'is this graph free of cycles'.",
+"Rules of the form 'a must come before b'.",
+"Deducing an unknown ordering from pairwise comparisons."],
+trig:["prerequisite","must come before","course schedule","build order","alien dictionary","can you finish"],
+code:["from collections import deque, defaultdict","adj, indeg = defaultdict(list), [0] * n","for a, b in edges:                # b must come before a","    adj[b].append(a); indeg[a] += 1","","q = deque(i for i in range(n) if indeg[i] == 0)","order = []","while q:","    u = q.popleft(); order.append(u)","    for v in adj[u]:","        indeg[v] -= 1","        if indeg[v] == 0: q.append(v)","","return order if len(order) == n else []   # short output means a cycle"],
+cx:"O(V + E)",
+key:"Cycle detection comes free. If the finished order is shorter than the node count, something never reached in-degree zero — that's a cycle, and it's exactly how Course Schedule answers false.",
+warn:"Watch edge direction. Course pairs are usually given as [course, prerequisite], so the edge runs prerequisite → course. Reversing it silently produces a valid-looking but wrong order.",
+ex:[["Course Schedule","course-schedule","Feasible if and only if no cycle exists."],["Course Schedule II","course-schedule-ii","Return the order itself."],["Alien Dictionary","alien-dictionary","Derive edges from the first differing character of adjacent words."],["Minimum Height Trees","minimum-height-trees","Peel leaves layer by layer — the undirected cousin."],["Sequence Reconstruction","sequence-reconstruction","Unique order exists only if the queue never holds two nodes."]],
+near:[16,17]
+},
+{
+n:"Union-Find",
+ess:"Maintain disjoint sets under merging. Find gives a set's representative; union joins two sets — both effectively constant time.",
+tell:[
+"Counting connected components, especially as edges arrive one by one.",
+"'Are these two connected?' asked repeatedly.",
+"Detecting the edge that creates a cycle in an undirected graph.",
+"Building a minimum spanning tree by adding cheap edges that don't close a loop."],
+trig:["connected components","redundant connection","valid tree","accounts merge","minimum cost to connect","are they connected"],
+code:["par = list(range(n)); size = [1] * n","","def find(x):","    while par[x] != x:","        par[x] = par[par[x]]      # path compression","        x = par[x]","    return x","","def union(a, b):","    ra, rb = find(a), find(b)","    if ra == rb: return False     # already joined — this edge makes a cycle","    if size[ra] < size[rb]: ra, rb = rb, ra","    par[rb] = ra; size[ra] += size[rb]","    return True"],
+cx:"Near O(1) per operation with path compression and union by size",
+key:"The return value of <code>union</code> is doing real work. False means the two ends were already connected, so this edge closes a cycle — that single fact solves Redundant Connection, Graph Valid Tree, and the cycle check inside Kruskal's algorithm.",
+warn:"For a static graph asked once, plain DFS is simpler and just as fast. Union-Find earns its place when edges stream in, when you need cycle detection mid-build, or when merging groups by identity as in Accounts Merge.",
+ex:[["Number of Connected Components","number-of-connected-components-in-an-undirected-graph","Start at n components, decrement on each successful union."],["Redundant Connection","redundant-connection","The first union that returns false is the answer."],["Graph Valid Tree","graph-valid-tree","Needs exactly n−1 edges and no cycle."],["Accounts Merge","accounts-merge","Union accounts sharing any email, then group by root."],["Min Cost to Connect All Points","min-cost-to-connect-all-points","Kruskal: sort edges, union while acyclic."]],
+near:[16,17]
+},
+{
+n:"1-D Dynamic Programming",
+ess:"State is a single index. The answer at position i is built from a fixed number of earlier answers, and subproblems repeat.",
+tell:[
+"Counting ways, minimum cost, or maximum value over a linear sequence.",
+"Greedy fails because taking the best option now blocks a better one later.",
+"The recursive brute force revisits identical arguments — overlapping subproblems.",
+"Longest or best <b>subsequence</b> — scattered, not contiguous."],
+trig:["in how many ways","minimum cost to reach","can you make up the amount","longest subsequence","rob houses","decode"],
+code:["dp = [0] * (n + 1)","dp[0] = base_case","for i in range(1, n + 1):","    dp[i] = combine(dp[i-1], dp[i-2], ...)","return dp[n]","","# House Robber:  dp[i] = max(dp[i-1], dp[i-2] + nums[i-1])","# Coin Change:   dp[a] = 1 + min(dp[a - c] for c in coins if c <= a)"],
+cx:"O(n × transitions) time · O(n), often reducible to O(1)",
+key:"Always go recursive brute force → memoise → tabulate, in that order. Skipping to the table is why DP feels impossible: the table is a compressed form of a recursion you never wrote.",
+warn:"If you can't finish the sentence '<b>dp[i] is the … using the first i elements</b>' in plain words, your state is wrong and no amount of index fiddling will save it. Fix the definition first.",
+ex:[["Climbing Stairs","climbing-stairs","Fibonacci with a story attached."],["House Robber","house-robber","Take and skip one, or skip and keep the option."],["House Robber II","house-robber-ii","Run the linear version twice, excluding one end each time."],["Coin Change","coin-change","Unbounded knapsack, minimising count."],["Word Break","word-break","dp[i] is true if some valid word ends exactly at i."],["Longest Increasing Subsequence","longest-increasing-subsequence","O(n²) DP, or patience sorting with binary search for O(n log n)."]],
+near:[9,19]
+},
+{
+n:"2-D Dynamic Programming",
+ess:"State is two indices — usually positions in two sequences, or a cell in a grid, or an index paired with a remaining budget.",
+tell:[
+"Two strings or arrays compared against each other.",
+"Paths through a grid with obstacles or costs.",
+"An index plus a second dimension: remaining capacity, target sum, transactions left.",
+"The 1-D version of your state can't distinguish two genuinely different situations."],
+trig:["two strings","edit distance","common subsequence","unique paths","target sum","with capacity k"],
+code:["dp = [[0] * (m + 1) for _ in range(n + 1)]","for i in range(1, n + 1):","    for j in range(1, m + 1):","        if a[i-1] == b[j-1]:","            dp[i][j] = dp[i-1][j-1] + 1          # characters match: consume both","        else:","            dp[i][j] = max(dp[i-1][j], dp[i][j-1])  # skip one from either side","return dp[n][m]"],
+cx:"O(n×m) time · O(n×m) space, usually collapsible to two rows",
+key:"Nearly every string-pair DP is that exact shape with different operators. Match moves diagonally; mismatch tries dropping a character from one side or the other. Edit Distance just adds a third option — replace, which is also diagonal, plus one.",
+warn:"Row 0 and column 0 encode 'one string is empty', and getting them wrong quietly breaks everything downstream. For Edit Distance they're 0…m and 0…n, not zeros — deleting into an empty string costs one per character.",
+ex:[["Longest Common Subsequence","longest-common-subsequence","The canonical match-or-skip grid."],["Edit Distance","edit-distance","Three moves: insert, delete, replace."],["Unique Paths","unique-paths","Each cell is the sum of the ones above and to its left."],["Coin Change II","coin-change-ii","Counting combinations — loop coins outside to avoid double counting."],["Target Sum","target-sum","Index plus running total; reduces to subset-sum."],["Interleaving String","interleaving-string","Two pointers into two sources, one grid."]],
+near:[18]
+}
+];
+
+var cur=0;
+function esc(s){return String(s).replace(/[&<>]/g,function(c){return{"&":"&amp;","<":"&lt;",">":"&gt;"}[c];});}
+function hl(line){
+  var e=esc(line);
+  e=e.replace(/(#.*)$/,'<span class="c">$1</span>');
+  e=e.replace(/\b(def|for|while|if|elif|else|return|in|not|and|or|import|from|lambda|break|continue|True|False|None)\b/g,'<span class="k">$1</span>');
+  return e;
+}
+function nav(){
+  document.getElementById("pa-nav").innerHTML=P.map(function(p,i){
+    return '<button data-i="'+i+'" aria-current="'+(i===cur)+'"><i>'+String(i+1).padStart(2,"0")+'</i>'+p.n+'</button>';
+  }).join("");
+}
+function render(){
+  var p=P[cur],h=[];
+  h.push('<span class="caption-box">&#x1F4CD; PATTERN '+String(cur+1).padStart(2,"0")+' OF '+P.length+'</span>');
+  h.push('<h2 class="pa-title">'+p.n+'</h2>');
+  h.push('<p class="pa-ess">'+p.ess+'</p>');
+  h.push('<h3 class="pa-h2">How to spot it</h3><ul>'+p.tell.map(function(t){return "<li>"+t+"</li>";}).join("")+'</ul>');
+  h.push('<h3 class="pa-h2">Words that give it away</h3><div class="pa-trig">'+p.trig.map(function(t){return "<span>"+t+"</span>";}).join("")+'</div>');
+  h.push('<h3 class="pa-h2">Skeleton</h3><pre class="pa-code">'+p.code.map(hl).join("\n")+'</pre>');
+  h.push('<div><span class="pa-cx">'+p.cx+'</span></div>');
+  h.push('<h3 class="pa-h2">The idea that makes it click</h3><div class="pa-note key">&#x1F4A1; '+p.key+'</div>');
+  h.push('<h3 class="pa-h2">Where people go wrong</h3><div class="pa-note warn">&#x26A0;&#xFE0F; '+p.warn+'</div>');
+  h.push('<h3 class="pa-h2">Problems, and why the pattern fires</h3><table class="pa-table">'+p.ex.map(function(e){
+    return '<tr><td><a href="'+LC+e[1]+'/" target="_blank" rel="noopener">'+e[0]+'</a></td><td class="why">'+e[2]+'</td></tr>';
+  }).join("")+'</table>');
+  h.push('<h3 class="pa-h2">Easily confused with</h3><div class="pa-xref">'+p.near.map(function(i){
+    return '<button data-go="'+i+'">'+P[i].n+' &#x2192;</button>';
+  }).join("")+'</div>');
+  var m=document.getElementById("pa-main");
+  m.innerHTML='<div class="pa-fade">'+h.join("")+'</div>';
+}
+function go(i){ cur=i; nav(); render(); }
+
+document.getElementById("pa-nav").onclick=function(e){
+  var b=e.target.closest("button"); if(b) go(+b.dataset.i);
+};
+document.getElementById("pa-main").onclick=function(e){
+  var b=e.target.closest("button[data-go]"); if(b) go(+b.dataset.go);
+};
+document.getElementById("pa-q").oninput=function(){
+  var q=this.value.toLowerCase().trim();
+  [].forEach.call(document.querySelectorAll("#pa-nav button"),function(b){
+    var p=P[+b.dataset.i];
+    var hay=(p.n+" "+p.trig.join(" ")+" "+p.ess+" "+p.ex.map(function(e){return e[0];}).join(" ")).toLowerCase();
+    b.classList.toggle("hide", q.length>1 && hay.indexOf(q)<0);
+  });
+};
+document.addEventListener("keydown",function(e){
+  if(e.target.tagName==="INPUT") return;
+  if(e.key==="ArrowDown"||e.key==="j"){ if(cur<P.length-1) go(cur+1); }
+  if(e.key==="ArrowUp"||e.key==="k"){ if(cur>0) go(cur-1); }
+});
+nav(); render();
+})();
+</script>
+</body>
+</html>
