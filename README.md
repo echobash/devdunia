@@ -100,3 +100,14 @@ Running DevDunia isn't free — I personally cover all hosting, domain, and infr
 ---
 
 ## 🤝 Contributing
+
+### 🧭 Contribution Guidelines (Quick Overview)
+
+DevDunia welcomes both coding and non-coding contributions.
+
+Before contributing:
+- Fork the repository and clone it locally
+- Create a separate branch for your changes
+- Keep changes small and focused (one fix or improvement per PR)
+
+Non-coding contributions such as documentation improvements, typo fixes, and clarity enhancements are highly appreciated and encouraged for new contributors.
